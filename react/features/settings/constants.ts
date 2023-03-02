@@ -3,8 +3,8 @@ export const SETTINGS_TABS = {
     DEVICES: 'devices_tab',
     MORE: 'more_tab',
     MODERATOR: 'moderator-tab',
-    PROFILE: 'profile_tab',
-    SOUNDS: 'sounds_tab'
+    NOTIFICATIONS: 'notifications_tab',
+    PROFILE: 'profile_tab'
 };
 
 /**

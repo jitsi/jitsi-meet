@@ -28,11 +28,6 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     desktopShareFramerates: Array<number>;
 
     /**
-     * The types of enabled notifications that can be configured and their specific visibility.
-     */
-    enabledNotifications: Object;
-
-    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean;
@@ -46,11 +41,6 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
      * Whether or not to display moderator-only settings.
      */
     showModeratorSettings: boolean;
-
-    /**
-     * Whether or not to display notifications settings.
-     */
-    showNotificationsSettings: boolean;
 
     /**
      * Whether or not to show prejoin screen.
@@ -90,7 +80,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
-        this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
@@ -141,24 +130,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
      */
     _onShowPrejoinPageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ showPrejoinPage: checked });
-    }
-
-    /**
-     * Callback invoked to select if the given type of
-     * notifications should be shown.
-     *
-     * @param {Object} e - The key event to handle.
-     * @param {string} type - The type of the notification.
-     *
-     * @returns {void}
-     */
-    _onEnabledNotificationsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>, type: any) {
-        super._onChange({
-            enabledNotifications: {
-                ...this.props.enabledNotifications,
-                [type]: checked
-            }
-        });
     }
 
     /**
@@ -270,37 +241,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
     }
 
     /**
-     * Returns the React Element for modifying the enabled notifications settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderNotificationsSettings() {
-        const { t, enabledNotifications } = this.props;
-
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'notifications'>
-                <span className = 'checkbox-label'>
-                    { t('notify.displayNotifications') }
-                </span>
-                {
-                    Object.keys(enabledNotifications).map(key => (
-                        <Checkbox
-                            checked = { Boolean(enabledNotifications[key as keyof typeof enabledNotifications]) }
-                            key = { key }
-                            label = { t(key) }
-                            name = { `show-${key}` }
-                            /* eslint-disable-next-line react/jsx-no-bind */
-                            onChange = { e => this._onEnabledNotificationsChanged(e, key) } />
-                    ))
-                }
-            </div>
-        );
-    }
-
-    /**
      * Returns the React Element for the max stage participants dropdown.
      *
      * @returns {ReactElement}
@@ -357,14 +297,13 @@ class MoreTab extends AbstractDialogTab<Props, any> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { showNotificationsSettings, showPrejoinSettings } = this.props;
+        const { showPrejoinSettings } = this.props;
 
         return (
             <div
                 className = 'settings-sub-pane left'
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
-                { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
             </div>
         );

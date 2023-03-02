@@ -116,14 +116,11 @@ export function getNotificationsMap(stateful: IStateful) {
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
-    const enabledNotifications = getNotificationsMap(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
     return {
         currentFramerate: framerate,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
-        enabledNotifications,
-        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
@@ -228,7 +225,7 @@ export function getProfileTabProps(stateful: IStateful) {
  * @returns {Object} - The properties for the "Sounds" tab from settings
  * dialog.
  */
-export function getSoundsTabProps(stateful: IStateful) {
+export function getNotificationsTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         soundsIncomingMessage,
@@ -240,9 +237,12 @@ export function getSoundsTabProps(stateful: IStateful) {
     } = state['features/base/settings'];
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
+    const enabledNotifications = getNotificationsMap(stateful);
 
     return {
         disabledSounds: state['features/base/config'].disabledSounds || [],
+        enabledNotifications,
+        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantKnocking,
