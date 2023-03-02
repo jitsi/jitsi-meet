@@ -84,10 +84,6 @@ const styles = (theme: Theme) => {
             display: 'flex',
             width: '100%',
 
-            '&.profile-pane': {
-                flexDirection: 'column'
-            },
-
             '& .auth-name': {
                 marginBottom: theme.spacing(1)
             },
@@ -128,19 +124,6 @@ const styles = (theme: Theme) => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%'
-            },
-
-            '& .profile-edit': {
-                display: 'flex',
-                width: '100%',
-                padding: '0 2px',
-                boxSizing: 'border-box'
-            },
-
-            '& .profile-edit-field': {
-                flex: 0.5,
-                marginRight: '20px',
-                marginTop: theme.spacing(3)
             },
 
             '& .settings-sub-pane': {
@@ -303,7 +286,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
-            className: `settings-pane ${classes.settingsDialog} profile-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitProfileTab,
             icon: IconUser
         });

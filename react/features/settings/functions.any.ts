@@ -116,22 +116,12 @@ export function getNotificationsMap(stateful: IStateful) {
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
-    const language = i18next.language || DEFAULT_LANGUAGE;
-    const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
     const enabledNotifications = getNotificationsMap(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
-    // when self view is controlled by the config we hide the settings
-    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
-
     return {
         currentFramerate: framerate,
-        currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
-        disableHideSelfView: disableSelfViewSettings || disableSelfView,
-        hideSelfView: getHideSelfView(state),
-        languages: LANGUAGES,
-        showLanguageSettings: configuredTabs.includes('language'),
         enabledNotifications,
         showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
@@ -207,14 +197,25 @@ export function getProfileTabProps(stateful: IStateful) {
     } = state['features/base/conference'];
     const { hideEmailInSettings } = state['features/base/config'];
     const localParticipant = getLocalParticipant(state);
+    const language = i18next.language || DEFAULT_LANGUAGE;
+    const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
+
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        currentLanguage: language,
         displayName: localParticipant?.name,
         email: localParticipant?.email,
+        hideEmailInSettings,
+        hideSelfView: getHideSelfView(state),
+        id: localParticipant?.id,
+        languages: LANGUAGES,
         readOnlyName: isNameReadOnly(state),
-        hideEmailInSettings
+        showLanguageSettings: configuredTabs.includes('language')
     };
 }
 

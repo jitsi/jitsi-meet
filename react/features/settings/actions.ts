@@ -107,18 +107,10 @@ export function submitMoreTab(newState: any) {
             }));
         }
 
-        if (newState.currentLanguage !== currentState.currentLanguage) {
-            i18next.changeLanguage(newState.currentLanguage);
-        }
-
         if (newState.currentFramerate !== currentState.currentFramerate) {
             const frameRate = parseInt(newState.currentFramerate, 10);
 
             dispatch(setScreenshareFramerate(frameRate));
-        }
-
-        if (newState.hideSelfView !== currentState.hideSelfView) {
-            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
         }
 
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
@@ -173,6 +165,14 @@ export function submitProfileTab(newState: any) {
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
+        }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
+
+        if (newState.currentLanguage !== currentState.currentLanguage) {
+            i18next.changeLanguage(newState.currentLanguage);
         }
     };
 }
