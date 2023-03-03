@@ -15,7 +15,7 @@ interface IProps {
      */
     onClick: () => void;
 
-    participantID: string;
+    participantID?: string;
 }
 
 const ParticipantActionEllipsis = ({ accessibilityLabel, onClick, participantID }: IProps) => (
@@ -24,7 +24,7 @@ const ParticipantActionEllipsis = ({ accessibilityLabel, onClick, participantID 
         icon = { IconDotsHorizontal }
         onClick = { onClick }
         size = 'small'
-        testId = { `participant-more-options-${participantID}` } />
+        testId = { participantID ? `participant-more-options-${participantID}` : undefined } />
 );
 
 export default ParticipantActionEllipsis;
