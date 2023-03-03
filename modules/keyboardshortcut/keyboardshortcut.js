@@ -8,10 +8,9 @@ import {
     createShortcutEvent,
     sendAnalytics
 } from '../../react/features/analytics';
-import { toggleDialog } from '../../react/features/base/dialog';
 import { clickOnVideo } from '../../react/features/filmstrip/actions';
-import { KeyboardShortcutsDialog }
-    from '../../react/features/keyboard-shortcuts';
+import { openSettingsDialog } from '../../react/features/settings/actions';
+import { SETTINGS_TABS } from '../../react/features/settings/constants';
 
 const logger = Logger.getLogger(__filename);
 
@@ -120,15 +119,17 @@ const KeyboardShortcut = {
         return jitsiLocalStorage.getItem(_enableShortcutsKey) === 'false' ? false : true;
     },
 
+    getShortcutsDescriptions() {
+        return _shortcutsHelp;
+    },
+
     /**
-     * Opens the {@KeyboardShortcutsDialog} dialog.
+     * Opens the {@SettingsDialog} dialog on the  Shortcuts page.
      *
      * @returns {void}
      */
     openDialog() {
-        APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
-            shortcutDescriptions: _shortcutsHelp
-        }));
+        APP.store.dispatch(openSettingsDialog(SETTINGS_TABS.SHORTCUTS, false));
     },
 
     /**
