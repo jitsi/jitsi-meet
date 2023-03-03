@@ -52,6 +52,7 @@ export function loadGoogleAPI() {
             return Promise.resolve();
         })
         .then(() => dispatch(setGoogleAPIState(GOOGLE_API_STATES.LOADED)))
+        .then(() => googleApi.signInIfNotSignedIn())
         .then(() => googleApi.isSignedIn())
         .then(isSignedIn => {
             if (isSignedIn) {
@@ -150,8 +151,7 @@ export function setGoogleAPIState(
  *  selectedBoundStreamID: *} | never>)}
  */
 export function showAccountSelection() {
-    return () =>
-        googleApi.showAccountSelection();
+    return () => googleApi.showAccountSelection(true);
 }
 
 /**
@@ -161,7 +161,7 @@ export function showAccountSelection() {
  */
 export function signIn() {
     return (dispatch: Dispatch<any>) => googleApi.get()
-            .then(() => googleApi.signInIfNotSignedIn())
+            .then(() => googleApi.signInIfNotSignedIn(true))
             .then(() => dispatch({
                 type: SET_GOOGLE_API_STATE,
                 googleAPIState: GOOGLE_API_STATES.SIGNED_IN
@@ -205,10 +205,10 @@ export function updateProfile() {
         .then(profile => {
             dispatch({
                 type: SET_GOOGLE_API_PROFILE,
-                profileEmail: profile.getEmail()
+                profileEmail: profile.email
             });
 
-            return profile.getEmail();
+            return profile.email;
         });
 }
 
