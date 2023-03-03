@@ -92,7 +92,7 @@ const LanguageSelectorDialog = ({
     }, [ _language ]);
 
     const onSourceLanguageClick = useCallback(() => {
-        dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
+        dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE, false));
     }, []);
 
     return (

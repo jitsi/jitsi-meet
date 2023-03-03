@@ -23,20 +23,9 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     currentFramerate: string;
 
     /**
-     * The currently selected language to display in the language select
-     * dropdown.
-     */
-    currentLanguage: string;
-
-    /**
      * All available desktop capture frame rates.
      */
     desktopShareFramerates: Array<number>;
-
-    /**
-     * Whether to show hide self view setting.
-     */
-    disableHideSelfView: boolean;
 
     /**
      * The types of enabled notifications that can be configured and their specific visibility.
@@ -49,24 +38,9 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
     followMeActive: boolean;
 
     /**
-     * Whether or not to hide self-view screen.
-     */
-    hideSelfView: boolean;
-
-    /**
-     * All available languages to display in the language select dropdown.
-     */
-    languages: Array<string>;
-
-    /**
      * The number of max participants to display on stage.
      */
     maxStageParticipants: number;
-
-    /**
-     * Whether or not to display the language select dropdown.
-     */
-    showLanguageSettings: boolean;
 
     /**
      * Whether or not to display moderator-only settings.
@@ -116,11 +90,9 @@ class MoreTab extends AbstractDialogTab<Props, any> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
-        this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
         this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
-        this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
     }
@@ -157,19 +129,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
         const frameRate = e.target.value;
 
         super._onChange({ currentFramerate: frameRate });
-    }
-
-    /**
-     * Callback invoked to select a language from select dropdown.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onLanguageItemSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-        const language = e.target.value;
-
-        super._onChange({ currentLanguage: language });
     }
 
     /**
@@ -213,17 +172,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
     _onKeyboardShortcutEnableChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         keyboardShortcut.enable(checked);
         super._onChange({ keyboardShortcutEnable: checked });
-    }
-
-    /**
-     * Callback invoked to select if hide self view should be enabled.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ hideSelfView: checked });
     }
 
     /**
@@ -292,67 +240,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
-            </div>
-        );
-    }
-
-    /**
-     * Returns the React Element for self view setting.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderSelfViewCheckbox() {
-        const { hideSelfView, t } = this.props;
-
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'selfview'>
-                <span className = 'checkbox-label'>
-                    { t('settings.selfView') }
-                </span>
-                <Checkbox
-                    checked = { hideSelfView }
-                    label = { t('videothumbnail.hideSelfView') }
-                    name = 'hide-self-view'
-                    onChange = { this._onHideSelfViewChanged } />
-            </div>
-        );
-    }
-
-    /**
-     * Returns the menu item for changing displayed language.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderLanguageSelect() {
-        const {
-            currentLanguage,
-            languages,
-            t
-        } = this.props;
-
-        const languageItems
-            = languages.map((language: string) => {
-                return {
-                    value: language,
-                    label: t(`languages:${language}`)
-                };
-            });
-
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'language'>
-                <div className = 'dropdown-menu'>
-                    <Select
-                        label = { t('settings.language') }
-                        onChange = { this._onLanguageItemSelect }
-                        options = { languageItems }
-                        value = { currentLanguage } />
-                </div>
             </div>
         );
     }
@@ -454,13 +341,10 @@ class MoreTab extends AbstractDialogTab<Props, any> {
      * @returns {ReactElement}
      */
     _renderSettingsRight() {
-        const { showLanguageSettings } = this.props;
-
         return (
             <div
                 className = 'settings-sub-pane right'
                 key = 'settings-sub-pane-right'>
-                { showLanguageSettings && this._renderLanguageSelect() }
                 { this._renderFramerateSelect() }
                 { this._renderMaxStageParticipantsSelect() }
             </div>
@@ -473,7 +357,7 @@ class MoreTab extends AbstractDialogTab<Props, any> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
+        const { showNotificationsSettings, showPrejoinSettings } = this.props;
 
         return (
             <div
@@ -482,7 +366,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
                 { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
-                { !disableHideSelfView && this._renderSelfViewCheckbox() }
             </div>
         );
     }

@@ -886,9 +886,9 @@
     },
     "profile": {
         "avatar": "avatar",
-        "setDisplayNameLabel": "Set your display name",
+        "setDisplayNameLabel": "Name",
         "setEmailInput": "Enter email",
-        "setEmailLabel": "Set your gravatar email",
+        "setEmailLabel": "Gravatar email",
         "title": "Profile"
     },
     "raisedHand": "Would like to speak",
