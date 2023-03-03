@@ -238,6 +238,8 @@ export function getNotificationsTabProps(stateful: IStateful) {
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
     const enabledNotifications = getNotificationsMap(stateful);
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const showSoundsSettings = configuredTabs.includes('sounds');
 
     return {
         disabledSounds: state['features/base/config'].disabledSounds || [],
@@ -250,7 +252,8 @@ export function getNotificationsTabProps(stateful: IStateful) {
         soundsTalkWhileMuted,
         soundsReactions,
         enableReactions,
-        moderatorMutedSoundsReactions
+        moderatorMutedSoundsReactions,
+        showSoundsSettings
     };
 }
 

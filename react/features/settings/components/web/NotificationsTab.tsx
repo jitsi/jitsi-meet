@@ -2,9 +2,7 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
@@ -264,13 +262,4 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-const mapStateToProps = (_state: IReduxState) => {
-    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const showSoundsSettings = configuredTabs.includes('sounds');
-
-    return {
-        showSoundsSettings
-    };
-};
-
-export default connect(mapStateToProps)(withStyles(styles)(translate(NotificationsTab)));
+export default withStyles(styles)(translate(NotificationsTab));
