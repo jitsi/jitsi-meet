@@ -4,7 +4,7 @@ import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
 import { IReduxState } from '../../../app/types';
-import { IconBell, IconCalendar, IconGear, IconModerator, IconUser, IconVolumeUp } from '../../../base/icons/svg';
+import { IconBell, IconCalendar, IconGear, IconHost, IconUser, IconVolumeUp } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
@@ -151,10 +151,6 @@ const styles = (theme: Theme) => {
                 marginBottom: theme.spacing(2)
             },
 
-            '& .moderator-settings-wrapper': {
-                paddingTop: '20px'
-            },
-
             '& .calendar-tab': {
                 alignItems: 'center',
                 flexDirection: 'column',
@@ -280,18 +276,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    if (showProfileSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.PROFILE,
-            component: ProfileTab,
-            labelKey: 'profile.title',
-            props: getProfileTabProps(state),
-            className: `settings-pane ${classes.settingsDialog}`,
-            submit: submitProfileTab,
-            icon: IconUser
-        });
-    }
-
     if (showModeratorSettings) {
         tabs.push({
             name: SETTINGS_TABS.MODERATOR,
@@ -311,7 +295,19 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             className: `settings-pane ${classes.settingsDialog} moderator-pane`,
             submit: submitModeratorTab,
-            icon: IconModerator
+            icon: IconHost
+        });
+    }
+
+    if (showProfileSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.PROFILE,
+            component: ProfileTab,
+            labelKey: 'profile.title',
+            props: getProfileTabProps(state),
+            className: `settings-pane ${classes.settingsDialog} profile-pane`,
+            submit: submitProfileTab,
+            icon: IconUser
         });
     }
 
