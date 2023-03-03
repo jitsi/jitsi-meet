@@ -290,7 +290,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     enabledNotifications: tabState?.enabledNotifications || {}
                 };
             },
-            props: getNotificationsTabProps(state),
+            props: getNotificationsTabProps(state, showSoundsSettings),
             className: `settings-pane ${classes.settingsDialog}`,
             submit: submitNotificationsTab,
             icon: IconBell

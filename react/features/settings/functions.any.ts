@@ -222,10 +222,11 @@ export function getProfileTabProps(stateful: IStateful) {
  *
  * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
+ * @param {boolean} showSoundsSettings - Whether to show the sound settings or not.
  * @returns {Object} - The properties for the "Sounds" tab from settings
  * dialog.
  */
-export function getNotificationsTabProps(stateful: IStateful) {
+export function getNotificationsTabProps(stateful: IStateful, showSoundsSettings?: boolean) {
     const state = toState(stateful);
     const {
         soundsIncomingMessage,
@@ -238,8 +239,6 @@ export function getNotificationsTabProps(stateful: IStateful) {
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
     const enabledNotifications = getNotificationsMap(stateful);
-    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const showSoundsSettings = configuredTabs.includes('sounds');
 
     return {
         disabledSounds: state['features/base/config'].disabledSounds || [],
