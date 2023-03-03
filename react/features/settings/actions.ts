@@ -21,8 +21,8 @@ import { LogoutDialog, SettingsDialog } from './components';
 import {
     getModeratorTabProps,
     getMoreTabProps,
-    getProfileTabProps,
-    getSoundsTabProps
+    getNotificationsTabProps,
+    getProfileTabProps
 } from './functions';
 
 /**
@@ -93,17 +93,6 @@ export function submitMoreTab(newState: any) {
         if (showPrejoinPage !== currentState.showPrejoinPage) {
             dispatch(updateSettings({
                 userSelectedSkipPrejoin: !showPrejoinPage
-            }));
-        }
-
-        const enabledNotifications = newState.enabledNotifications;
-
-        if (enabledNotifications !== currentState.enabledNotifications) {
-            dispatch(updateSettings({
-                userSelectedNotifications: {
-                    ...getState()['features/base/settings'].userSelectedNotifications,
-                    ...enabledNotifications
-                }
             }));
         }
 
@@ -183,9 +172,9 @@ export function submitProfileTab(newState: any) {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitSoundsTab(newState: any) {
+export function submitNotificationsTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const currentState = getSoundsTabProps(getState());
+        const currentState = getNotificationsTabProps(getState());
         const shouldNotUpdateReactionSounds = getModeratorTabProps(getState()).startReactionsMuted;
         const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
             || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
@@ -208,6 +197,17 @@ export function submitSoundsTab(newState: any) {
                 delete settingsToUpdate.soundsReactions;
             }
             dispatch(updateSettings(settingsToUpdate));
+        }
+
+        const enabledNotifications = newState.enabledNotifications;
+
+        if (enabledNotifications !== currentState.enabledNotifications) {
+            dispatch(updateSettings({
+                userSelectedNotifications: {
+                    ...getState()['features/base/settings'].userSelectedNotifications,
+                    ...enabledNotifications
+                }
+            }));
         }
     };
 }

@@ -18,23 +18,24 @@ import {
 import {
     submitModeratorTab,
     submitMoreTab,
-    submitProfileTab,
-    submitSoundsTab
+    submitNotificationsTab,
+    submitProfileTab
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
     getModeratorTabProps,
     getMoreTabProps,
-    getProfileTabProps,
-    getSoundsTabProps
+    getNotificationsMap,
+    getNotificationsTabProps,
+    getProfileTabProps
 } from '../../functions';
 
 // @ts-ignore
 import CalendarTab from './CalendarTab';
 import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
+import NotificationsTab from './NotificationsTab';
 import ProfileTab from './ProfileTab';
-import SoundsTab from './SoundsTab';
 /* eslint-enable lines-around-comment */
 
 /**
@@ -148,7 +149,7 @@ const styles = (theme: Theme) => {
 
             '& .settings-checkbox': {
                 display: 'flex',
-                marginBottom: theme.spacing(2)
+                marginBottom: theme.spacing(3)
             },
 
             '& .calendar-tab': {
@@ -248,6 +249,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
     const showSoundsSettings = configuredTabs.includes('sounds');
+    const enabledNotifications = getNotificationsMap(state);
+    const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
     const tabs: IDialogTab[] = [];
 
     if (showDeviceSettings) {
@@ -273,6 +276,24 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             className: `settings-pane ${classes.settingsDialog} devices-pane`,
             submit: (newState: any) => submitDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
             icon: IconVolumeUp
+        });
+    }
+
+    if (showSoundsSettings || showNotificationsSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.NOTIFICATIONS,
+            component: NotificationsTab,
+            labelKey: 'settings.notifications',
+            propsUpdateFunction: (tabState: any, newProps: any) => {
+                return {
+                    ...newProps,
+                    enabledNotifications: tabState?.enabledNotifications || {}
+                };
+            },
+            props: getNotificationsTabProps(state, showSoundsSettings),
+            className: `settings-pane ${classes.settingsDialog}`,
+            submit: submitNotificationsTab,
+            icon: IconBell
         });
     }
 
@@ -321,18 +342,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    if (showSoundsSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.SOUNDS,
-            component: SoundsTab,
-            labelKey: 'settings.sounds',
-            props: getSoundsTabProps(state),
-            className: `settings-pane ${classes.settingsDialog} profile-pane`,
-            submit: submitSoundsTab,
-            icon: IconBell
-        });
-    }
-
     if (showMoreTab) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
@@ -350,7 +359,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
-                    enabledNotifications: tabState?.enabledNotifications || {},
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },
