@@ -172,7 +172,9 @@ const ParticipantContextMenu = ({
     }
     , [ thumbnailMenu, _overflowDrawer, drawerParticipant, participant ]);
 
-    const isParticipantPane = useMemo(() => !_overflowDrawer && !thumbnailMenu, [ _overflowDrawer, thumbnailMenu ]);
+    const isClickedFromParticipantPane = useMemo(
+        () => !_overflowDrawer && !thumbnailMenu,
+    [ _overflowDrawer, thumbnailMenu ]);
     const quickActionButtonType = useSelector((state: IReduxState) =>
         getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state));
 
@@ -188,7 +190,7 @@ const ParticipantContextMenu = ({
     if (_isModerator) {
         if (isModerationSupported) {
             if (_isAudioMuted
-                && !(isParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ASK_TO_UNMUTE)) {
+                && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ASK_TO_UNMUTE)) {
                 buttons.push(<AskToUnmuteButton
                     buttonType = { MEDIA_TYPE.AUDIO }
                     key = 'ask-unmute'
@@ -196,7 +198,7 @@ const ParticipantContextMenu = ({
                 );
             }
             if (_isVideoForceMuted
-                && !(isParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ALLOW_VIDEO)) {
+                && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ALLOW_VIDEO)) {
                 buttons.push(<AskToUnmuteButton
                     buttonType = { MEDIA_TYPE.VIDEO }
                     key = 'allow-video'
@@ -205,7 +207,7 @@ const ParticipantContextMenu = ({
             }
         }
         if (!disableRemoteMute) {
-            if (!(isParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
+            if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
                 buttons.push(
                     <MuteButton
                         key = 'mute'
@@ -217,7 +219,7 @@ const ParticipantContextMenu = ({
                     key = 'mute-others'
                     participantID = { _getCurrentParticipantId() } />
             );
-            if (!(isParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.STOP_VIDEO)) {
+            if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.STOP_VIDEO)) {
                 buttons.push(
                     <MuteVideoButton
                         key = 'mute-video'
