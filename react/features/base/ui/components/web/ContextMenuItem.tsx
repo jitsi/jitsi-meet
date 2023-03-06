@@ -27,6 +27,13 @@ export interface IProps {
     className?: string;
 
     /**
+     * Id of dom element controlled by this item. Matches aria-controls.
+     * Useful if you need this item as a tab element.
+     *
+     */
+    controls?: string;
+
+    /**
      * Custom icon. If used, the icon prop is ignored.
      * Used to allow custom children instead of just the default icons.
      */
@@ -55,7 +62,7 @@ export interface IProps {
     /**
      * Keydown handler.
      */
-    onKeyDown?: (e?: React.KeyboardEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 
     /**
      * Keypress handler.
@@ -66,6 +73,11 @@ export interface IProps {
      * Overflow type for item text.
      */
     overflowType?: TEXT_OVERFLOW_TYPES;
+
+    /**
+     * You can use this item as a tab. Defaults to button if not set.
+     */
+    role?: 'tab' | 'button';
 
     /**
      * Whether the item is marked as selected.
@@ -150,6 +162,7 @@ const ContextMenuItem = ({
     accessibilityLabel,
     children,
     className,
+    controls,
     customIcon,
     disabled,
     id,
@@ -158,6 +171,7 @@ const ContextMenuItem = ({
     onKeyDown,
     onKeyPress,
     overflowType,
+    role = 'button',
     selected,
     testId,
     text,
@@ -167,8 +181,10 @@ const ContextMenuItem = ({
 
     return (
         <div
+            aria-controls = { controls }
             aria-disabled = { disabled }
             aria-label = { accessibilityLabel }
+            aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
                     disabled && styles.contextMenuItemDisabled,
@@ -181,8 +197,11 @@ const ContextMenuItem = ({
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
             onKeyPress = { disabled ? undefined : onKeyPress }
-            role = 'button'
-            tabIndex = { disabled ? undefined : 0 }>
+            role = { role }
+            tabIndex = { role === 'tab'
+                ? selected ? 0 : -1
+                : disabled ? undefined : 0
+            }>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }

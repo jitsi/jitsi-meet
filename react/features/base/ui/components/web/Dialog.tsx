@@ -131,7 +131,7 @@ const Dialog = ({
                 </p>
                 {!hideCloseButton && (
                     <ClickableIcon
-                        accessibilityLabel = { t('dialog.close') }
+                        accessibilityLabel = { t('dialog.accessibilityLabel.close') }
                         icon = { IconCloseLarge }
                         id = 'modal-header-close-button'
                         onClick = { onClose } />

@@ -115,7 +115,6 @@ class ChatInput extends Component<IProps, IState> {
                         </div>
                     )}
                     <Input
-                        autoFocus = { true }
                         className = 'chat-input'
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
                         iconClick = { this._toggleSmileysPanel }

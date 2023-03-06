@@ -191,7 +191,7 @@ class DesktopPicker extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     render() {
-        const { selectedTab, selectedSource, sources } = this.state;
+        const { selectedTab, selectedSource, sources, types } = this.state;
 
         return (
             <Dialog
@@ -204,14 +204,27 @@ class DesktopPicker extends PureComponent<IProps, IState> {
                 size = 'large'
                 titleKey = 'dialog.shareYourScreen'>
                 { this._renderTabs() }
-                <DesktopPickerPane
-                    key = { selectedTab }
-                    onClick = { this._onPreviewClick }
-                    onDoubleClick = { this._onSubmit }
-                    onShareAudioChecked = { this._onShareAudioChecked }
-                    selectedSourceId = { selectedSource.id }
-                    sources = { sources[selectedTab as keyof typeof sources] }
-                    type = { selectedTab } />
+                {types.map(type => (
+                    <div
+                        aria-labelledby = { `${type}-button` }
+                        className = { selectedTab === type ? undefined : 'hide' }
+                        id = { `${type}-panel` }
+                        key = { type }
+                        role = 'tabpanel'
+                        tabIndex = { 0 }>
+                        {selectedTab === type && (
+                            <DesktopPickerPane
+                                key = { selectedTab }
+                                onClick = { this._onPreviewClick }
+                                onDoubleClick = { this._onSubmit }
+                                onShareAudioChecked = { this._onShareAudioChecked }
+                                selectedSourceId = { selectedSource.id }
+                                sources = { sources[selectedTab as keyof typeof sources] }
+                                type = { selectedTab } />
+                        )}
+                    </div>
+                ))}
+
             </Dialog>
         );
     }
@@ -348,17 +361,18 @@ class DesktopPicker extends PureComponent<IProps, IState> {
                 type => {
                     return {
                         accessibilityLabel: t(TAB_LABELS[type as keyof typeof TAB_LABELS]),
-                        id: type,
+                        id: `${type}-tab`,
+                        controlsId: `${type}-panel`,
                         label: t(TAB_LABELS[type as keyof typeof TAB_LABELS])
                     };
                 });
 
         return (
             <Tabs
-                accessibilityLabel = ''
+                accessibilityLabel = { t('dialog.sharingTabs') }
                 className = 'desktop-picker-tabs-container'
                 onChange = { this._onTabSelected }
-                selected = { this.state.selectedTab }
+                selected = { `${this.state.selectedTab}-tab` }
                 tabs = { tabs } />);
     }
 

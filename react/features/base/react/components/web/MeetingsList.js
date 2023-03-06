@@ -105,17 +105,14 @@ class MeetingsList extends Component<Props> {
      * @returns {React.ReactNode}
      */
     render() {
-        const { listEmptyComponent, meetings, t } = this.props;
+        const { listEmptyComponent, meetings } = this.props;
 
         /**
          * If there are no recent meetings we don't want to display anything.
          */
         if (meetings) {
             return (
-                <Container
-                    aria-label = { t('welcomepage.recentList') }
-                    className = 'meetings-list'
-                    tabIndex = '-1'>
+                <Container className = 'meetings-list'>
                     {
                         meetings.length === 0
                             ? listEmptyComponent
@@ -237,23 +234,16 @@ class MeetingsList extends Component<Props> {
 
         return (
             <Container
-                aria-label = { title }
                 className = { rootClassName }
                 key = { index }
-                onClick = { onPress }
-                onKeyPress = { onKeyPress }
-                role = 'button'
-                tabIndex = { 0 }>
-                <Container className = 'left-column'>
-                    <Text className = 'title'>
-                        { _toDateString(date) }
-                    </Text>
-                    <Text className = 'subtitle'>
-                        { _toTimeString(time) }
-                    </Text>
-                </Container>
+                onClick = { onPress }>
                 <Container className = 'right-column'>
-                    <Text className = 'title'>
+                    <Text
+                        className = 'title'
+                        onClick = { onPress }
+                        onKeyPress = { onKeyPress }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         { title }
                     </Text>
                     {
@@ -268,6 +258,14 @@ class MeetingsList extends Component<Props> {
                                 { getLocalizedDurationFormatter(duration) }
                             </Text>) : null
                     }
+                </Container>
+                <Container className = 'left-column'>
+                    <Text className = 'title'>
+                        { _toDateString(date) }
+                    </Text>
+                    <Text className = 'subtitle'>
+                        { _toTimeString(time) }
+                    </Text>
                 </Container>
                 <Container className = 'actions'>
                     { elementAfter || null }

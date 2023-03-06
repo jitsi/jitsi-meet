@@ -240,7 +240,9 @@
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "accessibilityLabel": {
-            "liveStreaming": "Live Stream"
+            "close": "Close dialog",
+            "liveStreaming": "Live Stream",
+            "sharingTabs": "Sharing options"
         },
         "add": "Add",
         "addMeetingNote": "Add a note about this meeting",
@@ -1387,6 +1389,7 @@
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
+        "meetingsAccessibilityLabel": "Meetings",
         "mobileDownLoadLinkAndroid": "Download mobile app for Android",
         "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
         "mobileDownLoadLinkIos": "Download mobile app for iOS",

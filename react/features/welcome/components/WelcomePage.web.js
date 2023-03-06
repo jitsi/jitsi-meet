@@ -49,8 +49,7 @@ class WelcomePage extends AbstractWelcomePage {
             ...this.state,
 
             generateRoomnames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
-            selectedTab: 0
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
         };
 
         /**
@@ -114,7 +113,6 @@ class WelcomePage extends AbstractWelcomePage {
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
-        this._onTabSelected = this._onTabSelected.bind(this);
         this._renderFooter = this._renderFooter.bind(this);
     }
 
@@ -327,18 +325,6 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Callback invoked when the desired tab to display should be changed.
-     *
-     * @param {number} tabIndex - The index of the tab within the array of
-     * displayed tabs.
-     * @private
-     * @returns {void}
-     */
-    _onTabSelected(tabIndex) {
-        this.setState({ selectedTab: tabIndex });
-    }
-
-    /**
      * Renders the footer.
      *
      * @returns {ReactElement}
@@ -405,6 +391,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         if (_calendarEnabled) {
             tabs.push({
+                id: 'calendar',
                 label: t('welcomepage.upcomingMeetings'),
                 content: <CalendarList />
             });
@@ -412,6 +399,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         if (_recentListEnabled) {
             tabs.push({
+                id: 'recent',
                 label: t('welcomepage.recentMeetings'),
                 content: <RecentList />
             });
@@ -423,9 +411,9 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <Tabs
-                onSelect = { this._onTabSelected }
-                selected = { this.state.selectedTab }
-                tabs = { tabs } />);
+                accessibilityLabel = { t('welcomepage.meetingsAccessibilityLabel') }
+                tabs = { tabs } />
+        );
     }
 
     /**
