@@ -44,7 +44,7 @@ const useStyles = makeStyles()(theme => {
                 borderColor: theme.palette.ui10
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 outline: 0,
                 boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`,
                 border: 0,

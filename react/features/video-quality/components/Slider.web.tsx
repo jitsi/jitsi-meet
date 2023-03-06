@@ -94,7 +94,7 @@ const useStyles = makeStyles()(theme => {
                 top: 0,
                 width: '100%',
 
-                '&:focus': {
+                '&.focus-visible': {
                     // override global styles in order to use our own color
                     outline: 'none !important',
 

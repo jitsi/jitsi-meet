@@ -110,7 +110,7 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: theme.palette.ui03
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 boxShadow: `inset 0 0 0 2px ${theme.palette.action01Hover}`
             }
         },
