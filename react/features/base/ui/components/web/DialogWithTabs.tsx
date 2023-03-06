@@ -89,6 +89,10 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
+        closeButtonContainer: {
+            paddingBottom: theme.spacing(4)
+        },
+
         buttonContainer: {
             width: '100%',
             boxSizing: 'border-box',
@@ -138,20 +142,20 @@ interface IObject {
     [key: string]: string | string[] | boolean | number | number[] | {} | undefined;
 }
 
-export interface IDialogTab {
+export interface IDialogTab<P> {
     className?: string;
     component: ComponentType<any>;
     icon: Function;
     labelKey: string;
     name: string;
     props?: IObject;
-    propsUpdateFunction?: (tabState: IObject, newProps: IObject) => IObject;
+    propsUpdateFunction?: (tabState: IObject, newProps: P) => P;
     submit?: Function;
 }
 
 interface IProps extends IBaseProps {
     defaultTab?: string;
-    tabs: IDialogTab[];
+    tabs: IDialogTab<any>[];
 }
 
 const DialogWithTabs = ({
@@ -287,7 +291,7 @@ const DialogWithTabs = ({
             )}
             {(!isMobile || selectedTab) && (
                 <div className = { classes.contentContainer }>
-                    <div className = { classes.buttonContainer }>
+                    <div className = { cx(classes.buttonContainer, classes.closeButtonContainer) }>
                         {isMobile && (
                             <span className = { classes.backContainer }>
                                 <ClickableIcon

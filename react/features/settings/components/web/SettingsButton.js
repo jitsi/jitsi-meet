@@ -46,7 +46,7 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { defaultTab = SETTINGS_TABS.DEVICES, dispatch, isDisplayedOnWelcomePage = false } = this.props;
+        const { defaultTab = SETTINGS_TABS.AUDIO, dispatch, isDisplayedOnWelcomePage = false } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
         dispatch(openSettingsDialog(defaultTab, isDisplayedOnWelcomePage));

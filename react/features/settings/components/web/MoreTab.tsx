@@ -8,22 +8,11 @@ import { translate } from '../../../base/i18n/functions';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Select from '../../../base/ui/components/web/Select';
 import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
-import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
 export type Props = AbstractDialogTabProps & WithTranslation & {
-
-    /**
-     * The currently selected desktop share frame rate in the frame rate select dropdown.
-     */
-    currentFramerate: string;
-
-    /**
-     * All available desktop capture frame rates.
-     */
-    desktopShareFramerates: Array<number>;
 
     /**
      * Whether or not follow me is currently active (enabled by some other participant).
@@ -77,7 +66,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
@@ -105,19 +93,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
     }
 
     /**
-     * Callback invoked to select a frame rate from the select dropdown.
-     *
-     * @param {Object} e - The key event to handle.
-     * @private
-     * @returns {void}
-     */
-    _onFramerateItemSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-        const frameRate = e.target.value;
-
-        super._onChange({ currentFramerate: frameRate });
-    }
-
-    /**
      * Callback invoked to select if the lobby
      * should be shown.
      *
@@ -140,38 +115,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
         const maxParticipants = Number(e.target.value);
 
         super._onChange({ maxStageParticipants: maxParticipants });
-    }
-
-    /**
-     * Returns the React Element for the desktop share frame rate dropdown.
-     *
-     * @returns {ReactElement}
-     */
-    _renderFramerateSelect() {
-        const { currentFramerate, desktopShareFramerates, t } = this.props;
-        const frameRateItems = desktopShareFramerates.map((frameRate: number) => {
-            return {
-                value: frameRate,
-                label: `${frameRate} ${t('settings.framesPerSecond')}`
-            };
-        });
-
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'frameRate'>
-                <div className = 'dropdown-menu'>
-                    <Select
-                        bottomLabel = { parseInt(currentFramerate, 10) > SS_DEFAULT_FRAME_RATE
-                            ? t('settings.desktopShareHighFpsWarning')
-                            : t('settings.desktopShareWarning') }
-                        label = { t('settings.desktopShareFramerate') }
-                        onChange = { this._onFramerateItemSelect }
-                        options = { frameRateItems }
-                        value = { currentFramerate } />
-                </div>
-            </div>
-        );
     }
 
     /**
@@ -244,7 +187,6 @@ class MoreTab extends AbstractDialogTab<Props, any> {
             <div
                 className = 'settings-sub-pane right'
                 key = 'settings-sub-pane-right'>
-                { this._renderFramerateSelect() }
                 { this._renderMaxStageParticipantsSelect() }
             </div>
         );

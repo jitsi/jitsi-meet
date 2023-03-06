@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
@@ -11,18 +10,20 @@ import {
     IconHost,
     IconShortcuts,
     IconUser,
+    IconVideo,
     IconVolumeUp
 } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
+import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';
+import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection';
+import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection';
 import {
-    DeviceSelection,
-    getDeviceSelectionDialogProps,
-    submitDeviceSelectionTab
-    // @ts-ignore
-} from '../../../device-selection';
+    getAudioDeviceSelectionDialogProps,
+    getVideoDeviceSelectionDialogProps
+} from '../../../device-selection/functions.web';
 import {
     submitModeratorTab,
     submitMoreTab,
@@ -47,7 +48,6 @@ import MoreTab from './MoreTab';
 import NotificationsTab from './NotificationsTab';
 import ProfileTab from './ProfileTab';
 import ShortcutsTab from './ShortcutsTab';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of
@@ -58,7 +58,7 @@ interface IProps {
     /**
      * Information about the tabs to be rendered.
      */
-    _tabs: IDialogTab[];
+    _tabs: IDialogTab<any>[];
 
     /**
      * An object containing the CSS classes.
@@ -98,10 +98,6 @@ const styles = (theme: Theme) => {
 
             '& .auth-name': {
                 marginBottom: theme.spacing(1)
-            },
-
-            '& .calendar-tab, & .device-selection': {
-                marginTop: '20px'
             },
 
             '& .mock-atlaskit-label': {
@@ -168,7 +164,8 @@ const styles = (theme: Theme) => {
                 flexDirection: 'column',
                 fontSize: '14px',
                 minHeight: '100px',
-                textAlign: 'center'
+                textAlign: 'center',
+                marginTop: '20px'
             },
 
             '& .calendar-tab-sign-in': {
@@ -185,11 +182,6 @@ const styles = (theme: Theme) => {
             },
 
             '@media only screen and (max-width: 700px)': {
-                '& .device-selection': {
-                    display: 'flex',
-                    flexDirection: 'column'
-                },
-
                 '& .more-tab': {
                     flexDirection: 'column'
                 }
@@ -262,15 +254,15 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const showSoundsSettings = configuredTabs.includes('sounds');
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
-    const tabs: IDialogTab[] = [];
+    const tabs: IDialogTab<any>[] = [];
 
     if (showDeviceSettings) {
         tabs.push({
-            name: SETTINGS_TABS.DEVICES,
-            component: DeviceSelection,
-            labelKey: 'settings.devices',
-            props: getDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage),
-            propsUpdateFunction: (tabState: any, newProps: any) => {
+            name: SETTINGS_TABS.AUDIO,
+            component: AudioDevicesSelection,
+            labelKey: 'settings.audio',
+            props: getAudioDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getAudioDeviceSelectionDialogProps>) => {
                 // Ensure the device selection tab gets updated when new devices
                 // are found by taking the new props and only preserving the
                 // current user selected devices. If this were not done, the
@@ -279,14 +271,37 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    noiseSuppressionEnabled: tabState.noiseSuppressionEnabled,
                     selectedAudioInputId: tabState.selectedAudioInputId,
-                    selectedAudioOutputId: tabState.selectedAudioOutputId,
+                    selectedAudioOutputId: tabState.selectedAudioOutputId
+                };
+            },
+            className: `settings-pane ${classes.settingsDialog} devices-pane`,
+            submit: (newState: any) => submitAudioDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
+            icon: IconVolumeUp
+        });
+        tabs.push({
+            name: SETTINGS_TABS.VIDEO,
+            component: VideoDeviceSelection,
+            labelKey: 'settings.video',
+            props: getVideoDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getVideoDeviceSelectionDialogProps>) => {
+                // Ensure the device selection tab gets updated when new devices
+                // are found by taking the new props and only preserving the
+                // current user selected devices. If this were not done, the
+                // tab would keep using a copy of the initial props it received,
+                // leaving the device list to become stale.
+
+                return {
+                    ...newProps,
+                    currentFramerate: tabState?.currentFramerate,
+                    localFlipX: tabState.localFlipX,
                     selectedVideoInputId: tabState.selectedVideoInputId
                 };
             },
             className: `settings-pane ${classes.settingsDialog} devices-pane`,
-            submit: (newState: any) => submitDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
-            icon: IconVolumeUp
+            submit: (newState: any) => submitVideoDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
+            icon: IconVideo
         });
     }
 
@@ -314,7 +329,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ModeratorTab,
             labelKey: 'settings.moderator',
             props: moderatorTabProps,
-            propsUpdateFunction: (tabState: any, newProps: any) => {
+            propsUpdateFunction: (tabState: any, newProps: typeof moderatorTabProps) => {
                 // Updates tab props, keeping users selection
 
                 return {
@@ -379,12 +394,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: MoreTab,
             labelKey: 'settings.more',
             props: moreTabProps,
-            propsUpdateFunction: (tabState: any, newProps: any) => {
+            propsUpdateFunction: (tabState: any, newProps: typeof moreTabProps) => {
                 // Updates tab props, keeping users selection
 
                 return {
                     ...newProps,
-                    currentFramerate: tabState?.currentFramerate,
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,

@@ -220,7 +220,7 @@
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
-        "testAudio": "Play a test sound"
+        "testAudio": "Test"
     },
     "dialIn": {
         "screenTitle": "Dial-in summary"
@@ -971,6 +971,7 @@
         "title": "Security Options"
     },
     "settings": {
+        "audio": "Audio",
         "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -1012,7 +1013,8 @@
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
-        "title": "Settings"
+        "title": "Settings",
+        "video": "Video"
     },
     "settingsView": {
         "advanced": "Advanced",
@@ -1171,6 +1173,7 @@
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
         "embedMeeting": "Embed meeting",
+        "enableNoiseSuppression": "Enable noise suppression",
         "endConference": "End meeting for all",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
