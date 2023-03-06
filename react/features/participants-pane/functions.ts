@@ -131,14 +131,27 @@ export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(
  *
  * @param {IParticipant} participant - The participant.
  * @param {boolean} isAudioMuted - If audio is muted for the participant.
+ * @param {boolean} isVideoMuted - If audio is muted for the participant.
  * @param {IReduxState} state - The redux state.
  * @returns {string} - The type of the quick action button.
  */
-export function getQuickActionButtonType(participant: IParticipant, isAudioMuted: Boolean, state: IReduxState) {
+export function getQuickActionButtonType(
+        participant: IParticipant,
+        isAudioMuted: Boolean,
+        isVideoMuted: Boolean,
+        state: IReduxState) {
     // handled only by moderators
+    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+
     if (isLocalParticipantModerator(state)) {
         if (!isAudioMuted) {
             return QUICK_ACTION_BUTTON.MUTE;
+        }
+        if (!isVideoMuted) {
+            return QUICK_ACTION_BUTTON.STOP_VIDEO;
+        }
+        if (isVideoForceMuted) {
+            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
         }
         if (isSupported()(state)) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;

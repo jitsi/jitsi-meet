@@ -15,11 +15,15 @@ export type MediaType = 'audio' | 'video' | 'screenshare';
  *
  * @enum {string}
  */
-export const MEDIA_TYPE: { [key: string]: MediaType; } = {
-    AUDIO: 'audio',
-    SCREENSHARE: 'screenshare',
-    VIDEO: 'video'
-};
+export const MEDIA_TYPE: {
+    AUDIO: MediaType;
+    SCREENSHARE: MediaType;
+    VIDEO: MediaType;
+ } = {
+     AUDIO: 'audio',
+     SCREENSHARE: 'screenshare',
+     VIDEO: 'video'
+ };
 
 
 /* eslint-disable no-bitwise */

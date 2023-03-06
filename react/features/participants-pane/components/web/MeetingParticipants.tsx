@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { rejectParticipantAudio } from '../../../av-moderation/actions';
+import { rejectParticipantAudio, rejectParticipantVideo } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
@@ -88,10 +88,13 @@ function MeetingParticipants({
     const { t } = useTranslation();
 
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
-
     const muteAudio = useCallback(id => () => {
         dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
         dispatch(rejectParticipantAudio(id));
+    }, [ dispatch ]);
+    const stopVideo = useCallback(id => () => {
+        dispatch(muteRemote(id, MEDIA_TYPE.VIDEO));
+        dispatch(rejectParticipantVideo(id));
     }, [ dispatch ]);
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
@@ -103,8 +106,6 @@ function MeetingParticipants({
     // mounted.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
-    const askUnmuteText = t('participantsPane.actions.askUnmute');
-    const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count);
 
@@ -136,11 +137,9 @@ function MeetingParticipants({
                 value = { searchString } />
             <div>
                 <MeetingParticipantItems
-                    askUnmuteText = { askUnmuteText }
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
                     muteAudio = { muteAudio }
-                    muteParticipantButtonText = { muteParticipantButtonText }
                     openDrawerForParticipant = { openDrawerForParticipant }
                     overflowDrawer = { overflowDrawer }
                     participantActionEllipsisLabel = { participantActionEllipsisLabel }
@@ -148,6 +147,7 @@ function MeetingParticipants({
                     participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.entity }
                     searchString = { normalizeAccents(searchString) }
+                    stopVideo = { stopVideo }
                     toggleMenu = { toggleMenu }
                     youText = { youText } />
             </div>

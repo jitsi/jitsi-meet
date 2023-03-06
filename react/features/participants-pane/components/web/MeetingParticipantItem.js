@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { translate } from '../../../base/i18n';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
@@ -163,9 +162,9 @@ type Props = {
     participantID: ?string,
 
     /**
-     * The translate function.
-     */
-    t: Function,
+     * Callback used to stop a participant's video.
+    */
+    stopVideo: Function,
 
     /**
      * The translated "you" text.
@@ -192,17 +191,15 @@ function MeetingParticipantItem({
     _quickActionButtonType,
     _raisedHand,
     _videoMediaState,
-    askUnmuteText,
     isHighlighted,
     isInBreakoutRoom,
     muteAudio,
-    muteParticipantButtonText,
     onContextMenu,
     onLeave,
     openDrawerForParticipant,
     overflowDrawer,
     participantActionEllipsisLabel,
-    t,
+    stopVideo,
     youText
 }: Props) {
 
@@ -242,12 +239,6 @@ function MeetingParticipantItem({
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
 
-    let askToUnmuteText = askUnmuteText;
-
-    if (_audioMediaState !== MEDIA_STATE.FORCE_MUTED && _videoMediaState === MEDIA_STATE.FORCE_MUTED) {
-        askToUnmuteText = t('participantsPane.actions.allowVideo');
-    }
-
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
@@ -273,16 +264,16 @@ function MeetingParticipantItem({
                 && <>
                     {!isInBreakoutRoom && (
                         <ParticipantQuickAction
-                            askUnmuteText = { askToUnmuteText }
                             buttonType = { _quickActionButtonType }
                             muteAudio = { muteAudio }
-                            muteParticipantButtonText = { muteParticipantButtonText }
                             participantID = { _participantID }
-                            participantName = { _displayName } />
+                            participantName = { _displayName }
+                            stopVideo = { stopVideo } />
                     )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
-                        onClick = { onContextMenu } />
+                        onClick = { onContextMenu }
+                        participantID = { _participantID } />
                 </>
             }
 
@@ -318,7 +309,7 @@ function _mapStateToProps(state, ownProps): Object {
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
-    const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, state);
+    const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state);
 
     const tracks = state['features/base/tracks'];
     const _audioTrack = participantID === localParticipantId
@@ -342,4 +333,4 @@ function _mapStateToProps(state, ownProps): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingParticipantItem));
+export default connect(_mapStateToProps)(MeetingParticipantItem);
