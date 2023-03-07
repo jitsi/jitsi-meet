@@ -65,6 +65,7 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     useEffect(() => {
         if (portalTarget && getRef) {
             getRef(portalTarget);
+            portalTarget.style.zIndex = '300';
         }
     }, [ portalTarget ]);
 
