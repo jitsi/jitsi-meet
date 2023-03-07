@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { ZINDEX_DIALOG_PORTAL } from '../../constants';
 
 type Props = {
 
@@ -65,6 +66,7 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     useEffect(() => {
         if (portalTarget && getRef) {
             getRef(portalTarget);
+            portalTarget.style.zIndex = `${ZINDEX_DIALOG_PORTAL}`;
         }
     }, [ portalTarget ]);
 
