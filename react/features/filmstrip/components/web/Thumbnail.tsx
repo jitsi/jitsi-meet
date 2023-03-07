@@ -20,7 +20,7 @@ import { pinParticipant } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    getVirtualScreenshareParticipantOwnerIds,
+    getScreenshareParticipantIds,
     hasRaisedHand,
     isLocalScreenshareParticipant,
     isScreenShareParticipant,
@@ -1288,13 +1288,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const participantId = isLocal ? getLocalParticipant(state)?.id : participantID;
     const isActiveParticipant = activeParticipants.find((pId: string) => pId === participantId);
     const participantCurrentlyOnLargeVideo = state['features/large-video']?.participantId === id;
-    const virtualScreenshareParticipantOwnerIds = getVirtualScreenshareParticipantOwnerIds(state);
+    const screenshareParticipantIds = getScreenshareParticipantIds(state);
+
     const shouldDisplayTintBackground
         = _currentLayout !== LAYOUTS.TILE_VIEW && filmstripType === FILMSTRIP_TYPE.MAIN
         && (isActiveParticipant || participantCurrentlyOnLargeVideo)
 
         // skip showing tint for owner participants that are screensharing.
-        && !virtualScreenshareParticipantOwnerIds.includes(id);
+        && !screenshareParticipantIds.includes(id);
 
     return {
         _audioTrack,
