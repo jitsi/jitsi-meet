@@ -38,3 +38,6 @@ export const NOTIFY_CLICK_MODE = {
     ONLY_NOTIFY: 'ONLY_NOTIFY',
     PREVENT_AND_NOTIFY: 'PREVENT_AND_NOTIFY'
 };
+
+// Around 300 to be displayed above components like chat
+export const ZINDEX_DIALOG_PORTAL = 300;
