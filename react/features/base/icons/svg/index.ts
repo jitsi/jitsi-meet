@@ -45,7 +45,6 @@ export { default as IconFeedback } from './feedback.svg';
 export { default as IconGear } from './gear.svg';
 export { default as IconGoogle } from './google.svg';
 export { default as IconHangup } from './hangup.svg';
-export { default as IconHost } from './host.svg';
 export { default as IconHelp } from './help.svg';
 export { default as IconHighlight } from './highlight.svg';
 export { default as IconImage } from './image.svg';
