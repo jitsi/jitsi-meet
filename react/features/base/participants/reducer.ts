@@ -220,11 +220,14 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
                 state.numberOfNonModeratorParticipants += isModerator ? -1 : 1;
             }
 
-            if (oldParticipant.e2eeEnabled !== newParticipant.e2eeEnabled) {
-                state.numberOfParticipantsDisabledE2EE += newParticipant.e2eeEnabled ? -1 : 1;
+            const e2eeEnabled = Boolean(newParticipant.e2eeEnabled);
+            const e2eeSupported = Boolean(newParticipant.e2eeSupported);
+
+            if (Boolean(oldParticipant.e2eeEnabled) !== e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE += e2eeEnabled ? -1 : 1;
             }
-            if (!local && oldParticipant.e2eeSupported !== newParticipant.e2eeSupported) {
-                state.numberOfParticipantsNotSupportingE2EE += newParticipant.e2eeSupported ? -1 : 1;
+            if (!local && Boolean(oldParticipant.e2eeSupported) !== e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE += e2eeSupported ? -1 : 1;
             }
         }
 
