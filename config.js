@@ -48,7 +48,7 @@ var config = {
     // BOSH URL. FIXME: use XEP-0156 to discover it.
     bosh: 'https://jitsi-meet.example.com/' + subdir + 'http-bind',
 
-    // Websocket URL
+    // Websocket URL (XMPP)
     // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
 
     // The real JID of focus participant - can be overridden here
@@ -56,6 +56,19 @@ var config = {
     // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
+    // Options related to the bridge (colibri) data channel
+    bridgeChannel: {
+        // If the backend advertises multiple colibri websockets, this options allows
+        // to filter some of them out based on the domain name. We use the first URL
+        // which does not match ignoreDomain, falling back to the first one that matches
+        // ignoreDomain. Has no effect if undefined.
+        // ignoreDomain: 'example.com',
+
+        // Prefer SCTP (WebRTC data channels over the media path) over a colibri websocket.
+        // If SCTP is available in the backend it will be used instead of a WS. Defaults to
+        // false (SCTP is used only if available and no WS are available).
+        // preferSctp: false
+    },
 
     // Testing / experimental features.
     //
