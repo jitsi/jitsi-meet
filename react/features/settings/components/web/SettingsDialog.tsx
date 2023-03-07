@@ -7,8 +7,8 @@ import {
     IconBell,
     IconCalendar,
     IconGear,
-    IconHost,
     IconImage,
+    IconModerator,
     IconShortcuts,
     IconUser,
     IconVideo,
@@ -373,7 +373,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             className: `settings-pane ${classes.settingsDialog} moderator-pane`,
             submit: submitModeratorTab,
-            icon: IconHost
+            icon: IconModerator
         });
     }
 
