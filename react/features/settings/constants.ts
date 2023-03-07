@@ -6,7 +6,8 @@ export const SETTINGS_TABS = {
     NOTIFICATIONS: 'notifications_tab',
     PROFILE: 'profile_tab',
     SHORTCUTS: 'shortcuts_tab',
-    VIDEO: 'video_tab'
+    VIDEO: 'video_tab',
+    VIRTUAL_BACKGROUND: 'virtual-background_tab'
 };
 
 /**

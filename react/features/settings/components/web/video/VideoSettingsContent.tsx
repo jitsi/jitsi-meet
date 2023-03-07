@@ -3,7 +3,6 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../../app/types';
-import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import { IconImage } from '../../../../base/icons/svg';
 import Video from '../../../../base/media/components/Video.web';
@@ -13,7 +12,8 @@ import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../../base/ui/components/web/ContextMenuItemGroup';
-import VirtualBackgroundDialog from '../../../../virtual-background/components/VirtualBackgroundDialog';
+import { openSettingsDialog } from '../../../actions';
+import { SETTINGS_TABS } from '../../../constants';
 import { createLocalVideoTracks } from '../../../functions.web';
 
 const videoClassName = 'video-preview-video flipVideoX';
@@ -297,7 +297,7 @@ const mapStateToProps = (state: IReduxState) => {
 
 const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
     return {
-        selectBackground: () => dispatch(openDialog(VirtualBackgroundDialog)),
+        selectBackground: () => dispatch(openSettingsDialog(SETTINGS_TABS.VIRTUAL_BACKGROUND)),
         changeFlip: (flip: boolean) => {
             dispatch(updateSettings({
                 localFlipX: flip
