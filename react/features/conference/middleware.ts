@@ -6,6 +6,7 @@ import { batch } from 'react-redux';
 import { appNavigate } from '../app/actions';
 import { IStore } from '../app/types';
 import {
+    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     KICKED_OUT
@@ -72,6 +73,13 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_LEFT: {
+        clearInterval(intervalId);
+        intervalId = null;
+
+        break;
+    }
+
+    case CONFERENCE_FAILED: {
         clearInterval(intervalId);
         intervalId = null;
 
@@ -179,35 +187,31 @@ function _maybeDisplayCalendarNotification({ dispatch, getState }: IStore) {
 
     let eventToShow;
 
-    if (eventList?.length) {
-        for (const event of eventList) {
-            const eventURL
-                = event?.url
-                && getURLWithoutParamsNormalized(new URL(event.url));
+    if (!calendarEnabled && reducedUI) {
+        return;
+    }
 
-            if (eventURL && eventURL !== currentConferenceURL) {
+    for (const event of eventList) {
+
+        const eventURL
+            = event?.url && getURLWithoutParamsNormalized(new URL(event.url));
+
+        if (eventURL && eventURL !== currentConferenceURL) {
+            // @ts-ignore
+            if ((!eventToShow && event.startDate > now && event.startDate < now + ALERT_MILLISECONDS)
                 // @ts-ignore
-                if ((!eventToShow && event.startDate > now
-                        // @ts-ignore
-                        && event.startDate < now + ALERT_MILLISECONDS)
-                    // @ts-ignore
-                    || (event.startDate < now && event.endDate > now)) {
-                    eventToShow = event;
-                }
+                || (event.startDate < now && event.endDate > now)) {
+                eventToShow = event;
             }
         }
     }
 
-    if (calendarEnabled && !reducedUI) {
-        _calendarNotification(
-            {
-                dispatch,
-                getState
-            }, eventToShow
-        );
-    }
-
-    return undefined;
+    _calendarNotification(
+        {
+            dispatch,
+            getState
+        }, eventToShow
+    );
 }
 
 /**
@@ -228,33 +232,33 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
         = locationURL ? getURLWithoutParamsNormalized(locationURL) : '';
     const now = Date.now();
 
-    if (eventToShow) {
-        const customActionNameKey = [ 'notify.joinMeeting' ];
-        const customActionType = [ BUTTON_TYPES.PRIMARY ];
-        const customActionHandler = [ () => batch(() => {
-            dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
-            if (eventToShow?.url && (eventToShow.url !== currentConferenceURL)) {
-                dispatch(appNavigate(eventToShow.url));
-            }
-        }) ];
-        const description
-            = getLocalizedDateFormatter(eventToShow.startDate).fromNow();
-        const icon = NOTIFICATION_ICON.WARNING;
-        const title = (eventToShow.startDate < now) && (eventToShow.endDate > now)
-            ? i18n.t('calendarSync.ongoingMeeting')
-            : i18n.t('calendarSync.nextMeeting');
-        const uid = CALENDAR_NOTIFICATION_ID;
-
-        dispatch(showNotification({
-            customActionHandler,
-            customActionNameKey,
-            customActionType,
-            description,
-            icon,
-            title,
-            uid
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    if (!eventToShow) {
+        return;
     }
 
-    return null;
+    const customActionNameKey = [ 'notify.joinMeeting' ];
+    const customActionType = [ BUTTON_TYPES.PRIMARY ];
+    const customActionHandler = [ () => batch(() => {
+        dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
+        if (eventToShow?.url && (eventToShow.url !== currentConferenceURL)) {
+            dispatch(appNavigate(eventToShow.url));
+        }
+    }) ];
+    const description
+        = getLocalizedDateFormatter(eventToShow.startDate).fromNow();
+    const icon = NOTIFICATION_ICON.WARNING;
+    const title = (eventToShow.startDate < now) && (eventToShow.endDate > now)
+        ? i18n.t('calendarSync.ongoingMeeting')
+        : i18n.t('calendarSync.nextMeeting');
+    const uid = CALENDAR_NOTIFICATION_ID;
+
+    dispatch(showNotification({
+        customActionHandler,
+        customActionNameKey,
+        customActionType,
+        description,
+        icon,
+        title,
+        uid
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
