@@ -72,16 +72,31 @@ s2s_whitelist = {
 
 - Make sure s2s is not in modules_disabled
 - Enable `"xxl_conference";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
+- Make sure you add the correct upstreams to nginx config
+```
+upstream v1 {
+    zone upstreams 64K;
+    server 127.0.0.1:52801;
+    keepalive 2;
+}
+upstream v2 {
+    zone upstreams 64K;
+    server 127.0.0.1:52802;
+    keepalive 2;
+}
+```
 
 After configuring you can set the maximum number of main participants, before
 redirecting to visitors.
 ```
+hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.enabled" true
 hocon -f /etc/jitsi/jicofo/jicofo.conf set "jicofo.visitors.max-participants" 30
 ```
 Now restart prosody and jicofo
 ```
 service prosody restart
 service jicofo restart
+service nginx restart
 ```
 
 Now after the main 30 participants join, the rest will be visitors using the
