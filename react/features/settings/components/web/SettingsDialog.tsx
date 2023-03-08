@@ -389,8 +389,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     if (showMoreTab) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
-
-            // @ts-ignore
             component: MoreTab,
             labelKey: 'settings.more',
             props: moreTabProps,

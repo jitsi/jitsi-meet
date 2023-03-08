@@ -1,3 +1,6 @@
+import { Theme } from '@mui/material';
+import { withStyles } from '@mui/styles';
+import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -12,7 +15,12 @@ import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
-export type Props = AbstractDialogTabProps & WithTranslation & {
+export interface IProps extends AbstractDialogTabProps, WithTranslation {
+
+    /**
+     * CSS classes object.
+     */
+    classes: any;
 
     /**
      * Whether or not follow me is currently active (enabled by some other participant).
@@ -43,11 +51,23 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
      * Wether or not the stage filmstrip is enabled.
      */
     stageFilmstripEnabled: boolean;
+}
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function;
+const styles = (theme: Theme) => {
+    return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column' as const
+        },
+
+        divider: {
+            margin: `${theme.spacing(4)} 0`,
+            width: '100%',
+            height: '1px',
+            border: 0,
+            backgroundColor: theme.palette.ui03
+        }
+    };
 };
 
 /**
@@ -55,14 +75,14 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
  *
  * @augments Component
  */
-class MoreTab extends AbstractDialogTab<Props, any> {
+class MoreTab extends AbstractDialogTab<IProps, any> {
     /**
      * Initializes a new {@code MoreTab} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -78,16 +98,17 @@ class MoreTab extends AbstractDialogTab<Props, any> {
      * @returns {ReactElement}
      */
     render() {
-        const content = [];
-
-        content.push(this._renderSettingsLeft());
-        content.push(this._renderSettingsRight());
+        const { showPrejoinSettings, classes } = this.props;
 
         return (
             <div
-                className = 'more-tab box'
+                className = { clsx('more-tab', classes.container) }
                 key = 'more'>
-                { content }
+                {showPrejoinSettings && <>
+                    {this._renderPrejoinScreenSettings()}
+                    <hr className = { classes.divider } />
+                </>}
+                {this._renderMaxStageParticipantsSelect()}
             </div>
         );
     }
@@ -127,18 +148,11 @@ class MoreTab extends AbstractDialogTab<Props, any> {
         const { t, showPrejoinPage } = this.props;
 
         return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'prejoin-screen'>
-                <span className = 'checkbox-label'>
-                    { t('prejoin.premeeting') }
-                </span>
-                <Checkbox
-                    checked = { showPrejoinPage }
-                    label = { t('prejoin.showScreen') }
-                    name = 'show-prejoin-page'
-                    onChange = { this._onShowPrejoinPageChanged } />
-            </div>
+            <Checkbox
+                checked = { showPrejoinPage }
+                label = { t('prejoin.showScreen') }
+                name = 'show-prejoin-page'
+                onChange = { this._onShowPrejoinPageChanged } />
         );
     }
 
@@ -162,52 +176,13 @@ class MoreTab extends AbstractDialogTab<Props, any> {
             });
 
         return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'maxStageParticipants'>
-                <div className = 'dropdown-menu'>
-                    <Select
-                        label = { t('settings.maxStageParticipants') }
-                        onChange = { this._onMaxStageParticipantsSelect }
-                        options = { maxParticipantsItems }
-                        value = { maxStageParticipants } />
-                </div>
-            </div>
-        );
-    }
-
-    /**
-     * Returns the React element that needs to be displayed on the right half of the more tabs.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderSettingsRight() {
-        return (
-            <div
-                className = 'settings-sub-pane right'
-                key = 'settings-sub-pane-right'>
-                { this._renderMaxStageParticipantsSelect() }
-            </div>
-        );
-    }
-
-    /**
-     * Returns the React element that needs to be displayed on the left half of the more tabs.
-     *
-     * @returns {ReactElement}
-     */
-    _renderSettingsLeft() {
-        const { showPrejoinSettings } = this.props;
-
-        return (
-            <div
-                className = 'settings-sub-pane left'
-                key = 'settings-sub-pane-left'>
-                { showPrejoinSettings && this._renderPrejoinScreenSettings() }
-            </div>
+            <Select
+                label = { t('settings.maxStageParticipants') }
+                onChange = { this._onMaxStageParticipantsSelect }
+                options = { maxParticipantsItems }
+                value = { maxStageParticipants } />
         );
     }
 }
 
-export default translate(MoreTab);
+export default withStyles(styles)(translate(MoreTab));
