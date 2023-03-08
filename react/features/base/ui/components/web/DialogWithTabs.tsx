@@ -215,8 +215,8 @@ const DialogWithTabs = ({
         }
     }, [ isMobile, userSelected, selectedTab ]);
 
-    const onClose = useCallback((isCancelled = true) => {
-        if (isCancelled) {
+    const onClose = useCallback((isCancel = true) => {
+        if (isCancel) {
             tabs.forEach(({ cancel }) => {
                 cancel && dispatch(cancel());
             });

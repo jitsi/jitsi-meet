@@ -92,6 +92,7 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
         return (
             <div
                 className = { classes.container }
+                id = 'virtual-background-dialog'
                 key = 'virtual-background'>
                 <VirtualBackgrounds
                     _jitsiTrack = { _jitsiTrack }
