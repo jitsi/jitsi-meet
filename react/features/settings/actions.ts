@@ -11,6 +11,8 @@ import {
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
 import { updateSettings } from '../base/settings/actions';
+import { toggleBackgroundEffect } from '../virtual-background/actions';
+import virtualBackgroundLogger from '../virtual-background/logger';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
@@ -24,7 +26,8 @@ import {
     getMoreTabProps,
     getNotificationsTabProps,
     getProfileTabProps,
-    getShortcutsTabProps
+    getShortcutsTabProps,
+    getVirtualBackgroundTabProps
 } from './functions';
 
 /**
@@ -246,6 +249,34 @@ export function submitShortcutsTab(newState: any) {
 
         if (newState.keyboardShortcutsEnabled !== currentState.keyboardShortcutsEnabled) {
             keyboardShortcut.enable(newState.keyboardShortcutsEnabled);
+        }
+    };
+}
+
+/**
+ * Submits the settings from the "Virtual Background" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @param {boolean} isCancel - Whether the change represents a cancel.
+ * @returns {Function}
+ */
+export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const currentState = getVirtualBackgroundTabProps(getState());
+
+        if (newState.options?.selectedThumbnail) {
+            await dispatch(toggleBackgroundEffect(newState.options, currentState._jitsiTrack));
+
+            if (!isCancel) {
+                // Set x scale to default value.
+                dispatch(updateSettings({
+                    localFlipX: true
+                }));
+
+                virtualBackgroundLogger.info(`Virtual background type: '${
+                    typeof newState.options.backgroundType === 'undefined'
+                        ? 'none' : newState.options.backgroundType}' applied!`);
+            }
         }
     };
 }

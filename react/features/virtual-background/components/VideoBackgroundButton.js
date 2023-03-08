@@ -1,14 +1,13 @@
 // @flow
 
-import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { IconImage } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { openSettingsDialog } from '../../settings/actions';
+import { SETTINGS_TABS } from '../../settings/constants';
 import { checkBlurSupport } from '../functions';
-
-import { VirtualBackgroundDialog } from './index';
 
 /**
  * The type of the React {@code Component} props of {@link VideoBackgroundButton}.
@@ -45,7 +44,7 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch } = this.props;
 
-        dispatch(openDialog(VirtualBackgroundDialog));
+        dispatch(openSettingsDialog(SETTINGS_TABS.VIRTUAL_BACKGROUND));
     }
 
     /**

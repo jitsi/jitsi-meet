@@ -146,6 +146,7 @@ interface IObject {
 }
 
 export interface IDialogTab<P> {
+    cancel?: Function;
     className?: string;
     component: ComponentType<any>;
     icon: Function;
@@ -214,7 +215,12 @@ const DialogWithTabs = ({
         }
     }, [ isMobile, userSelected, selectedTab ]);
 
-    const onClose = useCallback(() => {
+    const onClose = useCallback((isCancel = true) => {
+        if (isCancel) {
+            tabs.forEach(({ cancel }) => {
+                cancel && dispatch(cancel());
+            });
+        }
         dispatch(hideDialog());
     }, []);
 
@@ -268,7 +274,7 @@ const DialogWithTabs = ({
         tabs.forEach(({ submit }, idx) => {
             submit?.(tabStates[idx]);
         });
-        onClose();
+        onClose(false);
     }, [ tabs, tabStates ]);
 
     const selectedTabIndex = useMemo(() => {

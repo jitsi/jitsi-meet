@@ -8,6 +8,7 @@ import {
     IconCalendar,
     IconGear,
     IconHost,
+    IconImage,
     IconShortcuts,
     IconUser,
     IconVideo,
@@ -24,12 +25,14 @@ import {
     getAudioDeviceSelectionDialogProps,
     getVideoDeviceSelectionDialogProps
 } from '../../../device-selection/functions.web';
+import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     submitModeratorTab,
     submitMoreTab,
     submitNotificationsTab,
     submitProfileTab,
-    submitShortcutsTab
+    submitShortcutsTab,
+    submitVirtualBackgroundTab
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
@@ -38,7 +41,8 @@ import {
     getNotificationsMap,
     getNotificationsTabProps,
     getProfileTabProps,
-    getShortcutsTabProps
+    getShortcutsTabProps,
+    getVirtualBackgroundTabProps
 } from '../../functions';
 
 // @ts-ignore
@@ -48,6 +52,7 @@ import MoreTab from './MoreTab';
 import NotificationsTab from './NotificationsTab';
 import ProfileTab from './ProfileTab';
 import ShortcutsTab from './ShortcutsTab';
+import VirtualBackgroundTab from './VirtualBackgroundTab';
 
 /**
  * The type of the React {@code Component} props of
@@ -254,6 +259,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const showSoundsSettings = configuredTabs.includes('sounds');
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
+    const virtualBackgroundSupported = checkBlurSupport();
     const tabs: IDialogTab<any>[] = [];
 
     if (showDeviceSettings) {
@@ -305,12 +311,37 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
+    if (virtualBackgroundSupported) {
+        tabs.push({
+            name: SETTINGS_TABS.VIRTUAL_BACKGROUND,
+            component: VirtualBackgroundTab,
+            labelKey: 'virtualBackground.title',
+            props: getVirtualBackgroundTabProps(state),
+            className: `settings-pane ${classes.settingsDialog}`,
+            submit: (newState: any) => submitVirtualBackgroundTab(newState),
+            cancel: () => {
+                const { _virtualBackground } = getVirtualBackgroundTabProps(state);
+
+                return submitVirtualBackgroundTab({
+                    options: {
+                        backgroundType: _virtualBackground.backgroundType,
+                        enabled: _virtualBackground.backgroundEffectEnabled,
+                        url: _virtualBackground.virtualSource,
+                        selectedThumbnail: _virtualBackground.selectedThumbnail,
+                        blurValue: _virtualBackground.blurValue
+                    }
+                }, true);
+            },
+            icon: IconImage
+        });
+    }
+
     if (showSoundsSettings || showNotificationsSettings) {
         tabs.push({
             name: SETTINGS_TABS.NOTIFICATIONS,
             component: NotificationsTab,
             labelKey: 'settings.notifications',
-            propsUpdateFunction: (tabState: any, newProps: any) => {
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getNotificationsTabProps>) => {
                 return {
                     ...newProps,
                     enabledNotifications: tabState?.enabledNotifications || {}
@@ -373,7 +404,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         component: ShortcutsTab,
         labelKey: 'settings.shortcuts',
         props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
-        propsUpdateFunction: (tabState: any, newProps: any) => {
+        propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
             // Updates tab props, keeping users selection
 
             return {

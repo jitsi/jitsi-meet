@@ -1350,7 +1350,7 @@
         "none": "None",
         "pleaseWait": "Please wait...",
         "removeBackground": "Remove background",
-        "slightBlur": "Slight Blur",
+        "slightBlur": "Half Blur",
         "title": "Virtual backgrounds",
         "uploadedImage": "Uploaded image {{index}}",
         "webAssemblyWarning": "WebAssembly not supported",
