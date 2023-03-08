@@ -170,10 +170,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
 
         local vnodes = visitors_nodes[room.jid].nodes;
+        local user, _, res = jid.split(occupant.nick);
         -- a change in the presence of a main participant we need to update all active visitor nodes
         for k in pairs(vnodes) do
             local fmuc_pr = st.clone(stanza);
-            local user, _, res = jid.split(occupant.nick);
             fmuc_pr.attr.to = jid.join(user, k, res);
             fmuc_pr.attr.from = occupant.jid;
             module:send(fmuc_pr);
@@ -191,9 +191,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         -- we want to update visitor node that a main participant left
         if stanza then
             local vnodes = visitors_nodes[room.jid].nodes;
+            local user, _, res = jid.split(occupant.nick);
             for k in pairs(vnodes) do
                 local fmuc_pr = st.clone(stanza);
-                local user, _, res = jid.split(occupant.nick);
                 fmuc_pr.attr.to = jid.join(user, k, res);
                 fmuc_pr.attr.from = occupant.jid;
                 module:send(fmuc_pr);
