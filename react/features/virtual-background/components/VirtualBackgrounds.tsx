@@ -130,6 +130,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            textAlign: 'center',
             ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01,
             objectFit: 'cover',
