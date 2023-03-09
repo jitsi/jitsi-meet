@@ -12,4 +12,7 @@ export * from './functions.any';
  */
 export function getShortcutsTabProps(_stateful: any, _isDisplayedOnWelcomePage?: boolean) {
     // needed to fix lint error.
+    return {
+        keyboardShortcutsEnabled: false
+    };
 }
