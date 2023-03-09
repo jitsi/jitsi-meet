@@ -42,3 +42,25 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: make
+  android-build:
+    name: Build mobile bundle (Android)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
+  ios-build:
+    name: Build mobile bundle (iOS)
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
