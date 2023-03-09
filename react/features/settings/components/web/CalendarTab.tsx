@@ -68,7 +68,7 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link CalendarTab}.
  */
-type State = {
+type IState = {
 
     /**
      * Whether or not any third party APIs are being loaded.
@@ -101,7 +101,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class CalendarTab extends Component<IProps, State> {
+class CalendarTab extends Component<IProps, IState> {
     /**
      * Initializes a new {@code CalendarTab} instance.
      *
@@ -128,7 +128,7 @@ class CalendarTab extends Component<IProps, State> {
      */
     componentDidMount() {
         this.props.dispatch(bootstrapCalendarIntegration())
-            .catch((err: Error) => logger.error('CalendarTab bootstrap failed', err))
+            .catch((err: any) => logger.error('CalendarTab bootstrap failed', err))
             .then(() => this.setState({ loading: false }));
     }
 
