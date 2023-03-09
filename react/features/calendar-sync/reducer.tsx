@@ -31,7 +31,9 @@ export interface ICalendarSyncState {
     error?: Object;
     events: Array<{
         calendarId: string;
+        endDate: string;
         id: string;
+        startDate: string;
         url: string;
     }>;
     integrationReady: boolean;

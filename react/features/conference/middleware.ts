@@ -1,31 +1,56 @@
+/* eslint-disable lines-around-comment */
+import i18n from 'i18next';
+import { batch } from 'react-redux';
+
+// @ts-ignore
 import { appNavigate } from '../app/actions';
 import { IStore } from '../app/types';
-import { CONFERENCE_JOINED, KICKED_OUT } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
+    KICKED_OUT
+} from '../base/conference/actionTypes';
 import { conferenceLeft } from '../base/conference/actions';
 import { getCurrentConference } from '../base/conference/functions';
+import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
+import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import { pinParticipant } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
-// eslint-disable-next-line lines-around-comment
+import { BUTTON_TYPES } from '../base/ui/constants.any';
+// @ts-ignore
+import { isCalendarEnabled } from '../calendar-sync';
 // @ts-ignore
 import { FeedbackDialog } from '../feedback';
-import { setFilmstripEnabled } from '../filmstrip/actions';
+import { setFilmstripEnabled } from '../filmstrip/actions.any';
+import { hideNotification, showNotification } from '../notifications/actions';
+import {
+    CALENDAR_NOTIFICATION_ID,
+    NOTIFICATION_ICON,
+    NOTIFICATION_TIMEOUT_TYPE
+} from '../notifications/constants';
 import { showSalesforceNotification } from '../salesforce/actions';
-import { setToolboxEnabled } from '../toolbox/actions';
+import { setToolboxEnabled } from '../toolbox/actions.any';
 
+// @ts-ignore
 import { notifyKickedOut } from './actions';
+
+let intervalId: any;
+
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_JOINED:
+    case CONFERENCE_JOINED: {
         _conferenceJoined(store);
 
         break;
+    }
 
     case SET_REDUCED_UI: {
         _setReducedUI(store);
@@ -43,6 +68,14 @@ MiddlewareRegistry.register(store => next => action => {
                 dispatch(appNavigate(undefined));
             }
         ));
+
+        break;
+    }
+
+    case CONFERENCE_LEFT:
+    case CONFERENCE_FAILED: {
+        clearInterval(intervalId);
+        intervalId = null;
 
         break;
     }
@@ -113,5 +146,113 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
         getState
     });
 
+    if (!intervalId) {
+        intervalId = setInterval(() =>
+            _maybeDisplayCalendarNotification({
+                dispatch,
+                getState
+            }), 10 * 1000);
+    }
+
     dispatch(showSalesforceNotification());
+}
+
+/**
+ * Periodically checks if there is an event in the calendar for which we
+ * need to show a notification.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @private
+ * @returns {void}
+ */
+function _maybeDisplayCalendarNotification({ dispatch, getState }: IStore) {
+    const state = getState();
+
+    const calendarEnabled = isCalendarEnabled(state);
+    const { events: eventList } = state['features/calendar-sync'];
+    const { locationURL } = state['features/base/connection'];
+    const { reducedUI } = state['features/base/responsive-ui'];
+
+    const currentConferenceURL
+        = locationURL ? getURLWithoutParamsNormalized(locationURL) : '';
+    const ALERT_MILLISECONDS = 5 * 60 * 1000;
+    const now = Date.now();
+
+    let eventToShow;
+
+    if (!calendarEnabled && reducedUI) {
+        return;
+    }
+
+    for (const event of eventList) {
+
+        const eventURL
+            = event?.url && getURLWithoutParamsNormalized(new URL(event.url));
+
+        if (eventURL && eventURL !== currentConferenceURL) {
+            // @ts-ignore
+            if ((!eventToShow && event.startDate > now && event.startDate < now + ALERT_MILLISECONDS)
+                // @ts-ignore
+                || (event.startDate < now && event.endDate > now)) {
+                eventToShow = event;
+            }
+        }
+    }
+
+    _calendarNotification(
+        {
+            dispatch,
+            getState
+        }, eventToShow
+    );
+}
+
+/**
+ * Calendar notification.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {eventToShow} eventToShow - Next or ongoing event.
+ * @private
+ * @returns {void}
+ */
+function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any) {
+    const state = getState();
+
+    const { locationURL } = state['features/base/connection'];
+
+    const currentConferenceURL
+        = locationURL ? getURLWithoutParamsNormalized(locationURL) : '';
+    const now = Date.now();
+
+    if (!eventToShow) {
+        return;
+    }
+
+    const customActionNameKey = [ 'notify.joinMeeting' ];
+    const customActionType = [ BUTTON_TYPES.PRIMARY ];
+    const customActionHandler = [ () => batch(() => {
+        dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
+        if (eventToShow?.url && (eventToShow.url !== currentConferenceURL)) {
+            dispatch(appNavigate(eventToShow.url));
+        }
+    }) ];
+    const description
+        = getLocalizedDateFormatter(eventToShow.startDate).fromNow();
+    const icon = NOTIFICATION_ICON.WARNING;
+    const title = (eventToShow.startDate < now) && (eventToShow.endDate > now)
+        ? i18n.t('calendarSync.ongoingMeeting')
+        : i18n.t('calendarSync.nextMeeting');
+    const uid = CALENDAR_NOTIFICATION_ID;
+
+    dispatch(showNotification({
+        customActionHandler,
+        customActionNameKey,
+        customActionType,
+        description,
+        icon,
+        title,
+        uid
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
