@@ -1,5 +1,3 @@
-// @ts-expect-error
-import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions';
@@ -17,7 +15,6 @@ import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
-import { isPrejoinPageVisible } from '../prejoin/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
 /**
@@ -273,26 +270,6 @@ export function getAudioSettingsVisibility(state: IReduxState) {
  */
 export function getVideoSettingsVisibility(state: IReduxState) {
     return state['features/settings'].videoSettingsVisible;
-}
-
-/**
- * Returns the properties for the "Shortcuts" tab from settings dialog from Redux
- * state.
- *
- * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the shortcuts dialog is displayed on the
- * welcome page or not.
- * @returns {Object} - The properties for the "Shortcuts" tab from settings
- * dialog.
- */
-export function getShortcutsTabProps(stateful: IStateful, isDisplayedOnWelcomePage?: boolean) {
-    const state = toState(stateful);
-
-    return {
-        displayShortcuts: !isDisplayedOnWelcomePage && !isPrejoinPageVisible(state),
-        keyboardShortcutsEnabled: keyboardShortcut.getEnabled()
-    };
 }
 
 /**
