@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 
-import Button from '../../../ui/components/native/Button';
+import { IconPlus } from '../../../icons';
+import IconButton from '../../../ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../ui/constants.any';
 import type { Item } from '../../Types';
 
@@ -100,9 +101,9 @@ export default class NavigateSectionListItem extends Component<Props> {
         const { secondaryAction } = this.props;
 
         return (
-            <Button
-                labelKey = { 'calendarSync.confirmAddLinkIcon' }
-                onClick = { secondaryAction }
+            <IconButton
+                onPress = { secondaryAction }
+                src = { IconPlus }
                 type = { BUTTON_TYPES.PRIMARY } />
         );
     }
