@@ -23,9 +23,7 @@ const useStyles = makeStyles()(theme => {
                     color: theme.palette.text03
                 },
                 '& .avatar': {
-                    width: '32px',
-                    marginRight: theme.spacing(3),
-                    height: theme.spacing(5)
+                    marginRight: theme.spacing(3)
                 },
                 '& .time': {
                     padding: '2px 4px',
