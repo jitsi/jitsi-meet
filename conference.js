@@ -1037,10 +1037,17 @@ export default {
             return;
         }
 
+        const state = APP.store.getState();
+
         if (!mute
-                && isUserInteractionRequiredForUnmute(APP.store.getState())) {
+                && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting video requires user interaction');
 
+            return;
+        }
+
+        // check for A/V Moderation when trying to unmute and return early
+        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
             return;
         }
 
@@ -1057,7 +1064,7 @@ export default {
             return;
         }
 
-        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
+        const localVideo = getLocalJitsiVideoTrack(state);
 
         if (!localVideo && !mute && !this.isCreatingLocalTrack) {
             const maybeShowErrorDialog = error => {
