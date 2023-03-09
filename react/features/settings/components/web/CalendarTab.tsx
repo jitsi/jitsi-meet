@@ -68,13 +68,13 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link CalendarTab}.
  */
-type IState = {
+interface IState {
 
     /**
      * Whether or not any third party APIs are being loaded.
      */
     loading: boolean;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
