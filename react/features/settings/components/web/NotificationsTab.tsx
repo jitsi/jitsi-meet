@@ -84,14 +84,25 @@ const styles = (theme: Theme) => {
     return {
         container: {
             display: 'flex',
-            width: '100%'
+            width: '100%',
+
+            '@media (max-width: 607px)': {
+                flexDirection: 'column' as const
+            }
         },
 
         column: {
+            display: 'flex',
+            flexDirection: 'column' as const,
             flex: 1,
 
             '&:first-child:not(:last-child)': {
-                marginRight: theme.spacing(3)
+                marginRight: theme.spacing(3),
+
+                '@media (max-width: 607px)': {
+                    marginRight: 0,
+                    marginBottom: theme.spacing(3)
+                }
             }
         },
 

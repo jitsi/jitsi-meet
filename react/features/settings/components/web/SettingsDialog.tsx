@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 
@@ -15,7 +14,6 @@ import {
     IconVolumeUp
 } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';
@@ -45,7 +43,6 @@ import {
     getVirtualBackgroundTabProps
 } from '../../functions';
 
-// @ts-ignore
 import CalendarTab from './CalendarTab';
 import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
@@ -95,102 +92,11 @@ interface IProps {
  *
  * @returns {Object}
  */
-const styles = (theme: Theme) => {
+const styles = () => {
     return {
         settingsDialog: {
             display: 'flex',
-            width: '100%',
-
-            '& .auth-name': {
-                marginBottom: theme.spacing(1)
-            },
-
-            '& .mock-atlaskit-label': {
-                color: '#b8c7e0',
-                fontSize: '12px',
-                fontWeight: 600,
-                lineHeight: 1.33,
-                padding: `20px 0px ${theme.spacing(1)} 0px`
-            },
-
-            '& .checkbox-label': {
-                color: theme.palette.text01,
-                ...withPixelLineHeight(theme.typography.bodyShortRegular),
-                marginBottom: theme.spacing(2),
-                display: 'block',
-                marginTop: '20px'
-            },
-
-            '& input[type="checkbox"]:checked + svg': {
-                '--checkbox-background-color': '#6492e7',
-                '--checkbox-border-color': '#6492e7'
-            },
-
-            '& input[type="checkbox"] + svg + span': {
-                color: '#9FB0CC'
-            },
-
-            // @ts-ignore
-            [[ '& .calendar-tab',
-                '& .more-tab',
-                '& .box' ]]: {
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%'
-            },
-
-            '& .settings-sub-pane': {
-                flex: 1
-            },
-
-            '& .settings-sub-pane .right': {
-                flex: 1
-            },
-            '& .settings-sub-pane .left': {
-                flex: 1
-            },
-
-            '& .settings-sub-pane-element': {
-                textAlign: 'left',
-                flex: 1
-            },
-
-            '& .dropdown-menu': {
-                marginTop: '20px'
-            },
-
-            '& .settings-checkbox': {
-                display: 'flex',
-                marginBottom: theme.spacing(3)
-            },
-
-            '& .calendar-tab': {
-                alignItems: 'center',
-                flexDirection: 'column',
-                fontSize: '14px',
-                minHeight: '100px',
-                textAlign: 'center',
-                marginTop: '20px'
-            },
-
-            '& .calendar-tab-sign-in': {
-                marginTop: '20px'
-            },
-
-            '& .sign-out-cta': {
-                marginBottom: '20px'
-            },
-
-            '& .sign-out-cta-button': {
-                display: 'flex',
-                justifyContent: 'center'
-            },
-
-            '@media only screen and (max-width: 700px)': {
-                '& .more-tab': {
-                    flexDirection: 'column'
-                }
-            }
+            width: '100%'
         }
     };
 };
@@ -282,7 +188,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     selectedAudioOutputId: tabState.selectedAudioOutputId
                 };
             },
-            className: `settings-pane ${classes.settingsDialog} devices-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: (newState: any) => submitAudioDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
             icon: IconVolumeUp
         });
@@ -305,7 +211,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     selectedVideoInputId: tabState.selectedVideoInputId
                 };
             },
-            className: `settings-pane ${classes.settingsDialog} devices-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: (newState: any) => submitVideoDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
             icon: IconVideo
         });
@@ -371,7 +277,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     startReactionsMuted: tabState?.startReactionsMuted
                 };
             },
-            className: `settings-pane ${classes.settingsDialog} moderator-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitModeratorTab,
             icon: IconModerator
         });
@@ -383,7 +289,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
-            className: `settings-pane ${classes.settingsDialog} profile-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitProfileTab,
             icon: IconUser
         });
@@ -394,7 +300,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
             labelKey: 'settings.calendar.title',
-            className: `settings-pane ${classes.settingsDialog} calendar-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             icon: IconCalendar
         });
     }
@@ -434,7 +340,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },
-            className: `settings-pane ${classes.settingsDialog} more-pane`,
+            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitMoreTab,
             icon: IconGear
         });

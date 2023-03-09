@@ -13,6 +13,7 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Input from '../../../base/ui/components/web/Input';
@@ -109,6 +110,16 @@ const styles = (theme: Theme) => {
 
         bottomMargin: {
             marginBottom: theme.spacing(4)
+        },
+
+        label: {
+            color: `${theme.palette.text01} !important`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            marginBottom: theme.spacing(2)
+        },
+
+        name: {
+            marginBottom: theme.spacing(1)
         }
     };
 };
@@ -312,16 +323,17 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     _renderAuth() {
         const {
             authLogin,
+            classes,
             t
         } = this.props;
 
         return (
             <div>
-                <h2 className = 'mock-atlaskit-label'>
+                <h2 className = { classes.label }>
                     { t('toolbar.authenticate') }
                 </h2>
                 { authLogin
-                    && <div className = 'auth-name'>
+                    && <div className = { classes.name }>
                         { t('settings.loggedIn', { name: authLogin }) }
                     </div> }
                 <Button
