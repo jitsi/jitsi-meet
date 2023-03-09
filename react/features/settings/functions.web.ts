@@ -1,4 +1,9 @@
+// @ts-expect-error
+import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
+import { IStateful } from '../base/app/types';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
+import { toState } from '../base/redux/functions';
+import { isPrejoinPageVisible } from '../prejoin/functions';
 
 export * from './functions.any';
 
@@ -61,4 +66,24 @@ export function createLocalAudioTracks(devices: Array<{ deviceId: string; label:
                 label
             };
         }));
+}
+
+/**
+ * Returns the properties for the "Shortcuts" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the shortcuts dialog is displayed on the
+ * welcome page or not.
+ * @returns {Object} - The properties for the "Shortcuts" tab from settings
+ * dialog.
+ */
+export function getShortcutsTabProps(stateful: IStateful, isDisplayedOnWelcomePage?: boolean) {
+    const state = toState(stateful);
+
+    return {
+        displayShortcuts: !isDisplayedOnWelcomePage && !isPrejoinPageVisible(state),
+        keyboardShortcutsEnabled: keyboardShortcut.getEnabled()
+    };
 }
