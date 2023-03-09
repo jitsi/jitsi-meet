@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 
+import Button from '../../../ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../ui/constants.any';
 import type { Item } from '../../Types';
 
 import AvatarListItem from './AvatarListItem';
-import Container from './Container';
 import Text from './Text';
 import styles from './styles';
 
@@ -99,11 +100,10 @@ export default class NavigateSectionListItem extends Component<Props> {
         const { secondaryAction } = this.props;
 
         return (
-            <Container
+            <Button
+                labelKey = { 'calendarSync.confirmAddLinkIcon' }
                 onClick = { secondaryAction }
-                style = { styles.secondaryActionContainer }>
-                <Text style = { styles.secondaryActionLabel }>+</Text>
-            </Container>
+                type = { BUTTON_TYPES.PRIMARY } />
         );
     }
 
