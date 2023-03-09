@@ -8,6 +8,7 @@ import {
 } from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
+// @ts-ignore
 import { openPageReloadDialog } from './actions';
 
 
@@ -108,9 +109,7 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(state, error)
             });
-        }
-
-        if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
+        } else if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             setTimeout(() => {
                 // @ts-ignore
                 store.dispatch(openPageReloadDialog());
