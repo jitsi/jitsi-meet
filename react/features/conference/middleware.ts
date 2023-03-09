@@ -72,13 +72,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_LEFT: {
-        clearInterval(intervalId);
-        intervalId = null;
-
-        break;
-    }
-
+    case CONFERENCE_LEFT:
     case CONFERENCE_FAILED: {
         clearInterval(intervalId);
         intervalId = null;
