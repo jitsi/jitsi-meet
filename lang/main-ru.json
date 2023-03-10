@@ -184,10 +184,15 @@
         "description": "Ничего не случилось? Мы попытались запустить вашу встречу в настольном приложении {{app}}. Повторите попытку или запустите ее в веб-приложении {{app}}.",
         "descriptionWithoutWeb": "Ничего не произошло? Мы попытались запустить вашу конференцию в настольном приложении {{app}}",
         "downloadApp": "Скачать приложение",
+        "downloadMobileApp": "Скачать из App Store",
         "ifDoNotHaveApp": "Если у Вас ещё нет приложения:",
         "ifHaveApp": "Если у Вас уже есть приложение:",
         "joinInApp": "Присоединиться к этой встрече с помощью приложения",
+        "joinInAppNew": "Присоединиться в приложении",
+        "joinInBrowser": "Присоединиться в браузере",
+        "launchMeetingLabel": "Как вы хотите присоединиться к этой встрече?",
         "launchWebButton": "Запустить в браузере",
+        "noMobileApp": "У вас нет приложения?",
         "title": "Запуск вашей встречи в {{app}}...",
         "tryAgainButton": "Повторите в настольном приложении",
         "unsupportedBrowser": "Вы используете браузер, который мы не поддерживаем."
@@ -648,6 +653,7 @@
         "invitedOneMember": "{{name}} был приглашен",
         "invitedThreePlusMembers": "Приглашены {{name}} и {{count}} других пользователей(ля)",
         "invitedTwoMembers": "{{first}} и {{second}} присоединились к конференции",
+        "joinMeeting": "Присоединиться",
         "kickParticipant": "{{kicker}} отключил {{kicked}}",
         "leftOneMember": "{{name}} покинул собрание",
         "leftThreePlusMembers": "{{name}} и многие другие покинули встречу",
@@ -658,6 +664,8 @@
         "linkToSalesforceKey": "Отправить ссылку на встречу для Salesforce",
         "linkToSalesforceProgress": "Отправка ссылки на встречу для Salesforce...",
         "linkToSalesforceSuccess": "Ссылка на эту встречу для Salesforce была отправлена",
+        "localRecordingStarted": "{{name}} начал локальную запись.",
+        "localRecordingStopped": "{{name}} остановил локальную запись.",
         "me": "Я",
         "moderationInEffectCSDescription": "Пожалуйста, поднимите руку, если вы хотите поделиться своим экраном.",
         "moderationInEffectCSTitle": "Демонстрация экрана заблокирована модератором",
@@ -1322,6 +1330,7 @@
             "microsoftLogo": "Логотип Майкрософт",
             "policyLogo": "Логотип политики"
         },
+        "meetingsAccessibilityLabel": "Конференции",
         "mobileDownLoadLinkAndroid": "Скачать мобильное приложение для Android",
         "mobileDownLoadLinkFDroid": "Скачать мобильное приложение для F-Droid",
         "mobileDownLoadLinkIos": "Скачать мобильное приложение для iOS",
@@ -1330,6 +1339,7 @@
         "recentList": "Недавние",
         "recentListDelete": "Удалить",
         "recentListEmpty": "Сейчас ваш список недавно проведенных конференций пуст. По мере вашего пользования сервисом он будет пополняться.",
+        "recentMeetings": "Ваши недавние конференции",
         "reducedUIText": "Добро пожаловать в {{app}}!",
         "roomNameAllowedChars": "Название конференции не должно содержать следующие символы: ?, &, :, ', \", %, #.",
         "roomname": "Укажите название комнаты",
@@ -1338,7 +1348,8 @@
         "settings": "Настройки",
         "startMeeting": "Создать конференцию",
         "terms": "Условия",
-        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
+        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций",
+        "upcomingMeetings": "Ваши предстоящие конференции"
     },
     "whiteboard": {
         "accessibilityLabel": {
