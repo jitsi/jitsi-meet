@@ -1,24 +1,13 @@
-// @flow
-
 import Flag from '@atlaskit/flag';
-import EditorErrorIcon from '@atlaskit/icon/glyph/editor/error';
-import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
-import EditorSuccessIcon from '@atlaskit/icon/glyph/editor/success';
-import EditorWarningIcon from '@atlaskit/icon/glyph/editor/warning';
-import PeopleIcon from '@atlaskit/icon/glyph/people';
-import PersonIcon from '@atlaskit/icon/glyph/person';
-import QuestionsIcon from '@atlaskit/icon/glyph/questions';
 import React, { isValidElement } from 'react';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCheck, IconInfo, IconMessage, IconUser, IconUsers, IconWarningCircle } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
 import { colors } from '../../../base/ui/Tokens';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
-import AbstractNotification, {
-    type Props
-} from '../AbstractNotification';
-
-declare var interfaceConfig: Object;
+import AbstractNotification, { IProps } from '../AbstractNotification';
 
 /**
  * Secondary colors for notification icons.
@@ -37,7 +26,7 @@ const ICON_COLOR = {
  *
  * @augments Component
  */
-class Notification extends AbstractNotification<Props> {
+class Notification extends AbstractNotification<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -64,12 +53,6 @@ class Notification extends AbstractNotification<Props> {
                 title = { title || t(titleKey, titleArguments) } />
         );
     }
-
-    _getDescription: () => Array<string>;
-
-    _getDescriptionKey: () => string;
-
-    _onDismissed: () => void;
 
     /**
      * Creates a {@code ReactElement} for displaying the contents of the
@@ -115,7 +98,7 @@ class Notification extends AbstractNotification<Props> {
      * @private
      * @returns {Object[]}
      */
-    _mapAppearanceToButtons(hideErrorSupportLink) {
+    _mapAppearanceToButtons(hideErrorSupportLink: boolean) {
         switch (this.props.appearance) {
         case NOTIFICATION_TYPE.ERROR: {
             const buttons = [
@@ -167,33 +150,31 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _getIcon() {
-        let Icon;
+        let icon;
 
         switch (this.props.icon || this.props.appearance) {
         case NOTIFICATION_ICON.ERROR:
-            Icon = EditorErrorIcon;
-            break;
         case NOTIFICATION_ICON.WARNING:
-            Icon = EditorWarningIcon;
+            icon = IconWarningCircle;
             break;
         case NOTIFICATION_ICON.SUCCESS:
-            Icon = EditorSuccessIcon;
+            icon = IconCheck;
             break;
         case NOTIFICATION_ICON.MESSAGE:
-            Icon = QuestionsIcon;
+            icon = IconMessage;
             break;
         case NOTIFICATION_ICON.PARTICIPANT:
-            Icon = PersonIcon;
+            icon = IconUser;
             break;
         case NOTIFICATION_ICON.PARTICIPANTS:
-            Icon = PeopleIcon;
+            icon = IconUsers;
             break;
         default:
-            Icon = EditorInfoIcon;
+            icon = IconInfo;
             break;
         }
 
-        return Icon;
+        return icon;
     }
 
     /**
@@ -205,16 +186,15 @@ class Notification extends AbstractNotification<Props> {
      */
     _mapAppearanceToIcon() {
         const { appearance, icon } = this.props;
-        const secIconColor = ICON_COLOR[appearance];
-        const iconSize = 'medium';
-        const Icon = this._getIcon();
+        const iconColor = ICON_COLOR[appearance as keyof typeof ICON_COLOR];
+        const iconSrc = this._getIcon();
 
         return (<div className = { icon }>
             <div className = { `ribbon ${appearance}` } />
             <Icon
-                label = { appearance }
-                secondaryColor = { secIconColor }
-                size = { iconSize } />
+                color = { iconColor }
+                size = { 20 }
+                src = { iconSrc } />
         </div>);
     }
 }

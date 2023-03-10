@@ -1,115 +1,109 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { NOTIFICATION_TYPE } from '../constants';
 
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * Display appearance for the component, passed directly to the
      * notification.
      */
-    appearance: string,
+    appearance: string;
 
     /**
      * Whether or not the title and description should be concatenated.
      */
-    concatText?: boolean,
+    concatText?: boolean;
 
     /**
      * Callback invoked when the custom button is clicked.
      */
-    customActionHandler: Function[],
+    customActionHandler: Function[];
 
     /**
      * The text to display as button in the notification for the custom action.
      */
-    customActionNameKey: string[],
+    customActionNameKey: string[];
 
     /**
      * The type of button.
      */
-    customActionType: ?string[],
+    customActionType?: string[];
 
     /**
      * The text to display in the body of the notification. If not passed
      * in, the passed in descriptionKey will be used.
      */
-    defaultTitleKey: string,
+    defaultTitleKey: string;
 
     /**
      * A description string that can be used in addition to the prop
      * descriptionKey.
      */
-    description: string,
+    description: string;
 
     /**
      * The translation arguments that may be necessary for the description.
      */
-    descriptionArguments: Object,
+    descriptionArguments: Object;
 
     /**
      * The translation key to use as the body of the notification.
      */
-    descriptionKey: string,
+    descriptionKey: string;
 
     /**
      * Whether the support link should be hidden in the case of an error
      * message.
      */
-    hideErrorSupportLink: boolean,
+    hideErrorSupportLink: boolean;
 
     /**
      * The type of icon to be displayed. If not passed in, the appearance
      * type will be used.
      */
-    icon?: String,
+    icon?: string;
 
     /**
      * Maximum lines of the description.
      */
-    maxLines: ?number,
+    maxLines?: number;
 
     /**
      * Callback invoked when the user clicks to dismiss the notification.
      */
-    onDismissed: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    onDismissed: Function;
 
     /**
      * The text to display at the top of the notification. If not passed in,
      * the passed in titleKey will be used.
      */
-    title: string,
+    title: string;
 
     /**
      * The translation arguments that may be necessary for the title.
      */
-    titleArguments: Object,
+    titleArguments: Object;
 
     /**
      * The translation key to display as the title of the notification if
      * no title is provided.
      */
-    titleKey: string,
+    titleKey: string;
 
     /**
      * The unique identifier for the notification.
      */
-    uid: string
-};
+    uid: string;
+}
 
 /**
  * Abstract class for {@code Notification} component.
  *
  * @augments Component
  */
-export default class AbstractNotification<P: Props> extends Component<P> {
+export default class AbstractNotification<P extends IProps> extends Component<P> {
     /**
      * Default values for {@code Notification} component's properties.
      *
@@ -131,8 +125,6 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         // Bind event handler so it is only bound once for every instance.
         this._onDismissed = this._onDismissed.bind(this);
     }
-
-    _getDescription: () => Array<string>;
 
     /**
      * Returns the description array to be displayed.
@@ -158,8 +150,6 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         return descriptionArray;
     }
 
-    _getDescriptionKey: () => string;
-
     /**
      * Returns the description key that was used if any.
      *
@@ -169,8 +159,6 @@ export default class AbstractNotification<P: Props> extends Component<P> {
     _getDescriptionKey() {
         return this.props.descriptionKey;
     }
-
-    _onDismissed: () => void;
 
     /**
      * Callback to dismiss the notification.
