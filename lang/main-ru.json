@@ -11,7 +11,6 @@
         "defaultEmail": "Ваш адрес электронной почты",
         "disabled": "Поиск не дал результата.",
         "failedToAdd": "Не удалось добавить участников",
-        "footerText": "Вызов номера отключен.",
         "googleEmail": "Электронная почта Google",
         "inviteMoreHeader": "Сейчас вы одни в этой встрече",
         "inviteMoreMailSubject": "Присоединиться к встрече {{appName}} ",
@@ -96,6 +95,7 @@
         "messageAccessibleTitleMe": "я говорю:",
         "messageTo": "Личное сообщение пользователю {{recipient}}",
         "messagebox": "Введите сообщение",
+        "newMessages": "Новые сообщения",
         "nickname": {
             "popover": "Выберите имя",
             "title": "Введите имя для использования чата",
@@ -115,6 +115,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Установить расширение Chrome",
+        "buttonTextEdge": "Установить расширение Edge",
         "close": "Закрыть",
         "dontShowAgain": "Не показывай мне это снова",
         "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365"
@@ -266,6 +267,7 @@
         "gracefulShutdown": "Технические работы. Пожалуйста, попробуйте позже.",
         "grantModeratorDialog": "Вы уверены, что хотите сделать этого участника модератором?",
         "grantModeratorTitle": "Сделать модератором",
+        "hide": "Скрыть",
         "hideShareAudioHelper": "Больше не показывать это диалоговое окно",
         "incorrectPassword": "Ошибка имени пользователя или пароля",
         "incorrectRoomLockPassword": "Неверный пароль",
@@ -385,6 +387,7 @@
         "shareYourScreenDisabled": "Демонстрация экрана отключена",
         "sharedVideoDialogError": "Ошибка: Невалидный URL",
         "sharedVideoLinkPlaceholder": "Ссылка на YouTube или прямая ссылка на видео",
+        "show": "Показать",
         "start": "Начать",
         "startLiveStreaming": "Начать трансляцию",
         "startRecording": "Начать запись",
@@ -431,9 +434,6 @@
     "giphy": {
         "noResults": "Результатов поиска не найдено :(",
         "search": "Поиск GIPHY"
-    },
-    "helpView": {
-        "title": "Справка"
     },
     "incomingCall": {
         "answer": "Ответ",
@@ -511,6 +511,10 @@
         "toggleScreensharing": "Переключиться между камерой и показом экрана",
         "toggleShortcuts": "Скрыть/Показать клавиша быстрого доступа",
         "videoMute": "Камера (вкл./выкл.)"
+    },
+    "largeVideo": {
+        "screenIsShared": "Вы демонстрируете свой экран",
+        "showMeWhatImSharing": "Показать мне что я демонстрирую"
     },
     "liveStreaming": {
         "busy": "Освобождаем новые ресурсы для трансляции. Пожалуйста, попробуйте снова через несколько минут.",
@@ -841,9 +845,6 @@
         "rejected": "Отклонен",
         "ringing": "Звоню. . ."
     },
-    "privacyView": {
-        "title": "Конфиденциальность"
-    },
     "profile": {
         "avatar": "аватар",
         "setDisplayNameLabel": "Отображаемое имя",
@@ -918,6 +919,7 @@
         "title": "Настройки безопасности"
     },
     "settings": {
+        "audio": "Звук",
         "buttonLabel": "Настройки",
         "calendar": {
             "about": "Интеграция с календарем {{appName}} используется для безопасного доступа к вашему календарю и синхронизации запланированных мероприятий.",
@@ -940,7 +942,9 @@
         "more": "Больше опций",
         "name": "Имя",
         "noDevice": "нет",
+        "notifications": "Оповещения",
         "participantJoined": "Участник присоединился",
+        "participantKnocking": "Участник вошел в лобби",
         "participantLeft": "Участник вышел",
         "playSounds": "Включить звук",
         "reactions": "Реакции на встречи",
@@ -949,13 +953,14 @@
         "selectCamera": "Камера",
         "selectMic": "Микрофон",
         "selfView": "Самостоятельный просмотр",
-        "sounds": "Звуки",
+        "shortcuts": "Сочетания клавиш",
         "speakers": "Динамики",
         "startAudioMuted": "Все начинают с выключенным звуком",
         "startReactionsMuted": "Отключение звука реакции для всех",
         "startVideoMuted": "Все начинают в скрытом режиме",
         "talkWhileMuted": "Говорите без звука",
-        "title": "Настройки"
+        "title": "Настройки",
+        "video": "Видео"
     },
     "settingsView": {
         "advanced": "Дополнительные",
@@ -1061,6 +1066,7 @@
             "muteEveryoneElse": "Заглушить всех остальных",
             "muteEveryoneElsesVideoStream": "Остановить чужое видео",
             "muteEveryonesVideoStream": "Остановить видео для всех",
+            "noiseSuppression": "Шумоподавление",
             "participants": "Участники",
             "pip": "Вкл/Выкл режим Картинка-в-картинке",
             "privateMessage": "Отправить личное сообщение",
@@ -1086,7 +1092,8 @@
             "toggleCamera": "Переключить камеру",
             "toggleFilmstrip": "Включить диафильм",
             "videoblur": "Вкл/Выкл размытие фона",
-            "videomute": "Вкл/Выкл видео"
+            "videomute": "Вкл/Выкл видео",
+            "whiteboard": "Показать/Скрыть доску"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
         "audioOnlyOff": "Включить видео (стандартный режим)",
@@ -1107,6 +1114,7 @@
         "download": "Скачать приложение",
         "e2ee": "Сквозное шифрование",
         "embedMeeting": "Встроить встречу",
+        "enableNoiseSuppression": "Включить шумоподавление",
         "endConference": "Завершить встречу для всех",
         "enterFullScreen": "На полный экран",
         "enterTileView": "Общий план",
@@ -1116,6 +1124,7 @@
         "giphy": "Показать GIPHY меню",
         "hangup": "Выход",
         "help": "Справка",
+        "hideWhiteboard": "Скрыть доску",
         "invite": "Пригласить",
         "joinBreakoutRoom": "Войти в сессионный зал",
         "laugh": "Смеяться",
@@ -1138,6 +1147,7 @@
         "noAudioSignalDialInDesc": "Вы можете также дозвониться используя:",
         "noAudioSignalDialInLinkDesc": "Номера для дозвона",
         "noAudioSignalTitle": "От вашего микрофона не идет звуковой сигнал!",
+        "noiseSuppression": "Шумоподавление",
         "noisyAudioInputDesc": "Возможно, ваш микрофон создает шум. Вы можете выключить его или смените устройство.",
         "noisyAudioInputTitle": "Похоже, ваш микрофон создает шум!",
         "openChat": "Открыть чат",
@@ -1160,6 +1170,7 @@
         "shareaudio": "Предоставить доступ к звуку",
         "sharedvideo": "Видео YouTube",
         "shortcuts": "Комбинации клавиш",
+        "showWhiteboard": "Показать доску",
         "silence": "Молчание",
         "speakerStats": "Статистика",
         "startScreenSharing": "Начать трансляцию с экрана",
@@ -1225,9 +1236,11 @@
         "ldTooltip": "Видео низкого качества",
         "lowDefinition": "Низкое качество",
         "performanceSettings": "Параметры производительности",
+        "recording": "Идет запись",
         "sd": "SD",
         "sdTooltip": "Видео стандартного качества",
-        "standardDefinition": "Стандартное качество (SD)"
+        "standardDefinition": "Стандартное качество (SD)",
+        "streaming": "Идет трансляция"
     },
     "videothumbnail": {
         "connectionInfo": "Информация о соединении",
@@ -1239,6 +1252,7 @@
         "grantModerator": "Сделать модератором",
         "hideSelfView": "Скрыть собственное представление",
         "kick": "Отключить",
+        "mirrorVideo": "Зеркально отразить видео",
         "moderator": "Модератор",
         "mute": "Без звука",
         "muted": "Звук выключен",
@@ -1248,6 +1262,7 @@
         "show": "Показать крупным планом",
         "showSelfView": "Показать своё представление",
         "unpinFromStage": "Отпинить",
+        "verify": "Проверить участника",
         "videoMuted": "Камера выключена",
         "videomute": "Участник выключил камеру"
     },
@@ -1320,6 +1335,7 @@
         "roomname": "Укажите название комнаты",
         "roomnameHint": "Укажите название комнаты или ее адрес. Можете сами создать название и передать его будущим участникам встречи, чтобы они использовали именно его.",
         "sendFeedback": "Обратная связь",
+        "settings": "Настройки",
         "startMeeting": "Создать конференцию",
         "terms": "Условия",
         "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
