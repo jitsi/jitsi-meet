@@ -21,7 +21,7 @@ import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import { NOTIFICATION_ICON } from '../../constants';
 import AbstractNotification, {
-    type Props as AbstractNotificationProps
+    type IProps as AbstractNotificationProps
     // @ts-ignore
 } from '../AbstractNotification';
 
