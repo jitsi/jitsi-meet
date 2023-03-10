@@ -1,4 +1,3 @@
-import Spinner from '@atlaskit/spinner';
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
@@ -9,6 +8,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
+import Spinner from '../../../base/ui/components/web/Spinner';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
@@ -213,11 +213,7 @@ class CalendarTab extends Component<IProps, IState> {
      */
     _renderLoadingState() {
         return (
-            <Spinner
-
-                // @ts-ignore
-                isCompleting = { false }
-                size = 'medium' />
+            <Spinner />
         );
     }
 

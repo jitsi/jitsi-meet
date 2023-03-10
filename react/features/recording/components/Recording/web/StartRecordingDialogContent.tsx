@@ -184,9 +184,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
      */
     _renderSpinner() {
         return (
-            <LoadingIndicator
-                isCompleting = { false }
-                size = 'small' />
+            <LoadingIndicator size = 'small' />
         );
     }
 

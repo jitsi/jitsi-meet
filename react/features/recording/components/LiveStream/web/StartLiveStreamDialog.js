@@ -1,11 +1,11 @@
 // @flow
 
-import Spinner from '@atlaskit/spinner';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import Dialog from '../../../../base/ui/components/web/Dialog';
+import Spinner from '../../../../base/ui/components/web/Spinner';
 import {
     GOOGLE_API_STATES,
     GoogleSignInButton,
@@ -284,11 +284,9 @@ class StartLiveStreamDialog
                         selectedBoundStreamID = { selectedBoundStreamID } />
                 );
             } else {
-                googleContent = (
-                    <Spinner
-                        isCompleting = { false }
-                        size = 'medium' />
-                );
+                googleContent
+                    = <Spinner />
+                ;
             }
 
             /**
@@ -310,11 +308,9 @@ class StartLiveStreamDialog
 
         case GOOGLE_API_STATES.NEEDS_LOADING:
         default:
-            googleContent = (
-                <Spinner
-                    isCompleting = { false }
-                    size = 'medium' />
-            );
+            googleContent
+                = <Spinner />
+            ;
 
             break;
         }
