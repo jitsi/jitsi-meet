@@ -1,5 +1,4 @@
 /* eslint-disable lines-around-comment */
-import Spinner from '@atlaskit/spinner';
 // @ts-ignore
 import Bourne from '@hapi/bourne';
 // @ts-ignore
@@ -17,6 +16,7 @@ import { IconCloseLarge } from '../../base/icons/svg';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 // @ts-ignore
 import { Tooltip } from '../../base/tooltip';
+import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
@@ -368,11 +368,7 @@ function VirtualBackgrounds({
                 options = { options } />
             {loading ? (
                 <div className = { classes.virtualBackgroundLoading }>
-                    <Spinner
-
-                        // @ts-ignore
-                        isCompleting = { false }
-                        size = 'medium' />
+                    <Spinner />
                 </div>
             ) : (
                 <div className = { classes.container }>

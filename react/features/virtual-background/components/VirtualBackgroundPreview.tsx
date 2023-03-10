@@ -1,4 +1,3 @@
-import Spinner from '@atlaskit/spinner';
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
@@ -12,6 +11,7 @@ import Video from '../../base/media/components/Video';
 import { equals } from '../../base/redux/functions';
 import { getCurrentCameraDeviceId } from '../../base/settings/functions.web';
 import { createLocalTracksF } from '../../base/tracks/functions';
+import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
@@ -207,12 +207,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     _loadVideoPreview() {
         return (
             <div className = 'video-preview-loader'>
-                <Spinner
-
-                    // @ts-ignore
-                    invertColor = { true }
-                    isCompleting = { false }
-                    size = { 'large' } />
+                <Spinner size = 'large' />
             </div>
         );
     }
