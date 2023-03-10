@@ -13,7 +13,6 @@ import { connect } from '../../../base/redux/functions';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 
-// @ts-ignore
 import Notification from './Notification';
 
 interface IProps extends WithTranslation {
@@ -34,7 +33,7 @@ interface IProps extends WithTranslation {
      */
     _notifications: Array<{
         props: Object;
-        uid: number;
+        uid: string;
     }>;
 
     /**
@@ -209,9 +208,9 @@ class NotificationsContainer extends Component<IProps> {
                     in = { true }
                     key = { uid }
                     timeout = { 200 }>
+                    {/* @ts-ignore */}
                     <Notification
                         { ...props }
-                        id = { uid }
                         onDismissed = { this._onDismissed }
                         uid = { uid } />
                 </CSSTransition>
