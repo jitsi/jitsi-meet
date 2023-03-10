@@ -282,7 +282,6 @@
         "linkMeetingTitle": "Связать встречу с Salesforce",
         "liveStreaming": "Трансляция",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Невозможно пока активна запись",
-        "liveStreamingDisabledTooltip": "Возможность трансляции отключена",
         "localUserControls": "Локальные пользовательские элементы управления",
         "lockMessage": "Не удалось запереть конференцию",
         "lockRoom": "Добавить конференцию $t(lockRoomPasswordUppercase)",
@@ -337,7 +336,6 @@
         "recentlyUsedObjects": "Ваши недавно использованные объекты",
         "recording": "Запись",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Невозможно пока активно потоковое вещание",
-        "recordingDisabledTooltip": "Невозможно начать запись",
         "rejoinNow": "Подключиться снова",
         "remoteControlAllowedMessage": "{{user}} принял ваш запрос на удаленное управление!",
         "remoteControlDeniedMessage": "{{user}} отклонил ваш запрос на удаленное управление!",
@@ -556,7 +554,6 @@
     "lobby": {
         "admit": "Признать",
         "admitAll": "Признать все",
-        "allow": "Разрешить",
         "backToKnockModeButton": "Попросить присоединиться",
         "chat": "Чат",
         "dialogTitle": "Режим лобби",
@@ -729,7 +726,6 @@
             "videoModeration": "Разрешить видео"
         },
         "close": "Закрыть",
-        "header": "Участники",
         "headings": {
             "lobby": "Лобби ({{count}})",
             "participantsList": "Список участников ({{count}})",
@@ -893,10 +889,12 @@
         "loggedIn": "Вошел как {{userName}}",
         "off": "Запись остановлена",
         "offBy": "{{name}} остановил запись",
-        "on": "Запись",
+        "on": "Запись началась",
         "onBy": "{{name}} включил запись",
+        "onlyRecordSelf": "Записать только мои аудио и видео потоки",
         "pending": "Подготовка записи конференции. . .",
         "rec": "ИДЕТ ЗАПИСЬ",
+        "saveLocalRecording": "Сохранить файл записи локально (Beta)",
         "serviceDescription": "Ваша запись будет сохранена соответствующей службой",
         "serviceDescriptionCloud": "Облачная запись",
         "serviceDescriptionCloudInfo": "Сохранённые записи автоматически удаляются спуся 24 часа со старта.",
@@ -904,6 +902,7 @@
         "sessionAlreadyActive": "Этот сеанс уже записывается или транслируется в прямом эфире.",
         "signIn": "Вход",
         "signOut": "Выход",
+        "surfaceError": "Пожалуйста, выберите текущую вкладку.",
         "title": "Запись",
         "unavailable": "Служба {{serviceName}} сейчас недоступна. Мы работаем над исправлением этой ошибки. Пожалуйста, попробуйте позже.",
         "unavailableTitle": "Запись невозможна",
@@ -939,6 +938,7 @@
         "loggedIn": "Вошел как {{name}}",
         "microphones": "Микрофоны",
         "moderator": "Модератор",
+        "moderatorOptions": "Настройки модератора",
         "more": "Больше опций",
         "name": "Имя",
         "noDevice": "нет",
@@ -1339,5 +1339,10 @@
         "startMeeting": "Создать конференцию",
         "terms": "Условия",
         "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Доска"
+        }
     }
 }
