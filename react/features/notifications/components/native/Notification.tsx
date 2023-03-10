@@ -115,6 +115,7 @@ class Notification extends AbstractNotification<Props> {
                         }
                     } }
                     style = { styles.btn }
+                    // @ts-ignore
                     type = { customActionType[index] } />
             ));
         }
