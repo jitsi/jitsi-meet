@@ -185,17 +185,19 @@ function _maybeDisplayCalendarNotification({ dispatch, getState }: IStore) {
         return;
     }
 
-    for (const event of eventList) {
+    if (eventList?.length) {
 
-        const eventURL
-            = event?.url && getURLWithoutParamsNormalized(new URL(event.url));
+        for (const event of eventList) {
+            const eventURL
+                = event?.url && getURLWithoutParamsNormalized(new URL(event.url));
 
-        if (eventURL && eventURL !== currentConferenceURL) {
-            // @ts-ignore
-            if ((!eventToShow && event.startDate > now && event.startDate < now + ALERT_MILLISECONDS)
+            if (eventURL && eventURL !== currentConferenceURL) {
                 // @ts-ignore
-                || (event.startDate < now && event.endDate > now)) {
-                eventToShow = event;
+                if ((!eventToShow && event.startDate > now && event.startDate < now + ALERT_MILLISECONDS)
+                    // @ts-ignore
+                    || (event.startDate < now && event.endDate > now)) {
+                    eventToShow = event;
+                }
             }
         }
     }

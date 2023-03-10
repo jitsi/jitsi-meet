@@ -1,10 +1,8 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../../styles';
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
-const SECONDARY_ACTION_BUTTON_SIZE = 30;
 const BUTTON_HEIGHT = BaseTheme.spacing[7];
 const BUTTON_WIDTH = BaseTheme.spacing[7];
 
@@ -106,28 +104,13 @@ const SECTION_LIST_STYLES = {
         color: OVERLAY_FONT_COLOR
     },
 
-    secondaryActionContainer: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 3,
-        height: SECONDARY_ACTION_BUTTON_SIZE,
-        justifyContent: 'center',
-        margin: BoxModel.margin * 0.5,
-        marginRight: BoxModel.margin,
-        width: SECONDARY_ACTION_BUTTON_SIZE
-    },
-
-    secondaryActionLabel: {
-        color: ColorPalette.white
-    },
-
     touchableView: {
         flexDirection: 'row'
     }
 };
 
 export const TINTED_VIEW_DEFAULT = {
-    backgroundColor: ColorPalette.appBackground,
+    backgroundColor: BaseTheme.palette.uiBackground,
     opacity: 0.8
 };
 

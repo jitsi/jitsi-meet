@@ -2,10 +2,12 @@
 
 import React, { Component } from 'react';
 
+import { IconPlus } from '../../../icons';
+import IconButton from '../../../ui/components/native/IconButton';
+import { BUTTON_TYPES } from '../../../ui/constants.any';
 import type { Item } from '../../Types';
 
 import AvatarListItem from './AvatarListItem';
-import Container from './Container';
 import Text from './Text';
 import styles from './styles';
 
@@ -99,11 +101,10 @@ export default class NavigateSectionListItem extends Component<Props> {
         const { secondaryAction } = this.props;
 
         return (
-            <Container
-                onClick = { secondaryAction }
-                style = { styles.secondaryActionContainer }>
-                <Text style = { styles.secondaryActionLabel }>+</Text>
-            </Container>
+            <IconButton
+                onPress = { secondaryAction }
+                src = { IconPlus }
+                type = { BUTTON_TYPES.PRIMARY } />
         );
     }
 
