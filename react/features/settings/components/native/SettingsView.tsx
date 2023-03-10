@@ -375,21 +375,27 @@ class SettingsView extends Component<IProps, IState> {
                             accessibilityLabel = 'settingsView.help'
                             labelKey = 'settingsView.help'
                             onClick = { this._onShowHelpPressed }
-                            type = { BUTTON_TYPES.TERTIARY } />
+                            style = { styles.linkButtonStyle }
+                            type = { BUTTON_TYPES.TERTIARY }
+                            useRippleColor = { false } />
                         {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.terms'
                             labelKey = 'settingsView.terms'
                             onClick = { this._onShowTermsPressed }
-                            type = { BUTTON_TYPES.TERTIARY } />
+                            style = { styles.linkButtonStyle }
+                            type = { BUTTON_TYPES.TERTIARY }
+                            useRippleColor = { false } />
                         {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.privacy'
                             labelKey = 'settingsView.privacy'
                             onClick = { this._onShowPrivacyPressed }
-                            type = { BUTTON_TYPES.TERTIARY } />
+                            style = { styles.linkButtonStyle }
+                            type = { BUTTON_TYPES.TERTIARY }
+                            useRippleColor = { false } />
                     </FormSection>
                     {/* @ts-ignore */}
                     <FormSection

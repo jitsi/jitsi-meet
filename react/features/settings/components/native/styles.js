@@ -146,5 +146,9 @@ export default {
      */
     screenContainer: {
         flex: 1
+    },
+
+    linkButtonStyle: {
+        height: BaseTheme.spacing[9]
     }
 };
