@@ -31,11 +31,11 @@ type Props = AbstractButtonProps & {
  */
 class ShareDesktopButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
     label = 'toolbar.startScreenSharing';
     icon = IconScreenshare;
     toggledIcon = IconStopScreenshare;
     toggledLabel = 'toolbar.stopScreenSharing';
-    tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
 
     /**
      * Retrieves tooltip dynamically.

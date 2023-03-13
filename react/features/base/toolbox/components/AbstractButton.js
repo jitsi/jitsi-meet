@@ -108,9 +108,20 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * A succinct description of what the button does. Used by accessibility
      * tools and torture tests.
      *
+     * If `toggledAccessibilityLabel` is defined, this is used only when the
+     * button is not toggled on.
+     *
      * @abstract
      */
     accessibilityLabel: string;
+
+    /**
+     * This is the same as `accessibilityLabel`, replacing it when the button
+     * is toggled on.
+     *
+     * @abstract
+     */
+    toggledAccessibilityLabel: string;
 
     labelProps: Object;
 
@@ -144,9 +155,21 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     /**
      * The text to display in the tooltip. Used only on web.
      *
+     * If `toggleTooltip` is defined, this is used only when the button is not
+     * toggled on.
+     *
      * @abstract
      */
     tooltip: ?string;
+
+    /**
+     * The text to display in the tooltip when the button is toggled on.
+     *
+     * Used only on web.
+     *
+     * @abstract
+     */
+    toggledTooltip: ?string;
 
     /**
      * Initializes a new {@code AbstractButton} instance.
@@ -222,6 +245,24 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     }
 
     /**
+     * Gets the current accessibility label, taking the toggled state into
+     * account. If no toggled label is provided, the regular accessibility label
+     * will also be used in the toggled state.
+     *
+     * The accessibility label is not visible in the UI, it is meant to be
+     * used by assistive technologies, mainly screen readers.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        return (this._isToggled()
+            ? this.toggledAccessibilityLabel
+            : this.accessibilityLabel
+        ) || this.accessibilityLabel;
+    }
+
+    /**
      * Gets the current styles, taking the toggled state into account. If no
      * toggled styles are provided, the regular styles will also be used in the
      * toggled state.
@@ -257,7 +298,9 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {string}
      */
     _getTooltip() {
-        return this.tooltip || '';
+        return (this._isToggled() ? this.toggledTooltip : this.tooltip)
+            || this.tooltip
+            || '';
     }
 
     /**
@@ -324,7 +367,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     render(): React$Node {
         const props = {
             ...this.props,
-            accessibilityLabel: this.accessibilityLabel,
+            accessibilityLabel: this._getAccessibilityLabel(),
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
             label: this._getLabel(),

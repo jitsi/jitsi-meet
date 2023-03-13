@@ -24,9 +24,11 @@ type Props = AbstractButtonProps & {
  */
 class ParticipantsPaneButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.participants';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
     icon = IconUsers;
     label = 'toolbar.participants';
     tooltip = 'toolbar.participants';
+    toggledTooltip = 'toolbar.closeParticipantsPane';
 
     /**
      * Indicates whether this button is in toggled state or not.

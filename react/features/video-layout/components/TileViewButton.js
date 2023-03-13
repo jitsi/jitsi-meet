@@ -38,7 +38,8 @@ type Props = AbstractButtonProps & {
  * @augments AbstractButton
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
+    accessibilityLabel = 'toolbar.accessibilityLabel.enterTileView';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitTileView';
     icon = IconTileView;
     label = 'toolbar.enterTileView';
     toggledLabel = 'toolbar.exitTileView';
