@@ -4,15 +4,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const TEXT_COLOR = BaseTheme.palette.text01;
 
-const headerNavigationButton = {
-    alignItems: 'center',
-    justifyContent: 'center'
-};
-
-const headerNavigationText = {
-    color: BaseTheme.palette.link01
-};
-
 const unreadCounterDescription = {
     ...BaseTheme.typography.bodyShortBoldLarge,
     color: BaseTheme.palette.text03
@@ -43,20 +34,17 @@ export const navigationStyles = {
         color: TEXT_COLOR
     },
 
-    headerNavigationButtonIcon: {
-        ...headerNavigationButton,
-        height: BaseTheme.spacing[5],
-        paddingLeft: BaseTheme.spacing[3],
-        width: BaseTheme.spacing[5]
+    headerNavigationIconButton: {
+        marginLeft: BaseTheme.spacing[2]
     },
 
     headerNavigationText: {
-        ...headerNavigationText
+        color: BaseTheme.palette.link01
     },
 
     headerNavigationTextBold: {
-        ...headerNavigationText,
-        ...BaseTheme.typography.bodyShortRegularLarge
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.link01
     },
 
     unreadCounterContainer: {

@@ -50,7 +50,7 @@ const HeaderNavigationButton
                             onPress = { onPress }
                             size = { 24 }
                             src = { src }
-                            style = { navigationStyles.headerNavigationButtonIcon } />
+                            style = { navigationStyles.headerNavigationIconButton } />
                     ) : (
                         <Button
                             disabled = { disabled }
