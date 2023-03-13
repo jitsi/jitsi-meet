@@ -16,7 +16,6 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
-    "@atlaskit/flag": "14.1.0",
     "@atlaskit/inline-dialog": "13.0.9",
     "@atlaskit/inline-message": "11.0.8",
     "@atlaskit/multi-select": "15.0.5",
@@ -119,7 +118,6 @@
     "react-native-youtube-iframe": "2.2.1",
     "react-redux": "7.1.0",
     "react-textarea-autosize": "8.3.0",
-    "react-transition-group": "2.4.0",
     "react-window": "1.8.6",
     "react-youtube": "10.1.0",
     "redux": "4.0.4",

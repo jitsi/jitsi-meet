@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
+import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
 
@@ -22,14 +23,14 @@ type Props = {
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-     dispatch: Function,
+    dispatch: Function,
 
-     toolboxVisible: boolean
+    toolboxVisible: boolean
 };
 
 /**
  * Implements a React {@link Component} which displays notifications and handles
- * automatic dismissmal after a notification is shown for a defined timeout
+ * automatic dismissal after a notification is shown for a defined timeout
  * period.
  *
  * @augments {Component}
@@ -95,9 +96,9 @@ class NotificationsContainer extends Component<Props> {
         if (_notifications.length) {
             const notification = _notifications[0];
             const previousNotification
-                 = prevProps && prevProps._notifications.length
-                     ? prevProps._notifications[0]
-                     : undefined;
+                = prevProps && prevProps._notifications.length
+                    ? prevProps._notifications[0]
+                    : undefined;
 
             if (notification !== previousNotification) {
                 this._clearNotificationDismissTimeout();
@@ -175,19 +176,21 @@ class NotificationsContainer extends Component<Props> {
         return (
             <SafeAreaView
                 edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }>
-                {
-                    _notifications.map((notification, index) => {
-                        const { props, uid } = notification;
+                <NotificationsTransition>
+                    {
+                        _notifications.map((notification, index) => {
+                            const { props, uid } = notification;
 
-                        return (
-                            <Notification
-                                { ...props }
-                                key = { index }
-                                onDismissed = { this._onDismissed }
-                                uid = { uid } />
-                        );
-                    })
-                }
+                            return (
+                                <Notification
+                                    { ...props }
+                                    key = { index }
+                                    onDismissed = { this._onDismissed }
+                                    uid = { uid } />
+                            );
+                        })
+                    }
+                </NotificationsTransition>
             </SafeAreaView>
         );
     }

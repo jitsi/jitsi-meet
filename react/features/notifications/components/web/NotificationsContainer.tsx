@@ -1,20 +1,16 @@
-import { FlagGroupContext } from '@atlaskit/flag/flag-group';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { Theme } from '@mui/material/styles';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
 import { connect } from '../../../base/redux/functions';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
+import { INotificationProps } from '../../types';
+import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
-
 interface IProps extends WithTranslation {
 
     /**
@@ -32,7 +28,7 @@ interface IProps extends WithTranslation {
      * notification at the top and the rest shown below it in order.
      */
     _notifications: Array<{
-        props: Object;
+        props: INotificationProps;
         uid: string;
     }>;
 
@@ -52,64 +48,20 @@ interface IProps extends WithTranslation {
     portal?: boolean;
 }
 
-const useStyles = (theme: Theme) => {
+const useStyles = () => {
     return {
         container: {
             position: 'absolute' as const,
             left: '16px',
-            bottom: '90px',
-            width: '400px',
+            bottom: '84px',
+            width: '320px',
             maxWidth: '100%',
             zIndex: 600
         },
 
         containerPortal: {
+            width: '100%',
             maxWidth: 'calc(100% - 32px)'
-        },
-
-        transitionGroup: {
-            '& > *': {
-                marginBottom: '20px',
-                borderRadius: '6px!important', // !important used to overwrite atlaskit style
-                position: 'relative'
-            },
-
-            '& div > span > svg > path': {
-                fill: 'inherit'
-            },
-
-            '& div > span, & div > p': {
-                color: theme.palette.field01
-            },
-
-            '& div.message > span': {
-                color: theme.palette.link01Active
-            },
-
-            '& .ribbon': {
-                width: '4px',
-                height: 'calc(100% - 16px)',
-                position: 'absolute',
-                left: 0,
-                top: '8px',
-                borderRadius: '4px',
-
-                '&.normal': {
-                    backgroundColor: theme.palette.link01Active
-                },
-
-                '&.error': {
-                    backgroundColor: theme.palette.iconError
-                },
-
-                '&.success': {
-                    backgroundColor: theme.palette.success01
-                },
-
-                '&.warning': {
-                    backgroundColor: theme.palette.warning01
-                }
-            }
         }
     };
 };
@@ -122,7 +74,6 @@ const useStyles = (theme: Theme) => {
  * @augments {Component}
  */
 class NotificationsContainer extends Component<IProps> {
-    _api: Object;
 
     /**
      * Initializes a new {@code NotificationsContainer} instance.
@@ -134,14 +85,6 @@ class NotificationsContainer extends Component<IProps> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDismissed = this._onDismissed.bind(this);
-
-        // HACK ALERT! We are rendering AtlasKit Flag elements outside of a FlagGroup container.
-        // In order to hook-up the dismiss action we'll a fake context provider,
-        // just like FlagGroup does.
-        this._api = {
-            onDismissed: this._onDismissed,
-            dismissAllowed: () => true
-        };
     }
 
     /**
@@ -151,25 +94,28 @@ class NotificationsContainer extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
+        const { _notifications } = this.props;
+
         if (this.props._iAmSipGateway) {
             return null;
         }
 
         return (
-            <AtlasKitThemeProvider mode = 'light'>
-                {/* @ts-ignore */}
-                <FlagGroupContext.Provider value = { this._api }>
-                    <div
-                        className = { clsx(this.props.classes.container, {
-                            [this.props.classes.containerPortal]: this.props.portal
-                        }) }
-                        id = 'notifications-container'>
-                        <TransitionGroup className = { this.props.classes.transitionGroup }>
-                            {this._renderFlags()}
-                        </TransitionGroup>
-                    </div>
-                </FlagGroupContext.Provider>
-            </AtlasKitThemeProvider>
+            <div
+                className = { clsx(this.props.classes.container, {
+                    [this.props.classes.containerPortal]: this.props.portal
+                }) }
+                id = 'notifications-container'>
+                <NotificationsTransition>
+                    {_notifications.map(({ props, uid }) => (
+                        <Notification
+                            { ...props }
+                            key = { uid }
+                            onDismissed = { this._onDismissed }
+                            uid = { uid } />
+                    )) || null }
+                </NotificationsTransition>
+            </div>
         );
     }
 
@@ -183,39 +129,6 @@ class NotificationsContainer extends Component<IProps> {
      */
     _onDismissed(uid: string) {
         this.props.dispatch(hideNotification(uid));
-    }
-
-    /**
-     * Renders notifications to display as ReactElements. An empty array will
-     * be returned if notifications are disabled.
-     *
-     * @private
-     * @returns {ReactElement[]}
-     */
-    _renderFlags() {
-        const { _notifications } = this.props;
-
-        return _notifications.map(notification => {
-            const { props, uid } = notification;
-
-            // The id attribute is necessary as {@code FlagGroup} looks for
-            // either id or key to set a key on notifications, but accessing
-            // props.key will cause React to print an error.
-            return (
-                <CSSTransition
-                    appear = { true }
-                    classNames = 'notification'
-                    in = { true }
-                    key = { uid }
-                    timeout = { 200 }>
-                    {/* @ts-ignore */}
-                    <Notification
-                        { ...props }
-                        onDismissed = { this._onDismissed }
-                        uid = { uid } />
-                </CSSTransition>
-            );
-        });
     }
 }
 
@@ -239,4 +152,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));
+export default connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer));

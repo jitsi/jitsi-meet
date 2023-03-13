@@ -16,14 +16,6 @@
     border-radius: 0;
 }
 
-/**
- * Move the @atlaskit/flag container up a little bit so it does not cover the
- * toolbar with the first notification.
- */
-.atlaskit-portal > #notifications-container {
-    bottom: calc(#{$newToolbarSizeWithPadding}) !important;
-}
-
 
 /**
  * Keep overflow menu within screen vertical bounds and make it scrollable.
