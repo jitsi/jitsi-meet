@@ -1,11 +1,13 @@
 import React from 'react';
-import { Linking, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
+import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
@@ -54,81 +56,51 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         const { _dialogStyles, t } = this.props;
 
         return (
-            <View style = { styles.formWrapper }>
-                <Text
-                    style = { [
-                        _dialogStyles.text,
-                        styles.text,
-                        styles.streamKeyInputLabel
-                    ] }>
-                    {
-                        t('dialog.streamKey')
-                    }
-                </Text>
-                <Input
-                    customStyles = {{ input: styles.streamKeyInput }}
-                    onChange = { this._onInputChange }
-                    placeholder = { t('liveStreaming.enterStreamKey') }
-                    value = { this.props.value } />
-                <View style = { styles.formFooter }>
-                    {
-                        this.state.showValidationError
-                            ? <View style = { styles.formFooterItem }>
-                                <Text
-                                    style = { [
-                                        _dialogStyles.text,
-                                        styles.warningText
-                                    ] }>
-                                    { t('liveStreaming.invalidStreamKey') }
-                                </Text>
-                            </View>
-                            : null
-                    }
-                    <View style = { styles.formFooterItem }>
-                        <TouchableOpacity
-                            onPress = { this._onOpenHelp }
-                            style = { styles.streamKeyHelp } >
-                            <Text
-                                style = { [
-                                    _dialogStyles.text,
-                                    styles.text
-                                ] }>
-                                {
-                                    t('liveStreaming.streamIdHelp')
-                                }
-                            </Text>
-                        </TouchableOpacity>
+            <>
+                <View style = { styles.formWrapper }>
+                    <Input
+                        customStyles = {{ input: styles.streamKeyInput }}
+                        onChange = { this._onInputChange }
+                        placeholder = { t('liveStreaming.enterStreamKey') }
+                        value = { this.props.value } />
+                    <View style = { styles.formValidation }>
+                        {
+                            this.state.showValidationError
+                                ? <View style = { styles.formValidationItem }>
+                                    <Text
+                                        style = { [
+                                            _dialogStyles.text,
+                                            styles.warningText
+                                        ] }>
+                                        { t('liveStreaming.invalidStreamKey') }
+                                    </Text>
+                                </View>
+                                : null
+                        }
+
                     </View>
                 </View>
-                <View>
-                    <TouchableOpacity onPress = { this._onOpenYoutubeTerms }>
-                        <Text
-                            style = { [
-                                _dialogStyles.text,
-                                styles.text,
-                                styles.tcText
-                            ] }>
-                            {
-                                t('liveStreaming.youtubeTerms')
-                            }
-                        </Text>
-                    </TouchableOpacity>
+                <View style = { styles.formButtonsWrapper }>
+                    <Button
+                        accessibilityLabel = 'liveStreaming.streamIdHelp'
+                        labelKey = 'liveStreaming.streamIdHelp'
+                        labelStyle = { styles.buttonLabelStyle }
+                        onClick = { this._onOpenHelp }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                    <Button
+                        accessibilityLabel = 'liveStreaming.youtubeTerms'
+                        labelKey = 'liveStreaming.youtubeTerms'
+                        labelStyle = { styles.buttonLabelStyle }
+                        onClick = { this._onOpenYoutubeTerms }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                    <Button
+                        accessibilityLabel = 'liveStreaming.googlePrivacyPolicy'
+                        labelKey = 'liveStreaming.googlePrivacyPolicy'
+                        labelStyle = { styles.buttonLabelStyle }
+                        onClick = { this._onOpenGooglePrivacyPolicy }
+                        type = { BUTTON_TYPES.TERTIARY } />
                 </View>
-                <View>
-                    <TouchableOpacity onPress = { this._onOpenGooglePrivacyPolicy }>
-                        <Text
-                            style = { [
-                                _dialogStyles.text,
-                                styles.text,
-                                styles.tcText
-                            ] }>
-                            {
-                                t('liveStreaming.googlePrivacyPolicy')
-                            }
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </>
         );
     }
 
