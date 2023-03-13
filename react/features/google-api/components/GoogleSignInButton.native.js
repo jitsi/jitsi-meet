@@ -1,9 +1,11 @@
 // @flow
 
 import React from 'react';
-import { Image, Text, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 
 import { translate } from '../../base/i18n';
+import Button from '../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../base/ui/constants.native';
 
 import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 import styles from './styles';
@@ -33,17 +35,16 @@ class GoogleSignInButton extends AbstractGoogleSignInButton {
      * @returns {ReactElement}
      */
     render() {
-        const { onClick, signedIn, t } = this.props;
+        const { onClick, signedIn } = this.props;
 
         if (signedIn) {
             return (
-                <TouchableOpacity
-                    onPress = { onClick }
-                    style = { styles.signOutButton } >
-                    <Text style = { styles.signOutButtonText }>
-                        { t('liveStreaming.signOut') }
-                    </Text>
-                </TouchableOpacity>
+                <Button
+                    accessibilityLabel = 'liveStreaming.signOut'
+                    labelKey = 'liveStreaming.signOut'
+                    onClick = { onClick }
+                    style = { styles.signOutButton }
+                    type = { BUTTON_TYPES.SECONDARY } />
             );
         }
 
