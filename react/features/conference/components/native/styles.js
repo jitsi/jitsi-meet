@@ -131,6 +131,7 @@ export default {
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
+        lineHeight: 14,
         textAlign: 'center'
     },
 
