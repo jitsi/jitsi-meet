@@ -1,7 +1,8 @@
 import React from 'react';
-import { Text, TouchableRipple } from 'react-native-paper';
 
-import { Icon } from '../../../base/icons';
+import Button from '../../../base/ui/components/native/Button';
+import IconButton from '../../../base/ui/components/native/IconButton';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import { navigationStyles } from './styles';
 
@@ -45,27 +46,24 @@ const HeaderNavigationButton
             <>
                 {
                     src ? (
-                        <TouchableRipple
+                        <IconButton
                             onPress = { onPress }
-                            style = { navigationStyles.headerNavigationButtonIcon } >
-                            <Icon
-                                size = { 24 }
-                                src = { src } />
-                        </TouchableRipple>
+                            size = { 24 }
+                            src = { src }
+                            style = { navigationStyles.headerNavigationButton } />
                     ) : (
-                        <TouchableRipple
+                        <Button
                             disabled = { disabled }
-                            onPress = { onPress }
-                            style = { navigationStyles.headerNavigationButtonText } >
-                            <Text
-                                style = {
-                                    twoActions
-                                        ? navigationStyles.headerNavigationTextBold
-                                        : navigationStyles.headerNavigationText
-                                }>
-                                { label }
-                            </Text>
-                        </TouchableRipple>
+                            labelKey = { label }
+                            labelStyle = {
+                                twoActions
+                                    ? navigationStyles.headerNavigationButtonLabelBold
+                                    : navigationStyles.headerNavigationButtonLabel
+                            }
+                            onClick = { onPress }
+                            style = { navigationStyles.headerNavigationButton }
+                            type = { BUTTON_TYPES.TERTIARY }
+                            useRippleColor = { false } />
                     )}
             </>
         );

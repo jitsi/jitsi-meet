@@ -375,6 +375,7 @@ class SettingsView extends Component<IProps, IState> {
                             accessibilityLabel = 'settingsView.help'
                             labelKey = 'settingsView.help'
                             onClick = { this._onShowHelpPressed }
+                            style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
                         {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
@@ -382,6 +383,7 @@ class SettingsView extends Component<IProps, IState> {
                             accessibilityLabel = 'settingsView.terms'
                             labelKey = 'settingsView.terms'
                             onClick = { this._onShowTermsPressed }
+                            style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
                         {/* @ts-ignore */}
                         <Divider style = { styles.fieldSeparator } />
@@ -389,6 +391,7 @@ class SettingsView extends Component<IProps, IState> {
                             accessibilityLabel = 'settingsView.privacy'
                             labelKey = 'settingsView.privacy'
                             onClick = { this._onShowPrivacyPressed }
+                            style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </FormSection>
                     {/* @ts-ignore */}
