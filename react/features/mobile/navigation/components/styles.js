@@ -34,15 +34,15 @@ export const navigationStyles = {
         color: TEXT_COLOR
     },
 
-    headerNavigationIconButton: {
+    headerNavigationButton: {
         marginLeft: BaseTheme.spacing[2]
     },
 
-    headerNavigationText: {
+    headerNavigationButtonLabel: {
         color: BaseTheme.palette.link01
     },
 
-    headerNavigationTextBold: {
+    headerNavigationButtonLabelBold: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.link01
     },

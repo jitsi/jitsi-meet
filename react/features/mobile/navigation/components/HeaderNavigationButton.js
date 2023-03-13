@@ -50,18 +50,20 @@ const HeaderNavigationButton
                             onPress = { onPress }
                             size = { 24 }
                             src = { src }
-                            style = { navigationStyles.headerNavigationIconButton } />
+                            style = { navigationStyles.headerNavigationButton } />
                     ) : (
                         <Button
                             disabled = { disabled }
                             labelKey = { label }
                             labelStyle = {
                                 twoActions
-                                    ? navigationStyles.headerNavigationTextBold
-                                    : navigationStyles.headerNavigationText
+                                    ? navigationStyles.headerNavigationButtonLabelBold
+                                    : navigationStyles.headerNavigationButtonLabel
                             }
                             onClick = { onPress }
-                            type = { BUTTON_TYPES.TERTIARY } />
+                            style = { navigationStyles.headerNavigationButton }
+                            type = { BUTTON_TYPES.TERTIARY }
+                            useRippleColor = { false } />
                     )}
             </>
         );
