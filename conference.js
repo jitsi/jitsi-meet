@@ -1455,7 +1455,7 @@ export default {
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
 
-                if (oldTrack === newTrack) {
+                if (oldTrack === newTrack || (!oldTrack && !newTrack)) {
                     resolve();
                     onFinish();
 
