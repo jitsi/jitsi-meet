@@ -100,6 +100,11 @@ interface IProps {
      * TabIndex  for the Icon.
      */
     tabIndex?: number;
+
+    /**
+     * Test id for the icon.
+     */
+    testId?: string;
 }
 
 export const DEFAULT_COLOR = navigator.product === 'ReactNative' ? 'white' : undefined;
@@ -132,6 +137,7 @@ export default function Icon(props: IProps) {
         role,
         onKeyPress,
         onKeyDown,
+        testId,
         ...rest
     }: IProps = props;
 
@@ -167,6 +173,7 @@ export default function Icon(props: IProps) {
             aria-label = { ariaLabel }
             aria-pressed = { ariaPressed }
             className = { `${jitsiIconClassName} ${className || ''}` }
+            data-testid = { testId }
             id = { containerId }
             onClick = { onClick }
             onKeyDown = { onKeyDown }
