@@ -2,7 +2,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
-export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text03;
 
 const TEXT_SIZE = 14;
 
@@ -146,5 +145,11 @@ export default {
      */
     screenContainer: {
         flex: 1
+    },
+
+    linksButton: {
+        alignSelf: 'center',
+        maxWidth: 400,
+        width: 'auto'
     }
 };
