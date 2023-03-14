@@ -9,7 +9,6 @@ import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { areThereNotifications } from '../../../notifications/functions';
 import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
 import {
