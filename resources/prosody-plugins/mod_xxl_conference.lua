@@ -207,4 +207,24 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-room-destroyed',function(event)
         visitors_nodes[event.room.jid] = nil;
     end);
+
+    -- detects new participants joining main room and sending them to the visitor nodes
+    host_module:hook('muc-occupant-joined', function (event)
+        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+
+        -- filter focus
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil then
+            return;
+        end
+
+        local vnodes = visitors_nodes[room.jid].nodes;
+        local user, _, res = jid.split(occupant.nick);
+        -- a main participant we need to update all active visitor nodes
+        for k in pairs(vnodes) do
+            local fmuc_pr = st.clone(stanza);
+            fmuc_pr.attr.to = jid.join(user, k, res);
+            fmuc_pr.attr.from = occupant.jid;
+            module:send(fmuc_pr);
+        end
+    end);
 end);
