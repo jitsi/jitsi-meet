@@ -105,5 +105,16 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         marginLeft: BaseTheme.spacing[1]
+    },
+
+    withToolbox: {
+        bottom: 64,
+        position: 'absolute',
+        width: '100%'
+    },
+
+    withoutToolbox: {
+        position: 'absolute',
+        width: '100%'
     }
 };

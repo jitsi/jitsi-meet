@@ -9,7 +9,6 @@ import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { areThereNotifications } from '../../../notifications/functions';
 import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
 import {
@@ -52,8 +51,6 @@ type Props = {
     _toolboxVisible: Boolean,
 
     _localParticipantId: string,
-
-    _notificationsAvailable: boolean,
 
     /**
      * The participants in the conference.
@@ -252,7 +249,6 @@ class Filmstrip extends PureComponent<Props> {
             _disableSelfView,
             _toolboxVisible,
             _localParticipantId,
-            _notificationsAvailable,
             _participants,
             _visible
         } = this.props;
@@ -261,7 +257,7 @@ class Filmstrip extends PureComponent<Props> {
             return null;
         }
 
-        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible && !_notificationsAvailable;
+        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible;
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
@@ -335,7 +331,6 @@ function _mapStateToProps(state) {
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
         _localParticipantId: getLocalParticipant(state)?.id,
-        _notificationsAvailable: areThereNotifications(state),
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)
