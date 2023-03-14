@@ -12,7 +12,6 @@ import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
 
-
 interface IProps extends WithTranslation {
 
     /**
