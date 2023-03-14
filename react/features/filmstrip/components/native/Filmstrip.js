@@ -261,7 +261,7 @@ class Filmstrip extends PureComponent<Props> {
             return null;
         }
 
-        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible && !_notificationsAvailable;
+        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible;
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
