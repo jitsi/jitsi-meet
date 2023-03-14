@@ -53,8 +53,6 @@ type Props = {
 
     _localParticipantId: string,
 
-    _notificationsAvailable: boolean,
-
     /**
      * The participants in the conference.
      */
@@ -252,7 +250,6 @@ class Filmstrip extends PureComponent<Props> {
             _disableSelfView,
             _toolboxVisible,
             _localParticipantId,
-            _notificationsAvailable,
             _participants,
             _visible
         } = this.props;
@@ -335,7 +332,6 @@ function _mapStateToProps(state) {
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
         _localParticipantId: getLocalParticipant(state)?.id,
-        _notificationsAvailable: areThereNotifications(state),
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)
