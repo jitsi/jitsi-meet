@@ -47,7 +47,7 @@ class NotificationsContainer extends Component<IProps> {
     /**
      * A timeout id returned by setTimeout.
      */
-    _notificationDismissTimeout: number;
+    _notificationDismissTimeout: ReturnType<typeof setTimeout>;
 
     /**
      * Initializes a new {@code NotificationsContainer} instance.
@@ -153,11 +153,11 @@ class NotificationsContainer extends Component<IProps> {
      * Emits an action to remove the notification from the redux store so it
      * stops displaying.
      *
-     * @param {number} uid - The id of the notification to be removed.
+     * @param {Object} uid - The id of the notification to be removed.
      * @private
      * @returns {void}
      */
-    _onDismissed(uid) {
+    _onDismissed(uid: any) {
         const { _notifications } = this.props;
 
         // Clear the timeout only if it's the top notification that's being
