@@ -47,7 +47,7 @@ class NotificationsContainer extends Component<IProps> {
     /**
      * A timeout id returned by setTimeout.
      */
-    _notificationDismissTimeout: ReturnType<typeof setTimeout>;
+    _notificationDismissTimeout: any;
 
     /**
      * Initializes a new {@code NotificationsContainer} instance.
