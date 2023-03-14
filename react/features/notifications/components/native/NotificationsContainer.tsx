@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import {Platform, StyleProp, ViewStyle} from 'react-native';
+import { Platform, StyleProp, ViewStyle } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { IReduxState } from '../../../app/types';
@@ -174,7 +174,7 @@ class NotificationsContainer extends Component<IProps> {
     render() {
         const { _notifications, toolboxVisible } = this.props;
         const notificationsContainerStyle
-            = toolboxVisible ? styles.withToolbox : styles.withoutToolbox
+            = toolboxVisible ? styles.withToolbox : styles.withoutToolbox;
 
         return (
             <SafeAreaView
@@ -182,7 +182,7 @@ class NotificationsContainer extends Component<IProps> {
                 style = { notificationsContainerStyle as StyleProp<ViewStyle> }>
                 <NotificationsTransition>
                     {
-                        _notifications.map((notification, index) => {
+                        _notifications.map(notification => {
                             // @ts-ignore
                             const { props, uid } = notification;
 
