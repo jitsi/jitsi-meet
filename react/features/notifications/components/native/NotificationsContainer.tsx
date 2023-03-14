@@ -10,6 +10,8 @@ import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
+
+// @ts-ignore
 import styles from './styles';
 
 
@@ -44,7 +46,7 @@ class NotificationsContainer extends Component<IProps> {
     /**
      * A timeout id returned by setTimeout.
      */
-    _notificationDismissTimeout: NodeJS.Timeout;
+    _notificationDismissTimeout: number;
 
     /**
      * Initializes a new {@code NotificationsContainer} instance.
@@ -109,8 +111,10 @@ class NotificationsContainer extends Component<IProps> {
                 // @ts-ignore
                 if (notification?.timeout) {
 
-                    const { timeout, uid } = notification as any;
+                    // @ts-ignore
+                    const { timeout, uid } = notification;
 
+                    // @ts-ignore
                     this._notificationDismissTimeout = setTimeout(() => {
                         // Perform a no-op if a timeout is not specified.
                         this._onDismissed(uid);
@@ -182,7 +186,8 @@ class NotificationsContainer extends Component<IProps> {
                 <NotificationsTransition>
                     {
                         _notifications.map(notification => {
-                            const { props, uid } = notification as any;
+                            // @ts-ignore
+                            const { props, uid } = notification;
 
                             return (
                                 <Notification
