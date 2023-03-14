@@ -90,7 +90,7 @@ class NotificationsContainer extends Component<IProps> {
     /**
      * Sets/clears the dismiss timeout for the top notification.
      *
-     * @param {P} [prevProps] - The previous properties (if called from
+     * @param {IProps} [prevProps] - The previous properties (if called from
      * {@code componentDidUpdate}).
      * @returns {void}
      * @private
@@ -109,8 +109,7 @@ class NotificationsContainer extends Component<IProps> {
                 // @ts-ignore
                 if (notification?.timeout) {
 
-                    // @ts-ignore
-                    const { timeout, uid } = notification;
+                    const { timeout, uid } = notification as any;
 
                     this._notificationDismissTimeout = setTimeout(() => {
                         // Perform a no-op if a timeout is not specified.
@@ -179,12 +178,11 @@ class NotificationsContainer extends Component<IProps> {
         return (
             <SafeAreaView
                 edges = { [ Platform.OS === 'ios' && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
-                style = { notificationsContainerStyle as StyleProp<ViewStyle> }>
+                style = { notificationsContainerStyle as any }>
                 <NotificationsTransition>
                     {
                         _notifications.map(notification => {
-                            // @ts-ignore
-                            const { props, uid } = notification;
+                            const { props, uid } = notification as any;
 
                             return (
                                 <Notification
