@@ -434,6 +434,7 @@ class Thumbnail extends Component<IProps, IState> {
         this.timeoutHandle = undefined;
         this.containerRef = createRef<HTMLSpanElement>();
         this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
+        this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
         this._onTogglePinButtonKeyDown = this._onTogglePinButtonKeyDown.bind(this);
         this._onFocus = this._onFocus.bind(this);
@@ -998,6 +999,15 @@ class Thumbnail extends Component<IProps, IState> {
     }
 
     /**
+     * Canplay event listener.
+     *
+     * @returns {void}
+     */
+    _onCanPlay() {
+        this.setState({ canPlayEventReceived: true });
+    }
+
+    /**
      * Renders a remote participant's 'thumbnail.
      *
      * @param {boolean} local - Whether or not it's the local participant.
@@ -1038,6 +1048,8 @@ class Thumbnail extends Component<IProps, IState> {
                 styles.thumbnail.height = styles.thumbnail.width;
                 containerClassName = `${containerClassName} self-view-mobile-portrait`;
             }
+        } else {
+            videoEventListeners.onCanPlay = this._onCanPlay;
         }
 
         const video = _videoTrack && <VideoTrack
