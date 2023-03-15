@@ -22,15 +22,6 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 const FADE_DURATION_MS = 300;
 
 /**
- * List of container events that we are going to process, will be added as listener to the
- * container for every event in the list. The latest event will be stored in redux.
- */
-const containerEvents = [
-    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
-    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
-];
-
-/**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method
  * ensures that whole video will be visible and can leave empty areas.
