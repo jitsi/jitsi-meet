@@ -134,7 +134,7 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.3.0)
-  - JitsiWebRTC (106.0.0)
+  - JitsiWebRTC (111.0.1)
   - libwebp (1.2.4):
     - libwebp/demux (= 1.2.4)
     - libwebp/mux (= 1.2.4)
@@ -390,8 +390,8 @@ PODS:
   - react-native-video/Video (6.0.0-alpha.1):
     - PromisesSwift
     - React-Core
-  - react-native-webrtc (106.0.7):
-    - JitsiWebRTC (~> 106.0.0)
+  - react-native-webrtc (111.0.0):
+    - JitsiWebRTC (~> 111.0.0)
     - React-Core
   - react-native-webview (11.15.1):
     - React-Core
@@ -501,7 +501,7 @@ DEPENDENCIES:
   - Firebase/DynamicLinks (~> 8.0)
   - "giphy-react-native-sdk (from `../node_modules/@giphy/react-native-sdk`)"
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - JitsiWebRTC (~> 106.0.0)
+  - JitsiWebRTC (~> 111.0.0)
   - ObjectiveDropboxOfficial (= 6.2.3)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -725,7 +725,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
-  JitsiWebRTC: f441eb0e2d67f0588bf24e21c5162e97342714fb
+  JitsiWebRTC: 9619c1f71cc16eeca76df68aa2d213c6d63274a8
   libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
@@ -755,7 +755,7 @@ SPEC CHECKSUMS:
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
-  react-native-webrtc: 0df36747802476e758af6b6dceccdeaed8c826c2
+  react-native-webrtc: a9d4d8ef61adb634e006ffd956c494ad8318d95c
   react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 46620fc6d1c3157b60ed28434e08f7fd7f3f3353
   React-RCTActionSheet: b1f7e72a0ba760ec684df335c61f730b5179f5ff
@@ -782,6 +782,6 @@ SPEC CHECKSUMS:
   RNWatch: dae6c858a2051dbdcfb00b9a86cf4d90400263b4
   Yoga: 7929b92b1828675c1bebeb114dae8cb8fa7ef6a3
 
-PODFILE CHECKSUM: e671cdcdb80fab67e305861c36bfae8ed5a5b0ef
+PODFILE CHECKSUM: d9116cb59cd7e921956e45de7cbbd75bef3862c1
 
 COCOAPODS: 1.11.3
