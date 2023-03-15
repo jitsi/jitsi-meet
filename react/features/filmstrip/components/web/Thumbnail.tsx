@@ -29,10 +29,9 @@ import {
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { isTestModeEnabled } from '../../../base/testing/functions';
 // @ts-ignore
 import { Tooltip } from '../../../base/tooltip';
-import { trackStreamingStatusChanged, updateLastTrackVideoMediaEvent } from '../../../base/tracks/actions';
+import { trackStreamingStatusChanged } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
@@ -51,8 +50,7 @@ import {
     DISPLAY_VIDEO,
     FILMSTRIP_TYPE,
     SHOW_TOOLBAR_CONTEXT_MENU_AFTER,
-    THUMBNAIL_TYPE,
-    VIDEO_TEST_EVENTS
+    THUMBNAIL_TYPE
 } from '../../constants';
 import {
     computeDisplayModeFromInput,
@@ -168,11 +166,6 @@ export interface IProps extends WithTranslation {
      * Indicates whether the participant is screen sharing.
      */
     _isScreenSharing: boolean;
-
-    /**
-     * Indicates whether testing mode is enabled.
-     */
-    _isTestModeEnabled: boolean;
 
     /**
      * Indicates whether the video associated with the thumbnail is playable.
@@ -441,7 +434,6 @@ class Thumbnail extends Component<IProps, IState> {
         this.timeoutHandle = undefined;
         this.containerRef = createRef<HTMLSpanElement>();
         this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
-        this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
         this._onTogglePinButtonKeyDown = this._onTogglePinButtonKeyDown.bind(this);
         this._onFocus = this._onFocus.bind(this);
@@ -452,7 +444,6 @@ class Thumbnail extends Component<IProps, IState> {
             trailing: false
         });
         this._onMouseLeave = this._onMouseLeave.bind(this);
-        this._onTestingEvent = this._onTestingEvent.bind(this);
         this._onTouchStart = this._onTouchStart.bind(this);
         this._onTouchEnd = this._onTouchEnd.bind(this);
         this._onTouchMove = this._onTouchMove.bind(this);
@@ -1007,41 +998,6 @@ class Thumbnail extends Component<IProps, IState> {
     }
 
     /**
-     * Canplay event listener.
-     *
-     * @param {SyntheticEvent} event - The event.
-     * @returns {void}
-     */
-    _onCanPlay(event: any) {
-        this.setState({ canPlayEventReceived: true });
-
-        const {
-            _isTestModeEnabled,
-            _videoTrack
-        } = this.props;
-
-        if (_videoTrack && _isTestModeEnabled) {
-            this._onTestingEvent(event);
-        }
-    }
-
-    /**
-     * Event handler for testing events.
-     *
-     * @param {SyntheticEvent} event - The event.
-     * @returns {void}
-     */
-    _onTestingEvent(event: any) {
-        const {
-            _videoTrack,
-            dispatch
-        } = this.props;
-        const jitsiVideoTrack = _videoTrack?.jitsiTrack;
-
-        dispatch(updateLastTrackVideoMediaEvent(jitsiVideoTrack, event.type));
-    }
-
-    /**
      * Renders a remote participant's 'thumbnail.
      *
      * @param {boolean} local - Whether or not it's the local participant.
@@ -1055,7 +1011,6 @@ class Thumbnail extends Component<IProps, IState> {
             _isMobile,
             _isMobilePortrait,
             _isScreenSharing,
-            _isTestModeEnabled,
             _localFlipX,
             _participant,
             _shouldDisplayTintBackground,
@@ -1083,13 +1038,6 @@ class Thumbnail extends Component<IProps, IState> {
                 styles.thumbnail.height = styles.thumbnail.width;
                 containerClassName = `${containerClassName} self-view-mobile-portrait`;
             }
-        } else {
-            if (_videoTrack && _isTestModeEnabled) {
-                VIDEO_TEST_EVENTS.forEach(attribute => {
-                    videoEventListeners[attribute] = this._onTestingEvent;
-                });
-            }
-            videoEventListeners.onCanPlay = this._onCanPlay;
         }
 
         const video = _videoTrack && <VideoTrack
@@ -1204,12 +1152,10 @@ class Thumbnail extends Component<IProps, IState> {
      */
     render() {
         const {
-            _isTestModeEnabled,
             _isVirtualScreenshareParticipant,
             _participant,
             _shouldDisplayTintBackground
         } = this.props;
-        const videoEventListeners: any = {};
 
         if (!_participant) {
             return null;
@@ -1231,13 +1177,6 @@ class Thumbnail extends Component<IProps, IState> {
         if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
             const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
-
-            if (_isTestModeEnabled) {
-                VIDEO_TEST_EVENTS.forEach(attribute => {
-                    videoEventListeners[attribute] = this._onTestingEvent;
-                });
-                videoEventListeners.onCanPlay = this._onCanPlay;
-            }
 
             return (
                 <VirtualScreenshareParticipant
@@ -1404,7 +1343,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _isMobile,
         _isMobilePortrait,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
-        _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
         _isVirtualScreenshareParticipant,
         _localFlipX: Boolean(localFlipX),

@@ -31,7 +31,6 @@ import {
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED,
-    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_WILL_CREATE
 } from './actionTypes';
 import {
@@ -823,29 +822,6 @@ export function setNoSrcDataNotificationUid(uid?: string) {
     return {
         type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
-    };
-}
-
-/**
- * Updates the last media event received for a video track.
- *
- * @param {JitsiRemoteTrack} track - JitsiTrack instance.
- * @param {string} name - The current media event name for the video.
- * @returns {{
- *     type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
- *     track: Track,
- *     name: string
- * }}
- */
-export function updateLastTrackVideoMediaEvent(track: any, name: string): {
-    name: string;
-    track: any;
-    type: 'TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT';
-} {
-    return {
-        type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
-        track,
-        name
     };
 }
 

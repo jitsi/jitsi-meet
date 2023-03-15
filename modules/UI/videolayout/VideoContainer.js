@@ -6,9 +6,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
-import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
-import { LargeVideoBackground, ORIENTATION, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
+import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video';
 import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -21,15 +20,6 @@ import LargeContainer from './LargeContainer';
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
-
-/**
- * List of container events that we are going to process, will be added as listener to the
- * container for every event in the list. The latest event will be stored in redux.
- */
-const containerEvents = [
-    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
-    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
-];
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -266,14 +256,6 @@ export class VideoContainer extends LargeContainer {
         this._resizeListeners = new Set();
 
         this.$video[0].onresize = this._onResize.bind(this);
-
-        if (isTestModeEnabled(APP.store.getState())) {
-            const cb = name => APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
-
-            containerEvents.forEach(event => {
-                this.$video[0].addEventListener(event, cb.bind(this, event));
-            });
-        }
     }
 
     /**
