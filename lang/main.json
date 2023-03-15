@@ -675,6 +675,7 @@
         "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
         "disconnected": "disconnected",
         "displayNotifications": "Display notifications for",
+        "dontRemindMe": "Do not remind me",
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
         "gifsMenu": "GIPHY",

@@ -36,10 +36,12 @@ import {
 import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions.any';
 
+import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
 // @ts-ignore
-import { notifyKickedOut } from './actions';
+import { dismissCalendarNotification, notifyKickedOut } from './actions';
 
-let intervalId: any;
+
+let intervalID: any;
 
 
 MiddlewareRegistry.register(store => next => action => {
@@ -72,10 +74,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DISMISS_CALENDAR_NOTIFICATION:
     case CONFERENCE_LEFT:
     case CONFERENCE_FAILED: {
-        clearInterval(intervalId);
-        intervalId = null;
+        clearInterval(intervalID);
+        intervalID = null;
 
         break;
     }
@@ -146,8 +149,8 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
         getState
     });
 
-    if (!intervalId) {
-        intervalId = setInterval(() =>
+    if (!intervalID) {
+        intervalID = setInterval(() =>
             _maybeDisplayCalendarNotification({
                 dispatch,
                 getState
@@ -232,20 +235,20 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
         return;
     }
 
-    const customActionNameKey = [ 'notify.joinMeeting' ];
-    const customActionType = [ BUTTON_TYPES.PRIMARY ];
+    const customActionNameKey = [ 'notify.joinMeeting', 'notify.dontRemindMe' ];
+    const customActionType = [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ];
     const customActionHandler = [ () => batch(() => {
         dispatch(hideNotification(CALENDAR_NOTIFICATION_ID));
         if (eventToShow?.url && (eventToShow.url !== currentConferenceURL)) {
             dispatch(appNavigate(eventToShow.url));
         }
-    }) ];
+    }), () => dispatch(dismissCalendarNotification()) ];
     const description
         = getLocalizedDateFormatter(eventToShow.startDate).fromNow();
     const icon = NOTIFICATION_ICON.WARNING;
     const title = (eventToShow.startDate < now) && (eventToShow.endDate > now)
-        ? i18n.t('calendarSync.ongoingMeeting')
-        : i18n.t('calendarSync.nextMeeting');
+        ? `${i18n.t('calendarSync.ongoingMeeting')}: ${eventToShow.title}`
+        : `${i18n.t('calendarSync.nextMeeting')}: ${eventToShow.title}`;
     const uid = CALENDAR_NOTIFICATION_ID;
 
     dispatch(showNotification({
