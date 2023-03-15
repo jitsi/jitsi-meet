@@ -39,7 +39,7 @@ export function notifyKickedOut(participant: any, submit?: Function) {
 /**
  * Dismisses calendar notification about next or ongoing event.
  *
- * @returns {Function}
+ * @returns {Object}
  */
 export function dismissCalendarNotification() {
     return {
