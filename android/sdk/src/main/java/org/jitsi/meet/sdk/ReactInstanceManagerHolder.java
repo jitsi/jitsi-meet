@@ -32,17 +32,17 @@ import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
-import com.oney.WebRTCModule.RTCVideoViewManager;
-import com.oney.WebRTCModule.WebRTCModule;
+import com.oney.WebRTCModule.WebRTCModuleOptions;
+import com.oney.WebRTCModule.webrtcutils.H264AndSoftwareVideoDecoderFactory;
+import com.oney.WebRTCModule.webrtcutils.H264AndSoftwareVideoEncoderFactory;
 
 import org.devio.rn.splashscreen.SplashScreenModule;
 import org.webrtc.EglBase;
-import org.webrtc.audio.AudioDeviceModule;
-import org.webrtc.audio.JavaAudioDeviceModule;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 class ReactInstanceManagerHolder {
@@ -79,30 +79,11 @@ class ReactInstanceManagerHolder {
             nativeModules.add(new RNConnectionService(reactContext));
         }
 
-        // Initialize the WebRTC module by hand, since we want to override some
-        // initialization options.
-        WebRTCModule.Options options = new WebRTCModule.Options();
-
-        AudioDeviceModule adm = JavaAudioDeviceModule.builder(reactContext)
-            .setEnableVolumeLogger(false)
-            .createAudioDeviceModule();
-        options.setAudioDeviceModule(adm);
-
-        EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
-
-        options.setVideoDecoderFactory(new WebRTCVideoDecoderFactory(eglContext));
-        options.setVideoEncoderFactory(new WebRTCVideoEncoderFactory(eglContext));
-
-        nativeModules.add(new WebRTCModule(reactContext, options));
-
         return nativeModules;
     }
 
     private static List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Arrays.<ViewManager>asList(
-            // WebRTC, see createNativeModules for details.
-            new RTCVideoViewManager()
-        );
+        return Collections.emptyList();
     }
 
     static List<ReactPackage> getReactNativePackages() {
@@ -122,6 +103,7 @@ class ReactInstanceManagerHolder {
             new com.reactnativecommunity.webview.RNCWebViewPackage(),
             new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
             new com.learnium.RNDeviceInfo.RNDeviceInfo(),
+            new com.oney.WebRTCModule.WebRTCModulePackage(),
             new com.swmansion.gesturehandler.RNGestureHandlerPackage(),
             new org.linusu.RNGetRandomValuesPackage(),
             new com.rnimmersive.RNImmersivePackage(),
@@ -253,6 +235,14 @@ class ReactInstanceManagerHolder {
         if (reactInstanceManager != null) {
             return;
         }
+
+        // Initialize the WebRTC module options.
+        WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
+
+        EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
+
+        options.videoDecoderFactory = new H264AndSoftwareVideoDecoderFactory(eglContext);
+        options.videoEncoderFactory = new H264AndSoftwareVideoEncoderFactory(eglContext);
 
         Log.d(TAG, "initializing RN with Application");
 
