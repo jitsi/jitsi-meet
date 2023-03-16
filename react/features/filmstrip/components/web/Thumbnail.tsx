@@ -651,6 +651,17 @@ class Thumbnail extends Component<IProps, IState> {
     }
 
     /**
+     * Returns the size the avatar should have.
+     *
+     * @returns {number}
+     */
+    _getAvatarSize() {
+        const { _height, _width } = this.props;
+
+        return Math.min(_height / 2, _width - 30, 200);
+    }
+
+    /**
      * Returns an object with the styles for thumbnail.
      *
      * @returns {Object} - The styles for the thumbnail.
@@ -687,7 +698,7 @@ class Thumbnail extends Component<IProps, IState> {
             video: {}
         };
 
-        const avatarSize = Math.min(_height / 2, _width - 30, 200);
+        const avatarSize = this._getAvatarSize();
         let { left } = style || {};
 
         if (typeof left === 'number' && horizontalOffset) {
@@ -923,7 +934,8 @@ class Thumbnail extends Component<IProps, IState> {
                 style = { styles }>
                 <Avatar
                     className = 'userAvatar'
-                    participantId = { id } />
+                    participantId = { id }
+                    size = { this._getAvatarSize() } />
             </div>
         );
     }

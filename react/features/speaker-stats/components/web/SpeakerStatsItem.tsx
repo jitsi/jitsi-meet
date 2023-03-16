@@ -79,13 +79,13 @@ const SpeakerStatsItem = (props: Props) => {
                             <StatelessAvatar
                                 className = 'userAvatar'
                                 color = { BaseTheme.palette.ui04 }
-                                initials = { getInitials(props.displayName) } />
+                                initials = { getInitials(props.displayName) }
+                                size = { 32 } />
                         ) : (
                             <Avatar
-
-                                // @ts-ignore
                                 className = 'userAvatar'
-                                participantId = { props.participantId } />
+                                participantId = { props.participantId }
+                                size = { 32 } />
                         )
                     }
                 </div>

@@ -1,8 +1,11 @@
+import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 
 import Icon from '../../../icons/components/Icon';
+import { IconUser } from '../../../icons/svg';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 import AbstractStatelessAvatar, { type IProps as AbstractProps } from '../AbstractStatelessAvatar';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
@@ -47,17 +50,21 @@ interface IProps extends AbstractProps {
 /**
  * Creates the styles for the component.
  *
+ * @param {Theme} theme - The MUI theme.
  * @returns {Object}
  */
-const styles = () => {
+const styles = (theme: Theme) => {
     return {
         avatar: {
             backgroundColor: '#AAA',
             borderRadius: '50%',
-            color: 'rgba(255, 255, 255, 1)',
-            fontWeight: '100',
+            fontWeight: '600',
+            color: theme.palette?.text01 || '#fff',
+            ...withPixelLineHeight(theme.typography?.heading1 ?? {}),
+            fontSize: 'inherit',
             objectFit: 'cover' as const,
             textAlign: 'center' as const,
+            overflow: 'hidden',
 
             '&.avatar-small': {
                 height: '28px !important',
@@ -77,6 +84,14 @@ const styles = () => {
                 height: '100%',
                 width: '100%'
             }
+        },
+
+        initialsContainer: {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
         },
 
         badge: {
@@ -173,35 +188,23 @@ class StatelessAvatar extends AbstractStatelessAvatar<IProps> {
                     data-testid = { this.props.testId }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
-                    <svg
-                        className = 'avatar-svg'
-                        viewBox = '0 0 100 100'
-                        xmlns = 'http://www.w3.org/2000/svg'
-                        xmlnsXlink = 'http://www.w3.org/1999/xlink'>
-                        <text
-                            dominantBaseline = 'central'
-                            fill = 'rgba(255,255,255,1)'
-                            fontSize = '40pt'
-                            textAnchor = 'middle'
-                            x = '50'
-                            y = '50'>
-                            { initials }
-                        </text>
-                    </svg>
+                    <div className = { this.props.classes.initialsContainer }>
+                        {initials}
+                    </div>
                 </div>
             );
         }
 
         // default avatar
         return (
-            <div className = { this._getBadgeClassName() }>
-                <img
-                    alt = 'avatar'
-                    className = { this._getAvatarClassName('defaultAvatar') }
-                    data-testid = { this.props.testId }
-                    id = { this.props.id }
-                    src = { this.props.defaultAvatar || 'images/avatar.png' }
-                    style = { this._getAvatarStyle() } />
+            <div
+                className = { clsx(this._getAvatarClassName('defaultAvatar'), this._getBadgeClassName()) }
+                data-testid = { this.props.testId }
+                id = { this.props.id }
+                style = { this._getAvatarStyle() }>
+                <Icon
+                    size = { '50%' }
+                    src = { IconUser } />
             </div>
         );
     }
@@ -217,7 +220,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<IProps> {
 
         return {
             background: color || undefined,
-            fontSize: size ? size * 0.5 : '180%',
+            fontSize: size ? size * 0.4 : '180%',
             height: size || '100%',
             width: size || '100%'
         };
