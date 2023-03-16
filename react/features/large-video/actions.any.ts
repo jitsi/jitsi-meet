@@ -1,15 +1,16 @@
 import { IReduxState, IStore } from '../app/types';
-import { getSsrcRewritingFeatureFlag } from '../base/config/functions.any';
+import { IStateful } from '../base/app/types';
 import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getLocalScreenShareParticipant,
+    getParticipantById,
     getPinnedParticipant,
     getRemoteParticipants,
     getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants/functions';
-import { ITrack } from '../base/tracks/types';
+import { toState } from '../base/redux/functions';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { getAutoPinSetting } from '../video-layout/functions';
 
@@ -104,17 +105,24 @@ export function setLargeVideoDimensions(height: number, width: number) {
 /**
  * Returns the most recent existing remote video track.
  *
- * @param {Track[]} tracks - All current tracks.
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
  * @private
  * @returns {(Track|undefined)}
  */
-function _electLastVisibleRemoteVideo(tracks: ITrack[]) {
+function _electLastVisibleRemoteParticipant(stateful: IStateful) {
+    const state = toState(stateful);
+    const tracks = state['features/base/tracks'];
+
     // First we try to get most recent remote video track.
     for (let i = tracks.length - 1; i >= 0; --i) {
         const track = tracks[i];
 
-        if (!track.local && track.mediaType === MEDIA_TYPE.VIDEO) {
-            return track;
+        if (!track.local && track.mediaType === MEDIA_TYPE.VIDEO && track.participantId) {
+            const participant = getParticipantById(state, track.participantId);
+
+            if (participant) {
+                return participant;
+            }
         }
     }
 }
@@ -171,14 +179,10 @@ function _electParticipantInLargeVideo(state: IReduxState) {
     participant = undefined;
 
     // Next, pick the most recent participant with video.
-    // (Skip this if rewriting, tracks may be detached from any owner.)
-    if (!getSsrcRewritingFeatureFlag(state)) {
-        const tracks = state['features/base/tracks'];
-        const videoTrack = _electLastVisibleRemoteVideo(tracks);
+    const lastVisibleRemoteParticipant = _electLastVisibleRemoteParticipant(state);
 
-        if (videoTrack) {
-            return videoTrack.participantId;
-        }
+    if (lastVisibleRemoteParticipant) {
+        return lastVisibleRemoteParticipant.id;
     }
 
     // Last, select the participant that joined last (other than poltergist or other bot type participants).
