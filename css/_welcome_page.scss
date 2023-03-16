@@ -20,7 +20,6 @@ body.welcome-page {
         background-size: $welcomePageHeaderBackgroundSize;
         padding-bottom: $welcomePageHeaderPaddingBottom;
         background-color: #131519;
-        height: 400px;
         overflow: hidden;
         position: relative;
 
@@ -62,26 +61,58 @@ body.welcome-page {
 
         }
 
+        .insecure-room-name-warning {
+            align-items: center;
+            color: $defaultWarningColor;
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            margin-top: 15px;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+
+            .jitsi-icon {
+                margin-right: 15px;
+
+                svg {
+                    fill: $defaultWarningColor;
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+        }
+
+        ::placeholder {
+            color: #253858;
+        }
+
         #enter_room {
             display: $welcomePageEnterRoomDisplay;
             align-items: center;
             max-width: 480px;
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
-            background-color: #fff;
-            padding: $welcomePageEnterRoomPadding;
-            border-radius: 4px;
-            margin: $welcomePageEnterRoomMargin;
+            height: fit-content;
 
-            .enter-room-input-container {
+            .join-meeting-container {
+                margin: $welcomePageEnterRoomMargin;
+                padding: $welcomePageEnterRoomPadding;
+                border-radius: 4px;
+                background-color: #fff;
+                display: flex;
+                width: 100%;
                 text-align: left;
                 color: #253858;
+            }
+
+            .enter-room-input-container {
                 flex-grow: 1;
-                height: fit-content;
                 padding-right: 4px;
-                position: relative;
 
                 .enter-room-input {
+                    border-radius: 4px;
                     border: 0;
                     background: #fff;
                     display: inline-block;
@@ -94,44 +125,13 @@ body.welcome-page {
                         outline: auto 2px #005fcc;
                     }
                 }
-
-                .insecure-room-name-warning {
-                    align-items: center;
-                    color: $defaultWarningColor;
-                    display: flex;
-                    flex-direction: row;
-                    margin-top: 15px;
-
-                    .jitsi-icon {
-                        margin-right: 15px;
-
-                        svg {
-                            fill: $defaultWarningColor
-                        }
-                    }
-                }
-
-                ::placeholder {
-                    color: #253858;
-                }
-            }
-
-            .warning-without-link {
-                position: absolute;
-                top: 44px;
-                left: -10px;
-            }
-
-            .warning-with-link {
-                position: absolute;
-                top: 84px;
             }
 
         }
 
         #moderated-meetings {
             max-width: calc(100% - 40px);
-            padding: 16px 0 39px 0;
+            padding: 16px 0 0;
             width: $welcomePageEnterRoomWidth;
             text-align: center;
 
