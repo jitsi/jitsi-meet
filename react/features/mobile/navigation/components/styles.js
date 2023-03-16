@@ -15,7 +15,7 @@ const headerNavigationButtonLabel = {
     color: BaseTheme.palette.link01,
     fontSize: HEADER_ACTION_BUTTON_SIZE,
     lineHeight: BaseTheme.spacing[3]
-}
+};
 
 /**
  * Styles of the navigation feature.
