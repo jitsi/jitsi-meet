@@ -6,9 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { IconRaiseHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../base/tooltip';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { open as openParticipantsPane } from '../../../participants-pane/actions.web';
 
 const useStyles = makeStyles()(theme => {

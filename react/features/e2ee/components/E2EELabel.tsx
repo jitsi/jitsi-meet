@@ -5,9 +5,7 @@ import { translate } from '../../base/i18n/functions';
 import { IconE2EE } from '../../base/icons/svg';
 import Label from '../../base/label/components/web/Label';
 import { COLORS } from '../../base/label/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 
 import { IProps, _mapStateToProps } from './AbstractE2EELabel';
 

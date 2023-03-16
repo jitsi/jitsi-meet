@@ -230,12 +230,9 @@ const styles = (theme: Theme) => {
         },
         contextMenu: {
             position: 'relative' as const,
-            marginTop: 0,
+            margin: 0,
             right: 'auto',
-            padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
-            marginLeft: theme.spacing(1),
-            marginRight: theme.spacing(1),
-            marginBottom: theme.spacing(1)
+            padding: `${theme.spacing(2)} ${theme.spacing(1)}`
         },
         download: {},
         mobile: {

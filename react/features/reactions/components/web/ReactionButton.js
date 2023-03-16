@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Tooltip } from '../../../base/tooltip';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import AbstractToolbarButton from '../../../toolbox/components/AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps } from '../../../toolbox/components/AbstractToolbarButton';
 

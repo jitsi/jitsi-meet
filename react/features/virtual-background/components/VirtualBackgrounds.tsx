@@ -14,8 +14,7 @@ import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
-// @ts-ignore
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
@@ -430,7 +429,7 @@ function VirtualBackgrounds({
                         </Tooltip>
                         {_images.map(image => (
                             <Tooltip
-                                content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
+                                content = { (image.tooltip && t(`virtualBackground.${image.tooltip}`)) ?? '' }
                                 key = { image.id }
                                 position = { 'top' }>
                                 <img

@@ -18,6 +18,7 @@
         "node_modules",
         "react/features/analytics/handlers/GoogleAnalyticsHandler.ts",
         "react/features/base/components/participants-pane-list",
+        "react/features/base/tooltip",
         "react/features/connection-stats",
         "react/features/desktop-picker",
         "react/features/e2ee",
