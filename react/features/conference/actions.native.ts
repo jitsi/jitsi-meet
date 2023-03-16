@@ -5,6 +5,9 @@ import { openDialog } from '../base/dialog/actions';
 import { AlertDialog } from '../base/dialog/components/native';
 import { getParticipantDisplayName } from '../base/participants/functions';
 
+import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
+
+
 /**
  * Notify that we've been kicked out of the conference.
  *
@@ -30,5 +33,16 @@ export function notifyKickedOut(participant: any, submit?: Function) {
             },
             onSubmit: submit
         }));
+    };
+}
+
+/**
+ * Dismisses calendar notification about next or ongoing event.
+ *
+ * @returns {Object}
+ */
+export function dismissCalendarNotification() {
+    return {
+        type: DISMISS_CALENDAR_NOTIFICATION
     };
 }
