@@ -9,6 +9,14 @@ const unreadCounterDescription = {
     color: BaseTheme.palette.text03
 };
 
+const HEADER_ACTION_BUTTON_SIZE = 16;
+
+const headerNavigationButtonLabel = {
+    color: BaseTheme.palette.link01,
+    fontSize: HEADER_ACTION_BUTTON_SIZE,
+    lineHeight: BaseTheme.spacing[3]
+};
+
 /**
  * Styles of the navigation feature.
  */
@@ -39,12 +47,12 @@ export const navigationStyles = {
     },
 
     headerNavigationButtonLabel: {
-        color: BaseTheme.palette.link01
+        ...headerNavigationButtonLabel
     },
 
     headerNavigationButtonLabelBold: {
-        ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.link01
+        ...headerNavigationButtonLabel,
+        ...BaseTheme.typography.bodyShortRegularLarge
     },
 
     unreadCounterContainer: {
