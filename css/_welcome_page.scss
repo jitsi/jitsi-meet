@@ -64,6 +64,7 @@ body.welcome-page {
         .insecure-room-name-warning {
             align-items: center;
             color: $defaultWarningColor;
+            font-weight: 600;
             display: flex;
             flex-direction: row;
             margin-top: 15px;
@@ -74,7 +75,11 @@ body.welcome-page {
                 margin-right: 15px;
 
                 svg {
-                    fill: $defaultWarningColor
+                    fill: $defaultWarningColor;
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
                 }
             }
         }
