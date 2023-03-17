@@ -5,7 +5,7 @@
         position: relative;
         right: auto;
         margin-bottom: 4px;
-        max-height: 456px;
+        max-height: calc(100vh - 100px);
         overflow: auto;
         width: 300px;
 
