@@ -6,7 +6,7 @@ export default {
     displayNameBackdrop: {
         alignSelf: 'center',
         backgroundColor: BaseTheme.palette.ui16,
-        borderRadius: 4,
+        borderRadius: BaseTheme.shape.borderRadius,
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1]
     },
