@@ -63,10 +63,7 @@ deploy-appbundle:
 
 deploy-lib-jitsi-meet:
 	cp \
-		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.min.js \
-		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.min.map \
-		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.e2ee-worker.js \
-		$(LIBJITSIMEET_DIR)/modules/browser/capabilities.json \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
 		$(DEPLOY_DIR)
 
 deploy-olm:
