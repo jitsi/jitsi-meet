@@ -31,6 +31,7 @@ import {
     showSharedVideoMenu
 } from '../../../participants-pane/actions.native';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
+import { shouldDisplayTileView } from '../../../video-layout';
 import { SQUARE_TILE_ASPECT_RATIO } from '../../constants';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -64,6 +65,11 @@ type Props = {
      * Indicates whether the participant is screen sharing.
      */
     _isScreenShare: boolean,
+
+    /**
+     * Whether or not tile view layout has been enabled as the user preference.
+     */
+    _isTileViewEnabled: boolean,
 
     /**
      * Indicates whether the thumbnail is for a virtual screenshare participant.
@@ -205,6 +211,7 @@ class Thumbnail extends PureComponent<Props> {
         const {
             _audioMuted: audioMuted,
             _fakeParticipant,
+            _isTileViewEnabled,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
             _renderModeratorIndicator: renderModeratorIndicator,
@@ -218,12 +225,13 @@ class Thumbnail extends PureComponent<Props> {
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
-                style = { [
-                    styles.thumbnailTopIndicatorContainer,
-                    styles.thumbnailTopLeftIndicatorContainer
-                ] }>
+                style = { styles.thumbnailTopLeftIndicatorContainer }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
-                { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
+                {
+                    !_isVirtualScreenshare && <RaisedHandIndicator
+                        isTileView = { _isTileViewEnabled }
+                        participantId = { participantId } />
+                }
                 { tileView && isScreenShare && (
                     <View style = { styles.indicatorContainer }>
                         <ScreenShareIndicator />
@@ -416,6 +424,7 @@ function _mapStateToProps(state, ownProps) {
         _fakeParticipant: participant?.fakeParticipant,
         _gifSrc: mode === 'chat' ? null : gifSrc,
         _isScreenShare: isScreenShare,
+        _isTileViewEnabled: shouldDisplayTileView(state),
         _isVirtualScreenshare: isScreenShareParticipant(participant),
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
