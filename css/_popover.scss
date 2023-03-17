@@ -1,49 +1,27 @@
-/**
- * Mousemove padding styles are used to add invisible elements to the popover
- * to allow mouse movement from the popover trigger to the popover itself
- * without triggering a mouseleave event.
- */
-%vertical-popover-padding {
-    height: 100%;
-    position: absolute;
-    top: 0;
-    width: 20px;
-    padding: 20px 0;
-    top: -20px;
-}
-
-%horizontal-popover-padding {
-    height: 25px;
-    position: absolute;
-    right: 0;
-    width: 100%;
-    padding: 0 35px;
-    left: -35px;
-}
-
-.popover-mousemove-padding-left {
-    @extend %vertical-popover-padding;
-    left: -35px;
-}
-
-.popover-mousemove-padding-right {
-    @extend %vertical-popover-padding;
-    right: -35px;
-}
-
-.popover-mousemove-padding-bottom {
-    @extend %horizontal-popover-padding;
-    bottom: -40px;
-}
-
-.popover-mousemove-padding-top {
-    @extend %horizontal-popover-padding;
-    top: -40px;
-}
-
 .popover {
     margin: -16px -24px;
     z-index: $popoverZ;
+
+    .popover-content {
+        margin: 16px 24px;
+        position: relative;
+
+        &.top {
+            bottom: 8px;
+        }
+
+        &.bottom {
+            top: 8px;
+        }
+
+        &.left {
+            right: 8px;
+        }
+
+        &.right {
+            left: 8px;
+        }
+    }
 }
 
 .excalidraw .popover {

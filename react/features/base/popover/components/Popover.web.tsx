@@ -5,7 +5,6 @@ import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
-import { isMobileBrowser } from '../../environment/utils';
 import { connect } from '../../redux/functions';
 import { getContextMenuStyle } from '../functions.web';
 
@@ -13,6 +12,11 @@ import { getContextMenuStyle } from '../functions.web';
  * The type of the React {@code Component} props of {@link Popover}.
  */
 interface IProps {
+
+    /**
+     * Whether the child element can be clicked on.
+     */
+    allowClick?: boolean;
 
     /**
      * A child React Element to use as the trigger for showing the dialog.
@@ -245,7 +249,8 @@ class Popover extends Component<IProps, IState> {
                     <DialogPortal
                         getRef = { this._setContextMenuRef }
                         setSize = { this._setContextMenuStyle }
-                        style = { this.state.contextMenuStyle }>
+                        style = { this.state.contextMenuStyle }
+                        targetSelector = '.popover-content'>
                         <ReactFocusLock
                             lockProps = {{
                                 role: 'dialog',
@@ -345,9 +350,11 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onClick(event: React.MouseEvent) {
-        const { trigger, visible } = this.props;
+        const { allowClick, trigger, visible } = this.props;
 
-        event.stopPropagation();
+        if (!allowClick) {
+            event.stopPropagation();
+        }
         if (trigger === 'click') {
             if (visible) {
                 this._onHideDialog();
@@ -417,20 +424,15 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content } = this.props;
+        const { content, position } = this.props;
 
         return (
             <div
                 className = 'popover'
                 onKeyDown = { this._onEscKey }>
-                { content }
-                {!isMobileBrowser() && (
-                    <>
-                        <div className = 'popover-mousemove-padding-top' />
-                        <div className = 'popover-mousemove-padding-right' />
-                        <div className = 'popover-mousemove-padding-left' />
-                        <div className = 'popover-mousemove-padding-bottom' />
-                    </>)}
+                <div className = { `popover-content ${position.split('-')[0]}` }>
+                    { content }
+                </div>
             </div>
         );
     }

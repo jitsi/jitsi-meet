@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 
 import { Icon } from '../../icons';
-import { Tooltip } from '../../tooltip';
+import Tooltip from '../../tooltip/components/Tooltip';
 import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
 import AbstractToolboxItem from './AbstractToolboxItem';

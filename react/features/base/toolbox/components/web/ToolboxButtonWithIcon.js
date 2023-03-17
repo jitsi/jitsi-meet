@@ -4,7 +4,7 @@ import React from 'react';
 
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 import { Icon } from '../../../icons';
-import { Tooltip } from '../../../tooltip';
+import Tooltip from '../../../tooltip/components/Tooltip';
 
 type Props = {
 
@@ -107,12 +107,13 @@ export default function ToolboxButtonWithIcon(props: Props) {
     } = props;
 
     const iconProps = {};
+    let className = '';
 
     if (iconDisabled) {
-        iconProps.className
+        className
             = 'settings-button-small-icon settings-button-small-icon--disabled';
     } else {
-        iconProps.className = 'settings-button-small-icon';
+        className = 'settings-button-small-icon';
         iconProps.onClick = () => {
             if (typeof APP !== 'undefined' && notifyMode) {
                 APP.API.notifyToolbarButtonClicked(
@@ -141,6 +142,7 @@ export default function ToolboxButtonWithIcon(props: Props) {
 
             <div>
                 <Tooltip
+                    containerClassName = { className }
                     content = { iconTooltip }
                     position = 'top'>
                     <Icon

@@ -31,6 +31,12 @@ type Props = {
      * Custom style to apply to the container div.
      */
     style?: any;
+
+    /**
+     * The selector for the element we consider the content container.
+     * This is used to determine the correct size of the portal content.
+     */
+    targetSelector?: string;
 };
 
 /**
@@ -39,7 +45,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function DialogPortal({ children, className, style, getRef, setSize }: Props) {
+function DialogPortal({ children, className, style, getRef, setSize, targetSelector }: Props) {
     const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
@@ -87,13 +93,15 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
             }
         });
 
+        const target = targetSelector ? portalTarget.querySelector(targetSelector) : portalTarget;
+
         if (document.body) {
             document.body.appendChild(portalTarget);
-            observer.observe(portalTarget);
+            observer.observe(target ?? portalTarget);
         }
 
         return () => {
-            observer.unobserve(portalTarget);
+            observer.unobserve(target ?? portalTarget);
             if (document.body) {
                 document.body.removeChild(portalTarget);
             }

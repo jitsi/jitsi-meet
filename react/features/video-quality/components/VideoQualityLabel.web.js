@@ -8,7 +8,7 @@ import { IconPerformance } from '../../base/icons';
 import { Label } from '../../base/label';
 import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 import { shouldDisplayTileView } from '../../video-layout';
 
 import AbstractVideoQualityLabel, {

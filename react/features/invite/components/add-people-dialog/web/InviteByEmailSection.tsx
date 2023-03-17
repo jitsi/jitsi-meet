@@ -11,9 +11,7 @@ import {
     IconOffice365,
     IconYahoo
 } from '../../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../../base/tooltip';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
 
 interface IProps {

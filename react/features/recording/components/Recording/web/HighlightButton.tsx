@@ -10,9 +10,7 @@ import { IconHighlight } from '../../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../../base/jwt/constants';
 import Label from '../../../../base/label/components/web/Label';
 import { connect } from '../../../../base/redux/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../../base/tooltip';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
 import AbstractHighlightButton, {

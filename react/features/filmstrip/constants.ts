@@ -222,7 +222,9 @@ export const STATS_POPOVER_POSITION = {
 /**
  * The tooltip position for the indicators on the thumbnail.
  */
-export const INDICATORS_TOOLTIP_POSITION = {
+export const INDICATORS_TOOLTIP_POSITION: {
+    [x: string]: 'right' | 'left' | 'top';
+} = {
     [THUMBNAIL_TYPE.TILE]: 'right',
     [THUMBNAIL_TYPE.VERTICAL]: 'left',
     [THUMBNAIL_TYPE.HORIZONTAL]: 'top'

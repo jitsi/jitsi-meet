@@ -10,7 +10,7 @@ import {
 import { translate } from '../../base/i18n';
 import { Icon, IconPlus } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 import { updateCalendarEvent } from '../actions';
 
 /**

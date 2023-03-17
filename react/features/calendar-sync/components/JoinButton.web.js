@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { Icon, IconPlus } from '../../base/icons';
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 
 /**
  * The type of the React {@code Component} props of {@link JoinButton}.
