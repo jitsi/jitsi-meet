@@ -590,6 +590,9 @@ var config = {
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
+    // Enables webhid functionality for Audio.
+    // enableWebHIDFeature: false,
+
     // DEPRECATED! Use 'welcomePage.disabled' instead.
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.

@@ -45,6 +45,16 @@ export function getToolbarButtons(state: IReduxState): Array<string> {
 }
 
 /**
+ * Returns the configuration value of web-hid feature.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean} True if web-hid feature should be enabled, otherwise false.
+ */
+export function getWebHIDFeatureConfig(state: IReduxState): boolean {
+    return state['features/base/config'].enableWebHIDFeature || false;
+}
+
+/**
  * Checks if the specified button is enabled.
  *
  * @param {string} buttonName - The name of the button.

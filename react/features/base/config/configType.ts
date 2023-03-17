@@ -324,6 +324,7 @@ export interface IConfig {
     enableSaveLogs?: boolean;
     enableTcc?: boolean;
     enableUnifiedOnChrome?: boolean;
+    enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
     etherpad_base?: string;
     faceLandmarks?: {
