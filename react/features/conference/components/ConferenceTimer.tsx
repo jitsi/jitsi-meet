@@ -82,6 +82,7 @@ const ConferenceTimer = ({ textStyle }: IProps) => {
     const stopTimer = useCallback(() => {
         if (interval.current) {
             clearInterval(interval.current);
+            interval.current = undefined;
         }
 
         setTimerValue(getLocalizedDurationFormatter(0));
