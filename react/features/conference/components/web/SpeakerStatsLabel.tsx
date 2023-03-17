@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
-import { IconConnection } from '../../../base/icons/svg';
+import { IconUsers } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
 import { getParticipantCount } from '../../../base/participants/functions';
@@ -33,7 +33,7 @@ function SpeakerStatsLabel() {
     return (
         <Label
             color = { COLORS.white }
-            icon = { IconConnection }
+            icon = { IconUsers }
             iconColor = '#fff'
             // eslint-disable-next-line react/jsx-no-bind
             onClick = { onClick }
