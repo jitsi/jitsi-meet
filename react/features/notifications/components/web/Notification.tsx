@@ -104,7 +104,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             alignItems: 'flex-start',
             padding: '8px 0',
-            flex: 1
+            flex: 1,
+            maxWidth: '100%'
         },
 
         textContainer: {
@@ -113,7 +114,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             justifyContent: 'space-between',
             color: theme.palette.text04,
             flex: 1,
-            margin: '0 8px'
+            margin: '0 8px',
+
+            // maxWidth: 100% minus the icon on left (20px) minus the close icon on the right (20px) minus the margins
+            maxWidth: 'calc(100% - 40px - 16px)',
+            maxHeight: '150px'
         },
 
         title: {
@@ -122,6 +127,8 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         description: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            overflow: 'auto',
+            overflowWrap: 'break-word',
 
             '&:not(:empty)': {
                 marginTop: theme.spacing(1)
