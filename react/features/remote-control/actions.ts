@@ -207,14 +207,14 @@ export function processPermissionRequestReply(participantId: string, event: any)
                 // the remote control permissions has been granted
                 // pin the controlled participant
                 const pinnedParticipant = getPinnedParticipant(state);
-                const virtualScreenshareParticipantId = getVirtualScreenshareParticipantByOwnerId(state, participantId);
+                const virtualScreenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participantId);
                 const pinnedId = pinnedParticipant?.id;
 
                 // @ts-ignore
-                if (virtualScreenshareParticipantId && pinnedId !== virtualScreenshareParticipantId) {
+                if (virtualScreenshareParticipant?.id && pinnedId !== virtualScreenshareParticipant?.id) {
                     // @ts-ignore
-                    dispatch(pinParticipant(virtualScreenshareParticipantId));
-                } else if (!virtualScreenshareParticipantId && pinnedId !== participantId) {
+                    dispatch(pinParticipant(virtualScreenshareParticipant?.id));
+                } else if (!virtualScreenshareParticipant?.id && pinnedId !== participantId) {
                     dispatch(pinParticipant(participantId));
                 }
             }
