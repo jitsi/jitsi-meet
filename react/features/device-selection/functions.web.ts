@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { IStateful } from '../base/app/types';
+import { getWebHIDFeatureConfig } from '../base/config/functions.web';
 import {
     addPendingDeviceRequest,
     getAvailableDevices,
@@ -44,7 +45,7 @@ export function getDeviceSelectionDialogProps(stateful: IStateful, isDisplayedOn
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedCamera = getUserSelectedCameraDeviceId(state);
     const userSelectedMic = getUserSelectedMicDeviceId(state);
-    const deviceHidSupported = isDeviceHidSupported();
+    const deviceHidSupported = isDeviceHidSupported() && getWebHIDFeatureConfig(state);
 
     // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
     // case for Safari on iOS.
