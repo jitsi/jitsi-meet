@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { IStateful } from '../base/app/types';
+import { getWebHIDFeatureConfig } from '../base/config/functions.web';
 import {
     addPendingDeviceRequest,
     getAvailableDevices,
@@ -46,7 +47,7 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
     const inputDeviceChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedMic = getUserSelectedMicDeviceId(state);
-    const deviceHidSupported = isDeviceHidSupported();
+    const deviceHidSupported = isDeviceHidSupported() && getWebHIDFeatureConfig(state);
     const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
     const hideNoiseSuppression = isPrejoinPageVisible(state) || isDisplayedOnWelcomePage;
 
