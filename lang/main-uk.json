@@ -68,9 +68,9 @@
         },
         "join": "Приєднатися",
         "joinTooltip": "Приєднатися до зустрічі",
-        "nextMeeting": "наступна зустріч",
+        "nextMeeting": "Наступна зустріч",
         "noEvents": "Немає запланованих подій.",
-        "ongoingMeeting": "поточна зустріч",
+        "ongoingMeeting": "Поточна зустріч",
         "permissionButton": "Налаштування",
         "permissionMessage": "Для перегляду зустрічей у застосунку потрібен дозвіл Календаря.",
         "refresh": "Оновити календар",
@@ -89,7 +89,7 @@
     "chat": {
         "enter": "Увійти в кімнату",
         "error": "Помилка: ваше повідомлення не було відправлено. Причина: {{error}}",
-        "fieldPlaceHolder": "Текст повідомлення",
+        "fieldPlaceHolder": "Аа",
         "lobbyChatMessageTo": "Повідомлення у приймальній для {{recipient}}",
         "message": "Повідомлення",
         "messageAccessibleTitle": "{{user}} пише:",
@@ -147,6 +147,7 @@
         "bridgeCount": "Кількість серверів: ",
         "codecs": "Кодеки (A/V): ",
         "connectedTo": "З'єднано з:",
+        "e2eeVerified": "E2EE підтверджено:",
         "framerate": "Частота кадрів:",
         "less": "Показати менше",
         "localaddress": "Локальна адреса:",
@@ -183,13 +184,21 @@
     "deepLinking": {
         "appNotInstalled": "Встановіть застосунок {{app}}, щоб приєднатися до цієї зустрічі з мобільного пристрою.",
         "description": "Ми спробували розпочати вашу зустріч у програмі {{app}}. Спробуйте ще раз або відкрийте {{app}} у веб-браузері.",
+        "descriptionNew": "Ми спробували розпочати вашу зустріч у програмі {{app}}. <br /><br /> Спробуйте ще раз або розпочніть зустріч у веб-браузері.",
         "descriptionWithoutWeb": "Ми спробували розпочати вашу зустріч у програмі {{app}}.",
         "downloadApp": "Завантажити застосунок",
+        "downloadMobileApp": "Завантажити з App Store",
         "ifDoNotHaveApp": "Якщо застосунок ще не встановлено:",
         "ifHaveApp": "Якщо ви вже встановили застосунок:",
         "joinInApp": "Приєднатися до цієї зустрічі за допомогою застосунку",
+        "joinInAppNew": "Приєднатися із застосунку",
+        "joinInBrowser": "Приєднатися у веб-браузері",
+        "launchMeetingLabel": "Яким чином приєднатися до цієї зустрічі?",
         "launchWebButton": "Відкрити у веб-браузері",
+        "noMobileApp": "Застосунок не встановлений?",
+        "termsAndConditions": "Продовжуючи, ви погоджуєтесь з нашіми <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>умовами використання.</a>",
         "title": "Приєднання до вашої зустрічі у {{app}}...",
+        "titleNew": "Приєднання до вашої зустрічі ...",
         "tryAgainButton": "Спробуйте у програмі на ПК",
         "unsupportedBrowser": "Ви використовуєте веб-браузер, який ми не підтримуємо."
     },
@@ -202,10 +211,16 @@
         "microphonePermission": "Помилка отримання дозволу доступу до мікрофона"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Налаштування зв'язку",
+            "connectedDevices": "Приєднані пристрої:",
+            "deleteDevice": "Вилучити пристрій",
+            "pairDevice": "Додати пристрій Bluetooth"
+        },
         "noPermission": "Дозвіл не надано",
         "previewUnavailable": "Перегляд недоступний",
         "selectADevice": "Виберіть пристрій",
-        "testAudio": "Перевірити звук"
+        "testAudio": "Перевірити"
     },
     "dialIn": {
         "screenTitle": "Підсумок вихідного дзвінка"
@@ -225,7 +240,9 @@
         "WaitingForHostTitle": "В очікуванні організатора...",
         "Yes": "Так",
         "accessibilityLabel": {
-            "liveStreaming": "Трансляція"
+            "close": "Закрити",
+            "liveStreaming": "Трансляція",
+            "sharingTabs": "Параметри спільного доступу"
         },
         "add": "Додати",
         "addMeetingNote": "Додати примітку про цю зустріч",
@@ -408,6 +425,10 @@
         "user": "Користувач",
         "userIdentifier": "Ідентифікатор користувача",
         "userPassword": "Пароль",
+        "verifyParticipantConfirm": "Збігаються",
+        "verifyParticipantDismiss": "Не збігаються",
+        "verifyParticipantQuestion": "Запитайте, чи учасник {{participantName}} бачить однаковий з вашим вміст і в тому самому порядку (ТЕСТУВАННЯ).",
+        "verifyParticipantTitle": "Підтвердження особи учасника",
         "videoLink": "URL-адреса відео",
         "viewUpgradeOptions": "Переглянути додаткові послуги",
         "viewUpgradeOptionsContent": "Щоб отримати необмежений доступ до таких преміум-послуг, як записування, транскрипція, RTMP трансляцію тощо, вам потрібно оновити ваш пакет послуг.",
@@ -433,12 +454,14 @@
         "veryBad": "Дуже погано",
         "veryGood": "Дуже добре"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Панель видів"
+        }
+    },
     "giphy": {
         "noResults": "Нічого не знайдено :(",
         "search": "Пошук GIPHY"
-    },
-    "helpView": {
-        "title": "Довідка"
     },
     "incomingCall": {
         "answer": "Відповісти",
@@ -563,7 +586,6 @@
     "lobby": {
         "admit": "Допустити",
         "admitAll": "Допустити всіх",
-        "allow": "Дозволити",
         "backToKnockModeButton": "Запитати дозволу",
         "chat": "Чат",
         "dialogTitle": "Приймальна",
@@ -649,8 +671,11 @@
         "connectedOneMember": "{{name}} на зв'язку",
         "connectedThreePlusMembers": "{{name}} та {{count}} інших учасників приєдналися до зустрічі",
         "connectedTwoMembers": "{{first}} та {{second}} приєдналися до зустрічі",
+        "dataChannelClosed": "Погіршення якості відео",
+        "dataChannelClosedDescription": "Канал мультимедійного мосту відключено; якість відео знижена до мінімуму.",
         "disconnected": "з'єднання розірване",
         "displayNotifications": "Показувати сповіщення:",
+        "dontRemindMe": "Не нагадувати",
         "focus": "Фокус зустрічі",
         "focusFail": "{{component}} недоступний - повторіть спробу через {{ms}} мс",
         "gifsMenu": "GIPHY",
@@ -659,6 +684,7 @@
         "invitedOneMember": "{{name}} запрошено",
         "invitedThreePlusMembers": "Запрошено {{name}} та {{count}} інших користувачів",
         "invitedTwoMembers": "{{first}} та {{second}} запрошено до зустрічі",
+        "joinMeeting": "Приєднатися",
         "kickParticipant": "{{kicker}} від'єднав {{kicked}} від зустрічі",
         "leftOneMember": "{{name}} покинув зустріч",
         "leftThreePlusMembers": "{{name}} та багато інших учасників покинули зустріч",
@@ -709,6 +735,8 @@
         "reactionSoundsForAll": "Вимкнути звукові сповіщення для всіх",
         "screenShareNoAudio": "На екрані вибору вікна не була ввімкнена опція «Поділитися аудіо».",
         "screenShareNoAudioTitle": "Не вдалося надати спільний доступ до аудіо!",
+        "screenSharingAudioOnlyDescription": "Увага: увімкнення спільного перегляду екрана збільшить споживання пропускної здатності, що погіршить якість режиму \"Найкраща продуктивність\".",
+        "screenSharingAudioOnlyTitle": "Режим \"Найкраща продуктивність\"",
         "selfViewTitle": "Ви завжди можете скасувати приховування виду на себе в налаштуваннях",
         "somebody": "Учасник",
         "startSilentDescription": "Повторно приєднайтеся до зустрічі, щоб увімкнути звук",
@@ -746,6 +774,7 @@
         "headings": {
             "lobby": "Приймальна ({{count}})",
             "participantsList": "Учасники ({{count}})",
+            "visitors": "Відвідувачі ({{count}})",
             "waitingLobby": "Очікують у приймальній ({{count}})"
         },
         "search": "Пошук учасників",
@@ -753,6 +782,7 @@
     },
     "passwordDigitsOnly": "До {{number}} цифр",
     "passwordSetRemotely": "Встановлено іншим учасником",
+    "pinParticipant": "{{participantName}} - Закріпити",
     "pinnedParticipant": "Учасник закріплений",
     "polls": {
         "answer": {
@@ -858,12 +888,9 @@
         "rejected": "Відмовився",
         "ringing": "Дзвінок..."
     },
-    "privacyView": {
-        "title": "Конфіденційність"
-    },
     "profile": {
         "avatar": "аватар",
-        "setDisplayNameLabel": "Ім'я на екрані",
+        "setDisplayNameLabel": "Ім'я",
         "setEmailInput": "Зазначте email",
         "setEmailLabel": "Email-адреса для Gravatar",
         "title": "Профіль"
@@ -914,6 +941,7 @@
         "localRecordingVideoWarning": "Щоб записати ваше відео, камера має бути увімкнена до початку запису",
         "localRecordingWarning": "Виберіть поточну вкладку веб-браузера, щоб використовувати правильні налаштування камери та мікрофона. Запис наразі обмежений 1 ГБ, що становить приблизно 100 хв.",
         "loggedIn": "Ви ввійшли як {{userName}}",
+        "noMicPermission": "Не вдалося створити мікрофонну доріжку. Надайте дозвіл на доступ до мікрофона.",
         "noStreams": "Аудіо чи відео потік не виявлено.",
         "off": "Запис зупинено",
         "offBy": "{{name}} зупинив запис",
@@ -922,7 +950,7 @@
         "onlyRecordSelf": "Записувати лише мої аудіо та відео потоки",
         "pending": "Підготовка до запису зустрічі...",
         "rec": "REC",
-        "saveLocalRecording": "Зберегти файл запису локально (бета-версія)",
+        "saveLocalRecording": "Зберегти файл запису локально (ТЕСТУВАННЯ)",
         "serviceDescription": "Ваш запис буде збережено послугою запису",
         "serviceDescriptionCloud": "Хмарний запис",
         "serviceDescriptionCloudInfo": "Записані зустрічі будуть видалені автоматично через 24 години після їх запису.",
@@ -947,6 +975,7 @@
         "title": "Параметри безпеки"
     },
     "settings": {
+        "audio": "Аудіо",
         "buttonLabel": "Налаштування",
         "calendar": {
             "about": "Інтеграція календаря дає {{appName}} безпечний доступ до вашого календаря та запланованих подій.",
@@ -964,12 +993,14 @@
         "incomingMessage": "Вхідне повідомлення",
         "language": "Мова",
         "loggedIn": "Увійшли як {{name}}",
-        "maxStageParticipants": "Максимальна кількість учасників, яку можна закріпити на головній сцені",
+        "maxStageParticipants": "Максимальна кількість учасників, яку можна закріпити на головній сцені (ТЕСТУВАННЯ)",
         "microphones": "Мікрофони",
         "moderator": "Модератор",
-        "more": "Додаткові параметри",
+        "moderatorOptions": "Параметри модерації",
+        "more": "Загальні параметри",
         "name": "Ім'я",
         "noDevice": "Немає",
+        "notifications": "Сповіщення",
         "participantJoined": "Учасник приєднався до зустрічі",
         "participantKnocking": "Учасник зайшов у приймальну",
         "participantLeft": "Учасник покинув зустріч",
@@ -980,13 +1011,14 @@
         "selectCamera": "Камера",
         "selectMic": "Мікрофон",
         "selfView": "Вид на себе",
-        "sounds": "Звукові сповіщення",
+        "shortcuts": "Комбінації клавіш",
         "speakers": "Динаміки",
         "startAudioMuted": "Усі починають з вимкненим мікрофоном",
         "startReactionsMuted": "Вимкнути звуки реакції для всіх",
         "startVideoMuted": "Усі починають з вимкненим відео",
         "talkWhileMuted": "Спроба говорити, коли мікрофон вимкнено",
-        "title": "Налаштування"
+        "title": "Налаштування",
+        "video": "Відео"
     },
     "settingsView": {
         "advanced": "Додатково",
@@ -1003,6 +1035,7 @@
         "displayName": "Ім'я на екрані",
         "displayNamePlaceholderText": "Наприклад: Іван Безіменний",
         "email": "Електронна пошта",
+        "emailPlaceholderText": "email@example.com",
         "goTo": "Гаразд",
         "header": "Налаштування",
         "help": "Довідка",
@@ -1066,18 +1099,29 @@
             "cc": "Субтитри",
             "chat": "Показати/приховати чат",
             "clap": "Овації",
+            "closeChat": "Приховати чат",
+            "closeMoreActions": "Приховати меню додаткових команд",
+            "closeParticipantsPane": "Приховати панель учасників",
             "collapse": "Згорнути",
             "document": "Відкрити/закрити спільний документ",
+            "documentClose": "Закрити спільний документ",
+            "documentOpen": "Відкрити спільний документ",
             "download": "Звантажити мобільний застосунок",
             "embedMeeting": "Вставити зустріч",
             "endConference": "Завершити зустріч для всіх",
+            "enterFullScreen": "Показати на весь екран",
+            "enterTileView": "Показати плитки",
+            "exitFullScreen": "Вийти з режиму на весь екран",
+            "exitTileView": "Вийти з режиму плиток",
             "expand": "Розгорнути",
             "feedback": "Залишити відгук",
             "fullScreen": "На весь екран",
             "giphy": "Показати/приховати меню GIPHY",
             "grantModerator": "Надати права модератора",
             "hangup": "Покинути зустріч",
+            "heading": "Панель інструментів",
             "help": "Довідка",
+            "hideWhiteboard": "Приховати дошку",
             "invite": "Запросити на зустріч",
             "kick": "Від'єднати учасника",
             "laugh": "Сміюся",
@@ -1087,21 +1131,23 @@
             "lobbyButton": "Увімкнути/вимкнути приймальну",
             "localRecording": "Показати/приховати панель керування відеозаписом",
             "lockRoom": "Встановити/прибрати пароль",
+            "lowerHand": "Опустити руку",
             "moreActions": "Додаткові команди",
             "moreActionsMenu": "Меню додаткових команд",
             "moreOptions": "Додаткові параметри",
-            "mute": "Увімкнути/вимкнути мікрофон",
+            "mute": "Вимкнути мікрофон",
             "muteEveryone": "Вимкнути мікрофони всім",
             "muteEveryoneElse": "Вимкнути мікрофони всім іншим",
             "muteEveryoneElsesVideoStream": "Вимкнути камери всім іншим",
             "muteEveryonesVideoStream": "Вимкнути камери всім",
             "noiseSuppression": "Придушення шуму",
-            "participants": "Показати/приховати панель учасників",
+            "openChat": "Показати чат",
+            "participants": "Показати панель учасників",
             "pip": "Увімкнути/вимкнути режим «Картинка в картинці».",
             "privateMessage": "Надіслати приватне повідомлення",
             "profile": "Редагувати профіль",
-            "raiseHand": "Підняти/опустити руку",
-            "reactionsMenu": "Відкрити/закрити меню реакцій",
+            "raiseHand": "Підняти руку",
+            "reactionsMenu": "Меню реакцій",
             "recording": "Увімкнути/вимкнути відеозапис",
             "remoteMute": "Вимкнути мікрофон учасника",
             "remoteVideoMute": "Вимкнути камеру учасника",
@@ -1111,18 +1157,22 @@
             "shareRoom": "Запросити на зустріч",
             "shareYourScreen": "Спільний перегляд екрана",
             "shareaudio": "Поділитися аудіо",
-            "sharedvideo": "Почати/зупинити спільне відео",
+            "sharedvideo": "Почати спільне відео",
             "shortcuts": "Показати/приховати комбінації клавіш",
             "show": "Показати на сцені",
+            "showWhiteboard": "Показати дошку",
             "silence": "Тиша",
             "speakerStats": "Показати/приховати статистику спілкування",
+            "stopScreenSharing": "Вимкнути спільний перегляд екрана",
+            "stopSharedVideo": "Зупинити спільне відео",
             "surprised": "Подив",
             "tileView": "Увімкнути/вимкнути плитки",
             "toggleCamera": "Увімкнути/вимкнути камеру",
             "toggleFilmstrip": "Показати/приховати панель видів",
+            "unmute": "Увімкнути мікрофон",
             "videoblur": "Увімкнути/вимкнути розмиття фону",
-            "videomute": "Увімкнути/вимкнути камеру",
-            "whiteboard": "Показати/приховати дошку"
+            "videomute": "Вимкнути камеру",
+            "videounmute": "Увімкнути камеру"
         },
         "addPeople": "Додати учасників до зустрічі",
         "audioOnlyOff": "Вимкнути режим економії",
@@ -1135,6 +1185,7 @@
         "chat": "Показати/приховати чат",
         "clap": "овації",
         "closeChat": "Панель чату",
+        "closeParticipantsPane": "Приховати панель учасників",
         "closeReactionsMenu": "Закрити меню реакцій",
         "disableNoiseSuppression": "Вимкнути придушення шуму",
         "disableReactionSounds": "Ви можете вимкнути звуки реакції для цієї зустрічі",
@@ -1143,6 +1194,7 @@
         "download": "Звантажити мобільний застосунок",
         "e2ee": "Наскрізне шифрування",
         "embedMeeting": "Вставити зустріч",
+        "enableNoiseSuppression": "Увімкнути придушення шуму",
         "endConference": "Завершити зустріч для всіх",
         "enterFullScreen": "На весь екран",
         "enterTileView": "Режим плиток",
@@ -1167,7 +1219,7 @@
         "lowerYourHand": "Опустити руку",
         "moreActions": "Додаткові команди",
         "moreOptions": "Додаткові параметри",
-        "mute": "Мікрофон",
+        "mute": "Вимкнути мікрофон",
         "muteEveryone": "Вимкнути мікрофони всім",
         "muteEveryonesVideo": "Вимкнути камери всім",
         "noAudioSignalDesc": "Якщо ви не вимикали мікрофон у системних або апаратних налаштуваннях, спробуйте перемикнути його.",
@@ -1184,7 +1236,7 @@
         "pip": "Режим «Картинка-у-картинці»",
         "privateMessage": "Надіслати приватне повідомлення",
         "profile": "Редагувати профіль",
-        "raiseHand": "Підняти/опустити руку",
+        "raiseHand": "Підняти руку",
         "raiseYourHand": "Підняти руку",
         "reactionBoo": "Надіслати реакцію «невдоволення»",
         "reactionClap": "Надіслати реакцію «овації»",
@@ -1211,8 +1263,10 @@
         "talkWhileMutedPopup": "Намагаєтесь говорити? Ваш мікрофон вимкнено.",
         "tileViewToggle": "Плитки",
         "toggleCamera": "Увімкнути/вимкнути камеру",
+        "unmute": "Увімкнути мікрофон",
         "videoSettings": "Налаштування камери",
-        "videomute": "Камера"
+        "videomute": "Вимкнути камеру",
+        "videounmute": "Увімкнути камеру"
     },
     "transcribing": {
         "ccButtonTooltip": "Субтитри",
@@ -1230,6 +1284,7 @@
         "subtitlesOff": "Вимкнені",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Відкріпити",
     "userMedia": {
         "androidGrantPermissions": "Виберіть <b><i>«Дозволити»</i></b>, коли ваш веб-браузер запитає дозволи.",
         "chromeGrantPermissions": "Виберіть <b><i>«Дозволити»</i></b>, коли ваш веб-браузер запитає дозволи.",
@@ -1268,9 +1323,11 @@
         "ldTooltip": "Відео низької якості",
         "lowDefinition": "Низька якість (LD)",
         "performanceSettings": "Параметри продуктивності",
+        "recording": "Триває запис",
         "sd": "SD",
         "sdTooltip": "Відео стандартної якості",
-        "standardDefinition": "Стандартна якість (SD)"
+        "standardDefinition": "Стандартна якість (SD)",
+        "streaming": "Триває трансляція"
     },
     "videothumbnail": {
         "connectionInfo": "Інформація про з'єднання",
@@ -1282,6 +1339,7 @@
         "grantModerator": "Надати права модератора",
         "hideSelfView": "Приховати вид на себе",
         "kick": "Від'єднати",
+        "mirrorVideo": "Віддзеркалити моє відео",
         "moderator": "Модератор",
         "mute": "Мікрофон учасника вимкнено",
         "muted": "Вимкнено мікрофон",
@@ -1291,6 +1349,7 @@
         "show": "Показати на сцені",
         "showSelfView": "Показати вид на себе",
         "unpinFromStage": "Відкріпити",
+        "verify": "Підтвердити особу учасника",
         "videoMuted": "Камера вимкнена",
         "videomute": "Учасник вимкнув камеру"
     },
@@ -1312,12 +1371,13 @@
         "none": "Немає",
         "pleaseWait": "Будь ласка, зачекайте...",
         "removeBackground": "Прибрати фон",
-        "slightBlur": "Легке розмиття",
+        "slightBlur": "Напіврозмиття",
         "title": "Віртуальні фони",
         "uploadedImage": "Завантажена картинка {{index}}",
         "webAssemblyWarning": "WebAssembly не підтримується",
         "webAssemblyWarningDescription": "WebAssembly вимкнено або не підтримується цим веб-браузером"
     },
+    "visitorsLabel": "Кількість відвідувачів: {{count}}",
     "volumeSlider": "Регулятор гучності",
     "welcomepage": {
         "accessibilityLabel": {
@@ -1350,6 +1410,7 @@
             "microsoftLogo": "Логотип Microsoft",
             "policyLogo": "Логотип політики"
         },
+        "meetingsAccessibilityLabel": "Зустрічі",
         "mobileDownLoadLinkAndroid": "Завантажте мобільний застосунок для Android",
         "mobileDownLoadLinkFDroid": "Завантажте мобільний застосунок для F-Droid",
         "mobileDownLoadLinkIos": "Завантажте мобільний застосунок для iOS",
@@ -1358,6 +1419,7 @@
         "recentList": "Нещодавні",
         "recentListDelete": "Вилучити",
         "recentListEmpty": "Зараз ваш список нещодавніх зустрічей порожній. Починайте спілкування, і ви знайдете тут усі свої нещодавні зустрічі.",
+        "recentMeetings": "Нещодавні зустрічі",
         "reducedUIText": "Вітаємо у {{app}}!",
         "roomNameAllowedChars": "Назва зустрічі не повинна містити такі символи: ?, &, :, ', \", %, #.",
         "roomname": "Зазначте назву кімнати",
@@ -1366,6 +1428,12 @@
         "settings": "Налаштування",
         "startMeeting": "Почати зустріч",
         "terms": "Умови користування",
-        "title": "Захищена, повнофункціональна та безкоштовна система відеоконференцій"
+        "title": "Захищена, повнофункціональна та безкоштовна система відеоконференцій",
+        "upcomingMeetings": "Заплановані зустрічі"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Дошка"
+        }
     }
 }
