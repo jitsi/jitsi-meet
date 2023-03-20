@@ -39,7 +39,7 @@ import {
 } from './styles';
 
 
-let indicatorColor;
+let indicatorColor: any;
 
 type IProps = AbstractProps & {
 
