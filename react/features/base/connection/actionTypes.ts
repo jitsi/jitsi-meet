@@ -64,3 +64,13 @@ export const SET_LOCATION_URL = 'SET_LOCATION_URL';
  * }
  */
 export const SHOW_CONNECTION_INFO = 'SHOW_CONNECTION_INFO';
+
+/**
+ * The type of (redux) action which tells whether connection indicator is shown or not.
+ *
+ * {
+ *     type: CONNECTION_INDICATOR_VISIBILITY,
+ *     visible: boolean
+ * }
+ */
+export const CONNECTION_INDICATOR_VISIBILITY = 'CONNECTION_INDICATOR_VISIBILITY';

@@ -52,6 +52,11 @@ type Props = {
     _audioMuted: boolean,
 
     /**
+     * Whether or not connection indicator are visible.
+     */
+    _connectionIndicatorVisibility: boolean,
+
+    /**
      * URL of GIF sent by this participant, null if there's none.
      */
     _gifSrc: ?string,
@@ -210,6 +215,7 @@ class Thumbnail extends PureComponent<Props> {
     _renderIndicators() {
         const {
             _audioMuted: audioMuted,
+            _connectionIndicatorVisibility,
             _fakeParticipant,
             _isTileViewEnabled,
             _isScreenShare: isScreenShare,
@@ -228,8 +234,10 @@ class Thumbnail extends PureComponent<Props> {
                 style = { styles.thumbnailTopLeftIndicatorContainer }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
                 {
-                    !_isVirtualScreenshare && <RaisedHandIndicator
-                        isTileView = { _isTileViewEnabled }
+                    !_isVirtualScreenshare
+                    && <RaisedHandIndicator
+                        connectionIndicatorVisibility = { _connectionIndicatorVisibility }
+                        isTileViewEnabled = { _isTileViewEnabled }
                         participantId = { participantId } />
                 }
                 { tileView && isScreenShare && (
@@ -403,6 +411,7 @@ class Thumbnail extends PureComponent<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { ownerId } = state['features/shared-video'];
+    const { connectionIndicatorVisibility } = state['features/base/connection'];
     const tracks = state['features/base/tracks'];
     const { participantID, tileView } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
@@ -421,6 +430,7 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
+        _connectionIndicatorVisibility: connectionIndicatorVisibility,
         _fakeParticipant: participant?.fakeParticipant,
         _gifSrc: mode === 'chat' ? null : gifSrc,
         _isScreenShare: isScreenShare,

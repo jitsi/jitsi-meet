@@ -4,6 +4,7 @@ import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 
 import {
+    CONNECTION_INDICATOR_VISIBILITY,
     CONNECTION_WILL_CONNECT
 } from './actionTypes';
 import {
@@ -200,5 +201,22 @@ export function disconnect(_?: boolean) {
         }
 
         return promise;
+    };
+}
+
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Connection indicator visibility.
+ *
+ * @param {Boolean} visible - Connection indicator visibility.
+ * @returns {{
+ *     type: CONNECTION_INDICATOR_VISIBILITY
+ *     visible
+ * }}
+ */
+export function connectionIndicatorVisibility(visible: boolean) {
+    return {
+        type: CONNECTION_INDICATOR_VISIBILITY,
+        visible
     };
 }

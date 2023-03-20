@@ -7,11 +7,16 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_INDICATOR_VISIBILITY,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SHOW_CONNECTION_INFO
 } from './actionTypes';
 import { ConnectionFailedError } from './actions.any';
+
+const DEFAULT_STATE = {
+    connectionIndicatorVisibility: false
+};
 
 export interface IConnectionState {
     connecting?: any;
@@ -22,6 +27,7 @@ export interface IConnectionState {
         getLogs: () => Object;
         initJitsiConference: Function;
     };
+    connectionIndicatorVisibility: boolean;
     error?: ConnectionFailedError;
     locationURL?: URL;
     passwordRequired?: Object;
@@ -34,7 +40,7 @@ export interface IConnectionState {
  */
 ReducerRegistry.register<IConnectionState>(
     'features/base/connection',
-    (state = {}, action): IConnectionState => {
+    (state = DEFAULT_STATE, action): IConnectionState => {
         switch (action.type) {
         case CONNECTION_DISCONNECTED:
             return _connectionDisconnected(state, action);
@@ -56,6 +62,9 @@ ReducerRegistry.register<IConnectionState>(
 
         case SHOW_CONNECTION_INFO:
             return _setShowConnectionInfo(state, action);
+
+        case CONNECTION_INDICATOR_VISIBILITY:
+            return set(state, 'connectionIndicatorVisibility', action.visible);
         }
 
         return state;

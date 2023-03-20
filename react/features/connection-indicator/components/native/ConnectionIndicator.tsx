@@ -4,6 +4,8 @@ import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { IReduxState } from '../../../app/types';
+import { connectionIndicatorVisibility }
+    from '../../../base/connection/actions.native';
 import { IconConnection } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -35,6 +37,9 @@ import {
     CONNECTOR_INDICATOR_OTHER,
     iconStyle
 } from './styles';
+
+
+let indicatorColor;
 
 type IProps = AbstractProps & {
 
@@ -101,6 +106,32 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
     }
 
     /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate() {
+        // @ts-ignore
+        const { dispatch } = this.props;
+
+        if (indicatorColor) {
+            dispatch(connectionIndicatorVisibility(Boolean(indicatorColor)));
+        }
+    }
+
+    /**
+     * Implements {@code Component#componentWillUnmount}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        // @ts-ignore
+        const { dispatch } = this.props;
+
+        dispatch(connectionIndicatorVisibility(false));
+    }
+
+    /**
      * Get the icon configuration from CONNECTOR_INDICATOR_COLORS which has a percentage
      * that matches or exceeds the passed in percentage. The implementation
      * assumes CONNECTOR_INDICATOR_COLORS is already sorted by highest to lowest
@@ -137,12 +168,13 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
         } = this.state;
         const { percent } = stats;
 
-        if (!showIndicator || typeof percent === 'undefined'
-                || _connectionIndicatorDisabled || _isVirtualScreenshareParticipant) {
+        const connectionIndicatorNotAvailable
+            = !showIndicator || typeof percent === 'undefined'
+            || _connectionIndicatorDisabled || _isVirtualScreenshareParticipant;
+
+        if (connectionIndicatorNotAvailable) {
             return null;
         }
-
-        let indicatorColor;
 
         if (_isConnectionStatusInactive) {
             if (_connectionIndicatorInactiveDisabled) {

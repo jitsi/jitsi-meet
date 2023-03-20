@@ -17,6 +17,11 @@ import styles from './styles';
 type Props = AbstractProps & {
 
     /**
+     * Whether or not connection indicator are visible.
+     */
+    connectionIndicatorVisibility: boolean,
+
+    /**
      * Whether or not tile view layout has been enabled as the user preference.
      */
     isTileViewEnabled: boolean
@@ -28,16 +33,26 @@ type Props = AbstractProps & {
  * @augments Component
  */
 class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
+
     /**
      * Renders the platform specific indicator element.
      *
      * @returns {React$Element<*>}
      */
     _renderIndicator() {
-        const { isTileViewEnabled } = this.props;
-        const raisedHandIndicatorStyles = isTileViewEnabled
-            ? styles.raisedHandIndicatorTileView
-            : styles.raisedHandIndicator;
+        const { connectionIndicatorVisibility, isTileViewEnabled } = this.props;
+
+        let raisedHandIndicatorStyles;
+
+        if (connectionIndicatorVisibility) {
+            if (isTileViewEnabled) {
+                raisedHandIndicatorStyles = styles.raisedHandIndicatorTileView;
+            } else {
+                raisedHandIndicatorStyles = styles.raisedHandIndicator;
+            }
+        } else {
+            raisedHandIndicatorStyles = styles.raisedHandIndicatorTileView;
+        }
 
         return (
             <View style = { raisedHandIndicatorStyles }>
