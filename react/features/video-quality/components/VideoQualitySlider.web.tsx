@@ -3,6 +3,7 @@ import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
@@ -11,7 +12,6 @@ import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
 import { setLastN } from '../../base/lastn/actions';
 import { getLastNForQualityLevel } from '../../base/lastn/functions';
-import { connect } from '../../base/redux/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
@@ -55,12 +55,12 @@ interface IProps extends WithTranslation {
     /**
      * The channelLastN value configured for the conference.
      */
-    _channelLastN: number;
+    _channelLastN?: number;
 
     /**
      * Whether or not the conference is in peer to peer mode.
      */
-    _p2p: Boolean;
+    _p2p?: Object;
 
     /**
      * The currently configured maximum quality resolution to be sent and

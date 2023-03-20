@@ -1,10 +1,10 @@
 import React from 'react';
 import Dialog from 'react-native-dialog';
 import { Divider } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import AbstractMuteEveryonesVideoDialog, {
     type Props,
     abstractMapStateToProps as _mapStateToProps } from '../AbstractMuteEveryonesVideoDialog';

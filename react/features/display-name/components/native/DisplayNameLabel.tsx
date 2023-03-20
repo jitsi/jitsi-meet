@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -7,7 +8,6 @@ import {
     getParticipantDisplayName,
     isScreenShareParticipant
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 
 // @ts-ignore
 import styles from './styles';
@@ -73,8 +73,8 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _participantName: getParticipantDisplayName(state, ownProps.participantId ?? ''),
-        _render: participant && (!participant?.local || ownProps.contained)
-            && (!participant?.fakeParticipant || isScreenShareParticipant(participant))
+        _render: Boolean(participant && (!participant?.local || ownProps.contained)
+            && (!participant?.fakeParticipant || isScreenShareParticipant(participant)))
     };
 }
 

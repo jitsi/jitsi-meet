@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
@@ -11,7 +12,6 @@ import { translate } from '../../../base/i18n/functions';
 // @ts-ignore
 import { Icon, IconAddUser } from '../../../base/icons';
 import { getParticipantCountWithFake } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
@@ -145,8 +145,8 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _inviteOthersControl,
         _isInBreakoutRoom,
-        _isInviteFunctionsDisabled: !flag || disableInviteFunctions,
-        _isLonelyMeeting: conference && getParticipantCountWithFake(state) === 1
+        _isInviteFunctionsDisabled: Boolean(!flag || disableInviteFunctions),
+        _isLonelyMeeting: Boolean(conference && getParticipantCountWithFake(state) === 1)
     };
 }
 

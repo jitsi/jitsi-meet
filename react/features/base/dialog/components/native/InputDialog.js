@@ -1,8 +1,8 @@
 import React from 'react';
 import Dialog from 'react-native-dialog';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
-import { connect } from '../../../redux';
 import { _abstractMapStateToProps } from '../../functions';
 import AbstractDialog, {
     type Props as AbstractProps,

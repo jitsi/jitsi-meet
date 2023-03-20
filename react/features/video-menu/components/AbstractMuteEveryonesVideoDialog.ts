@@ -8,7 +8,7 @@ import { getLocalParticipant, getParticipantDisplayName } from '../../base/parti
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantsVideoDialog, {
-    type Props as AbstractProps
+    type IProps as AbstractProps
 } from './AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
@@ -16,17 +16,17 @@ import AbstractMuteRemoteParticipantsVideoDialog, {
  * {@link AbstractMuteEveryonesVideoDialog}.
  */
 export type Props = AbstractProps & WithTranslation & {
-    content: string;
+    content?: string;
     exclude: Array<string>;
-    isModerationSupported: boolean;
-    isVideoModerationEnabled: boolean;
+    isModerationSupported?: boolean;
+    isVideoModerationEnabled?: boolean;
     showAdvancedModerationToggle: boolean;
     title: string;
 };
 
 interface IState {
     content: string;
-    moderationEnabled: boolean;
+    moderationEnabled?: boolean;
 }
 
 /**

@@ -437,7 +437,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object): $Shape<Props> {
+export function _mapStateToProps(state: Object) {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
     const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);

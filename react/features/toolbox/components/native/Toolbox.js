@@ -3,10 +3,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { Platform } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 import { ReactionsMenuButton } from '../../../reactions/components';

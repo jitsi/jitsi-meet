@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { IconArrowUp } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks';
 import { VideoSettingsPopup, toggleVideoSettings } from '../../../settings';
@@ -19,7 +19,7 @@ type Props = {
     /**
      * The button's key.
      */
-     buttonKey?: string,
+    buttonKey?: string,
 
     /**
      * External handler for click action.

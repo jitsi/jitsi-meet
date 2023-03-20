@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { Text } from 'react-native-paper';
+import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
 import {
@@ -15,7 +16,6 @@ import {
     hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { type AbstractButtonProps } from '../../../base/toolbox/components';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';

@@ -1,5 +1,6 @@
 // @flow
 
+import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
 import {
@@ -14,7 +15,6 @@ import {
     hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 /**

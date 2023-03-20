@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 
 import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
     from './AbstractUserMediaPermissionsOverlay';
@@ -96,7 +96,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
  * @param {Object} ownProps - The props passed to the component.
  * @returns {Object}
  */
-function mapStateToProps(state): Object {
+function mapStateToProps(state) {
     const { premeetingBackground } = state['features/dynamic-branding'];
 
     return {

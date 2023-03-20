@@ -1,7 +1,8 @@
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconRaiseHand } from '../../../base/icons';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 

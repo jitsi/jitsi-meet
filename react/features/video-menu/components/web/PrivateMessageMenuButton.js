@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/actions.web';
 import {
@@ -85,7 +85,7 @@ class PrivateMessageMenuButton extends Component<Props> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+function _mapStateToProps(state: Object, ownProps: Props) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { visible = enabled } = ownProps;
 

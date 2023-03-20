@@ -1,10 +1,11 @@
 /* eslint-disable lines-around-comment */
+import { connect } from 'react-redux';
+
 import { IReduxState } from '../../../app/types';
 import { CAR_MODE_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconCar } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { navigate }
@@ -12,6 +13,7 @@ import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
+/* eslint-enable lines-around-comment */
 
 /**
  * Implements an {@link AbstractButton} to open the carmode.
@@ -48,5 +50,6 @@ function _mapStateToProps(state: IReduxState, ownProps: AbstractButtonProps): Ob
         visible
     };
 }
+
 // @ts-ignore
 export default translate(connect(_mapStateToProps)(OpenCarmodeButton));

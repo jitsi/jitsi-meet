@@ -1,12 +1,12 @@
 // @flow
 
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { VIDEO_SHARE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconPlay } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSharedVideo } from '../../actions.native';
 import { isSharingStatus } from '../../functions';

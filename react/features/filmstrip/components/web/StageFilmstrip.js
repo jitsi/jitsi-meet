@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { getToolbarButtons } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { connect } from '../../../base/redux';
 import { LAYOUTS, LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import {
     ASPECT_RATIO_BREAKPOINT,

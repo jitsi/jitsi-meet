@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { isVideoMutedByUser } from '../../../base/media';
 import { PreMeetingScreen } from '../../../base/premeeting';
-import { connect } from '../../../base/redux';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks';
 import { isDeviceStatusVisible } from '../../functions';
 
@@ -14,7 +14,7 @@ type Props = {
     /**
      * Indicates the className that needs to be applied.
     */
-     className: string,
+    className: string,
 
     /**
      * Flag signaling if the device status is visible or not.
@@ -75,7 +75,7 @@ class PrejoinThirdParty extends Component<Props> {
  * @param {Object} ownProps - The props passed to the component.
  * @returns {Object}
  */
-function mapStateToProps(state): Object {
+function mapStateToProps(state) {
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
         showCameraPreview: !isVideoMutedByUser(state),

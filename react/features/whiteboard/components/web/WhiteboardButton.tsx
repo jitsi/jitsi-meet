@@ -1,7 +1,8 @@
+import { connect } from 'react-redux';
+
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';

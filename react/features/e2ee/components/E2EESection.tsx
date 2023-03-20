@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
-import { connect } from '../../base/redux/functions';
 import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
@@ -16,7 +16,7 @@ interface IProps extends WithTranslation {
     /**
      * The resource for the description, computed based on the maxMode and whether the switch is toggled or not.
      */
-    _descriptionResource: string;
+    _descriptionResource?: string;
 
     /**
      * Custom e2ee labels.
@@ -100,7 +100,7 @@ class E2EESection extends Component<IProps, IState> {
     render() {
         const { _descriptionResource, _enabled, _e2eeLabels, _everyoneSupportE2EE, t } = this.props;
         const { toggled } = this.state;
-        const description = _e2eeLabels?.description || t(_descriptionResource);
+        const description = _e2eeLabels?.description || t(_descriptionResource ?? '');
         const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
         const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
 
@@ -176,7 +176,7 @@ function mapStateToProps(state: IReduxState) {
         _e2eeLabels: e2eeLabels,
         _enabled: maxMode === MAX_MODE.DISABLED || e2eeEnabled,
         _toggled: e2eeEnabled,
-        _everyoneSupportE2EE: doesEveryoneSupportE2EE(state)
+        _everyoneSupportE2EE: Boolean(doesEveryoneSupportE2EE(state))
     };
 }
 

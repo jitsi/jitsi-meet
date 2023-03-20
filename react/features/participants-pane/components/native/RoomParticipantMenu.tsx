@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 // @ts-ignore
@@ -11,7 +12,6 @@ import { BottomSheet, hideSheet } from '../../../base/dialog';
 // @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import { getBreakoutRooms } from '../../../breakout-rooms/functions';
 // @ts-ignore
 import SendToBreakoutRoom from '../../../video-menu/components/native/SendToBreakoutRoom';

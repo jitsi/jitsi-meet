@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { IconWarning } from '../../../base/icons';
 import { Label } from '../../../base/label';
-import { connect } from '../../../base/redux';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 import styles from './styles';

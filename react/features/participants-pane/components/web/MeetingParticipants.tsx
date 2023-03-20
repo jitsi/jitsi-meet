@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
@@ -10,7 +10,6 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
@@ -173,7 +172,7 @@ function MeetingParticipants({
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState): Object {
+function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate

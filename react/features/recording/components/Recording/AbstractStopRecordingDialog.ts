@@ -9,6 +9,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
 import { stopLocalVideoRecording } from '../../actions';
 import { getActiveSession } from '../../functions';
+import { ISessionData } from '../../reducer';
 
 import LocalRecordingManager from './LocalRecordingManager';
 
@@ -21,12 +22,12 @@ export interface IProps extends WithTranslation {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: IJitsiConference;
+    _conference?: IJitsiConference;
 
     /**
      * The redux representation of the recording session to be stopped.
      */
-    _fileRecordingSession: Object;
+    _fileRecordingSession?: ISessionData;
 
     /**
      * Whether the recording is a local recording or not.

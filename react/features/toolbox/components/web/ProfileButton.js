@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { SETTINGS_TABS, openSettingsDialog } from '../../../settings';
 
@@ -22,12 +23,12 @@ type Props = AbstractButtonProps & {
     /**
      * The redux representation of the local participant.
      */
-     _localParticipant: Object,
+    _localParticipant: Object,
 
-     /**
+    /**
       * Whether the button support clicking or not.
       */
-     _unclickable: boolean,
+    _unclickable: boolean,
 
     /**
      * The redux {@code dispatch} function.

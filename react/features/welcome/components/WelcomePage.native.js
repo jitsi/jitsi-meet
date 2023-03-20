@@ -1,11 +1,11 @@
 import React from 'react';
 import { Animated, SafeAreaView, TouchableHighlight, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { getName } from '../../app/functions';
 import { translate } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { LoadingIndicator, Text } from '../../base/react';
-import { connect } from '../../base/redux';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import Input from '../../base/ui/components/native/Input';

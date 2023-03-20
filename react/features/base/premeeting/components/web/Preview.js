@@ -1,12 +1,12 @@
 // @flow
 
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 
 import { getDisplayName } from '../../../../base/settings';
 import { Avatar } from '../../../avatar';
 import { Video } from '../../../media';
 import { getLocalParticipant } from '../../../participants';
-import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
 
 declare var APP: Object;
@@ -26,7 +26,7 @@ export type Props = {
     /**
      * The name of the user that is about to join.
      */
-     name: string,
+    name: string,
 
     /**
      * Flag signaling the visibility of camera preview.

@@ -1,16 +1,17 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconEnterFullscreen, IconExitFullscreen } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 type Props = AbstractButtonProps & {
 
-  /**
-   * Whether or not the app is currently in full screen.
-   */
-   _fullScreen: boolean,
+    /**
+    * Whether or not the app is currently in full screen.
+    */
+    _fullScreen: boolean,
 };
 
 /**

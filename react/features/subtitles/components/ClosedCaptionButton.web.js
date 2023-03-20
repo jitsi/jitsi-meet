@@ -1,8 +1,9 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../base/i18n';
 import { IconSubtitles } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { toggleLanguageSelectorDialog } from '../actions';
 
 import {

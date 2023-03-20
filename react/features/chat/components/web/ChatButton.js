@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 import ChatCounter from './ChatCounter';

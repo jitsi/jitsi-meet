@@ -1,8 +1,8 @@
 import React from 'react';
 import Dialog from 'react-native-dialog';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
-import { connect } from '../../../redux';
 import AbstractDialog from '../AbstractDialog';
 import { renderHTML } from '../functions.native';
 

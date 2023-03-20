@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
@@ -19,7 +20,6 @@ import {
 } from '../../../../base/icons';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { AvatarListItem, type Item } from '../../../../base/react';
-import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import Input from '../../../../base/ui/components/native/Input';
 import HeaderNavigationButton

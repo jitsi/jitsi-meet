@@ -1,10 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { IDeeplinkingConfig } from '../../base/config/configType';
-import { connect } from '../../base/redux';
 
 
 /**

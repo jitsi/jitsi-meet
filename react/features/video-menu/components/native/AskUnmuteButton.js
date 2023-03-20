@@ -1,12 +1,13 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { approveParticipant } from '../../../av-moderation/actions';
 import { isSupported } from '../../../av-moderation/functions';
 import { translate } from '../../../base/i18n';
 import { IconMic, IconVideo } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isForceMuted } from '../../../participants-pane/functions';
 

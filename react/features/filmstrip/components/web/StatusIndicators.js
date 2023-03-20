@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { MEDIA_TYPE } from '../../../base/media';
 import {
@@ -8,7 +9,6 @@ import {
     getParticipantByIdOrUndefined,
     isScreenShareParticipantById
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,

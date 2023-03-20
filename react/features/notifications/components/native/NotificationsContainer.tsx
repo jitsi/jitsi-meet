@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { connect } from '../../../base/redux/functions';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';

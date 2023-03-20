@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { type Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../../app/types';
-import { connect } from '../../../redux/functions';
+import { IReduxState, IStore } from '../../../../app/types';
 import { ASPECT_RATIO_WIDE } from '../../../responsive-ui/constants';
 import { storeVideoTransform } from '../../actions';
 
@@ -692,7 +691,7 @@ class VideoTransform extends Component<Props, State> {
  *     _onUnmount: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<any>) {
+function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         /**
          * Dispatches actions to store the last applied transform to a video.

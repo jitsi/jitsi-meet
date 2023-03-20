@@ -1,9 +1,9 @@
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { openSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconVolumeUp } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 import AudioRoutePickerDialog from './AudioRoutePickerDialog';

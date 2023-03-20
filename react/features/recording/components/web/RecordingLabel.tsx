@@ -1,12 +1,12 @@
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { connect } from '../../../base/redux/functions';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import AbstractRecordingLabel, {
     _mapStateToProps

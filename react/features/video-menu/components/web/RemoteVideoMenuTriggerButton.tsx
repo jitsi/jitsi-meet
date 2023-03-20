@@ -48,11 +48,6 @@ interface IProps extends WithTranslation {
     _menuPosition: string;
 
     /**
-     * Whether to display the Popover as a drawer.
-     */
-    _overflowDrawer: boolean;
-
-    /**
      * Participant reference.
      */
     _participant: IParticipant;
@@ -165,7 +160,6 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
     render() {
         const {
             _disabled,
-            _overflowDrawer,
             _showConnectionInfo,
             _participantDisplayName,
             buttonVisible,
@@ -194,7 +188,6 @@ class RemoteVideoMenuTriggerButton extends Component<IProps> {
                 id = 'remote-video-menu-trigger'
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }
-                overflowDrawer = { _overflowDrawer }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
                 { buttonVisible && !_disabled && (
@@ -287,7 +280,6 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { active, controller } = state['features/remote-control'];
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
-    const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
     const { remoteVideoMenu } = state['features/base/config'];
     const { ownerId } = state['features/shared-video'];
@@ -323,7 +315,6 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _disabled: Boolean(remoteVideoMenu?.disabled),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _menuPosition,
-        _overflowDrawer: overflowDrawer,
         _participant: participant ?? { id: '' },
         _participantDisplayName: _participantDisplayName ?? '',
         _remoteControlState,

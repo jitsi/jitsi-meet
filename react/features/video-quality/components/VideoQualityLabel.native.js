@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { Label } from '../../base/label';
-import { connect } from '../../base/redux';
 import { type StyleType, combineStyles } from '../../base/styles';
 
 import AbstractVideoQualityLabel, {

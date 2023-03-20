@@ -1,17 +1,18 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconCloudUpload } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { SalesforceLinkDialog } from '../../../salesforce/components';
 
 /**
  * The type of the React {@code Component} props of {@link LinkToSalesforce}.
  */
- type Props = AbstractButtonProps & {
+type Props = AbstractButtonProps & {
 
     /**
      * The redux {@code dispatch} function.

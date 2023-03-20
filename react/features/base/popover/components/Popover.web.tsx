@@ -1,11 +1,11 @@
 import React, { Component, ReactNode } from 'react';
 import ReactFocusLock from 'react-focus-lock';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
-import { connect } from '../../redux/functions';
 import { getContextMenuStyle } from '../functions.web';
 
 /**

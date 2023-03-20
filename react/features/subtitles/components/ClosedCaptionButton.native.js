@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { CLOSE_CAPTIONS_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconSubtitles } from '../../base/icons';
-import { connect } from '../../base/redux';
 
 import {
     AbstractClosedCaptionButton,

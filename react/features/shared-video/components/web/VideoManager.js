@@ -1,6 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {

@@ -5,9 +5,9 @@ import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { Icon, IconVolumeUp } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 

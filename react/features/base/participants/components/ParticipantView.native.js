@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import {
     isTrackStreamingStatusActive,
@@ -11,7 +12,7 @@ import { translate } from '../../i18n/functions';
 import VideoTrack from '../../media/components/native/VideoTrack';
 import { shouldRenderVideoTrack } from '../../media/functions';
 import { Container } from '../../react';
-import { connect, toState } from '../../redux/functions';
+import { toState } from '../../redux/functions';
 import { TestHint } from '../../testing/components';
 import { getVideoTrackByParticipant } from '../../tracks/functions';
 import { getParticipantById, getParticipantDisplayName, isSharedVideoParticipant } from '../functions';

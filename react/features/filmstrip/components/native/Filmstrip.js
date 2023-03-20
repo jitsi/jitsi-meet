@@ -3,10 +3,10 @@
 import React, { PureComponent } from 'react';
 import { FlatList } from 'react-native';
 import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { isToolboxVisible } from '../../../toolbox/functions';

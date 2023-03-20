@@ -1,9 +1,9 @@
 /* eslint-disable lines-around-comment */
 import React from 'react';
 import { Platform } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import { isDesktopShareButtonDisabled } from '../../functions.native';
 

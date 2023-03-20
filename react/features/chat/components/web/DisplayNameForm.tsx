@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';

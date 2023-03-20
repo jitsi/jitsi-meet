@@ -4,12 +4,12 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { BackHandler, NativeModules, SafeAreaView, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { connect } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions';
 import { FULLSCREEN_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.native';

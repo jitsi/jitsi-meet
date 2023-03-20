@@ -399,7 +399,7 @@ export default AbstractVideoManager;
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object): $Shape<Props> {
+export function _mapStateToProps(state: Object) {
     const { ownerId, status, time, videoUrl, muted } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
     const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);

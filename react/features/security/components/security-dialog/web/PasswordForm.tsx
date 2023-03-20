@@ -19,7 +19,7 @@ interface IProps extends WithTranslation {
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string;
+    locked?: string;
 
     /**
      * Callback to invoke when the local participant is submitting a password
@@ -30,7 +30,7 @@ interface IProps extends WithTranslation {
     /**
      * The current known password for the JitsiConference.
      */
-    password: string;
+    password?: string;
 
     /**
      * The number of digits to be used in the password.

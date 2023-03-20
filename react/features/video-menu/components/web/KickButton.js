@@ -1,10 +1,10 @@
 /* @flow */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { IconUserDeleted } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import AbstractKickButton, {
     type Props

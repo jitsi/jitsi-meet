@@ -1,5 +1,7 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import {
     ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
@@ -9,7 +11,6 @@ import {
 import { AUDIO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
-import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton, AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
@@ -157,7 +158,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  *     _disabled: boolean
  * }}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state) {
     const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const _disabled = isAudioMuteButtonDisabled(state);
     const enabledFlag = getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true);
