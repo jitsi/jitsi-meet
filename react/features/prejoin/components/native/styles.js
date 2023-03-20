@@ -48,7 +48,7 @@ export const preJoinStyles = {
         backgroundColor: BaseTheme.palette.uiBackground,
         bottom: 0,
         display: 'flex',
-        height: 316,
+        height: 280,
         justifyContent: 'center',
         position: 'absolute',
         width: '100%',
