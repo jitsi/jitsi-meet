@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { reloadNow } from '../../../app/actions';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link ReloadButton}.
@@ -63,7 +63,7 @@ class ReloadButton extends Component<Props> {
  * @private
  * @returns {Object}
  */
-function _mapDispatchToProps(dispatch: Function): Object {
+function _mapDispatchToProps(dispatch: Function) {
     return {
         /**
          * Dispatches the redux action to reload the page.

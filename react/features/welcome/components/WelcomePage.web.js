@@ -1,12 +1,12 @@
 /* global interfaceConfig */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
-import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS, SettingsButton } from '../../settings';

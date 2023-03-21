@@ -1,7 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import AbstractMuteRemoteParticipantsVideoDialog, {
     abstractMapStateToProps
@@ -37,5 +37,4 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
     }
 }
 
-// @ts-ignore
 export default translate(connect(abstractMapStateToProps)(MuteRemoteParticipantsVideoDialog));

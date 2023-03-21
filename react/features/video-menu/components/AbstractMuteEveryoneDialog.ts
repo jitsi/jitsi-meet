@@ -16,16 +16,16 @@ import AbstractMuteRemoteParticipantDialog, {
  * {@link AbstractMuteEveryoneDialog}.
  */
 export type Props = AbstractProps & WithTranslation & {
-    content: string;
+    content?: string;
     exclude: Array<string>;
-    isAudioModerationEnabled: boolean;
-    isModerationSupported: boolean;
+    isAudioModerationEnabled?: boolean;
+    isModerationSupported?: boolean;
     showAdvancedModerationToggle: boolean;
     title: string;
 };
 
 interface IState {
-    audioModerationEnabled: boolean;
+    audioModerationEnabled?: boolean;
     content: string;
 }
 

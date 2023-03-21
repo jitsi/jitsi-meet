@@ -1,10 +1,11 @@
+import { connect } from 'react-redux';
+
 import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import {
     IconNoiseSuppressionOff,
     IconNoiseSuppressionOn
 } from '../../base/icons/svg';
-import { connect } from '../../base/redux/functions';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -69,7 +70,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: IReduxState): Object {
+function _mapStateToProps(state: IReduxState) {
     return {
         _isNoiseSuppressionEnabled: isNoiseSuppressionEnabled(state)
     };

@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import AbstractMessageContainer, { type Props as AbstractProps }
     from '../AbstractMessageContainer';
 

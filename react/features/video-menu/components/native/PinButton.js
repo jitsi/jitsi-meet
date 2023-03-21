@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconEnlarge } from '../../../base/icons';
 import { pinParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { shouldDisplayTileView } from '../../../video-layout/functions';
 

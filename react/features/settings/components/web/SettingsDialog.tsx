@@ -1,5 +1,6 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -13,7 +14,6 @@ import {
     IconVideo,
     IconVolumeUp
 } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';

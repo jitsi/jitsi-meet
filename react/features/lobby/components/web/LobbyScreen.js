@@ -1,12 +1,12 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconCloseLarge } from '../../../base/icons';
 import { PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import ChatInput from '../../../chat/components/web/ChatInput';

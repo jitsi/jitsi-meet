@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 
 import AbstractPageReloadOverlay, {
     type Props,

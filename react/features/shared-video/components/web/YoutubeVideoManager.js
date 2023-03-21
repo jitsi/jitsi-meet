@@ -1,8 +1,8 @@
 /* eslint-disable no-invalid-this */
 import React from 'react';
+import { connect } from 'react-redux';
 import YouTube from 'react-youtube';
 
-import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {

@@ -1,7 +1,8 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 import { toggleSecurityDialog } from '../../../actions';
 import AbstractSecurityDialogButton, {
     type Props as AbstractSecurityDialogButtonProps,

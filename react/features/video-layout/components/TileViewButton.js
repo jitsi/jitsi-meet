@@ -1,5 +1,5 @@
 // @flow
-import { batch } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -9,7 +9,6 @@ import {
 import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { setTileView } from '../actions';

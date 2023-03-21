@@ -1,8 +1,9 @@
+import { connect } from 'react-redux';
+
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMessage, IconReply } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { handleLobbyChatInitialized, openChat } from '../../../chat/actions.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';

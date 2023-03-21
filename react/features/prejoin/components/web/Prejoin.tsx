@@ -1,6 +1,7 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 // eslint-disable-next-line lines-around-comment
@@ -13,7 +14,6 @@ import { isVideoMutedByUser } from '../../../base/media/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import ActionButton from '../../../base/premeeting/components/web/ActionButton';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
-import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import { getDisplayName } from '../../../base/settings/functions.web';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
@@ -66,7 +66,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether conference join is in progress.
      */
-    joiningInProgress: boolean;
+    joiningInProgress?: boolean;
 
     /**
      * The name of the user that is about to join.
@@ -76,7 +76,7 @@ interface IProps extends WithTranslation {
     /**
      * Local participant id.
      */
-    participantId: string;
+    participantId?: string;
 
     /**
      * The prejoin config.

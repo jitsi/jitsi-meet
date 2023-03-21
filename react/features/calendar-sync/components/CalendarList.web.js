@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {
     createCalendarClickedEvent,
@@ -9,7 +10,6 @@ import {
 import { translate } from '../../base/i18n';
 import { Icon, IconCalendar } from '../../base/icons';
 import { AbstractPage } from '../../base/react';
-import { connect } from '../../base/redux';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { SETTINGS_TABS, openSettingsDialog } from '../../settings';
 import { refreshCalendar } from '../actions';

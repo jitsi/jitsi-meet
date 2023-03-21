@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { getToolbarButtons } from '../../../../base/config';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 import AbstractRecordButton, {
     type Props,
     _mapStateToProps as _abstractMapStateToProps
@@ -47,7 +48,7 @@ class RecordingButton extends AbstractRecordButton<Props> {
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props): Object {
+export function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     const toolbarButtons = getToolbarButtons(state);
     const visible = toolbarButtons.includes('recording') && abstractProps.visible;

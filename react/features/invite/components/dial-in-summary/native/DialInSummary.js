@@ -3,13 +3,13 @@
 import React, { PureComponent } from 'react';
 import { Linking, View } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
-import { connect } from '../../../../base/redux';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';

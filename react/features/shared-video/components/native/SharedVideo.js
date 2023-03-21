@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui';
 import { setToolboxVisible } from '../../../toolbox/actions';
 

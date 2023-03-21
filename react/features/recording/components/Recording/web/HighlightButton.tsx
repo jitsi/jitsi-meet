@@ -1,6 +1,7 @@
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
+import { connect } from 'react-redux';
 
 // @ts-ignore
 import { StartRecordingDialog } from '../..';
@@ -9,7 +10,6 @@ import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../../base/jwt/constants';
 import Label from '../../../../base/label/components/web/Label';
-import { connect } from '../../../../base/redux/functions';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
@@ -55,7 +55,7 @@ interface IState {
 const styles = (theme: Theme) => {
     return {
         container: {
-            position: 'relative'
+            position: 'relative' as const
         },
         disabled: {
             background: theme.palette.text02
@@ -67,13 +67,13 @@ const styles = (theme: Theme) => {
             backgroundColor: theme.palette.field02,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             color: theme.palette.uiBackground,
             fontSize: '14px',
             fontWeight: '400',
             left: '4px',
             padding: '16px',
-            position: 'absolute',
+            position: 'absolute' as const,
             top: '32px',
             width: 320
         },

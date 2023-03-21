@@ -1,8 +1,8 @@
 import Logger from '@jitsi/logger';
 import React from 'react';
 import Video from 'react-native-video';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {

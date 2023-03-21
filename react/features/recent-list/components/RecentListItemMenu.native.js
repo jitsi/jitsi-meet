@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../base/dialog';
 import { bottomSheetStyles } from '../../base/dialog/components/native/styles';
 import { type Item } from '../../base/react/Types';
-import { connect } from '../../base/redux';
 
 import DeleteItemButton from './DeleteItemButton.native';
 import ShowDialInInfoButton from './ShowDialInInfoButton.native';

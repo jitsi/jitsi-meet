@@ -220,7 +220,6 @@ class LocalVideoMenuTriggerButton extends Component<IProps> {
                     id = 'local-video-menu-trigger'
                     onPopoverClose = { this._onPopoverClose }
                     onPopoverOpen = { this._onPopoverOpen }
-                    overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
                     visible = { popoverVisible }>
                     {buttonVisible && !isMobileBrowser() && (

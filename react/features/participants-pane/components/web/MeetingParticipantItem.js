@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
@@ -11,7 +12,6 @@ import {
     hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
@@ -294,7 +294,7 @@ function MeetingParticipantItem({
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps): Object {
+function _mapStateToProps(state, ownProps) {
     const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;

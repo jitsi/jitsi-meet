@@ -99,9 +99,7 @@ export interface IJitsiConference {
 export interface IConferenceState {
     authEnabled?: boolean;
     authLogin?: string;
-    authRequired?: {
-        join: Function;
-    };
+    authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
     e2eeSupported?: boolean;

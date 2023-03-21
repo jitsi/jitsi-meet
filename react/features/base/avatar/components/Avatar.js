@@ -1,9 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 import { getParticipantById } from '../../participants';
-import { connect } from '../../redux';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
 
 import { StatelessAvatar } from './';

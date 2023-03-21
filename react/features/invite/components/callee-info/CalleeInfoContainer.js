@@ -1,8 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-
-import { connect } from '../../../base/redux';
+import { connect } from 'react-redux';
 
 import CalleeInfo from './CalleeInfo';
 
@@ -49,7 +48,7 @@ class CalleeInfoContainer extends Component<Props> {
  *     _calleeInfoVisible: boolean
  * }}
  */
-function _mapStateToProps(state: Object): Object {
+function _mapStateToProps(state: Object) {
     return {
         /**
          * The indicator which determines whether {@code CalleeInfo} is to be

@@ -3,9 +3,9 @@
 /* eslint-disable react/no-multi-comp */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { connect } from '../../../base/redux';
 import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';

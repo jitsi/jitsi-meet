@@ -1,8 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
-import { connect } from '../../../../base/redux';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack } from

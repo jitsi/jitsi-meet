@@ -1,5 +1,7 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -9,7 +11,6 @@ import {
 import { VIDEO_MUTE_BUTTON_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
-import { connect } from '../../base/redux';
 import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
@@ -160,7 +161,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
  *     _videoMuted: boolean
  * }}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state) {
     const tracks = state['features/base/tracks'];
     const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
 

@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';

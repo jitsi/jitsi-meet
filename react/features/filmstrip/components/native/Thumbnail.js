@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
@@ -17,7 +18,6 @@ import {
 import ParticipantView from '../../../base/participants/components/ParticipantView.native';
 import { FakeParticipant } from '../../../base/participants/types';
 import { Container } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant,

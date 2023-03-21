@@ -1,11 +1,11 @@
 // @flow
 
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconShareDoc } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { toggleDocument } from '../../etherpad/actions';
 import { setOverflowMenuVisible } from '../../toolbox/actions.web';

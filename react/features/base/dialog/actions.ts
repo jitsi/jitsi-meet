@@ -74,7 +74,7 @@ export function openDialog(component: ComponentType<any>, componentProps?: Objec
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openSheet(component: ComponentType, componentProps?: Object) {
+export function openSheet(component: ComponentType<any>, componentProps?: Object) {
     return {
         type: OPEN_SHEET,
         component,

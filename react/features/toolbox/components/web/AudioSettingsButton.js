@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { IconArrowUp } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
-import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
 import { getAudioSettingsVisibility } from '../../../settings/functions';
@@ -18,12 +18,12 @@ type Props = {
     /**
      * The button's key.
      */
-     buttonKey?: string,
+    buttonKey?: string,
 
     /**
      * External handler for click action.
      */
-     handleClick: Function,
+    handleClick: Function,
 
     /**
      * Indicates whether audio permissions have been granted or denied.

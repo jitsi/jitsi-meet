@@ -35,12 +35,12 @@ interface IProps extends WithTranslation {
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string;
+    locked?: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    password: string;
+    password?: string;
 
     /**
      * Whether or not to show the password in editing mode.
@@ -165,7 +165,7 @@ function PasswordSection({
      * @returns {void}
      */
     function onPasswordCopy() {
-        copyText(password);
+        copyText(password ?? '');
     }
 
     /**

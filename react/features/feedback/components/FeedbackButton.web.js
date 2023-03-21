@@ -1,10 +1,11 @@
 
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconFeedback } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openFeedbackDialog } from '../actions';
 
@@ -16,7 +17,7 @@ type Props = AbstractButtonProps & {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-     _conference: Object,
+    _conference: Object,
 
     /**
      * The redux {@code dispatch} function.

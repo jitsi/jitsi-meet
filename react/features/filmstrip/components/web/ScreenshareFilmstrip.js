@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../base/redux';
 import { LAYOUTS, LAYOUT_CLASSNAMES, getCurrentLayout } from '../../../video-layout';
 import {
     FILMSTRIP_TYPE

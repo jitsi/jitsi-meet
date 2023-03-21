@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { createInviteDialogEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
@@ -8,7 +9,6 @@ import { IReduxState } from '../../../../app/types';
 import { getInviteURL } from '../../../../base/connection/functions';
 import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { StatusCode } from '../../../../base/util/uri';
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
@@ -68,7 +68,7 @@ interface IProps extends WithTranslation {
     /**
      * An alternate app name to be displayed in the email subject.
      */
-    _inviteAppName?: string;
+    _inviteAppName?: string | null;
 
     /**
      * Whether or not invite contacts should be visible.
@@ -88,12 +88,12 @@ interface IProps extends WithTranslation {
     /**
      * The current known URL for a live stream in progress.
      */
-    _liveStreamViewURL: string;
+    _liveStreamViewURL?: string;
 
     /**
      * The default phone number.
      */
-    _phoneNumber?: string;
+    _phoneNumber?: string | null;
 
     /**
      * Whether or not url sharing button should be visible.

@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { MEDIA_TYPE } from '../../../base/media';
@@ -10,7 +11,6 @@ import {
     getRemoteParticipants
 } from '../../../base/participants';
 import { Container, Text } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { isLocalTrackMuted } from '../../../base/tracks';
 import { CALLING, PresenceLabel } from '../../../presence-status';
 

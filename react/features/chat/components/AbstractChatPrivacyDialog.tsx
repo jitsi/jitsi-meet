@@ -19,9 +19,9 @@ interface IProps extends WithTranslation {
     _onSetMessageRecipient: Function;
 
     /**
-     * The participant retrieved from Redux by the participanrID prop.
+     * The participant retrieved from Redux by the participantID prop.
      */
-    _participant: Object;
+    _participant?: IParticipant;
 
     /**
      * The message that is about to be sent.

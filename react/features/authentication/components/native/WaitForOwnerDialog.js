@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import { cancelWaitForOwner, openLoginDialog } from '../../actions.native';
 
 /**

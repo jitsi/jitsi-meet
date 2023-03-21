@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent, sendAnalytics } from '../../../../analytics';
-import { connect } from '../../../redux';
 import logger from '../../logger';
 
 /**

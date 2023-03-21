@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -9,7 +10,6 @@ import {
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Icon, IconPlus } from '../../base/icons';
-import { connect } from '../../base/redux';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import { updateCalendarEvent } from '../actions';
 

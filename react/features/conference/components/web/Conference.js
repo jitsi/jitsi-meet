@@ -2,13 +2,13 @@
 
 import _ from 'lodash';
 import React from 'react';
+import { connect as reactReduxConnect } from 'react-redux';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
 import { MainFilmstrip, ScreenshareFilmstrip, StageFilmstrip } from '../../../filmstrip';

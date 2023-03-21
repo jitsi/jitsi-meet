@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import {
     createCalendarClickedEvent,
@@ -10,7 +11,6 @@ import {
 import { appNavigate } from '../../app/actions';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
-import { connect } from '../../base/redux';
 import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions';
 
 

@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 import {
@@ -9,7 +10,6 @@ import {
     Text
     // @ts-ignore
 } from '../../../../base/react';
-import { connect } from '../../../../base/redux/functions';
 import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';

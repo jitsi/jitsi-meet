@@ -1,9 +1,9 @@
 /* @flow */
 
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 

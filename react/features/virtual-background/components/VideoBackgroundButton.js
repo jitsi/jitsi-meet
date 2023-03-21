@@ -1,8 +1,9 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../base/i18n';
 import { IconImage } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { openSettingsDialog } from '../../settings/actions';

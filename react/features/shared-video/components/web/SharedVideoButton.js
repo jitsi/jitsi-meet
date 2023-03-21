@@ -1,10 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { IconPlay } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -92,7 +92,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state) {
     const {
         disabled: sharedVideoBtnDisabled,
         status: sharedVideoStatus

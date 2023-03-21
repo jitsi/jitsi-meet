@@ -1,11 +1,11 @@
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { getParticipantById } from '../../base/participants/functions';
-import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { participantVerified } from '../actions';
 import { ISas } from '../reducer';
@@ -16,7 +16,7 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
     emoji: string;
     pId: string;
-    participantName: string;
+    participantName?: string;
     sas: ISas;
 }
 
@@ -31,7 +31,7 @@ const styles = () => {
     return {
         container: {
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'column' as const,
             margin: '16px'
         },
         row: {
@@ -39,7 +39,7 @@ const styles = () => {
             display: 'flex'
         },
         item: {
-            textAlign: 'center',
+            textAlign: 'center' as const,
             margin: '16px'
         },
         emoji: {
@@ -161,6 +161,4 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
 }
 
 export default translate(connect(_mapStateToProps)(
-
-    // @ts-ignore
     withStyles(styles)(ParticipantVerificationDialog)));

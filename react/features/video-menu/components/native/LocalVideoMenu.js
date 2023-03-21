@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { BottomSheet } from '../../../base/dialog';
@@ -9,7 +10,6 @@ import {
     getLocalParticipant,
     getParticipantDisplayName
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import ToggleSelfViewButton from '../../../toolbox/components/native/ToggleSelfViewButton';
 
 import ConnectionStatusButton from './ConnectionStatusButton';

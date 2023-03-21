@@ -1,12 +1,12 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import ParticipantView from '../../base/participants/components/ParticipantView.native';
 import { getParticipantById, isLocalScreenshareParticipant } from '../../base/participants/functions';
-import { connect } from '../../base/redux';
 import {
     getVideoTrackByParticipant,
     isLocalVideoTrackDesktop,

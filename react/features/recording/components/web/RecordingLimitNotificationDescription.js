@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link RecordingLimitNotificationDescription}.
@@ -62,7 +62,7 @@ function RecordingLimitNotificationDescription(props: Props) {
 
 
 /**
- * Maps part of the Redix state to the props of this component.
+ * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
  * @returns {Props}

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { IconConnection } from '../../../base/icons/svg';
@@ -13,7 +14,6 @@ import {
 } from '../../../base/participants/functions';
 // @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
-import { connect } from '../../../base/redux/functions';
 import {
     getTrackByMediaTypeAndParticipant
 } from '../../../base/tracks/functions.native';

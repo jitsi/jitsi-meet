@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import { shouldHideShareAudioHelper } from '../../../base/settings/functions.web';
 import { toggleScreensharing } from '../../../base/tracks/actions.web';
@@ -105,10 +105,10 @@ class ShareAudioDialog extends Component<IProps> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState): Partial<IProps> {
+function _mapStateToProps(state: IReduxState) {
 
     return {
-        _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
+        _shouldHideShareAudioHelper: Boolean(shouldHideShareAudioHelper(state))
     };
 }
 

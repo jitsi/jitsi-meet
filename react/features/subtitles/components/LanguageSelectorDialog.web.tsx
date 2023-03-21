@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../app/types';
@@ -9,7 +9,6 @@ import { IReduxState } from '../../app/types';
 // @ts-ignore
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { translate, translateToHTML } from '../../base/i18n/functions';
-import { connect } from '../../base/redux/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';

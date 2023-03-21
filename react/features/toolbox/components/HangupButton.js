@@ -1,11 +1,11 @@
 // @flow
 
 import _ from 'lodash';
+import { connect } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { leaveConference } from '../../base/conference/actions';
 import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 

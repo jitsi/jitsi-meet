@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { FlatList, Text } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -13,7 +14,6 @@ import {
     getParticipantCountWithFake,
     getRemoteParticipants
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';

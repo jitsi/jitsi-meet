@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { connect as reduxConnect } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
 import { IStateful } from '../app/types';
@@ -25,19 +24,6 @@ export function assign<T extends Object>(target: T, source: Partial<T>): T {
     }
 
     return t;
-}
-
-/**
- * Wrapper function for the react-redux connect function to avoid having to
- * declare function types for flow, but still let flow warn for other errors.
- *
- * @param {any} mapStateToProps - Redux mapStateToProps function.
- * @param {Function?} mapDispatchToProps - Redux mapDispatchToProps function.
- * @returns {Connector}
- */
-export function connect(
-        mapStateToProps?: any, mapDispatchToProps?: Function | Object) {
-    return reduxConnect(mapStateToProps, mapDispatchToProps);
 }
 
 /**
