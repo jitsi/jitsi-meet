@@ -1,98 +1,92 @@
-// @flow
-
 import { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { WithTranslation } from 'react-i18next';
 
-import { getLocalParticipant } from '../../base/participants';
+import { IReduxState, IStore } from '../../app/types';
+import { getLocalParticipant } from '../../base/participants/functions';
 import { sendMessage, setIsPollsTabFocused } from '../actions';
 import { SMALL_WIDTH_THRESHOLD } from '../constants';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * Whether the chat is opened in a modal or not (computed based on window width).
      */
-    _isModal: boolean,
+    _isModal: boolean;
 
     /**
      * True if the chat window should be rendered.
      */
-    _isOpen: boolean,
+    _isOpen: boolean;
 
     /**
      * True if the polls feature is enabled.
      */
-    _isPollsEnabled: boolean,
+    _isPollsEnabled: boolean;
 
     /**
      * Whether the poll tab is focused or not.
      */
-    _isPollsTabFocused: boolean,
+    _isPollsTabFocused: boolean;
 
     /**
      * All the chat messages in the conference.
      */
-    _messages: Array<Object>,
+    _messages: Array<Object>;
 
     /**
      * Number of unread chat messages.
      */
-    _nbUnreadMessages: number,
+    _nbUnreadMessages: number;
 
     /**
      * Number of unread poll messages.
      */
-    _nbUnreadPolls: number,
+    _nbUnreadPolls: number;
 
     /**
      * Function to send a text message.
      *
      * @protected
      */
-    _onSendMessage: Function,
+    _onSendMessage: Function;
+
+    /**
+     * Function to toggle the chat window.
+     */
+    _onToggleChat: Function;
 
     /**
      * Function to display the chat tab.
      *
      * @protected
      */
-    _onToggleChatTab: Function,
+    _onToggleChatTab: Function;
 
     /**
      * Function to display the polls tab.
      *
      * @protected
      */
-    _onTogglePollsTab: Function,
-
-    /**
-     * Function to toggle the chat window.
-     */
-    _onToggleChat: Function,
+    _onTogglePollsTab: Function;
 
     /**
      * Whether or not to block chat access with a nickname input form.
      */
-    _showNamePrompt: boolean,
+    _showNamePrompt: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Dispatch<any>,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function,
-};
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * Implements an abstract chat panel.
  */
-export default class AbstractChat<P: Props> extends Component<P> {
+export default class AbstractChat<P extends IProps> extends Component<P> {
 
     /**
      * Initializes a new {@code AbstractChat} instance.
@@ -109,8 +103,6 @@ export default class AbstractChat<P: Props> extends Component<P> {
         this._onTogglePollsTab = this._onTogglePollsTab.bind(this);
     }
 
-    _onSendMessage: (string) => void;
-
     /**
     * Sends a text message.
     *
@@ -123,8 +115,6 @@ export default class AbstractChat<P: Props> extends Component<P> {
         this.props.dispatch(sendMessage(text));
     }
 
-    _onToggleChatTab: () => void;
-
     /**
      * Display the Chat tab.
      *
@@ -134,8 +124,6 @@ export default class AbstractChat<P: Props> extends Component<P> {
     _onToggleChatTab() {
         this.props.dispatch(setIsPollsTabFocused(false));
     }
-
-    _onTogglePollsTab: () => void;
 
     /**
      * Display the Polls tab.
@@ -160,7 +148,7 @@ export default class AbstractChat<P: Props> extends Component<P> {
  *     _showNamePrompt: boolean
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);

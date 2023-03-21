@@ -1,3 +1,5 @@
+import { IReduxState } from '../../../app/types';
+
 import {
     FOUR_GROUPS_DASH_SEPARATED,
     GOOGLE_PRIVACY_POLICY,
@@ -11,7 +13,7 @@ import {
  * @param {Object} state - The global state.
  * @returns {LiveStreaming}
  */
-export function getLiveStreaming(state: Object) {
+export function getLiveStreaming(state: IReduxState) {
     const { liveStreaming = {} } = state['features/base/config'];
 
     const regexp = liveStreaming.validatorRegExpString
