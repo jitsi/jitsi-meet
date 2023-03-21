@@ -40,6 +40,11 @@
 .prejoin-preview {
     &-dropdown-btns {
         padding: 8px 0;
+        width: 300px;
+        background-color: #E0E0E0;
+        border-radius: 3px;
+        position: relative;
+        top: -16px;
     }
 
     &-dropdown-container {

@@ -1,4 +1,3 @@
-import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -12,6 +11,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';
 import { isVideoMutedByUser } from '../../../base/media/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
+import Popover from '../../../base/popover/components/Popover.web';
 import ActionButton from '../../../base/premeeting/components/web/ActionButton';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
 import { updateSettings } from '../../../base/settings/actions';
@@ -375,7 +375,7 @@ class Prejoin extends Component<IProps, IState> {
                         data-testid = 'prejoin.errorMessage'>{t('prejoin.errorMissingName')}</div>}
 
                     <div className = 'prejoin-preview-dropdown-container'>
-                        <InlineDialog
+                        <Popover
                             content = { hasExtraJoinButtons && <div className = 'prejoin-preview-dropdown-btns'>
                                 {extraButtonsToRender.map(({ key, ...rest }) => (
                                     <Button
@@ -386,8 +386,10 @@ class Prejoin extends Component<IProps, IState> {
                                         { ...rest } />
                                 ))}
                             </div> }
-                            isOpen = { showJoinByPhoneButtons }
-                            onClose = { _onDropdownClose }>
+                            onPopoverClose = { _onDropdownClose }
+                            position = 'bottom'
+                            trigger = 'click'
+                            visible = { showJoinByPhoneButtons }>
                             <ActionButton
                                 OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
                                 ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
@@ -403,7 +405,7 @@ class Prejoin extends Component<IProps, IState> {
                                 type = 'primary'>
                                 { t('prejoin.joinMeeting') }
                             </ActionButton>
-                        </InlineDialog>
+                        </Popover>
                     </div>
                 </div>
                 { showDialog && (
