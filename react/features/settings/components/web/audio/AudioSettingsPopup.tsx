@@ -67,6 +67,7 @@ function AudioSettingsPopup({
     return (
         <div className = 'audio-preview'>
             <Popover
+                allowClick = { true }
                 content = { <AudioSettingsContent
                     currentMicDeviceId = { currentMicDeviceId }
                     currentOutputDeviceId = { currentOutputDeviceId }

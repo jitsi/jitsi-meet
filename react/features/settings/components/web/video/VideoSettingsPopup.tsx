@@ -57,6 +57,7 @@ function VideoSettingsPopup({
     return (
         <div className = 'video-preview'>
             <Popover
+                allowClick = { true }
                 content = { <VideoSettingsContent
                     currentCameraDeviceId = { currentCameraDeviceId }
                     setVideoInputDevice = { setVideoInputDevice }
