@@ -1,7 +1,7 @@
-// @flow
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { Component } from 'react';
-
+import { IReduxState } from '../../app/types';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getSessionStatusToShow } from '../functions';
 
@@ -13,44 +13,39 @@ import { getSessionStatusToShow } from '../functions';
  * running. These boolean are shared across the two components to make it
  * easier to align web's behaviour to mobile's later if necessary.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Whether this is the Jibri recorder participant.
      */
-    _iAmRecorder: boolean,
+    _iAmRecorder: boolean;
 
     /**
      * The status of the highermost priority session.
      */
-    _status: ?string,
+    _status?: string;
 
     /**
      * An object containing the CSS classes.
      */
-    classes: ?{[ key: string]: string},
+    classes?: { [ key: string]: string; };
 
     /**
      * The recording mode this indicator should display.
      */
-    mode: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    mode: string;
+}
 
 /**
  * State of the component.
  */
-type State = {
+interface IState {
 
     /**
      * True if the label status is stale, so it needs to be removed.
      */
-    staleLabel: boolean
-};
+    staleLabel: boolean;
+}
 
 /**
  * The timeout after a label is considered stale. See {@code _updateStaleStatus}
@@ -62,13 +57,15 @@ const STALE_TIMEOUT = 10 * 1000;
  * Abstract class for the {@code RecordingLabel} component.
  */
 export default class AbstractRecordingLabel
-    extends Component<Props, State> {
+    extends Component<IProps, IState> {
+    _mounted: boolean;
+
     /**
      * Implements {@code Component#getDerivedStateFromProps}.
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, prevState: State) {
+    static getDerivedStateFromProps(props: IProps, prevState: IState) {
         return {
             staleLabel: props._status !== JitsiRecordingConstants.status.OFF
                 && prevState.staleLabel ? false : prevState.staleLabel
@@ -80,14 +77,14 @@ export default class AbstractRecordingLabel
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
             staleLabel: true
         };
 
-        this._updateStaleStatus({}, props);
+        this._updateStaleStatus(undefined, props);
     }
 
     /**
@@ -113,7 +110,7 @@ export default class AbstractRecordingLabel
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         this._updateStaleStatus(prevProps, this.props);
     }
 
@@ -126,8 +123,6 @@ export default class AbstractRecordingLabel
         return this.props._status && !this.state.staleLabel && !this.props._iAmRecorder
             ? this._renderLabel() : null;
     }
-
-    _getLabelKey: () => ?string;
 
     /**
      * Returns the label key that this indicator should render.
@@ -153,19 +148,21 @@ export default class AbstractRecordingLabel
      * @protected
      * @returns {React$Element}
      */
-    _renderLabel: () => React$Element<*>;
+    _renderLabel(): React.ReactNode | null {
+        return null;
+    }
 
     /**
      * Updates the stale status of the label on a prop change. A label is stale
      * if it's in a {@code _status} that doesn't need to be rendered anymore.
      *
-     * @param {Props} oldProps - The previous props of the component.
-     * @param {Props} newProps - The new props of the component.
+     * @param {IProps} oldProps - The previous props of the component.
+     * @param {IProps} newProps - The new props of the component.
      * @returns {void}
      */
-    _updateStaleStatus(oldProps, newProps) {
+    _updateStaleStatus(oldProps: IProps | undefined, newProps: IProps) {
         if (newProps._status === JitsiRecordingConstants.status.OFF) {
-            if (oldProps._status !== JitsiRecordingConstants.status.OFF) {
+            if (oldProps?._status !== JitsiRecordingConstants.status.OFF) {
                 setTimeout(() => {
                     if (!this._mounted) {
                         return;
@@ -189,13 +186,13 @@ export default class AbstractRecordingLabel
  * {@code AbstractRecordingLabel}'s props.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The component's own props.
+ * @param {IProps} ownProps - The component's own props.
  * @private
  * @returns {{
  *     _status: ?string
  * }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { mode } = ownProps;
 
     return {

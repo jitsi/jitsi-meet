@@ -1,81 +1,79 @@
-// @flow
-
 import { Component } from 'react';
 
-import {
-    createLiveStreamingDialogEvent,
-    sendAnalytics
-} from '../../../analytics';
+import { createLiveStreamingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractStartLiveStreamDialog}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: Object,
+    _conference: IJitsiConference;
 
     /**
      * The current state of interactions with the Google API. Determines what
      * Google related UI should display.
      */
-    _googleAPIState: number,
+    _googleAPIState: number;
 
     /**
      * The email of the user currently logged in to the Google web client
      * application.
      */
-    _googleProfileEmail: string,
+    _googleProfileEmail: string;
 
     /**
      * The live stream key that was used before.
      */
-    _streamKey: string,
+    _streamKey: string;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function;
 }
 
 /**
  * The type of the React {@code Component} state of
  * {@link AbstractStartLiveStreamDialog}.
  */
-export type State = {
+export interface IState {
 
     /**
      * Details about the broadcasts available for use for the logged in Google
      * user's YouTube account.
      */
-    broadcasts: ?Array<Object>,
+    broadcasts?: Array<any>;
 
     /**
      * The error type, as provided by Google, for the most recent error
      * encountered by the Google API.
      */
-    errorType: ?string,
+    errorType?: string;
 
     /**
      * The boundStreamID of the broadcast currently selected in the broadcast
      * dropdown.
      */
-    selectedBoundStreamID: ?string,
+    selectedBoundStreamID?: string;
 
     /**
      * The selected or entered stream key to use for YouTube live streaming.
      */
-    streamKey: string
-};
+    streamKey: string;
+}
 
 /**
  * Implements an abstract class for the StartLiveStreamDialog on both platforms.
@@ -84,8 +82,8 @@ export type State = {
  * but the abstraction of its properties are already present in this abstract
  * class.
  */
-export default class AbstractStartLiveStreamDialog<P: Props>
-    extends Component<P, State> {
+export default class AbstractStartLiveStreamDialog<P extends IProps>
+    extends Component<P, IState> {
     _isMounted: boolean;
 
     /**
@@ -139,8 +137,6 @@ export default class AbstractStartLiveStreamDialog<P: Props>
         this._isMounted = false;
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Invokes the passed in {@link onCancel} callback and closes
      * {@code StartLiveStreamDialog}.
@@ -163,9 +159,7 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      * @private
      * @returns {Promise}
      */
-    _onGetYouTubeBroadcasts: () => Promise<*>;
-
-    _onStreamKeyChange: string => void;
+    _onGetYouTubeBroadcasts: () => Promise<any>;
 
     /**
      * Callback invoked to update the {@code StartLiveStreamDialog} component's
@@ -175,14 +169,12 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      * @private
      * @returns {void}
      */
-    _onStreamKeyChange(streamKey) {
+    _onStreamKeyChange(streamKey: string) {
         this._setStateIfMounted({
             streamKey,
             selectedBoundStreamID: undefined
         });
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Invokes the passed in {@link onSubmit} callback with the entered stream
@@ -204,10 +196,10 @@ export default class AbstractStartLiveStreamDialog<P: Props>
         let selectedBroadcastID = null;
 
         if (selectedBoundStreamID) {
-            const selectedBroadcast = broadcasts && broadcasts.find(
+            const selectedBroadcast = broadcasts?.find(
                 broadcast => broadcast.boundStreamID === selectedBoundStreamID);
 
-            selectedBroadcastID = selectedBroadcast && selectedBroadcast.id;
+            selectedBroadcastID = selectedBroadcast?.id;
         }
 
         sendAnalytics(
@@ -231,7 +223,7 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      * @private
      * @returns {void}
      */
-    _setStateIfMounted(newState) {
+    _setStateIfMounted(newState: IState) {
         if (this._isMounted) {
             this.setState(newState);
         }
@@ -249,7 +241,7 @@ export default class AbstractStartLiveStreamDialog<P: Props>
  *     _streamKey: string
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _conference: state['features/base/conference'].conference,
         _googleAPIState: state['features/google-api'].googleAPIState,

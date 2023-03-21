@@ -93,7 +93,9 @@ export interface IJitsiConference {
     setReceiverConstraints: Function;
     setSenderVideoConstraint: Function;
     setSubject: Function;
+    startRecording: Function;
     startVerification: Function;
+    stopRecording: Function;
 }
 
 export interface IConferenceState {

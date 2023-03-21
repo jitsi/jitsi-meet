@@ -1,69 +1,69 @@
-// @flow
-
+// @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
-import type { Dispatch } from 'redux';
 
-import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
+import { createWelcomePageEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
+import { IReduxState, IStore } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
-import { isCalendarEnabled } from '../../calendar-sync';
+import { isCalendarEnabled } from '../../calendar-sync/functions';
 import { isRecentListEnabled } from '../../recent-list/functions';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * Whether the calendar functionality is enabled or not.
      */
-    _calendarEnabled: boolean,
+    _calendarEnabled: boolean;
 
     /**
      * The deeplinking config.
      */
-    _deeplinkingCfg: IDeeplinkingConfig,
+    _deeplinkingCfg: IDeeplinkingConfig;
 
     /**
      * Whether the insecure room name functionality is enabled or not.
      */
-    _enableInsecureRoomNameWarning: boolean,
+    _enableInsecureRoomNameWarning: boolean;
 
     /**
      * URL for the moderated rooms microservice, if available.
      */
-    _moderatedRoomServiceUrl: ?string,
+    _moderatedRoomServiceUrl?: string;
 
     /**
      * Whether the recent list is enabled.
      */
-    _recentListEnabled: Boolean,
+    _recentListEnabled: Boolean;
 
     /**
      * Room name to join to.
      */
-    _room: string,
+    _room: string;
 
     /**
      * The current settings.
      */
-    _settings: Object,
+    _settings: Object;
 
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Dispatch<any>
-};
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * Base (abstract) class for container component rendering the welcome page.
  *
  * @abstract
  */
-export class AbstractWelcomePage<P: Props> extends Component<P, *> {
-    _mounted: ?boolean;
+export class AbstractWelcomePage<P extends IProps> extends Component<P> {
+    _mounted: boolean | undefined;
 
     /**
      * Save room name into component's local state.
@@ -71,7 +71,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      * @type {Object}
      * @property {number|null} animateTimeoutId - Identifier of the letter
      * animation timeout.
-     * @property {string} generatedRoomname - Automatically generated room name.
+     * @property {string} generatedRoomName - Automatically generated room name.
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
@@ -80,7 +80,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      */
     state = {
         animateTimeoutId: undefined,
-        generatedRoomname: '',
+        generatedRoomName: '',
         insecureRoomName: false,
         joining: false,
         room: '',
@@ -98,12 +98,12 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomnameChanging
-            = this._animateRoomnameChanging.bind(this);
+        this._animateRoomNameChanging
+            = this._animateRoomNameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
-        this._updateRoomname = this._updateRoomname.bind(this);
+        this._updateRoomName = this._updateRoomName.bind(this);
     }
 
     /**
@@ -128,8 +128,6 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
         this._mounted = false;
     }
 
-    _animateRoomnameChanging: (string) => void;
-
     /**
      * Animates the changing of the room name.
      *
@@ -138,7 +136,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      * @private
      * @returns {void}
      */
-    _animateRoomnameChanging(word: string) {
+    _animateRoomNameChanging(word: string) {
         let animateTimeoutId;
         const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
 
@@ -146,7 +144,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
             animateTimeoutId
                 = setTimeout(
                     () => {
-                        this._animateRoomnameChanging(
+                        this._animateRoomNameChanging(
                             word.substring(1, word.length));
                     },
                     70);
@@ -164,8 +162,8 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      * @returns {void}
      */
     _clearTimeouts() {
-        clearTimeout(this.state.animateTimeoutId);
-        clearTimeout(this.state.updateTimeoutId);
+        this.state.animateTimeoutId && clearTimeout(this.state.animateTimeoutId);
+        this.state.updateTimeoutId && clearTimeout(this.state.updateTimeoutId);
     }
 
     /**
@@ -173,9 +171,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      *
      * @returns {ReactElement}
      */
-    _doRenderInsecureRoomNameWarning: () => React$Component<any>;
-
-    _onJoin: () => void;
+    _doRenderInsecureRoomNameWarning: () => React.Component<any>;
 
     /**
      * Handles joining. Either by clicking on 'Join' button
@@ -185,7 +181,7 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      * @returns {void}
      */
     _onJoin() {
-        const room = this.state.room || this.state.generatedRoomname;
+        const room = this.state.room || this.state.generatedRoomName;
 
         sendAnalytics(
             createWelcomePageEvent('clicked', 'joinButton', {
@@ -206,8 +202,6 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
         }
     }
 
-    _onRoomChange: (string) => void;
-
     /**
      * Handles 'change' event for the room name text input field.
      *
@@ -223,8 +217,6 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
         });
     }
 
-    _renderInsecureRoomNameWarning: () => React$Component<any>;
-
     /**
      * Renders the insecure room name warning if needed.
      *
@@ -238,8 +230,6 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
         return null;
     }
 
-    _updateRoomname: () => void;
-
     /**
      * Triggers the generation of a new room name and initiates an animation of
      * its changing.
@@ -247,19 +237,19 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
      * @protected
      * @returns {void}
      */
-    _updateRoomname() {
-        const generatedRoomname = generateRoomWithoutSeparator();
+    _updateRoomName() {
+        const generatedRoomName = generateRoomWithoutSeparator();
         const roomPlaceholder = '';
-        const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
+        const updateTimeoutId = setTimeout(this._updateRoomName, 10000);
 
         this._clearTimeouts();
         this.setState(
             {
-                generatedRoomname,
+                generatedRoomName,
                 roomPlaceholder,
                 updateTimeoutId
             },
-            () => this._animateRoomnameChanging(generatedRoomname));
+            () => this._animateRoomNameChanging(generatedRoomName));
     }
 }
 
@@ -269,9 +259,9 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
         _deeplinkingCfg: state['features/base/config'].deeplinking || {},

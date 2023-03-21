@@ -1,64 +1,65 @@
-// @flow
-
+import { DebouncedFunc } from 'lodash';
 import debounce from 'lodash/debounce';
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+
+import { IReduxState } from '../../../app/types';
 
 import { getLiveStreaming } from './functions';
 
 
 export type LiveStreaming = {
-    enabled: boolean,
-    helpLink: string, // Documentation reference for the live streaming feature.
-    termsLink: string, // Terms link
-    dataPrivacyLink: string, // Data privacy link
-    validatorRegExpString: string // RegExp string that validates the stream key input field
-}
+
+    // Terms link
+    dataPrivacyLink: string;
+    enabled: boolean;
+    helpLink: string;
+
+    // Documentation reference for the live streaming feature.
+    termsLink: string; // Data privacy link
+    validatorRegExpString: string; // RegExp string that validates the stream key input field
+};
 
 export type LiveStreamingProps = {
-    enabled: boolean,
-    helpURL: string,
-    termsURL: string,
-    dataPrivacyURL: string,
-    streamLinkRegexp: RegExp
-}
+    dataPrivacyURL: string;
+    enabled: boolean;
+    helpURL: string;
+    streamLinkRegexp: RegExp;
+    termsURL: string;
+};
 
 /**
  * The props of the component.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * The live streaming dialog properties.
      */
-    _liveStreaming: LiveStreamingProps,
+    _liveStreaming: LiveStreamingProps;
 
     /**
      * Callback invoked when the entered stream key has changed.
      */
-    onChange: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    onChange: Function;
 
     /**
      * The stream key value to display as having been entered so far.
      */
-    value: string
-};
+    value: string;
+}
 
 /**
  * The state of the component.
  */
-type State = {
+interface IState {
 
     /**
      * Whether or not to show the warnings that the passed in value seems like
      * an improperly formatted stream key.
      */
-    showValidationError: boolean
-};
+    showValidationError: boolean;
+}
 
 /**
  * An abstract React Component for entering a key for starting a YouTube live
@@ -66,10 +67,10 @@ type State = {
  *
  * @augments Component
  */
-export default class AbstractStreamKeyForm<P: Props>
-    extends Component<P, State> {
+export default class AbstractStreamKeyForm<P extends IProps>
+    extends Component<P, IState> {
 
-    _debouncedUpdateValidationErrorVisibility: Function;
+    _debouncedUpdateValidationErrorVisibility: DebouncedFunc<() => void>;
 
     /**
      * Constructor for the component.
@@ -114,8 +115,6 @@ export default class AbstractStreamKeyForm<P: Props>
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
 
-    _onInputChange: Object => void;
-
     /**
      * Callback invoked when the value of the input field has updated through
      * user input. This forwards the value (string only, even if it was a dom
@@ -126,7 +125,7 @@ export default class AbstractStreamKeyForm<P: Props>
      * @private
      * @returns {void}
      */
-    _onInputChange(change) {
+    _onInputChange(change: any) {
         const value = typeof change === 'object' ? change.target.value : change;
 
         this.props.onChange(value);
@@ -174,7 +173,7 @@ export default class AbstractStreamKeyForm<P: Props>
  *     _liveStreaming: LiveStreamingProps
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _liveStreaming: getLiveStreaming(state)
     };
