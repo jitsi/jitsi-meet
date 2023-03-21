@@ -150,21 +150,8 @@ export default {
 
     thumbnailTopLeftIndicatorContainer: {
         ...indicatorContainer,
-        alignContent: 'center',
         backgroundColor: 'unset',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        position: 'absolute',
-        top: BaseTheme.spacing[1],
-        width: 72
-    },
-
-    thumbnailTopLeftIndicatorContainerTileView: {
-        ...indicatorContainer,
-        alignContent: 'center',
-        backgroundColor: 'unset',
-        flexDirection: 'row',
-        justifyContent: 'center',
         position: 'absolute',
         top: BaseTheme.spacing[1]
     },
