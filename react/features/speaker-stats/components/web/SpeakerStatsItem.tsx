@@ -1,7 +1,6 @@
 // eslint-disable-next-line lines-around-comment
 import React from 'react';
 
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import StatelessAvatar from '../../../base/avatar/components/web/StatelessAvatar';
 import { getInitials } from '../../../base/avatar/functions';

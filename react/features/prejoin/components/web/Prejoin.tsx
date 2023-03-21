@@ -4,9 +4,7 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { isNameReadOnly } from '../../../base/config/functions.web';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';

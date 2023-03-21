@@ -7,8 +7,6 @@ import { WithTranslation } from 'react-i18next';
 import UIEvents from '../../../../../service/UI/UIEvents';
 import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
