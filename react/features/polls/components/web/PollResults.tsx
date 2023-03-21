@@ -10,7 +10,8 @@ const useStyles = makeStyles()(theme => {
             margin: '24px',
             padding: '16px',
             backgroundColor: theme.palette.ui02,
-            borderRadius: '8px'
+            borderRadius: '8px',
+            wordBreak: 'break-word'
         },
         header: {
             marginBottom: '16px'
@@ -143,7 +144,7 @@ const PollResults = ({
                                     style = {{ width: `${percentage}%` }} />
                             </span>
                             <div className = { classes.voteCount }>
-                                {voterCount}({percentage}%)
+                                {voterCount} ({percentage}%)
                             </div>
                         </div>
                         {showDetails && voters && voterCount > 0
