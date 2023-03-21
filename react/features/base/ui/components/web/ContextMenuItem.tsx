@@ -57,7 +57,7 @@ export interface IProps {
     /**
      * Click handler.
      */
-    onClick?: (e?: React.MouseEvent) => void;
+    onClick?: (e?: React.MouseEvent<any>) => void;
 
     /**
      * Keydown handler.

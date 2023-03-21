@@ -1,43 +1,39 @@
-// @flow
-
 import React, { Fragment } from 'react';
 
-import { Icon } from '../../icons';
+import Icon from '../../icons/components/Icon';
 import Tooltip from '../../tooltip/components/Tooltip';
 import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
 import AbstractToolboxItem from './AbstractToolboxItem';
-import type { Props as AbstractToolboxItemProps } from './AbstractToolboxItem';
+import type { IProps as AbstractToolboxItemProps } from './AbstractToolboxItem';
 
-type Props = AbstractToolboxItemProps & {
+interface IProps extends AbstractToolboxItemProps {
 
     /**
      * Whether or not the item is displayed in a context menu.
      */
-    contextMenu?: boolean,
+    contextMenu?: boolean;
 
     /**
     * On key down handler.
     */
-    onKeyDown: Function
-};
+    onKeyDown: (e?: React.KeyboardEvent) => void;
+}
 
 /**
  * Web implementation of {@code AbstractToolboxItem}.
  */
-export default class ToolboxItem extends AbstractToolboxItem<Props> {
+export default class ToolboxItem extends AbstractToolboxItem<IProps> {
     /**
      * Initializes a new {@code ToolboxItem} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onKeyPress = this._onKeyPress.bind(this);
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * Handles 'Enter' and Space key on the button to trigger onClick for accessibility.
@@ -46,8 +42,8 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      * @private
      * @returns {void}
      */
-    _onKeyPress(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
+    _onKeyPress(event?: React.KeyboardEvent) {
+        if (event?.key === 'Enter' || event?.key === ' ') {
             event.preventDefault();
             this.props.onClick();
         }
@@ -113,7 +109,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         if (useTooltip) {
             children = (
                 <Tooltip
-                    content = { this.tooltip }
+                    content = { this.tooltip ?? '' }
                     position = { tooltipPosition }>
                     { children }
                 </Tooltip>
