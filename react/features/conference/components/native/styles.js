@@ -109,18 +109,17 @@ export default {
     },
 
     alwaysOnTitleBar: {
-        paddingRight: 0,
-        borderRadius: 6,
-        backgroundColor: 'rgba(0, 0, 0, .5)',
-        marginLeft: BaseTheme.spacing[2],
-        flexDirection: 'row',
-        alignSelf: 'flex-start',
         alignItems: 'center',
+        alignSelf: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, .5)',
+        borderRadius: BaseTheme.shape.borderRadius,
+        flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[2],
-
+        marginRight: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[0],
         '&:not(:empty)': {
-            padding: 4
+            padding: BaseTheme.spacing[1]
         }
     },
 

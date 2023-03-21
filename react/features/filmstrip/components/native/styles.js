@@ -10,17 +10,11 @@ const indicatorContainer = {
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: BaseTheme.shape.borderRadius,
-    flexShrink: 1,
     height: 24,
-    justifyContent: 'center',
     margin: 2,
     padding: 2
 };
 
-const raisedHandIndicator = {
-    ...indicatorContainer,
-    backgroundColor: BaseTheme.palette.warning02
-};
 
 /**
  * The styles of the feature filmstrip.
@@ -130,6 +124,10 @@ export default {
         ...indicatorContainer
     },
 
+    screenShareIndicatorContainer: {
+        ...indicatorContainer
+    },
+
     /**
      * The thumbnail indicator container.
      */
@@ -152,20 +150,28 @@ export default {
 
     thumbnailTopLeftIndicatorContainer: {
         ...indicatorContainer,
+        alignContent: 'center',
         backgroundColor: 'unset',
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        top: BaseTheme.spacing[1],
+        width: 72
+    },
+
+    thumbnailTopLeftIndicatorContainerTileView: {
+        ...indicatorContainer,
+        alignContent: 'center',
+        backgroundColor: 'unset',
+        flexDirection: 'row',
+        justifyContent: 'center',
         position: 'absolute',
         top: BaseTheme.spacing[1]
     },
 
     raisedHandIndicator: {
-        ...raisedHandIndicator,
-        left: 14
-    },
-
-    raisedHandIndicatorTileView: {
-        ...raisedHandIndicator,
-        left: 2
+        ...indicatorContainer,
+        backgroundColor: BaseTheme.palette.warning02
     },
 
     raisedHandIcon: {

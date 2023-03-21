@@ -222,18 +222,18 @@ class Thumbnail extends PureComponent<Props> {
         } = this.props;
         const indicators = [];
 
+        const thumbnailTopLeftIndicatorContainerStyles = _isTileViewEnabled
+            ? styles.thumbnailTopLeftIndicatorContainerTileView
+            : styles.thumbnailTopLeftIndicatorContainer;
+
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
-                style = { styles.thumbnailTopLeftIndicatorContainer }>
+                style = { thumbnailTopLeftIndicatorContainerStyles }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
-                {
-                    !_isVirtualScreenshare && <RaisedHandIndicator
-                        isTileView = { _isTileViewEnabled }
-                        participantId = { participantId } />
-                }
+                { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
                 { tileView && isScreenShare && (
-                    <View style = { styles.indicatorContainer }>
+                    <View style = { styles.screenShareIndicatorContainer }>
                         <ScreenShareIndicator />
                     </View>
                 ) }
