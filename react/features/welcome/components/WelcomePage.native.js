@@ -73,7 +73,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
     _onRoomChange: (string) => void;
 
-    _updateRoomname: () => void;
+    _updateRoomName: () => void;
 
     /**
      * Implements React's {@link Component#componentDidMount()}. Invoked
@@ -96,14 +96,14 @@ class WelcomePage extends AbstractWelcomePage<*> {
         });
 
         navigation.addListener('focus', () => {
-            this._updateRoomname();
+            this._updateRoomName();
         });
 
         navigation.addListener('blur', () => {
             this._clearTimeouts();
 
             this.setState({
-                generatedRoomname: '',
+                generatedRoomName: '',
                 insecureRoomName: false,
                 room: ''
             });
@@ -194,7 +194,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
             });
         } else {
             // Restart room placeholder animation.
-            this._updateRoomname();
+            this._updateRoomName();
         }
 
         Animated.timing(
