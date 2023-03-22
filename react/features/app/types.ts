@@ -32,6 +32,7 @@ import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
 import { ICalendarSyncState } from '../calendar-sync/reducer';
 import { IChatState } from '../chat/reducer';
 import { IDeepLinkingState } from '../deep-linking/reducer';
+import { IDesktopPicker } from '../desktop-picker/reducer';
 import { IDropboxState } from '../dropbox/reducer';
 import { IDynamicBrandingState } from '../dynamic-branding/reducer';
 import { IE2EEState } from '../e2ee/reducer';
@@ -123,6 +124,7 @@ export interface IReduxState {
     'features/call-integration': ICallIntegrationState;
     'features/chat': IChatState;
     'features/deep-linking': IDeepLinkingState;
+    'features/desktop-picker': IDesktopPicker;
     'features/dropbox': IDropboxState;
     'features/dynamic-branding': IDynamicBrandingState;
     'features/e2ee': IE2EEState;

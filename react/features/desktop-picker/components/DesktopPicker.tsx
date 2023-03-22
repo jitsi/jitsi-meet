@@ -1,25 +1,23 @@
+import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import Tabs from '../../base/ui/components/web/Tabs';
-import { obtainDesktopSources } from '../functions';
+import { deleteDesktopSources } from '../actions';
+import {
+    getDesktopPickerSources,
+    obtainDesktopSources,
+    oldJitsiMeetElectronUsage
+} from '../functions';
+import { IDesktopSources } from '../types';
+import { THUMBNAIL_SIZE } from '../utils';
 
 import DesktopPickerPane from './DesktopPickerPane';
-
-/**
- * The size of the requested thumbnails.
- *
- * @type {Object}
- */
-const THUMBNAIL_SIZE = {
-    height: 300,
-    width: 300
-};
 
 /**
  * The sources polling interval in ms.
@@ -46,6 +44,11 @@ const VALID_TYPES = Object.keys(TAB_LABELS);
  * The type of the React {@code Component} props of {@link DesktopPicker}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * An object containing all the DesktopCapturerSources.
+     */
+     _sources: IDesktopSources;
 
     /**
      * An array with desktop sharing sources to be displayed.
@@ -183,6 +186,32 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     }
 
     /**
+     * Clean up component and DesktopCapturerSource store state.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps: IProps) {
+        const usingOldJitsiMeetElectron = oldJitsiMeetElectronUsage();
+
+        // skip logic if old jitsi meet electron used.
+        if (usingOldJitsiMeetElectron) {
+            return;
+        }
+
+        if (this.props._sources && !_.isEqual(this.props._sources, prevProps._sources)) {
+            const selectedSource = this._getSelectedSource(this.props._sources);
+
+            // update state with latest thumbnail desktop sources
+            // eslint-disable-next-line react/no-did-update-set-state
+            this.setState({
+                sources: this.props._sources,
+                selectedSource
+            });
+        }
+    }
+
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -282,6 +311,7 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     _onCloseModal(id = '', type?: string, screenShareAudio = false) {
         this.props.onSourceChoose(id, type, screenShareAudio);
         this.props.dispatch(hideDialog());
+        this.props.dispatch(deleteDesktopSources());
     }
 
     /**
@@ -322,14 +352,14 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     _onTabSelected(id: string) {
         const { sources } = this.state;
 
-        this._selectedTabType = id;
-
         // When we change tabs also reset the screenShareAudio state so we don't
         // use the option from one tab when sharing from another.
         this.setState({
             screenShareAudio: false,
             selectedSource: this._getSelectedSource(sources),
-            selectedTab: id
+
+            // select type `window` or `screen` from id
+            selectedTab: id.split('-')[0]
         });
     }
 
@@ -406,6 +436,17 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     _updateSources() {
         const { types } = this.state;
 
+        const usingOldJitsiMeetElectron = oldJitsiMeetElectronUsage();
+
+        if (!usingOldJitsiMeetElectron) {
+            APP.API.notifyRequestDesktopSources({
+                types,
+                thumbnailSize: THUMBNAIL_SIZE
+            });
+
+            return;
+        }
+
         if (types.length > 0) {
             obtainDesktopSources(
                 this.state.types,
@@ -414,8 +455,6 @@ class DesktopPicker extends PureComponent<IProps, IState> {
             .then((sources: any) => {
                 const selectedSource = this._getSelectedSource(sources);
 
-                // TODO: Maybe check if we have stopped the timer and unmounted
-                // the component.
                 this.setState({
                     sources,
                     selectedSource
@@ -426,4 +465,18 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     }
 }
 
-export default translate(connect()(DesktopPicker));
+/**
+ * Maps (parts of) the redux state to the React props.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {{
+*     _sources: IDesktopPicker
+* }}
+*/
+function _mapStateToProps(state: IReduxState) {
+    return {
+        _sources: getDesktopPickerSources(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DesktopPicker));

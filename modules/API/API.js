@@ -67,6 +67,7 @@ import {
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
+import { executeInitDesktopSources } from '../../react/features/desktop-picker';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -469,6 +470,17 @@ function initCommands() {
         },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
+        },
+        '_request-desktop-sources-result': data => {
+            if (data.error) {
+                logger.error(`Error to retrieve desktop sources result, error data: ${data.error}`);
+
+                return;
+            }
+
+            if (data.success?.data?.sources) {
+                APP.store.dispatch(executeInitDesktopSources(data.success.data.sources));
+            }
         },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
@@ -1276,6 +1288,19 @@ class API {
             description,
             name: 'notification-triggered',
             title
+        });
+    }
+
+    /**
+     * Notify request desktop sources.
+     *
+     * @param {Object} options - Object with the options for desktop sources.
+     * @returns {void}
+     */
+    notifyRequestDesktopSources(options) {
+        this._sendEvent({
+            name: '_request-desktop-sources',
+            options
         });
     }
 

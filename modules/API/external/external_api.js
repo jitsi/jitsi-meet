@@ -54,7 +54,6 @@ const commands = {
     removeBreakoutRoom: 'remove-breakout-room',
     resizeFilmStrip: 'resize-film-strip',
     resizeLargeVideo: 'resize-large-video',
-    sendCameraFacingMode: 'send-camera-facing-mode-message',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendParticipantToRoom: 'send-participant-to-room',
@@ -91,7 +90,8 @@ const commands = {
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
-    toggleWhiteboard: 'toggle-whiteboard'
+    toggleWhiteboard: 'toggle-whiteboard',
+    _requestDesktopSourcesResult: '_request-desktop-sources-result'
 };
 
 /**
@@ -147,6 +147,7 @@ const events = {
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
+    '_request-desktop-sources': '_requestDesktopSources',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -1309,6 +1310,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         if (width <= this._width && height <= this._height) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
+    }
+
+    /**
+     * Send request to request desktop sources.
+     *
+     * @returns {Promise} - Result.
+     */
+    _requestDesktopSources() {
+        return this._transport.sendRequest({
+            name: '_request-desktop-sources'
+        });
     }
 
     /**
