@@ -48,7 +48,7 @@ class WelcomePage extends AbstractWelcomePage {
         this.state = {
             ...this.state,
 
-            generateRoomnames:
+            generateRoomNames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
         };
 
@@ -129,8 +129,8 @@ class WelcomePage extends AbstractWelcomePage {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
-        if (this.state.generateRoomnames) {
-            this._updateRoomname();
+        if (this.state.generateRoomNames) {
+            this._updateRoomName();
         }
 
         if (this._shouldShowAdditionalContent()) {
