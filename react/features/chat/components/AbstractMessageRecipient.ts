@@ -37,8 +37,6 @@ export interface IProps extends WithTranslation {
       * Shows widget if it is necessary.
       */
     _visible: boolean;
-
-    classes?: any;
 }
 
 /**
