@@ -1,98 +1,98 @@
-/* @flow */
-/* eslint-disable no-invalid-this */
-
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
 
-import { getCurrentConference } from '../../../base/conference';
-import { getLocalParticipant } from '../../../base/participants';
+import { IReduxState } from '../../../app/types';
+import { getCurrentConference } from '../../../base/conference/functions';
+import { IJitsiConference } from '../../../base/conference/reducer';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import { setSharedVideoStatus } from '../../actions.any';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 /**
- * Return true if the diffenrece between the two timees is larger than 5.
+ * Return true if the difference between the two times is larger than 5.
  *
  * @param {number} newTime - The current time.
  * @param {number} previousTime - The previous time.
  * @private
  * @returns {boolean}
 */
-function shouldSeekToPosition(newTime, previousTime) {
+function shouldSeekToPosition(newTime: number, previousTime: number) {
     return Math.abs(newTime - previousTime) > 5;
 }
 
 /**
  * The type of the React {@link Component} props of {@link AbstractVideoManager}.
  */
-export type Props = {
+export interface IProps {
 
     /**
-     * The current coference.
+     * The current conference.
      */
-    _conference: Object,
+    _conference: IJitsiConference;
 
     /**
      * Is the video shared by the local user.
      *
      * @private
      */
-    _isOwner: boolean,
+    _isOwner: boolean;
 
     /**
      * The shared video owner id.
      */
-    _ownerId: string,
+    _ownerId: string;
 
     /**
      * The shared video status.
      */
-     _status: string,
+    _status: string;
 
     /**
      * Seek time in seconds.
      *
      */
-    _time: number,
+    _time: number;
 
     /**
      * The video url.
      */
-     _videoUrl: string,
+    _videoUrl: string;
 
     /**
      * The Redux dispatch function.
      */
-     dispatch: Function,
+    dispatch: Function;
 
     /**
       * The player's height.
     */
-    height: number,
+    height: number;
 
     /**
       * The video id.
     */
-    videoId: string,
+    videoId: string;
 
     /**
       * The player's width.
     */
-    width: number
+    width: number;
 }
 
 /**
  * Manager of shared video.
  */
-class AbstractVideoManager extends PureComponent<Props> {
+class AbstractVideoManager extends PureComponent<IProps> {
     throttledFireUpdateSharedVideoEvent: Function;
 
     /**
      * Initializes a new instance of AbstractVideoManager.
      *
+     * @param {IProps} props - Component props.
      * @returns {void}
      */
-    constructor() {
-        super();
+    constructor(props: IProps) {
+        super(props);
 
         this.throttledFireUpdateSharedVideoEvent = throttle(this.fireUpdateSharedVideoEvent.bind(this), 5000);
     }
@@ -215,7 +215,7 @@ class AbstractVideoManager extends PureComponent<Props> {
     /**
      * Indicates the playback state of the video.
      */
-    getPlaybackStatus: () => boolean;
+    getPlaybackStatus: () => string;
 
     /**
      * Plays video.
@@ -245,15 +245,15 @@ export default AbstractVideoManager;
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object): $Shape<Props> {
+export function _mapStateToProps(state: IReduxState) {
     const { ownerId, status, time, videoUrl } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
 
     return {
         _conference: getCurrentConference(state),
-        _isOwner: ownerId === localParticipant.id,
+        _isOwner: ownerId === localParticipant?.id,
         _ownerId: ownerId,
         _status: status,
         _time: time,

@@ -1,5 +1,4 @@
-/* @flow */
-
+import { IReduxState } from '../../../app/types';
 import { isTestModeEnabled } from '../functions';
 
 /**
@@ -17,25 +16,25 @@ export type TestHintProps = {
      * {@link TestHint} Components are rendered only if this flag is set to
      * {@code true}.
      */
-    _testModeEnabled: boolean,
+    _testModeEnabled: boolean;
 
     /**
      * The test hint's identifier string. Must be unique in the app instance
      * scope.
      */
-    id: string,
+    id: string;
 
     /**
      * The optional "on press" handler which can be used to bind a click handler
      * to a {@link TestHint}.
      */
-    onPress: ?Function,
+    onPress?: Function;
 
     /**
      * The test hint's (text) value which is to be consumed by the tests.
      */
-    value: string
-}
+    value: string;
+};
 
 /**
  * Maps (parts of) the redux state to {@link TestHint}'s React {@code Component}
@@ -47,7 +46,7 @@ export type TestHintProps = {
  *     _testModeEnabled: boolean
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
 
         /**
