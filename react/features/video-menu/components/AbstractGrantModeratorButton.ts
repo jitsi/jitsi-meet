@@ -1,39 +1,24 @@
-// @flow
-
-import { openDialog } from '../../base/dialog';
-import { IconModerator } from '../../base/icons';
-import {
-    PARTICIPANT_ROLE,
-    getLocalParticipant,
-    getParticipantById,
-    isParticipantModerator
-} from '../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { IReduxState } from '../../app/types';
+import { openDialog } from '../../base/dialog/actions';
+import { IconModerator } from '../../base/icons/svg';
+import { PARTICIPANT_ROLE } from '../../base/participants/constants';
+import { getLocalParticipant, getParticipantById, isParticipantModerator } from '../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 
 import { GrantModeratorDialog } from './';
 
-export type Props = AbstractButtonProps & {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
+export interface IProps extends AbstractButtonProps {
 
     /**
      * The ID of the participant for whom to grant moderator status.
      */
-    participantID: string,
-
-    /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    participantID: string;
+}
 
 /**
  * An abstract remote video menu button which kicks the remote participant.
  */
-export default class AbstractGrantModeratorButton extends AbstractButton<Props, *> {
+export default class AbstractGrantModeratorButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.grantModerator';
     icon = IconModerator;
     label = 'videothumbnail.grantModerator';
@@ -61,7 +46,7 @@ export default class AbstractGrantModeratorButton extends AbstractButton<Props, 
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { participantID } = ownProps;
 
     const localParticipant = getLocalParticipant(state);
@@ -69,6 +54,6 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
     return {
         visible: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR)
-          && !isParticipantModerator(targetParticipant)
+            && !isParticipantModerator(targetParticipant)
     };
 }

@@ -1,14 +1,11 @@
-// @flow
+import { IconMic, IconMicSlash } from '../../icons/svg';
 
-import { IconMic, IconMicSlash } from '../../icons';
-
-import AbstractButton from './AbstractButton';
-import type { Props } from './AbstractButton';
+import AbstractButton, { IProps } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for toggling audio mute.
  */
-export default class AbstractAudioMuteButton<P: Props, S: *>
+export default class AbstractAudioMuteButton<P extends IProps, S>
     extends AbstractButton<P, S> {
 
     icon = IconMic;
@@ -35,6 +32,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      */
     _isAudioMuted() {
         // To be implemented by subclass.
+        return false;
     }
 
     /**
@@ -56,7 +54,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * @protected
      * @returns {void}
      */
-    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
+    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // To be implemented by subclass.
     }
 }

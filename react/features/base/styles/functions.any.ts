@@ -3,7 +3,7 @@ import Platform from '../react/Platform';
 import { ColorPalette } from './components/styles/ColorPalette';
 
 declare type StyleSheet = {
-    [key: string]: string;
+    [key: string]: string | number;
 };
 
 export type StyleType = StyleSheet | Array<StyleSheet>;

@@ -1,37 +1,26 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
-import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
 import { getSecurityUiConfig } from '../../../base/config/functions.any';
-import {
-    LOBBY_MODE_ENABLED,
-    MEETING_PASSWORD_ENABLED,
-    SECURITY_OPTIONS_ENABLED,
-    getFeatureFlag
-} from '../../../base/flags';
-import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { LOBBY_MODE_ENABLED, MEETING_PASSWORD_ENABLED, SECURITY_OPTIONS_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { IconSecurityOff, IconSecurityOn } from '../../../base/icons/svg';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
-export type Props = AbstractButtonProps & {
+export interface IProps extends AbstractButtonProps {
 
     /**
      * Whether the shared document is being edited or not.
      */
-    _locked: boolean,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>
-};
+    _locked: boolean;
+}
 
 
 /**
  * Implements an {@link AbstractButton} to open the security dialog/screen.
  */
-export default class AbstractSecurityDialogButton<P: Props, S:*>
+export default class AbstractSecurityDialogButton<P extends IProps, S>
     extends AbstractButton<P, S> {
     accessibilityLabel = 'toolbar.accessibilityLabel.security';
     icon = IconSecurityOff;
@@ -78,14 +67,14 @@ export default class AbstractSecurityDialogButton<P: Props, S:*>
  * Maps part of the redux state to the component's props.
  *
  * @param {Object} state - The redux store/state.
- * @returns {Props}
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = getSecurityUiConfig(state);
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
-    const lobbySupported = conference && conference.isLobbySupported();
+    const lobbySupported = conference?.isLobbySupported();
     const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
     const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
     const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;

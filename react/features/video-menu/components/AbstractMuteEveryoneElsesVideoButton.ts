@@ -1,34 +1,23 @@
-// @flow
-
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { openDialog } from '../../base/dialog';
-import { IconVideoOff } from '../../base/icons';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { openDialog } from '../../base/dialog/actions';
+import { IconVideoOff } from '../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 
 import { MuteEveryonesVideoDialog } from './';
 
-export type Props = AbstractButtonProps & {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
+export interface IProps extends AbstractButtonProps {
 
     /**
      * The ID of the participant object that this button is supposed to keep unmuted.
      */
-    participantID: string,
-
-    /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    participantID: string;
+}
 
 /**
  * An abstract remote video menu button which disables the camera of all the other participants.
  */
-export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton<Props, *> {
+export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElsesVideoStream';
     icon = IconVideoOff;
     label = 'videothumbnail.domuteVideoOfOthers';

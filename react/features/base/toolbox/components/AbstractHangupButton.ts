@@ -1,14 +1,11 @@
-// @flow
+import { IconHangup } from '../../icons/svg';
 
-import { IconHangup } from '../../icons';
-
-import AbstractButton from './AbstractButton';
-import type { Props } from './AbstractButton';
+import AbstractButton, { IProps } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for disconnecting a conference.
  */
-export default class AbstractHangupButton<P : Props, S: *>
+export default class AbstractHangupButton<P extends IProps, S>
     extends AbstractButton<P, S> {
 
     icon = IconHangup;

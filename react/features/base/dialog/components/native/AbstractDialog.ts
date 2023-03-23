@@ -1,10 +1,8 @@
-// @flow
-
 import { Component } from 'react';
-import type { Dispatch } from 'redux';
 
-import { hideDialog } from '../actions';
-import type { DialogProps } from '../constants';
+import { IStore } from '../../../../app/types';
+import { hideDialog } from '../../actions';
+import { DialogProps } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractDialog}.
@@ -14,20 +12,20 @@ export type Props = DialogProps & {
     /**
      * Used to show/hide the dialog on cancel.
      */
-    dispatch: Dispatch<any>
+    dispatch: IStore['dispatch'];
 };
 
 /**
  * The type of the React {@code Component} state of {@link AbstractDialog}.
  */
 export type State = {
-    submitting: ?boolean
+    submitting?: boolean;
 };
 
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog<P : Props, S : State>
+export default class AbstractDialog<P extends Props, S extends State>
     extends Component<P, S> {
 
     _mounted: boolean;
@@ -77,8 +75,6 @@ export default class AbstractDialog<P : Props, S : State>
         return this.props.dispatch(hideDialog());
     }
 
-    _onCancel: () => void;
-
     /**
      * Dispatches a redux action to hide this dialog when it's canceled.
      *
@@ -93,8 +89,6 @@ export default class AbstractDialog<P : Props, S : State>
         }
     }
 
-    _onSubmit: (?string) => void;
-
     /**
      * Submits this {@code Dialog}. If the React {@code Component} prop
      * {@code onSubmit} is defined, the function that is the value of the prop
@@ -107,7 +101,7 @@ export default class AbstractDialog<P : Props, S : State>
      * @param {string} [value] - The submitted value if any.
      * @returns {void}
      */
-    _onSubmit(value: ?string) {
+    _onSubmit(value?: string) {
         const { okDisabled = false, onSubmit } = this.props;
 
         if (!okDisabled) {
@@ -139,8 +133,6 @@ export default class AbstractDialog<P : Props, S : State>
         }
     }
 
-    _onSubmitFulfilled: () => void;
-
     /**
      * Notifies this {@code AbstractDialog} that it has been submitted
      * successfully. Dispatches a redux action to hide this dialog after it has
@@ -154,8 +146,6 @@ export default class AbstractDialog<P : Props, S : State>
 
         this._hide();
     }
-
-    _onSubmitRejected: () => void;
 
     /**
      * Notifies this {@code AbstractDialog} that its submission has failed.
