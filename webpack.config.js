@@ -150,21 +150,6 @@ function getConfig(options = {}) {
                     'css-loader'
                 ]
             }, {
-                test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
-                        '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
-                    }
-                }
-            }, {
-                test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
-                    }
-                }
-            }, {
                 test: /\.svg$/,
                 use: [ {
                     loader: '@svgr/webpack',
