@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
 import { _abstractMapStateToProps } from '../../functions';
+
 import AbstractDialog, {
     type Props as AbstractProps,
     type State as AbstractState
-} from '../AbstractDialog';
-
+} from './AbstractDialog';
 import { inputDialog as styles } from './styles';
 
 type Props = AbstractProps & {

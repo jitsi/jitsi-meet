@@ -9,17 +9,17 @@ export type Styles = {
     /**
      * Style for the item's icon.
      */
-    iconStyle: StyleType;
+    iconStyle?: StyleType;
 
     /**
      * Style for the item's label.
      */
-    labelStyle: StyleType;
+    labelStyle?: StyleType;
 
     /**
      * Style for the item itself.
      */
-    style: StyleType;
+    style?: StyleType;
 
     /**
      * Color for the item underlay (shows when clicked).

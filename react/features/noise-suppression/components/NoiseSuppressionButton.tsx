@@ -6,37 +6,25 @@ import {
     IconNoiseSuppressionOff,
     IconNoiseSuppressionOn
 } from '../../base/icons/svg';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-
-    // @ts-ignore
-} from '../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { toggleNoiseSuppression } from '../actions';
 import { isNoiseSuppressionEnabled } from '../functions';
 
-type Props = AbstractButtonProps & {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function;
-
-};
+interface IProps extends AbstractButtonProps {
+    _isNoiseSuppressionEnabled?: boolean;
+}
 
 /**
  * Component that renders a toolbar button for toggling noise suppression.
  */
-class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
+class NoiseSuppressionButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
     icon = IconNoiseSuppressionOn;
     label = 'toolbar.noiseSuppression';
     tooltip = 'toolbar.noiseSuppression';
     toggledIcon = IconNoiseSuppressionOff;
     toggledLabel = 'toolbar.disableNoiseSuppression';
-
-    private props: Props;
 
     /**
      * Handles clicking / pressing the button.
@@ -68,7 +56,7 @@ class NoiseSuppressionButton extends AbstractButton<Props, any, any> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     return {
@@ -76,5 +64,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(NoiseSuppressionButton));

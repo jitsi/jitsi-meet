@@ -1,14 +1,11 @@
-// @flow
+import { IconVideo, IconVideoOff } from '../../icons/svg';
 
-import { IconVideo, IconVideoOff } from '../../icons';
-
-import AbstractButton from './AbstractButton';
-import type { Props } from './AbstractButton';
+import AbstractButton, { IProps } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for toggling video mute.
  */
-export default class AbstractVideoMuteButton<P : Props, S : *>
+export default class AbstractVideoMuteButton<P extends IProps, S>
     extends AbstractButton<P, S> {
 
     icon = IconVideo;
@@ -45,17 +42,18 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
      */
     _isVideoMuted() {
         // To be implemented by subclass.
+        return false;
     }
 
     /**
      * Helper function to perform the actual setting of the video mute / unmute
      * action.
      *
-     * @param {boolean} videoMuted - Whether video should be muted or not.
+     * @param {boolean} _videoMuted - Whether video should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars
+    _setVideoMuted(_videoMuted: boolean) {
         // To be implemented by subclass.
     }
 }

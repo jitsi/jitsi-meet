@@ -1,33 +1,25 @@
 import { connect } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { setWhiteboardOpen } from '../../actions';
 import { isWhiteboardVisible } from '../../functions';
 
-
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
 
     /**
      * Whether or not the button is toggled.
      */
     _toggled: boolean;
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: IStore['dispatch'];
-};
+}
 
 /**
  * Component that renders a toolbar button for the whiteboard.
  */
-class WhiteboardButton extends AbstractButton<Props, any, any> {
+class WhiteboardButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.hideWhiteboard';
     icon = IconWhiteboard;
@@ -44,8 +36,6 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
      * @returns {void}
      */
     _handleClick() {
-
-        // @ts-ignore
         const { dispatch, _toggled } = this.props;
 
         dispatch(setWhiteboardOpen(!_toggled));
@@ -60,7 +50,6 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
      * @returns {boolean}
      */
     _isToggled() {
-        // @ts-ignore
         return this.props._toggled;
     }
 }
@@ -70,7 +59,7 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     return {
@@ -78,5 +67,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(WhiteboardButton));

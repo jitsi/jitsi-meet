@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
 import { _abstractMapStateToProps } from '../../functions';
-import AbstractDialog, { type Props as AbstractProps } from '../AbstractDialog';
 import { renderHTML } from '../functions.native';
+
+import AbstractDialog, { type Props as AbstractProps } from './AbstractDialog';
 
 
 type Props = AbstractProps & {

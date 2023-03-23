@@ -1,11 +1,10 @@
-// @flow
-
-import { IconSites } from '../../../base/icons';
+import { IReduxState } from '../../../app/types';
+import { IconSites } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { getActiveSession } from '../../functions';
@@ -17,38 +16,28 @@ import { getLiveStreaming } from './functions';
  * The type of the React {@code Component} props of
  * {@link AbstractLiveStreamButton}.
  */
-export type Props = AbstractButtonProps & {
+export interface IProps extends AbstractButtonProps {
 
     /**
      * True if the button needs to be disabled.
      */
-    _disabled: Boolean,
+    _disabled: boolean;
 
     /**
      * True if there is a running active live stream, false otherwise.
      */
-    _isLiveStreamRunning: boolean,
+    _isLiveStreamRunning: boolean;
 
     /**
      * The tooltip to display when hovering over the button.
      */
-    _tooltip: ?String,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
-
-    /**
-     * The i18n translate function.
-     */
-    t: Function
-};
+    _tooltip?: string;
+}
 
 /**
  * An abstract class of a button for starting and stopping live streaming.
  */
-export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P, *> {
+export default class AbstractLiveStreamButton<P extends IProps> extends AbstractButton<P> {
     accessibilityLabel = 'dialog.accessibilityLabel.liveStreaming';
     icon = IconSites;
     label = 'dialog.startLiveStreaming';
@@ -61,7 +50,7 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
      * @returns {string}
      */
     _getTooltip() {
-        return this.props._tooltip || '';
+        return this.props._tooltip ?? '';
     }
 
     /**
@@ -119,7 +108,7 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
  * {@code AbstractLiveStreamButton} component.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the Component.
+ * @param {IProps} ownProps - The own props of the Component.
  * @private
  * @returns {{
  *     _disabled: boolean,
@@ -127,7 +116,7 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     let { visible } = ownProps;
 
     // A button can be disabled/enabled only if enableFeaturesBasedOnToken

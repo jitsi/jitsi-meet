@@ -1,13 +1,10 @@
-// @flow
-
-import {
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
-import { IconRecord, IconStop } from '../../../base/icons';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import { IconRecord, IconStop } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { getActiveSession, getRecordButtonProps } from '../../functions';
 
@@ -17,38 +14,28 @@ import LocalRecordingManager from './LocalRecordingManager';
  * The type of the React {@code Component} props of
  * {@link AbstractRecordButton}.
  */
-export type Props = AbstractButtonProps & {
+export interface IProps extends AbstractButtonProps {
 
     /**
      * True if the button needs to be disabled.
      */
-    _disabled: Boolean,
+    _disabled: boolean;
 
     /**
      * True if there is a running active recording, false otherwise.
      */
-    _isRecordingRunning: boolean,
+    _isRecordingRunning: boolean;
 
     /**
      * The tooltip to display when hovering over the button.
      */
-    _tooltip: ?String,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
-
-    /**
-     * The i18n translate function.
-     */
-    t: Function
-};
+    _tooltip?: string;
+}
 
 /**
  * An abstract implementation of a button for starting and stopping recording.
  */
-export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *> {
+export default class AbstractRecordButton<P extends IProps> extends AbstractButton<P> {
     accessibilityLabel = 'toolbar.accessibilityLabel.recording';
     icon = IconRecord;
     label = 'dialog.startRecording';
@@ -62,7 +49,7 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
      * @returns {string}
      */
     _getTooltip() {
-        return this.props._tooltip || '';
+        return this.props._tooltip ?? '';
     }
 
     /**
@@ -136,7 +123,7 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: Object): Object {
+export function _mapStateToProps(state: IReduxState) {
     const {
         disabled: _disabled,
         tooltip: _tooltip,

@@ -1,56 +1,54 @@
-/* @flow */
-
-import { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractToolbarButton}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * A succinct description of what the button does. Used by accessibility
      * tools and torture tests.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * The Icon of this {@code AbstractToolbarButton}.
      */
-    icon: Object,
+    icon: Object;
 
     /**
      * The style of the Icon of this {@code AbstractToolbarButton}.
      */
-    iconStyle?: Object,
+    iconStyle?: Object;
 
     /**
      * On click handler.
      */
-    onClick: Function,
+    onClick: Function;
 
     /**
      * {@code AbstractToolbarButton} Styles.
      */
-    style?: Array<string> | Object,
+    style?: Array<string> | Object;
 
     /**
      * An optional modifier to render the button toggled.
      */
-    toggled?: boolean,
+    toggled?: boolean;
 
     /**
      * The color underlying the button.
      */
-    underlayColor?: any
-};
+    underlayColor?: any;
+}
 
 /**
  * Abstract (base) class for a button in {@link Toolbar}.
  *
  * @abstract
  */
-export default class AbstractToolbarButton<P: Props, State=void> extends Component<P, State> {
+export default class AbstractToolbarButton<P extends IProps, State=void> extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractToolbarButton} instance.
      *
@@ -64,8 +62,6 @@ export default class AbstractToolbarButton<P: Props, State=void> extends Compone
         this._onClick = this._onClick.bind(this);
     }
 
-    _onClick: (any) => any;
-
     /**
      * Handles clicking/pressing this {@code AbstractToolbarButton} by
      * forwarding the event to the {@code onClick} prop of this instance if any.
@@ -74,10 +70,10 @@ export default class AbstractToolbarButton<P: Props, State=void> extends Compone
      * @returns {*} The result returned by the invocation of the {@code onClick}
      * prop of this instance if any.
      */
-    _onClick(...args) {
+    _onClick(...args: any) {
         const { onClick } = this.props;
 
-        return onClick && onClick(...args);
+        return onClick?.(...args);
     }
 
     /**
@@ -90,7 +86,22 @@ export default class AbstractToolbarButton<P: Props, State=void> extends Compone
         return this._renderButton(this._renderIcon());
     }
 
-    _renderButton: (React$Element<any> | null) => React$Element<any>;
+    /**
+     * Render a button element.
+     *
+     * @param {ReactElement | null} _el - The element to render inside the button.
+     * @returns {ReactElement}
+     */
+    _renderButton(_el: ReactElement | null): React.ReactElement | null {
+        return null;
+    }
 
-    _renderIcon: () => React$Element<any> | null;
+    /**
+     * Render an icon element.
+     *
+     * @returns {ReactElement | null}
+     */
+    _renderIcon(): React.ReactElement | null {
+        return null;
+    }
 }

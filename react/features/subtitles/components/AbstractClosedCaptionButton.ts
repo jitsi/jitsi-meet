@@ -1,39 +1,29 @@
-// @flow
-
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
-import { isLocalParticipantModerator } from '../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { isLocalParticipantModerator } from '../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 
-export type AbstractProps = AbstractButtonProps & {
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
-     * Invoked to Dispatch an Action to the redux store.
-     */
-    dispatch: Function,
+export interface IAbstractProps extends AbstractButtonProps {
 
     /**
      * Whether the local participant is currently requesting subtitles.
      */
-    _requestingSubtitles: Boolean,
+    _requestingSubtitles: boolean;
 
     /**
      * Selected language for subtitle.
      */
-    _subtitles: String
-};
+    _subtitles: string;
+}
 
 /**
  * The button component which starts/stops the transcription.
  */
 export class AbstractClosedCaptionButton
-    extends AbstractButton<AbstractProps, *> {
+    extends AbstractButton<IAbstractProps> {
 
     /**
      * Helper function to be implemented by subclasses, which should be used
@@ -105,7 +95,7 @@ export class AbstractClosedCaptionButton
  *     visible: boolean
  * }}
  */
-export function _abstractMapStateToProps(state: Object, ownProps: Object) {
+export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstractProps) {
     const { _requestingSubtitles, _language } = state['features/subtitles'];
     const { transcription } = state['features/base/config'];
     const { isTranscribing } = state['features/transcribing'];

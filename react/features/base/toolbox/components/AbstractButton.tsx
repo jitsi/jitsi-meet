@@ -1,13 +1,15 @@
 import React, { Component, ReactNode } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { GestureResponderEvent } from 'react-native';
 
+import { IStore } from '../../../app/types';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { combineStyles } from '../../styles/functions.any';
 
 import { Styles } from './AbstractToolboxItem';
 import ToolboxItem from './ToolboxItem';
 
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * Function to be called after the click handler has been processed.
@@ -37,6 +39,11 @@ export type Props = {
     disabledStyles?: Styles;
 
     /**
+     * Redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
+
+    /**
      * External handler for click action.
      */
     handleClick?: Function;
@@ -50,7 +57,7 @@ export type Props = {
     /**
      * Whether to show the label or not.
      */
-    showLabel: boolean;
+    showLabel?: boolean;
 
     /**
      * Collection of styles for the button.
@@ -65,13 +72,13 @@ export type Props = {
     /**
      * From which direction the tooltip should appear, relative to the button.
      */
-    tooltipPosition: string;
+    tooltipPosition?: string;
 
     /**
      * Whether this button is visible or not.
      */
-    visible: boolean;
-};
+    visible?: boolean;
+}
 
 /**
  * Default style for disabled buttons.
@@ -90,7 +97,7 @@ export const defaultDisabledButtonStyles = {
 /**
  * An abstract implementation of a button.
  */
-export default class AbstractButton<P extends Props, S> extends Component<P, S> {
+export default class AbstractButton<P extends IProps, S=any> extends Component<P, S> {
     static defaultProps = {
         afterClick: undefined,
         disabledStyles: defaultDisabledButtonStyles,
@@ -171,7 +178,7 @@ export default class AbstractButton<P extends Props, S> extends Component<P, S> 
     /**
      * Initializes a new {@code AbstractButton} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code AbstractButton} instance with.
      */
     constructor(props: P) {
@@ -275,11 +282,11 @@ export default class AbstractButton<P extends Props, S> extends Component<P, S> 
         if (this._isDisabled() && buttonStyles && disabledStyles) {
             return {
                 iconStyle: combineStyles(
-                    buttonStyles.iconStyle, disabledStyles.iconStyle),
+                    buttonStyles.iconStyle ?? {}, disabledStyles.iconStyle ?? {}),
                 labelStyle: combineStyles(
-                    buttonStyles.labelStyle, disabledStyles.labelStyle),
+                    buttonStyles.labelStyle ?? {}, disabledStyles.labelStyle ?? {}),
                 style: combineStyles(
-                    buttonStyles.style, disabledStyles.style),
+                    buttonStyles.style ?? {}, disabledStyles.style ?? {}),
                 underlayColor:
                     disabledStyles.underlayColor || buttonStyles.underlayColor
             };
@@ -319,7 +326,7 @@ export default class AbstractButton<P extends Props, S> extends Component<P, S> 
      * @protected
      * @returns {?boolean}
      */
-    _isToggled() {
+    _isToggled(): boolean | undefined {
         return undefined;
     }
 

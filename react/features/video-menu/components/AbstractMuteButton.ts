@@ -1,45 +1,32 @@
-// @flow
-
-import {
-    createRemoteVideoMenuButtonEvent,
-    sendAnalytics
-} from '../../analytics';
+import { createRemoteVideoMenuButtonEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
 import { rejectParticipantAudio } from '../../av-moderation/actions';
-import { IconMicSlash } from '../../base/icons';
-import { MEDIA_TYPE } from '../../base/media';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { isRemoteTrackMuted } from '../../base/tracks';
+import { IconMicSlash } from '../../base/icons/svg';
+import { MEDIA_TYPE } from '../../base/media/constants';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+import { isRemoteTrackMuted } from '../../base/tracks/functions.any';
 import { muteRemote } from '../actions.any';
 
-export type Props = AbstractButtonProps & {
+export interface IProps extends AbstractButtonProps {
 
     /**
      * Boolean to indicate if the audio track of the participant is muted or
      * not.
      */
-    _audioTrackMuted: boolean,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
+    _audioTrackMuted: boolean;
 
     /**
      * The ID of the participant object that this button is supposed to
      * mute/unmute.
      */
-    participantID: string,
-
-    /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    participantID: string;
+}
 
 /**
  * An abstract remote video menu button which mutes the remote participant.
  */
-export default class AbstractMuteButton extends AbstractButton<Props, *> {
+export default class AbstractMuteButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.remoteMute';
     icon = IconMicSlash;
     label = 'videothumbnail.domute';
@@ -93,7 +80,7 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
  *      _audioTrackMuted: boolean
  *  }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const tracks = state['features/base/tracks'];
 
     return {
