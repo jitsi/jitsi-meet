@@ -9,10 +9,13 @@
 --- Make sure 's2s' is not in modules_disabled
 --- Open port 5269 on the provider side and on the firewall on the machine (iptables -I INPUT 4 -p tcp -m tcp --dport 5269 -j ACCEPT)
 --- TODO: make it work with tenants
+--- NOTE: Make sure all communication between prosodies is using the real jids ([foo]room1@muc.example.com)
 local st = require 'util.stanza';
 local jid = require 'util.jid';
 local util = module:require 'util';
 local presence_check_status = util.presence_check_status;
+local get_room_from_jid = util.get_room_from_jid;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -41,6 +44,9 @@ if main_muc_component_config == nil then
     return ;
 end
 
+-- Advertise the component for discovery via disco#items
+module:add_identity('component', 'visitors', 'visitors.'..module.host);
+
 -- visitors_nodes = {
 --  roomjid1 = {
 --    nodes = {
@@ -68,7 +74,6 @@ module:hook('iq/full', function(event)
     end
 
     -- let's send participants if any from the room to the visitors room
-    -- TODO fix room name extract, make sure it works wit tenants
     local main_room = conference.attr.room;
     local vnode = conference.attr.vnode;
 
@@ -76,8 +81,7 @@ module:hook('iq/full', function(event)
         return;
     end
 
-    local room = get_room_from_jid(main_room);
-
+    local room = get_room_from_jid(room_jid_match_rewrite(main_room));
     if room == nil then
         return;  -- room does not exists. Continue with normal flow
     end

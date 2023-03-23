@@ -47,8 +47,8 @@ import {
     dataChannelClosed,
     dataChannelOpened,
     e2eRttChanged,
-    generateVisitorConfig,
     getConferenceOptions,
+    getVisitorOptions,
     kickedOut,
     lockStateChanged,
     nonParticipantMessageReceived,
@@ -56,6 +56,7 @@ import {
     p2pStatusChanged,
     sendLocalParticipant
 } from './react/features/base/conference';
+import { overwriteConfig } from './react/features/base/config/actions';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
@@ -341,23 +342,26 @@ class ConferenceConnector {
         }
 
         case JitsiConferenceErrors.REDIRECTED: {
-            generateVisitorConfig(APP.store.getState(), params);
+            const newConfig = getVisitorOptions(APP.store.getState(), params);
 
-            APP.store.dispatch(setIAmVisitor(true));
+            if (!newConfig) {
+                logger.warn('Not redirected missing params');
+                break;
+            }
 
-            connection.disconnect().then(() => {
-                connect(this._conference.roomName).then(con => {
-                    const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
+            const [ vnode ] = params;
 
-                    const jitsiTracks = localTracks.map(t => t.jitsiTrack);
+            APP.store.dispatch(overwriteConfig(newConfig))
+                .then(APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
+                .then(this._conference.leaveRoom())
 
-                    // visitors connect muted
-                    jitsiTracks.forEach(t => t.mute());
-
-                    // TODO disable option to unmute audio or video
-                    this._conference.startConference(con, jitsiTracks);
+                // we do not clear local tracks on error, so we need to manually clear them
+                .then(APP.store.dispatch(destroyLocalTracks()))
+                .then(() => {
+                    connect(this._conference.roomName).then(con => {
+                        this._conference.startConference(con, []);
+                    });
                 });
-            });
 
             break;
         }

@@ -30,9 +30,19 @@ modules_enabled = {
       'bosh';
       's2s_bidi';
       's2s_whitelist';
+      's2soutinjection';
+      'certs_s2soutinjection';
 };
 
-s2s_whitelist = {};
+s2s_whitelist = {
+    'visitors.jitmeet.example.com'; -- needed for sending promotion request to visitors.jitmeet.example.com component
+    'jitmeet.example.com'; -- unavailable presences back to main room
+};
+
+s2s_connect_overrides = {
+    ["jitmeet.example.com"] = { "127.0.0.1", 5269 }; -- needed for the main room when connecting in to send main participants
+    ["visitors.jitmeet.example.com"] = { "127.0.0.1", 5269 }; -- needed for sending promotion request to visitors.jitmeet.example.com component
+}
 
 external_service_secret = '__turnSecret__';
 
@@ -111,6 +121,7 @@ Component 'conference.vX.meet.jitsi' 'muc'
         'muc_domain_mapper';
         'muc_meeting_id';
         'fmuc';
+        's2soutinjection';
     }
     muc_room_default_presence_broadcast = {
         visitor = false;

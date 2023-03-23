@@ -55,13 +55,21 @@ Setting up configuration for the main prosody is a manual process:
 -- targets must be IPs, not hostnames
 s2s_connect_overrides = {
     ["conference.v1.meet.jitsi"] = { "127.0.0.1", 52691 };
+    ["v1.meet.jitsi"] = { "127.0.0.1", 52691 }; -- neded for v1.meet.jitsi->visitors.jitmeet.example.com
     ["conference.v2.meet.jitsi"] = { "127.0.0.1", 52692 };
+    ["v2.meet.jitsi"] = { "127.0.0.1", 52692 };
     ["conference.v3.meet.jitsi"] = { "127.0.0.1", 52693 };
+    ["v3.meet.jitsi"] = { "127.0.0.1", 52693 };
     ["conference.v4.meet.jitsi"] = { "127.0.0.1", 52694 };
+    ["v4.meet.jitsi"] = { "127.0.0.1", 52694 };
     ["conference.v5.meet.jitsi"] = { "127.0.0.1", 52695 };
+    ["v5.meet.jitsi"] = { "127.0.0.1", 52695 };
     ["conference.v6.meet.jitsi"] = { "127.0.0.1", 52696 };
+    ["v6.meet.jitsi"] = { "127.0.0.1", 52696 };
     ["conference.v7.meet.jitsi"] = { "127.0.0.1", 52697 };
+    ["v7.meet.jitsi"] = { "127.0.0.1", 52697 };
     ["conference.v8.meet.jitsi"] = { "127.0.0.1", 52698 };
+    ["v8.meet.jitsi"] = { "127.0.0.1", 52698 };
 }
 -- allowed list of server-2-server connections
 s2s_whitelist = {
@@ -72,6 +80,10 @@ s2s_whitelist = {
 
 - Make sure s2s is not in modules_disabled
 - Enable `"xxl_conference";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
+- Create the visitors component in /etc/prosody/conf.d/jitmeet.example.com.cfg.lua:
+```
+Component "visitors.damencho.jitsi.net" "visitors_component"
+```
 - Make sure you add the correct upstreams to nginx config
 ```
 upstream v1 {
