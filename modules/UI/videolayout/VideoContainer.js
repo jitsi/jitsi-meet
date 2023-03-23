@@ -223,15 +223,14 @@ export class VideoContainer extends LargeContainer {
          * @type {boolean}
          */
         this.avatarDisplayed = false;
-        this.$avatar = $('#dominantSpeaker');
+        this.avatar = document.getElementById('dominantSpeaker');
 
         /**
-         * A jQuery selector of the remote connection message.
-         * @type {jQuery|HTMLElement}
+         * The HTMLElements of the remote connection message.
+         * @type {HTMLElement}
          */
-        this.$remoteConnectionMessage = $('#remoteConnectionMessage');
-
-        this.$remotePresenceMessage = $('#remotePresenceMessage');
+        this.remoteConnectionMessage = document.getElementById('remoteConnectionMessage');
+        this.remotePresenceMessage = document.getElementById('remotePresenceMessage');
 
         this.$wrapper = $('#largeVideoWrapper');
 
@@ -241,7 +240,7 @@ export class VideoContainer extends LargeContainer {
          * video anyway.
          */
         this.$wrapperParent = this.$wrapper.parent();
-        this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
+        this.avatarHeight = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect().height;
         this.$video[0].onplaying = function(event) {
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
@@ -358,8 +357,8 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     positionRemoteStatusMessages() {
-        this._positionParticipantStatus(this.$remoteConnectionMessage);
-        this._positionParticipantStatus(this.$remotePresenceMessage);
+        this._positionParticipantStatus(this.remoteConnectionMessage);
+        this._positionParticipantStatus(this.remotePresenceMessage);
     }
 
     /**
@@ -369,18 +368,16 @@ export class VideoContainer extends LargeContainer {
      * @private
      * @returns {void}
      */
-    _positionParticipantStatus($element) {
+    _positionParticipantStatus(element) {
         if (this.avatarDisplayed) {
-            const $avatarImage = $('#dominantSpeakerAvatarContainer');
+            const avatarImage = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect();
 
-            $element.css(
-                'top',
-                $avatarImage.offset().top + $avatarImage.height() + 10);
+            element.style.top = avatarImage.top + avatarImage.height + 10;
         } else {
-            const height = $element.height();
-            const parentHeight = $element.parent().height();
+            const height = element.getBoundingClientRect().height;
+            const parentHeight = element.parentElement.getBoundingClientRect().height;
 
-            $element.css('top', (parentHeight / 2) - (height / 2));
+            element.style.top = (parentHeight / 2) - (height / 2);
         }
     }
 
@@ -540,7 +537,7 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        this.$avatar.css('visibility', show ? 'visible' : 'hidden');
+        this.avatar.style.visibility = show ? 'visible' : 'hidden';
         this.avatarDisplayed = show;
 
         APP.API.notifyLargeVideoVisibilityChanged(show);

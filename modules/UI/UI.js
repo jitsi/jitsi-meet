@@ -5,7 +5,6 @@ const UI = {};
 
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
-import $ from 'jquery';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util';
@@ -106,16 +105,16 @@ UI.start = function() {
     VideoLayout.resizeVideoArea();
 
     if (isMobileBrowser()) {
-        $('body').addClass('mobile-browser');
+        document.body.classList.add('mobile-browser');
     } else {
-        $('body').addClass('desktop-browser');
+        document.body.classList.add('desktop-browser');
     }
 
     if (config.backgroundAlpha !== undefined) {
-        const backgroundColor = $('body').css('background-color');
+        const backgroundColor = getComputedStyle(document.body).getPropertyValue('background-color');
         const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
 
-        $('body').css('background-color', alphaColor);
+        document.body.style.backgroundColor = alphaColor;
     }
 
     if (config.iAmRecorder) {
@@ -135,32 +134,33 @@ UI.registerListeners
     = () => UIListeners.forEach((value, key) => UI.addListener(key, value));
 
 /**
+ *
+ */
+function onResize() {
+    VideoLayout.onResize();
+}
+
+/**
  * Setup some DOM event listeners.
  */
 UI.bindEvents = () => {
-    /**
-     *
-     */
-    function onResize() {
-        VideoLayout.onResize();
-    }
-
     // Resize and reposition videos in full screen mode.
-    $(document).on(
-            'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-            onResize);
+    document.addEventListener('webkitfullscreenchange', onResize);
+    document.addEventListener('mozfullscreenchange', onResize);
+    document.addEventListener('fullscreenchange', onResize);
 
-    $(window).resize(onResize);
+    window.addEventListener('resize', onResize);
 };
 
 /**
  * Unbind some DOM event listeners.
  */
 UI.unbindEvents = () => {
-    $(document).off(
-            'webkitfullscreenchange mozfullscreenchange fullscreenchange');
+    document.removeEventListener('webkitfullscreenchange', onResize);
+    document.removeEventListener('mozfullscreenchange', onResize);
+    document.removeEventListener('fullscreenchange', onResize);
 
-    $(window).off('resize');
+    window.removeEventListener('resize', onResize);
 };
 
 /**
