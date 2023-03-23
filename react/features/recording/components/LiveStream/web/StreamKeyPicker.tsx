@@ -100,6 +100,7 @@ class StreamKeyPicker extends PureComponent<IProps> {
         return (
             <div className = 'broadcast-dropdown dropdown-menu'>
                 <Select
+                    id = 'streamkeypicker-select'
                     label = { t('liveStreaming.choose') }
                     onChange = { this._onSelect }
                     options = { dropdownItems }
