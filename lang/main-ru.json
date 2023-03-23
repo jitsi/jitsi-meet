@@ -11,7 +11,6 @@
         "defaultEmail": "Ваш адрес электронной почты",
         "disabled": "Поиск не дал результата.",
         "failedToAdd": "Не удалось добавить участников",
-        "footerText": "Вызов номера отключен.",
         "googleEmail": "Электронная почта Google",
         "inviteMoreHeader": "Сейчас вы одни в этой встрече",
         "inviteMoreMailSubject": "Присоединиться к встрече {{appName}} ",
@@ -96,6 +95,7 @@
         "messageAccessibleTitleMe": "я говорю:",
         "messageTo": "Личное сообщение пользователю {{recipient}}",
         "messagebox": "Введите сообщение",
+        "newMessages": "Новые сообщения",
         "nickname": {
             "popover": "Выберите имя",
             "title": "Введите имя для использования чата",
@@ -115,6 +115,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Установить расширение Chrome",
+        "buttonTextEdge": "Установить расширение Edge",
         "close": "Закрыть",
         "dontShowAgain": "Не показывай мне это снова",
         "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365"
@@ -183,10 +184,15 @@
         "description": "Ничего не случилось? Мы попытались запустить вашу встречу в настольном приложении {{app}}. Повторите попытку или запустите ее в веб-приложении {{app}}.",
         "descriptionWithoutWeb": "Ничего не произошло? Мы попытались запустить вашу конференцию в настольном приложении {{app}}",
         "downloadApp": "Скачать приложение",
+        "downloadMobileApp": "Скачать из App Store",
         "ifDoNotHaveApp": "Если у Вас ещё нет приложения:",
         "ifHaveApp": "Если у Вас уже есть приложение:",
         "joinInApp": "Присоединиться к этой встрече с помощью приложения",
+        "joinInAppNew": "Присоединиться в приложении",
+        "joinInBrowser": "Присоединиться в браузере",
+        "launchMeetingLabel": "Как вы хотите присоединиться к этой встрече?",
         "launchWebButton": "Запустить в браузере",
+        "noMobileApp": "У вас нет приложения?",
         "title": "Запуск вашей встречи в {{app}}...",
         "tryAgainButton": "Повторите в настольном приложении",
         "unsupportedBrowser": "Вы используете браузер, который мы не поддерживаем."
@@ -266,6 +272,7 @@
         "gracefulShutdown": "Технические работы. Пожалуйста, попробуйте позже.",
         "grantModeratorDialog": "Вы уверены, что хотите сделать этого участника модератором?",
         "grantModeratorTitle": "Сделать модератором",
+        "hide": "Скрыть",
         "hideShareAudioHelper": "Больше не показывать это диалоговое окно",
         "incorrectPassword": "Ошибка имени пользователя или пароля",
         "incorrectRoomLockPassword": "Неверный пароль",
@@ -280,7 +287,6 @@
         "linkMeetingTitle": "Связать встречу с Salesforce",
         "liveStreaming": "Трансляция",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Невозможно пока активна запись",
-        "liveStreamingDisabledTooltip": "Возможность трансляции отключена",
         "localUserControls": "Локальные пользовательские элементы управления",
         "lockMessage": "Не удалось запереть конференцию",
         "lockRoom": "Добавить конференцию $t(lockRoomPasswordUppercase)",
@@ -335,7 +341,6 @@
         "recentlyUsedObjects": "Ваши недавно использованные объекты",
         "recording": "Запись",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Невозможно пока активно потоковое вещание",
-        "recordingDisabledTooltip": "Невозможно начать запись",
         "rejoinNow": "Подключиться снова",
         "remoteControlAllowedMessage": "{{user}} принял ваш запрос на удаленное управление!",
         "remoteControlDeniedMessage": "{{user}} отклонил ваш запрос на удаленное управление!",
@@ -385,6 +390,7 @@
         "shareYourScreenDisabled": "Демонстрация экрана отключена",
         "sharedVideoDialogError": "Ошибка: Невалидный URL",
         "sharedVideoLinkPlaceholder": "Ссылка на YouTube или прямая ссылка на видео",
+        "show": "Показать",
         "start": "Начать",
         "startLiveStreaming": "Начать трансляцию",
         "startRecording": "Начать запись",
@@ -431,9 +437,6 @@
     "giphy": {
         "noResults": "Результатов поиска не найдено :(",
         "search": "Поиск GIPHY"
-    },
-    "helpView": {
-        "title": "Справка"
     },
     "incomingCall": {
         "answer": "Ответ",
@@ -512,6 +515,10 @@
         "toggleShortcuts": "Скрыть/Показать клавиша быстрого доступа",
         "videoMute": "Камера (вкл./выкл.)"
     },
+    "largeVideo": {
+        "screenIsShared": "Вы демонстрируете свой экран",
+        "showMeWhatImSharing": "Показать мне что я демонстрирую"
+    },
     "liveStreaming": {
         "busy": "Освобождаем новые ресурсы для трансляции. Пожалуйста, попробуйте снова через несколько минут.",
         "busyTitle": "Все ресурсы для трансляции уже задействованы",
@@ -552,7 +559,6 @@
     "lobby": {
         "admit": "Признать",
         "admitAll": "Признать все",
-        "allow": "Разрешить",
         "backToKnockModeButton": "Попросить присоединиться",
         "chat": "Чат",
         "dialogTitle": "Режим лобби",
@@ -647,6 +653,7 @@
         "invitedOneMember": "{{name}} был приглашен",
         "invitedThreePlusMembers": "Приглашены {{name}} и {{count}} других пользователей(ля)",
         "invitedTwoMembers": "{{first}} и {{second}} присоединились к конференции",
+        "joinMeeting": "Присоединиться",
         "kickParticipant": "{{kicker}} отключил {{kicked}}",
         "leftOneMember": "{{name}} покинул собрание",
         "leftThreePlusMembers": "{{name}} и многие другие покинули встречу",
@@ -657,6 +664,8 @@
         "linkToSalesforceKey": "Отправить ссылку на встречу для Salesforce",
         "linkToSalesforceProgress": "Отправка ссылки на встречу для Salesforce...",
         "linkToSalesforceSuccess": "Ссылка на эту встречу для Salesforce была отправлена",
+        "localRecordingStarted": "{{name}} начал локальную запись.",
+        "localRecordingStopped": "{{name}} остановил локальную запись.",
         "me": "Я",
         "moderationInEffectCSDescription": "Пожалуйста, поднимите руку, если вы хотите поделиться своим экраном.",
         "moderationInEffectCSTitle": "Демонстрация экрана заблокирована модератором",
@@ -677,6 +686,10 @@
         "newDeviceAction": "Использовать",
         "newDeviceAudioTitle": "Обнаружено новое аудиоустройство",
         "newDeviceCameraTitle": "Обнаружена новая камера",
+        "noiseSuppressionDesktopAudioDescription": "Шумоподавление не может быть включено при совместном использовании звука рабочего стола, пожалуйста, отключите его и повторите попытку.",
+        "noiseSuppressionFailedTitle": "Не удалось запустить шумоподавление",
+        "noiseSuppressionNoTrackDescription": "Пожалуйста, сначала включите звук микрофона.",
+        "noiseSuppressionStereoDescription": "Шумоподавление стереозвука в настоящее время не поддерживается.",
         "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента {{app}}, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
         "oldElectronClientDescription2": "последней версии",
         "oldElectronClientDescription3": " сейчас!",
@@ -725,7 +738,6 @@
             "videoModeration": "Разрешить видео"
         },
         "close": "Закрыть",
-        "header": "Участники",
         "headings": {
             "lobby": "Лобби ({{count}})",
             "participantsList": "Список участников ({{count}})",
@@ -841,9 +853,6 @@
         "rejected": "Отклонен",
         "ringing": "Звоню. . ."
     },
-    "privacyView": {
-        "title": "Конфиденциальность"
-    },
     "profile": {
         "avatar": "аватар",
         "setDisplayNameLabel": "Отображаемое имя",
@@ -892,10 +901,12 @@
         "loggedIn": "Вошел как {{userName}}",
         "off": "Запись остановлена",
         "offBy": "{{name}} остановил запись",
-        "on": "Запись",
+        "on": "Запись началась",
         "onBy": "{{name}} включил запись",
+        "onlyRecordSelf": "Записать только мои аудио и видео потоки",
         "pending": "Подготовка записи конференции. . .",
         "rec": "ИДЕТ ЗАПИСЬ",
+        "saveLocalRecording": "Сохранить файл записи локально (Beta)",
         "serviceDescription": "Ваша запись будет сохранена соответствующей службой",
         "serviceDescriptionCloud": "Облачная запись",
         "serviceDescriptionCloudInfo": "Сохранённые записи автоматически удаляются спуся 24 часа со старта.",
@@ -903,6 +914,7 @@
         "sessionAlreadyActive": "Этот сеанс уже записывается или транслируется в прямом эфире.",
         "signIn": "Вход",
         "signOut": "Выход",
+        "surfaceError": "Пожалуйста, выберите текущую вкладку.",
         "title": "Запись",
         "unavailable": "Служба {{serviceName}} сейчас недоступна. Мы работаем над исправлением этой ошибки. Пожалуйста, попробуйте позже.",
         "unavailableTitle": "Запись невозможна",
@@ -918,6 +930,7 @@
         "title": "Настройки безопасности"
     },
     "settings": {
+        "audio": "Звук",
         "buttonLabel": "Настройки",
         "calendar": {
             "about": "Интеграция с календарем {{appName}} используется для безопасного доступа к вашему календарю и синхронизации запланированных мероприятий.",
@@ -937,10 +950,13 @@
         "loggedIn": "Вошел как {{name}}",
         "microphones": "Микрофоны",
         "moderator": "Модератор",
+        "moderatorOptions": "Настройки модератора",
         "more": "Больше опций",
         "name": "Имя",
         "noDevice": "нет",
+        "notifications": "Оповещения",
         "participantJoined": "Участник присоединился",
+        "participantKnocking": "Участник вошел в лобби",
         "participantLeft": "Участник вышел",
         "playSounds": "Включить звук",
         "reactions": "Реакции на встречи",
@@ -949,13 +965,14 @@
         "selectCamera": "Камера",
         "selectMic": "Микрофон",
         "selfView": "Самостоятельный просмотр",
-        "sounds": "Звуки",
+        "shortcuts": "Сочетания клавиш",
         "speakers": "Динамики",
         "startAudioMuted": "Все начинают с выключенным звуком",
         "startReactionsMuted": "Отключение звука реакции для всех",
         "startVideoMuted": "Все начинают в скрытом режиме",
         "talkWhileMuted": "Говорите без звука",
-        "title": "Настройки"
+        "title": "Настройки",
+        "video": "Видео"
     },
     "settingsView": {
         "advanced": "Дополнительные",
@@ -1061,6 +1078,7 @@
             "muteEveryoneElse": "Заглушить всех остальных",
             "muteEveryoneElsesVideoStream": "Остановить чужое видео",
             "muteEveryonesVideoStream": "Остановить видео для всех",
+            "noiseSuppression": "Шумоподавление",
             "participants": "Участники",
             "pip": "Вкл/Выкл режим Картинка-в-картинке",
             "privateMessage": "Отправить личное сообщение",
@@ -1086,7 +1104,8 @@
             "toggleCamera": "Переключить камеру",
             "toggleFilmstrip": "Включить диафильм",
             "videoblur": "Вкл/Выкл размытие фона",
-            "videomute": "Вкл/Выкл видео"
+            "videomute": "Вкл/Выкл видео",
+            "whiteboard": "Показать/Скрыть доску"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
         "audioOnlyOff": "Включить видео (стандартный режим)",
@@ -1107,6 +1126,7 @@
         "download": "Скачать приложение",
         "e2ee": "Сквозное шифрование",
         "embedMeeting": "Встроить встречу",
+        "enableNoiseSuppression": "Включить шумоподавление",
         "endConference": "Завершить встречу для всех",
         "enterFullScreen": "На полный экран",
         "enterTileView": "Общий план",
@@ -1116,6 +1136,7 @@
         "giphy": "Показать GIPHY меню",
         "hangup": "Выход",
         "help": "Справка",
+        "hideWhiteboard": "Скрыть доску",
         "invite": "Пригласить",
         "joinBreakoutRoom": "Войти в сессионный зал",
         "laugh": "Смеяться",
@@ -1138,6 +1159,7 @@
         "noAudioSignalDialInDesc": "Вы можете также дозвониться используя:",
         "noAudioSignalDialInLinkDesc": "Номера для дозвона",
         "noAudioSignalTitle": "От вашего микрофона не идет звуковой сигнал!",
+        "noiseSuppression": "Шумоподавление",
         "noisyAudioInputDesc": "Возможно, ваш микрофон создает шум. Вы можете выключить его или смените устройство.",
         "noisyAudioInputTitle": "Похоже, ваш микрофон создает шум!",
         "openChat": "Открыть чат",
@@ -1160,6 +1182,7 @@
         "shareaudio": "Предоставить доступ к звуку",
         "sharedvideo": "Видео YouTube",
         "shortcuts": "Комбинации клавиш",
+        "showWhiteboard": "Показать доску",
         "silence": "Молчание",
         "speakerStats": "Статистика",
         "startScreenSharing": "Начать трансляцию с экрана",
@@ -1225,9 +1248,11 @@
         "ldTooltip": "Видео низкого качества",
         "lowDefinition": "Низкое качество",
         "performanceSettings": "Параметры производительности",
+        "recording": "Идет запись",
         "sd": "SD",
         "sdTooltip": "Видео стандартного качества",
-        "standardDefinition": "Стандартное качество (SD)"
+        "standardDefinition": "Стандартное качество (SD)",
+        "streaming": "Идет трансляция"
     },
     "videothumbnail": {
         "connectionInfo": "Информация о соединении",
@@ -1239,6 +1264,7 @@
         "grantModerator": "Сделать модератором",
         "hideSelfView": "Скрыть собственное представление",
         "kick": "Отключить",
+        "mirrorVideo": "Зеркально отразить видео",
         "moderator": "Модератор",
         "mute": "Без звука",
         "muted": "Звук выключен",
@@ -1248,6 +1274,7 @@
         "show": "Показать крупным планом",
         "showSelfView": "Показать своё представление",
         "unpinFromStage": "Отпинить",
+        "verify": "Проверить участника",
         "videoMuted": "Камера выключена",
         "videomute": "Участник выключил камеру"
     },
@@ -1307,6 +1334,7 @@
             "microsoftLogo": "Логотип Майкрософт",
             "policyLogo": "Логотип политики"
         },
+        "meetingsAccessibilityLabel": "Конференции",
         "mobileDownLoadLinkAndroid": "Скачать мобильное приложение для Android",
         "mobileDownLoadLinkFDroid": "Скачать мобильное приложение для F-Droid",
         "mobileDownLoadLinkIos": "Скачать мобильное приложение для iOS",
@@ -1315,13 +1343,21 @@
         "recentList": "Недавние",
         "recentListDelete": "Удалить",
         "recentListEmpty": "Сейчас ваш список недавно проведенных конференций пуст. По мере вашего пользования сервисом он будет пополняться.",
+        "recentMeetings": "Ваши недавние конференции",
         "reducedUIText": "Добро пожаловать в {{app}}!",
         "roomNameAllowedChars": "Название конференции не должно содержать следующие символы: ?, &, :, ', \", %, #.",
         "roomname": "Укажите название комнаты",
         "roomnameHint": "Укажите название комнаты или ее адрес. Можете сами создать название и передать его будущим участникам встречи, чтобы они использовали именно его.",
         "sendFeedback": "Обратная связь",
+        "settings": "Настройки",
         "startMeeting": "Создать конференцию",
         "terms": "Условия",
-        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
+        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций",
+        "upcomingMeetings": "Ваши предстоящие конференции"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Доска"
+        }
     }
 }
