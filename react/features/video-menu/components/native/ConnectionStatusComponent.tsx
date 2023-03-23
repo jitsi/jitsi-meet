@@ -7,7 +7,6 @@ import { withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import { hideSheet } from '../../../base/dialog/actions';
 // @ts-ignore

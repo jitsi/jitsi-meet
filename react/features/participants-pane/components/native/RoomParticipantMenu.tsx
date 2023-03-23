@@ -5,8 +5,7 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 // @ts-ignore
 import { BottomSheet, hideSheet } from '../../../base/dialog';
 // @ts-ignore

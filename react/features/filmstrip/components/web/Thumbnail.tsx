@@ -10,8 +10,7 @@ import { connect } from 'react-redux';
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';

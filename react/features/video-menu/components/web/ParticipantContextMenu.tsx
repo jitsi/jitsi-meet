@@ -7,8 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';

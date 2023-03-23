@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../../../base/avatar';
+import Avatar from '../../../../../base/avatar/components/Avatar';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';

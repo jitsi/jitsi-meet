@@ -18,8 +18,7 @@ import { connect } from 'react-redux';
 
 import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { getLegalUrls } from '../../../base/config/functions.native';
 import { translate } from '../../../base/i18n/functions';
 // @ts-ignore

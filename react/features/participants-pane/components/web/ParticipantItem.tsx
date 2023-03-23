@@ -2,8 +2,7 @@ import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import ListItem from '../../../base/components/participants-pane-list/ListItem';
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';

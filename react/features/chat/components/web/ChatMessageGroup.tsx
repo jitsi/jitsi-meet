@@ -2,8 +2,6 @@ import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import { IMessage } from '../../reducer';
 

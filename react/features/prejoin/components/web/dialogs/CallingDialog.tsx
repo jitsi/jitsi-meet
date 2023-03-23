@@ -2,8 +2,7 @@ import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../../base/avatar';
+import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../../base/icons/svg';

@@ -1,109 +1,111 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
-import { getParticipantById } from '../../participants';
+import { IReduxState } from '../../../app/types';
+import { getParticipantById } from '../../participants/functions';
+import { IParticipant } from '../../participants/types';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
+
+import { IProps as AbstractProps } from './AbstractStatelessAvatar';
 
 import { StatelessAvatar } from './';
 
-export type Props = {
+export interface IProps {
 
     /**
      * The URL patterns for URLs that needs to be handled with CORS.
      */
-    _corsAvatarURLs: Array<string>,
+    _corsAvatarURLs?: Array<string>;
 
     /**
      * Custom avatar backgrounds from branding.
      */
-    _customAvatarBackgrounds: Array<string>,
+    _customAvatarBackgrounds?: Array<string>;
 
     /**
      * The string we base the initials on (this is generated from a list of precedences).
      */
-    _initialsBase: ?string,
+    _initialsBase?: string;
 
     /**
      * An URL that we validated that it can be loaded.
      */
-    _loadableAvatarUrl: ?string,
+    _loadableAvatarUrl?: string;
 
     /**
      * Indicates whether _loadableAvatarUrl should use CORS or not.
      */
-    _loadableAvatarUrlUseCORS: ?boolean,
+    _loadableAvatarUrlUseCORS?: boolean;
 
     /**
      * A prop to maintain compatibility with web.
      */
-    className?: string,
+    className?: string;
 
     /**
      * A string to override the initials to generate a color of. This is handy if you don't want to make
      * the background color match the string that the initials are generated from.
      */
-    colorBase?: string,
+    colorBase?: string;
 
     /**
      * Display name of the entity to render an avatar for (if any). This is handy when we need
-     * an avatar for a non-participasnt entity (e.g. A recent list item).
+     * an avatar for a non-participant entity (e.g. A recent list item).
      */
-    displayName?: string,
+    displayName?: string;
 
     /**
      * Whether or not to update the background color of the avatar.
      */
-    dynamicColor?: Boolean,
+    dynamicColor?: boolean;
 
     /**
      * ID of the element, if any.
      */
-    id?: string,
+    id?: string;
 
     /**
      * The ID of the participant to render an avatar for (if it's a participant avatar).
      */
-    participantId?: string,
+    participantId?: string;
 
     /**
      * The size of the avatar.
      */
-    size: number,
+    size: number;
 
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    status?: ?string,
+    status?: string;
 
     /**
      * TestId of the element, if any.
      */
-    testId?: string,
+    testId?: string;
 
     /**
      * URL of the avatar, if any.
      */
-    url: ?string,
+    url?: string;
 
     /**
      * Indicates whether to load the avatar using CORS or not.
      */
-    useCORS?: ?boolean
+    useCORS?: boolean;
 }
 
 type State = {
-    avatarFailed: boolean,
-    isUsingCORS: boolean
-}
+    avatarFailed: boolean;
+    isUsingCORS: boolean;
+};
 
 export const DEFAULT_SIZE = 65;
 
 /**
  * Implements a class to render avatars in the app.
  */
-class Avatar<P: Props> extends PureComponent<P, State> {
+class Avatar<P extends IProps> extends PureComponent<P, State> {
     /**
      * Default values for {@code Avatar} component's properties.
      *
@@ -179,7 +181,13 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         } = this.props;
         const { avatarFailed, isUsingCORS } = this.state;
 
-        const avatarProps = {
+        const avatarProps: AbstractProps & {
+            className?: string;
+            id?: string;
+            status?: string;
+            testId?: string;
+            useCORS?: boolean;
+        } = {
             className,
             color: undefined,
             id,
@@ -212,7 +220,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
 
         if (initials) {
             if (dynamicColor) {
-                avatarProps.color = getAvatarColor(colorBase || _initialsBase, _customAvatarBackgrounds);
+                avatarProps.color = getAvatarColor(colorBase || _initialsBase, _customAvatarBackgrounds ?? []);
             }
 
             avatarProps.initials = initials;
@@ -224,8 +232,6 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         );
     }
 
-    _onAvatarLoadError: () => void;
-
     /**
      * Callback to handle the error while loading of the avatar URI.
      *
@@ -233,7 +239,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
      * @param {boolean} params.dontRetry - If false we will retry to load the Avatar with different CORS mode.
      * @returns {void}
      */
-    _onAvatarLoadError(params = {}) {
+    _onAvatarLoadError(params: any = {}) {
         const { dontRetry = false } = params;
 
         if (Boolean(this.props.useCORS) === this.state.isUsingCORS && !dontRetry) {
@@ -254,12 +260,12 @@ class Avatar<P: Props> extends PureComponent<P, State> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {Props}
+ * @param {IProps} ownProps - The own props of the component.
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { colorBase, displayName, participantId } = ownProps;
-    const _participant: ?Object = participantId && getParticipantById(state, participantId);
+    const _participant: IParticipant | undefined = participantId ? getParticipantById(state, participantId) : undefined;
     const _initialsBase = _participant?.name ?? displayName;
     const { corsAvatarURLs } = state['features/base/config'];
 
