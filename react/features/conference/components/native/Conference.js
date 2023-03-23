@@ -2,7 +2,14 @@
 
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { BackHandler, NativeModules, SafeAreaView, View } from 'react-native';
+import {
+    BackHandler,
+    NativeModules,
+    Platform,
+    SafeAreaView,
+    StatusBar,
+    View
+} from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
@@ -267,7 +274,8 @@ class Conference extends AbstractConference<Props, State> {
      */
     render() {
         const {
-            _brandingStyles
+            _brandingStyles,
+            _fullscreenEnabled
         } = this.props;
 
         return (
@@ -277,6 +285,13 @@ class Conference extends AbstractConference<Props, State> {
                     _brandingStyles
                 ] }>
                 <BrandingImageBackground />
+                {
+                    Platform.OS === 'android'
+                    && <StatusBar
+                        barStyle = 'light-content'
+                        hidden = { _fullscreenEnabled }
+                        translucent = { _fullscreenEnabled } />
+                }
                 { this._renderContent() }
             </Container>
         );
