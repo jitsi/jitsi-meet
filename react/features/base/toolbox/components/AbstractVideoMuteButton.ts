@@ -49,11 +49,11 @@ export default class AbstractVideoMuteButton<P extends IProps, S>
      * Helper function to perform the actual setting of the video mute / unmute
      * action.
      *
-     * @param {boolean} videoMuted - Whether video should be muted or not.
+     * @param {boolean} _videoMuted - Whether video should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setVideoMuted(videoMuted: boolean) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    _setVideoMuted(_videoMuted: boolean) {
         // To be implemented by subclass.
     }
 }

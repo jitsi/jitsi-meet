@@ -50,11 +50,11 @@ export default class AbstractAudioMuteButton<P extends IProps, S>
      * Helper function to perform the actual setting of the audio mute / unmute
      * action.
      *
-     * @param {boolean} audioMuted - Whether audio should be muted or not.
+     * @param {boolean} _audioMuted - Whether audio should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    _setAudioMuted(_audioMuted: boolean) {
         // To be implemented by subclass.
     }
 }
