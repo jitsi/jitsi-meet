@@ -1,7 +1,5 @@
 /* global APP, interfaceConfig */
 
-import $ from 'jquery';
-
 import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
 
 const Filmstrip = {
@@ -14,16 +12,16 @@ const Filmstrip = {
         // horizontal film strip mode for calculating how tall large video
         // display should be.
         if (isFilmstripVisible(APP.store) && !interfaceConfig.VERTICAL_FILMSTRIP) {
-            return $('.filmstrip').outerHeight();
+            return document.querySelector('.filmstrip').offsetHeight;
         }
 
         return 0;
     },
 
     /**
-     * Returns the width of the vertical filmstip if the filmstrip is visible and 0 otherwise.
+     * Returns the width of the vertical filmstrip if the filmstrip is visible and 0 otherwise.
      *
-     * @returns {number} - The width of the vertical filmstip if the filmstrip is visible and 0 otherwise.
+     * @returns {number} - The width of the vertical filmstrip if the filmstrip is visible and 0 otherwise.
      */
     getVerticalFilmstripWidth() {
         return isFilmstripVisible(APP.store) ? getVerticalFilmstripVisibleAreaWidth() : 0;
