@@ -145,6 +145,7 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
             allowClick = { true }
             className = { containerClassName }
             content = { contentComponent }
+            focusable = { false }
             onPopoverClose = { onPopoverClose }
             onPopoverOpen = { onPopoverOpen }
             position = { position }

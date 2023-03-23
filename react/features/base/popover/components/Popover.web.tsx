@@ -41,6 +41,16 @@ interface IProps {
     disablePopover?: boolean;
 
     /**
+     * Whether we can reach the popover element via keyboard or not when trigger is 'hover' (true by default).
+     *
+     * Only works when trigger is set to 'hover'.
+     *
+     * There are some rare cases where we want to set this to false,
+     * when the popover content is not necessary for screen reader users, because accessible elsewhere.
+     */
+    focusable?: boolean;
+
+    /**
      * The id of the dom element acting as the Popover label (matches aria-labelledby).
      */
     headingId?: string;
@@ -119,6 +129,7 @@ class Popover extends Component<IProps, IState> {
      */
     static defaultProps = {
         className: '',
+        focusable: true,
         id: '',
         trigger: 'hover'
     };
@@ -207,6 +218,7 @@ class Popover extends Component<IProps, IState> {
         const { children,
             className,
             content,
+            focusable,
             headingId,
             headingLabel,
             id,
@@ -242,9 +254,11 @@ class Popover extends Component<IProps, IState> {
                 onKeyPress = { this._onKeyPress }
                 { ...(trigger === 'hover' ? {
                     onMouseEnter: this._onShowDialog,
-                    onMouseLeave: this._onHideDialog,
-                    tabIndex: 0
+                    onMouseLeave: this._onHideDialog
                 } : {}) }
+                { ...(trigger === 'hover' && focusable && {
+                    tabIndex: 0
+                }) }
                 ref = { this._containerRef }>
                 { visible && (
                     <DialogPortal
@@ -361,12 +375,12 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onClick(event: React.MouseEvent) {
-        const { allowClick, trigger, visible } = this.props;
+        const { allowClick, trigger, focusable, visible } = this.props;
 
         if (!allowClick) {
             event.stopPropagation();
         }
-        if (trigger === 'click') {
+        if (trigger === 'click' || focusable) {
             if (visible) {
                 this._onHideDialog();
             } else {
