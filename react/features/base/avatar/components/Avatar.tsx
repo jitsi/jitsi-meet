@@ -6,6 +6,8 @@ import { getParticipantById } from '../../participants/functions';
 import { IParticipant } from '../../participants/types';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
 
+import { IProps as AbstractProps } from './AbstractStatelessAvatar';
+
 import { StatelessAvatar } from './';
 
 export interface IProps {
@@ -179,7 +181,13 @@ class Avatar<P extends IProps> extends PureComponent<P, State> {
         } = this.props;
         const { avatarFailed, isUsingCORS } = this.state;
 
-        const avatarProps: any = {
+        const avatarProps: AbstractProps & {
+            className?: string;
+            id?: string;
+            status?: string;
+            testId?: string;
+            useCORS?: boolean;
+        } = {
             className,
             color: undefined,
             id,
