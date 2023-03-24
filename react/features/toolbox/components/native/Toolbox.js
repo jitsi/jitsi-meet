@@ -83,10 +83,12 @@ function Toolbox(props: Props) {
             _styles.backgroundToggle
         ]
     };
+    const style = { ...styles.toolbox };
 
     // we have only hangup and raisehand button in _iAmVisitor mode
     if (_iAmVisitor) {
         additionalButtons.add('raisehand');
+        style.justifyContent = 'center';
     }
 
     return (
@@ -97,7 +99,7 @@ function Toolbox(props: Props) {
                 accessibilityRole = 'toolbar'
                 edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
                 pointerEvents = 'box-none'
-                style = { styles.toolbox }>
+                style = { style }>
                 {!_iAmVisitor && <AudioMuteButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
