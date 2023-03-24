@@ -287,6 +287,8 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
                     && appendURLParam(config.oldConfig.websocket, 'customusername', username)
             };
         }
+
+        return {};
     }
 
     const oldConfig = {
