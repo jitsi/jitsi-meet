@@ -55,7 +55,7 @@ Setting up configuration for the main prosody is a manual process:
 -- targets must be IPs, not hostnames
 s2s_connect_overrides = {
     ["conference.v1.meet.jitsi"] = { "127.0.0.1", 52691 };
-    ["v1.meet.jitsi"] = { "127.0.0.1", 52691 }; -- neded for v1.meet.jitsi->visitors.jitmeet.example.com
+    ["v1.meet.jitsi"] = { "127.0.0.1", 52691 }; -- needed for v1.meet.jitsi->visitors.jitmeet.example.com
     ["conference.v2.meet.jitsi"] = { "127.0.0.1", 52692 };
     ["v2.meet.jitsi"] = { "127.0.0.1", 52692 };
     ["conference.v3.meet.jitsi"] = { "127.0.0.1", 52693 };
@@ -79,10 +79,10 @@ s2s_whitelist = {
 ```
 
 - Make sure s2s is not in modules_disabled
-- Enable `"xxl_conference";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
+- Enable `"visitors";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
 - Create the visitors component in /etc/prosody/conf.d/jitmeet.example.com.cfg.lua:
 ```
-Component "visitors.damencho.jitsi.net" "visitors_component"
+Component "visitors.jitmeet.example.com" "visitors_component"
 ```
 - Make sure you add the correct upstreams to nginx config
 ```

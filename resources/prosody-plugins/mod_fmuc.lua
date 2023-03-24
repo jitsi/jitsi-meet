@@ -70,11 +70,11 @@ module:hook('muc-occupant-left', function (event)
     end
 
     if not room.destroying then
-        if room.xxl_destroy_timer then
-            room.xxl_destroy_timer:stop();
+        if room.visitors_destroy_timer then
+            room.visitors_destroy_timer:stop();
         end
 
-        room.xxl_destroy_timer = module:add_timer(15, function()
+        room.visitors_destroy_timer = module:add_timer(15, function()
             -- let's check are all visitors in the room, if all a visitors - destroy it
             -- if all are main-participants also destroy it
             local main_count = 0;
@@ -148,7 +148,7 @@ module:hook('muc-broadcast-presence', function (event)
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
-          :tag('request-promotion', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
+          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
         -- TODO what about name ???? it will be coming from the token, but we need to extract it and send it to the moderators
         module:send(promotion_request);
     end
@@ -178,8 +178,8 @@ local function stanza_handler(event)
         return;
     end
 
-    if origin.type ~= 's2sout' then
-        module:log('warn', 'not from component or s2sin session, ignore! %s %s', origin.type, stanza);
+    if stanza.attr.from ~= 'visitors.'..fmuc_main_domain then
+        module:log('warn', 'not from visitors component, ignore! %s %s', stanza.attr.from, stanza);
         return true;
     end
 
@@ -191,7 +191,7 @@ local function stanza_handler(event)
         return;
     end
 
-    local request_promotion = visitors_iq:get_child('response-promotion');
+    local request_promotion = visitors_iq:get_child('promotion-response');
     if not request_promotion then
         return;
     end

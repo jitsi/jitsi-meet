@@ -61,7 +61,7 @@ local function stanza_handler(event)
         return;
     end
 
-    local request_promotion = visitors_iq:get_child('request-promotion');
+    local request_promotion = visitors_iq:get_child('promotion-request');
     if not request_promotion then
         return;
     end
@@ -110,7 +110,7 @@ local function stanza_handler(event)
                 xmlns='jitsi:visitors',
                 room = string.gsub(req_room, muc_domain_base, req_from),
                 focusjid = focus_jid })
-                          :tag('response-promotion', {
+                          :tag('promotion-response', {
                 xmlns='jitsi:visitors',
                 jid = req_jid,
                 username = username ,

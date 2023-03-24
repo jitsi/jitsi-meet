@@ -272,30 +272,21 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
         return;
     }
 
-    if (!vnode && config.oldConfig && username) {
+    if (!vnode) {
         // this is redirecting back to main, lets restore config
         // no point of updating disableFocus, we can skip the initial iq to jicofo
-
-        let bosh = config.oldConfig.bosh;
-
-        if (bosh) {
-            bosh += bosh.indexOf('?') === -1 ? `?customusername=${username}` : `&customusername=${username}`;
+        if (config.oldConfig && username) {
+            return {
+                hosts: {
+                    domain: config.oldConfig.hosts.domain,
+                    muc: config.oldConfig.hosts.muc
+                },
+                focusUserJid: focusJid,
+                bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
+                websocket: config.oldConfig.websocket
+                    && appendURLParam(config.oldConfig.websocket, 'customusername', username)
+            };
         }
-        let websocket = config.oldConfig.websocket;
-
-        if (websocket) {
-            websocket += websocket.indexOf('?') === -1 ? `?customusername=${username}` : `&customusername=${username}`;
-        }
-
-        return {
-            hosts: {
-                domain: config.oldConfig.hosts.domain,
-                muc: config.oldConfig.hosts.muc
-            },
-            focusUserJid: focusJid,
-            bosh,
-            websocket
-        };
     }
 
     const oldConfig = {

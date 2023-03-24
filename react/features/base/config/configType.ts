@@ -206,7 +206,6 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
-    customDomain?: string;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
     customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;

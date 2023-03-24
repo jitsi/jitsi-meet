@@ -40,7 +40,7 @@ local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', '
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
-    module:log('error', 'xxl rooms not enabled missing main_muc config');
+    module:log('error', 'visitors rooms not enabled missing main_muc config');
     return ;
 end
 
