@@ -5,8 +5,7 @@ import { IReduxState } from '../../../app/types';
 import { getParticipantById } from '../../participants/functions';
 import { IParticipant } from '../../participants/types';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
-
-import { IProps as AbstractProps } from './AbstractStatelessAvatar';
+import { IAvatarProps as AbstractProps } from '../types';
 
 import { StatelessAvatar } from './';
 
