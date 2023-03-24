@@ -147,6 +147,7 @@
         "bridgeCount": "Conteggio server:",
         "codecs": "Codec (A/V): ",
         "connectedTo": "Connesso a:",
+        "e2eeVerified": "E2EE verificata:",
         "framerate": "Fotogrammi al secondo:",
         "less": "Mostra meno",
         "localaddress": "Indirizzo locale:",
@@ -182,19 +183,27 @@
     },
     "deepLinking": {
         "appNotInstalled": "Per partecipare a questa riunione sul tuo telefono ti serve l'app mobile {{app}}.",
-        "description": "Non è successo nulla? Abbiamo provato ad avviare la riunione sull'app desktop {{app}}. Prova di nuovo o avviala nell'app web {{app}}.",
+        "description": "Non è successo nulla? Abbiamo provato ad avviare la riunione sull'app per PC: {{app}}. Prova di nuovo o avviala nell'app web {{app}}.",
+        "descriptionNew": "Non è successo niente? Abbiamo tentato di avviare la riunione nell'app per PC: {{app}}. <br /><br /> Prova di nuovo o avviala nell'app web.",
         "descriptionWithoutWeb": "Non è successo niente? Abbiamo provato ad avviare la riunione nell'app desktop {{app}}",
         "downloadApp": "Scarica l'app",
+        "downloadMobileApp": "Scarica dall'App Store",
         "ifDoNotHaveApp": "Se non hai ancora l'app:",
         "ifHaveApp": "Se hai già l'app:",
         "joinInApp": "Entra in riunione usando l'app",
+        "joinInAppNew": "Entra con l'app",
+        "joinInBrowser": "Entra col browser",
+        "launchMeetingLabel": "Come vuoi entrare in riunione?",
         "launchWebButton": "Avvia sul web",
+        "noMobileApp": "L'app non è installata?",
+        "termsAndConditions": "Continuando, accetti i nostri <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>termini e condizioni.</a>",
         "title": "Sto avviando la riunione su {{app}}...",
+        "titleNew": "Riunione in avvio...",
         "tryAgainButton": "Prova di nuovo sul desktop",
         "unsupportedBrowser": "Sembra tu stia usando un browser che non supportiamo."
     },
-    "defaultLink": "es. {{url}}",
-    "defaultNickname": "es. Anna Rossi",
+    "defaultLink": "es: {{url}}",
+    "defaultNickname": "es: Anna Rossi",
     "deviceError": {
         "cameraError": "Impossibile accedere alla videocamera",
         "cameraPermission": "Errore nell'ottenere i permessi per la videocamera",
@@ -202,6 +211,12 @@
         "microphonePermission": "Errore nell'ottenere i permessi per il microfono"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Controllo della chiamata",
+            "connectedDevices": "Dispositivi connessi:",
+            "deleteDevice": "Elimina dispositivo",
+            "pairDevice": "Accoppia dispositivo"
+        },
         "noPermission": "Permesso negato",
         "previewUnavailable": "Anteprima non disponibile",
         "selectADevice": "Scegli un dispositivo",
@@ -225,7 +240,9 @@
         "WaitingForHostTitle": "In attesa dell'organizzatore...",
         "Yes": "Sì",
         "accessibilityLabel": {
-            "liveStreaming": "Diretta streaming"
+            "close": "Chiudi finestra",
+            "liveStreaming": "Diretta streaming",
+            "sharingTabs": "Opzioni di condivisione"
         },
         "add": "Aggiungi",
         "addMeetingNote": "Aggiungi una a questa riunione",
@@ -260,10 +277,10 @@
         "dismiss": "Scarta",
         "displayNameRequired": "Ciao, qual è il tuo nome",
         "done": "Fatto",
-        "e2eeDescription": "La crittografia punto-a-punto al momento è SPERIMENTALE. Tieni presente che attivandola disabiliterai i servizi svolti dal server, come: la registrazione, la dirette streaming e la partecipazione usando telefoni. Tieni anche presente che la riunione funzionerà solo per chi si collega usando browser che supportano flussi inseribili (insertable streams).",
+        "e2eeDescription": "La crittografia punto-punto al momento è SPERIMENTALE. Tieni presente che attivandola disabiliterai i servizi svolti dal server, come: la registrazione, la dirette streaming e la partecipazione usando telefoni. Tieni anche presente che la riunione funzionerà solo per chi si collega usando browser che supportano flussi inseribili (insertable streams).",
         "e2eeDisabledDueToMaxModeDescription": "Impossibile crittografare la sessione, per il numero eccessivo di partecipanti.",
-        "e2eeLabel": "Attiva la crittografia punto-a-punto",
-        "e2eeWarning": "ATTENZIONE: non tutti i partecipanti a questa riunione sembrano supportare le funzionalità di crittografia punto-a-punto. Se la attivi, non potranno sentirti o vederti.",
+        "e2eeLabel": "Attiva la crittografia punto-punto",
+        "e2eeWarning": "ATTENZIONE: non tutti i partecipanti a questa riunione sembrano supportare le funzionalità di crittografia punto-punto. Se la attivi, non potranno sentirti o vederti.",
         "e2eeWillDisableDueToMaxModeDescription": "WARNING: ATTENZIONE: la crittografia punto-punto verrà disattivata automaticamente, se si aggiungono nuovi partecipanti alla riunione.",
         "embedMeeting": "Incorpora la riunione",
         "enterDisplayName": "Inserisci qui il tuo nome",
@@ -408,6 +425,10 @@
         "user": "Utente",
         "userIdentifier": "Identificatore utente",
         "userPassword": "Password utente",
+        "verifyParticipantConfirm": "Corrispondono",
+        "verifyParticipantDismiss": "Non corrispondono",
+        "verifyParticipantQuestion": "SPERIMENTALE: Chiedi al partecipante {{participantName}} se vede gli stessi contenuti, nello stesso ordine.",
+        "verifyParticipantTitle": "Conferma dagli utenti",
         "videoLink": "Collegamento video",
         "viewUpgradeOptions": "Vedi le opzioni premium",
         "viewUpgradeOptionsContent": "Per aver accesso illimitato alle funzionalità premium come la registrazione, trascrizione, lo Streaming RTMP & altri, devi passare ad un abbonamento diverso.",
@@ -433,12 +454,14 @@
         "veryBad": "Pessima",
         "veryGood": "Ottima"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Anteprime video"
+        }
+    },
     "giphy": {
         "noResults": "Trovato niente :(",
         "search": "Cerca in GIPHY"
-    },
-    "helpView": {
-        "title": "Aiuto"
     },
     "incomingCall": {
         "answer": "Rispondi",
@@ -563,7 +586,6 @@
     "lobby": {
         "admit": "Ammetti",
         "admitAll": "Ammetti tutti",
-        "allow": "Autorizza",
         "backToKnockModeButton": "Nessuna password, richiedi l'accesso",
         "chat": "Conversazione",
         "dialogTitle": "Sala d'attesa",
@@ -649,8 +671,11 @@
         "connectedOneMember": "{{name}} è entrato in riunione",
         "connectedThreePlusMembers": "{{name}} e altri {{count}} sono entrati in riunione",
         "connectedTwoMembers": "{{first}} e {{second}} sono entrati in riunione",
+        "dataChannelClosed": "Qualità video compromessa",
+        "dataChannelClosedDescription": "Il canale ponte è stato disconnesso e di conseguenza la qualità video è impostata al minimo.",
         "disconnected": "disconnesso",
         "displayNotifications": "Mostra le notifiche per",
+        "dontRemindMe": "Non mi ricordare",
         "focus": "Focus su riunione",
         "focusFail": "{{component}} non disponibile - riprovo tra {{ms}} sec",
         "gifsMenu": "GIPHY",
@@ -659,6 +684,7 @@
         "invitedOneMember": "{{displayName}} è stato invitato",
         "invitedThreePlusMembers": "Hai invitato {{name}} e altri {{count}}",
         "invitedTwoMembers": "Hai invitato {{first}} e {{second}}",
+        "joinMeeting": "Entra",
         "kickParticipant": "{{kicked}} è stato espulso da {{kicker}}",
         "leftOneMember": "{{name}} ha lasciato la riunione",
         "leftThreePlusMembers": "{{name}} e molti altri hanno lasciato la riunione",
@@ -709,6 +735,8 @@
         "reactionSoundsForAll": "Disattiva suoni a tutti",
         "screenShareNoAudio": "L'opzione di condivisione audio non era selezionata nella schermata di selezione della finestra da condividere.",
         "screenShareNoAudioTitle": "Condividi audio non è stato selezionato",
+        "screenSharingAudioOnlyDescription": "Si avvisa che condividendo lo schermo s'intacca la modalità \"Prestazioni migliori\" e si usa maggiore ampiezza di banda.",
+        "screenSharingAudioOnlyTitle": "Modalità \"Prestazioni migliori\"",
         "selfViewTitle": "Puoi sempre ripristinare la tua immagine nelle impostazioni",
         "somebody": "Qualcuno",
         "startSilentDescription": "Entra di nuovo nella riunione, per attivare l'audio",
@@ -746,13 +774,15 @@
         "headings": {
             "lobby": "Sala d'attesa ({{count}})",
             "participantsList": "Partecipanti alla riunione ({{count}})",
-            "waitingLobby": "In attesa ({{count}})"
+            "visitors": "Visitanti ({{count}})",
+            "waitingLobby": "In attesa in sala d'attesa ({{count}})"
         },
         "search": "Cerca partecipanti",
         "title": "Partecipanti"
     },
     "passwordDigitsOnly": "Fino a {{number}} cifre",
     "passwordSetRemotely": "definita da altro utente",
+    "pinParticipant": "{{participantName}} - Metti in evidenza",
     "pinnedParticipant": "Il partecipante è in evidenza",
     "polls": {
         "answer": {
@@ -858,9 +888,6 @@
         "rejected": "Rifiutato",
         "ringing": "Sta suonando..."
     },
-    "privacyView": {
-        "title": "Privacy"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Crea il tuo nome",
@@ -914,6 +941,7 @@
         "localRecordingVideoWarning": "Per registrare il video, deve essere già avviato prima dell'inizio della registrazione",
         "localRecordingWarning": "Assicurati di aver selezionato la scheda corrente, per registrare gli audio e video corretti. La registrazione è limitata ad 1GB, cioè circa 100 minuti.",
         "loggedIn": "Accesso effettuato come {{userName}}",
+        "noMicPermission": "Il canale audio del microfono non è stata avviato. Autorizzare l'uso del microfono, per favore.",
         "noStreams": "Audio e video non trovati.",
         "off": "Registrazione interrotta",
         "offBy": "{{name}} ha interrotto la registrazione",
@@ -947,6 +975,7 @@
         "title": "Impostazioni di sicurezza"
     },
     "settings": {
+        "audio": "Audio",
         "buttonLabel": "Impostazioni",
         "calendar": {
             "about": "L’integrazione del calendario con {{appName}} è usata per accedere in sicurezza al proprio calendario e poter leggere i prossimi appuntamenti ",
@@ -967,6 +996,7 @@
         "maxStageParticipants": "Numero massimo video che possono essere fissati nella schemata",
         "microphones": "Microfoni",
         "moderator": "Moderatore",
+        "moderatorOptions": "Opzioni moderatore",
         "more": "Mostra di più",
         "name": "Nome",
         "noDevice": "Nessuno",
@@ -1001,8 +1031,11 @@
         "disableCrashReportingWarning": "Sei sicuro di voler disattivare la diagnostica dei crash? Quest'impostazione verrà eseguita al prossimo avvio dell'app.",
         "disableP2P": "Disattiva la modalità punto-punto",
         "displayName": "Nome visualizzato",
+        "disableP2P": "Disabilita modalità punto-punto",
+        "displayName": "Nome mostrato",
         "displayNamePlaceholderText": "Es: Mario Rossi",
         "email": "email",
+        "emailPlaceholderText": "email@esempio.it",
         "goTo": "Vai a",
         "header": "Impostazioni",
         "help": "Aiuto",
@@ -1066,18 +1099,29 @@
             "cc": "Sottotitoli",
             "chat": "Conversazione",
             "clap": "Applaudi",
+            "closeChat": "Chiudi conversazione",
+            "closeMoreActions": "Chiudi menù altre azioni",
+            "closeParticipantsPane": "Chiudi pannello partecipanti",
             "collapse": "Riduci",
-            "document": "Documenti condivisi",
+            "document": "Documento condiviso",
+            "documentClose": "Chiudi documento condiviso",
+            "documentOpen": "Apri documento condiviso",
             "download": "Scarica le nostre app",
             "embedMeeting": "Incorpora riunione altrove",
             "endConference": "Termina la riunione per tutti",
+            "enterFullScreen": "Vista a schermo intero",
+            "enterTileView": "Vedi tutti partecipanti",
+            "exitFullScreen": "Esci da schermo intero",
+            "exitTileView": "Esci da vista tutti partecipanti",
             "expand": "Espandi",
             "feedback": "Lascia un feedback",
             "fullScreen": "Schermo intero",
             "giphy": "Menù GIPHY",
             "grantModerator": "Autorizza moderatore",
             "hangup": "Lascia la riunione",
+            "heading": "Barra strumenti",
             "help": "Aiuto",
+            "invite": "Invita partecipanti",
             "invite": "Invita partecipanti",
             "kick": "Espelli partecipante",
             "laugh": "Ridi",
@@ -1087,15 +1131,17 @@
             "lobbyButton": "Sala d'attesa",
             "localRecording": "Controlli di registrazione locale",
             "lockRoom": "Attiva o disattiva password",
+            "lowerHand": "Abbassa la mano",
             "moreActions": "Attiva o disattiva menu avanzato",
             "moreActionsMenu": "Menu avanzato",
             "moreOptions": "Altre opzioni",
-            "mute": "Audio",
+            "mute": "Silenzia",
             "muteEveryone": "Spegni i microfoni a tutti",
             "muteEveryoneElse": "Spegni i microfoni di tutti gli altri",
             "muteEveryoneElsesVideoStream": "Spegni la videocamera di tutti gli altri",
             "muteEveryonesVideoStream": "Spegni la videocamera a tutti",
             "noiseSuppression": "Riduzione del rumore",
+            "openChat": "Apri conversazione",
             "participants": "Partecipanti",
             "pip": "Immagine nell’immagine",
             "privateMessage": "Invia messaggio privato",
@@ -1114,15 +1160,18 @@
             "sharedvideo": "Condivisione",
             "shortcuts": "Scorciatoie",
             "show": "Mostra in primo piano",
+            "showWhiteboard": "Mostra lavagna",
             "silence": "Senza parole",
             "speakerStats": "Statistiche relatore",
+            "stopScreenSharing": "Ferma condivisione schermo",
+            "stopSharedVideo": "Ferma video",
             "surprised": "Sorpreso",
             "tileView": "Vedi tutti i partecipanti, o uno solo",
             "toggleCamera": "Cambia videocamera",
             "toggleFilmstrip": "Pellicola",
             "videoblur": "Sfoca video",
-            "videomute": "Videocamera",
-            "whiteboard": "Usa lavagna"
+            "videomute": "Ferma videocamera",
+            "videounmute": "Attiva videocamera"
         },
         "addPeople": "Aggiungi partecipanti alla chiamata",
         "audioOnlyOff": "Disabilita modalità per banda limitata",
@@ -1135,6 +1184,7 @@
         "chat": "Conversazione",
         "clap": "Applaudi",
         "closeChat": "Chiudi conversazione",
+        "closeParticipantsPane": "Chiudi pannello partecipanti",
         "closeReactionsMenu": "Chiudi il menù reazioni",
         "disableNoiseSuppression": "Interrompi riduzione rumore",
         "disableReactionSounds": "Puoi disattivare i suoni delle reaction, in questa riunione",
@@ -1143,6 +1193,7 @@
         "download": "Scarica le nostre app",
         "e2ee": "Crittografia punto-punto",
         "embedMeeting": "Incorpora riunione altrove",
+        "enableNoiseSuppression": "Attiva riduzione rumore",
         "endConference": "Termina la riunione per tutti",
         "enterFullScreen": "Schermo intero",
         "enterTileView": "Vedi tutti i partecipanti",
@@ -1198,7 +1249,7 @@
         "shareaudio": "Condividi audio",
         "sharedvideo": "Condividi un video",
         "shortcuts": "Visualizza scorciatoie",
-        "showWhiteboard": "Show whiteboard",
+        "showWhiteboard": "Mostra lavagna",
         "silence": "Silenzio",
         "speakerStats": "Statistiche",
         "startScreenSharing": "Inizia la condivisione dello schermo",
@@ -1211,8 +1262,10 @@
         "talkWhileMutedPopup": "Stai provando a parlare? Il microfono è disattivato.",
         "tileViewToggle": "Vedi tutti i partecipanti insieme, o uno solo",
         "toggleCamera": "Cambia videocamera",
+        "unmute": "Riattiva",      
         "videoSettings": "Impostazioni video",
-        "videomute": "Videocamera"
+        "videomute": "Ferma videocamera",
+        "videounmute": "Attiva videocamera"
     },
     "transcribing": {
         "ccButtonTooltip": "Sottotitoli",
@@ -1230,6 +1283,7 @@
         "subtitlesOff": "Spento",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Togli",
     "userMedia": {
         "androidGrantPermissions": "Seleziona <b><i>consenti</i></b> quando richiesto dal browser.",
         "chromeGrantPermissions": "Seleziona <b><i>consenti</i></b> quando richiesto dal browser.",
@@ -1268,9 +1322,11 @@
         "ldTooltip": "Stai vedendo a bassa definizione",
         "lowDefinition": "Bassa definizione",
         "performanceSettings": "Imposta prestazioni",
+        "recording": "Registrazione in corso",
         "sd": "SD",
         "sdTooltip": "Stai vedendo a definizione standard",
-        "standardDefinition": "Definizione standard"
+        "standardDefinition": "Definizione standard",
+        "streaming": "Diretta streaming in corso"   
     },
     "videothumbnail": {
         "connectionInfo": "Info connessione",
@@ -1282,6 +1338,7 @@
         "grantModerator": "Autorizza moderatore",
         "hideSelfView": "Nascondi tua immagine",
         "kick": "Espelli",
+        "mirrorVideo": "Rifletti a specchio il mio video",
         "moderator": "Moderatore",
         "mute": "Il partecipante ha il microfono spento",
         "muted": "Audio disattivato",
@@ -1291,6 +1348,7 @@
         "show": "Mostra tra gli oratori",
         "showSelfView": "Mostra tua immagine",
         "unpinFromStage": "Libera questo video",
+        "verify": "Verifica partecipante",
         "videoMuted": "Video disattivato",
         "videomute": "Il partecipante ha la videocamera spenta"
     },
@@ -1318,7 +1376,8 @@
         "webAssemblyWarning": "Il WebAssembly non è supportato",
         "webAssemblyWarningDescription": "Il WebAssembly è disabilitato o non è supportato da questo browser"
     },
-    "volumeSlider": "Sbarra volume",
+    "visitorsLabel": "Numero di visitatori: {{count}}",
+    "volumeSlider": "Cursore volume",
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Tocca per accedere",
@@ -1350,6 +1409,7 @@
             "microsoftLogo": "Logo Microsoft",
             "policyLogo": "Logo normativa"
         },
+        "meetingsAccessibilityLabel": "Riunioni",
         "mobileDownLoadLinkAndroid": "Scarica app per Android",
         "mobileDownLoadLinkFDroid": "Scarica app da F-Droid",
         "mobileDownLoadLinkIos": "Scarica app per iOS",
@@ -1358,6 +1418,7 @@
         "recentList": "Recenti",
         "recentListDelete": "Cancella",
         "recentListEmpty": "La lista delle riunioni recenti è vuota. Partecipa almeno ad una riunione e potrai riavviarla in seguito.",
+        "recentMeetings": "Riunioni recenti",
         "reducedUIText": "Benvenuto in {{app}}!",
         "roomNameAllowedChars": "Il nome della riunione non deve contenere questi caratteri: ?, &, :, ', \", %, #.",
         "roomname": "Inserisci il nome della riunione",
@@ -1366,6 +1427,12 @@
         "settings": "Impostazioni",
         "startMeeting": "Inizia riunione",
         "terms": "Termini di utilizzo",
-        "title": "Il sistema di videoconferenza sicuro, funzionale e completamente gratuito."
+        "title": "Il sistema di videoconferenza sicuro, funzionale e completamente gratuito",
+        "upcomingMeetings": "Riunioni prossime"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Lavagna"
+        }
     }
 }
