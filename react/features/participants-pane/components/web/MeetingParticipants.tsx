@@ -106,7 +106,7 @@ function MeetingParticipants({
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count);
+    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
     const { classes: styles, cx } = useStyles();
 
@@ -119,8 +119,8 @@ function MeetingParticipants({
                 { t('participantsPane.title') }
             </span>
             <div className = { cx(styles.heading, styles.headingW) }>
-                {visitorsCount && visitorsCount > 0
-                    && t('participantsPane.headings.visitors', { count: visitorsCount })}
+                {visitorsCount > 0
+                    ? t('participantsPane.headings.visitors', { count: visitorsCount }) : undefined}
             </div>
             <div className = { styles.heading }>
                 {currentRoom?.name

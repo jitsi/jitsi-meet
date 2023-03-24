@@ -25,7 +25,7 @@ const VisitorsCountLabel = () => {
         state['features/visitors'].count || 0);
     const { t } = useTranslation();
 
-    return visitorsMode && (<Tooltip
+    return !visitorsMode && visitorsCount > 0 && (<Tooltip
         content = { t('visitorsLabel', { count: visitorsCount }) }
         position = { 'bottom' }>
         <Label
