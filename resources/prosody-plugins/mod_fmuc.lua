@@ -10,7 +10,6 @@
 --- NOTE: Make sure all communication between prosodies is using the real jids ([foo]room1@muc.example.com), as there
 --- are certain configs for whitelisted domains and connections that are domain based
 --- TODO: filter presence from main occupants back to main prosody
---- TODO: filter messages back to main prosody
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
@@ -138,7 +137,6 @@ module:hook('muc-broadcast-presence', function (event)
     local raiseHand = full_p:get_child_text('jitsi_participant_raisedHand');
     -- a promotion detected let's send it to main prosody
     if raiseHand then
-        -- TODO check room= with tenants
         local iq_id = new_id();
         sent_iq_cache:set(iq_id, socket.gettime());
         local promotion_request = st.iq({
@@ -148,8 +146,13 @@ module:hook('muc-broadcast-presence', function (event)
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
-          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
-        -- TODO what about name ???? it will be coming from the token, but we need to extract it and send it to the moderators
+          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up()
+
+        local nick_element = occupant:get_presence():get_child('nick', 'http://jabber.org/protocol/nick');
+        if nick_element then
+            promotion_request:add_child(nick_element);
+        end
+
         module:send(promotion_request);
     end
 
@@ -249,7 +252,9 @@ module:hook("muc-occupant-groupchat", function(event)
         stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
         local nick_element = occupant:get_presence():get_child(
                 'nick', 'http://jabber.org/protocol/nick');
-        stanza:add_child(nick_element);
+        if nick_element then
+            stanza:add_child(nick_element);
+        end
 
         stanza.attr.from = occupant.nick;
     else

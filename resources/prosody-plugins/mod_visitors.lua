@@ -4,11 +4,9 @@
 --- vm1-ip-address conference.visitors1.domain.com
 --- vm2-ip-address visitors2.domain.com
 --- vm2-ip-address conference.visitors2.domain.com
---- TODO: drop the /etc/hosts changes for https://modules.prosody.im/mod_s2soutinjection.html
 --- Enable in global modules: 's2s_bidi' and 'certs_all'
 --- Make sure 's2s' is not in modules_disabled
 --- Open port 5269 on the provider side and on the firewall on the machine (iptables -I INPUT 4 -p tcp -m tcp --dport 5269 -j ACCEPT)
---- TODO: make it work with tenants
 --- NOTE: Make sure all communication between prosodies is using the real jids ([foo]room1@muc.example.com)
 local st = require 'util.stanza';
 local jid = require 'util.jid';
@@ -127,7 +125,6 @@ module:hook('presence/full', function(event)
     local stanza = event.stanza;
     local room_name, from_host = jid.split(stanza.attr.from);
     if stanza.attr.type == 'unavailable' and from_host ~= main_muc_component_config then
-        -- TODO tenants???
         local room_jid = jid.join(room_name, main_muc_component_config); -- converts from visitor to main room jid
 
         local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
