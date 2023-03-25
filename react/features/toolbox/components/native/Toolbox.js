@@ -108,7 +108,7 @@ function Toolbox(props: Props) {
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
                 }
-                {!_iAmVisitor && additionalButtons.has('chat')
+                {additionalButtons.has('chat')
                       && <ChatButton
                           styles = { buttonStylesBorderless }
                           toggledStyles = { backgroundToggledStyle } />
