@@ -25,6 +25,7 @@ import { getQuickActionButtonType, isForceMuted } from '../../../participants-pa
 // @ts-ignore
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
+import { iAmVisitor } from '../../../visitors/functions';
 
 import CustomOptionButton from './CustomOptionButton';
 // @ts-ignore
@@ -146,6 +147,7 @@ const ParticipantContextMenu = ({
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
+    const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
     const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
@@ -264,7 +266,7 @@ const ParticipantContextMenu = ({
             participantID = { _getCurrentParticipantId() } />);
     }
 
-    if (!disablePrivateChat) {
+    if (!disablePrivateChat && !visitorsMode) {
         buttons2.push(<PrivateMessageMenuButton
             key = 'privateMessage'
             participantID = { _getCurrentParticipantId() } />

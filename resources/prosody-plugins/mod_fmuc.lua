@@ -236,3 +236,42 @@ end
 process_host_module(main_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
 end);
+
+-- only live chat is supported for visitors
+module:hook("muc-occupant-groupchat", function(event)
+    local occupant, room, stanza = event.occupant, event.room, event.stanza;
+    local from = stanza.attr.from;
+
+    -- if there is no occupant this is a message from main, probably coming from other vnode
+    if occupant then
+        -- add to message stanza display name for the visitor
+        -- remove existing nick to avoid forgery
+        stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
+        local nick_element = occupant:get_presence():get_child(
+                'nick', 'http://jabber.org/protocol/nick');
+        stanza:add_child(nick_element);
+
+        stanza.attr.from = occupant.nick;
+    else
+        stanza.attr.from = jid.join(jid.node(from), module.host);
+    end
+
+    -- let's send it to main chat and rest of visitors here
+    for _, o in room:each_occupant() do
+        -- filter remote occupants
+        if jid.host(o.bare_jid) == main_domain then
+            room:route_to_occupant(o, stanza)
+        end
+    end
+
+    -- send to main participants only messages from local occupants (skip from remote vnodes)
+    if occupant then
+
+        local main_message = st.clone(stanza);
+        main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain);
+        module:send(main_message);
+    end
+    stanza.attr.from = from; -- something prosody does internally
+
+    return true;
+end, 55); -- prosody check for visitor's chat is prio 50, we want to override it
