@@ -1,6 +1,6 @@
-import { withStyles } from '@mui/styles';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -63,11 +63,6 @@ interface IProps {
     _tabs: IDialogTab<any>[];
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes: Object;
-
-    /**
      * Which settings tab should be initially displayed. If not defined then
      * the first tab will be displayed.
      */
@@ -85,57 +80,36 @@ interface IProps {
     isDisplayedOnWelcomePage: boolean;
 }
 
-/**
- * Creates the styles for the component.
- *
- * @param {Object} theme - The current UI theme.
- *
- * @returns {Object}
- */
-const styles = () => {
+const useStyles = makeStyles()(() => {
     return {
         settingsDialog: {
             display: 'flex',
             width: '100%'
         }
     };
+});
+
+const SettingsDialog = ({ _tabs, defaultTab, dispatch }: IProps) => {
+    const { classes } = useStyles();
+
+    const correctDefaultTab = _tabs.find(tab => tab.name === defaultTab)?.name;
+    const tabs = _tabs.map(tab => {
+        return {
+            ...tab,
+            className: `settings-pane ${classes.settingsDialog}`,
+            submit: (...args: any) => tab.submit
+                && dispatch(tab.submit(...args))
+        };
+    });
+
+    return (
+        <DialogWithTabs
+            className = 'settings-dialog'
+            defaultTab = { correctDefaultTab }
+            tabs = { tabs }
+            titleKey = 'settings.title' />
+    );
 };
-
-/**
- * A React {@code Component} for displaying a dialog to modify local settings
- * and conference-wide (moderator) settings. This version is connected to
- * redux to get the current settings.
- *
- * @augments Component
- */
-class SettingsDialog extends Component<IProps> {
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { _tabs, defaultTab, dispatch } = this.props;
-        const correctDefaultTab = _tabs.find(tab => tab.name === defaultTab)?.name;
-        const tabs = _tabs.map(tab => {
-            return {
-                ...tab,
-                submit: (...args: any) => tab.submit
-                    && dispatch(tab.submit(...args))
-            };
-        });
-
-        return (
-            <DialogWithTabs
-                className = 'settings-dialog'
-                defaultTab = { correctDefaultTab }
-                tabs = { tabs }
-                titleKey = 'settings.title' />
-        );
-    }
-}
 
 /**
  * Maps (parts of) the Redux state to the associated props for the
@@ -149,7 +123,7 @@ class SettingsDialog extends Component<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { classes, isDisplayedOnWelcomePage } = ownProps;
+    const { isDisplayedOnWelcomePage } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // The settings sections to display.
@@ -188,7 +162,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     selectedAudioOutputId: tabState.selectedAudioOutputId
                 };
             },
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: (newState: any) => submitAudioDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
             icon: IconVolumeUp
         });
@@ -211,7 +184,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     selectedVideoInputId: tabState.selectedVideoInputId
                 };
             },
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: (newState: any) => submitVideoDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
             icon: IconVideo
         });
@@ -223,7 +195,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: VirtualBackgroundTab,
             labelKey: 'virtualBackground.title',
             props: getVirtualBackgroundTabProps(state),
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: (newState: any) => submitVirtualBackgroundTab(newState),
             cancel: () => {
                 const { _virtualBackground } = getVirtualBackgroundTabProps(state);
@@ -254,7 +225,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 };
             },
             props: getNotificationsTabProps(state, showSoundsSettings),
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitNotificationsTab,
             icon: IconBell
         });
@@ -277,7 +247,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     startReactionsMuted: tabState?.startReactionsMuted
                 };
             },
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitModeratorTab,
             icon: IconModerator
         });
@@ -289,7 +258,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitProfileTab,
             icon: IconUser
         });
@@ -300,7 +268,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
             labelKey: 'settings.calendar.title',
-            className: `settings-pane ${classes.settingsDialog}`,
             icon: IconCalendar
         });
     }
@@ -318,7 +285,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
             };
         },
-        className: `settings-pane ${classes.settingsDialog}`,
         submit: submitShortcutsTab,
         icon: IconShortcuts
     });
@@ -340,7 +306,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },
-            className: `settings-pane ${classes.settingsDialog}`,
             submit: submitMoreTab,
             icon: IconGear
         });
@@ -349,4 +314,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     return { _tabs: tabs };
 }
 
-export default withStyles(styles)(connect(_mapStateToProps)(SettingsDialog));
+export default connect(_mapStateToProps)(SettingsDialog);
