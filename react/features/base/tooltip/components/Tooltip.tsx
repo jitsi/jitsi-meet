@@ -58,6 +58,7 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
     const dispatch = useDispatch();
     const [ visible, setVisible ] = useState(false);
     const [ isUnmounting, setIsUnmounting ] = useState(false);
+    const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
     const { classes, cx } = useStyles();
     const timeoutID = useRef({
         open: 0,
@@ -68,10 +69,6 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
         previousContent,
         visible: isVisible
     } = useSelector((state: IReduxState) => state['features/base/tooltip']);
-
-    if (isMobileBrowser()) {
-        return children;
-    }
 
     const contentComponent = (
         <div
@@ -132,6 +129,11 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
             timeoutID.current.close = 0;
         }
     }, [ storeContent ]);
+
+
+    if (isMobileBrowser() || overflowDrawer) {
+        return children;
+    }
 
     return (
         <Popover
