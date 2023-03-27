@@ -198,10 +198,10 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             const [ vnode ] = error.params;
 
             dispatch(overwriteConfig(newConfig))
-                .then(dispatch(setIAmVisitor(Boolean(vnode))))
                 .then(dispatch(conferenceWillLeave(conference)))
                 .then(conference.leave())
                 .then(dispatch(disconnect()))
+                .then(dispatch(setIAmVisitor(Boolean(vnode))))
 
                 // we do not clear local tracks on error, so we need to manually clear them
                 .then(dispatch(destroyLocalTracks()))

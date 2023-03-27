@@ -26,7 +26,7 @@ const VisitorsCountLabel = () => {
     const { t } = useTranslation();
 
     return !visitorsMode && visitorsCount > 0 && (<Tooltip
-        content = { t('visitorsLabel', { count: visitorsCount }) }
+        content = { t('visitors.labelTooltip', { count: visitorsCount }) }
         position = { 'bottom' }>
         <Label
             className = { styles.label }

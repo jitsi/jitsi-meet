@@ -472,7 +472,12 @@ class Conference extends AbstractConference<Props, State> {
 
                 <TestConnectionInfo />
 
-                {_shouldDisplayTileView && <Toolbox />}
+                {_shouldDisplayTileView
+                    && <>
+                        { this._renderNotificationsContainer() }
+                        <Toolbox />
+                    </>
+                }
             </>
         );
     }
