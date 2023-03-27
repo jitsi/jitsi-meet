@@ -26,6 +26,11 @@ do
     cp prosody.cfg.lua.visitor.template /etc/prosody-v${i}/prosody.cfg.lua
     sed -i "s/vX/v${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
     sed -i "s/jitmeet.example.com/$JICOFO_HOSTNAME/g" /etc/prosody-v${i}/prosody.cfg.lua
+    # fix the ports
+    sed -i "s/52691/5269${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
+    sed -i "s/52221/5222${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
+    sed -i "s/52801/5280${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
+    sed -i "s/52811/5281${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
 done
 
 # Configure jicofo
