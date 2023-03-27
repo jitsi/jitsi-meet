@@ -1,3 +1,1 @@
-// @flow
-
 export * from './web';

@@ -1,6 +1,6 @@
-// @flow
-
 import { Component } from 'react';
+
+import { IReduxState } from '../../app/types';
 
 /**
  * {@code AbstractCaptions} Properties.
@@ -10,21 +10,21 @@ export type AbstractCaptionsProps = {
     /**
      * Whether local participant is requesting to see subtitles.
      */
-    _requestingSubtitles: boolean,
+    _requestingSubtitles: boolean;
 
     /**
      * Transcript texts formatted with participant's name and final content.
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: ?Map<string, string>
+    _transcripts: Map<string, string>;
 };
 
 /**
  * Abstract React {@code Component} which can display speech-to-text results
  * from Jigasi as subtitles.
  */
-export class AbstractCaptions<P: AbstractCaptionsProps>
+export class AbstractCaptions<P extends AbstractCaptionsProps>
     extends Component<P> {
 
     /**
@@ -60,7 +60,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @protected
      * @returns {React$Element} - The React element which displays the text.
      */
-    _renderParagraph: (id: string, text: string) => React$Element<*>;
+    _renderParagraph: (id: string, text: string) => React.ReactElement;
 
     /**
      * Renders the subtitles container.
@@ -71,7 +71,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
      * @protected
      * @returns {React$Element} - The subtitles container.
      */
-    _renderSubtitlesContainer: (Array<React$Element<*>>) => React$Element<*>;
+    _renderSubtitlesContainer: (el: Array<React.ReactElement>) => React.ReactElement;
 }
 
 /**
@@ -83,7 +83,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
  * @returns {Map<string, string>} - Formatted transcript subtitles mapped by
  * transcript message IDs.
  */
-function _constructTranscripts(state: Object): Map<string, string> {
+function _constructTranscripts(state: IReduxState): Map<string, string> {
     const { _transcriptMessages } = state['features/subtitles'];
     const transcripts = new Map();
 
@@ -118,7 +118,7 @@ function _constructTranscripts(state: Object): Map<string, string> {
  *     _transcripts: Map<string, string>
  * }}
  */
-export function _abstractMapStateToProps(state: Object) {
+export function _abstractMapStateToProps(state: IReduxState) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const transcripts = _constructTranscripts(state);
 

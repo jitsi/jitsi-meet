@@ -1,5 +1,3 @@
-// @flow
-
 import { Component } from 'react';
 
 import logger from '../logger';
@@ -9,11 +7,11 @@ import logger from '../logger';
  * playback.
  */
 export type AudioElement = {
-    currentTime: number,
-    pause: () => void,
-    play: () => void,
-    setSinkId?: string => Function,
-    stop: () => void
+    currentTime: number;
+    pause: () => void;
+    play: () => void;
+    setSinkId?: (id: string) => Promise<any>;
+    stop: () => void;
 };
 
 /**
@@ -21,11 +19,13 @@ export type AudioElement = {
  */
 type Props = {
 
+    loop?: boolean;
+
     /**
      * A callback which will be called with {@code AbstractAudio} instance once
      * the audio element is loaded.
      */
-    setRef?: ?AudioElement => void,
+    setRef?: (ref?: any) => void;
 
     /**
      * The URL of a media resource to use in the element.
@@ -35,10 +35,9 @@ type Props = {
      *
      * @type {Object | string}
      */
-    src: Object | string,
-    stream?: Object,
-    loop?: ?boolean
-}
+    src: Object | string;
+    stream?: Object;
+};
 
 /**
  * The React {@link Component} which is similar to Web's
@@ -49,7 +48,7 @@ export default class AbstractAudio extends Component<Props> {
      * The {@link AudioElement} instance which implements the audio playback
      * functionality.
      */
-    _audioElementImpl: ?AudioElement;
+    _audioElementImpl: AudioElement | undefined;
 
     /**
      * Initializes a new {@code AbstractAudio} instance.
@@ -71,7 +70,7 @@ export default class AbstractAudio extends Component<Props> {
      * @returns {void}
      */
     pause(): void {
-        this._audioElementImpl && this._audioElementImpl.pause();
+        this._audioElementImpl?.pause();
     }
 
     /**
@@ -81,10 +80,8 @@ export default class AbstractAudio extends Component<Props> {
      * @returns {void}
      */
     play(): void {
-        this._audioElementImpl && this._audioElementImpl.play();
+        this._audioElementImpl?.play();
     }
-
-    setAudioElementImpl: ?AudioElement => void;
 
     /**
      * Set the (reference to the) {@link AudioElement} object which implements
@@ -95,13 +92,12 @@ export default class AbstractAudio extends Component<Props> {
      * @protected
      * @returns {void}
      */
-    setAudioElementImpl(element: ?AudioElement): void {
+    setAudioElementImpl(element?: AudioElement): void {
         this._audioElementImpl = element;
 
         // setRef
         const { setRef } = this.props;
 
-        // $FlowFixMe
         typeof setRef === 'function' && setRef(element ? this : null);
     }
 
@@ -126,6 +122,6 @@ export default class AbstractAudio extends Component<Props> {
      * @returns {void}
      */
     stop(): void {
-        this._audioElementImpl && this._audioElementImpl.stop();
+        this._audioElementImpl?.stop();
     }
 }

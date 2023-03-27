@@ -14,7 +14,7 @@ import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
 import AbstractHighlightButton, {
-    type Props as AbstractProps,
+    type IProps as AbstractProps,
     _abstractMapStateToProps
 
     // @ts-ignore
@@ -32,6 +32,8 @@ type Props = AbstractProps & {
      * Flag controlling visibility of the component.
      */
     _visible: boolean;
+
+    classes: any;
 };
 
 /**

@@ -1,11 +1,10 @@
-/* @flow */
-
 import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
 
-import { trackVideoStarted } from '../../tracks';
+import { IStore } from '../../../app/types';
+import { trackVideoStarted } from '../../tracks/actions';
 import { shouldRenderVideoTrack } from '../functions';
 
+// @ts-ignore
 import { Video } from './_';
 
 /**
@@ -16,36 +15,36 @@ export type Props = {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Callback to invoke when the {@link Video} of {@code AbstractVideoTrack}
      * is clicked/pressed.
      */
-    onPress?: Function,
+    onPress?: Function;
 
     /**
      * The Redux representation of the participant's video track.
      */
-    videoTrack?: Object,
+    videoTrack?: any;
 
     /**
      * Whether or not video should be rendered after knowing video playback has
      * started.
      */
-    waitForVideoStarted?: boolean,
+    waitForVideoStarted?: boolean;
 
     /**
      * The z-order of the Video of AbstractVideoTrack in the stacking space of
      * all Videos. For more details, refer to the zOrder property of the Video
      * class for React Native.
      */
-    zOrder?: number,
+    zOrder?: number;
 
     /**
      * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
      */
-    zoomEnabled?: boolean
+    zoomEnabled?: boolean;
 };
 
 /**
@@ -54,7 +53,7 @@ export type Props = {
  *
  * @abstract
  */
-export default class AbstractVideoTrack<P: Props> extends Component<P> {
+export default class AbstractVideoTrack<P extends Props> extends Component<P> {
     /**
      * Initializes a new AbstractVideoTrack instance.
      *
@@ -113,7 +112,7 @@ export default class AbstractVideoTrack<P: Props> extends Component<P> {
 
         return (
             <Video
-                mirror = { videoTrack && videoTrack.mirror }
+                mirror = { videoTrack?.mirror }
                 onPlaying = { this._onVideoPlaying }
                 onPress = { this.props.onPress }
                 stream = { stream }
@@ -121,8 +120,6 @@ export default class AbstractVideoTrack<P: Props> extends Component<P> {
                 zoomEnabled = { zoomEnabled } />
         );
     }
-
-    _onVideoPlaying: () => void;
 
     /**
      * Handler for case when video starts to play.
@@ -147,6 +144,6 @@ export default class AbstractVideoTrack<P: Props> extends Component<P> {
  * @returns {*} If the specified value is falsy, null; otherwise, the specified
  * value.
  */
-function _falsy2null(value) {
+function _falsy2null(value: any) {
     return value || null;
 }

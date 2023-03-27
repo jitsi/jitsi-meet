@@ -1,57 +1,54 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { getActiveSession, isHighlightMeetingMomentDisabled } from '../..';
-import { openDialog } from '../../../base/dialog';
+import { IReduxState, IStore } from '../../../app/types';
+import { openDialog } from '../../../base/dialog/actions';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    hideNotification,
-    showNotification
-} from '../../../notifications';
+import { hideNotification, showNotification } from '../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../../notifications/constants';
 import { highlightMeetingMoment } from '../../actions.any';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { StartRecordingDialog } from '../../components';
 import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
-import { getRecordButtonProps } from '../../functions';
+import { getActiveSession, getRecordButtonProps, isHighlightMeetingMomentDisabled } from '../../functions';
 
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * Indicates whether or not the button is disabled.
      */
-    _disabled: boolean,
+    _disabled: boolean;
 
     /**
      * Indicates whether or not a highlight request is in progress.
      */
-    _isHighlightInProgress: boolean,
+    _isHighlightInProgress: boolean;
 
     /**
      * Indicates whether or not the button should be visible.
      */
-    _visible: boolean,
+    _visible: boolean;
 
     /**
-     * Invoked to obtain translated strings.
+     * Redux dispatch function.
      */
-    t: Function
-};
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * Abstract class for the {@code AbstractHighlightButton} component.
  */
-export default class AbstractHighlightButton<P: Props> extends Component<P> {
+export default class AbstractHighlightButton<P extends IProps, S={}> extends Component<P, S> {
     /**
      * Initializes a new AbstractHighlightButton instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this._onClick = this._onClick.bind(this);
@@ -105,7 +102,7 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
  *     _visible: boolean
  * }}
  */
-export function _abstractMapStateToProps(state: Object) {
+export function _abstractMapStateToProps(state: IReduxState) {
     const isRecordingRunning = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
     const isButtonDisabled = isHighlightMeetingMomentDisabled(state);
     const { webhookProxyUrl } = state['features/base/config'];
