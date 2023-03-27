@@ -77,7 +77,6 @@ class ShareAudioDialog extends Component<IProps> {
 
         return (
             <Dialog
-                className = 'share-audio-dialog-container'
                 ok = {{ translationKey: 'dialog.shareAudio' }}
                 onSubmit = { this._onContinue }
                 size = 'large'
