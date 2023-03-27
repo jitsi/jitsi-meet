@@ -85,6 +85,11 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-hu')
     },
 
+    // Indonesian
+    'id': {
+        main: require('../../../../lang/main-it')
+    },
+
     // Italian
     'it': {
         main: require('../../../../lang/main-it')
