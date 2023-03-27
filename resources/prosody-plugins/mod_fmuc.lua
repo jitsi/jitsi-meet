@@ -23,6 +23,8 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 local main_domain = string.gsub(module.host, muc_domain_prefix..'.', '');
 
+local NICK_NS = 'http://jabber.org/protocol/nick';
+
 -- This is the domain of the main prosody that is federating with us;
 local fmuc_main_domain;
 
@@ -146,9 +148,9 @@ module:hook('muc-broadcast-presence', function (event)
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
-          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up()
+          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
 
-        local nick_element = occupant:get_presence():get_child('nick', 'http://jabber.org/protocol/nick');
+        local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
         if nick_element then
             promotion_request:add_child(nick_element);
         end
@@ -244,16 +246,22 @@ end);
 module:hook("muc-occupant-groupchat", function(event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;
     local from = stanza.attr.from;
+    local occupant_host = jid.host(occupant.bare_jid);
 
     -- if there is no occupant this is a message from main, probably coming from other vnode
     if occupant then
-        -- add to message stanza display name for the visitor
-        -- remove existing nick to avoid forgery
-        stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
-        local nick_element = occupant:get_presence():get_child(
-                'nick', 'http://jabber.org/protocol/nick');
-        if nick_element then
-            stanza:add_child(nick_element);
+        -- we manage nick only for visitors
+        if occupant_host ~= fmuc_main_domain then
+            -- add to message stanza display name for the visitor
+            -- remove existing nick to avoid forgery
+            stanza:remove_children('nick', NICK_NS);
+            local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
+            if nick_element then
+                stanza:add_child(nick_element);
+            else
+                stanza:tag('nick', { xmlns = NICK_NS })
+                    :text('anonymous'):up();
+            end
         end
 
         stanza.attr.from = occupant.nick;
@@ -270,8 +278,7 @@ module:hook("muc-occupant-groupchat", function(event)
     end
 
     -- send to main participants only messages from local occupants (skip from remote vnodes)
-    if occupant then
-
+    if occupant and occupant_host ~= fmuc_main_domain then
         local main_message = st.clone(stanza);
         main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain);
         module:send(main_message);
@@ -280,3 +287,10 @@ module:hook("muc-occupant-groupchat", function(event)
 
     return true;
 end, 55); -- prosody check for visitor's chat is prio 50, we want to override it
+
+module:hook('muc-private-message', function(event)
+    -- private messaging is forbidden
+    event.origin.send(st.error_reply(event.stanza, "auth", "forbidden",
+            "Private messaging is disabled on visitor nodes"));
+    return true;
+end, 10);

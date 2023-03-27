@@ -276,5 +276,5 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
 
         return true;
-        end, 55); -- prosody check for unknown participant chat is prio 50, we want to override it
+    end, 55); -- prosody check for unknown participant chat is prio 50, we want to override it
 end);
