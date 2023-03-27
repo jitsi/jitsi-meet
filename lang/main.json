@@ -1377,6 +1377,9 @@
         "webAssemblyWarning": "WebAssembly not supported",
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
+    "visitors": {
+        "chatIndicator": "(visitor)"
+    },
     "visitorsLabel": "Number of visitors: {{count}}",
     "volumeSlider": "Volume slider",
     "welcomepage": {

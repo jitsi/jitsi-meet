@@ -6,6 +6,7 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { openDialog } from '../base/dialog/actions';
+import i18next from '../base/i18n/i18next';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
@@ -229,11 +230,13 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
-        (id: string, message: string, timestamp: number, displayName: string) => {
+        // eslint-disable-next-line max-params
+        (id: string, message: string, timestamp: number, displayName: string, isGuest?: boolean) => {
             _onConferenceMessageReceived(store, { id,
                 message,
                 timestamp,
                 displayName,
+                isGuest,
                 privateMessage: false });
         }
     );
@@ -292,8 +295,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @param {Object} message - The message object.
  * @returns {void}
  */
-function _onConferenceMessageReceived(store: IStore, { displayName, id, message, timestamp, privateMessage }: {
-    displayName?: string; id: string; message: string; privateMessage: boolean; timestamp: number; }) {
+function _onConferenceMessageReceived(store: IStore, { displayName, id, isGuest, message, timestamp, privateMessage }: {
+    displayName?: string; id: string; isGuest?: boolean;
+    message: string; privateMessage: boolean; timestamp: number; }) {
     const isGif = isGifMessage(message);
 
     if (isGif) {
@@ -305,6 +309,7 @@ function _onConferenceMessageReceived(store: IStore, { displayName, id, message,
     _handleReceivedMessage(store, {
         displayName,
         id,
+        isGuest,
         message,
         privateMessage,
         lobbyChat: false,
@@ -391,13 +396,13 @@ function getLobbyChatDisplayName(state: IReduxState, id: string) {
  *
  * @param {Store} store - The Redux store.
  * @param {Object} message - The message object.
- * @param {boolean} shouldPlaySound - Whether or not to play the incoming message sound.
- * @param {boolean} isReaction - Whether or not the message is a reaction message.
+ * @param {boolean} shouldPlaySound - Whether to play the incoming message sound.
+ * @param {boolean} isReaction - Whether the message is a reaction message.
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, id, message, privateMessage, timestamp, lobbyChat }: {
-        displayName?: string; id: string; lobbyChat: boolean;
+        { displayName, id, isGuest, message, privateMessage, timestamp, lobbyChat }: {
+        displayName?: string; id: string; isGuest?: boolean; lobbyChat: boolean;
         message: string; privateMessage: boolean; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
@@ -416,7 +421,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     const participant = getParticipantById(state, id) || { local: undefined };
 
     const localParticipant = getLocalParticipant(getState);
-    const displayNameToShow = lobbyChat
+    let displayNameToShow = lobbyChat
         ? getLobbyChatDisplayName(state, id)
         : displayName || getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
@@ -426,6 +431,10 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     // skip message notifications on join (the messages having timestamp - coming from the history)
     const shouldShowNotification = userSelectedNotifications?.['notify.chatMessages']
         && !hasRead && !isReaction && !timestamp;
+
+    if (isGuest) {
+        displayNameToShow = `${displayNameToShow} ${i18next.t('visitors.chatIndicator')}`;
+    }
 
     dispatch(addMessage({
         displayName: displayNameToShow,
