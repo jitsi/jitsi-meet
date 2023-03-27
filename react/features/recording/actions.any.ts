@@ -350,7 +350,7 @@ function _setPendingRecordingNotificationUid(uid: string | undefined, streamType
  * @param {boolean} onlySelf - Whether to only record the local streams.
  * @returns {Object}
  */
-export function startLocalVideoRecording(onlySelf: boolean) {
+export function startLocalVideoRecording(onlySelf?: boolean) {
     return {
         type: START_LOCAL_RECORDING,
         onlySelf

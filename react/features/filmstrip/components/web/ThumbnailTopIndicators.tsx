@@ -104,7 +104,7 @@ const ThumbnailTopIndicators = ({
     if (isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
-                {!_connectionIndicatorDisabled
+                {!_connectionIndicatorDisabled // @ts-ignore
                     && <ConnectionIndicator
                         alwaysVisible = { showConnectionIndicator }
                         enableStatsDisplay = { true }
@@ -124,7 +124,7 @@ const ThumbnailTopIndicators = ({
                 iconSize = { _indicatorIconSize }
                 participantId = { participantId }
                 tooltipPosition = { tooltipPosition } />
-            {!_connectionIndicatorDisabled
+            {!_connectionIndicatorDisabled // @ts-ignore
                 && <ConnectionIndicator
                     alwaysVisible = { showConnectionIndicator }
                     enableStatsDisplay = { true }

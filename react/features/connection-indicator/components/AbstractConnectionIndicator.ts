@@ -1,7 +1,6 @@
-// @flow
-
 import { Component } from 'react';
 
+import { IReduxState } from '../../app/types';
 import { getVirtualScreenshareParticipantOwnerId } from '../../base/participants/functions';
 import statsEmitter from '../statsEmitter';
 
@@ -18,49 +17,51 @@ export const INDICATOR_DISPLAY_THRESHOLD = 30;
 /**
  * The type of the React {@code Component} props of {@link ConnectionIndicator}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * How long the connection indicator should remain displayed before hiding.
      */
-    _autoHideTimeout: number,
+    _autoHideTimeout: number;
 
     /**
      * Whether or not the statistics are for screen share.
      */
-    _isVirtualScreenshareParticipant: boolean,
+    _isVirtualScreenshareParticipant: boolean;
+
+    /**
+     * Custom icon style.
+     */
+    iconStyle?: Object;
 
     /**
      * The ID of the participant associated with the displayed connection indication and
      * stats.
      */
-    participantId: string,
-
-    /**
-     * Custom icon style.
-     */
-    iconStyle?: Object
-};
+    participantId: string;
+}
 
 /**
  * The type of the React {@code Component} state of {@link ConnectionIndicator}.
  */
-export type State = {
+export interface IState {
 
     /**
      * Whether or not a CSS class should be applied to the root for hiding the
      * connection indicator. By default the indicator should start out hidden
      * because the current connection status is not known at mount.
      */
-    showIndicator: boolean,
+    showIndicator: boolean;
 
     /**
      * Cache of the stats received from subscribing to stats emitting. The keys
      * should be the name of the stat. With each stat update, updates stats are
      * mixed in with cached stats and a new stats object is set in state.
      */
-    stats: Object
-};
+    stats: {
+        percent?: number;
+    };
+}
 
 /**
  * Implements a React {@link Component} which displays the current connection
@@ -68,11 +69,11 @@ export type State = {
  *
  * @augments {Component}
  */
-class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
+class AbstractConnectionIndicator<P extends IProps, S extends IState> extends Component<P, S> {
     /**
      * The timeout for automatically hiding the indicator.
      */
-    autoHideTimeout: ?TimeoutID;
+    autoHideTimeout: number | undefined;
 
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
@@ -103,7 +104,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const prevParticipantId = this._getRealParticipantId(prevProps);
         const participantId = this._getRealParticipantId(this.props);
 
@@ -123,7 +124,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(this._getRealParticipantId(this.props), this._onStatsUpdated);
 
-        clearTimeout(this.autoHideTimeout);
+        clearTimeout(this.autoHideTimeout ?? 0);
     }
 
     /**
@@ -132,15 +133,13 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @param {Props} props - The props where to extract the data from.
      * @returns {string | undefined } The resolved participant ID.
      */
-    _getRealParticipantId(props: Props) {
+    _getRealParticipantId(props: IProps) {
         if (props._isVirtualScreenshareParticipant) {
             return getVirtualScreenshareParticipantOwnerId(props.participantId);
         }
 
         return props.participantId;
     }
-
-    _onStatsUpdated: (Object) => void;
 
     /**
      * Callback invoked when new connection stats associated with the passed in
@@ -151,7 +150,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @private
      * @returns {void}
      */
-    _onStatsUpdated(stats = {}) {
+    _onStatsUpdated(stats = { connectionQuality: undefined }) {
         // Rely on React to batch setState actions.
         const { connectionQuality } = stats;
         const newPercentageState = typeof connectionQuality === 'undefined'
@@ -166,7 +165,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
             stats: newStats
         });
 
-        this._updateIndicatorAutoHide(newStats.percent);
+        this._updateIndicatorAutoHide(newStats.percent ?? 0);
     }
 
     /**
@@ -177,9 +176,9 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @private
      * @returns {void}
      */
-    _updateIndicatorAutoHide(percent) {
+    _updateIndicatorAutoHide(percent: number) {
         if (percent < INDICATOR_DISPLAY_THRESHOLD) {
-            clearTimeout(this.autoHideTimeout);
+            clearTimeout(this.autoHideTimeout ?? 0);
             this.autoHideTimeout = undefined;
 
             this.setState({
@@ -190,7 +189,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
             // is needed if the percent is below the threshold and there is an
             // autoHideTimeout set.
         } else {
-            this.autoHideTimeout = setTimeout(() => {
+            this.autoHideTimeout = window.setTimeout(() => {
                 this.setState({
                     showIndicator: false
                 });
@@ -205,9 +204,9 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-export function mapStateToProps(state: Object) {
+export function mapStateToProps(state: IReduxState) {
     return {
         _autoHideTimeout: state['features/base/config'].connectionIndicators?.autoHideTimeout ?? defaultAutoHideTimeout
     };

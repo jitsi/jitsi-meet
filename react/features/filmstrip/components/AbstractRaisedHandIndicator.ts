@@ -1,27 +1,26 @@
-// @flow
+import React, { Component } from 'react';
 
-import { Component } from 'react';
+import { IReduxState } from '../../app/types';
+import { getParticipantById, hasRaisedHand } from '../../base/participants/functions';
 
-import { getParticipantById, hasRaisedHand } from '../../base/participants';
+export interface IProps {
 
-export type Props = {
+    /**
+     * True if the hand is raised for this participant.
+     */
+    _raisedHand?: boolean;
 
     /**
      * The participant id who we want to render the raised hand indicator
      * for.
      */
-    participantId: string,
-
-    /**
-     * True if the hand is raised for this participant.
-     */
-    _raisedHand?: boolean
+    participantId: string;
 }
 
 /**
  * Implements an abstract class for the RaisedHandIndicator component.
  */
-export default class AbstractRaisedHandIndicator<P: Props>
+export default class AbstractRaisedHandIndicator<P extends IProps>
     extends Component<P> {
 
     /**
@@ -42,7 +41,7 @@ export default class AbstractRaisedHandIndicator<P: Props>
      *
      * @returns {React$Element<*>}
      */
-    _renderIndicator: () => React$Element<*>;
+    _renderIndicator: () => React.ReactElement;
 
 }
 
@@ -50,10 +49,10 @@ export default class AbstractRaisedHandIndicator<P: Props>
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
+ * @param {IProps} ownProps - The own props of the component.
  * @returns {Object}
  */
-export function _mapStateToProps(state: Object, ownProps: Props): Object {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const participant = getParticipantById(state, ownProps.participantId);
 
     return {
