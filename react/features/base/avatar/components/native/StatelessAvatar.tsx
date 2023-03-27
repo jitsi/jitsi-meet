@@ -1,41 +1,44 @@
-// @flow
-
-import React from 'react';
+import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
 
-import { Icon } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { type StyleType } from '../../../styles';
-import AbstractStatelessAvatar, { type IProps as AbstractProps } from '../AbstractStatelessAvatar';
+import { isIcon } from '../../functions';
+import { IAvatarProps } from '../../types';
 
+// @ts-ignore
 import styles from './styles';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const DEFAULT_AVATAR = require('../../../../../../images/avatar.png');
 
-type Props = AbstractProps & {
+interface IProps extends IAvatarProps {
 
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    status?: ?string,
+    status?: string;
 
     /**
      * External style passed to the component.
      */
-    style?: StyleType
-};
+    style?: StyleType;
+}
 
 /**
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+export default class StatelessAvatar extends Component<IProps> {
 
     /**
      * Instantiates a new {@code Component}.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
@@ -51,7 +54,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         let avatar;
 
-        if (this._isIcon(url)) {
+        if (isIcon(url)) {
             avatar = this._renderIconAvatar(url);
         } else if (url) {
             avatar = this._renderURLAvatar();
@@ -74,8 +77,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             </View>
         );
     }
-
-    _isIcon: (?string | ?Object) => boolean;
 
     /**
      * Renders a badge representing the avatar status.
@@ -120,7 +121,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      * @param {Object} icon - The icon component to render.
      * @returns {React$Element<*>}
      */
-    _renderIconAvatar(icon) {
+    _renderIconAvatar(icon: Function) {
         const { color, size } = this.props;
 
         return (
@@ -167,7 +168,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     _renderURLAvatar() {
         const { onAvatarLoadError, size, url } = this.props;
 
-        return (
+        return ( // @ts-ignore
             <Image
                 defaultSource = { DEFAULT_AVATAR }
                 onError = { onAvatarLoadError }
@@ -176,8 +177,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                 style = { styles.avatarContent(size) } />
         );
     }
-
-    _onAvatarLoadError: () => void;
 
     /**
      * Handles avatar load errors.

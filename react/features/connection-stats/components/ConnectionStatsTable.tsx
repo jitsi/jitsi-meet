@@ -1,11 +1,9 @@
-import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+/* eslint-disable react/no-multi-comp */
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../base/environment/utils';
-import { translate } from '../../base/i18n/functions';
 import ContextMenu from '../../base/ui/components/web/ContextMenu';
 
 type DownloadUpload = {
@@ -17,7 +15,7 @@ type DownloadUpload = {
  * The type of the React {@code Component} props of
  * {@link ConnectionStatsTable}.
  */
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * The audio SSRC of this client.
@@ -47,11 +45,6 @@ interface IProps extends WithTranslation {
      * conference.
      */
     bridgeCount: number;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
 
     /**
      * Audio/video codecs in use for the connection.
@@ -201,16 +194,16 @@ function onClick(event: React.MouseEvent) {
     event.stopPropagation();
 }
 
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         actions: {
             margin: '10px auto',
-            textAlign: 'center' as const
+            textAlign: 'center'
         },
         connectionStatsTable: {
             '&, & > table': {
                 fontSize: '12px',
-                fontWeight: '400',
+                fontWeight: 400,
 
                 '& td': {
                     padding: '2px 0'
@@ -229,7 +222,7 @@ const styles = (theme: Theme) => {
             }
         },
         contextMenu: {
-            position: 'relative' as const,
+            position: 'relative',
             margin: 0,
             right: 'auto',
             padding: `${theme.spacing(2)} ${theme.spacing(1)}`
@@ -243,438 +236,42 @@ const styles = (theme: Theme) => {
         },
         upload: {}
     };
-};
+});
 
-/**
- * React {@code Component} for displaying connection statistics.
- *
- * @augments Component
- */
-class ConnectionStatsTable extends Component<IProps> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const {
-            classes,
-            disableShowMoreStats,
-            enableSaveLogs,
-            isVirtualScreenshareParticipant,
-            isLocalVideo,
-            isNarrowLayout
-        } = this.props;
-        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() || isNarrowLayout });
+const ConnectionStatsTable = ({
+    audioSsrc,
+    bandwidth,
+    bitrate,
+    bridgeCount,
+    codec,
+    connectionSummary,
+    disableShowMoreStats,
+    e2eeVerified,
+    enableSaveLogs,
+    framerate,
+    isVirtualScreenshareParticipant,
+    isLocalVideo,
+    isNarrowLayout,
+    maxEnabledResolution,
+    onSaveLogs,
+    onShowMore,
+    packetLoss,
+    participantId,
+    region,
+    resolution,
+    serverRegion,
+    shouldShowMore,
+    transport,
+    videoSsrc
+}: IProps) => {
+    const { classes, cx } = useStyles();
+    const { t } = useTranslation();
 
-        if (isVirtualScreenshareParticipant) {
-            return this._renderScreenShareStatus();
-        }
-
-        return (
-            <ContextMenu
-                className = { classes.contextMenu }
-                hidden = { false }
-                inDrawer = { true }>
-                <div
-                    className = { className }
-                    onClick = { onClick }>
-                    { this._renderStatistics() }
-                    <div className = { classes.actions }>
-                        { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
-                        { !disableShowMoreStats && this._renderShowMoreLink() }
-                    </div>
-                    { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
-                </div>
-            </ContextMenu>
-        );
-    }
-
-    /**
-     * Creates a ReactElement that will display connection statistics for a screen share thumbnail.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderScreenShareStatus() {
-        const { classes } = this.props;
-        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
-
-        return (<ContextMenu
-            className = { classes.contextMenu }
-            hidden = { false }
-            inDrawer = { true }>
-            <div
-                className = { className }
-                onClick = { onClick }>
-                <tbody>
-                    { this._renderResolution() }
-                    { this._renderFrameRate() }
-                </tbody>
-            </div>
-        </ContextMenu>);
-    }
-
-    /**
-     * Creates a table as ReactElement that will display additional statistics
-     * related to bandwidth and transport for the local user.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderAdditionalStats() {
-        const { isLocalVideo } = this.props;
-
-        return (
-            <table>
-                <tbody>
-                    { isLocalVideo ? this._renderBandwidth() : null }
-                    { isLocalVideo ? this._renderTransport() : null }
-                    { this._renderRegion() }
-                    { isLocalVideo ? this._renderBridgeCount() : null }
-                    { this._renderAudioSsrc() }
-                    { this._renderVideoSsrc() }
-                    { this._renderParticipantId() }
-                </tbody>
-            </table>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying bandwidth related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderBandwidth() {
-        const { classes } = this.props;
-        const { download, upload } = this.props.bandwidth || {};
-
-        return (
-            <tr>
-                <td>
-                    { this.props.t('connectionindicator.bandwidth') }
-                </td>
-                <td>
-                    <span className = { classes.download }>
-                        &darr;
-                    </span>
-                    { download ? `${download} Kbps` : 'N/A' }
-                    <span className = { classes.upload }>
-                        &uarr;
-                    </span>
-                    { upload ? `${upload} Kbps` : 'N/A' }
-                </td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a a table row as a ReactElement for displaying bitrate related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderBitrate() {
-        const { classes } = this.props;
-        const { download, upload } = this.props.bitrate || {};
-
-        return (
-            <tr>
-                <td>
-                    <span>
-                        { this.props.t('connectionindicator.bitrate') }
-                    </span>
-                </td>
-                <td>
-                    <span className = { classes.download }>
-                        &darr;
-                    </span>
-                    { download ? `${download} Kbps` : 'N/A' }
-                    <span className = { classes.upload }>
-                        &uarr;
-                    </span>
-                    { upload ? `${upload} Kbps` : 'N/A' }
-                </td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying the audio ssrc.
-     * This will typically be something like "Audio SSRC: 12345".
-     *
-     * @returns {JSX.Element}
-     * @private
-     */
-    _renderAudioSsrc() {
-        const { audioSsrc, t } = this.props;
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.audio_ssrc') }</span>
-                </td>
-                <td>{ audioSsrc || 'N/A' }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying the video ssrc.
-     * This will typically be something like "Video SSRC: 12345".
-     *
-     * @returns {JSX.Element}
-     * @private
-     */
-    _renderVideoSsrc() {
-        const { videoSsrc, t } = this.props;
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.video_ssrc') }</span>
-                </td>
-                <td>{ videoSsrc || 'N/A' }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying the endpoint id.
-     * This will typically be something like "Endpoint id: 1e8fbg".
-     *
-     * @returns {JSX.Element}
-     * @private
-     */
-    _renderParticipantId() {
-        const { participantId, t } = this.props;
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.participant_id') }</span>
-                </td>
-                <td>{ participantId || 'N/A' }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a a table row as a ReactElement for displaying codec, if present.
-     * This will typically be something like "Codecs (A/V): Opus, vp8".
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderCodecs() {
-        const { audioSsrc, codec, t, videoSsrc } = this.props;
-
-        let codecString = 'N/A';
-
-        if (codec) {
-            const audioCodec = codec[audioSsrc]?.audio;
-            const videoCodec = codec[videoSsrc]?.video;
-
-            if (audioCodec || videoCodec) {
-                codecString = [ audioCodec, videoCodec ].filter(Boolean).join(', ');
-            }
-        }
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.codecs') }</span>
-                </td>
-                <td>{ codecString }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a a table row as a ReactElement for displaying e2ee verication status, if present.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderE2EEVerified() {
-        const { e2eeVerified, t } = this.props;
-
-        if (e2eeVerified === undefined) {
-            return;
-        }
-
-        const status = e2eeVerified ? '\u{2705}' : '\u{274C}';
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.e2eeVerified') }</span>
-                </td>
-                <td>{ status }</td>
-            </tr>
-        );
-    }
-
-
-    /**
-     * Creates a table row as a ReactElement for displaying a summary message
-     * about the current connection status.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderConnectionSummary() {
-        const { classes } = this.props;
-
-        return (
-            <tr className = { classes.status }>
-                <td>
-                    <span>{ this.props.t('connectionindicator.status') }</span>
-                </td>
-                <td>{ this.props.connectionSummary }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying the "connected to"
-     * information.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderRegion() {
-        const { region, serverRegion, t } = this.props;
-        let str = serverRegion;
-
-        if (!serverRegion) {
-            return;
-        }
-
-
-        if (region && serverRegion && region !== serverRegion) {
-            str += ` from ${region}`;
-        }
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.connectedTo') }</span>
-                </td>
-                <td>{ str }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying the "bridge count"
-     * information.
-     *
-     * @returns {*}
-     * @private
-     */
-    _renderBridgeCount() {
-        const { bridgeCount, t } = this.props;
-
-        // 0 is valid, but undefined/null/NaN aren't.
-        if (!bridgeCount && bridgeCount !== 0) {
-            return;
-        }
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.bridgeCount') }</span>
-                </td>
-                <td>{ bridgeCount }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying frame rate related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderFrameRate() {
-        const { framerate, t, videoSsrc } = this.props;
-        let frameRateString = 'N/A';
-
-        if (framerate) {
-            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
-        }
-
-        return (
-            <tr>
-                <td>
-                    <span>{ t('connectionindicator.framerate') }</span>
-                </td>
-                <td>{ frameRateString }</td>
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a tables row as a ReactElement for displaying packet loss related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPacketLoss() {
-        const { classes, packetLoss, t } = this.props;
-        let packetLossTableData;
-
-        if (packetLoss) {
-            const { download, upload } = packetLoss;
-
-            packetLossTableData = (
-                <td>
-                    <span className = { classes.download }>
-                        &darr;
-                    </span>
-                    { download === null ? 'N/A' : `${download}%` }
-                    <span className = { classes.upload }>
-                        &uarr;
-                    </span>
-                    { upload === null ? 'N/A' : `${upload}%` }
-                </td>
-            );
-        } else {
-            packetLossTableData = <td>N/A</td>;
-        }
-
-        return (
-            <tr>
-                <td>
-                    <span>
-                        { t('connectionindicator.packetloss') }
-                    </span>
-                </td>
-                { packetLossTableData }
-            </tr>
-        );
-    }
-
-    /**
-     * Creates a table row as a ReactElement for displaying resolution related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderResolution() {
-        const { isVirtualScreenshareParticipant, maxEnabledResolution, resolution, t, videoSsrc } = this.props;
+    const _renderResolution = () => {
         let resolutionString = 'N/A';
 
         if (resolution && videoSsrc) {
-            const { width, height } = resolution[videoSsrc] ?? { };
+            const { width, height } = resolution[videoSsrc] ?? {};
 
             if (width && height) {
                 resolutionString = `${width}x${height}`;
@@ -690,96 +287,94 @@ class ConnectionStatsTable extends Component<IProps> {
         return (
             <tr>
                 <td>
-                    <span>{ t('connectionindicator.resolution') }</span>
+                    <span>{t('connectionindicator.resolution')}</span>
                 </td>
-                <td>{ resolutionString }</td>
+                <td>{resolutionString}</td>
             </tr>
         );
-    }
+    };
 
-    /**
-     * Creates a ReactElement for display a link to save the logs.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderSaveLogs() {
+    const _renderFrameRate = () => {
+        let frameRateString = 'N/A';
+
+        if (framerate) {
+            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
+        }
+
         return (
-            <span>
-                <a
-                    className = 'savelogs link'
-                    onClick = { this.props.onSaveLogs }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    { this.props.t('connectionindicator.savelogs') }
-                </a>
-                <span> | </span>
-            </span>
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.framerate')}</span>
+                </td>
+                <td>{frameRateString}</td>
+            </tr>
         );
-    }
+    };
 
+    const _renderScreenShareStatus = () => {
+        const className = cx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
 
-    /**
-     * Creates a ReactElement for display a link to toggle showing additional
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderShowMoreLink() {
-        const translationKey
-            = this.props.shouldShowMore
-                ? 'connectionindicator.less'
-                : 'connectionindicator.more';
-
-        return (
-            <a
-                className = 'showmore link'
-                onClick = { this.props.onShowMore }
-                role = 'button'
-                tabIndex = { 0 }>
-                { this.props.t(translationKey) }
-            </a>
-        );
-    }
-
-    /**
-     * Creates a table as a ReactElement for displaying connection statistics.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderStatistics() {
-        return (
-            <table>
+        return (<ContextMenu
+            className = { classes.contextMenu }
+            hidden = { false }
+            inDrawer = { true }>
+            <div
+                className = { className }
+                onClick = { onClick }>
                 <tbody>
-                    { this._renderConnectionSummary() }
-                    { this._renderBitrate() }
-                    { this._renderPacketLoss() }
-                    { this._renderResolution() }
-                    { this._renderFrameRate() }
-                    { this._renderCodecs() }
-                    { this._renderE2EEVerified() }
+                    {_renderResolution()}
+                    {_renderFrameRate()}
                 </tbody>
-            </table>
+            </div>
+        </ContextMenu>);
+    };
+
+    const _renderBandwidth = () => {
+        const { download, upload } = bandwidth || {};
+
+        return (
+            <tr>
+                <td>
+                    {t('connectionindicator.bandwidth')}
+                </td>
+                <td>
+                    <span className = { classes.download }>
+                        &darr;
+                    </span>
+                    {download ? `${download} Kbps` : 'N/A'}
+                    <span className = { classes.upload }>
+                        &uarr;
+                    </span>
+                    {upload ? `${upload} Kbps` : 'N/A'}
+                </td>
+            </tr>
         );
-    }
+    };
 
-    /**
-     * Creates table rows as ReactElements for displaying transport related
-     * statistics.
-     *
-     * @private
-     * @returns {ReactElement[]}
-     */
-    _renderTransport() {
-        const { t, transport } = this.props;
+    const _renderTransportTableRow = (config: any) => {
+        const { additionalData, data, key, label } = config;
 
+        return (
+            <tr key = { key }>
+                <td>
+                    <span>
+                        {label}
+                    </span>
+                </td>
+                <td>
+                    {getStringFromArray(data)}
+                    {additionalData || null}
+                </td>
+            </tr>
+        );
+    };
+
+    const _renderTransport = () => {
         if (!transport || transport.length === 0) {
             const NA = (
                 <tr key = 'address'>
                     <td>
-                        <span>{ t('connectionindicator.address') }</span>
+                        <span>{t('connectionindicator.address')}</span>
                     </td>
                     <td>
                         N/A
@@ -863,7 +458,7 @@ class ConnectionStatsTable extends Component<IProps> {
                 data: data.remotePort,
                 key: 'remoteport',
                 label: t('connectionindicator.remoteport',
-                        { count: transport.length })
+                    { count: transport.length })
             },
             {
                 data: data.localIP,
@@ -885,41 +480,261 @@ class ConnectionStatsTable extends Component<IProps> {
             }
         ];
 
-        return tableRowConfigurations.map(this._renderTransportTableRow);
-    }
+        return tableRowConfigurations.map(_renderTransportTableRow);
+    };
 
-    /**
-     * Creates a table row as a ReactElement for displaying a transport related
-     * statistic.
-     *
-     * @param {Object} config - Describes the contents of the row.
-     * @param {ReactElement} config.additionalData - Extra data to display next
-     * to the passed in config.data.
-     * @param {Array} config.data - The transport statistics to display.
-     * @param {string} config.key - The ReactElement's key. Must be unique for
-     * iterating over multiple child rows.
-     * @param {string} config.label - The text to display describing the data.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderTransportTableRow(config: any) {
-        const { additionalData, data, key, label } = config;
+    const _renderRegion = () => {
+        let str = serverRegion;
+
+        if (!serverRegion) {
+            return;
+        }
+
+
+        if (region && serverRegion && region !== serverRegion) {
+            str += ` from ${region}`;
+        }
 
         return (
-            <tr key = { key }>
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.connectedTo')}</span>
+                </td>
+                <td>{str}</td>
+            </tr>
+        );
+    };
+
+    const _renderBridgeCount = () => {
+        // 0 is valid, but undefined/null/NaN aren't.
+        if (!bridgeCount && bridgeCount !== 0) {
+            return;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.bridgeCount')}</span>
+                </td>
+                <td>{bridgeCount}</td>
+            </tr>
+        );
+    };
+
+    const _renderAudioSsrc = () => (
+        <tr>
+            <td>
+                <span>{t('connectionindicator.audio_ssrc')}</span>
+            </td>
+            <td>{audioSsrc || 'N/A'}</td>
+        </tr>
+    );
+
+    const _renderVideoSsrc = () => (
+        <tr>
+            <td>
+                <span>{t('connectionindicator.video_ssrc')}</span>
+            </td>
+            <td>{videoSsrc || 'N/A'}</td>
+        </tr>
+    );
+
+    const _renderParticipantId = () => (
+        <tr>
+            <td>
+                <span>{t('connectionindicator.participant_id')}</span>
+            </td>
+            <td>{participantId || 'N/A'}</td>
+        </tr>
+    );
+
+    const _renderAdditionalStats = () => (
+        <table>
+            <tbody>
+                {isLocalVideo ? _renderBandwidth() : null}
+                {isLocalVideo ? _renderTransport() : null}
+                {_renderRegion()}
+                {isLocalVideo ? _renderBridgeCount() : null}
+                {_renderAudioSsrc()}
+                {_renderVideoSsrc()}
+                {_renderParticipantId()}
+            </tbody>
+        </table>
+    );
+
+    const _renderBitrate = () => {
+        const { download, upload } = bitrate || {};
+
+        return (
+            <tr>
                 <td>
                     <span>
-                        { label }
+                        {t('connectionindicator.bitrate')}
                     </span>
                 </td>
                 <td>
-                    { getStringFromArray(data) }
-                    { additionalData || null }
+                    <span className = { classes.download }>
+                        &darr;
+                    </span>
+                    {download ? `${download} Kbps` : 'N/A'}
+                    <span className = { classes.upload }>
+                        &uarr;
+                    </span>
+                    {upload ? `${upload} Kbps` : 'N/A'}
                 </td>
             </tr>
         );
+    };
+
+    const _renderCodecs = () => {
+        let codecString = 'N/A';
+
+        if (codec) {
+            const audioCodec = codec[audioSsrc]?.audio;
+            const videoCodec = codec[videoSsrc]?.video;
+
+            if (audioCodec || videoCodec) {
+                codecString = [ audioCodec, videoCodec ].filter(Boolean).join(', ');
+            }
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.codecs')}</span>
+                </td>
+                <td>{codecString}</td>
+            </tr>
+        );
+    };
+
+    const _renderE2EEVerified = () => {
+        if (e2eeVerified === undefined) {
+            return;
+        }
+
+        const status = e2eeVerified ? '\u{2705}' : '\u{274C}';
+
+        return (
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.e2eeVerified')}</span>
+                </td>
+                <td>{status}</td>
+            </tr>
+        );
+    };
+
+    const _renderConnectionSummary = () => (
+        <tr className = { classes.status }>
+            <td>
+                <span>{t('connectionindicator.status')}</span>
+            </td>
+            <td>{connectionSummary}</td>
+        </tr>
+    );
+
+    const _renderPacketLoss = () => {
+        let packetLossTableData;
+
+        if (packetLoss) {
+            const { download, upload } = packetLoss;
+
+            packetLossTableData = (
+                <td>
+                    <span className = { classes.download }>
+                        &darr;
+                    </span>
+                    {download === null ? 'N/A' : `${download}%`}
+                    <span className = { classes.upload }>
+                        &uarr;
+                    </span>
+                    {upload === null ? 'N/A' : `${upload}%`}
+                </td>
+            );
+        } else {
+            packetLossTableData = <td>N/A</td>;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>
+                        {t('connectionindicator.packetloss')}
+                    </span>
+                </td>
+                {packetLossTableData}
+            </tr>
+        );
+    };
+
+    const _renderSaveLogs = () => (
+        <span>
+            <a
+                className = 'savelogs link'
+                onClick = { onSaveLogs }
+                role = 'button'
+                tabIndex = { 0 }>
+                {t('connectionindicator.savelogs')}
+            </a>
+            <span> | </span>
+        </span>
+    );
+
+    const _renderShowMoreLink = () => {
+        const translationKey
+            = shouldShowMore
+                ? 'connectionindicator.less'
+                : 'connectionindicator.more';
+
+        return (
+            <a
+                className = 'showmore link'
+                onClick = { onShowMore }
+                role = 'button'
+                tabIndex = { 0 }>
+                {t(translationKey)}
+            </a>
+        );
+    };
+
+    const _renderStatistics = () => (
+        <table>
+            <tbody>
+                {_renderConnectionSummary()}
+                {_renderBitrate()}
+                {_renderPacketLoss()}
+                {_renderResolution()}
+                {_renderFrameRate()}
+                {_renderCodecs()}
+                {_renderE2EEVerified()}
+            </tbody>
+        </table>
+    );
+
+    if (isVirtualScreenshareParticipant) {
+        return _renderScreenShareStatus();
     }
-}
+
+    return (
+        <ContextMenu
+            className = { classes.contextMenu }
+            hidden = { false }
+            inDrawer = { true }>
+            <div
+                className = { cx(classes.connectionStatsTable, {
+                    [classes.mobile]: isMobileBrowser() || isNarrowLayout }) }
+                onClick = { onClick }>
+                {_renderStatistics()}
+                <div className = { classes.actions }>
+                    {isLocalVideo && enableSaveLogs ? _renderSaveLogs() : null}
+                    {!disableShowMoreStats && _renderShowMoreLink()}
+                </div>
+                {shouldShowMore ? _renderAdditionalStats() : null}
+            </div>
+        </ContextMenu>
+    );
+};
 
 /**
  * Utility for getting the IP from a transport statistics object's
@@ -970,4 +785,4 @@ function getStringFromArray(array: string[]) {
     return res;
 }
 
-export default translate(withStyles(styles)(ConnectionStatsTable));
+export default ConnectionStatsTable;

@@ -1,25 +1,19 @@
-import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconUser } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import AbstractStatelessAvatar, { type IProps as AbstractProps } from '../AbstractStatelessAvatar';
+import { isIcon } from '../../functions';
+import { IAvatarProps } from '../../types';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
-interface IProps extends AbstractProps {
+interface IProps extends IAvatarProps {
 
     /**
      * External class name passed through props.
      */
     className?: string;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
 
     /**
      * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
@@ -47,13 +41,7 @@ interface IProps extends AbstractProps {
     useCORS?: boolean;
 }
 
-/**
- * Creates the styles for the component.
- *
- * @param {Theme} theme - The MUI theme.
- * @returns {Object}
- */
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         avatar: {
             backgroundColor: '#AAA',
@@ -62,8 +50,8 @@ const styles = (theme: Theme) => {
             color: theme.palette?.text01 || '#fff',
             ...withPixelLineHeight(theme.typography?.heading1 ?? {}),
             fontSize: 'inherit',
-            objectFit: 'cover' as const,
-            textAlign: 'center' as const,
+            objectFit: 'cover',
+            textAlign: 'center',
             overflow: 'hidden',
 
             '&.avatar-small': {
@@ -95,7 +83,7 @@ const styles = (theme: Theme) => {
         },
 
         badge: {
-            position: 'relative' as const,
+            position: 'relative',
 
             '&.avatar-badge:after': {
                 borderRadius: '50%',
@@ -124,145 +112,105 @@ const styles = (theme: Theme) => {
             }
         }
     };
-};
+});
 
-/**
- * Implements a stateless avatar component that renders an avatar purely from what gets passed through
- * props.
- */
-class StatelessAvatar extends AbstractStatelessAvatar<IProps> {
+const StatelessAvatar = ({
+    className,
+    color,
+    id,
+    initials,
+    onAvatarLoadError,
+    onAvatarLoadErrorParams,
+    size,
+    status,
+    testId,
+    url,
+    useCORS
+}: IProps) => {
+    const { classes, cx } = useStyles();
 
-    /**
-     * Instantiates a new {@code Component}.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
-    }
-
-    /**
-     * Implements {@code Component#render}.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const { initials, url, useCORS } = this.props;
-
-        if (this._isIcon(url)) {
-            return (
-                <div
-                    className = { clsx(this._getAvatarClassName(), this._getBadgeClassName()) }
-                    data-testid = { this.props.testId }
-                    id = { this.props.id }
-                    style = { this._getAvatarStyle(this.props.color) }>
-                    <Icon
-                        size = '50%'
-                        src = { url } />
-                </div>
-            );
-        }
-
-        if (url) {
-            return (
-                <div className = { this._getBadgeClassName() }>
-                    <img
-                        alt = 'avatar'
-                        className = { this._getAvatarClassName() }
-                        crossOrigin = { useCORS ? '' : undefined }
-                        data-testid = { this.props.testId }
-                        id = { this.props.id }
-                        onError = { this._onAvatarLoadError }
-                        src = { url }
-                        style = { this._getAvatarStyle() } />
-                </div>
-            );
-        }
-
-        if (initials) {
-            return (
-                <div
-                    className = { clsx(this._getAvatarClassName(), this._getBadgeClassName()) }
-                    data-testid = { this.props.testId }
-                    id = { this.props.id }
-                    style = { this._getAvatarStyle(this.props.color) }>
-                    <div className = { this.props.classes.initialsContainer }>
-                        {initials}
-                    </div>
-                </div>
-            );
-        }
-
-        // default avatar
-        return (
-            <div
-                className = { clsx(this._getAvatarClassName('defaultAvatar'), this._getBadgeClassName()) }
-                data-testid = { this.props.testId }
-                id = { this.props.id }
-                style = { this._getAvatarStyle() }>
-                <Icon
-                    size = { '50%' }
-                    src = { IconUser } />
-            </div>
-        );
-    }
-
-    /**
-     * Constructs a style object to be used on the avatars.
-     *
-     * @param {string} color - The desired background color.
-     * @returns {Object}
-     */
-    _getAvatarStyle(color?: string) {
-        const { size } = this.props;
-
+    const _getAvatarStyle = (backgroundColor?: string) => {
         return {
-            background: color || undefined,
+            background: backgroundColor || undefined,
             fontSize: size ? size * 0.4 : '180%',
             height: size || '100%',
             width: size || '100%'
         };
-    }
+    };
 
-    /**
-     * Constructs a list of class names required for the avatar component.
-     *
-     * @param {string} additional - Any additional class to add.
-     * @returns {string}
-     */
-    _getAvatarClassName(additional?: string) {
-        return clsx('avatar', additional, this.props.className, this.props.classes.avatar);
-    }
+    const _getAvatarClassName = (additional?: string) => cx('avatar', additional, className, classes.avatar);
 
-    /**
-     * Generates a class name to render a badge on the avatar, if necessary.
-     *
-     * @returns {string}
-     */
-    _getBadgeClassName() {
-        const { status } = this.props;
-
+    const _getBadgeClassName = () => {
         if (status) {
-            return clsx('avatar-badge', `avatar-badge-${status}`, this.props.classes.badge);
+            return cx('avatar-badge', `avatar-badge-${status}`, classes.badge);
         }
 
         return '';
-    }
+    };
 
-    /**
-     * Handles avatar load errors.
-     *
-     * @returns {void}
-     */
-    _onAvatarLoadError() {
-        const { onAvatarLoadError, onAvatarLoadErrorParams } = this.props;
-
+    const _onAvatarLoadError = useCallback(() => {
         if (typeof onAvatarLoadError === 'function') {
             onAvatarLoadError(onAvatarLoadErrorParams);
         }
-    }
-}
+    }, [ onAvatarLoadError, onAvatarLoadErrorParams ]);
 
-export default withStyles(styles)(StatelessAvatar);
+    if (isIcon(url)) {
+        return (
+            <div
+                className = { cx(_getAvatarClassName(), _getBadgeClassName()) }
+                data-testid = { testId }
+                id = { id }
+                style = { _getAvatarStyle(color) }>
+                <Icon
+                    size = '50%'
+                    src = { url } />
+            </div>
+        );
+    }
+
+    if (url) {
+        return (
+            <div className = { _getBadgeClassName() }>
+                <img
+                    alt = 'avatar'
+                    className = { _getAvatarClassName() }
+                    crossOrigin = { useCORS ? '' : undefined }
+                    data-testid = { testId }
+                    id = { id }
+                    onError = { _onAvatarLoadError }
+                    src = { url }
+                    style = { _getAvatarStyle() } />
+            </div>
+        );
+    }
+
+    if (initials) {
+        return (
+            <div
+                className = { cx(_getAvatarClassName(), _getBadgeClassName()) }
+                data-testid = { testId }
+                id = { id }
+                style = { _getAvatarStyle(color) }>
+                <div className = { classes.initialsContainer }>
+                    {initials}
+                </div>
+            </div>
+        );
+    }
+
+    // default avatar
+    return (
+        <div
+            className = { cx(_getAvatarClassName('defaultAvatar'), _getBadgeClassName()) }
+            data-testid = { testId }
+            id = { id }
+            style = { _getAvatarStyle() }>
+            <Icon
+                size = { '50%' }
+                src = { IconUser } />
+        </div>
+    );
+};
+
+
+export default StatelessAvatar;
