@@ -221,7 +221,7 @@ class Thumbnail extends PureComponent<Props> {
                 style = { styles.thumbnailTopLeftIndicatorContainer }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
                 { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
-                { tileView && !isScreenShare && (
+                { tileView && (isScreenShare || _isVirtualScreenshare) && (
                     <View style = { styles.screenShareIndicatorContainer }>
                         <ScreenShareIndicator />
                     </View>
