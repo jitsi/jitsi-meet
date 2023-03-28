@@ -1,7 +1,6 @@
 module:log('info', 'Starting visitors_component at %s', module.host);
 
 local jid = require 'util.jid';
-local iterators = require 'util.iterators';
 local st = require 'util.stanza';
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -25,6 +24,70 @@ local visitors_promotion_map = {};
 
 local sent_iq_cache = require 'util.cache'.new(200);
 
+-- send iq result that the iq was received and will be processed
+local function respond_iq_result(origin, stanza)
+    -- respond with successful receiving the iq
+    origin.send(st.iq({
+        type = "result";
+        from = stanza.attr.to;
+        to = stanza.attr.from;
+        id = stanza.attr.id
+    }));
+end
+
+local function request_promotion_received(room, from_jid, from_vnode)
+    if not visitors_promotion_map[room.jid] and auto_allow_promotion then
+        -- visitors is enabled
+        visitors_promotion_map[room.jid] = {};
+    end
+
+    -- if visitors is enabled for the room
+    if visitors_promotion_map[room.jid] then
+        if auto_allow_promotion then
+            --  we are in auto-allow mode, let's reply with accept
+            -- we store where the request is coming from so we can send back the response
+            local username = new_id():lower();
+            visitors_promotion_map[room.jid][username] = {
+                from = from_vnode;
+                jid = from_jid;
+            };
+
+            local req_from = visitors_promotion_map[room.jid][username].from;
+            local req_jid = visitors_promotion_map[room.jid][username].jid;
+            local focus_occupant = get_focus_occupant(room);
+            local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
+
+            local iq_id = new_id();
+            sent_iq_cache:set(iq_id, socket.gettime());
+
+            module:send(st.iq({
+                    type='set', to = req_from, from = module.host, id = iq_id })
+                :tag('visitors', {
+                    xmlns='jitsi:visitors',
+                    room = string.gsub(room.jid, muc_domain_base, req_from),
+                    focusjid = focus_jid })
+                 :tag('promotion-response', {
+                    xmlns='jitsi:visitors',
+                    jid = req_jid,
+                    username = username ,
+                    allow = 'true' }):up());
+            return true;
+        end
+
+        -- TODO send promotion request to all moderators
+        module:log('warn', 'Received promotion request from %s for room %s without active visitors', from, room.jid);
+        return;
+    end
+end
+
+local function connect_vnode_received(room, vnode)
+    module:context(muc_domain_base):fire_event('jitsi-connect-vnode', { room = room; vnode = vnode; });
+end
+
+local function disconnect_vnode_received(room, vnode)
+    module:context(muc_domain_base):fire_event('jitsi-disconnect-vnode', { room = room; vnode = vnode; });
+end
+
 -- listens for iq request for promotion and forward it to moderators in the meeting for approval
 -- or auto-allow it if such the config is set enabling it
 local function stanza_handler(event)
@@ -39,7 +102,7 @@ local function stanza_handler(event)
         return true;
     end
 
-    if stanza.attr.type ~= 'set' then
+    if stanza.attr.type ~= 'set' and stanza.attr.type ~= 'get' then
         return; -- We do not want to reply to these, so leave.
     end
 
@@ -48,7 +111,8 @@ local function stanza_handler(event)
         return;
     end
 
-    if origin.type ~= 's2sin' then
+    -- set stanzas are coming from s2s connection
+    if stanza.attr.type == 'set' and origin.type ~= 's2sin' then
         module:log('warn', 'not from s2s session, ignore! %s', stanza);
         return true;
     end
@@ -62,64 +126,24 @@ local function stanza_handler(event)
     end
 
     local request_promotion = visitors_iq:get_child('promotion-request');
-    if not request_promotion then
-        return;
+    if request_promotion then
+        respond_iq_result(origin, stanza);
+        return request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from);
     end
 
-    -- respond with successful receiving the iq
-    origin.send(st.iq({
-        type = "result";
-        from = stanza.attr.to;
-        to = stanza.attr.from;
-        id = stanza.attr.id
-    }));
-
-    -- TODO send iq to moderators (what about name? -> it will be coming from the token) or auto allow
-    if not visitors_promotion_map[room.jid] and auto_allow_promotion then
-        -- visitors is enabled
-        visitors_promotion_map[room.jid] = {};
+    local connect_vnode = visitors_iq:get_child('connect-vnode');
+    if connect_vnode then
+        respond_iq_result(origin, stanza);
+        return connect_vnode_received(room, connect_vnode.attr.vnode);
     end
 
-    -- if visitors is enabled for the room
-    if visitors_promotion_map[room.jid] then
-        if auto_allow_promotion then
-            --  we are in auto-allow mode, let's reply with accept
-            -- we store where the request is coming from so we can send back the response
-            local username = new_id():lower();
-            visitors_promotion_map[room.jid][username] = {
-                from = stanza.attr.from;
-                jid = request_promotion.attr.jid;
-                room = visitors_iq.attr.room;
-            };
-
-            local req_from = visitors_promotion_map[room.jid][username].from;
-            local req_room = visitors_promotion_map[room.jid][username].room;
-            local req_jid = visitors_promotion_map[room.jid][username].jid;
-            local focus_occupant = get_focus_occupant(room);
-            local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
-
-            local iq_id = new_id();
-            sent_iq_cache:set(iq_id, socket.gettime());
-
-            module:send(st.iq({
-                type='set',
-                to = req_from,
-                from = module.host,
-                id = iq_id })
-                          :tag('visitors', {
-                xmlns='jitsi:visitors',
-                room = string.gsub(req_room, muc_domain_base, req_from),
-                focusjid = focus_jid })
-                          :tag('promotion-response', {
-                xmlns='jitsi:visitors',
-                jid = req_jid,
-                username = username ,
-                allow = 'true' }):up());
-            return true;
-        end
-
-        -- TODO send promotion request to all moderators
+    local disconnect_vnode = visitors_iq:get_child('disconnect-vnode');
+    if disconnect_vnode then
+        respond_iq_result(origin, stanza);
+        return disconnect_vnode_received(room, disconnect_vnode.attr.vnode);
     end
+
+    module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
 end
 
 module:hook("iq/host", stanza_handler, 10);

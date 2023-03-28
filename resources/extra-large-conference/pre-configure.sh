@@ -49,6 +49,7 @@ do
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.hostname" 127.0.0.1
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.port" 5222${i}
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.domain" "auth.meet.jitsi"
+  hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.xmpp-domain" "v${i}.meet.jitsi"
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.password" "${PASS}"
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.disable-certificate-verification" true
 done
