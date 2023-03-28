@@ -1,8 +1,6 @@
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { hideNotification } from '../../actions';
@@ -11,7 +9,7 @@ import { INotificationProps } from '../../types';
 import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * Whether we are a SIP gateway or not.
@@ -33,11 +31,6 @@ interface IProps extends WithTranslation {
     }>;
 
     /**
-     * JSS classes object.
-     */
-    classes: any;
-
-    /**
      * Invoked to update the redux store in order to remove notifications.
      */
     dispatch: Function;
@@ -48,10 +41,10 @@ interface IProps extends WithTranslation {
     portal?: boolean;
 }
 
-const useStyles = () => {
+const useStyles = makeStyles()(() => {
     return {
         container: {
-            position: 'absolute' as const,
+            position: 'absolute',
             left: '16px',
             bottom: '84px',
             width: '320px',
@@ -64,73 +57,42 @@ const useStyles = () => {
             maxWidth: 'calc(100% - 32px)'
         }
     };
+});
+
+const NotificationsContainer = ({
+    _iAmSipGateway,
+    _notifications,
+    dispatch,
+    portal
+}: IProps) => {
+    const { classes, cx } = useStyles();
+
+    const _onDismissed = useCallback((uid: string) => {
+        dispatch(hideNotification(uid));
+    }, []);
+
+    if (_iAmSipGateway) {
+        return null;
+    }
+
+    return (
+        <div
+            className = { cx(classes.container, {
+                [classes.containerPortal]: portal
+            }) }
+            id = 'notifications-container'>
+            <NotificationsTransition>
+                {_notifications.map(({ props, uid }) => (
+                    <Notification
+                        { ...props }
+                        key = { uid }
+                        onDismissed = { _onDismissed }
+                        uid = { uid } />
+                )) || null}
+            </NotificationsTransition>
+        </div>
+    );
 };
-
-/**
- * Implements a React {@link Component} which displays notifications and handles
- * automatic dismissal after a notification is shown for a defined timeout
- * period.
- *
- * @augments {Component}
- */
-class NotificationsContainer extends Component<IProps> {
-
-    /**
-     * Initializes a new {@code NotificationsContainer} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onDismissed = this._onDismissed.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { _notifications } = this.props;
-
-        if (this.props._iAmSipGateway) {
-            return null;
-        }
-
-        return (
-            <div
-                className = { clsx(this.props.classes.container, {
-                    [this.props.classes.containerPortal]: this.props.portal
-                }) }
-                id = 'notifications-container'>
-                <NotificationsTransition>
-                    {_notifications.map(({ props, uid }) => (
-                        <Notification
-                            { ...props }
-                            key = { uid }
-                            onDismissed = { this._onDismissed }
-                            uid = { uid } />
-                    )) || null }
-                </NotificationsTransition>
-            </div>
-        );
-    }
-
-    /**
-     * Emits an action to remove the notification from the redux store so it
-     * stops displaying.
-     *
-     * @param {string} uid - The id of the notification to be removed.
-     * @private
-     * @returns {void}
-     */
-    _onDismissed(uid: string) {
-        this.props.dispatch(hideNotification(uid));
-    }
-}
 
 /**
  * Maps (parts of) the Redux state to the associated props for this component.
@@ -152,4 +114,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer));
+export default connect(_mapStateToProps)(NotificationsContainer);

@@ -12,7 +12,15 @@ import { reloadNow } from '../../app/actions';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../../notifications';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
+import { setIAmVisitor } from '../../visitors/actions';
+import { overwriteConfig } from '../config';
+import {
+    CONNECTION_ESTABLISHED,
+    CONNECTION_FAILED,
+    connectionDisconnected,
+    disconnect
+} from '../connection';
+import { connect } from '../connection/actions';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import {
@@ -24,7 +32,7 @@ import {
     getPinnedParticipant
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
-import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
+import { TRACK_ADDED, TRACK_REMOVED, destroyLocalTracks } from '../tracks';
 
 import {
     CONFERENCE_FAILED,
@@ -47,7 +55,8 @@ import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
     forEachConference,
-    getCurrentConference
+    getCurrentConference,
+    getVisitorOptions
 } from './functions';
 import logger from './logger';
 
@@ -119,8 +128,15 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _conferenceFailed({ dispatch, getState }, next, action) {
-    const result = next(action);
     const { conference, error } = action;
+
+    if (error.name === JitsiConferenceErrors.REDIRECTED) {
+        if (typeof error.recoverable === 'undefined') {
+            error.recoverable = true;
+        }
+    }
+
+    const result = next(action);
     const { enableForcedReload } = getState()['features/base/config'];
 
     // Handle specific failure reasons.
@@ -168,6 +184,31 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
         sendAnalytics(createOfferAnswerFailedEvent());
         break;
+    case JitsiConferenceErrors.REDIRECTED: {
+        // once conference.js is gone this can be removed and both
+        // redirect logics to be merged
+        if (typeof APP === 'undefined') {
+            const newConfig = getVisitorOptions(getState, error.params);
+
+            if (!newConfig) {
+                logger.warn('Not redirected missing params');
+                break;
+            }
+
+            const [ vnode ] = error.params;
+
+            dispatch(overwriteConfig(newConfig))
+                .then(dispatch(conferenceWillLeave(conference)))
+                .then(conference.leave())
+                .then(dispatch(disconnect()))
+                .then(dispatch(setIAmVisitor(Boolean(vnode))))
+
+                // we do not clear local tracks on error, so we need to manually clear them
+                .then(dispatch(destroyLocalTracks()))
+                .then(dispatch(connect()));
+        }
+        break;
+    }
     }
 
     if (typeof APP === 'undefined') {

@@ -1379,8 +1379,12 @@
     },
     "visitors": {
         "chatIndicator": "(visitor)"
+        "labelTooltip": "Number of visitors: {{count}}",
+        "notification": {
+            "description": "To participate raise your hand",
+            "title": "You are a visitor in the meeting"
+        }
     },
-    "visitorsLabel": "Number of visitors: {{count}}",
     "volumeSlider": "Volume slider",
     "welcomepage": {
         "accessibilityLabel": {

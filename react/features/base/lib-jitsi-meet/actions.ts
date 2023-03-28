@@ -14,6 +14,7 @@ import {
     LIB_WILL_INIT
 } from './actionTypes';
 import { isAnalyticsEnabled } from './functions.any';
+import logger from './logger';
 
 /**
  * Disposes (of) lib-jitsi-meet.
@@ -56,6 +57,9 @@ export function initLib() {
             JitsiMeetJS.setNetworkInfo({
                 isOnline: isOnline(state)
             });
+
+            logger.info(`lib-jitsi-meet version:${JitsiMeetJS.version}`);
+
             dispatch({ type: LIB_DID_INIT });
         } catch (error: any) {
             dispatch(libInitError(error));

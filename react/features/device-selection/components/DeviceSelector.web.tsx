@@ -1,21 +1,14 @@
-import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
-import { translate } from '../../base/i18n/functions';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Select from '../../base/ui/components/web/Select';
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelector}.
  */
-interface IProps extends WithTranslation {
-
-    /**
-     * CSS classes object.
-     */
-    classes: any;
+interface IProps {
 
     /**
      * MediaDeviceInfos used for display in the select element.
@@ -58,7 +51,7 @@ interface IProps extends WithTranslation {
     selectedDeviceId: string;
 }
 
-const styles = (theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         textSelector: {
             width: '100%',
@@ -71,87 +64,34 @@ const styles = (theme: Theme) => {
             border: `1px solid ${theme.palette.ui03}`
         }
     };
-};
+});
 
-/**
- * React component for selecting a device from a select element. Wraps
- * AKDropdownMenu with device selection specific logic.
- *
- * @augments Component
- */
-class DeviceSelector extends Component<IProps> {
-    /**
-     * Initializes a new DeviceSelector instance.
-     *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+const DeviceSelector = ({
+    devices,
+    hasPermission,
+    isDisabled,
+    label,
+    onSelect,
+    selectedDeviceId
+}: IProps) => {
+    const { classes } = useStyles();
+    const { t } = useTranslation();
 
-        this._onSelect = this._onSelect.bind(this);
-        this._createDropdown = this._createDropdown.bind(this);
-    }
+    const _onSelect = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+        const deviceId = e.target.value;
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        if (this.props.hasPermission === undefined) {
-            return null;
+        if (selectedDeviceId !== deviceId) {
+            onSelect(deviceId);
         }
+    }, [ selectedDeviceId, onSelect ]);
 
-        if (!this.props.hasPermission) {
-            return this._renderNoPermission();
-        }
-
-        if (!this.props.devices || !this.props.devices.length) {
-            return this._renderNoDevices();
-        }
-
-        const items = this.props.devices.map(device => {
-            return {
-                value: device.deviceId,
-                label: device.label || device.deviceId
-            };
-        });
-        const defaultSelected = this.props.devices.find(item =>
-            item.deviceId === this.props.selectedDeviceId
-        );
-
-        return this._createDropdown({
-            defaultSelected,
-            isDisabled: this.props.isDisabled,
-            items,
-            placeholder: this.props.t('deviceSelection.selectADevice')
-        });
-    }
-
-    /**
-     * Creates a AKDropdownMenu Component using passed in props and options. If
-     * the dropdown needs to be disabled, then only the AKDropdownMenu trigger
-     * element is returned to simulate a disabled state.
-     *
-     * @param {Object} options - Additional configuration for display.
-     * @param {Object} options.defaultSelected - The option that should be set
-     * as currently chosen.
-     * @param {boolean} options.isDisabled - If true, only the AKDropdownMenu
-     * trigger component will be returned to simulate a disabled dropdown.
-     * @param {Array} options.items - All the selectable options to display.
-     * @param {string} options.placeholder - The translation key to display when
-     * no selection has been made.
-     * @private
-     * @returns {ReactElement}
-     */
-    _createDropdown(options: { defaultSelected?: MediaDeviceInfo; isDisabled: boolean;
-        items?: Array<{ label: string; value: string; }>; placeholder: string; }) {
+    const _createDropdown = (options: {
+        defaultSelected?: MediaDeviceInfo; isDisabled: boolean;
+        items?: Array<{ label: string; value: string; }>; placeholder: string;
+    }) => {
         const triggerText
             = (options.defaultSelected && (options.defaultSelected.label || options.defaultSelected.deviceId))
-                || options.placeholder;
-        const { classes } = this.props;
+            || options.placeholder;
 
         if (options.isDisabled || !options.items?.length) {
             return (
@@ -163,56 +103,51 @@ class DeviceSelector extends Component<IProps> {
 
         return (
             <Select
-                label = { this.props.t(this.props.label) }
-                onChange = { this._onSelect }
+                label = { t(label) }
+                onChange = { _onSelect }
                 options = { options.items }
-                value = { this.props.selectedDeviceId } />
+                value = { selectedDeviceId } />
         );
+    };
+
+    const _renderNoDevices = () => _createDropdown({
+        isDisabled: true,
+        placeholder: t('settings.noDevice')
+    });
+
+    const _renderNoPermission = () => _createDropdown({
+        isDisabled: true,
+        placeholder: t('deviceSelection.noPermission')
+    });
+
+    if (hasPermission === undefined) {
+        return null;
     }
 
-    /**
-     * Invokes the passed in callback to notify of selection changes.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-        const deviceId = e.target.value;
-
-        if (this.props.selectedDeviceId !== deviceId) {
-            this.props.onSelect(deviceId);
-        }
+    if (!hasPermission) {
+        return _renderNoPermission();
     }
 
-    /**
-     * Creates a Select Component that is disabled and has a placeholder
-     * indicating there are no devices to select.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderNoDevices() {
-        return this._createDropdown({
-            isDisabled: true,
-            placeholder: this.props.t('settings.noDevice')
-        });
+    if (!devices || !devices.length) {
+        return _renderNoDevices();
     }
 
-    /**
-     * Creates a AKDropdownMenu Component that is disabled and has a placeholder
-     * stating there is no permission to display the devices.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderNoPermission() {
-        return this._createDropdown({
-            isDisabled: true,
-            placeholder: this.props.t('deviceSelection.noPermission')
-        });
-    }
-}
+    const items = devices.map(device => {
+        return {
+            value: device.deviceId,
+            label: device.label || device.deviceId
+        };
+    });
+    const defaultSelected = devices.find(item =>
+        item.deviceId === selectedDeviceId
+    );
 
-export default withStyles(styles)(translate(DeviceSelector));
+    return _createDropdown({
+        defaultSelected,
+        isDisabled,
+        items,
+        placeholder: t('deviceSelection.selectADevice')
+    });
+};
+
+export default DeviceSelector;

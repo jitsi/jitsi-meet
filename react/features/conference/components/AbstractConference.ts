@@ -1,9 +1,8 @@
-// @flow
-
 import React, { Component } from 'react';
 
+import { IReduxState } from '../../app/types';
 import { NotificationsContainer } from '../../notifications/components';
-import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayTileView } from '../../video-layout/functions.any';
 import { shouldDisplayNotifications } from '../functions';
 
 /**
@@ -17,7 +16,7 @@ export type AbstractProps = {
      * @protected
      * @type {boolean}
      */
-    _notificationsVisible: boolean,
+    _notificationsVisible: boolean;
 
     /**
      * Conference room name.
@@ -25,7 +24,7 @@ export type AbstractProps = {
      * @protected
      * @type {string}
      */
-    _room: string,
+    _room: string;
 
     /**
      * Whether or not the layout should change to support tile view mode.
@@ -33,7 +32,7 @@ export type AbstractProps = {
      * @protected
      * @type {boolean}
      */
-    _shouldDisplayTileView: boolean
+    _shouldDisplayTileView: boolean;
 };
 
 /**
@@ -42,7 +41,7 @@ export type AbstractProps = {
  *
  * @augments Component
  */
-export class AbstractConference<P: AbstractProps, S>
+export class AbstractConference<P extends AbstractProps, S>
     extends Component<P, S> {
 
     /**
@@ -53,7 +52,7 @@ export class AbstractConference<P: AbstractProps, S>
      * @protected
      * @returns {React$Element}
      */
-    renderNotificationsContainer(props: ?Object) {
+    renderNotificationsContainer(props?: any) {
         if (this.props._notificationsVisible) {
             return (
                 React.createElement(NotificationsContainer, props)
@@ -72,7 +71,7 @@ export class AbstractConference<P: AbstractProps, S>
  * @private
  * @returns {AbstractProps}
  */
-export function abstractMapStateToProps(state: Object) {
+export function abstractMapStateToProps(state: IReduxState) {
     return {
         _notificationsVisible: shouldDisplayNotifications(state),
         _room: state['features/base/conference'].room,

@@ -1,13 +1,15 @@
-// @flow
-// eslint-disable-next-line no-unused-vars
 import React, { PureComponent } from 'react';
 
-import { conferenceWillJoin, getConferenceName } from '../../base/conference';
+import { IReduxState } from '../../app/types';
+import { conferenceWillJoin } from '../../base/conference/actions';
+import { getConferenceName } from '../../base/conference/functions';
+import { IJitsiConference } from '../../base/conference/reducer';
 import { getSecurityUiConfig } from '../../base/config/functions.any';
-import { INVITE_ENABLED, getFeatureFlag } from '../../base/flags';
-import { getLocalParticipant } from '../../base/participants';
-import { getFieldValue } from '../../base/react';
-import { updateSettings } from '../../base/settings';
+import { INVITE_ENABLED } from '../../base/flags/constants';
+import { getFeatureFlag } from '../../base/flags/functions';
+import { getLocalParticipant } from '../../base/participants/functions';
+import { getFieldValue } from '../../base/react/functions';
+import { updateSettings } from '../../base/settings/actions';
 import { isDeviceStatusVisible } from '../../prejoin/functions';
 import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
 
@@ -22,47 +24,47 @@ export type Props = {
     /**
      * Indicates whether the device status should be visible.
      */
-    _deviceStatusVisible: boolean,
-
-    /**
-     * True if knocking is already happening, so we're waiting for a response.
-     */
-    _knocking: boolean,
-
-    /**
-    * Lobby messages between moderator and the participant.
-    */
-    _lobbyChatMessages: Object,
-
-    /**
-     * Name of the lobby chat recipient.
-     */
-    _lobbyMessageRecipient: string,
+    _deviceStatusVisible: boolean;
 
     /**
      * True if moderator initiated a chat session with the participant.
      */
-    _isLobbyChatActive: boolean,
+    _isLobbyChatActive: boolean;
+
+    /**
+     * True if knocking is already happening, so we're waiting for a response.
+     */
+    _knocking: boolean;
+
+    /**
+    * Lobby messages between moderator and the participant.
+    */
+    _lobbyChatMessages: Object;
+
+    /**
+     * Name of the lobby chat recipient.
+     */
+    _lobbyMessageRecipient: string;
 
     /**
      * The name of the meeting we're about to join.
      */
-    _meetingName: string,
+    _meetingName: string;
 
     /**
      * The members only conference if any,.
      */
-    _membersOnlyConference: Object,
+    _membersOnlyConference: IJitsiConference;
 
     /**
      * The email of the participant about to knock/join.
      */
-    _participantEmail: string,
+    _participantEmail: string;
 
     /**
      * The id of the participant about to knock/join. This is the participant ID in the lobby room, at this point.
      */
-    _participantId: string,
+    _participantId: string;
 
     /**
      * The name of the participant about to knock/join.
@@ -72,27 +74,27 @@ export type Props = {
     /**
      * True if a recent attempt to join with password failed.
      */
-    _passwordJoinFailed: boolean,
+    _passwordJoinFailed: boolean;
 
     /**
      * True if the password field should be available for lobby participants.
      */
-     _renderPassword: boolean,
+    _renderPassword: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Indicates whether the copy url button should be shown.
      */
-    showCopyUrlButton: boolean,
+    showCopyUrlButton: boolean;
 
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function;
 };
 
 type State = {
@@ -100,38 +102,38 @@ type State = {
     /**
      * The display name value entered into the field.
      */
-    displayName: string,
+    displayName: string;
 
     /**
      * The email value entered into the field.
      */
-    email: string,
+    email: string;
 
     /**
      * True if lobby chat widget is open.
      */
-    isChatOpen: boolean,
+    isChatOpen: boolean;
 
     /**
      * The password value entered into the field.
      */
-    password: string,
+    password: string;
 
     /**
      * True if a recent attempt to join with password failed.
      */
-    passwordJoinFailed: boolean,
+    passwordJoinFailed: boolean;
 
     /**
      * The state of the screen. One of {@code SCREEN_STATES[*]}.
      */
-    screenState: number
-}
+    screenState: number;
+};
 
 /**
  * Abstract class to encapsulate the platform common code of the {@code LobbyScreen}.
  */
-export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent<P, State> {
+export default class AbstractLobbyScreen<P extends Props = Props> extends PureComponent<P, State> {
     /**
      * Instantiates a new component.
      *
@@ -192,8 +194,6 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             : passwordPrompt ? 'lobby.enterPasswordTitle' : 'lobby.joinTitle';
     }
 
-    _onAskToJoin: () => void;
-
     /**
      * Callback to be invoked when the user submits the joining request.
      *
@@ -209,8 +209,6 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         return false;
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Callback to be invoked when the user cancels the dialog.
      *
@@ -223,15 +221,13 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         return true;
     }
 
-    _onChangeDisplayName: Object => void;
-
     /**
      * Callback to be invoked when the user changes its display name.
      *
      * @param {SyntheticEvent} event - The SyntheticEvent instance of the change.
      * @returns {void}
      */
-    _onChangeDisplayName(event) {
+    _onChangeDisplayName(event: { target: { value: string; }; } | string) {
         const displayName = getFieldValue(event);
 
         this.setState({
@@ -243,15 +239,13 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         });
     }
 
-    _onChangeEmail: Object => void;
-
     /**
      * Callback to be invoked when the user changes its email.
      *
      * @param {SyntheticEvent} event - The SyntheticEvent instance of the change.
      * @returns {void}
      */
-    _onChangeEmail(event) {
+    _onChangeEmail(event: { target: { value: string; }; } | string) {
         const email = getFieldValue(event);
 
         this.setState({
@@ -263,21 +257,17 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         });
     }
 
-    _onChangePassword: Object => void;
-
     /**
      * Callback to be invoked when the user changes the password.
      *
      * @param {SyntheticEvent} event - The SyntheticEvent instance of the change.
      * @returns {void}
      */
-    _onChangePassword(event) {
+    _onChangePassword(event: { target: { value: string; }; } | string) {
         this.setState({
             password: getFieldValue(event)
         });
     }
-
-    _onEnableEdit: () => void;
 
     /**
      * Callback to be invoked for the edit button.
@@ -289,8 +279,6 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             screenState: SCREEN_STATES.EDIT
         });
     }
-
-    _onJoinWithPassword: () => void;
 
     /**
      * Callback to be invoked when the user tries to join using a preset password.
@@ -304,19 +292,15 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         this.props.dispatch(joinWithPassword(this.state.password));
     }
 
-    _onSendMessage: () => void;
-
     /**
      * Callback to be invoked for sending lobby chat messages.
      *
      * @param {string} message - Message to be sent.
      * @returns {void}
      */
-    _onSendMessage(message) {
+    _onSendMessage(message: string) {
         this.props.dispatch(onSendMessage(message));
     }
-
-    _onSwitchToKnockMode: () => void;
 
     /**
      * Callback to be invoked for the enter (go back to) knocking mode button.
@@ -334,8 +318,6 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         this.props.dispatch(conferenceWillJoin(this.props._membersOnlyConference));
     }
 
-    _onSwitchToPasswordMode: () => void;
-
     /**
      * Callback to be invoked for the enter password button.
      *
@@ -346,8 +328,6 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             screenState: SCREEN_STATES.PASSWORD
         });
     }
-
-    _onToggleChat: () => void;
 
     /**
      * Callback to be invoked for toggling lobby chat visibility.
@@ -393,42 +373,42 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
      *
      * @returns {React$Element}
      */
-    _renderJoining: () => React$Element<*>;
+    _renderJoining: () => React.ReactElement;
 
     /**
      * Renders the participant form to let the knocking participant enter its details.
      *
      * @returns {React$Element}
      */
-    _renderParticipantForm: () => React$Element<*>;
+    _renderParticipantForm: () => React.ReactElement;
 
     /**
      * Renders the participant info fragment when we have all the required details of the user.
      *
      * @returns {React$Element}
      */
-    _renderParticipantInfo: () => React$Element<*>;
+    _renderParticipantInfo: () => React.ReactElement;
 
     /**
      * Renders the password form to let the participant join by using a password instead of knocking.
      *
      * @returns {React$Element}
      */
-    _renderPasswordForm: () => React$Element<*>;
+    _renderPasswordForm: () => React.ReactElement;
 
     /**
      * Renders the password join button (set).
      *
      * @returns {React$Element}
      */
-    _renderPasswordJoinButtons: () => React$Element<*>;
+    _renderPasswordJoinButtons: () => React.ReactElement;
 
     /**
      * Renders the standard (pre-knocking) button set.
      *
      * @returns {React$Element}
      */
-    _renderStandardButtons: () => React$Element<*>;
+    _renderStandardButtons: () => React.ReactElement;
 }
 
 /**
@@ -437,7 +417,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
     const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);

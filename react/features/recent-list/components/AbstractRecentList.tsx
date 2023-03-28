@@ -1,20 +1,18 @@
-// @flow
-
 import React from 'react';
-import type { Dispatch } from 'redux';
 
-import {
-    createRecentClickedEvent,
-    createRecentSelectedEvent,
-    sendAnalytics
-} from '../../analytics';
+import { createRecentClickedEvent, createRecentSelectedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
+import { IStore } from '../../app/types';
 import {
-    AbstractPage,
     Container,
     Text
-} from '../../base/react';
 
+    // @ts-ignore
+} from '../../base/react';
+import AbstractPage from '../../base/react/components/AbstractPage';
+
+// @ts-ignore
 import styles from './styles';
 
 /**
@@ -25,19 +23,19 @@ type Props = {
     /**
      * The redux store's {@code dispatch} function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * The translate function.
      */
-    t: Function
+    t: Function;
 };
 
 /**
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
+export default class AbstractRecentList<P extends Props> extends AbstractPage<P> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -59,8 +57,6 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
     componentDidMount() {
         sendAnalytics(createRecentSelectedEvent());
     }
-
-    _getRenderListEmptyComponent: () => React$Node;
 
     /**
      * Returns a list empty component if a custom one has to be rendered instead
@@ -90,8 +86,6 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
         );
     }
 
-    _onPress: string => void;
-
     /**
      * Handles the list's navigate action.
      *
@@ -99,7 +93,7 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
      * @param {string} url - The url string to navigate to.
      * @returns {void}
      */
-    _onPress(url) {
+    _onPress(url: string) {
         const { dispatch } = this.props;
 
         sendAnalytics(createRecentClickedEvent('meeting.tile'));
