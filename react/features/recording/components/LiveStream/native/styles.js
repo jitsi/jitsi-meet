@@ -113,7 +113,7 @@ export default createStyleSheet({
      * Additional style for the selected item.
      */
     streamKeyPickerItemHighlight: {
-        backgroundColor: BaseTheme.palette.ui04
+        backgroundColor: BaseTheme.palette.ui13
     },
 
     /**
