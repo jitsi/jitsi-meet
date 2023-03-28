@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, createStyleSheet } from '../../../../base/styles';
+import { createStyleSheet } from '../../../../base/styles';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 /**
@@ -24,27 +24,20 @@ export default createStyleSheet({
     formWrapper: {
         alignItems: 'stretch',
         flexDirection: 'column',
-        padding: BoxModel.padding
-    },
-
-    /**
-     * Wrapper for the last element in the form.
-     */
-    formValidation: {
-        flexDirection: 'row',
-        height: BaseTheme.spacing[4]
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     formValidationItem: {
         alignSelf: 'flex-start',
-        marginVertical: BaseTheme.spacing[1]
+        flexDirection: 'row',
+        height: BaseTheme.spacing[4],
+        marginTop: BaseTheme.spacing[2]
     },
 
     formButtonsWrapper: {
         alignSelf: 'center',
         display: 'flex',
-        maxWidth: 200,
-        width: 'auto'
+        maxWidth: 200
     },
 
     buttonLabelStyle: {
@@ -55,7 +48,7 @@ export default createStyleSheet({
      * Explaining text on the top of the sign in form.
      */
     helpText: {
-        marginBottom: BoxModel.margin
+        marginBottom: BaseTheme.spacing[2]
     },
 
     /**
@@ -68,7 +61,7 @@ export default createStyleSheet({
         flexDirection: 'column',
         justifyContent: 'center',
         paddingHorizontal: BaseTheme.spacing[2],
-        paddingTop: BaseTheme.spacing[3]
+        paddingVertical: BaseTheme.spacing[3]
     },
 
     /**
@@ -87,6 +80,10 @@ export default createStyleSheet({
         textAlign: 'left'
     },
 
+    streamKeyContainer: {
+        marginTop: BaseTheme.spacing[3]
+    },
+
     /**
      * Custom component to pick a broadcast from the list fetched from Google.
      */
@@ -94,7 +91,7 @@ export default createStyleSheet({
         alignSelf: 'stretch',
         flex: 1,
         height: 40,
-        marginHorizontal: 4,
+        marginHorizontal: BaseTheme.spacing[1],
         width: 300
     },
 
@@ -102,14 +99,14 @@ export default createStyleSheet({
      * CTA (label) of the picker.
      */
     streamKeyPickerCta: {
-        marginBottom: 8
+        marginBottom: BaseTheme.spacing[2]
     },
 
     /**
      * Style of a single item in the list.
      */
     streamKeyPickerItem: {
-        padding: 4
+        padding: BaseTheme.spacing[1]
     },
 
     /**
@@ -124,7 +121,7 @@ export default createStyleSheet({
      */
     streamKeyPickerWrapper: {
         borderColor: BaseTheme.palette.ui07,
-        borderRadius: 3,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         flexDirection: 'column'
     },
