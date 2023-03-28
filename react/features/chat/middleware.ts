@@ -30,8 +30,6 @@ import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles/actions.any';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { showToolbox } from '../toolbox/actions';
 
 

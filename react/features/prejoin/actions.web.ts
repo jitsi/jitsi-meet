@@ -16,8 +16,6 @@ import {
     getLocalVideoTrack
 } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';

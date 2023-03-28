@@ -7,8 +7,6 @@ import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import Tabs from '../../base/ui/components/web/Tabs';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { obtainDesktopSources } from '../functions';
 
 // @ts-ignore

@@ -5,8 +5,6 @@ import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCopy } from '../../../../base/icons/svg';
 import { copyText } from '../../../../base/util/copyText.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { _formatConferenceIDPin } from '../../../_utils';
 
 /**

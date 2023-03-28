@@ -339,7 +339,7 @@ export function getConferenceTimestamp(stateful: IStateful) {
  * {@code getState} function.
  * @returns {JitsiConference|undefined}
  */
-export function getCurrentConference(stateful: IStateful): any {
+export function getCurrentConference(stateful: IStateful): IJitsiConference | undefined {
     const { conference, joining, leaving, membersOnly, passwordRequired }
         = getConferenceState(toState(stateful));
 

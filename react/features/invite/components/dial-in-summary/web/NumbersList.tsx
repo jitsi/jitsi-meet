@@ -1,12 +1,11 @@
-/* eslint-disable lines-around-comment */
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import React, { useCallback, useMemo } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
-import { Icon, IconSip } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconSip } from '../../../../base/icons/svg';
 
 countries.registerLocale(en);
 
@@ -29,7 +28,7 @@ interface INormalizedNumber {
 }
 
 interface INumbersMapping {
-     [countryName: string]: Array<INormalizedNumber>;
+    [countryName: string]: Array<INormalizedNumber>;
 }
 
 interface IProps extends WithTranslation {
@@ -48,7 +47,7 @@ interface IProps extends WithTranslation {
      * The phone numbers to display. Can be an array of number Objects or an
      * object with countries as keys and an array of numbers as values.
      */
-     numbers: INumbersMapping;
+    numbers: INumbersMapping;
 
 }
 

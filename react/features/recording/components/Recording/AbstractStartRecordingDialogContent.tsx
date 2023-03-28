@@ -5,13 +5,8 @@ import { WithTranslation } from 'react-i18next';
 import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-// @ts-ignore
-import {
-    _abstractMapStateToProps
-    // @ts-ignore
-} from '../../../base/dialog';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { _abstractMapStateToProps } from '../../../base/dialog/functions';
 // @ts-ignore
 import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
@@ -341,7 +336,7 @@ export function mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _hideStorageWarning: recordingService?.hideStorageWarning,
+        _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

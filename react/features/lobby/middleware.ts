@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -28,7 +26,6 @@ import {
 } from '../base/sounds/actions';
 import { isTestModeEnabled } from '../base/testing/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-// @ts-ignore
 import { openChat } from '../chat/actions';
 import {
     handleLobbyChatInitialized,
@@ -228,8 +225,7 @@ function _handleLobbyNotification(store: IStore) {
             customActionType.splice(1, 0, BUTTON_TYPES.SECONDARY);
             customActionHandler.splice(1, 0, () => batch(() => {
                 dispatch(handleLobbyChatInitialized(firstParticipant.id));
-                // @ts-ignore
-                dispatch(openChat(disablePolls));
+                dispatch(openChat({}, disablePolls));
             }));
         }
     } else {
@@ -287,7 +283,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         // In case of wrong password we need to be in the right state if in the meantime someone allows us to join
         if (nonFirstFailure) {
-            // @ts-ignore
             dispatch(conferenceWillJoin(membersOnly));
         }
 

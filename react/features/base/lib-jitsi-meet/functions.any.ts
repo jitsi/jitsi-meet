@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 

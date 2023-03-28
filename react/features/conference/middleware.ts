@@ -1,8 +1,6 @@
-/* eslint-disable lines-around-comment */
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 
-// @ts-ignore
 import { appNavigate } from '../app/actions';
 import { IStore } from '../app/types';
 import {
@@ -22,8 +20,8 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-// @ts-ignore
-import { isCalendarEnabled } from '../calendar-sync';
+import { isCalendarEnabled } from '../calendar-sync/functions';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
@@ -37,7 +35,6 @@ import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions.any';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
-// @ts-ignore
 import { dismissCalendarNotification, notifyKickedOut } from './actions';
 
 
@@ -197,6 +194,7 @@ function _maybeDisplayCalendarNotification({ dispatch, getState }: IStore) {
             if (eventURL && eventURL !== currentConferenceURL) {
                 // @ts-ignore
                 if ((!eventToShow && event.startDate > now && event.startDate < now + ALERT_MILLISECONDS)
+
                     // @ts-ignore
                     || (event.startDate < now && event.endDate > now)) {
                     eventToShow = event;

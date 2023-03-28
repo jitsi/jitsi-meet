@@ -6,8 +6,7 @@ import { CAR_MODE_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconCar } from '../../../base/icons/svg';
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
 // @ts-ignore
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -18,7 +17,7 @@ import { screen } from '../../../mobile/navigation/routes';
 /**
  * Implements an {@link AbstractButton} to open the carmode.
  */
-class OpenCarmodeButton extends AbstractButton<AbstractButtonProps, any, any> {
+class OpenCarmodeButton extends AbstractButton<AbstractButtonProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.carmode';
     icon = IconCar;
     label = 'carmode.labels.buttonLabel';

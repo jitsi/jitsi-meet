@@ -120,7 +120,7 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IRedux
     } else {
         // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
         // stream as we would use a regular stream.
-        await conference.replaceTrack(null, desktopAudioTrack);
+        await conference?.replaceTrack(null, desktopAudioTrack);
     }
 }
 
@@ -250,7 +250,7 @@ async function _toggleScreenSharing(
             if (localAudio) {
                 localAudio.setEffect(undefined);
             } else {
-                await conference.replaceTrack(desktopAudioTrack, null);
+                await conference?.replaceTrack(desktopAudioTrack, null);
             }
             desktopAudioTrack.dispose();
             dispatch(setScreenshareAudioTrack(null));

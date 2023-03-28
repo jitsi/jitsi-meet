@@ -1,16 +1,14 @@
-/* eslint-disable lines-around-comment */
-
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags/';
+import { INVITE_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
-// @ts-ignore
-import { Icon, IconAddUser } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconAddUser } from '../../../base/icons/svg';
 import { getParticipantCountWithFake } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';

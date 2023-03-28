@@ -6,7 +6,6 @@ import BaseTheme from '../base/ui/components/BaseTheme';
 // @ts-ignore
 import TabIcon from './components/TabIcon';
 
-// @ts-ignore
 export const ACTIVE_TAB_COLOR = BaseTheme.palette.icon01;
 export const INACTIVE_TAB_COLOR = BaseTheme.palette.icon03;
 

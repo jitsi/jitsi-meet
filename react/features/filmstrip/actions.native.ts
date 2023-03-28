@@ -59,3 +59,24 @@ export function setTileViewDimensions() {
         });
     };
 }
+
+/**
+ * Add participant to the active participants list.
+ *
+ * @param {string} _participantId - The Id of the participant to be added.
+ * @param {boolean?} _pinned - Whether the participant is pinned or not.
+ * @returns {Object}
+ */
+export function addStageParticipant(_participantId: string, _pinned = false): any {
+    return {};
+}
+
+/**
+ * Remove participant from the active participants list.
+ *
+ * @param {string} _participantId - The Id of the participant to be removed.
+ * @returns {Object}
+ */
+export function removeStageParticipant(_participantId: string): any {
+    return {};
+}

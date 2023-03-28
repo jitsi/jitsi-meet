@@ -1,14 +1,13 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
 import { isDesktopShareButtonDisabled } from '../../functions.native';
 
 // @ts-ignore
 import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import ScreenSharingIosButton from './ScreenSharingIosButton.js';
 

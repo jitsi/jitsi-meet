@@ -384,7 +384,7 @@ export function conferenceJoinInProgress(conference: IJitsiConference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceLeft(conference: Partial<IJitsiConference>) {
+export function conferenceLeft(conference?: IJitsiConference) {
     return {
         type: CONFERENCE_LEFT,
         conference
@@ -473,7 +473,7 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceWillJoin(conference: IJitsiConference) {
+export function conferenceWillJoin(conference?: IJitsiConference) {
     return {
         type: CONFERENCE_WILL_JOIN,
         conference
@@ -493,7 +493,7 @@ export function conferenceWillJoin(conference: IJitsiConference) {
  *     conference: JitsiConference
  * }}
  */
-export function conferenceWillLeave(conference: IJitsiConference) {
+export function conferenceWillLeave(conference?: IJitsiConference) {
     return {
         type: CONFERENCE_WILL_LEAVE,
         conference

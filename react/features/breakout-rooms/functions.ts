@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { IJitsiConference } from '../base/conference/reducer';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -46,7 +45,7 @@ export const getMainRoom = (stateful: IStateful) => {
  */
 export const getRoomsInfo = (stateful: IStateful) => {
     const breakoutRooms = getBreakoutRooms(stateful);
-    const conference: IJitsiConference = getCurrentConference(stateful);
+    const conference = getCurrentConference(stateful);
 
     const initialRoomsInfo = {
         rooms: []

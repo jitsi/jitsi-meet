@@ -64,7 +64,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
 
             focusWhiteboard(store);
             dispatch(setupWhiteboard({ collabDetails }));
-            conference.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
+            conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
                 collabServerUrl,
                 collabDetails
             });
@@ -95,11 +95,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
  * is left or failed, e.g. Disable the whiteboard if it's left open.
  */
 StateListenerRegistry.register(
-
-    // @ts-ignore
     state => getCurrentConference(state),
-
-    // @ts-ignore
     (conference, { dispatch }, previousConference): void => {
         if (conference !== previousConference) {
             dispatch(resetWhiteboard());

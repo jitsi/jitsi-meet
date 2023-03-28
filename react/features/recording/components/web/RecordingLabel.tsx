@@ -8,11 +8,7 @@ import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
-import AbstractRecordingLabel, {
-    _mapStateToProps
-
-    // @ts-ignore
-} from '../AbstractRecordingLabel';
+import AbstractRecordingLabel, { _mapStateToProps } from '../AbstractRecordingLabel';
 
 /**
  * Creates the styles for the component.

@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-// @ts-ignore
-import { Icon, IconAddUser } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconAddUser } from '../../../base/icons/svg';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,

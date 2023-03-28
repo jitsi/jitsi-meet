@@ -17,7 +17,6 @@ import Button from '../../base/ui/components/web/Button';
 // @ts-ignore
 import DialInSummary from '../../invite/components/dial-in-summary/web/DialInSummary';
 import { openWebApp } from '../actions';
-// @ts-ignore
 import { _TNS } from '../constants';
 // @ts-ignore
 import { generateDeepLinkingURL } from '../functions';
