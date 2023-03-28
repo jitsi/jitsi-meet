@@ -11,7 +11,7 @@ export const ACTIVE_OPACITY = 0.3;
 /**
  * Underlay of the TouchableHighlight.
  */
-export const TOUCHABLE_UNDERLAY = BaseTheme.palette.ui06;
+export const TOUCHABLE_UNDERLAY = BaseTheme.palette.action03Focus;
 
 /**
  * The styles of the React {@code Components} of LiveStream.
@@ -120,7 +120,7 @@ export default createStyleSheet({
      * Overall wrapper for the picker.
      */
     streamKeyPickerWrapper: {
-        borderColor: BaseTheme.palette.ui07,
+        borderColor: BaseTheme.palette.dividerColor,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
         flexDirection: 'column'
