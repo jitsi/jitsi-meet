@@ -46,21 +46,15 @@
         "today": "Today"
     },
     "chat": {
-        "error": "Error: your message \"{{originalText}}\" was not sent. Reason: {{error}}",
-        "fieldPlaceHolder": "",
-        "messageTo": "",
         "messagebox": "Type a message",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
             "titleWithPolls": "Enter a nickname to use chat"
         },
-        "noMessagesMessage": "",
-        "privateNotice": "",
         "sendButton": "Send",
         "title": "Chat",
-        "titleWithPolls": "Chat",
-        "you": ""
+        "titleWithPolls": "Chat"
     },
     "chromeExtensionBanner": {
         "buttonText": "",

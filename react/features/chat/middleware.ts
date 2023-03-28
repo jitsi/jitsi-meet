@@ -232,7 +232,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         // eslint-disable-next-line max-params
         (id: string, message: string, timestamp: number, displayName: string, isGuest?: boolean) => {
-            _onConferenceMessageReceived(store, { id,
+            _onConferenceMessageReceived(store, {
+                id: id || displayName, // in case of messages coming from visitors we can have unknown id
                 message,
                 timestamp,
                 displayName,
