@@ -9,6 +9,14 @@ export enum BUTTON_TYPES {
 }
 
 /**
+ * Behaviour types for showing overflow text content.
+ */
+export enum TEXT_OVERFLOW_TYPES {
+    ELLIPSIS = 'ellipsis',
+    SCROLL_ON_HOVER = 'scroll-on-hover'
+}
+
+/**
  * The modes of the buttons.
  */
 export const BUTTON_MODES: {

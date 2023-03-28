@@ -6,10 +6,10 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
-import { connect } from '../../base/redux';
 import { openSettings } from '../../mobile/permissions';
 import { refreshCalendar } from '../actions';
 

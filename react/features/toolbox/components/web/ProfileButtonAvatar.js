@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of

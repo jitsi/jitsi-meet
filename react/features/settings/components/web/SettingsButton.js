@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconGear } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { openSettingsDialog } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
@@ -46,7 +47,7 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { defaultTab = SETTINGS_TABS.DEVICES, dispatch, isDisplayedOnWelcomePage = false } = this.props;
+        const { defaultTab = SETTINGS_TABS.AUDIO, dispatch, isDisplayedOnWelcomePage = false } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
         dispatch(openSettingsDialog(defaultTab, isDisplayedOnWelcomePage));

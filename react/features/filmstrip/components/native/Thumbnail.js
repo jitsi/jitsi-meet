@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
@@ -17,7 +18,6 @@ import {
 import ParticipantView from '../../../base/participants/components/ParticipantView.native';
 import { FakeParticipant } from '../../../base/participants/types';
 import { Container } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant,
@@ -218,14 +218,11 @@ class Thumbnail extends PureComponent<Props> {
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
-                style = { [
-                    styles.thumbnailTopIndicatorContainer,
-                    styles.thumbnailTopLeftIndicatorContainer
-                ] }>
+                style = { styles.thumbnailTopLeftIndicatorContainer }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
                 { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
-                { tileView && isScreenShare && (
-                    <View style = { styles.indicatorContainer }>
+                { tileView && !isScreenShare && (
+                    <View style = { styles.screenShareIndicatorContainer }>
                         <ScreenShareIndicator />
                     </View>
                 ) }

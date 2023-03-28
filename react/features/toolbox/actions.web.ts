@@ -212,7 +212,7 @@ export function setHangupMenuVisible(visible: boolean): Object {
  *     visible: boolean
  * }}
  */
-export function setOverflowMenuVisible(visible: boolean): Object {
+export function setOverflowMenuVisible(visible: boolean) {
     return {
         type: SET_OVERFLOW_MENU_VISIBLE,
         visible

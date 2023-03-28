@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { InputDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**

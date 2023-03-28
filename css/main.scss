@@ -25,7 +25,6 @@ $flagsImagePath: "../images/";
 
 /* Modules BEGIN */
 @import 'reset';
-@import 'atlaskit_overrides';
 @import 'base';
 @import 'utils';
 @import 'overlay/overlay';
@@ -33,7 +32,6 @@ $flagsImagePath: "../images/";
 @import 'reload_overlay/reload_overlay';
 @import 'mini_toolbox';
 @import 'modals/desktop-picker/desktop-picker';
-@import 'modals/device-selection/device-selection';
 @import 'modals/dialog';
 @import 'modals/embed-meeting/embed-meeting';
 @import 'modals/feedback/feedback';
@@ -82,7 +80,6 @@ $flagsImagePath: "../images/";
 @import 'audio-preview';
 @import 'video-preview';
 @import 'premeeting/main';
-@import 'country-picker';
 @import 'modals/invite/invite_more';
 @import 'modals/security/security';
 @import 'e2ee';
@@ -92,6 +89,5 @@ $flagsImagePath: "../images/";
 @import 'reactions-menu';
 @import 'plan-limit';
 @import 'polls';
-@import 'notifications';
 
 /* Modules END */

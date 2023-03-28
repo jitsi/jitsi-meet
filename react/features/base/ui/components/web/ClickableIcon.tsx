@@ -25,7 +25,7 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: theme.palette.ui02
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 outline: 0,
                 boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
             },

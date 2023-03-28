@@ -1,5 +1,6 @@
 // @flow
 
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
@@ -7,7 +8,6 @@ import {
     IconVolumeOff,
     IconVolumeUp
 } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -72,7 +72,7 @@ class ShareAudioButton extends AbstractButton<Props, *> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state: Object): $Shape<Props> {
+function _mapStateToProps(state: Object) {
 
     return {
         _isAudioOnlySharing: isAudioOnlySharing(state)

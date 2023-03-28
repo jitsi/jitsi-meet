@@ -1,11 +1,11 @@
 /* @flow */
 
-import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
 import Checkbox from '../../base/ui/components/web/Checkbox';
+import Spinner from '../../base/ui/components/web/Spinner';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -111,9 +111,7 @@ class DesktopPickerPane extends Component<Props> {
                         type = { type } />))
                 : (
                     <div className = 'desktop-picker-pane-spinner'>
-                        <Spinner
-                            isCompleting = { false }
-                            size = 'medium' />
+                        <Spinner />
                     </div>
                 );
 

@@ -139,12 +139,6 @@ const VideoLayout = {
         }
     },
 
-    changeUserAvatar(id, avatarUrl) {
-        if (this.isCurrentlyOnLarge(id)) {
-            largeVideo.updateAvatar(avatarUrl);
-        }
-    },
-
     isLargeVideoVisible() {
         return this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE);
     },

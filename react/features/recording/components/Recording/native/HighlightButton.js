@@ -1,12 +1,12 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../../base/i18n';
 import { IconHighlight } from '../../../../base/icons';
 import { Label } from '../../../../base/label';
-import { connect } from '../../../../base/redux';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import AbstractHighlightButton, {
     type Props as AbstractProps,

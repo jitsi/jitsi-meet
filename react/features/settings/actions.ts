@@ -1,5 +1,7 @@
 import { batch } from 'react-redux';
 
+// @ts-expect-error
+import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
 import { IStore } from '../app/types';
 import {
     setFollowMe,
@@ -9,7 +11,8 @@ import {
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
 import { updateSettings } from '../base/settings/actions';
-import { setScreenshareFramerate } from '../screen-share/actions';
+import { toggleBackgroundEffect } from '../virtual-background/actions';
+import virtualBackgroundLogger from '../virtual-background/logger';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
@@ -21,8 +24,10 @@ import { LogoutDialog, SettingsDialog } from './components';
 import {
     getModeratorTabProps,
     getMoreTabProps,
+    getNotificationsTabProps,
     getProfileTabProps,
-    getSoundsTabProps
+    getShortcutsTabProps,
+    getVirtualBackgroundTabProps
 } from './functions';
 
 /**
@@ -96,31 +101,6 @@ export function submitMoreTab(newState: any) {
             }));
         }
 
-        const enabledNotifications = newState.enabledNotifications;
-
-        if (enabledNotifications !== currentState.enabledNotifications) {
-            dispatch(updateSettings({
-                userSelectedNotifications: {
-                    ...getState()['features/base/settings'].userSelectedNotifications,
-                    ...enabledNotifications
-                }
-            }));
-        }
-
-        if (newState.currentLanguage !== currentState.currentLanguage) {
-            i18next.changeLanguage(newState.currentLanguage);
-        }
-
-        if (newState.currentFramerate !== currentState.currentFramerate) {
-            const frameRate = parseInt(newState.currentFramerate, 10);
-
-            dispatch(setScreenshareFramerate(frameRate));
-        }
-
-        if (newState.hideSelfView !== currentState.hideSelfView) {
-            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
-        }
-
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
             dispatch(updateSettings({ maxStageParticipants: Number(newState.maxStageParticipants) }));
         }
@@ -174,6 +154,14 @@ export function submitProfileTab(newState: any) {
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
         }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
+
+        if (newState.currentLanguage !== currentState.currentLanguage) {
+            i18next.changeLanguage(newState.currentLanguage);
+        }
     };
 }
 
@@ -183,9 +171,9 @@ export function submitProfileTab(newState: any) {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
-export function submitSoundsTab(newState: any) {
+export function submitNotificationsTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const currentState = getSoundsTabProps(getState());
+        const currentState = getNotificationsTabProps(getState());
         const shouldNotUpdateReactionSounds = getModeratorTabProps(getState()).startReactionsMuted;
         const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
             || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
@@ -208,6 +196,17 @@ export function submitSoundsTab(newState: any) {
                 delete settingsToUpdate.soundsReactions;
             }
             dispatch(updateSettings(settingsToUpdate));
+        }
+
+        const enabledNotifications = newState.enabledNotifications;
+
+        if (enabledNotifications !== currentState.enabledNotifications) {
+            dispatch(updateSettings({
+                userSelectedNotifications: {
+                    ...getState()['features/base/settings'].userSelectedNotifications,
+                    ...enabledNotifications
+                }
+            }));
         }
     };
 }
@@ -235,5 +234,49 @@ export function toggleVideoSettings() {
         const value = getState()['features/settings'].videoSettingsVisible;
 
         dispatch(setVideoSettingsVisibility(!value));
+    };
+}
+
+/**
+ * Submits the settings from the "Shortcuts" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitShortcutsTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const currentState = getShortcutsTabProps(getState());
+
+        if (newState.keyboardShortcutsEnabled !== currentState.keyboardShortcutsEnabled) {
+            keyboardShortcut.enable(newState.keyboardShortcutsEnabled);
+        }
+    };
+}
+
+/**
+ * Submits the settings from the "Virtual Background" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @param {boolean} isCancel - Whether the change represents a cancel.
+ * @returns {Function}
+ */
+export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const currentState = getVirtualBackgroundTabProps(getState());
+
+        if (newState.options?.selectedThumbnail) {
+            await dispatch(toggleBackgroundEffect(newState.options, currentState._jitsiTrack));
+
+            if (!isCancel) {
+                // Set x scale to default value.
+                dispatch(updateSettings({
+                    localFlipX: true
+                }));
+
+                virtualBackgroundLogger.info(`Virtual background type: '${
+                    typeof newState.options.backgroundType === 'undefined'
+                        ? 'none' : newState.options.backgroundType}' applied!`);
+            }
+        }
     };
 }

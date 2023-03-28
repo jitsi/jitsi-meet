@@ -1,7 +1,8 @@
 /* eslint-disable lines-around-comment */
 
 import React from 'react';
-import { View } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { IconConnection } from '../../../base/icons/svg';
@@ -13,7 +14,6 @@ import {
 } from '../../../base/participants/functions';
 // @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
-import { connect } from '../../../base/redux/functions';
 import {
     getTrackByMediaTypeAndParticipant
 } from '../../../base/tracks/functions.native';
@@ -164,10 +164,11 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
 
         return (
             <View
-                style = {{
-                    ...indicatorStyles.indicatorContainer,
-                    backgroundColor: indicatorColor
-                }}>
+                style = { [
+                    indicatorStyles.indicatorContainer as StyleProp<ViewStyle>,
+                    { backgroundColor: indicatorColor }
+                ] }>
+                {/* @ts-ignore */}
                 <BaseIndicator
                     icon = { IconConnection }
                     // @ts-ignore

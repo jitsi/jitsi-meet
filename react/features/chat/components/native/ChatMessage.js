@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { isGifMessage } from '../../../gifs/functions';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';

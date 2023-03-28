@@ -4,9 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { StatusBar } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { connect } from '../../../base/redux/functions';
 // @ts-ignore
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';

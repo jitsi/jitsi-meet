@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/functions';
 import Label from '../../base/label/components/web/Label';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 
 import { Props, _mapStateToProps } from './AbstractTranscribingLabel';
 

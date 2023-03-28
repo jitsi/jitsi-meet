@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { getToolbarButtons } from '../../../../base/config';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 import AbstractLiveStreamButton, {
     type Props,
     _mapStateToProps as _abstractMapStateToProps

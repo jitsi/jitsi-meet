@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
@@ -13,7 +14,6 @@ import {
     IconPhoneRinging,
     IconVolumeUp
 } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';

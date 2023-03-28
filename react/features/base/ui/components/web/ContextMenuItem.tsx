@@ -5,6 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { TEXT_OVERFLOW_TYPES } from '../../constants.any';
+
+import TextWithOverflow from './TextWithOverflow';
 
 export interface IProps {
 
@@ -22,6 +25,13 @@ export interface IProps {
      * CSS class name used for custom styles.
      */
     className?: string;
+
+    /**
+     * Id of dom element controlled by this item. Matches aria-controls.
+     * Useful if you need this item as a tab element.
+     *
+     */
+    controls?: string;
 
     /**
      * Custom icon. If used, the icon prop is ignored.
@@ -47,17 +57,27 @@ export interface IProps {
     /**
      * Click handler.
      */
-    onClick?: (e?: React.MouseEvent) => void;
+    onClick?: (e?: React.MouseEvent<any>) => void;
 
     /**
      * Keydown handler.
      */
-    onKeyDown?: (e?: React.KeyboardEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 
     /**
      * Keypress handler.
      */
     onKeyPress?: (e?: React.KeyboardEvent) => void;
+
+    /**
+     * Overflow type for item text.
+     */
+    overflowType?: TEXT_OVERFLOW_TYPES;
+
+    /**
+     * You can use this item as a tab. Defaults to button if not set.
+     */
+    role?: 'tab' | 'button';
 
     /**
      * Whether the item is marked as selected.
@@ -102,7 +122,7 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: theme.palette.ui03
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 boxShadow: `inset 0 0 0 2px ${theme.palette.action01Hover}`
             }
         },
@@ -142,6 +162,7 @@ const ContextMenuItem = ({
     accessibilityLabel,
     children,
     className,
+    controls,
     customIcon,
     disabled,
     id,
@@ -149,6 +170,8 @@ const ContextMenuItem = ({
     onClick,
     onKeyDown,
     onKeyPress,
+    overflowType,
+    role = 'button',
     selected,
     testId,
     text,
@@ -158,8 +181,10 @@ const ContextMenuItem = ({
 
     return (
         <div
+            aria-controls = { controls }
             aria-disabled = { disabled }
             aria-label = { accessibilityLabel }
+            aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
                     disabled && styles.contextMenuItemDisabled,
@@ -172,20 +197,24 @@ const ContextMenuItem = ({
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
             onKeyPress = { disabled ? undefined : onKeyPress }
-            role = 'button'
-            tabIndex = { disabled ? undefined : 0 }>
+            role = { role }
+            tabIndex = { role === 'tab'
+                ? selected ? 0 : -1
+                : disabled ? undefined : 0
+            }>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }
                     size = { 20 }
                     src = { icon } />}
             {text && (
-                <span
+                <TextWithOverflow
                     className = { cx(styles.text,
-                _overflowDrawer && styles.drawerText,
-                textClassName) }>
+                    _overflowDrawer && styles.drawerText,
+                    textClassName) }
+                    overflowType = { overflowType } >
                     {text}
-                </span>
+                </TextWithOverflow>
             )}
             {children}
         </div>

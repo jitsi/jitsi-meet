@@ -1,10 +1,10 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
-import { connect } from '../../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,

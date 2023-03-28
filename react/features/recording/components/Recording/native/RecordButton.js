@@ -1,11 +1,11 @@
 // @flow
 
 import { Platform } from 'react-native';
+import { connect } from 'react-redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { IOS_RECORDING_ENABLED, RECORDING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';

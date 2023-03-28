@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconCameraRefresh } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalTrackMuted, isToggleCameraEnabled, toggleCamera } from '../../../base/tracks';
 import { setOverflowMenuVisible } from '../../actions.web';
@@ -66,7 +67,7 @@ class ToggleCameraButton extends AbstractButton<Props, any> {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function mapStateToProps(state): Object {
+function mapStateToProps(state) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
 

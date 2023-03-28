@@ -1,16 +1,15 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { rejectParticipantAudio } from '../../../av-moderation/actions';
+import { rejectParticipantAudio, rejectParticipantVideo } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
@@ -88,10 +87,13 @@ function MeetingParticipants({
     const { t } = useTranslation();
 
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
-
     const muteAudio = useCallback(id => () => {
         dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
         dispatch(rejectParticipantAudio(id));
+    }, [ dispatch ]);
+    const stopVideo = useCallback(id => () => {
+        dispatch(muteRemote(id, MEDIA_TYPE.VIDEO));
+        dispatch(rejectParticipantVideo(id));
     }, [ dispatch ]);
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
@@ -103,10 +105,8 @@ function MeetingParticipants({
     // mounted.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
-    const askUnmuteText = t('participantsPane.actions.askUnmute');
-    const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count);
+    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
     const { classes: styles, cx } = useStyles();
 
@@ -119,8 +119,8 @@ function MeetingParticipants({
                 { t('participantsPane.title') }
             </span>
             <div className = { cx(styles.heading, styles.headingW) }>
-                {visitorsCount && visitorsCount > 0
-                    && t('participantsPane.headings.visitors', { count: visitorsCount })}
+                {visitorsCount > 0
+                    ? t('participantsPane.headings.visitors', { count: visitorsCount }) : undefined}
             </div>
             <div className = { styles.heading }>
                 {currentRoom?.name
@@ -136,11 +136,9 @@ function MeetingParticipants({
                 value = { searchString } />
             <div>
                 <MeetingParticipantItems
-                    askUnmuteText = { askUnmuteText }
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
                     muteAudio = { muteAudio }
-                    muteParticipantButtonText = { muteParticipantButtonText }
                     openDrawerForParticipant = { openDrawerForParticipant }
                     overflowDrawer = { overflowDrawer }
                     participantActionEllipsisLabel = { participantActionEllipsisLabel }
@@ -148,6 +146,7 @@ function MeetingParticipants({
                     participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.entity }
                     searchString = { normalizeAccents(searchString) }
+                    stopVideo = { stopVideo }
                     toggleMenu = { toggleMenu }
                     youText = { youText } />
             </div>
@@ -173,7 +172,7 @@ function MeetingParticipants({
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState): Object {
+function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate

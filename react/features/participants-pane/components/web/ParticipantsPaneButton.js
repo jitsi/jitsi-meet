@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { IconUsers } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 import ParticipantsCounter from './ParticipantsCounter';
@@ -24,9 +24,11 @@ type Props = AbstractButtonProps & {
  */
 class ParticipantsPaneButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.participants';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
     icon = IconUsers;
     label = 'toolbar.participants';
     tooltip = 'toolbar.participants';
+    toggledTooltip = 'toolbar.closeParticipantsPane';
 
     /**
      * Indicates whether this button is in toggled state or not.

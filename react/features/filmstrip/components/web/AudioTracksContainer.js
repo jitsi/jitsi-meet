@@ -1,8 +1,8 @@
 /* @flow */
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { AudioTrack, MEDIA_TYPE } from '../../../base/media';
-import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link AudioTracksContainer}.

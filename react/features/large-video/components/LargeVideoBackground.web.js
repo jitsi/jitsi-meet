@@ -1,8 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { connect } from '../../base/redux';
 import { shouldDisplayTileView } from '../../video-layout';
 
 /**
@@ -24,7 +24,7 @@ export const ORIENTATION = {
  */
 type Props = {
 
-   /**
+    /**
      * Whether or not the layout should change to support tile view mode.
      *
      * @protected
@@ -230,17 +230,17 @@ export class LargeVideoBackground extends Component<Props> {
             height: canvasHeight,
             width: canvasWidth
         } = this._canvasEl;
-        const cavnasContext = this._canvasEl.getContext('2d');
+        const canvasContext = this._canvasEl.getContext('2d');
 
         if (this.props.orientationFit === ORIENTATION.LANDSCAPE) {
             const heightScaledToFit = (canvasWidth / videoWidth) * videoHeight;
 
-            cavnasContext.drawImage(
+            canvasContext.drawImage(
                 videoElement, 0, 0, canvasWidth, heightScaledToFit);
         } else {
             const widthScaledToFit = (canvasHeight / videoHeight) * videoWidth;
 
-            cavnasContext.drawImage(
+            canvasContext.drawImage(
                 videoElement, 0, 0, widthScaledToFit, canvasHeight);
         }
     }

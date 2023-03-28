@@ -84,6 +84,14 @@ export interface IConfigState extends IConfig {
     };
     disableRemoteControl?: boolean;
     error?: Error;
+    oldConfig?: {
+        bosh?: string;
+        hosts: {
+            domain: string;
+            muc: string;
+        };
+        websocket?: string;
+    };
 }
 
 ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {

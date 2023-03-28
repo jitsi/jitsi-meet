@@ -27,7 +27,7 @@ interface IProps {
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string;
+    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
 }
 
 const useStyles = makeStyles()(() => {

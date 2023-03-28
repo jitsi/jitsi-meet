@@ -1,8 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { hideDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';

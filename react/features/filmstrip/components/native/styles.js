@@ -7,11 +7,14 @@ import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 export const AVATAR_SIZE = 50;
 
 const indicatorContainer = {
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: BaseTheme.shape.borderRadius,
+    height: 24,
     margin: 2,
     padding: 2
 };
+
 
 /**
  * The styles of the feature filmstrip.
@@ -53,12 +56,12 @@ export default {
      * to {@code FILMSTRIP_SIZE}.
      */
     filmstripWide: {
-        bottom: 0,
+        bottom: BaseTheme.spacing[0],
         flexDirection: 'column',
         flexGrow: 0,
         position: 'absolute',
-        right: 0,
-        top: 0
+        right: BaseTheme.spacing[0],
+        top: BaseTheme.spacing[0]
     },
 
     /**
@@ -102,8 +105,8 @@ export default {
     thumbnail: {
         alignItems: 'stretch',
         backgroundColor: BaseTheme.palette.ui02,
-        borderColor: '#424242',
-        borderRadius: 4,
+        borderColor: BaseTheme.palette.border03,
+        borderRadius: BaseTheme.shape.borderRadius,
         borderStyle: 'solid',
         borderWidth: 1,
         flex: 1,
@@ -118,30 +121,26 @@ export default {
     },
 
     indicatorContainer: {
-        ...indicatorContainer,
-        flexShrink: 1,
-        height: 32,
-        justifyContent: 'center',
-        marginBottom: BaseTheme.spacing[0],
-        marginHorizontal: BaseTheme.spacing[1],
-        marginTop: BaseTheme.spacing[2],
-        width: 32
+        ...indicatorContainer
+    },
+
+    screenShareIndicatorContainer: {
+        ...indicatorContainer
     },
 
     /**
-     * The thumbnails indicator container.
+     * The thumbnail indicator container.
      */
     thumbnailIndicatorContainer: {
-        alignSelf: 'center',
-        bottom: 4,
+        ...indicatorContainer,
+        bottom: 3,
         flex: 1,
         flexDirection: 'row',
-        left: 4,
+        left: 3,
         position: 'absolute',
         maxWidth: '95%',
         overflow: 'hidden',
-        ...indicatorContainer,
-        padding: 0
+        padding: BaseTheme.spacing[0]
     },
 
     bottomIndicatorsContainer: {
@@ -149,15 +148,12 @@ export default {
         flexDirection: 'row'
     },
 
-    thumbnailTopIndicatorContainer: {
-        padding: 4,
-        position: 'absolute',
-        top: 0,
-        flexDirection: 'row'
-    },
-
     thumbnailTopLeftIndicatorContainer: {
-        left: 0
+        ...indicatorContainer,
+        backgroundColor: 'unset',
+        flexDirection: 'row',
+        position: 'absolute',
+        top: BaseTheme.spacing[1]
     },
 
     raisedHandIndicator: {
@@ -175,7 +171,7 @@ export default {
     },
 
     thumbnailDominantSpeaker: {
-        borderWidth: 4,
+        borderWidth: 2,
         borderColor: BaseTheme.palette.action01Hover
     },
 

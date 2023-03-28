@@ -14,10 +14,17 @@ const defaultState = {
     _language: 'transcribing.subtitlesOff'
 };
 
+interface ITranscriptMessage {
+    final: string;
+    participantName: string;
+    stable: string;
+    unstable: string;
+}
+
 export interface ISubtitlesState {
     _language: string;
     _requestingSubtitles: boolean;
-    _transcriptMessages: Map<string, Object>;
+    _transcriptMessages: Map<string, ITranscriptMessage>;
 }
 
 /**
@@ -77,7 +84,7 @@ function _removeTranscriptMessage(state: ISubtitlesState, { transcriptMessageID 
  * reduction of the specified action.
  */
 function _updateTranscriptMessage(state: ISubtitlesState, { transcriptMessageID, newTranscriptMessage }:
-    { newTranscriptMessage: Object; transcriptMessageID: string; }) {
+    { newTranscriptMessage: ITranscriptMessage; transcriptMessageID: string; }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Updates the new message for the given key in the Map.

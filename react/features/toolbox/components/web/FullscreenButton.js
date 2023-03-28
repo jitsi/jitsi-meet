@@ -1,25 +1,29 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconEnterFullscreen, IconExitFullscreen } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 type Props = AbstractButtonProps & {
 
-  /**
-   * Whether or not the app is currently in full screen.
-   */
-   _fullScreen: boolean,
+    /**
+    * Whether or not the app is currently in full screen.
+    */
+    _fullScreen: boolean,
 };
 
 /**
  * Implementation of a button for toggling fullscreen state.
  */
 class FullscreenButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.fullScreen';
+    accessibilityLabel = 'toolbar.accessibilityLabel.enterFullScreen';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitFullScreen';
     label = 'toolbar.enterFullScreen';
     toggledLabel = 'toolbar.exitFullScreen';
+    tooltip = 'toolbar.enterFullScreen';
+    toggledTooltip = 'toolbar.exitFullScreen';
 
     /**
      * Retrieves icon dynamically.
@@ -38,26 +42,6 @@ class FullscreenButton extends AbstractButton<Props, *> {
      * @param {string} _value - The value.
      */
     set icon(_value) {
-        // Unused.
-    }
-
-    /**
-     * Retrieves icon dynamically.
-     */
-    get tooltip() {
-        if (this._isToggled()) {
-            return 'toolbar.exitFullScreen';
-        }
-
-        return 'toolbar.enterFullScreen';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
         // Unused.
     }
 

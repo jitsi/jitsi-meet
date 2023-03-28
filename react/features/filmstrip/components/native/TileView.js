@@ -7,10 +7,10 @@ import {
     TouchableWithoutFeedback
 } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { setVisibleRemoteParticipants } from '../../actions.web';
 

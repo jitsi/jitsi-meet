@@ -76,6 +76,35 @@
     }
 }
 
+.animatedFadeIn {
+    opacity: 0;
+    animation: fadeInAnimation 0.3s ease forwards;
+}
+
+@keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animatedFadeOut {
+    opacity: 1;
+    animation: fadeOutAnimation 0.3s ease forwards;
+}
+
+@keyframes fadeOutAnimation {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
 #largeVideoContainer {
     height: 100%;
     width: 100%;

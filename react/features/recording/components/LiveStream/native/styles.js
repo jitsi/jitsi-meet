@@ -30,15 +30,25 @@ export default createStyleSheet({
     /**
      * Wrapper for the last element in the form.
      */
-    formFooter: {
-        flexDirection: 'row'
+    formValidation: {
+        flexDirection: 'row',
+        height: BaseTheme.spacing[4]
     },
 
-    /**
-     * Wrapper for individual children in the last element of the form.
-     */
-    formFooterItem: {
-        flex: 1
+    formValidationItem: {
+        alignSelf: 'flex-start',
+        marginVertical: BaseTheme.spacing[1]
+    },
+
+    formButtonsWrapper: {
+        alignSelf: 'center',
+        display: 'flex',
+        maxWidth: 200,
+        width: 'auto'
+    },
+
+    buttonLabelStyle: {
+        color: BaseTheme.palette.link01
     },
 
     /**
@@ -73,20 +83,8 @@ export default createStyleSheet({
      */
     streamKeyInput: {
         alignSelf: 'stretch',
-        borderColor: BaseTheme.palette.ui05,
-        borderBottomWidth: 1,
         color: BaseTheme.palette.text01,
-        fontSize: 14,
-        height: 40,
-        marginBottom: 5,
         textAlign: 'left'
-    },
-
-    /**
-     * Label for the previous field.
-     */
-    streamKeyInputLabel: {
-        alignSelf: 'flex-start'
     },
 
     /**

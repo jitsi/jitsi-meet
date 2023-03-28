@@ -79,7 +79,7 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text01,
-            padding: '8px 16px',
+            padding: '10px 16px',
             paddingRight: '42px',
             border: 0,
             appearance: 'none',

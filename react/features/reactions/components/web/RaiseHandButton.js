@@ -1,7 +1,8 @@
+import { connect } from 'react-redux';
+
 import { translate } from '../../../base/i18n';
 import { IconRaiseHand } from '../../../base/icons';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 
@@ -21,25 +22,12 @@ type Props = AbstractButtonProps & {
  */
 class RaiseHandButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
     icon = IconRaiseHand;
     label = 'toolbar.raiseHand';
-    toggledLabel = 'toolbar.raiseHand';
-
-    /**
-     * Retrieves tooltip dynamically.
-     */
-    get tooltip() {
-        return 'toolbar.raiseHand';
-    }
-
-    /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
-     *
-     * @param {string} _value - The value.
-     */
-    set tooltip(_value) {
-        // Unused.
-    }
+    toggledLabel = 'toolbar.lowerYourHand';
+    tooltip = 'toolbar.raiseHand';
+    toggledTooltip = 'toolbar.lowerYourHand';
 
     /**
      * Indicates whether this button is in toggled state or not.

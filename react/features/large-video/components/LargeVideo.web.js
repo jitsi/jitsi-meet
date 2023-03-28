@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { VIDEO_TYPE } from '../../base/media';
 import { getLocalParticipant } from '../../base/participants';
 import { Watermarks } from '../../base/react';
-import { connect } from '../../base/redux';
 import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks';
 import { setColorAlpha } from '../../base/util';

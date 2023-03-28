@@ -1,12 +1,12 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, isScreenShareParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import {
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack

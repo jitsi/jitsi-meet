@@ -259,10 +259,10 @@ export function getConferenceOptions(stateful: IStateful) {
  *
  * @param {IStateful} stateful - The redux store state.
  * @param {Array<string>} params - The received parameters.
- * @returns {void}
+ * @returns {Object}
  */
-export function generateVisitorConfig(stateful: IStateful, params: Array<string>) {
-    const [ vnode, focusJid ] = params;
+export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
+    const [ vnode, focusJid, username ] = params;
 
     const config = toState(stateful)['features/base/config'];
 
@@ -272,21 +272,47 @@ export function generateVisitorConfig(stateful: IStateful, params: Array<string>
         return;
     }
 
-    const oldDomain = config.hosts.domain;
+    if (!vnode) {
+        // this is redirecting back to main, lets restore config
+        // no point of updating disableFocus, we can skip the initial iq to jicofo
+        if (config.oldConfig && username) {
+            return {
+                hosts: {
+                    domain: config.oldConfig.hosts.domain,
+                    muc: config.oldConfig.hosts.muc
+                },
+                focusUserJid: focusJid,
+                bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
+                websocket: config.oldConfig.websocket
+                    && appendURLParam(config.oldConfig.websocket, 'customusername', username)
+            };
+        }
 
-    config.hosts.domain = `${vnode}.meet.jitsi`;
-    config.hosts.muc = config.hosts.muc.replace(oldDomain, config.hosts.domain);
-    config.focusUserJid = focusJid;
-
-    // This flag disables sending the initial conference request
-    config.disableFocus = true;
-
-    if (config.bosh) {
-        config.bosh = appendURLParam(config.bosh, 'vnode', vnode);
+        return {};
     }
-    if (config.websocket) {
-        config.websocket = appendURLParam(config.websocket, 'vnode', vnode);
-    }
+
+    const oldConfig = {
+        hosts: {
+            domain: config.hosts.domain,
+            muc: config.hosts.muc
+        },
+        bosh: config.bosh,
+        websocket: config.websocket
+    };
+
+    const domain = `${vnode}.meet.jitsi`;
+
+    return {
+        oldConfig,
+        hosts: {
+            domain,
+            muc: config.hosts.muc.replace(oldConfig.hosts.domain, domain)
+        },
+        focusUserJid: focusJid,
+        disableFocus: true, // This flag disables sending the initial conference request
+        bosh: config.bosh && appendURLParam(config.bosh, 'vnode', vnode),
+        websocket: config.websocket && appendURLParam(config.websocket, 'vnode', vnode)
+    };
 }
 
 /**

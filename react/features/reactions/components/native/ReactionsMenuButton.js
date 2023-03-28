@@ -1,5 +1,6 @@
 // @flow
 
+import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
 import { isDialogOpen, openDialog } from '../../../base/dialog';
@@ -9,7 +10,6 @@ import { IconRaiseHand } from '../../../base/icons';
 import {
     getLocalParticipant, hasRaisedHand
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 import ReactionMenuDialog from './ReactionMenuDialog';

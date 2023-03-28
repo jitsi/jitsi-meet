@@ -32,17 +32,6 @@ export const UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
     = 'UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION';
 
 /**
- * Action to update the redux store with the current media event name of large video.
- *
- * @returns {{
- *     type: UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
- *     name: string
- * }}
- */
-export const UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT
-    = 'UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT';
-
-/**
  * Action to set the redux store of the current show me what I'm sharing flag value.
  *
  * @returns {{

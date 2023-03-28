@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { getSecurityUiConfig } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 import Switch from '../../../base/ui/components/web/Switch';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../actions';
@@ -125,7 +125,7 @@ class LobbySection extends PureComponent<IProps, IState> {
  * @param {Object} state - The Redux state.
  * @returns {IProps}
  */
-function mapStateToProps(state: IReduxState): Partial<IProps> {
+function mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = getSecurityUiConfig(state);
 

@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { AlertDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 
 /**
  * Dialog to inform the user that we couldn't fetch the dial-in info page.

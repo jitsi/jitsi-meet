@@ -93,15 +93,15 @@ export interface IJitsiConference {
     setReceiverConstraints: Function;
     setSenderVideoConstraint: Function;
     setSubject: Function;
+    startRecording: Function;
     startVerification: Function;
+    stopRecording: Function;
 }
 
 export interface IConferenceState {
     authEnabled?: boolean;
     authLogin?: string;
-    authRequired?: {
-        join: Function;
-    };
+    authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
     e2eeSupported?: boolean;

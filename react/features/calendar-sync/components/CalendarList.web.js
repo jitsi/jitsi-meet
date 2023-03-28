@@ -1,7 +1,7 @@
 // @flow
 
-import Spinner from '@atlaskit/spinner';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {
     createCalendarClickedEvent,
@@ -10,7 +10,7 @@ import {
 import { translate } from '../../base/i18n';
 import { Icon, IconCalendar } from '../../base/icons';
 import { AbstractPage } from '../../base/react';
-import { connect } from '../../base/redux';
+import Spinner from '../../base/ui/components/web/Spinner';
 import { SETTINGS_TABS, openSettingsDialog } from '../../settings';
 import { refreshCalendar } from '../actions';
 import { ERRORS } from '../constants';
@@ -177,10 +177,7 @@ class CalendarList extends AbstractPage<Props> {
         } else if (_hasIntegrationSelected && !_hasLoadedEvents) {
             return (
                 <div className = 'meetings-list-empty'>
-                    <Spinner
-                        invertColor = { true }
-                        isCompleting = { false }
-                        size = 'medium' />
+                    <Spinner />
                 </div>
             );
         }
@@ -202,7 +199,8 @@ class CalendarList extends AbstractPage<Props> {
                     className = 'meetings-list-empty-button'
                     onClick = { this._onOpenSettings }
                     onKeyPress = { this._onKeyPressOpenSettings }
-                    role = 'button'>
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon
                         className = 'meetings-list-empty-icon'
                         src = { IconCalendar } />

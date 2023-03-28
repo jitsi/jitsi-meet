@@ -1,8 +1,9 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { translate } from '../../base/i18n';
 import { IconTrash } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { deleteRecentListEntry } from '../actions';
 

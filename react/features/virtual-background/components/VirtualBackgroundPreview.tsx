@@ -1,4 +1,3 @@
-import Spinner from '@atlaskit/spinner';
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
@@ -8,12 +7,11 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Video from '../../base/media/components/Video';
 import { equals } from '../../base/redux/functions';
 import { getCurrentCameraDeviceId } from '../../base/settings/functions.web';
 import { createLocalTracksF } from '../../base/tracks/functions';
+import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
@@ -83,39 +81,28 @@ interface IState {
 const styles = (theme: Theme) => {
     return {
         virtualBackgroundPreview: {
-            '& .video-preview': {
-                height: '250px'
-            },
-
-            '& .video-background-preview-entry': {
-                height: '250px',
-                width: '570px',
-                marginBottom: theme.spacing(2),
-                zIndex: 2,
-
-                '@media (max-width: 632px)': {
-                    maxWidth: '336px'
-                }
-            },
+            height: 'auto',
+            width: '100%',
+            overflow: 'hidden',
+            marginBottom: theme.spacing(3),
+            zIndex: 2,
+            borderRadius: '3px',
+            backgroundColor: theme.palette.uiBackground,
+            position: 'relative' as const,
 
             '& .video-preview-loader': {
-                borderRadius: '6px',
-                backgroundColor: 'transparent',
-                height: '250px',
-                marginBottom: theme.spacing(2),
-                width: '572px',
-                position: 'fixed',
-                zIndex: 2,
+                height: '220px',
 
                 '& svg': {
-                    position: 'absolute',
+                    position: 'absolute' as const,
                     top: '40%',
                     left: '45%'
-                },
-
-                '@media (min-width: 432px) and (max-width: 632px)': {
-                    width: '340px'
                 }
+            },
+
+            '& .video-preview-error': {
+                height: '220px',
+                position: 'relative'
             }
         }
     };
@@ -220,12 +207,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     _loadVideoPreview() {
         return (
             <div className = 'video-preview-loader'>
-                <Spinner
-
-                    // @ts-ignore
-                    invertColor = { true }
-                    isCompleting = { false }
-                    size = { 'large' } />
+                <Spinner size = 'large' />
             </div>
         );
     }
@@ -238,31 +220,21 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      */
     _renderPreviewEntry(data: Object) {
         const { t } = this.props;
-        const className = 'video-background-preview-entry';
 
         if (this.state.loading) {
             return this._loadVideoPreview();
         }
         if (!data) {
             return (
-                <div
-                    className = { className }
-                    video-preview-container = { true }>
-                    <div className = 'video-preview-error'>{t('deviceSelection.previewUnavailable')}</div>
-                </div>
+                <div className = 'video-preview-error'>{t('deviceSelection.previewUnavailable')}</div>
             );
         }
-        const props: Object = {
-            className
-        };
 
         return (
-            <div { ...props }>
-                <Video
-                    className = { videoClassName }
-                    playsinline = { true }
-                    videoTrack = {{ jitsiTrack: data }} />
-            </div>
+            <Video
+                className = { videoClassName }
+                playsinline = { true }
+                videoTrack = {{ jitsiTrack: data }} />
         );
     }
 
@@ -310,8 +282,8 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
 
         return (<div className = { classes.virtualBackgroundPreview }>
             {jitsiTrack
-                ? <div className = 'video-preview'>{this._renderPreviewEntry(jitsiTrack)}</div>
-                : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
+                ? this._renderPreviewEntry(jitsiTrack)
+                : this._loadVideoPreview()
             }</div>);
     }
 }

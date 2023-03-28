@@ -1,7 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';

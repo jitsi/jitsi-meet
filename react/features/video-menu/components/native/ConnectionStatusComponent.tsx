@@ -1,11 +1,12 @@
 /* eslint-disable lines-around-comment */
 
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import { hideSheet } from '../../../base/dialog/actions';
 // @ts-ignore
@@ -18,7 +19,6 @@ import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
 // @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
-import { connect } from '../../../base/redux/functions';
 import {
     getTrackByMediaTypeAndParticipant
 } from '../../../base/tracks/functions.native';
@@ -57,7 +57,7 @@ const CONNECTION_QUALITY = [
     }
 ];
 
-type IProps = {
+interface IProps extends WithTranslation {
 
     /**
      * Whether this participant's connection is inactive.
@@ -90,15 +90,10 @@ type IProps = {
     participantID: string;
 
     /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function;
-
-    /**
      * Theme used for styles.
      */
     theme: any;
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link ConnectionStatusComponent}.
@@ -484,5 +479,4 @@ function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(withTheme(ConnectionStatusComponent)));

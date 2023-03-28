@@ -2,10 +2,10 @@
 
 import React, { PureComponent } from 'react';
 import { Divider } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { BottomSheet, hideSheet } from '../../../base/dialog';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-import { connect } from '../../../base/redux';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import { SharedDocumentButton } from '../../../etherpad';
 import { ReactionMenu } from '../../../reactions/components';

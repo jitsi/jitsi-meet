@@ -63,10 +63,12 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 
 const DEFAULT_STATE = {
     dominantSpeaker: undefined,
-    everyoneIsModerator: false,
     fakeParticipants: new Map(),
     local: undefined,
     localScreenShare: undefined,
+    numberOfNonModeratorParticipants: 0,
+    numberOfParticipantsDisabledE2EE: 0,
+    numberOfParticipantsNotSupportingE2EE: 0,
     overwrittenNameList: {},
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
@@ -79,10 +81,12 @@ const DEFAULT_STATE = {
 
 export interface IParticipantsState {
     dominantSpeaker?: string;
-    everyoneIsModerator: boolean;
     fakeParticipants: Map<string, IParticipant>;
     local?: ILocalParticipant;
     localScreenShare?: IParticipant;
+    numberOfNonModeratorParticipants: number;
+    numberOfParticipantsDisabledE2EE: number;
+    numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
     raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
@@ -200,23 +204,30 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         let newParticipant: IParticipant | null = null;
+        const oldParticipant = local || state.local?.id === id ? state.local : state.remote.get(id);
 
         if (state.remote.has(id)) {
-            newParticipant = _participant(state.remote.get(id), action);
+            newParticipant = _participant(oldParticipant, action);
             state.remote.set(id, newParticipant);
         } else if (id === state.local?.id) {
             newParticipant = state.local = _participant(state.local, action);
         }
 
-        if (newParticipant) {
-
-            // everyoneIsModerator calculation:
+        if (oldParticipant && newParticipant && !newParticipant.fakeParticipant) {
             const isModerator = isParticipantModerator(newParticipant);
 
-            if (state.everyoneIsModerator && !isModerator) {
-                state.everyoneIsModerator = false;
-            } else if (!state.everyoneIsModerator && isModerator) {
-                state.everyoneIsModerator = _isEveryoneModerator(state);
+            if (isParticipantModerator(oldParticipant) !== isModerator) {
+                state.numberOfNonModeratorParticipants += isModerator ? -1 : 1;
+            }
+
+            const e2eeEnabled = Boolean(newParticipant.e2eeEnabled);
+            const e2eeSupported = Boolean(newParticipant.e2eeSupported);
+
+            if (Boolean(oldParticipant.e2eeEnabled) !== e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE += e2eeEnabled ? -1 : 1;
+            }
+            if (!local && Boolean(oldParticipant.e2eeSupported) !== e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE += e2eeSupported ? -1 : 1;
             }
         }
 
@@ -267,13 +278,22 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             state.dominantSpeaker = id;
         }
 
-        const isModerator = isParticipantModerator(participant);
-        const { local, remote } = state;
+        if (!fakeParticipant) {
+            const isModerator = isParticipantModerator(participant);
 
-        if (state.everyoneIsModerator && !isModerator) {
-            state.everyoneIsModerator = false;
-        } else if (!local && remote.size === 0 && isModerator) {
-            state.everyoneIsModerator = true;
+            if (!isModerator) {
+                state.numberOfNonModeratorParticipants += 1;
+            }
+
+            const { e2eeEnabled, e2eeSupported } = participant as IParticipant;
+
+            if (!e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE += 1;
+            }
+
+            if (!participant.local && !e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE += 1;
+            }
         }
 
         if (participant.local) {
@@ -349,6 +369,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             pinnedParticipant
         } = state;
         let oldParticipant = remote.get(id);
+        let isLocalScreenShare = false;
 
         if (oldParticipant?.sources?.size) {
             const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
@@ -373,6 +394,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             oldParticipant = state.local;
             delete state.local;
         } else if (localScreenShare?.id === id) {
+            isLocalScreenShare = true;
             oldParticipant = state.local;
             delete state.localScreenShare;
         } else {
@@ -382,10 +404,6 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
 
         state.sortedRemoteParticipants.delete(id);
         state.raisedHandsQueue = state.raisedHandsQueue.filter(pid => pid.id !== id);
-
-        if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
-            state.everyoneIsModerator = _isEveryoneModerator(state);
-        }
 
         if (dominantSpeaker === id) {
             state.dominantSpeaker = undefined;
@@ -405,6 +423,22 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
             sortedRemoteVirtualScreenshareParticipants.delete(id);
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+        }
+
+        if (oldParticipant && !oldParticipant.fakeParticipant && !isLocalScreenShare) {
+            const { e2eeEnabled, e2eeSupported } = oldParticipant;
+
+            if (!isParticipantModerator(oldParticipant)) {
+                state.numberOfNonModeratorParticipants -= 1;
+            }
+
+            if (!e2eeEnabled) {
+                state.numberOfParticipantsDisabledE2EE -= 1;
+            }
+
+            if (!oldParticipant.local && !e2eeSupported) {
+                state.numberOfParticipantsNotSupportingE2EE -= 1;
+            }
         }
 
         return { ...state };
@@ -463,27 +497,6 @@ function _getDisplayName(state: Object, name?: string): string {
     const config = state['features/base/config'];
 
     return name ?? (config?.defaultRemoteDisplayName || 'Fellow Jitster');
-}
-
-/**
- * Loops through the participants in the state in order to check if all participants are moderators.
- *
- * @param {Object} state - The local participant redux state.
- * @returns {boolean}
- */
-function _isEveryoneModerator(state: IParticipantsState) {
-    if (isParticipantModerator(state.local)) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        for (const [ k, p ] of state.remote) {
-            if (!isParticipantModerator(p)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    return false;
 }
 
 /**

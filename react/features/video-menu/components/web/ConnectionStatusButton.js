@@ -1,9 +1,9 @@
 // @flow
 import React, { useCallback } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { IconInfoCircle } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { renderConnectionStatus } from '../../actions.web';
 

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import {
@@ -9,7 +10,6 @@ import {
     isParticipantModerator
 } from '../../../base/participants';
 import { FakeParticipant } from '../../../base/participants/types';
-import { connect } from '../../../base/redux';
 import {
     isParticipantAudioMuted,
     isParticipantVideoMuted

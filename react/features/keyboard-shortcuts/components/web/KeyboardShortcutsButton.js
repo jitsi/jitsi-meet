@@ -1,11 +1,13 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconShortcuts } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { openKeyboardShortcutsDialog } from '../../actions';
+import { openSettingsDialog } from '../../../settings/actions';
+import { SETTINGS_TABS } from '../../../settings/constants';
 
 /**
  * The type of the React {@code Component} props of {@link KeyboardShortcutsButton}.
@@ -37,7 +39,7 @@ class KeyboardShortcutsButton extends AbstractButton<Props, *> {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('shortcuts'));
-        dispatch(openKeyboardShortcutsDialog());
+        dispatch(openSettingsDialog(SETTINGS_TABS.SHORTCUTS));
     }
 }
 

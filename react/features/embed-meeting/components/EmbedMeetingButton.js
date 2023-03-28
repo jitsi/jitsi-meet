@@ -1,10 +1,11 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { IconCode } from '../../base/icons';
-import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
 import EmbedMeetingDialog from './EmbedMeetingDialog';

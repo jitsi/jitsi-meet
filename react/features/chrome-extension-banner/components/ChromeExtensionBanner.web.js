@@ -2,6 +2,7 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 import {
     createChromeExtensionBannerEvent,
@@ -15,7 +16,6 @@ import {
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseLarge } from '../../base/icons';
 import { browser } from '../../base/lib-jitsi-meet';
-import { connect } from '../../base/redux';
 import { isVpaasMeeting } from '../../jaas/functions';
 import logger from '../logger';
 

@@ -3,11 +3,11 @@
 import React from 'react';
 import { NativeModules, Platform, findNodeHandle } from 'react-native';
 import { ScreenCapturePickerView } from 'react-native-webrtc';
+import { connect } from 'react-redux';
 
 import { IOS_SCREENSHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconScreenshare } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks';
 

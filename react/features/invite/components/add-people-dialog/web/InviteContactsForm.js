@@ -2,13 +2,13 @@
 
 import InlineMessage from '@atlaskit/inline-message';
 import React from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { Avatar } from '../../../../base/avatar';
 import { translate } from '../../../../base/i18n';
 import { Icon, IconPhoneRinging } from '../../../../base/icons';
 import { MultiSelectAutocomplete } from '../../../../base/react';
-import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { hideAddPeopleDialog } from '../../../actions';
 import { INVITE_TYPES } from '../../../constants';

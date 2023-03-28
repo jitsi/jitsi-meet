@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
@@ -134,35 +134,38 @@ class Chat extends AbstractChat<Props> {
     _renderChat() {
         const { _isPollsEnabled, _isPollsTabFocused } = this.props;
 
-        if (_isPollsTabFocused) {
-            return (
-                <>
-                    { _isPollsEnabled && this._renderTabs() }
-                    <div
-                        aria-labelledby = { CHAT_TABS.POLLS }
-                        id = 'polls-panel'
-                        role = 'tabpanel'>
-                        <PollsPane />
-                    </div>
-                    <KeyboardAvoider />
-                </>
-            );
-        }
-
         return (
             <>
                 { _isPollsEnabled && this._renderTabs() }
                 <div
                     aria-labelledby = { CHAT_TABS.CHAT }
-                    className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
-                    id = 'chat-panel'
-                    role = 'tabpanel'>
+                    className = { clsx(
+                        'chat-panel',
+                        !_isPollsEnabled && 'chat-panel-no-tabs',
+                        _isPollsTabFocused && 'hide'
+                    ) }
+                    id = { `${CHAT_TABS.CHAT}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 0 }>
                     <MessageContainer
                         messages = { this.props._messages } />
                     <MessageRecipient />
                     <ChatInput
                         onSend = { this._onSendMessage } />
                 </div>
+                { _isPollsEnabled && (
+                    <>
+                        <div
+                            aria-labelledby = { CHAT_TABS.POLLS }
+                            className = { clsx('polls-panel', !_isPollsTabFocused && 'hide') }
+                            id = { `${CHAT_TABS.POLLS}-panel` }
+                            role = 'tabpanel'
+                            tabIndex = { 0 }>
+                            <PollsPane />
+                        </div>
+                        <KeyboardAvoider />
+                    </>
+                )}
             </>
         );
     }
@@ -185,11 +188,13 @@ class Chat extends AbstractChat<Props> {
                     accessibilityLabel: t('chat.tabs.chat'),
                     countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
                     id: CHAT_TABS.CHAT,
+                    controlsId: `${CHAT_TABS.CHAT}-panel`,
                     label: t('chat.tabs.chat')
                 }, {
                     accessibilityLabel: t('chat.tabs.polls'),
                     countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
                     id: CHAT_TABS.POLLS,
+                    controlsId: `${CHAT_TABS.POLLS}-panel`,
                     label: t('chat.tabs.polls')
                 }
                 ] } />

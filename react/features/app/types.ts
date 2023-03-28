@@ -24,6 +24,7 @@ import { IResponsiveUIState } from '../base/responsive-ui/reducer';
 import { ISettingsState } from '../base/settings/reducer';
 import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
+import { ITooltipState } from '../base/tooltip/reducer';
 import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
 import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
@@ -111,6 +112,7 @@ export interface IReduxState {
     'features/base/responsive-ui': IResponsiveUIState;
     'features/base/settings': ISettingsState;
     'features/base/sounds': ISoundsState;
+    'features/base/tooltip': ITooltipState;
     'features/base/tracks': ITracksState;
     'features/base/user-interaction': IUserInteractionState;
     'features/breakout-rooms': IBreakoutRoomsState;

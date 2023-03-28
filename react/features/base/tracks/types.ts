@@ -46,7 +46,6 @@ export interface ITrackOptions {
 export interface ITrack {
     isReceivingData: boolean;
     jitsiTrack: any;
-    lastMediaEvent?: string;
     local: boolean;
     mediaType: MediaType;
     mirror: boolean;

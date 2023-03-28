@@ -184,13 +184,21 @@
     "deepLinking": {
         "appNotInstalled": "Sie benötigen die „{{app}}“-App, um der Konferenz auf dem Smartphone beizutreten.",
         "description": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
+        "descriptionNew": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. <br /><br /> Versuchen Sie es erneut oder treten Sie der Konferenz im Web bei.",
         "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{app}}“-Desktop-App zu starten.",
         "downloadApp": "App herunterladen",
+        "downloadMobileApp": "Aus dem App Store herunterladen",
         "ifDoNotHaveApp": "Wenn Sie die App noch nicht haben:",
         "ifHaveApp": "Wenn Sie die App bereits haben:",
         "joinInApp": "Mit der App am Meeting teilnehmen",
+        "joinInAppNew": "Mit der App",
+        "joinInBrowser": "Im Browser",
+        "launchMeetingLabel": "Wie möchten Sie an der Konferenz teilnehmen?",
         "launchWebButton": "Im Web öffnen",
+        "noMobileApp": "Sie haben die App noch nicht installiert?",
+        "termsAndConditions": "Indem Sie fortfahren, stimmen Sie underen<a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>Nutzungsbedingungen</a> zu.",
         "title": "Die Konferenz wird in {{app}} geöffnet …",
+        "titleNew": "Konferenz starten ...",
         "tryAgainButton": "Erneut mit der nativen Applikation versuchen",
         "unsupportedBrowser": "Sie verwenden einen Browser, der noch nicht unterstützt wird."
     },
@@ -203,6 +211,12 @@
         "microphonePermission": "Fehler beim Bezug der Mikrofon-Zugriffsberechtigungen"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Anrufsteuerung",
+            "connectedDevices": "Verbundene Geräte:",
+            "deleteDevice": "Gerät löschen",
+            "pairDevice": "Gerät verbinden"
+        },
         "noPermission": "Berechtigungen nicht erteilt",
         "previewUnavailable": "Keine Vorschau verfügbar",
         "selectADevice": "Ein Gerät wählen",
@@ -226,7 +240,9 @@
         "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
         "accessibilityLabel": {
-            "liveStreaming": "Livestream"
+            "close": "Popup schließen",
+            "liveStreaming": "Livestream",
+            "sharingTabs": "Optionen zum Teilen"
         },
         "add": "Hinzufügen",
         "addMeetingNote": "Notiz zu dieser Konferenz hinzufügen",
@@ -437,6 +453,11 @@
         "star": "Sterne",
         "veryBad": "Sehr schlecht",
         "veryGood": "Sehr gut"
+    },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Videominiaturen"
+        }
     },
     "giphy": {
         "noResults": "Keine Ergebnisse :(",
@@ -654,6 +675,7 @@
         "dataChannelClosedDescription": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher ist die Videoqulität auf die schlechteste Stufe limitiert.",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
+        "dontRemindMe": "Nicht erinnern",
         "focus": "Konferenzleitung",
         "focusFail": "{{component}} ist im Moment nicht verfügbar – wiederholen in {{ms}} Sekunden",
         "gifsMenu": "GIPHY",
@@ -662,6 +684,7 @@
         "invitedOneMember": "{{name}} wurde eingeladen",
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
+        "joinMeeting": "Beitreten",
         "kickParticipant": "{{kicked}} wurde von {{kicker}} ausgewiesen",
         "leftOneMember": "{{name}} hat die Konferenz verlassen",
         "leftThreePlusMembers": "{{name}} und Weitere haben die Konferenz verlassen",
@@ -751,6 +774,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Anwesende ({{count}})",
+            "visitors": "Gäste ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
         },
         "search": "Suche Anwesende",
@@ -758,6 +782,7 @@
     },
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
     "passwordSetRemotely": "von einer anderen Person gesetzt",
+    "pinParticipant": "{{participantName}} - anheften",
     "pinnedParticipant": "Die Person ist angeheftet",
     "polls": {
         "answer": {
@@ -950,6 +975,7 @@
         "title": "Sicherheitsoptionen"
     },
     "settings": {
+        "audio": "Audio",
         "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -970,9 +996,11 @@
         "maxStageParticipants": "Maximale Anzahl an Personen, die zur Hauptansicht angeheftet werden können",
         "microphones": "Mikrofon",
         "moderator": "Moderation",
+        "moderatorOptions": "Moderationseinstellungen",
         "more": "Mehr",
         "name": "Name",
         "noDevice": "Kein",
+        "notifications": "Benachrichtigungen",
         "participantJoined": "Neue Person nimmt teil",
         "participantKnocking": "Person hat Lobby betreten",
         "participantLeft": "Person verlässt die Konferenz",
@@ -983,13 +1011,14 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "selfView": "Eigene Ansicht",
-        "sounds": "Hinweistöne",
+        "shortcuts": "Tastaturkürzel",
         "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
         "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
         "startVideoMuted": "Alle Personen treten ohne Video bei",
         "talkWhileMuted": "Wenn bei Stummschaltung gesprochen wird",
-        "title": "Einstellungen"
+        "title": "Einstellungen",
+        "video": "Kamera"
     },
     "settingsView": {
         "advanced": "Erweitert",
@@ -1070,18 +1099,29 @@
             "cc": "Untertitel ein-/ausschalten",
             "chat": "Chatfenster öffnen / schließen",
             "clap": "Klatschen",
+            "closeChat": "Chat schließen",
+            "closeMoreActions": "„Weitere Einstellungen“ schließen",
+            "closeParticipantsPane": "Anwesendenliste schließen",
             "collapse": "Einklappen",
             "document": "Geteiltes Dokument schließen",
+            "documentClose": "Geteiltes Dokument schließen",
+            "documentOpen": "Geteiltes Dokument öffnen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
             "endConference": "Konferenz für alle beenden",
+            "enterFullScreen": "Vollbildmodus einschalten",
+            "enterTileView": "Kachelansicht einschalten",
+            "exitFullScreen": "Vollbildansicht ausschalten",
+            "exitTileView": "Kachelansicht ausschalten",
             "expand": "Ausklappen",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus ein-/ausschalten",
             "giphy": "GIPHY ein-/ausschalten",
             "grantModerator": "Moderationsrechte vergeben",
             "hangup": "Konferenz verlassen",
+            "heading": "Toolbar",
             "help": "Hilfe",
+            "hideWhiteboard": "Whiteboard ausblenden",
             "invite": "Person einladen",
             "kick": "Person entfernen",
             "laugh": "Lachen",
@@ -1091,6 +1131,7 @@
             "lobbyButton": "Lobbymodus ein-/ausschalten",
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/ausschalten",
+            "lowerHand": "Hand senken",
             "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
             "moreActionsMenu": "Menü „Weitere Einstellungen“",
             "moreOptions": "Menü „Weitere Optionen“",
@@ -1100,6 +1141,7 @@
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
             "muteEveryonesVideoStream": "Alle Kameras ausschalten",
             "noiseSuppression": "Rauschunterdrückung",
+            "openChat": "Chat öffnen",
             "participants": "Anwesende",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
@@ -1118,15 +1160,19 @@
             "sharedvideo": "Videofreigabe ein-/ausschalten",
             "shortcuts": "Tastenkombinationen ein-/ausblenden",
             "show": "Im Vordergrund anzeigen",
+            "showWhiteboard": "Whiteboard anzeigen",
             "silence": "Stille",
             "speakerStats": "Sprechstatistik ein-/ausblenden",
+            "stopScreenSharing": "Bildschirmfreigabe beenden",
+            "stopSharedVideo": "Videofreigabe beenden",
             "surprised": "Überrascht",
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
+            "unmute": "Stummschaltung aufheben",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
-            "whiteboard": "Whiteboard ein-/ausschalten"
+            "videounmute": "Kamera einschalten"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
@@ -1139,6 +1185,7 @@
         "chat": "Chat öffnen / schließen",
         "clap": "Klatschen",
         "closeChat": "Chat schließen",
+        "closeParticipantsPane": "Anwesenheitsliste schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
@@ -1147,6 +1194,7 @@
         "download": "Unsere Apps herunterladen",
         "e2ee": "Ende-zu-Ende-Verschlüsselung",
         "embedMeeting": "Konferenz einbetten",
+        "enableNoiseSuppression": "Rauschunterdrückung einschalten",
         "endConference": "Konferenz für alle beenden",
         "enterFullScreen": "Vollbildmodus",
         "enterTileView": "Kachelansicht einschalten",
@@ -1171,7 +1219,7 @@
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
-        "mute": "Mikrofon aktivieren / deaktivieren",
+        "mute": "Stummschalten",
         "muteEveryone": "Alle stummschalten",
         "muteEveryonesVideo": "Alle Kameras ausschalten",
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
@@ -1215,8 +1263,10 @@
         "talkWhileMutedPopup": "Versuchen Sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera wechseln",
+        "unmute": "Stummschaltung aufheben",
         "videoSettings": "Kameraeinstellungen",
-        "videomute": "Kamera starten / stoppen"
+        "videomute": "Kamera stoppen",
+        "videounmute": "Kamera einschalten"
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
@@ -1234,6 +1284,7 @@
         "subtitlesOff": "Ausschalten",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {
         "androidGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
         "chromeGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
@@ -1272,9 +1323,11 @@
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
         "performanceSettings": "Qualitätseinstellungen",
+        "recording": "Aufnahme läuft",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
-        "standardDefinition": "Standardauflösung"
+        "standardDefinition": "Standardauflösung",
+        "streaming": "Streaming läuft"
     },
     "videothumbnail": {
         "connectionInfo": "Verbindungsinformationen",
@@ -1324,6 +1377,7 @@
         "webAssemblyWarning": "WebAssembly wird nicht unterstützt",
         "webAssemblyWarningDescription": "WebAssembly ist deaktiviert oder wird in diesem Browser nicht unterstützt"
     },
+    "visitorsLabel": "Anzahl Gäste: {{count}}",
     "volumeSlider": "Lautstärkeregler",
     "welcomepage": {
         "accessibilityLabel": {
@@ -1356,6 +1410,7 @@
             "microsoftLogo": "Microsoft Logo",
             "policyLogo": "Richtlinienlogo"
         },
+        "meetingsAccessibilityLabel": "Konferenzen",
         "mobileDownLoadLinkAndroid": "Android App Download",
         "mobileDownLoadLinkFDroid": "F-Droid App Download",
         "mobileDownLoadLinkIos": "iOS App Download",
@@ -1375,5 +1430,10 @@
         "terms": "AGB",
         "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen",
         "upcomingMeetings": "Ihre zukünftigen Konferenzen"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Whiteboard"
+        }
     }
 }

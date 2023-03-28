@@ -1,7 +1,6 @@
 // eslint-disable-next-line lines-around-comment
 import React from 'react';
 
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import StatelessAvatar from '../../../base/avatar/components/web/StatelessAvatar';
 import { getInitials } from '../../../base/avatar/functions';
@@ -79,13 +78,13 @@ const SpeakerStatsItem = (props: Props) => {
                             <StatelessAvatar
                                 className = 'userAvatar'
                                 color = { BaseTheme.palette.ui04 }
-                                initials = { getInitials(props.displayName) } />
+                                initials = { getInitials(props.displayName) }
+                                size = { 32 } />
                         ) : (
                             <Avatar
-
-                                // @ts-ignore
                                 className = 'userAvatar'
-                                participantId = { props.participantId } />
+                                participantId = { props.participantId }
+                                size = { 32 } />
                         )
                     }
                 </div>

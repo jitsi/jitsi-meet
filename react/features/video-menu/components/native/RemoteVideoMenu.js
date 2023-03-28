@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { BottomSheet, hideSheet } from '../../../base/dialog';
@@ -12,7 +13,6 @@ import {
     getParticipantDisplayName,
     isLocalParticipantModerator
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';

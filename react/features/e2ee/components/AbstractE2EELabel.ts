@@ -27,6 +27,6 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         _e2eeLabels: e2ee.labels,
-        _showLabel: state['features/e2ee'].everyoneEnabledE2EE
+        _showLabel: state['features/base/participants'].numberOfParticipantsDisabledE2EE === 0
     };
 }

@@ -1,9 +1,10 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { SPEAKERSTATS_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AbstractSpeakerStatsButton from '../AbstractSpeakerStatsButton';

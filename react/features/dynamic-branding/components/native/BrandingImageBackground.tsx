@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { SvgUri } from 'react-native-svg';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 

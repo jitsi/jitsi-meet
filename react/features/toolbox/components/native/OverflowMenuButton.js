@@ -1,8 +1,9 @@
+import { connect } from 'react-redux';
+
 import { openSheet } from '../../../base/dialog';
 import { OVERFLOW_MENU_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconDotsHorizontal } from '../../../base/icons';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 import OverflowMenu from './OverflowMenu';

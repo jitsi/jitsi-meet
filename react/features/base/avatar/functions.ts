@@ -79,3 +79,13 @@ export function getInitials(s?: string) {
 export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
     return corsURLs.some(pattern => url.startsWith(pattern));
 }
+
+/**
+ * Checks if the passed prop is a loaded icon or not.
+ *
+ * @param {string? | Object?} iconProp - The prop to check.
+ * @returns {boolean}
+ */
+export function isIcon(iconProp?: string | Function): iconProp is Function {
+    return Boolean(iconProp) && (typeof iconProp === 'object' || typeof iconProp === 'function');
+}

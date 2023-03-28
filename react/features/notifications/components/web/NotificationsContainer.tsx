@@ -1,22 +1,15 @@
-import { FlagGroupContext } from '@atlaskit/flag/flag-group';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import { Theme } from '@mui/material/styles';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import React, { useCallback } from 'react';
+import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
+import { INotificationProps } from '../../types';
+import NotificationsTransition from '../NotificationsTransition';
 
-// @ts-ignore
 import Notification from './Notification';
-
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * Whether we are a SIP gateway or not.
@@ -33,14 +26,9 @@ interface IProps extends WithTranslation {
      * notification at the top and the rest shown below it in order.
      */
     _notifications: Array<{
-        props: Object;
-        uid: number;
+        props: INotificationProps;
+        uid: string;
     }>;
-
-    /**
-     * JSS classes object.
-     */
-    classes: any;
 
     /**
      * Invoked to update the redux store in order to remove notifications.
@@ -53,172 +41,58 @@ interface IProps extends WithTranslation {
     portal?: boolean;
 }
 
-const useStyles = (theme: Theme) => {
+const useStyles = makeStyles()(() => {
     return {
         container: {
-            position: 'absolute' as const,
+            position: 'absolute',
             left: '16px',
-            bottom: '90px',
-            width: '400px',
+            bottom: '84px',
+            width: '320px',
             maxWidth: '100%',
             zIndex: 600
         },
 
         containerPortal: {
+            width: '100%',
             maxWidth: 'calc(100% - 32px)'
-        },
-
-        transitionGroup: {
-            '& > *': {
-                marginBottom: '20px',
-                borderRadius: '6px!important', // !important used to overwrite atlaskit style
-                position: 'relative'
-            },
-
-            '& div > span > svg > path': {
-                fill: 'inherit'
-            },
-
-            '& div > span, & div > p': {
-                color: theme.palette.field01
-            },
-
-            '& div.message > span': {
-                color: theme.palette.link01Active
-            },
-
-            '& .ribbon': {
-                width: '4px',
-                height: 'calc(100% - 16px)',
-                position: 'absolute',
-                left: 0,
-                top: '8px',
-                borderRadius: '4px',
-
-                '&.normal': {
-                    backgroundColor: theme.palette.link01Active
-                },
-
-                '&.error': {
-                    backgroundColor: theme.palette.iconError
-                },
-
-                '&.success': {
-                    backgroundColor: theme.palette.success01
-                },
-
-                '&.warning': {
-                    backgroundColor: theme.palette.warning01
-                }
-            }
         }
     };
-};
+});
 
-/**
- * Implements a React {@link Component} which displays notifications and handles
- * automatic dismissal after a notification is shown for a defined timeout
- * period.
- *
- * @augments {Component}
- */
-class NotificationsContainer extends Component<IProps> {
-    _api: Object;
+const NotificationsContainer = ({
+    _iAmSipGateway,
+    _notifications,
+    dispatch,
+    portal
+}: IProps) => {
+    const { classes, cx } = useStyles();
 
-    /**
-     * Initializes a new {@code NotificationsContainer} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
+    const _onDismissed = useCallback((uid: string) => {
+        dispatch(hideNotification(uid));
+    }, []);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onDismissed = this._onDismissed.bind(this);
-
-        // HACK ALERT! We are rendering AtlasKit Flag elements outside of a FlagGroup container.
-        // In order to hook-up the dismiss action we'll a fake context provider,
-        // just like FlagGroup does.
-        this._api = {
-            onDismissed: this._onDismissed,
-            dismissAllowed: () => true
-        };
+    if (_iAmSipGateway) {
+        return null;
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        if (this.props._iAmSipGateway) {
-            return null;
-        }
-
-        return (
-            <AtlasKitThemeProvider mode = 'light'>
-                {/* @ts-ignore */}
-                <FlagGroupContext.Provider value = { this._api }>
-                    <div
-                        className = { clsx(this.props.classes.container, {
-                            [this.props.classes.containerPortal]: this.props.portal
-                        }) }
-                        id = 'notifications-container'>
-                        <TransitionGroup className = { this.props.classes.transitionGroup }>
-                            {this._renderFlags()}
-                        </TransitionGroup>
-                    </div>
-                </FlagGroupContext.Provider>
-            </AtlasKitThemeProvider>
-        );
-    }
-
-    /**
-     * Emits an action to remove the notification from the redux store so it
-     * stops displaying.
-     *
-     * @param {string} uid - The id of the notification to be removed.
-     * @private
-     * @returns {void}
-     */
-    _onDismissed(uid: string) {
-        this.props.dispatch(hideNotification(uid));
-    }
-
-    /**
-     * Renders notifications to display as ReactElements. An empty array will
-     * be returned if notifications are disabled.
-     *
-     * @private
-     * @returns {ReactElement[]}
-     */
-    _renderFlags() {
-        const { _notifications } = this.props;
-
-        return _notifications.map(notification => {
-            const { props, uid } = notification;
-
-            // The id attribute is necessary as {@code FlagGroup} looks for
-            // either id or key to set a key on notifications, but accessing
-            // props.key will cause React to print an error.
-            return (
-                <CSSTransition
-                    appear = { true }
-                    classNames = 'notification'
-                    in = { true }
-                    key = { uid }
-                    timeout = { 200 }>
+    return (
+        <div
+            className = { cx(classes.container, {
+                [classes.containerPortal]: portal
+            }) }
+            id = 'notifications-container'>
+            <NotificationsTransition>
+                {_notifications.map(({ props, uid }) => (
                     <Notification
                         { ...props }
-                        id = { uid }
-                        onDismissed = { this._onDismissed }
+                        key = { uid }
+                        onDismissed = { _onDismissed }
                         uid = { uid } />
-                </CSSTransition>
-            );
-        });
-    }
-}
+                )) || null}
+            </NotificationsTransition>
+        </div>
+    );
+};
 
 /**
  * Maps (parts of) the Redux state to the associated props for this component.
@@ -240,4 +114,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));
+export default connect(_mapStateToProps)(NotificationsContainer);

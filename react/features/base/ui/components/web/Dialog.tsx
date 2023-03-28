@@ -23,12 +23,6 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
 
-        closeIcon: {
-            '&:focus': {
-                boxShadow: 'none'
-            }
-        },
-
         title: {
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.heading5),
@@ -137,8 +131,7 @@ const Dialog = ({
                 </p>
                 {!hideCloseButton && (
                     <ClickableIcon
-                        accessibilityLabel = { t('dialog.close') }
-                        className = { classes.closeIcon }
+                        accessibilityLabel = { t('dialog.accessibilityLabel.close') }
                         icon = { IconCloseLarge }
                         id = 'modal-header-close-button'
                         onClick = { onClose } />

@@ -1,10 +1,11 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconRingGroup } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
 

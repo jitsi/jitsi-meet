@@ -4,13 +4,12 @@
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
-import { IReduxState } from '../../../../app/types';
+import { IReduxState, IStore } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
-import { connect } from '../../../redux/functions';
 import { hideDialog } from '../../actions';
 // @ts-ignore
 import logger from '../../logger';
@@ -24,9 +23,9 @@ import ConfirmDialog from './ConfirmDialog';
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogProps extends WithTranslation {
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
     isNetworkFailure: boolean;
-    reason: string;
+    reason?: string;
 }
 
 /**
@@ -208,7 +207,7 @@ function mapStateToProps(state: IReduxState) {
         = connectionError && isFatalJitsiConnectionError(connectionError);
     const fatalConfigError = fatalError === configError;
 
-    const isNetworkFailure = fatalConfigError || fatalConnectionError;
+    const isNetworkFailure = Boolean(fatalConfigError || fatalConnectionError);
 
     let reason;
 

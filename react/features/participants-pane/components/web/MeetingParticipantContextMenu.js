@@ -1,12 +1,12 @@
 // @flow
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import FakeParticipantContextMenu from '../../../video-menu/components/web/FakeParticipantContextMenu';
 import ParticipantContextMenu from '../../../video-menu/components/web/ParticipantContextMenu';
 
@@ -122,7 +122,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state, ownProps): Object {
+function _mapStateToProps(state, ownProps) {
     const { participantID, overflowDrawer, drawerParticipant } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;

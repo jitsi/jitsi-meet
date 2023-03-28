@@ -4,9 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-ignore
 import TogglePinToStageButton from '../../../../features/video-menu/components/web/TogglePinToStageButton';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { IconPlay } from '../../../base/icons/svg';
 import { isWhiteboardParticipant } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../redux';
 import AbstractVideoTrack from '../AbstractVideoTrack';
 import type { Props } from '../AbstractVideoTrack';
 
