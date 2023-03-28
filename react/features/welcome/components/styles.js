@@ -135,7 +135,7 @@ export default {
      */
     reducedUIContainer: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.screen01Header,
+        backgroundColor: BaseTheme.palette.link01,
         flex: 1,
         justifyContent: 'center'
     },
@@ -166,7 +166,7 @@ export default {
      */
     textInput: {
         backgroundColor: 'transparent',
-        borderColor: BaseTheme.palette.field02,
+        borderColor: BaseTheme.palette.ui10,
         borderRadius: 4,
         borderWidth: 1,
         color: TEXT_COLOR,
@@ -193,13 +193,13 @@ export default {
     },
 
     insecureRoomNameWarningIcon: {
-        color: BaseTheme.palette.warning03,
+        color: BaseTheme.palette.warning02,
         fontSize: 24,
         marginRight: 10
     },
 
     insecureRoomNameWarningText: {
-        color: BaseTheme.palette.warning03,
+        color: BaseTheme.palette.warning02,
         flex: 1
     },
 

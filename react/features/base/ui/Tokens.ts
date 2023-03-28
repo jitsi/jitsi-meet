@@ -42,21 +42,7 @@ export const colors = {
     support06: '#6A50D3',
     support07: '#4380E2',
     support08: '#00A8B3',
-    support09: '#2AA076',
-
-    // The following tokens are not in the Design System and they should be removed
-    // after we replace them in the components.
-    primary10: '#17A0DB',
-    primary11: '#1081B2',
-    surface00: '#111111',
-    surface12: '#AAAAAA',
-    surface13: '#495258',
-    surface14: '#555555',
-    surface15: '#474747',
-    surface16: '#131519',
-    surface17: '#161618',
-    warning07: '#FFD740',
-    disabled01: '#00000040'
+    support09: '#2AA076'
 };
 
 // Mapping between the token used and the color
@@ -170,48 +156,7 @@ export const colorMap = {
     support06: 'support06',
     support07: 'support07',
     support08: 'support08',
-    support09: 'support09',
-
-    // The following mappings are not in the Design System and they should be removed
-    // after we replace them in the components.
-    ui00: 'surface00',
-    ui12: 'surface11',
-    ui13: 'surface14',
-    ui14: 'surface15',
-    ui15: 'surface12',
-    ui16: 'surface16',
-    action04: 'primary11',
-    action03Focus: 'surface07',
-    action03Disabled: 'transparent',
-    actionDisabled: 'surface09',
-    icon05: 'surface04',
-    text05: 'surface06',
-    text06: 'surface03',
-    text07Info: 'surface02',
-    screen01Header: 'primary10',
-    screen02Header: 'surface17',
-    underlay01: 'surface13',
-    bottomSheet: 'surface00',
-    dividerColor: 'surface12',
-    indicatorColor: 'surface12',
-    section01: 'surface10',
-    border01: 'surface08',
-    border02: 'surface06',
-    border03: 'surface04',
-    border05: 'surface07',
-    borderError: 'error06',
-    warning03: 'warning07',
-    tab01Disabled: 'disabled01',
-    switch01Enabled: 'success04',
-    switch01Disabled: 'surface06',
-    video01Disabled: 'disabled01',
-    field01Hover: 'surface03',
-    field01Focus: 'primary05',
-    field01Disabled: 'surface05',
-    field02: 'surface11',
-    field02Hover: 'primary09',
-    field02Focus: 'primary05',
-    field02Disabled: 'surface06'
+    support09: 'support09'
 };
 
 
@@ -337,30 +282,6 @@ export const typography = {
     heading6: {
         fontSize: 16,
         lineHeight: 26,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
-
-
-    // These styles are no longer part of the Design System.
-    // They should be replaced and removed.
-    heading7: {
-        fontSize: 14,
-        lineHeight: 24,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
-
-    labelButton: {
-        fontSize: 14,
-        lineHeight: 24,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
-
-    labelButtonLarge: {
-        fontSize: 16,
-        lineHeight: 24,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
     }

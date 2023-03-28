@@ -251,7 +251,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
                 style = { speakerDeviceIsNotSelected && borderRadiusHighlightStyles }
-                underlayColor = { BaseTheme.palette.underlay01 } >
+                underlayColor = { BaseTheme.palette.ui04 } >
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }

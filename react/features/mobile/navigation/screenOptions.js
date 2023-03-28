@@ -43,7 +43,7 @@ export const welcomeScreenOptions = {
     gestureEnabled: false,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
+        backgroundColor: BaseTheme.palette.ui01
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
@@ -65,7 +65,7 @@ export const chatTabBarOptions = {
     },
     tabBarStyle: {
         backgroundColor: BaseTheme.palette.ui01,
-        borderBottomColor: BaseTheme.palette.border05,
+        borderBottomColor: BaseTheme.palette.ui06,
         borderBottomWidth: 0.4
     }
 };
@@ -79,7 +79,7 @@ export const presentationScreenOptions = {
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
+        backgroundColor: BaseTheme.palette.ui01
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
@@ -184,7 +184,7 @@ export const connectingScreenOptions = {
 export const preJoinScreenOptions = {
     gestureEnabled: false,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
+        backgroundColor: BaseTheme.palette.ui01
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01

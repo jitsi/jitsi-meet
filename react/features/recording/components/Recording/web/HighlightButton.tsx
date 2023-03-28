@@ -62,11 +62,11 @@ const styles = (theme: Theme) => {
         disabled: {
             background: theme.palette.text02
         },
-        regular: { // @ts-ignore
-            background: theme.palette.field02
+        regular: {
+            background: theme.palette.ui10
         },
-        highlightNotification: { // @ts-ignore
-            backgroundColor: theme.palette.field02,
+        highlightNotification: {
+            backgroundColor: theme.palette.ui10,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
             boxSizing: 'border-box' as const,
@@ -79,8 +79,8 @@ const styles = (theme: Theme) => {
             top: '32px',
             width: 320
         },
-        highlightNotificationButton: { // @ts-ignore
-            color: theme.palette.field01Focus,
+        highlightNotificationButton: {
+            color: theme.palette.action01,
             cursor: 'pointer',
             fontWeight: '600',
             marginTop: '8px'

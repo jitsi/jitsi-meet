@@ -1277,7 +1277,6 @@ var config = {
                 ui03: "violet",
                 ui04: "magenta",
                 ui05: "blueviolet",
-                field02Hover: 'red',
                 action01: 'green',
                 action01Hover: 'lightgreen',
                 disabled01: 'beige',

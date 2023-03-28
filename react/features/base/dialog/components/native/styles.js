@@ -113,7 +113,7 @@ export const bottomSheetStyles = {
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: BaseTheme.palette.underlay01
+        underlayColor: BaseTheme.palette.ui04
     },
 
     /**
@@ -136,17 +136,17 @@ export const bottomSheetStyles = {
      * Bottom sheet's background color with footer.
      */
     sheetFooter: {
-        backgroundColor: BaseTheme.palette.bottomSheet
+        backgroundColor: BaseTheme.palette.ui01
     }
 };
 
 export default {
     dialogButton: {
-        ...BaseTheme.typography.labelButton
+        ...BaseTheme.typography.bodyLongBold
     },
 
     destructiveDialogButton: {
-        ...BaseTheme.typography.labelButton,
+        ...BaseTheme.typography.bodyLongBold,
         color: BaseTheme.palette.actionDanger
     }
 };
@@ -258,7 +258,7 @@ ColorSchemeRegistry.register('Dialog', {
     },
 
     topBorderContainer: {
-        borderTopColor: BaseTheme.palette.dividerColor,
+        borderTopColor: BaseTheme.palette.ui07,
         borderTopWidth: 1
     }
 });

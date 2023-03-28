@@ -9,7 +9,7 @@ export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const ICON_INFO = require('../../../../../images/icon-info.png');
 export const ICON_USERS = require('../../../../../images/icon-users.png');
 export const LOCAL_RECORDING = require('../../../../../images/downloadLocalRecording.png');
-export const TRACK_COLOR = BaseTheme.palette.ui15;
+export const TRACK_COLOR = BaseTheme.palette.ui07;
 
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
@@ -60,7 +60,7 @@ export default {
         marginRight: 12
     },
     highlightButton: {
-        backgroundColor: BaseTheme.palette.section01,
+        backgroundColor: BaseTheme.palette.ui09,
         flexDirection: 'row',
         alignItems: 'center',
         marginLeft: BaseTheme.spacing[0],
@@ -125,7 +125,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
 
     headerInfo: {
         ...header,
-        backgroundColor: BaseTheme.palette.warning03,
+        backgroundColor: BaseTheme.palette.warning02,
         marginBottom: BaseTheme.spacing[4],
         paddingHorizontal: BaseTheme.spacing[3]
     },
@@ -147,7 +147,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     switch: {
-        color: BaseTheme.palette.ui12
+        color: BaseTheme.palette.ui10
     },
 
     title: {
@@ -156,7 +156,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
 
     titleInfo: {
         ...title,
-        color: BaseTheme.palette.text07Info
+        color: BaseTheme.palette.ui01
     },
 
     text: {

@@ -11,7 +11,7 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
  *
  */
 const AudioIcon = (): JSX.Element => (<Icon
-    color = { BaseTheme.palette.text06 }
+    color = { BaseTheme.palette.ui02 }
     size = { 20 }
     src = { IconVolumeUp } />);
 

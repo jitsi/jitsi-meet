@@ -85,7 +85,7 @@ export default {
 
     participantContent: {
         alignItems: 'center',
-        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomColor: BaseTheme.palette.ui02,
         borderBottomWidth: 2.4,
         display: 'flex',
         flexDirection: 'row',
@@ -247,8 +247,8 @@ export default {
 
     contextMenuItemSectionAvatar: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.bottomSheet,
-        borderBottomColor: BaseTheme.palette.dividerColor,
+        backgroundColor: BaseTheme.palette.ui01,
+        borderBottomColor: BaseTheme.palette.ui07,
         borderBottomWidth: 1,
         borderTopLeftRadius: BaseTheme.spacing[3],
         borderTopRightRadius: BaseTheme.spacing[3],
@@ -276,7 +276,7 @@ export default {
     },
 
     divider: {
-        backgroundColor: BaseTheme.palette.dividerColor
+        backgroundColor: BaseTheme.palette.ui07
     },
 
     inputContainer: {

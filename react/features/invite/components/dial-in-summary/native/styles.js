@@ -2,9 +2,9 @@
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
-export const INDICATOR_COLOR = BaseTheme.palette.indicatorColor;
+export const INDICATOR_COLOR = BaseTheme.palette.ui07;
 
-const WV_BACKGROUND = BaseTheme.palette.ui14;
+const WV_BACKGROUND = BaseTheme.palette.ui03;
 
 export default {
 
@@ -15,7 +15,7 @@ export default {
 
     indicatorWrapper: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui12,
+        backgroundColor: BaseTheme.palette.ui10,
         height: '100%',
         justifyContent: 'center'
     },
