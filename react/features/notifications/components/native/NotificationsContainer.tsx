@@ -30,6 +30,11 @@ interface IProps extends WithTranslation {
     dispatch: Function;
 
     /**
+     * Whether or not the layout should change to support tile view mode.
+     */
+    shouldDisplayTileView: boolean;
+
+    /**
      * Checks toolbox visibility.
      */
     toolboxVisible: boolean;
@@ -176,9 +181,21 @@ class NotificationsContainer extends Component<IProps> {
      * @inheritdoc
      */
     render() {
-        const { _notifications, toolboxVisible } = this.props;
-        const notificationsContainerStyle
-            = toolboxVisible ? styles.withToolbox : styles.withoutToolbox;
+        const { _notifications, shouldDisplayTileView, toolboxVisible } = this.props;
+        let notificationsContainerStyle;
+
+        if (shouldDisplayTileView) {
+
+            if (toolboxVisible) {
+                notificationsContainerStyle = styles.withToolboxTileView;
+            } else {
+                notificationsContainerStyle = styles.withoutToolboxTileView;
+            }
+
+        } else {
+            notificationsContainerStyle
+                = toolboxVisible ? styles.withToolbox : styles.withoutToolbox;
+        }
 
         return (
             <SafeAreaView

@@ -472,7 +472,8 @@ class Conference extends AbstractConference<Props, State> {
 
                 <TestConnectionInfo />
 
-                {_shouldDisplayTileView
+                {
+                    _shouldDisplayTileView
                     && <>
                         { this._renderNotificationsContainer() }
                         <Toolbox />
@@ -533,6 +534,7 @@ class Conference extends AbstractConference<Props, State> {
 
         return super.renderNotificationsContainer(
             {
+                shouldDisplayTileView: this.props._shouldDisplayTileView,
                 style: notificationsStyle,
                 toolboxVisible: this.props._toolboxVisible
             }
