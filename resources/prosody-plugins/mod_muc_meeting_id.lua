@@ -99,3 +99,9 @@ function handle_jicofo_unlock(event)
 end
 
 module:hook('jicofo-unlock-room', handle_jicofo_unlock);
+
+-- make sure we remove nick if someone is sending it with a message to protect
+-- forgery of display name
+module:hook("muc-occupant-groupchat", function(event)
+    event.stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
+end, 45); -- prosody check is prio 50, we want to run after it

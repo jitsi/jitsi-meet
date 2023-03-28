@@ -1378,6 +1378,7 @@
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
     "visitors": {
+        "chatIndicator": "(visitor)",
         "labelTooltip": "Number of visitors: {{count}}",
         "notification": {
             "description": "To participate raise your hand",

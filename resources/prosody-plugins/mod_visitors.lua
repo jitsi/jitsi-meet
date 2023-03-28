@@ -4,11 +4,9 @@
 --- vm1-ip-address conference.visitors1.domain.com
 --- vm2-ip-address visitors2.domain.com
 --- vm2-ip-address conference.visitors2.domain.com
---- TODO: drop the /etc/hosts changes for https://modules.prosody.im/mod_s2soutinjection.html
 --- Enable in global modules: 's2s_bidi' and 'certs_all'
 --- Make sure 's2s' is not in modules_disabled
 --- Open port 5269 on the provider side and on the firewall on the machine (iptables -I INPUT 4 -p tcp -m tcp --dport 5269 -j ACCEPT)
---- TODO: make it work with tenants
 --- NOTE: Make sure all communication between prosodies is using the real jids ([foo]room1@muc.example.com)
 local st = require 'util.stanza';
 local jid = require 'util.jid';
@@ -127,7 +125,6 @@ module:hook('presence/full', function(event)
     local stanza = event.stanza;
     local room_name, from_host = jid.split(stanza.attr.from);
     if stanza.attr.type == 'unavailable' and from_host ~= main_muc_component_config then
-        -- TODO tenants???
         local room_jid = jid.join(room_name, main_muc_component_config); -- converts from visitor to main room jid
 
         local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
@@ -231,4 +228,53 @@ process_host_module(main_muc_component_config, function(host_module, host)
             module:send(fmuc_pr);
         end
     end);
+    -- forwards messages from main participants to vnodes
+    host_module:hook("muc-occupant-groupchat", function(event)
+        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        local vnodes = visitors_nodes[room.jid].nodes;
+        local user = jid.node(occupant.nick);
+        -- a main participant we need to update all active visitor nodes
+        for k in pairs(vnodes) do
+            local fmuc_msg = st.clone(stanza);
+            fmuc_msg.attr.to = jid.join(user, k);
+            fmuc_msg.attr.from = occupant.jid;
+            module:send(fmuc_msg);
+        end
+    end);
+    -- receiving messages from visitor nodes and forward them to local main participants
+    -- and forward them to the rest of visitor nodes
+    host_module:hook("muc-occupant-groupchat", function(event)
+        local occupant, room, stanza = event.occupant, event.room, event.stanza;
+        local to = stanza.attr.to;
+        local from = stanza.attr.from;
+        local from_vnode = jid.host(from);
+
+        if occupant or not (visitors_nodes[to] or visitors_nodes[to].nodes[from_vnode]) then
+            return;
+        end
+
+        -- a message from visitor occupant of known visitor node
+        stanza.attr.from = to;
+        for _, o in room:each_occupant() do
+            -- send it to the nick to be able to route it to the room (ljm multiple rooms) from unknown occupant
+            room:route_to_occupant(o, stanza);
+        end
+
+        -- now we need to send to rest of visitor nodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for k in pairs(vnodes) do
+            if k ~= from_vnode then
+                local st_copy = st.clone(stanza);
+                st_copy.attr.to = jid.join(jid.node(room.jid), k);
+                module:send(st_copy);
+            end
+        end
+
+        return true;
+    end, 55); -- prosody check for unknown participant chat is prio 50, we want to override it
 end);

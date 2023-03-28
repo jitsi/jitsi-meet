@@ -10,7 +10,6 @@
 --- NOTE: Make sure all communication between prosodies is using the real jids ([foo]room1@muc.example.com), as there
 --- are certain configs for whitelisted domains and connections that are domain based
 --- TODO: filter presence from main occupants back to main prosody
---- TODO: filter messages back to main prosody
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
@@ -23,6 +22,8 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 local main_domain = string.gsub(module.host, muc_domain_prefix..'.', '');
+
+local NICK_NS = 'http://jabber.org/protocol/nick';
 
 -- This is the domain of the main prosody that is federating with us;
 local fmuc_main_domain;
@@ -138,7 +139,6 @@ module:hook('muc-broadcast-presence', function (event)
     local raiseHand = full_p:get_child_text('jitsi_participant_raisedHand');
     -- a promotion detected let's send it to main prosody
     if raiseHand then
-        -- TODO check room= with tenants
         local iq_id = new_id();
         sent_iq_cache:set(iq_id, socket.gettime());
         local promotion_request = st.iq({
@@ -149,7 +149,12 @@ module:hook('muc-broadcast-presence', function (event)
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
           :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
-        -- TODO what about name ???? it will be coming from the token, but we need to extract it and send it to the moderators
+
+        local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
+        if nick_element then
+            promotion_request:add_child(nick_element);
+        end
+
         module:send(promotion_request);
     end
 
@@ -236,3 +241,56 @@ end
 process_host_module(main_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
 end);
+
+-- only live chat is supported for visitors
+module:hook("muc-occupant-groupchat", function(event)
+    local occupant, room, stanza = event.occupant, event.room, event.stanza;
+    local from = stanza.attr.from;
+    local occupant_host = jid.host(occupant.bare_jid);
+
+    -- if there is no occupant this is a message from main, probably coming from other vnode
+    if occupant then
+        -- we manage nick only for visitors
+        if occupant_host ~= fmuc_main_domain then
+            -- add to message stanza display name for the visitor
+            -- remove existing nick to avoid forgery
+            stanza:remove_children('nick', NICK_NS);
+            local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
+            if nick_element then
+                stanza:add_child(nick_element);
+            else
+                stanza:tag('nick', { xmlns = NICK_NS })
+                    :text('anonymous'):up();
+            end
+        end
+
+        stanza.attr.from = occupant.nick;
+    else
+        stanza.attr.from = jid.join(jid.node(from), module.host);
+    end
+
+    -- let's send it to main chat and rest of visitors here
+    for _, o in room:each_occupant() do
+        -- filter remote occupants
+        if jid.host(o.bare_jid) == main_domain then
+            room:route_to_occupant(o, stanza)
+        end
+    end
+
+    -- send to main participants only messages from local occupants (skip from remote vnodes)
+    if occupant and occupant_host ~= fmuc_main_domain then
+        local main_message = st.clone(stanza);
+        main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain);
+        module:send(main_message);
+    end
+    stanza.attr.from = from; -- something prosody does internally
+
+    return true;
+end, 55); -- prosody check for visitor's chat is prio 50, we want to override it
+
+module:hook('muc-private-message', function(event)
+    -- private messaging is forbidden
+    event.origin.send(st.error_reply(event.stanza, "auth", "forbidden",
+            "Private messaging is disabled on visitor nodes"));
+    return true;
+end, 10);
