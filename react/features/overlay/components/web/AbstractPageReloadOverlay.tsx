@@ -159,13 +159,11 @@ export default class AbstractPageReloadOverlay<P extends IProps>
         // because the log queue is not flushed before "fabric terminated" is
         // sent to the backed.
         // FIXME: We should dispatch action for this.
-        if (typeof APP !== 'undefined') {
-            if (APP.conference?._room) {
-                APP.conference._room.sendApplicationLog(JSON.stringify({
-                    name: 'page.reload',
-                    label: this.props.reason
-                }));
-            }
+        if (typeof APP !== 'undefined' && APP.conference?._room) {
+            APP.conference._room.sendApplicationLog(JSON.stringify({
+                name: 'page.reload',
+                label: this.props.reason
+            }));
         }
 
         sendAnalytics(createPageReloadScheduledEvent(

@@ -259,7 +259,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         } else { // @ts-ignore
             if (_tokenExpireDate && Date.now() > new Date(_tokenExpireDate)) {
                 getNewAccessToken(_appKey, _rToken)
-                    .then((resp: any) => dispatch(updateDropboxToken(resp.token, resp.rToken, resp.expireDate)));
+                    .then((resp: { expireDate: number; rToken: string; token: string; }) =>
+                        dispatch(updateDropboxToken(resp.token, resp.rToken, resp.expireDate)));
 
                 return;
             }
