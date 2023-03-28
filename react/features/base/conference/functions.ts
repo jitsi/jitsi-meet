@@ -288,7 +288,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
             };
         }
 
-        return {};
+        return;
     }
 
     const oldConfig = {

@@ -108,12 +108,24 @@ export default {
     },
 
     withToolbox: {
-        bottom: 64,
+        bottom: 56,
+        position: 'absolute',
+        width: '100%'
+    },
+
+    withToolboxTileView: {
+        bottom: 56,
         position: 'absolute',
         width: '100%'
     },
 
     withoutToolbox: {
+        position: 'absolute',
+        width: '100%'
+    },
+
+    withoutToolboxTileView: {
+        bottom: 0,
         position: 'absolute',
         width: '100%'
     }

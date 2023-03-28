@@ -224,12 +224,13 @@ function _mapStateToProps(state, ownProps) {
     const _currentRoomId = getCurrentRoomId(state);
     const shouldDisableKick = disableKick || !kickOutEnabled;
     const moderator = isLocalParticipantModerator(state);
+    const _iAmVisitor = state['features/visitors'].iAmVisitor;
 
     return {
         _currentRoomId,
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
-        _disablePrivateChat: Boolean(disablePrivateChat),
+        _disablePrivateChat: Boolean(disablePrivateChat) || _iAmVisitor,
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),

@@ -352,8 +352,8 @@ class ConferenceConnector {
             const [ vnode ] = params;
 
             APP.store.dispatch(overwriteConfig(newConfig))
-                .then(APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
                 .then(this._conference.leaveRoom())
+                .then(APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
 
                 // we do not clear local tracks on error, so we need to manually clear them
                 .then(APP.store.dispatch(destroyLocalTracks()))

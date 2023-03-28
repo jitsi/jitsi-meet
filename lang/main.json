@@ -1377,7 +1377,13 @@
         "webAssemblyWarning": "WebAssembly not supported",
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
-    "visitorsLabel": "Number of visitors: {{count}}",
+    "visitors": {
+        "labelTooltip": "Number of visitors: {{count}}",
+        "notification": {
+            "description": "To participate raise your hand",
+            "title": "You are a visitor in the meeting"
+        }
+    },
     "volumeSlider": "Volume slider",
     "welcomepage": {
         "accessibilityLabel": {
