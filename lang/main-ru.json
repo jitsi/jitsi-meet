@@ -1105,7 +1105,7 @@
             "toggleFilmstrip": "Включить диафильм",
             "videoblur": "Вкл/Выкл размытие фона",
             "videomute": "Вкл/Выкл видео",
-            "whiteboard": "Показать/Скрыть доску"
+            "whiteboard": "Показать / Скрыть интерактивную доску"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
         "audioOnlyOff": "Включить видео (стандартный режим)",
@@ -1136,7 +1136,7 @@
         "giphy": "Показать GIPHY меню",
         "hangup": "Выход",
         "help": "Справка",
-        "hideWhiteboard": "Скрыть доску",
+        "hideWhiteboard": "Скрыть интерактивную доску",
         "invite": "Пригласить",
         "joinBreakoutRoom": "Войти в сессионный зал",
         "laugh": "Смеяться",
@@ -1182,7 +1182,7 @@
         "shareaudio": "Предоставить доступ к звуку",
         "sharedvideo": "Видео YouTube",
         "shortcuts": "Комбинации клавиш",
-        "showWhiteboard": "Показать доску",
+        "showWhiteboard": "Показать интерактивную доску",
         "silence": "Молчание",
         "speakerStats": "Статистика",
         "startScreenSharing": "Начать трансляцию с экрана",
@@ -1357,7 +1357,7 @@
     },
     "whiteboard": {
         "accessibilityLabel": {
-            "heading": "Доска"
+            "heading": "Интерактивная доска"
         }
     }
 }
