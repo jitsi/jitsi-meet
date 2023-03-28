@@ -61,8 +61,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     <Input
                         customStyles = {{
                             input: styles.streamKeyInput,
-                            container: styles.streamKeyContainer
-                    }}
+                            container: styles.streamKeyContainer }}
                         onChange = { this._onInputChange }
                         placeholder = { t('liveStreaming.enterStreamKey') }
                         value = { this.props.value } />
