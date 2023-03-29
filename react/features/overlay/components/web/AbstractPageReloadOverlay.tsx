@@ -1,96 +1,91 @@
-// @flow
-
+// @ts-ignore
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { WithTranslation } from 'react-i18next';
 
-import {
-    createPageReloadScheduledEvent,
-    sendAnalytics
-} from '../../../analytics';
-import { reloadNow } from '../../../app/actions';
+import { createPageReloadScheduledEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { reloadNow } from '../../../app/actions.web';
+import { IReduxState, IStore } from '../../../app/types';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
-} from '../../../base/lib-jitsi-meet/functions';
+} from '../../../base/lib-jitsi-meet/functions.web';
 import logger from '../../logger';
 
+// @ts-ignore
 import ReloadButton from './ReloadButton';
-
-declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractPageReloadOverlay}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * The details is an object containing more information about the connection
      * failed (shard changes, was the computer suspended, etc.).
      */
-    details: Object,
+    details: Object;
 
-    dispatch: Dispatch<any>,
+    /**
+     * Redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
 
     /**
      * The error that caused the display of the overlay.
      */
-    error: Error,
+    error: Error;
 
     /**
      * The indicator which determines whether the reload was caused by network
      * failure.
      */
-    isNetworkFailure: boolean,
+    isNetworkFailure: boolean;
 
     /**
      * The reason for the error that will cause the reload.
      * NOTE: Used by PageReloadOverlay only.
      */
-    reason: string,
-
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function
-};
+    reason: string;
+}
 
 /**
  * The type of the React {@code Component} state of
  * {@link AbstractPageReloadOverlay}.
  */
-type State = {
+interface IState {
 
     /**
      * The translation key for the title of the overlay.
      */
-    message: string,
+    message: string;
 
     /**
      * Current value(time) of the timer.
      */
-    timeLeft: number,
+    timeLeft: number;
 
     /**
      * How long the overlay dialog will be displayed before the conference will
      * be reloaded.
      */
-    timeoutSeconds: number,
+    timeoutSeconds: number;
 
     /**
      * The translation key for the title of the overlay.
      */
-    title: string
-};
+    title: string;
+}
 
 /**
  * Implements an abstract React {@link Component} for the page reload overlays.
  *
  * FIXME: This is not really an abstract class as some components and functions are very web specific.
  */
-export default class AbstractPageReloadOverlay<P: Props>
-    extends Component<P, State> {
+export default class AbstractPageReloadOverlay<P extends IProps>
+    extends Component<P, IState> {
 
     /**
      * Determines whether this overlay needs to be rendered (according to a
@@ -100,7 +95,7 @@ export default class AbstractPageReloadOverlay<P: Props>
      * @returns {boolean} - If this overlay needs to be rendered, {@code true};
      * {@code false}, otherwise.
      */
-    static needsRender(state: Object) {
+    static needsRender(state: IReduxState) {
         const { error: conferenceError } = state['features/base/conference'];
         const { error: configError } = state['features/base/config'];
         const { error: connectionError } = state['features/base/connection'];
@@ -115,7 +110,7 @@ export default class AbstractPageReloadOverlay<P: Props>
         return jitsiConnectionError || jitsiConferenceError || configError;
     }
 
-    _interval: ?IntervalID;
+    _interval: number | undefined;
 
     /**
      * Initializes a new AbstractPageReloadOverlay instance.
@@ -164,13 +159,11 @@ export default class AbstractPageReloadOverlay<P: Props>
         // because the log queue is not flushed before "fabric terminated" is
         // sent to the backed.
         // FIXME: We should dispatch action for this.
-        if (typeof APP !== 'undefined') {
-            if (APP.conference && APP.conference._room) {
-                APP.conference._room.sendApplicationLog(JSON.stringify({
-                    name: 'page.reload',
-                    label: this.props.reason
-                }));
-            }
+        if (typeof APP !== 'undefined' && APP.conference?._room) {
+            APP.conference._room.sendApplicationLog(JSON.stringify({
+                name: 'page.reload',
+                label: this.props.reason
+            }));
         }
 
         sendAnalytics(createPageReloadScheduledEvent(
@@ -183,7 +176,7 @@ export default class AbstractPageReloadOverlay<P: Props>
                 this.state.timeoutSeconds} seconds.`);
 
         this._interval
-            = setInterval(
+            = window.setInterval(
                 () => {
                     if (this.state.timeLeft === 0) {
                         if (this._interval) {
@@ -268,7 +261,7 @@ export default class AbstractPageReloadOverlay<P: Props>
  *     reason: string
  * }}
  */
-export function abstractMapStateToProps(state: Object) {
+export function abstractMapStateToProps(state: IReduxState) {
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
     const { fatalError } = state['features/overlay'];
@@ -290,7 +283,7 @@ export function abstractMapStateToProps(state: Object) {
     }
 
     return {
-        details: fatalError && fatalError.details,
+        details: fatalError?.details,
         error: fatalError,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,

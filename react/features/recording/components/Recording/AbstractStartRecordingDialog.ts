@@ -1,142 +1,138 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-} from '../../../analytics';
+import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState, IStore } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import {
-    getDropboxData,
-    getNewAccessToken,
-    isEnabled as isDropboxEnabled,
-    updateDropboxToken
-} from '../../../dropbox';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
-import { toggleRequestingSubtitles } from '../../../subtitles';
+import { updateDropboxToken } from '../../../dropbox/actions';
+import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
+import { showErrorNotification } from '../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
+import { toggleRequestingSubtitles } from '../../../subtitles/actions';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
 
-export type Props = {
-
-    /**
-     * Requests subtitles when recording is turned on.
-     */
-    _autoCaptionOnRecord: boolean,
-
-    /**
-     * The {@code JitsiConference} for the current conference.
-     */
-    _conference: Object,
+export interface IProps extends WithTranslation {
 
     /**
      * The app key for the dropbox authentication.
      */
-    _appKey: string,
+    _appKey: string;
+
+    /**
+     * Requests subtitles when recording is turned on.
+     */
+    _autoCaptionOnRecord: boolean;
+
+    /**
+     * The {@code JitsiConference} for the current conference.
+     */
+    _conference: IJitsiConference;
 
     /**
      * Whether to show file recordings service, even if integrations
      * are enabled.
      */
-    _fileRecordingsServiceEnabled: boolean,
+    _fileRecordingsServiceEnabled: boolean;
 
     /**
      * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
-    _fileRecordingsServiceSharingEnabled: boolean,
+    _fileRecordingsServiceSharingEnabled: boolean;
 
     /**
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
-    _isDropboxEnabled: boolean,
+    _isDropboxEnabled: boolean;
 
     /**
      * Whether or not local recording is enabled.
      */
-    _localRecordingEnabled: boolean,
+    _localRecordingEnabled: boolean;
 
     /**
      * The dropbox refresh token.
      */
-    _rToken: string,
+    _rToken: string;
 
     /**
      * Whether or not the local participant is screensharing.
      */
-    _screensharing: boolean,
+    _screensharing: boolean;
 
     /**
      * Whether or not the screenshot capture feature is enabled.
      */
-    _screenshotCaptureEnabled: boolean,
-
-    /**
-     * Access token's expiration date as UNIX timestamp.
-     */
-    _tokenExpireDate?: number,
+    _screenshotCaptureEnabled: boolean;
 
     /**
      * The dropbox access token.
      */
-    _token: string,
+    _token: string;
+
+    /**
+     * Access token's expiration date as UNIX timestamp.
+     */
+    _tokenExpireDate?: number;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    dispatch: IStore['dispatch'];
 }
 
-type State = {
+interface IState {
 
     /**
      * <tt>true</tt> if we have valid oauth token.
      */
-    isTokenValid: boolean,
+    isTokenValid: boolean;
 
     /**
      * <tt>true</tt> if we are in process of validating the oauth token.
      */
-    isValidating: boolean,
+    isValidating: boolean;
+
+    /**
+     * Whether the local recording should record just the local user streams.
+     */
+    localRecordingOnlySelf?: boolean;
 
     /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
-    selectedRecordingService: ?string,
+    selectedRecordingService?: string;
 
     /**
      * True if the user requested the service to share the recording with others.
      */
-    sharingEnabled: boolean,
+    sharingEnabled: boolean;
 
     /**
      * Number of MiB of available space in user's Dropbox account.
      */
-    spaceLeft: ?number,
+    spaceLeft?: number;
 
     /**
      * The display name of the user's Dropbox account.
      */
-    userName: ?string
-};
+    userName?: string;
+}
 
 /**
  * Component for the recording start dialog.
  */
-class AbstractStartRecordingDialog extends Component<Props, State> {
+class AbstractStartRecordingDialog extends Component<IProps, IState> {
     /**
      * Initializes a new {@code StartRecordingDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -191,13 +187,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
     }
-
-    _areIntegrationsEnabled: () => boolean;
 
     /**
      * Returns true if the integrations with third party services are enabled
@@ -210,8 +204,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         return this.props._isDropboxEnabled;
     }
 
-    _onSharingSettingChanged: () => void;
-
     /**
      * Callback to handle sharing setting change from the dialog.
      *
@@ -222,8 +214,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             sharingEnabled: !this.state.sharingEnabled
         });
     }
-
-    _onLocalRecordingSelfChange: () => void;
 
     /**
      * Callback to handle local recording only self setting change.
@@ -236,8 +226,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         });
     }
 
-    _onSelectedRecordingServiceChanged: (string) => void;
-
     /**
      * Handles selected recording service changes.
      *
@@ -245,7 +233,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * service.
      * @returns {void}
      */
-    _onSelectedRecordingServiceChanged(selectedRecordingService) {
+    _onSelectedRecordingServiceChanged(selectedRecordingService: string) {
         this.setState({ selectedRecordingService }, () => {
             this.props.dispatch(setSelectedRecordingService(selectedRecordingService));
         });
@@ -268,10 +256,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
                 isTokenValid: false,
                 isValidating: false
             });
-        } else {
+        } else { // @ts-ignore
             if (_tokenExpireDate && Date.now() > new Date(_tokenExpireDate)) {
                 getNewAccessToken(_appKey, _rToken)
-                    .then(resp => dispatch(updateDropboxToken(resp.token, resp.rToken, resp.expireDate)));
+                    .then((resp: { expireDate: number; rToken: string; token: string; }) =>
+                        dispatch(updateDropboxToken(resp.token, resp.rToken, resp.expireDate)));
 
                 return;
             }
@@ -297,8 +286,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         }
     }
 
-    _onSubmit: () => boolean;
-
     /**
      * Starts a file recording session.
      *
@@ -316,7 +303,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             dispatch
         } = this.props;
         let appData;
-        const attributes = {};
+        const attributes: {
+            type?: string;
+        } = {};
 
         switch (this.state.selectedRecordingService) {
         case RECORDING_TYPES.DROPBOX: {
@@ -374,8 +363,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         return true;
     }
 
-    _toggleScreenshotCapture:() => void;
-
     /**
      * Toggles screenshot capture feature.
      *
@@ -391,7 +378,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @protected
      * @returns {React$Component}
      */
-    _renderDialogContent: () => React$Component<*>;
+    _renderDialogContent: () => React.Component;
 }
 
 /**
@@ -412,11 +399,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  *     _token: string
  * }}
  */
-export function mapStateToProps(state: Object) {
+export function mapStateToProps(state: IReduxState) {
     const {
         transcription,
         recordingService,
-        dropbox = {},
+        dropbox = { appKey: undefined },
         localRecording
     } = state['features/base/config'];
 

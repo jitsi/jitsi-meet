@@ -1,31 +1,27 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+
+import { IReduxState } from '../../../app/types';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractUserMediaPermissionsOverlay}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The browser which is used currently. The text is different for every
      * browser.
      */
-    browser: string,
-
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function
-};
+    browser: string;
+}
 
 /**
  * Implements a React {@link Component} for overlay with guidance how to proceed
  * with gUM prompt.
  */
 export default class AbstractUserMediaPermissionsOverlay
-    extends Component<Props> {
+    extends Component<IProps> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -34,7 +30,7 @@ export default class AbstractUserMediaPermissionsOverlay
      * @returns {boolean} - If this overlay needs to be rendered, {@code true};
      * {@code false}, otherwise.
      */
-    static needsRender(state: Object) {
+    static needsRender(state: IReduxState) {
         return state['features/overlay'].isMediaPermissionPromptVisible;
     }
 }
@@ -48,7 +44,7 @@ export default class AbstractUserMediaPermissionsOverlay
  *     browser: string
  * }}
  */
-export function abstractMapStateToProps(state: Object) {
+export function abstractMapStateToProps(state: IReduxState) {
     const { browser } = state['features/overlay'];
 
     return {

@@ -24,9 +24,8 @@ import {
     isTrackStreamingStatusInterrupted
 } from '../../functions';
 import AbstractConnectionIndicator, {
-    type Props as AbstractProps,
+    IProps as AbstractProps,
     mapStateToProps as _abstractMapStateToProps
-    // @ts-ignore
 } from '../AbstractConnectionIndicator';
 
 import {
