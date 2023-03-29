@@ -8,6 +8,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local new_id = require 'util.id'.medium;
+local um_is_admin = require "core.usermanager".is_admin;
 
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
@@ -17,6 +18,10 @@ if not muc_domain_base then
 end
 
 local auto_allow_promotion = module:get_option_boolean("auto_allow_visitor_promotion", false);
+
+local function is_admin(jid)
+    return um_is_admin(jid, module.host);
+end
 
 -- This is a map to keep data for room and the jids that were allowed to join after visitor mode is enabled
 -- automatically allowed or allowed by a moderator
@@ -125,25 +130,36 @@ local function stanza_handler(event)
         return;
     end
 
+    local processed;
+    -- promotion request is coming from visitors and is a set and is over the s2s connection
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
         respond_iq_result(origin, stanza);
-        return request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from);
+        processed = request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from);
     end
 
+    local is_from_admin = is_admin(jid.bare(stanza.attr.from));
+
+    -- this is only from jicofo, so it is safe to
     local connect_vnode = visitors_iq:get_child('connect-vnode');
-    if connect_vnode then
+    if connect_vnode and is_from_admin then
         respond_iq_result(origin, stanza);
-        return connect_vnode_received(room, connect_vnode.attr.vnode);
+        connect_vnode_received(room, connect_vnode.attr.vnode);
+        processed = true;
     end
 
     local disconnect_vnode = visitors_iq:get_child('disconnect-vnode');
-    if disconnect_vnode then
+    if disconnect_vnode and is_from_admin then
         respond_iq_result(origin, stanza);
-        return disconnect_vnode_received(room, disconnect_vnode.attr.vnode);
+        disconnect_vnode_received(room, disconnect_vnode.attr.vnode);
+        processed = true;
     end
 
-    module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
+    if not processed then
+        module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
+    end
+
+    return processed;
 end
 
 module:hook("iq/host", stanza_handler, 10);

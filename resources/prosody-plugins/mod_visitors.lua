@@ -101,8 +101,6 @@ local function disconnect_vnode(event)
     -- we are counting vnode main participants and we should be clearing it there
     -- let's do it here just in case
     visitors_nodes[room.jid].nodes[conference_service] = nil;
-
-    return true;
 end
 module:hook('jitsi-disconnect-vnode', disconnect_vnode);
 
