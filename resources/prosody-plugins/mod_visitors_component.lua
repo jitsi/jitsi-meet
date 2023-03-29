@@ -134,31 +134,27 @@ local function stanza_handler(event)
     -- promotion request is coming from visitors and is a set and is over the s2s connection
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
-        respond_iq_result(origin, stanza);
         processed = request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from);
     end
 
-    local is_from_admin = is_admin(jid.bare(stanza.attr.from));
+    -- connect and disconnect are only received from jicofo
+    if is_admin(jid.bare(stanza.attr.from)) then
+        for item in visitors_iq:childtags('connect-vnode') do
+            connect_vnode_received(room, item.attr.vnode);
+            processed = true;
+        end
 
-    -- this is only from jicofo, so it is safe to
-    local connect_vnode = visitors_iq:get_child('connect-vnode');
-    if connect_vnode and is_from_admin then
-        respond_iq_result(origin, stanza);
-        connect_vnode_received(room, connect_vnode.attr.vnode);
-        processed = true;
-    end
-
-    local disconnect_vnode = visitors_iq:get_child('disconnect-vnode');
-    if disconnect_vnode and is_from_admin then
-        respond_iq_result(origin, stanza);
-        disconnect_vnode_received(room, disconnect_vnode.attr.vnode);
-        processed = true;
+        for item in visitors_iq:childtags('disconnect-vnode') do
+            disconnect_vnode_received(room, item.attr.vnode);
+            processed = true;
+        end
     end
 
     if not processed then
         module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
     end
 
+    respond_iq_result(origin, stanza);
     return processed;
 end
 
