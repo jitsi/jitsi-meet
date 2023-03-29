@@ -12,8 +12,6 @@ local st = require 'util.stanza';
 local jid = require 'util.jid';
 local util = module:require 'util';
 local presence_check_status = util.presence_check_status;
-local get_room_from_jid = util.get_room_from_jid;
-local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -56,34 +54,9 @@ module:add_identity('component', 'visitors', 'visitors.'..module.host);
 --}
 local visitors_nodes = {};
 
---- Intercept conference IQ error from Jicofo. Sends the main participants to the visitor node.
---- Jicofo is connected to the room when sending this error
-module:log('info', 'Hook to iq/host');
-module:hook('iq/full', function(event)
-    local stanza = event.stanza;
-
-    if stanza.name ~= 'iq' or stanza.attr.type ~= 'result' or stanza.attr.from ~= focus_component_host  then
-        return;  -- not IQ from jicofo. Ignore this event.
-    end
-
-    local conference = stanza:get_child('conference', 'http://jitsi.org/protocol/focus');
-    if not conference then
-        return;
-    end
-
-    -- let's send participants if any from the room to the visitors room
-    local main_room = conference.attr.room;
-    local vnode = conference.attr.vnode;
-
-    if not main_room or not vnode then
-        return;
-    end
-
-    local room = get_room_from_jid(room_jid_match_rewrite(main_room));
-    if room == nil then
-        return;  -- room does not exists. Continue with normal flow
-    end
-
+-- an event received from visitors component, which receives iqs from jicofo
+local function connect_vnode(event)
+    local room, vnode = event.room, event.vnode;
     local conference_service = muc_domain_prefix..'.'..vnode..'.meet.jitsi';
 
     if visitors_nodes[room.jid] and
@@ -117,7 +90,19 @@ module:hook('iq/full', function(event)
         end
     end
     visitors_nodes[room.jid].nodes[conference_service] = sent_main_participants;
-end, 900);
+end
+module:hook('jitsi-connect-vnode', connect_vnode);
+
+-- an event received from visitors component, which receives iqs from jicofo
+local function disconnect_vnode(event)
+    local room, vnode = event.room, event.vnode;
+    local conference_service = muc_domain_prefix..'.'..vnode..'.meet.jitsi';
+
+    -- we are counting vnode main participants and we should be clearing it there
+    -- let's do it here just in case
+    visitors_nodes[room.jid].nodes[conference_service] = nil;
+end
+module:hook('jitsi-disconnect-vnode', disconnect_vnode);
 
 -- takes care when the visitor nodes destroys the room to count the leaving participants from there, and if its really destroyed
 -- we clean up, so if we establish again the connection to the same visitor node to send the main participants
