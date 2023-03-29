@@ -236,6 +236,8 @@ export interface IConfig {
     };
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;
+    dialOutAuthUrl?: string;
+    dialOutRegionUrl?: string;
     disable1On1Mode?: boolean | null;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
@@ -450,6 +452,7 @@ export interface IConfig {
         hideMuteAllButton?: boolean;
     };
     pcStatsInterval?: number;
+    peopleSearchQueryTypes?: string[];
     peopleSearchUrl?: string;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {

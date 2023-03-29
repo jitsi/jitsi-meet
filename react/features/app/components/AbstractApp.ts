@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { BaseApp } from '../../base/app';
-import { toURLString } from '../../base/util';
+import BaseApp from '../../base/app/components/BaseApp';
+import { toURLString } from '../../base/util/uri';
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
@@ -14,12 +12,12 @@ export type Props = {
      * XXX Refer to the implementation of loadURLObject: in
      * ios/sdk/src/JitsiMeetView.m for further information.
      */
-    timestamp: any,
+    timestamp: any;
 
     /**
      * The URL, if any, with which the app was launched.
      */
-    url: Object | string
+    url: Object | string;
 };
 
 /**
@@ -27,11 +25,13 @@ export type Props = {
  *
  * @abstract
  */
-export class AbstractApp extends BaseApp<Props, *> {
+export class AbstractApp extends BaseApp<Props> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
-    _init: Object;
+    _init: {
+        promise: Promise<any>;
+    };
 
     /**
      * Initializes the app.
@@ -70,8 +70,6 @@ export class AbstractApp extends BaseApp<Props, *> {
         }
     }
 
-    _createMainElement: (React.ReactElement, Object) => ?React.ReactElement;
-
     /**
      * Gets the default URL to be opened when this {@code App} mounts.
      *
@@ -80,6 +78,7 @@ export class AbstractApp extends BaseApp<Props, *> {
      * mounts.
      */
     _getDefaultURL() {
+        // @ts-ignore
         return getDefaultURL(this.state.store);
     }
 
@@ -91,7 +90,7 @@ export class AbstractApp extends BaseApp<Props, *> {
      * @protected
      * @returns {void}
      */
-    _openURL(url) {
-        this.state.store.dispatch(appNavigate(toURLString(url)));
+    _openURL(url: string | Object) {
+        this.state.store?.dispatch(appNavigate(toURLString(url)));
     }
 }

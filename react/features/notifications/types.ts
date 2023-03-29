@@ -15,7 +15,7 @@ export interface INotificationProps {
     sticky?: boolean;
     title?: string;
     titleArguments?: {
-        [key: string]: string;
+        [key: string]: string | number;
     };
     titleKey?: string;
     uid?: string;

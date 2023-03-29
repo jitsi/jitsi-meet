@@ -1,26 +1,24 @@
-// @flow
-
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
-import React, { Component, Fragment } from 'react';
+import React, { Component, ComponentType, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
-import { i18next } from '../../i18n';
-import {
-    MiddlewareRegistry,
-    PersistenceRegistry,
-    ReducerRegistry,
-    StateListenerRegistry
-} from '../../redux';
+import { IStore } from '../../../app/types';
+import i18next from '../../i18n/i18next';
+import MiddlewareRegistry from '../../redux/MiddlewareRegistry';
+import PersistenceRegistry from '../../redux/PersistenceRegistry';
+import ReducerRegistry from '../../redux/ReducerRegistry';
+import StateListenerRegistry from '../../redux/StateListenerRegistry';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { SoundCollection } from '../../sounds';
-import { createDeferred } from '../../util';
+import { createDeferred } from '../../util/helpers';
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
-
-declare var APP: Object;
 
 /**
  * The type of the React {@code Component} state of {@link BaseApp}.
@@ -30,12 +28,15 @@ type State = {
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
      */
-    route: Object,
+    route: {
+        component?: ComponentType;
+        props?: Object;
+    };
 
     /**
      * The redux store used by the {@code BaseApp}.
      */
-    store: Object
+    store?: IStore;
 };
 
 /**
@@ -43,11 +44,13 @@ type State = {
  *
  * @abstract
  */
-export default class BaseApp extends Component<*, State> {
+export default class BaseApp<P> extends Component<P, State> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
-    _init: Object;
+    _init: {
+        promise: Promise<any>;
+    };
 
     /**
      * Initializes a new {@code BaseApp} instance.
@@ -55,7 +58,7 @@ export default class BaseApp extends Component<*, State> {
      * @param {Object} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: P) {
         super(props);
 
         this.state = {
@@ -85,6 +88,7 @@ export default class BaseApp extends Component<*, State> {
 
             const setStatePromise = new Promise(resolve => {
                 this.setState({
+                    // @ts-ignore
                     store: this._createStore()
                 }, resolve);
             });
@@ -97,8 +101,9 @@ export default class BaseApp extends Component<*, State> {
             logger.error(err);
         }
 
-        this.state.store.dispatch(appWillMount(this));
+        this.state.store?.dispatch(appWillMount(this));
 
+        // @ts-ignore
         this._init.resolve();
     }
 
@@ -108,7 +113,7 @@ export default class BaseApp extends Component<*, State> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        this.state.store.dispatch(appWillUnmount(this));
+        this.state.store?.dispatch(appWillUnmount(this));
     }
 
     /**
@@ -132,7 +137,7 @@ export default class BaseApp extends Component<*, State> {
      * @private
      * @returns {Promise}
      */
-    _initStorage(): Promise<*> {
+    _initStorage(): Promise<any> {
         const _initializing = jitsiLocalStorage.getItem('_initializing');
 
         return _initializing || Promise.resolve();
@@ -159,6 +164,7 @@ export default class BaseApp extends Component<*, State> {
         if (store) {
             return (
                 <I18nextProvider i18n = { i18next }>
+                    {/* @ts-ignore */}
                     <Provider store = { store }>
                         <Fragment>
                             { this._createMainElement(component, props) }
@@ -198,7 +204,7 @@ export default class BaseApp extends Component<*, State> {
      * @returns {ReactElement}
      * @protected
      */
-    _createMainElement(component, props) {
+    _createMainElement(component?: ComponentType, props?: Object) {
         return component ? React.createElement(component, props || {}) : null;
     }
 
@@ -219,6 +225,8 @@ export default class BaseApp extends Component<*, State> {
         // - Thunk - allows us to dispatch async actions easily. For more info
         // @see https://github.com/gaearon/redux-thunk.
         const middleware = MiddlewareRegistry.applyMiddleware(Thunk);
+
+        // @ts-ignore
         const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
         const store = createStore(reducer, PersistenceRegistry.getPersistedState(), composeEnhancers(middleware));
 
@@ -230,6 +238,7 @@ export default class BaseApp extends Component<*, State> {
         // Don't use in the react code!!!
         // FIXME: remove when the reactification is finished!
         if (typeof APP !== 'undefined') {
+            // @ts-ignore
             APP.store = store;
         }
 
@@ -242,7 +251,11 @@ export default class BaseApp extends Component<*, State> {
      * @param {Route} route - The Route to which to navigate.
      * @returns {Promise}
      */
-    _navigate(route): Promise<*> {
+    _navigate(route: {
+        component?: ComponentType;
+        href?: string;
+        props?: Object;
+    }): Promise<any> {
         if (_.isEqual(route, this.state.route)) {
             return Promise.resolve();
         }
@@ -259,7 +272,7 @@ export default class BaseApp extends Component<*, State> {
         // performed before setState completes, the app may not navigate to the
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
-        return new Promise(resolve => {
+        return new Promise(resolve => { // @ts-ignore
             this.setState({ route }, resolve);
         });
     }
@@ -269,5 +282,5 @@ export default class BaseApp extends Component<*, State> {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer: () => React$Element<*>;
+    _renderDialogContainer: () => React.ReactElement;
 }

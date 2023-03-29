@@ -8,7 +8,7 @@ import { Label } from '../../base/label';
 import { type StyleType, combineStyles } from '../../base/styles';
 
 import AbstractVideoQualityLabel, {
-    type Props as AbstractProps,
+    IProps as AbstractProps,
     _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import styles from './styles';

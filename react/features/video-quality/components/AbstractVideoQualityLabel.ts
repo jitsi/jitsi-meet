@@ -1,24 +1,20 @@
-// @flow
-
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-export type Props = {
+import { IReduxState } from '../../app/types';
+
+export interface IProps extends WithTranslation {
 
     /**
      * Whether or not the conference is in audio only mode.
      */
-    _audioOnly: boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    _audioOnly: boolean;
+}
 
 /**
  * Abstract class for the {@code VideoQualityLabel} component.
  */
-export default class AbstractVideoQualityLabel<P: Props> extends Component<P> {
+export default class AbstractVideoQualityLabel<P extends IProps> extends Component<P> {
 
 }
 
@@ -32,7 +28,7 @@ export default class AbstractVideoQualityLabel<P: Props> extends Component<P> {
  *     _audioOnly: boolean
  * }}
  */
-export function _abstractMapStateToProps(state: Object) {
+export function _abstractMapStateToProps(state: IReduxState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
 
     return {
