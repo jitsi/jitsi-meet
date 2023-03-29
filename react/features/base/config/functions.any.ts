@@ -62,11 +62,11 @@ export function getMeetingRegion(state: IReduxState) {
 /**
  * Selector for determining if sending multiple stream support is enabled.
  *
- * @param {Object} state - The global state.
+ * @param {Object} _state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
-    return isUnifiedPlanEnabled(state);
+export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState) {
+    return browser.supportsUnifiedPlan();
 }
 
 /**
@@ -203,19 +203,6 @@ export function isNameReadOnly(state: IReduxState): boolean {
  */
 export function isDisplayNameVisible(state: IReduxState): boolean {
     return !state['features/base/config'].hideDisplayName;
-}
-
-/**
- * Selector for determining if Unified plan support is enabled.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isUnifiedPlanEnabled(state: IReduxState): boolean {
-    const { enableUnifiedOnChrome = true } = state['features/base/config'];
-
-    return browser.supportsUnifiedPlan()
-        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
 }
 
 /**

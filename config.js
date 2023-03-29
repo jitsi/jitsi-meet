@@ -139,9 +139,6 @@ var config = {
     // Media
     //
 
-    // Enable unified plan implementation support on Chromium based browsers.
-    // enableUnifiedOnChrome: false,
-
     // Audio
 
     // Disable measuring of audio levels.
@@ -948,9 +945,6 @@ var config = {
         // 3rd participant joins the conference will be moved back to the JVB
         // connection.
         enabled: true,
-
-        // Enable unified plan implementation support on Chromium for p2p connection.
-        // enableUnifiedOnChrome: false,
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
