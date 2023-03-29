@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
@@ -8,7 +6,6 @@ import {
 } from '../base/lib-jitsi-meet/functions.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-// @ts-ignore
 import { openPageReloadDialog } from './actions';
 
 

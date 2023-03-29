@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -8,11 +6,10 @@ import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import Label from '../Label';
-// @ts-ignore
 import CountryPicker from '../country-picker/CountryPicker';
-/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 

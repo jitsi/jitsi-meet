@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 // @ts-ignore
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
@@ -11,7 +9,6 @@ import { IReduxState, IStore } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
 import { hideDialog } from '../../actions';
-// @ts-ignore
 import logger from '../../logger';
 
 // @ts-ignore
@@ -203,6 +200,7 @@ function mapStateToProps(state: IReduxState) {
     const { fatalError } = state['features/overlay'];
 
     const fatalConnectionError
+
         // @ts-ignore
         = connectionError && isFatalJitsiConnectionError(connectionError);
     const fatalConfigError = fatalError === configError;

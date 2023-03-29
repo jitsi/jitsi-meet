@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { IStore } from '../app/types';
 
@@ -11,12 +11,13 @@ export * from './actions.any';
  * Displays the chat panel.
  *
  * @param {Object} participant - The recipient for the private chat.
+ * @param {Object} _disablePolls - Used on native.
  * @returns {{
  *     participant: Participant,
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(participant?: Object) {
+export function openChat(participant?: Object, _disablePolls?: boolean) {
     return function(dispatch: IStore['dispatch']) {
         dispatch({
             participant,

@@ -79,7 +79,6 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
                 error
             );
 
-            // @ts-ignore
             dispatch(showErrorNotification({
                 titleKey: 'notify.noiseSuppressionFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

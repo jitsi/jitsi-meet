@@ -7,8 +7,6 @@ import { pinParticipant } from '../base/participants/actions';
 import { getParticipantById, getPinnedParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { updateSettings } from '../base/settings/actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { addStageParticipant, removeStageParticipant, setFilmstripVisible } from '../filmstrip/actions';
 import { setTileView } from '../video-layout/actions.any';
 

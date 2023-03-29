@@ -5,8 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { getDialInfoPageURL, hasMultipleNumbers } from '../../../functions';
 
 import DialInNumber from './DialInNumber';

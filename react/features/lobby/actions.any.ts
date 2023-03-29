@@ -33,7 +33,7 @@ export function joinWithPassword(password: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        dispatch(setPassword(conference, conference.join, password));
+        dispatch(setPassword(conference, conference?.join, password));
     };
 }
 
@@ -115,7 +115,7 @@ export function admitMultiple(participants: Array<IKnockingParticipant>) {
         const conference = getCurrentConference(getState);
 
         participants.forEach(p => {
-            conference.lobbyApproveAccess(p.id);
+            conference?.lobbyApproveAccess(p.id);
         });
     };
 }
@@ -232,9 +232,9 @@ export function toggleLobbyMode(enabled: boolean) {
         const conference = getCurrentConference(getState);
 
         if (enabled) {
-            conference.enableLobby();
+            conference?.enableLobby();
         } else {
-            conference.disableLobby();
+            conference?.disableLobby();
         }
     };
 }
@@ -277,7 +277,7 @@ export function handleLobbyChatInitialized(payload: { attendee: IParticipant; mo
         const state = getState();
         const conference = getCurrentConference(state);
 
-        const id = conference.myLobbyUserId();
+        const id = conference?.myLobbyUserId();
 
         dispatch({
             type: SET_LOBBY_PARTICIPANT_CHAT_STATE,
@@ -289,7 +289,7 @@ export function handleLobbyChatInitialized(payload: { attendee: IParticipant; mo
 
         const attendeeIsKnocking = getKnockingParticipants(state).some(p => p.id === payload.attendee.id);
 
-        if (attendeeIsKnocking && conference.getRole() === 'moderator' && payload.moderator.id !== id) {
+        if (attendeeIsKnocking && conference?.getRole() === 'moderator' && payload.moderator.id !== id) {
             dispatch(showNotification({
                 titleKey: 'lobby.lobbyChatStartedNotification',
                 titleArguments: {
@@ -325,7 +325,7 @@ export function sendLobbyChatMessage(message: Object) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        conference.sendLobbyMessage(message);
+        conference?.sendLobbyMessage(message);
     };
 }
 
@@ -395,7 +395,7 @@ export function setLobbyMessageListener() {
             return;
         }
 
-        conference.addLobbyMessageListener((message: any, participantId: string) => {
+        conference?.addLobbyMessageListener((message: any, participantId: string) => {
             if (message.type === LOBBY_CHAT_MESSAGE) {
                 return dispatch(handleLobbyMessageReceived(message.message, participantId));
             }

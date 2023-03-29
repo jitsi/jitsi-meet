@@ -21,7 +21,6 @@ class SpeakerStatsButton extends AbstractSpeakerStatsButton {
      * @returns {void}
      */
     _handleClick() {
-        // @ts-ignore
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
@@ -29,5 +28,4 @@ class SpeakerStatsButton extends AbstractSpeakerStatsButton {
     }
 }
 
-// @ts-ignore
 export default translate(connect()(SpeakerStatsButton));

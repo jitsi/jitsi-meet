@@ -14,10 +14,8 @@ import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
 import AbstractHighlightButton, {
-    type IProps as AbstractProps,
+    IProps as AbstractProps,
     _abstractMapStateToProps
-
-    // @ts-ignore
 } from '../AbstractHighlightButton';
 
 type Props = AbstractProps & {
