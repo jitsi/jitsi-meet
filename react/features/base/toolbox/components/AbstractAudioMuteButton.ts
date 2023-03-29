@@ -5,7 +5,7 @@ import AbstractButton, { IProps } from './AbstractButton';
 /**
  * An abstract implementation of a button for toggling audio mute.
  */
-export default class AbstractAudioMuteButton<P extends IProps, S>
+export default class AbstractAudioMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
     icon = IconMic;

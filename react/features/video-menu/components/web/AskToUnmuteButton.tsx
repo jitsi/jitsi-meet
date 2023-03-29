@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -9,7 +7,7 @@ import { IconMic, IconVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE, MediaType } from '../../../base/media/constants';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 
-type Props = {
+interface IProps {
 
     buttonType: MediaType;
 
@@ -17,9 +15,9 @@ type Props = {
      * The ID for the participant on which the button will act.
      */
     participantID: string;
-};
+}
 
-const AskToUnmuteButton = ({ buttonType, participantID }: Props) => {
+const AskToUnmuteButton = ({ buttonType, participantID }: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _onClick = useCallback(() => {

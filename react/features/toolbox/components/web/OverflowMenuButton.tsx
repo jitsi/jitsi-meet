@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { ReactNode, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -6,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import Popover from '../../../base/popover/components/Popover.web';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
@@ -15,9 +15,7 @@ import { showOverflowDrawer } from '../../functions.web';
 
 import Drawer from './Drawer';
 import JitsiPortal from './JitsiPortal';
-// @ts-ignore
 import OverflowToggleButton from './OverflowToggleButton';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuButton}.
