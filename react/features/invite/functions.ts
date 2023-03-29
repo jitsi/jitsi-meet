@@ -26,6 +26,7 @@ import {
     UPGRADE_OPTIONS_TEXT
 } from './constants';
 import logger from './logger';
+import { IInvitee } from './types';
 
 declare let $: any;
 
@@ -379,7 +380,7 @@ export function getInviteText({
  * @returns {Object} An object with keys as user types and values as the number
  * of invites for that type.
  */
-export function getInviteTypeCounts(inviteItems: Array<{ type: string; }> = []) {
+export function getInviteTypeCounts(inviteItems: IInvitee[] = []) {
     const inviteTypeCounts: any = {};
 
     inviteItems.forEach(({ type }) => {

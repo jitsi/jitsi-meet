@@ -12,7 +12,7 @@ import Tooltip from '../../base/tooltip/components/Tooltip';
 import { shouldDisplayTileView } from '../../video-layout';
 
 import AbstractVideoQualityLabel, {
-    type Props as AbstractProps,
+    IProps as AbstractProps,
     _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import VideoQualityDialog from './VideoQualityDialog.web';

@@ -1,15 +1,15 @@
-// @flow
-
 import { Component } from 'react';
 
-import { createInviteDialogEvent, sendAnalytics } from '../../../analytics';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showNotification
-} from '../../../notifications';
+import { createInviteDialogEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import { showNotification } from '../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
+import { INotificationProps } from '../../../notifications/types';
 import { invite } from '../../actions';
 import { INVITE_TYPES } from '../../constants';
 import {
+    GetInviteResultsOptions,
     getInviteResultsForQuery,
     getInviteTypeCounts,
     isAddPeopleEnabled,
@@ -17,23 +17,31 @@ import {
     isSipInviteEnabled
 } from '../../functions';
 import logger from '../../logger';
+import { IInvitee } from '../../types';
 
-export type Props = {
+export interface IProps {
 
     /**
      * Whether or not to show Add People functionality.
      */
-    _addPeopleEnabled: boolean,
+    _addPeopleEnabled: boolean;
+
+    _appId: string;
 
     /**
      * Whether or not call flows are enabled.
      */
-    _callFlowsEnabled: boolean,
+    _callFlowsEnabled: boolean;
 
     /**
      * The URL for validating if a phone number can be called.
      */
-    _dialOutAuthUrl: string,
+    _dialOutAuthUrl: string;
+
+    /**
+     * Whether or not to show Dial Out functionality.
+     */
+    _dialOutEnabled: boolean;
 
     /**
      * The URL for validating if an outbound destination is allowed.
@@ -41,59 +49,54 @@ export type Props = {
     _dialOutRegionUrl: string;
 
     /**
-     * Whether or not to show Dial Out functionality.
-     */
-    _dialOutEnabled: boolean,
-
-    /**
-     * Whether or not to allow sip invites.
-     */
-     _sipInviteEnabled: boolean,
-
-    /**
      * The JWT token.
      */
-    _jwt: string,
+    _jwt: string;
 
     /**
      * The query types used when searching people.
      */
-    _peopleSearchQueryTypes: Array<string>,
+    _peopleSearchQueryTypes: Array<string>;
 
     /**
      * The URL pointing to the service allowing for people search.
      */
-    _peopleSearchUrl: string,
+    _peopleSearchUrl: string;
+
+    /**
+     * Whether or not to allow sip invites.
+     */
+    _sipInviteEnabled: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function
-};
+    dispatch: Function;
+}
 
-export type State = {
+export interface IState {
 
     /**
      * Indicating that an error occurred when adding people to the call.
      */
-    addToCallError: boolean,
+    addToCallError: boolean;
 
     /**
      * Indicating that we're currently adding the new people to the
      * call.
      */
-    addToCallInProgress: boolean,
+    addToCallInProgress: boolean;
 
     /**
      * The list of invite items.
      */
-    inviteItems: Array<Object>,
-};
+    inviteItems: Array<Object>;
+}
 
 /**
  * Implements an abstract dialog to invite people to the conference.
  */
-export default class AbstractAddPeopleDialog<P: Props, S: State>
+export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
     extends Component<P, S> {
     /**
      * Constructor of the component.
@@ -112,7 +115,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
      * @param {Object} invitee - The invitee object.
      * @returns {string}
      */
-    _getDisplayName(invitee) {
+    _getDisplayName(invitee: IInvitee) {
         if (invitee.type === INVITE_TYPES.PHONE) {
             return invitee.number;
         }
@@ -135,7 +138,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
      * @param {Array<Object>} invitees - The items to be invited.
      * @returns {Promise<Array<Object>>}
      */
-    _invite(invitees) {
+    _invite(invitees: IInvitee[]) {
         const inviteTypeCounts = getInviteTypeCounts(invitees);
 
         sendAnalytics(createInviteDialogEvent(
@@ -155,7 +158,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
         const { _callFlowsEnabled, dispatch } = this.props;
 
         return dispatch(invite(invitees))
-            .then(invitesLeftToSend => {
+            .then((invitesLeftToSend: IInvitee[]) => {
                 this.setState({
                     addToCallInProgress: false
                 });
@@ -179,7 +182,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     });
                 } else if (!_callFlowsEnabled) {
                     const invitedCount = invitees.length;
-                    let notificationProps;
+                    let notificationProps: INotificationProps | undefined;
 
                     if (invitedCount >= 3) {
                         notificationProps = {
@@ -228,8 +231,6 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             || this.state.addToCallInProgress;
     }
 
-    _query: (?string) => Promise<Array<Object>>;
-
     /**
      * Performs a people and phone number search request.
      *
@@ -249,7 +250,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             _peopleSearchUrl: peopleSearchUrl,
             _sipInviteEnabled: sipInviteEnabled
         } = this.props;
-        const options = {
+        const options: GetInviteResultsOptions = {
             addPeopleEnabled,
             appId,
             dialOutAuthUrl,
@@ -280,7 +281,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
  *     _peopleSearchUrl: string
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     const {
         callFlowsEnabled,
         dialOutAuthUrl,
