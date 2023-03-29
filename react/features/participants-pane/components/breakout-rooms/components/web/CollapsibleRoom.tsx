@@ -88,8 +88,8 @@ const useStyles = makeStyles()(theme => {
         roomName: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap', // @ts-ignore
-            ...withPixelLineHeight(theme.typography.labelButton),
+            whiteSpace: 'nowrap',
+            ...withPixelLineHeight(theme.typography.bodyLongBold),
             padding: '12px 0'
         },
 

@@ -35,7 +35,7 @@ export default {
 
     buttonDisabled: {
         ...button,
-        backgroundColor: BaseTheme.palette.actionDisabled
+        backgroundColor: BaseTheme.palette.ui08
     },
 
     buttonLabelPrimary: {

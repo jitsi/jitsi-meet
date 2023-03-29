@@ -29,7 +29,7 @@ export default {
     bottomBar: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: BaseTheme.palette.screen02Header,
+        backgroundColor: BaseTheme.palette.ui01,
         height: BaseTheme.spacing[10]
     },
 
@@ -93,7 +93,7 @@ export default {
     },
 
     separator: {
-        borderBottomColor: BaseTheme.palette.dividerColor,
+        borderBottomColor: BaseTheme.palette.ui07,
         borderBottomWidth: 1,
         marginLeft: 85
     },

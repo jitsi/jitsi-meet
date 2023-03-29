@@ -49,8 +49,7 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            // @ts-ignore
-            ...withPixelLineHeight(theme.typography.heading7),
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
             color: theme.palette.text02
         },
         link: {

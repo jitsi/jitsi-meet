@@ -104,13 +104,13 @@ class VolumeSlider extends PureComponent<Props, State> {
                     size = { 24 }
                     src = { IconVolumeUp } />
                 <Slider
-                    maximumTrackTintColor = { palette.field02 }
+                    maximumTrackTintColor = { palette.ui10 }
                     maximumValue = { VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { onVolumeChange }
                     style = { styles.sliderContainer }
-                    thumbTintColor = { palette.field02 }
+                    thumbTintColor = { palette.ui10 }
                     value = { volumeLevel } />
             </View>
 

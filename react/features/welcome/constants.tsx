@@ -16,8 +16,8 @@ export const tabBarOptions = {
     tabBarLabelStyle: {
         fontSize: 12
     },
-    tabBarStyle: { // @ts-ignore
-        backgroundColor: BaseTheme.palette.screen02Header
+    tabBarStyle: {
+        backgroundColor: BaseTheme.palette.ui01
     }
 };
 

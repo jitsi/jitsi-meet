@@ -116,9 +116,7 @@ const useStyles = makeStyles()(theme => {
             border: '1px solid',
             borderColor: theme.palette.ui05,
             backgroundColor: theme.palette.field01,
-
-            // @ts-ignore
-            color: theme.palette.field02,
+            color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             padding: '10px 16px'
         }

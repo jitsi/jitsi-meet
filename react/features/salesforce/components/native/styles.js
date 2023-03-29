@@ -83,7 +83,7 @@ export default {
         padding: BaseTheme.spacing[3]
     },
     addNote: {
-        color: BaseTheme.palette.field02,
+        color: BaseTheme.palette.text01,
         margin: BaseTheme.spacing[3]
     },
     notes: {
@@ -92,7 +92,7 @@ export default {
         borderColor: BaseTheme.palette.ui05,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 1,
-        color: BaseTheme.palette.field02,
+        color: BaseTheme.palette.text01,
         lineHeight: 18,
         marginHorizontal: BaseTheme.spacing[3],
         marginVertical: BaseTheme.spacing[2],

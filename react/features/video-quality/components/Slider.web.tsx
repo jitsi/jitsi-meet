@@ -51,8 +51,8 @@ const useStyles = makeStyles()(theme => {
         width: 24
     };
 
-    const focused = { // @ts-ignore
-        outline: `1px solid ${theme.palette.action03Focus}`
+    const focused = {
+        outline: `1px solid ${theme.palette.ui06}`
     };
 
     return {

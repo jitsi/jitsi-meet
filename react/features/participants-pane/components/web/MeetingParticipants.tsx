@@ -34,14 +34,11 @@ const useStyles = makeStyles()(theme => {
         },
         heading: {
             color: theme.palette.text02,
-
-            // @ts-ignore
-            ...withPixelLineHeight(theme.typography.labelButton),
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
             margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                // @ts-ignore
-                ...withPixelLineHeight(theme.typography.labelButtonLarge)
+                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
             }
         },
 

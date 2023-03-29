@@ -10,7 +10,7 @@ const contentColumn = {
 
 const notification = {
     display: 'flex',
-    backgroundColor: BaseTheme.palette.ui12,
+    backgroundColor: BaseTheme.palette.ui10,
     borderRadius: BaseTheme.shape.borderRadius,
     borderLeftColor: BaseTheme.palette.link01Active,
     borderLeftWidth: 4,
