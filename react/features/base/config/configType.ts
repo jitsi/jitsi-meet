@@ -325,7 +325,6 @@ export interface IConfig {
     enableRemb?: boolean;
     enableSaveLogs?: boolean;
     enableTcc?: boolean;
-    enableUnifiedOnChrome?: boolean;
     enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
     etherpad_base?: string;
@@ -440,7 +439,6 @@ export interface IConfig {
     p2p?: {
         backToP2PDelay?: number;
         disabledCodec?: string;
-        enableUnifiedOnChrome?: boolean;
         enabled?: boolean;
         iceTransportPolicy?: string;
         preferredCodec?: string;

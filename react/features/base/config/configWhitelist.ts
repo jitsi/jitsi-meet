@@ -147,7 +147,6 @@ export default [
     'enableRemb',
     'enableSaveLogs',
     'enableTalkWhileMuted',
-    'enableUnifiedOnChrome',
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
     'enableTcc',
