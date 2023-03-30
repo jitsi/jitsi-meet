@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
 import TogglePinToStageButton from '../../../../features/video-menu/components/web/TogglePinToStageButton';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { IconPlay } from '../../../base/icons/svg';

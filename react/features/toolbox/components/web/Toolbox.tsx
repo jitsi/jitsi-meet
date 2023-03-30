@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -35,72 +34,50 @@ import { ITrack } from '../../../base/tracks/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { toggleChat } from '../../../chat/actions.web';
-// @ts-ignore
-import { ChatButton } from '../../../chat/components';
-// @ts-ignore
-import { EmbedMeetingButton } from '../../../embed-meeting';
-// @ts-ignore
-import { SharedDocumentButton } from '../../../etherpad';
-// @ts-ignore
-import { FeedbackButton } from '../../../feedback';
+import ChatButton from '../../../chat/components/web/ChatButton';
+import EmbedMeetingButton from '../../../embed-meeting/components/EmbedMeetingButton';
+import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton';
+import FeedbackButton from '../../../feedback/components/FeedbackButton';
 import { setGifMenuVisibility } from '../../../gifs/actions';
 import { isGifEnabled } from '../../../gifs/functions';
-// @ts-ignore
-import { InviteButton } from '../../../invite/components/add-people-dialog';
+import InviteButton from '../../../invite/components/add-people-dialog/web/InviteButton';
 import { isVpaasMeeting } from '../../../jaas/functions';
-// @ts-ignore
-import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
+import KeyboardShortcutsButton from '../../../keyboard-shortcuts/components/web/KeyboardShortcutsButton';
 import { NoiseSuppressionButton } from '../../../noise-suppression/components';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions.web';
-// @ts-ignore
-import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
+import ParticipantsPaneButton from '../../../participants-pane/components/web/ParticipantsPaneButton';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
 import ReactionsMenuButton from '../../../reactions/components/web/ReactionsMenuButton';
 import { REACTIONS } from '../../../reactions/constants';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
-import {
-    LiveStreamButton,
-    RecordButton
-    // @ts-ignore
-} from '../../../recording';
+import LiveStreamButton from '../../../recording/components/LiveStream/web/LiveStreamButton';
+import RecordButton from '../../../recording/components/Recording/web/RecordButton';
 import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
     startScreenShareFlow
 } from '../../../screen-share/actions.web';
-// @ts-ignore
 import ShareAudioButton from '../../../screen-share/components/web/ShareAudioButton';
 import {
     isScreenAudioSupported,
     isScreenVideoShared
 } from '../../../screen-share/functions';
-// @ts-ignore
 import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
-// @ts-ignore
-import { SettingsButton } from '../../../settings';
-// @ts-ignore
-import { SharedVideoButton } from '../../../shared-video/components';
-// @ts-ignore
-import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
+import SettingsButton from '../../../settings/components/web/SettingsButton';
+import SharedVideoButton from '../../../shared-video/components/web/SharedVideoButton';
 import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
-import {
-    ClosedCaptionButton
-    // @ts-ignore
-} from '../../../subtitles';
-import {
-    TileViewButton,
-    shouldDisplayTileView,
-    toggleTileView
-    // @ts-ignore
-} from '../../../video-layout';
-// @ts-ignore
-import { VideoQualityButton, VideoQualityDialog } from '../../../video-quality/components';
-// @ts-ignore
-import { VideoBackgroundButton } from '../../../virtual-background';
+import SpeakerStatsButton from '../../../speaker-stats/components/web/SpeakerStatsButton';
+import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton';
+import { toggleTileView } from '../../../video-layout/actions.web';
+import TileViewButton from '../../../video-layout/components/TileViewButton';
+import { shouldDisplayTileView } from '../../../video-layout/functions.web';
+import VideoQualityButton from '../../../video-quality/components/VideoQualityButton';
+import VideoQualityDialog from '../../../video-quality/components/VideoQualityDialog';
+import VideoBackgroundButton from '../../../virtual-background/components/VideoBackgroundButton';
 import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
 import { isWhiteboardButtonVisible } from '../../../whiteboard/functions';
@@ -114,36 +91,23 @@ import {
 import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 import { getJwtDisabledButtons } from '../../functions.any';
-// @ts-ignore
 import DownloadButton from '../DownloadButton';
-// @ts-ignore
 import HangupButton from '../HangupButton';
-// @ts-ignore
 import HelpButton from '../HelpButton';
 
-// @ts-ignore
 import AudioSettingsButton from './AudioSettingsButton';
 import CustomOptionButton from './CustomOptionButton';
 import { EndConferenceButton } from './EndConferenceButton';
-// @ts-ignore
 import FullscreenButton from './FullscreenButton';
 import HangupMenuButton from './HangupMenuButton';
 import { LeaveConferenceButton } from './LeaveConferenceButton';
-// @ts-ignore
 import LinkToSalesforceButton from './LinkToSalesforceButton';
-// @ts-ignore
 import OverflowMenuButton from './OverflowMenuButton';
-// @ts-ignore
 import ProfileButton from './ProfileButton';
-// @ts-ignore
 import Separator from './Separator';
-// @ts-ignore
 import ShareDesktopButton from './ShareDesktopButton';
-// @ts-ignore
 import ToggleCameraButton from './ToggleCameraButton';
-// @ts-ignore
 import VideoSettingsButton from './VideoSettingsButton';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.

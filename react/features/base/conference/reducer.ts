@@ -63,6 +63,7 @@ export interface IJitsiConference {
     getParticipants: Function;
     getRole: Function;
     getSpeakerStats: () => ISpeakerStats;
+    getSsrcByTrack: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
     isCallstatsEnabled: Function;

@@ -81,7 +81,7 @@ export function _mapStateToProps(state: IReduxState) {
     const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
-        _locked: locked || lobbyEnabled,
+        _locked: Boolean(locked || lobbyEnabled),
         visible: enabledFlag && (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }

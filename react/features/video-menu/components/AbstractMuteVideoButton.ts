@@ -80,7 +80,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
  *      _videoTrackMuted: boolean
  *  }}
  */
-export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const tracks = state['features/base/tracks'];
 
     return {

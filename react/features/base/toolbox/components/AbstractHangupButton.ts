@@ -5,7 +5,7 @@ import AbstractButton, { IProps } from './AbstractButton';
 /**
  * An abstract implementation of a button for disconnecting a conference.
  */
-export default class AbstractHangupButton<P extends IProps, S>
+export default class AbstractHangupButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
     icon = IconHangup;

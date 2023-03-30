@@ -104,7 +104,7 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference) {
  * is closed.
  * @returns {Object}
  */
-export function openFeedbackDialog(conference: Object, onClose?: Function) {
+export function openFeedbackDialog(conference?: IJitsiConference, onClose?: Function) {
     return openDialog(FeedbackDialog, {
         conference,
         onClose

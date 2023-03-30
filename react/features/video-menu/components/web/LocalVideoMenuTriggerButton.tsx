@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
@@ -15,21 +14,15 @@ import { getLocalVideoTrack } from '../../../base/tracks/functions';
 import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-// @ts-ignore
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { renderConnectionStatus } from '../../actions.web';
 
-// @ts-ignore
 import ConnectionStatusButton from './ConnectionStatusButton';
-// @ts-ignore
 import FlipLocalVideoButton from './FlipLocalVideoButton';
-// @ts-ignore
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
-// @ts-ignore
 import TogglePinToStageButton from './TogglePinToStageButton';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of

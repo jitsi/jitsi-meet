@@ -20,10 +20,10 @@ import {
 import { toggleAudioSettings } from '../../../actions';
 import { getAudioSettingsVisibility } from '../../../functions.web';
 
-import AudioSettingsContent, { type IProps as AudioSettingsContentProps } from './AudioSettingsContent';
+import AudioSettingsContent from './AudioSettingsContent';
 
 
-interface IProps extends AudioSettingsContentProps {
+interface IProps {
 
     /**
     * Component's children (the audio button).
@@ -31,9 +31,30 @@ interface IProps extends AudioSettingsContentProps {
     children: ReactNode;
 
     /**
+    * The deviceId of the microphone in use.
+    */
+    currentMicDeviceId: string;
+
+    /**
+    * The deviceId of the output device in use.
+    */
+    currentOutputDeviceId?: string;
+
+    /**
     * Flag controlling the visibility of the popup.
     */
     isOpen: boolean;
+
+    /**
+    * Used to decide whether to measure audio levels for microphone devices.
+    */
+    measureAudioLevels: boolean;
+
+    /**
+    * A list with objects containing the labels and deviceIds
+    * of all the input devices.
+    */
+    microphoneDevices: Array<{ deviceId: string; label: string; }>;
 
     /**
     * Callback executed when the popup closes.
@@ -41,9 +62,25 @@ interface IProps extends AudioSettingsContentProps {
     onClose: Function;
 
     /**
+    * A list of objects containing the labels and deviceIds
+    * of all the output devices.
+    */
+    outputDevices: Array<{ deviceId: string; label: string; }>;
+
+    /**
      * The popup placement enum value.
      */
     popupPlacement: string;
+
+    /**
+    * Used to set a new microphone as the current one.
+    */
+    setAudioInputDevice: Function;
+
+    /**
+    * Used to set a new output device as the current one.
+    */
+    setAudioOutputDevice: Function;
 }
 
 /**

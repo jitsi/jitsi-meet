@@ -59,7 +59,17 @@ export interface IState {
      * mixed in with cached stats and a new stats object is set in state.
      */
     stats: {
+        bandwidth?: any;
+        bitrate?: any;
+        bridgeCount?: any;
+        codec?: any;
+        framerate?: any;
+        maxEnabledResolution?: any;
+        packetLoss?: any;
         percent?: number;
+        resolution?: any;
+        serverRegion?: any;
+        transport?: any;
     };
 }
 

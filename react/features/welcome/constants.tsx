@@ -3,7 +3,6 @@ import React from 'react';
 import { IconCalendar, IconGear, IconRestore } from '../base/icons/svg';
 import BaseTheme from '../base/ui/components/BaseTheme';
 
-// @ts-ignore
 import TabIcon from './components/TabIcon';
 
 export const ACTIVE_TAB_COLOR = BaseTheme.palette.icon01;

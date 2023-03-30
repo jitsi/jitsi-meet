@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
@@ -13,16 +12,13 @@ import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import Button from '../../../base/ui/components/web/Button';
 import ConnectionIndicatorContent from
-// @ts-ignore
     '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { renderConnectionStatus } from '../../actions.web';
 
 import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
-// @ts-ignore
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} props of
@@ -59,7 +55,7 @@ interface IProps {
     /**
      * The current state of the participant's remote control session.
      */
-    _remoteControlState: number;
+    _remoteControlState?: number;
 
     /**
      * Whether the popover should render the Connection Info stats.
@@ -223,7 +219,7 @@ const RemoteVideoMenuTriggerButton = ({
  */
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { participantID, thumbnailType } = ownProps;
-    let _remoteControlState = null;
+    let _remoteControlState;
     const localParticipantId = getLocalParticipant(state)?.id;
     const participant = getParticipantById(state, participantID ?? '');
     const _participantDisplayName = participant?.name;

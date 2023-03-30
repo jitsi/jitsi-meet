@@ -46,7 +46,7 @@ export default class AbstractGrantModeratorButton extends AbstractButton<IProps>
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID } = ownProps;
 
     const localParticipant = getLocalParticipant(state);
