@@ -140,7 +140,6 @@ export default [
     'enableEncodedTransformSupport',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
-    'enableLayerSuspension',
     'enableLipSync',
     'enableLobbyChat',
     'enableOpusRed',

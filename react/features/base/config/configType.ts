@@ -316,7 +316,6 @@ export interface IConfig {
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;
-    enableLayerSuspension?: boolean;
     enableLipSync?: boolean;
     enableLobbyChat?: boolean;
     enableNoAudioDetection?: boolean;
