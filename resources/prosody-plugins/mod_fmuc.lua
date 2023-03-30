@@ -304,11 +304,10 @@ end, 10);
 module:hook_global("stats-update", function ()
     local participants_count, rooms_count, visitors_count = 0, 0, 0;
 
-    -- iterate over all non healthcheck rooms
+    -- iterate over all rooms
     for room in prosody.hosts[module.host].modules.muc.each_room() do
-    rooms_count = rooms_count + 1;
-        if not is_healthcheck_room(room.jid) then
-            for _, o in room:each_occupant() do
+        rooms_count = rooms_count + 1;
+        for _, o in room:each_occupant() do
             if jid.host(o.bare_jid) == main_domain then
                 visitors_count = visitors_count + 1;
             else
@@ -317,7 +316,6 @@ module:hook_global("stats-update", function ()
         end
         -- do not count jicofo
         participants_count = participants_count - 1;
-        end
     end
 
     measure_rooms(rooms_count);
