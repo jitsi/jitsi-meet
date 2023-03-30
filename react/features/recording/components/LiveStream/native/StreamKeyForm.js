@@ -59,25 +59,22 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
             <>
                 <View style = { styles.formWrapper }>
                     <Input
-                        customStyles = {{ input: styles.streamKeyInput }}
+                        customStyles = {{
+                            input: styles.streamKeyInput,
+                            container: styles.streamKeyContainer }}
                         onChange = { this._onInputChange }
                         placeholder = { t('liveStreaming.enterStreamKey') }
                         value = { this.props.value } />
-                    <View style = { styles.formValidation }>
+                    <View style = { styles.formValidationItem }>
                         {
-                            this.state.showValidationError
-                                ? <View style = { styles.formValidationItem }>
-                                    <Text
-                                        style = { [
-                                            _dialogStyles.text,
-                                            styles.warningText
-                                        ] }>
-                                        { t('liveStreaming.invalidStreamKey') }
-                                    </Text>
-                                </View>
-                                : null
+                            this.state.showValidationError && <Text
+                                style = { [
+                                    _dialogStyles.text,
+                                    styles.warningText
+                                ] }>
+                                { t('liveStreaming.invalidStreamKey') }
+                            </Text>
                         }
-
                     </View>
                 </View>
                 <View style = { styles.formButtonsWrapper }>
