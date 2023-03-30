@@ -25,6 +25,11 @@ local main_domain = string.gsub(module.host, muc_domain_prefix..'.', '');
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
+-- we send stats for the total number of rooms, total number of participants and total number of visitors
+local measure_rooms = module:measure("vnode-rooms", "amount");
+local measure_participants = module:measure("vnode-participants", "amount");
+local measure_visitors = module:measure("vnode-visitors", "amount");
+
 -- This is the domain of the main prosody that is federating with us;
 local fmuc_main_domain;
 
@@ -294,3 +299,28 @@ module:hook('muc-private-message', function(event)
             "Private messaging is disabled on visitor nodes"));
     return true;
 end, 10);
+
+-- we calculate the stats on the configured interval (60 seconds by default)
+module:hook_global("stats-update", function ()
+    local participants_count, rooms_count, visitors_count = 0, 0, 0;
+
+    -- iterate over all rooms
+    for room in prosody.hosts[module.host].modules.muc.each_room() do
+        rooms_count = rooms_count + 1;
+        for _, o in room:each_occupant() do
+            if jid.host(o.bare_jid) == main_domain then
+                visitors_count = visitors_count + 1;
+            else
+                participants_count = participants_count + 1;
+            end
+        end
+        -- do not count jicofo
+        participants_count = participants_count - 1;
+    end
+
+    measure_rooms(rooms_count);
+    measure_visitors(visitors_count);
+    measure_participants(participants_count);
+end);
+
+
