@@ -6,9 +6,7 @@ import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconCloudUpload } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { SalesforceLinkDialog } from '../../../salesforce/components';
+import SalesforceLinkDialog from '../../../salesforce/components/web/SalesforceLinkDialog';
 
 /**
  * Implementation of a button for opening the Salesforce link dialog.

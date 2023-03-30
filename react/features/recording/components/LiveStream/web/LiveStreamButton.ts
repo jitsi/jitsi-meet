@@ -9,12 +9,8 @@ import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractLiveStreamButton';
 
-import {
-    StartLiveStreamDialog,
-    StopLiveStreamDialog
-
-    // @ts-ignore
-} from './index';
+import StartLiveStreamDialog from './StartLiveStreamDialog';
+import StopLiveStreamDialog from './StopLiveStreamDialog';
 
 
 /**

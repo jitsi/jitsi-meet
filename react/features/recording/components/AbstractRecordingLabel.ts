@@ -196,7 +196,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { mode } = ownProps;
 
     return {
-        _iAmRecorder: state['features/base/config'].iAmRecorder,
+        _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
         _status: getSessionStatusToShow(state, mode)
     };
 }

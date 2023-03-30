@@ -1,36 +1,34 @@
-// @flow
-
 import React from 'react';
 
-type Props = {
+interface IProps {
 
     /**
      * The text for the Label.
      */
-    children: React$Node,
+    children: React.ReactElement;
 
     /**
      * The CSS class of the label.
      */
-    className?: string,
+    className?: string;
 
     /**
      * The (round) number prefix for the Label.
      */
-    number?: string | number,
+    number?: string | number;
 
     /**
      * The click handler.
      */
-    onClick?: Function,
-};
+    onClick?: (e?: React.MouseEvent) => void;
+}
 
 /**
  *  Label for the dialogs.
  *
  *  @returns {ReactElement}
  */
-function Label({ children, className, number, onClick }: Props) {
+function Label({ children, className, number, onClick }: IProps) {
     const containerClass = className
         ? `prejoin-dialog-label ${className}`
         : 'prejoin-dialog-label';

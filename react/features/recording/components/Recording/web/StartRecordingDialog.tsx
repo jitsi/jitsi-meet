@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n';
+import { IReduxState } from '../../../../app/types';
+import { translate } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
+import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
 import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
@@ -20,8 +21,6 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
  * @augments Component
  */
 class StartRecordingDialog extends AbstractStartRecordingDialog {
-
-    isStartRecordingDisabled: () => boolean;
 
     /**
      * Disables start recording button.
@@ -104,12 +103,6 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             dispatch(toggleScreenshotCaptureSummary(true));
         }
     }
-
-    _areIntegrationsEnabled: () => boolean;
-    _onSubmit: () => boolean;
-    _onSelectedRecordingServiceChanged: (string) => void;
-    _onSharingSettingChanged: () => void;
-    _onLocalRecordingSelfChange: () => void;
 }
 
 /**
@@ -118,7 +111,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     return {
         ...abstractMapStateToProps(state),
         _screenshotCaptureEnabled: isScreenshotCaptureEnabled(state, true, false)

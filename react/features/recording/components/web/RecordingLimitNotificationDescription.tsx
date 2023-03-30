@@ -1,48 +1,43 @@
-// @flow
-
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { translate, translateToHTML } from '../../../base/i18n';
+import { IReduxState } from '../../../app/types';
+import { translate, translateToHTML } from '../../../base/i18n/functions';
 
 /**
  * The type of the React {@code Component} props of {@link RecordingLimitNotificationDescription}.
  */
-type Props = {
-
-    /**
-     * The limit of time in minutes for the recording.
-     */
-    _limit: number,
+interface IProps extends WithTranslation {
 
     /**
      * The name of the app with unlimited recordings.
      */
-    _appName: string,
+    _appName?: string;
 
     /**
      * The URL to the app with unlimited recordings.
      */
-    _appURL: string,
+    _appURL?: string;
+
+    /**
+     * The limit of time in minutes for the recording.
+     */
+    _limit?: number;
 
     /**
      * True if the notification is related to the livestreaming and false if not.
      */
-    isLiveStreaming: Boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    isLiveStreaming: Boolean;
+}
 
 /**
  * A component that renders the description of the notification for the recording initiator.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {Component}
  */
-function RecordingLimitNotificationDescription(props: Props) {
+function RecordingLimitNotificationDescription(props: IProps) {
     const { _limit, _appName, _appURL, isLiveStreaming, t } = props;
 
     return (
@@ -65,9 +60,9 @@ function RecordingLimitNotificationDescription(props: Props) {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state): $Shape<Props> {
+function _mapStateToProps(state: IReduxState) {
     const { recordingLimit = {} } = state['features/base/config'];
     const { limit: _limit, appName: _appName, appURL: _appURL } = recordingLimit;
 

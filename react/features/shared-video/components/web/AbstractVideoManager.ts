@@ -129,7 +129,6 @@ class AbstractVideoManager extends PureComponent<IProps> {
         this.throttledFireUpdateSharedVideoEvent = throttle(this.fireUpdateSharedVideoEvent.bind(this), 5000);
 
         // selenium tests handler
-        // @ts-ignore
         window._sharedVideoPlayer = this;
     }
 

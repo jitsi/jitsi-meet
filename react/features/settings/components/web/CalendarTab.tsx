@@ -9,19 +9,11 @@ import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Spinner from '../../../base/ui/components/web/Spinner';
-import {
-    CALENDAR_TYPE,
-    MicrosoftSignInButton,
-    bootstrapCalendarIntegration,
-    clearCalendarIntegration,
-    isCalendarEnabled,
-    signIn
-
-    // @ts-ignore
-} from '../../../calendar-sync';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { GoogleSignInButton } from '../../../google-api';
+import { bootstrapCalendarIntegration, clearCalendarIntegration, signIn } from '../../../calendar-sync/actions';
+import MicrosoftSignInButton from '../../../calendar-sync/components/MicrosoftSignInButton';
+import { CALENDAR_TYPE } from '../../../calendar-sync/constants';
+import { isCalendarEnabled } from '../../../calendar-sync/functions';
+import GoogleSignInButton from '../../../google-api/components/GoogleSignInButton';
 import logger from '../../logger';
 
 /**

@@ -1,9 +1,7 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
@@ -33,8 +31,6 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
             </Dialog>
         );
     }
-
-    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));

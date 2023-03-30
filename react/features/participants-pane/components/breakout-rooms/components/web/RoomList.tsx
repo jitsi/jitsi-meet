@@ -1,11 +1,9 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { isMobileBrowser } from '../../../../../base/environment/utils';
-import { isLocalParticipantModerator } from '../../../../../base/participants';
-import { equals } from '../../../../../base/redux';
+import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
+import { equals } from '../../../../../base/redux/functions';
 import useContextMenu from '../../../../../base/ui/hooks/useContextMenu.web';
 import {
     getBreakoutRooms,
@@ -14,7 +12,8 @@ import {
     isAutoAssignParticipantsVisible,
     isInBreakoutRoom
 } from '../../../../../breakout-rooms/functions';
-import { showOverflowDrawer } from '../../../../../toolbox/functions';
+import { IRoom } from '../../../../../breakout-rooms/types';
+import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 
 import { AutoAssignButton } from './AutoAssignButton';
 import { CollapsibleRoom } from './CollapsibleRoom';
@@ -24,36 +23,40 @@ import RoomActionEllipsis from './RoomActionEllipsis';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomParticipantContextMenu } from './RoomParticipantContextMenu';
 
-type Props = {
+interface IProps {
 
     /**
      * Participants search string.
      */
-    searchString: string
+    searchString: string;
 }
 
-export const RoomList = ({ searchString }: Props) => {
+export const RoomList = ({ searchString }: IProps) => {
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
-                    .filter((room: Object) => room.id !== currentRoomId)
-                    .sort((p1: Object, p2: Object) => (p1?.name || '').localeCompare(p2?.name || ''));
+                    .filter((room: IRoom) => room.id !== currentRoomId)
+                    .sort((p1?: IRoom, p2?: IRoom) => (p1?.name || '').localeCompare(p2?.name || ''));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
     const overflowDrawer = useSelector(showOverflowDrawer);
-    const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
+    const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<IRoom>();
     const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
-        participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu();
+        participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu<{
+            jid: string;
+            participantName: string;
+            room: IRoom;
+        }>();
     const hideMenu = useCallback(() => !overflowDrawer && lowerMenu(), [ overflowDrawer, lowerMenu ]);
-    const onRaiseMenu = useCallback(room => target => raiseMenu(room, target), [ raiseMenu ]);
+    const onRaiseMenu = useCallback(room => (target: HTMLElement) => raiseMenu(room, target), [ raiseMenu ]);
 
     return (
         <>
             {inBreakoutRoom && <LeaveButton />}
             {showAutoAssign && <AutoAssignButton />}
             <div id = 'breakout-rooms-list'>
-                {rooms.map((room: Object) => (
+                {rooms.map(room => (
                     <React.Fragment key = { room.id }>
                         <CollapsibleRoom
                             isHighlighted = { raiseContext.entity === room }

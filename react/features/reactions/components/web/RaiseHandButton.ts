@@ -1,26 +1,27 @@
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { IconRaiseHand } from '../../../base/icons';
-import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { IconRaiseHand } from '../../../base/icons/svg';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
  */
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
 
     /**
      * Whether or not the hand is raised.
      */
-    raisedHand: boolean,
-};
+    raisedHand: boolean;
+}
 
 /**
  * Implementation of a button for raising hand.
  */
-class RaiseHandButton extends AbstractButton<Props, *> {
+class RaiseHandButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
     icon = IconRaiseHand;
@@ -48,7 +49,7 @@ class RaiseHandButton extends AbstractButton<Props, *> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-const mapStateToProps = state => {
+const mapStateToProps = (state: IReduxState) => {
     const localParticipant = getLocalParticipant(state);
 
     return {

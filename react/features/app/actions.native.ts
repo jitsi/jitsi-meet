@@ -164,10 +164,10 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
  *
- * @param {Object} options - Ignored.
+ * @param {Object} _options - Ignored.
  * @returns {Function}
  */
-export function maybeRedirectToWelcomePage(options: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function maybeRedirectToWelcomePage(_options?: any): any {
     // Dummy.
 }
 

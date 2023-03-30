@@ -30,7 +30,6 @@ export function _cancelPasswordRequiredPrompt(conference: any) {
             // unload and clean of the connection.
             APP.API.notifyReadyToClose();
 
-            // @ts-ignore
             dispatch(maybeRedirectToWelcomePage());
 
             return;

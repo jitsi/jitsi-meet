@@ -3,8 +3,6 @@ import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functi
 import { getLocalJitsiDesktopTrack, getLocalJitsiVideoTrack } from '../base/tracks/functions';
 
 import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
 

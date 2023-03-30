@@ -210,9 +210,7 @@ export function processPermissionRequestReply(participantId: string, event: any)
                 const virtualScreenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participantId);
                 const pinnedId = pinnedParticipant?.id;
 
-                // @ts-ignore
                 if (virtualScreenshareParticipant?.id && pinnedId !== virtualScreenshareParticipant?.id) {
-                    // @ts-ignore
                     dispatch(pinParticipant(virtualScreenshareParticipant?.id));
                 } else if (!virtualScreenshareParticipant?.id && pinnedId !== participantId) {
                     dispatch(pinParticipant(participantId));
@@ -563,7 +561,7 @@ export function grant(participantId: string) {
                 true,
                 false,
                 { desktopSharingSources: [ 'screen' ] }
-            )) // @ts-ignore
+            ))
             .then(() => dispatch(sendStartRequest()));
         }
 

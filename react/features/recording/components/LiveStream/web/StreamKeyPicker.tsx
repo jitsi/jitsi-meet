@@ -30,7 +30,7 @@ interface IProps extends WithTranslation {
      * The boundStreamID of the broadcast that should display as selected in the
      * dropdown.
      */
-    selectedBoundStreamID: string;
+    selectedBoundStreamID?: string;
 }
 
 /**
@@ -103,7 +103,7 @@ class StreamKeyPicker extends PureComponent<IProps> {
                     label = { t('liveStreaming.choose') }
                     onChange = { this._onSelect }
                     options = { dropdownItems }
-                    value = { selectedBoundStreamID } />
+                    value = { selectedBoundStreamID ?? '' } />
             </div>
         );
     }

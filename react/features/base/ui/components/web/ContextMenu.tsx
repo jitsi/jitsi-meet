@@ -83,7 +83,7 @@ interface IProps {
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget?: HTMLElement;
+    offsetTarget?: HTMLElement | null;
 
     /**
      * Callback for click on an item in the menu.

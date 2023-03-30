@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
+import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture/actions';
 import AbstractStopRecordingDialog, {
     IProps,
     _mapStateToProps

@@ -5,10 +5,8 @@ import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n';
 import { translate, translateToHTML } from '../../base/i18n/functions';
+import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../../base/i18n/i18next';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';

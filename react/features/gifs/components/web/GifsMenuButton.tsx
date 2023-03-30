@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactionButton from '../../../reactions/components/web/ReactionButton';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { setGifDrawerVisibility, setGifMenuVisibility } from '../../actions';
-import { isGifsMenuOpen } from '../../functions';
+import { isGifsMenuOpen } from '../../functions.web';
 
 const GifsMenuButton = () => {
     const menuOpen = useSelector(isGifsMenuOpen);

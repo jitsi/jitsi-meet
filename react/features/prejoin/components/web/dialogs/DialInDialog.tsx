@@ -7,8 +7,6 @@ import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowLeft } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
 import { getCountryCodeFromPhone } from '../../../utils';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Label from '../Label';
 
 interface IProps extends WithTranslation {

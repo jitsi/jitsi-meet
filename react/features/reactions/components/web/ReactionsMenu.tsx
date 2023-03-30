@@ -10,8 +10,6 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 import { dockToolbox } from '../../../toolbox/actions.web';
@@ -19,7 +17,6 @@ import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
-// @ts-ignore
 import ReactionButton from './ReactionButton';
 
 interface IProps {

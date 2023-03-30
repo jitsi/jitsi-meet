@@ -126,12 +126,12 @@ export interface IProps extends WithTranslation {
     /**
      * Number of MiB of available space in user's Dropbox account.
      */
-    spaceLeft: number | null;
+    spaceLeft?: number;
 
     /**
      * The display name of the user's Dropbox account.
      */
-    userName: string | null;
+    userName?: string;
 }
 
 /**

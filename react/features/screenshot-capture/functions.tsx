@@ -1,7 +1,7 @@
-// @flow
-
+import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { toState } from '../base/redux';
+import { toState } from '../base/redux/functions';
 import { getActiveSession } from '../recording/functions';
 import { isScreenVideoShared } from '../screen-share/functions';
 
@@ -14,7 +14,7 @@ import ScreenshotCaptureSummary from './ScreenshotCaptureSummary';
  * {@code getState} function.
  * @returns {Promise<ScreenshotCapture>}
  */
-export function createScreenshotCaptureSummary(stateful: Object | Function) {
+export function createScreenshotCaptureSummary(stateful: IStateful) {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         return Promise.reject(new Error('ScreenshotCaptureSummary not supported!'));
     }
@@ -30,7 +30,7 @@ export function createScreenshotCaptureSummary(stateful: Object | Function) {
  * @param {boolean} checkRecording - Whether to check is recording is on.
  * @returns {boolean}
  */
-export function isScreenshotCaptureEnabled(state: Object, checkSharing, checkRecording) {
+export function isScreenshotCaptureEnabled(state: IReduxState, checkSharing?: boolean, checkRecording?: boolean) {
     const { screenshotCapture } = state['features/base/config'];
 
     if (!screenshotCapture?.enabled) {

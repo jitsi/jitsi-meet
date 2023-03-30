@@ -15,7 +15,7 @@ export interface IProps {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: IJitsiConference;
+    _conference?: IJitsiConference;
 
     /**
      * The current state of interactions with the Google API. Determines what
@@ -32,7 +32,7 @@ export interface IProps {
     /**
      * The live stream key that was used before.
      */
-    _streamKey: string;
+    _streamKey?: string;
 
     /**
      * The Redux dispatch function.
@@ -72,7 +72,7 @@ export interface IState {
     /**
      * The selected or entered stream key to use for YouTube live streaming.
      */
-    streamKey: string;
+    streamKey?: string;
 }
 
 /**
@@ -159,7 +159,9 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      * @private
      * @returns {Promise}
      */
-    _onGetYouTubeBroadcasts: () => Promise<any>;
+    _onGetYouTubeBroadcasts(): Promise<any> | void {
+        // to be overwritten by child classes.
+    }
 
     /**
      * Callback invoked to update the {@code StartLiveStreamDialog} component's
@@ -205,7 +207,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
         sendAnalytics(
             createLiveStreamingDialogEvent('start', 'confirm.button'));
 
-        this.props._conference.startRecording({
+        this.props._conference?.startRecording({
             broadcastId: selectedBroadcastID,
             mode: JitsiRecordingConstants.mode.STREAM,
             streamId: key
