@@ -13,7 +13,6 @@ export default [
     '_desktopSharingSourceDevice',
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
-    'abTesting',
     'analytics.disabled',
     'analytics.rtcstatsEnabled',
     'audioLevelsInterval',

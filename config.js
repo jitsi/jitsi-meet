@@ -1414,7 +1414,6 @@ var config = {
     /**
      _peerConnStatusOutOfLastNTimeout
      _peerConnStatusRtcMuteTimeout
-     abTesting
      avgRtpStatsN
      callStatsConfIDNamespace
      callStatsCustomScriptUrl
