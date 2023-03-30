@@ -9,8 +9,8 @@ import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractRecordButton';
 
-// @ts-ignore
-import { StartRecordingDialog, StopRecordingDialog } from './index';
+import StartRecordingDialog from './StartRecordingDialog';
+import StopRecordingDialog from './StopRecordingDialog';
 
 
 /**

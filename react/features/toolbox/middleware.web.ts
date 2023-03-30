@@ -86,14 +86,9 @@ function _setFullScreen(next: Function, action: AnyAction) {
         if (typeof document.exitFullscreen === 'function') {
             document.exitFullscreen();
 
-        // @ts-ignore
         } else if (typeof document.mozCancelFullScreen === 'function') {
-            // @ts-ignore
             document.mozCancelFullScreen();
-
-        // @ts-ignore
         } else if (typeof document.webkitExitFullscreen === 'function') {
-            // @ts-ignore
             document.webkitExitFullscreen();
         }
     }

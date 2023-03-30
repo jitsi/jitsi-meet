@@ -1,12 +1,10 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
 import Input from '../../../../base/ui/components/web/Input';
 import AbstractStreamKeyForm, {
-    type Props, _mapStateToProps
+    IProps, _mapStateToProps
 } from '../AbstractStreamKeyForm';
 
 /**
@@ -14,15 +12,15 @@ import AbstractStreamKeyForm, {
  *
  * @augments Component
  */
-class StreamKeyForm extends AbstractStreamKeyForm<Props> {
+class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
 
     /**
      * Initializes a new {@code StreamKeyForm} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code StreamKeyForm} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -90,10 +88,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         );
     }
 
-    _onInputChange: Object => void;
-
-    _onOpenHelp: () => void;
-
     /**
      * Opens a new tab with information on how to manually locate a YouTube
      * broadcast stream key.
@@ -105,8 +99,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         window.open(this.props._liveStreaming.helpURL, '_blank', 'noopener');
     }
 
-    _onOpenHelpKeyPress: () => void;
-
     /**
      * Opens a new tab with information on how to manually locate a YouTube
      * broadcast stream key.
@@ -116,7 +108,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @private
      * @returns {void}
      */
-    _onOpenHelpKeyPress(e) {
+    _onOpenHelpKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ') {
             e.preventDefault();
             this._onOpenHelp();

@@ -18,11 +18,17 @@ import {
     searchSessionRecords
 } from './functions';
 
+interface ISelectedRecord {
+    id: string;
+    name: string;
+    onClick: (e?: React.MouseEvent) => void;
+    type: string;
+}
+
 export const useSalesforceLinkDialog = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const [ selectedRecord, setSelectedRecord ] = useState<{
-        id: string; name: string; onClick: Function; type: string; } | null>(null);
+    const [ selectedRecord, setSelectedRecord ] = useState<ISelectedRecord | null>(null);
     const [ selectedRecordOwner, setSelectedRecordOwner ] = useState<{
         id: string; name: string; type: string; } | null>(null);
     const [ records, setRecords ] = useState([]);

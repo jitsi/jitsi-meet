@@ -1,5 +1,3 @@
-// @flow
-
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -27,4 +25,5 @@ const code = `
     };
 `;
 
+// @ts-ignore
 export const timerWorkerScript = URL.createObjectURL(new Blob([ code ], { type: 'application/javascript' }));

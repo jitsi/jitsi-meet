@@ -6,15 +6,12 @@ import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { IReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
-// @ts-ignore
 import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';

@@ -30,7 +30,7 @@ export interface IProps extends WithTranslation {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: IJitsiConference;
+    _conference?: IJitsiConference;
 
     /**
      * Whether to show file recordings service, even if integrations
@@ -100,12 +100,12 @@ interface IState {
     /**
      * Whether the local recording should record just the local user streams.
      */
-    localRecordingOnlySelf?: boolean;
+    localRecordingOnlySelf: boolean;
 
     /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
-    selectedRecordingService?: string;
+    selectedRecordingService: string;
 
     /**
      * True if the user requested the service to share the recording with others.
@@ -143,7 +143,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
         this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
 
-        let selectedRecordingService;
+        let selectedRecordingService = '';
 
         // TODO: Potentially check if we need to handle changes of
         // _fileRecordingsServiceEnabled and _areIntegrationsEnabled()
@@ -351,7 +351,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         );
 
         this._toggleScreenshotCapture();
-        _conference.startRecording({
+        _conference?.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
         });
@@ -408,16 +408,16 @@ export function mapStateToProps(state: IReduxState) {
     } = state['features/base/config'];
 
     return {
-        _appKey: dropbox.appKey,
+        _appKey: dropbox.appKey ?? '',
         _autoCaptionOnRecord: transcription?.autoCaptionOnRecord ?? false,
         _conference: state['features/base/conference'].conference,
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
-        _rToken: state['features/dropbox'].rToken,
+        _rToken: state['features/dropbox'].rToken ?? '',
         _tokenExpireDate: state['features/dropbox'].expireDate,
-        _token: state['features/dropbox'].token
+        _token: state['features/dropbox'].token ?? ''
     };
 }
 

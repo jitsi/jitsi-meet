@@ -1,79 +1,75 @@
-// @flow
-
 import React from 'react';
 
-import { Icon } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
 import Popover from '../../../popover/components/Popover.web';
 
-type Props = {
-
-    /**
-     * Whether the element popup is expanded.
-     */
-    ariaExpanded?: boolean,
+interface IProps {
 
     /**
      * The id of the element this button icon controls.
      */
-    ariaControls?: string,
+    ariaControls?: string;
+
+    /**
+     * Whether the element popup is expanded.
+     */
+    ariaExpanded?: boolean;
 
     /**
      * Whether the element has a popup.
      */
-    ariaHasPopup?: boolean,
+    ariaHasPopup?: boolean;
 
     /**
      * Aria label for the Icon.
      */
-    ariaLabel?: string,
+    ariaLabel?: string;
 
     /**
      * The decorated component (ToolboxButton).
      */
-    children: React$Node,
+    children: React.ReactNode;
 
     /**
      * Icon of the button.
      */
-    icon: Function,
+    icon: Function;
 
     /**
      * Flag used for disabling the small icon.
      */
-    iconDisabled: boolean,
+    iconDisabled: boolean;
 
     /**
      * The ID of the icon button.
      */
-    iconId: string,
+    iconId: string;
 
     /**
      * Popover close callback.
      */
-    onPopoverClose: Function,
+    onPopoverClose: Function;
 
     /**
      * Popover open callback.
      */
-    onPopoverOpen: Function,
+    onPopoverOpen: Function;
 
     /**
      * The content that will be displayed inside the popover.
      */
-    popoverContent: React$Node,
+    popoverContent: React.ReactNode;
 
     /**
      * Additional styles.
      */
-    styles?: Object,
+    styles?: Object;
 
     /**
      * Whether or not the popover is visible.
      */
-    visible: boolean
-};
-
-declare var APP: Object;
+    visible: boolean;
+}
 
 /**
  * Displays the `ToolboxButtonWithIcon` component.
@@ -81,7 +77,7 @@ declare var APP: Object;
  * @param {Object} props - Component's props.
  * @returns {ReactElement}
  */
-export default function ToolboxButtonWithIconPopup(props: Props) {
+export default function ToolboxButtonWithIconPopup(props: IProps) {
     const {
         ariaControls,
         ariaExpanded,
@@ -98,7 +94,7 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
         visible
     } = props;
 
-    const iconProps = {};
+    const iconProps: any = {};
 
     if (iconDisabled) {
         iconProps.className
@@ -116,7 +112,7 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
     return (
         <div
             className = 'settings-button-container'
-            styles = { styles }>
+            style = { styles }>
             {children}
             <div className = 'settings-button-small-icon-container'>
                 <Popover

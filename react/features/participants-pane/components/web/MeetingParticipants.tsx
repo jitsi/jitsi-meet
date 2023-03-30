@@ -83,7 +83,7 @@ function MeetingParticipants({
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
-    const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
+    const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const muteAudio = useCallback(id => () => {
         dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
         dispatch(rejectParticipantAudio(id));

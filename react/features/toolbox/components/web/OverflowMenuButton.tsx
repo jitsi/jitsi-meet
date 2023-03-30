@@ -5,9 +5,8 @@ import { makeStyles } from 'tss-react/mui';
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import Popover from '../../../base/popover/components/Popover.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
+import ReactionEmoji from '../../../reactions/components/web/ReactionEmoji';
+import ReactionsMenu from '../../../reactions/components/web/ReactionsMenu';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { getReactionsQueue } from '../../../reactions/functions.any';
 import { DRAWER_MAX_HEIGHT } from '../../constants';

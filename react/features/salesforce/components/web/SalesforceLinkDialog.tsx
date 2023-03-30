@@ -176,9 +176,7 @@ function SalesforceLinkDialog() {
     const renderSelection = () => (
         <div>
             <div className = { classes.recordInfo }>
-                {/* @ts-ignore */}
                 <RecordItem { ...selectedRecord } />
-                {/* @ts-ignore */}
                 {selectedRecordOwner && <RecordItem { ...selectedRecordOwner } />}
                 {hasDetailsErrors && renderDetailsErrors()}
             </div>

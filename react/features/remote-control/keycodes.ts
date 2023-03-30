@@ -154,8 +154,7 @@ const keyCodeToKey = {
  * Generate codes for digit keys (0-9).
  */
 for (let i = 0; i < 10; i++) {
-    // @ts-ignore
-    keyCodeToKey[i + 48] = `${i}`;
+    keyCodeToKey[(i + 48) as keyof typeof keyCodeToKey] = `${i}`;
 }
 
 /**

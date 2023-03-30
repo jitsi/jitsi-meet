@@ -6,8 +6,6 @@ import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Label from '../Label';
 import CountryPicker from '../country-picker/CountryPicker';
 

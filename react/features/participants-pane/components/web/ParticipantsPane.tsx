@@ -21,8 +21,6 @@ import {
     isMuteAllVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
 import { FooterContextMenu } from './FooterContextMenu';

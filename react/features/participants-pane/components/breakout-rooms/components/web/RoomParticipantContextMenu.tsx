@@ -9,8 +9,6 @@ import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
 import { AVATAR_SIZE } from '../../../../constants';
 
@@ -20,7 +18,7 @@ interface IProps {
     /**
      * Room and participant jid reference.
      */
-    entity: {
+    entity?: {
         jid: string;
         participantName: string;
         room: any;
@@ -29,7 +27,7 @@ interface IProps {
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: HTMLElement | undefined;
+    offsetTarget?: HTMLElement | null;
 
     /**
      * Callback for the mouse entering the component.
@@ -80,15 +78,15 @@ export const RoomParticipantContextMenu = ({
             return (<SendToRoomButton
                 key = { room.id }
                 onClick = { lowerMenu }
-                participantID = { entity?.jid }
+                participantID = { entity?.jid ?? '' }
                 room = { room } />);
         }
 
         return null;
     })
-.filter(Boolean), [ entity, rooms ]);
+    .filter(Boolean), [ entity, rooms ]);
 
-    return isLocalModerator && (
+    return isLocalModerator ? (
         <ContextMenu
             entity = { entity }
             isDrawerOpen = { Boolean(entity) }
@@ -112,5 +110,5 @@ export const RoomParticipantContextMenu = ({
                 {breakoutRoomsButtons}
             </ContextMenuItemGroup>
         </ContextMenu>
-    );
+    ) : null;
 };

@@ -1,8 +1,6 @@
-// @flow
-
 import React from 'react';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 
 import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 

@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -9,6 +9,7 @@ import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
+import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
 import { participantMatchesSearch } from '../../../../functions';
@@ -25,7 +26,7 @@ interface IProps {
     /**
      * React children.
      */
-    children: ReactElement;
+    children: React.ReactNode;
 
     /**
      * Is this item highlighted/raised.
@@ -47,6 +48,8 @@ interface IProps {
      */
     participantContextEntity?: {
         jid: string;
+        participantName: string;
+        room: IRoom;
     };
 
     /**

@@ -83,8 +83,8 @@ export default class AbstractStopRecordingDialog<P extends IProps>
         } else {
             const { _fileRecordingSession } = this.props;
 
-            if (_fileRecordingSession) { // @ts-ignore
-                this.props._conference.stopRecording(_fileRecordingSession.id);
+            if (_fileRecordingSession) {
+                this.props._conference?.stopRecording(_fileRecordingSession.id);
                 this._toggleScreenshotCapture();
             }
         }

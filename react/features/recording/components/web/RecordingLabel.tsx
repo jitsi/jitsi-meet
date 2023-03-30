@@ -38,14 +38,12 @@ class RecordingLabel extends AbstractRecordingLabel {
      * @inheritdoc
      */
     _renderLabel() {
-        // @ts-ignore
         if (this.props._status !== JitsiRecordingConstants.status.ON) {
             // Since there are no expanded labels on web, we only render this
             // label when the recording status is ON.
             return null;
         }
 
-        // @ts-ignore
         const { classes, mode, t } = this.props;
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
         const icon = isRecording ? IconRecord : IconSites;
@@ -63,5 +61,4 @@ class RecordingLabel extends AbstractRecordingLabel {
     }
 }
 
-// @ts-ignore
 export default withStyles(styles)(translate(connect(_mapStateToProps)(RecordingLabel)));

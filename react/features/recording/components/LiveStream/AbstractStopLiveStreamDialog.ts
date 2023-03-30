@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { getActiveSession } from '../../functions';
+import { ISessionData } from '../../reducer';
 
 /**
  * The type of the React {@code Component} props of
@@ -17,12 +18,12 @@ interface IProps extends WithTranslation {
     /**
      * The {@code JitsiConference} for the current conference.
      */
-    _conference: IJitsiConference;
+    _conference?: IJitsiConference;
 
     /**
      * The redux representation of the live streaming to be stopped.
      */
-    _session: { id: string; };
+    _session?: ISessionData;
 }
 
 /**
@@ -57,7 +58,7 @@ export default class AbstractStopLiveStreamDialog extends Component<IProps> {
         const { _session } = this.props;
 
         if (_session) {
-            this.props._conference.stopRecording(_session.id);
+            this.props._conference?.stopRecording(_session.id);
         }
 
         return true;

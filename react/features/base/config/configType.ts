@@ -127,6 +127,7 @@ export interface INoiseSuppressionConfig {
 
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
+    _screenshotHistoryRegionUrl?: string;
     analytics?: {
         amplitudeAPPKey?: string;
         disabled?: boolean;

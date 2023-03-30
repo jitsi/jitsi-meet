@@ -1,47 +1,46 @@
-/* @flow */
-
 import React from 'react';
 
 import Tooltip from '../../../base/tooltip/components/Tooltip';
-import AbstractToolbarButton from '../../../toolbox/components/AbstractToolbarButton';
-import type { Props as AbstractToolbarButtonProps } from '../../../toolbox/components/AbstractToolbarButton';
+import AbstractToolbarButton, {
+    IProps as AbstractToolbarButtonProps
+} from '../../../toolbox/components/AbstractToolbarButton';
 
 /**
  * The type of the React {@code Component} props of {@link ReactionButton}.
  */
-type Props = AbstractToolbarButtonProps & {
+interface IProps extends AbstractToolbarButtonProps {
+
+    /**
+     * Optional label for the button.
+     */
+    label?: string;
 
     /**
      * Optional text to display in the tooltip.
      */
-    tooltip?: string,
+    tooltip?: string;
 
     /**
      * From which direction the tooltip should appear, relative to the
      * button.
      */
-    tooltipPosition: string,
-
-    /**
-     * Optional label for the button.
-     */
-    label?: string
-};
+    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
+}
 
 /**
  * The type of the React {@code Component} state of {@link ReactionButton}.
  */
-type State = {
+interface IState {
 
     /**
      * Used to determine zoom level on reaction burst.
      */
-    increaseLevel: number,
+    increaseLevel: number;
 
     /**
      * Timeout ID to reset reaction burst.
      */
-    increaseTimeout: TimeoutID | null
+    increaseTimeout: number | null;
 }
 
 /**
@@ -49,7 +48,7 @@ type State = {
  *
  * @augments AbstractToolbarButton
  */
-class ReactionButton extends AbstractToolbarButton<Props, State> {
+class ReactionButton extends AbstractToolbarButton<IProps, IState> {
     /**
      * Default values for {@code ReactionButton} component's properties.
      *
@@ -64,7 +63,7 @@ class ReactionButton extends AbstractToolbarButton<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onKeyDown = this._onKeyDown.bind(this);
@@ -76,10 +75,6 @@ class ReactionButton extends AbstractToolbarButton<Props, State> {
         };
     }
 
-    _onKeyDown: (Object) => void;
-
-    _onClickHandler: () => void;
-
     /**
      * Handles 'Enter' key on the button to trigger onClick for accessibility.
      * We should be handling Space onKeyUp but it conflicts with PTT.
@@ -88,7 +83,7 @@ class ReactionButton extends AbstractToolbarButton<Props, State> {
      * @private
      * @returns {void}
      */
-    _onKeyDown(event) {
+    _onKeyDown(event: React.KeyboardEvent) {
         // If the event coming to the dialog has been subject to preventDefault
         // we don't handle it here.
         if (event.defaultPrevented) {
@@ -109,8 +104,8 @@ class ReactionButton extends AbstractToolbarButton<Props, State> {
      */
     _onClickHandler() {
         this.props.onClick();
-        clearTimeout(this.state.increaseTimeout);
-        const timeout = setTimeout(() => {
+        clearTimeout(this.state.increaseTimeout ?? 0);
+        const timeout = window.setTimeout(() => {
             this.setState({
                 increaseLevel: 0
             });
@@ -132,7 +127,7 @@ class ReactionButton extends AbstractToolbarButton<Props, State> {
      * @protected
      * @returns {ReactElement} The button of this {@code ReactionButton}.
      */
-    _renderButton(children) {
+    _renderButton(children: React.ReactElement) {
         return (
             <div
                 aria-label = { this.props.accessibilityLabel }

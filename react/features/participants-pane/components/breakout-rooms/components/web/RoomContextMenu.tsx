@@ -1,47 +1,44 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
-import {
-    IconCloseLarge,
-    IconRingGroup
-} from '../../../../../base/icons';
-import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../../analytics/functions';
+import { IconCloseLarge, IconRingGroup } from '../../../../../base/icons/svg';
+import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
-import { showOverflowDrawer } from '../../../../../toolbox/functions';
+import { IRoom } from '../../../../../breakout-rooms/types';
+import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 
-type Props = {
+interface IProps {
 
     /**
      * Room reference.
      */
-    entity: Object,
+    entity?: IRoom;
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: ?HTMLElement,
+    offsetTarget?: HTMLElement | null;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onEnter: Function,
+    onEnter: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onLeave: Function,
+    onLeave: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for making a selection in the menu.
      */
-    onSelect: Function
-};
+    onSelect: (e?: React.MouseEvent | boolean) => void;
+}
 
 export const RoomContextMenu = ({
     entity: room,
@@ -49,7 +46,7 @@ export const RoomContextMenu = ({
     onEnter,
     onLeave,
     onSelect
-}: Props) => {
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
@@ -57,15 +54,15 @@ export const RoomContextMenu = ({
 
     const onJoinRoom = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('join'));
-        dispatch(moveToRoom(room.jid));
+        dispatch(moveToRoom(room?.jid));
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
-        dispatch(removeBreakoutRoom(room.jid));
+        dispatch(removeBreakoutRoom(room?.jid ?? ''));
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
-        dispatch(closeBreakoutRoom(room.id));
+        dispatch(closeBreakoutRoom(room?.id ?? ''));
     }, [ dispatch, room ]);
 
     const isRoomEmpty = !(room?.participants && Object.keys(room.participants).length > 0);
@@ -86,17 +83,18 @@ export const RoomContextMenu = ({
         } : null
     ].filter(Boolean);
 
-    const lowerMenu = useCallback(() => onSelect(true));
+    const lowerMenu = useCallback(() => onSelect(true), []);
 
     return (
         <ContextMenu
             entity = { room }
-            isDrawerOpen = { room }
+            isDrawerOpen = { Boolean(room) }
             offsetTarget = { offsetTarget }
             onClick = { lowerMenu }
             onDrawerClose = { onSelect }
             onMouseEnter = { onEnter }
             onMouseLeave = { onLeave }>
+            {/* @ts-ignore */}
             <ContextMenuItemGroup actions = { actions } />
         </ContextMenu>
     );

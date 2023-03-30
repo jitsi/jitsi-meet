@@ -219,8 +219,9 @@ const SpeakerStats = () => {
         showFaceExpressions && !displaySwitch && dispatch(toggleFaceExpressions());
     }, [ clientWidth ]);
 
-    // @ts-ignore
-    useEffect(() => () => dispatch(resetSearchCriteria()), []);
+    useEffect(() => () => {
+        dispatch(resetSearchCriteria());
+    }, []);
 
     return (
         <Dialog

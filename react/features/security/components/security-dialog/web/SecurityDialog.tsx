@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -8,13 +7,10 @@ import { IJitsiConference } from '../../../../base/conference/reducer';
 import { getSecurityUiConfig } from '../../../../base/config/functions.any';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-// @ts-ignore
-import { E2EESection } from '../../../../e2ee/components';
-// @ts-ignore
-import { LobbySection } from '../../../../lobby';
+import E2EESection from '../../../../e2ee/components/E2EESection';
+import LobbySection from '../../../../lobby/components/web/LobbySection';
 
 import PasswordSection from './PasswordSection';
-/* eslint-enable lines-around-comment */
 
 export interface INotifyClick {
     key: string;

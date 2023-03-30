@@ -25,6 +25,13 @@ declare global {
         interfaceConfig?: any;
         JitsiMeetJS?: any;
         JitsiMeetElectron?: any;
+        // selenium tests handler
+        _sharedVideoPlayer: any;
+    }
+
+    interface Document {
+        mozCancelFullScreen?: Function;
+        webkitExitFullscreen?: Function;
     }
 
     const config: IConfig;

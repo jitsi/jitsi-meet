@@ -25,7 +25,6 @@ import {
     ICON_INFO,
     ICON_USERS,
     LOCAL_RECORDING
-    // @ts-ignore
 } from '../styles.web';
 
 
@@ -122,7 +121,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             onSharingSettingChanged,
             sharingSetting,
             t
-            // @ts-ignore
         } = this.props;
 
         return (
