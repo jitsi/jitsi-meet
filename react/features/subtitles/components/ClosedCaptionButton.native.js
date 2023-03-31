@@ -2,7 +2,8 @@
 
 import { connect } from 'react-redux';
 
-import { CLOSE_CAPTIONS_ENABLED, getFeatureFlag } from '../../base/flags';
+import { CLOSE_CAPTIONS_ENABLED } from '../../base/flags/constants';
+import { getFeatureFlag } from '../../base/flags/functions';
 import { translate } from '../../base/i18n';
 import { IconSubtitles } from '../../base/icons';
 

@@ -1,6 +1,7 @@
 // @flow
 
-import { CALL_INTEGRATION_ENABLED, getFeatureFlag } from '../../base/flags';
+import { CALL_INTEGRATION_ENABLED } from '../../base/flags/constants';
+import { getFeatureFlag } from '../../base/flags/functions';
 import { toState } from '../../base/redux';
 
 /**

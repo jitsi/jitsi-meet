@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { Avatar } from '../../../../base/avatar';
+import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n';
 import { Icon, IconPhoneRinging } from '../../../../base/icons';
 import { MultiSelectAutocomplete } from '../../../../base/react';

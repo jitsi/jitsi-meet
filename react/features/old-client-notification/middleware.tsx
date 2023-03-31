@@ -8,7 +8,7 @@ import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 // @ts-ignore
-import { OldElectronAPPNotificationDescription } from './components';
+import OldElectronAPPNotificationDescription from './components/OldElectronAPPNotificationDescription';
 import { isOldJitsiMeetElectronApp } from './functions';
 
 MiddlewareRegistry.register(store => next => action => {

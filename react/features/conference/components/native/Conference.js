@@ -14,22 +14,21 @@ import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions';
-import { FULLSCREEN_ENABLED, PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.native';
-import { DisplayNameLabel } from '../../../display-name';
+import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
 import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
-import {
-    FILMSTRIP_SIZE,
-    Filmstrip,
-    TileView,
-    isFilmstripVisible
-} from '../../../filmstrip';
-import { CalleeInfoContainer } from '../../../invite';
-import { LargeVideo } from '../../../large-video';
+import Filmstrip from '../../../filmstrip/components/native/Filmstrip';
+import TileView from '../../../filmstrip/components/native/TileView';
+import { FILMSTRIP_SIZE } from '../../../filmstrip/constants';
+import { isFilmstripVisible } from '../../../filmstrip/functions.native';
+import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
+import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { startKnocking } from '../../../lobby/actions.any';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate }
@@ -37,9 +36,9 @@ import { navigate }
 import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture';
-import { Captions } from '../../../subtitles/components';
+import Captions from '../../../subtitles/components/Captions.native';
 import { setToolboxVisible } from '../../../toolbox/actions';
-import { Toolbox } from '../../../toolbox/components/native';
+import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions';
 import {
     AbstractConference,

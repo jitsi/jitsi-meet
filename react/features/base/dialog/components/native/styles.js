@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
-import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
+import ColorSchemeRegistry from '../../../color-scheme/ColorSchemeRegistry';
+import { schemeColor } from '../../../color-scheme/functions';
 import { BoxModel } from '../../../styles';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 

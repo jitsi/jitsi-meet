@@ -18,9 +18,8 @@ import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { LogoutDialog, SettingsDialog } from './components';
+import LogoutDialog from './components/web/LogoutDialog';
+import SettingsDialog from './components/web/SettingsDialog';
 import {
     getModeratorTabProps,
     getMoreTabProps,
@@ -28,7 +27,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps,
     getVirtualBackgroundTabProps
-} from './functions';
+} from './functions.web';
 
 /**
  * Opens {@code LogoutDialog}.

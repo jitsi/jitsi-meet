@@ -5,7 +5,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { VideoTrack } from '../../../base/media';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout/constants';
+import { getCurrentLayout } from '../../../video-layout/functions.web';
 
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { openSheet } from '../../../base/dialog';
+import { openSheet } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n';
 import { IconInfoCircle } from '../../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';

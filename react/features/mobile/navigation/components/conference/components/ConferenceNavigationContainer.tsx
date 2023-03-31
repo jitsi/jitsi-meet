@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 // @ts-ignore
-import { Chat } from '../../../../../chat';
+import Chat from '../../../../../chat/components/native/Chat';
 // @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
 // @ts-ignore
@@ -15,19 +15,19 @@ import CarMode from '../../../../../conference/components/native/carmode/CarMode
 // @ts-ignore
 import { getDisablePolls } from '../../../../../conference/functions';
 // @ts-ignore
-import { SharedDocument } from '../../../../../etherpad';
+import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
-import { GifsMenu } from '../../../../../gifs/components';
+import GifsMenu from '../../../../../gifs/components/native/GifsMenu';
 import AddPeopleDialog
 // @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 // @ts-ignore
-import { ParticipantsPane } from '../../../../../participants-pane/components/native';
+import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore
-import { StartLiveStreamDialog } from '../../../../../recording';
-import { StartRecordingDialog }
+import StartLiveStreamDialog from '../../../../../recording/components/LiveStream/native/StartLiveStreamDialog';
+import StartRecordingDialog
 // @ts-ignore
-    from '../../../../../recording/components/Recording/native';
+    from '../../../../../recording/components/Recording/native/StartRecordingDialog';
 import SalesforceLinkDialog
 // @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';

@@ -11,18 +11,20 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    JITSI_CONFERENCE_URL_KEY,
-    SET_ROOM,
+    SET_ROOM
+} from '../../base/conference/actionTypes';
+import { JITSI_CONFERENCE_URL_KEY } from '../../base/conference/constants';
+import {
     forEachConference,
     getCurrentConference,
     isRoomValid
-} from '../../base/conference';
+} from '../../base/conference/functions';
+import { CONNECTION_DISCONNECTED } from '../../base/connection/actionTypes';
 import {
-    CONNECTION_DISCONNECTED,
     JITSI_CONNECTION_CONFERENCE_KEY,
-    JITSI_CONNECTION_URL_KEY,
-    getURLWithoutParams
-} from '../../base/connection';
+    JITSI_CONNECTION_URL_KEY
+} from '../../base/connection/constants';
+import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
@@ -37,10 +39,10 @@ import {
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
-import { CLOSE_CHAT, OPEN_CHAT } from '../../chat';
+import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { openChat } from '../../chat/actions';
 import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
-import { setRequestingSubtitles } from '../../subtitles';
+import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 

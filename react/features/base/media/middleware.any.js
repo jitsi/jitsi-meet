@@ -8,15 +8,15 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showWarningNotification
-} from '../../notifications';
+import { showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
-import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
-import { SET_ROOM, isRoomValid } from '../conference';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
+import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
+import { setAudioOnly } from '../audio-only/actions';
+import { SET_ROOM } from '../conference/actionTypes';
+import { isRoomValid } from '../conference/functions';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';

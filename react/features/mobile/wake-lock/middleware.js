@@ -1,6 +1,6 @@
 import KeepAwake from 'react-native-keep-awake';
 
-import { getCurrentConference } from '../../base/conference';
+import { getCurrentConference } from '../../base/conference/functions';
 import { StateListenerRegistry } from '../../base/redux';
 
 /**

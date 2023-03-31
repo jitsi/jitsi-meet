@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { setPassword } from '../../base/conference';
-import { InputDialog } from '../../base/dialog';
+import { setPassword } from '../../base/conference/actions';
+import InputDialog from '../../base/dialog/components/native/InputDialog';
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
 /**

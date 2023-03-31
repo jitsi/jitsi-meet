@@ -5,8 +5,9 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
-import { Avatar } from '../../../base/avatar';
-import { BottomSheet, hideSheet } from '../../../base/dialog';
+import Avatar from '../../../base/avatar/components/Avatar';
+import { hideSheet } from '../../../base/dialog/actions';
+import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import {
     getParticipantById,

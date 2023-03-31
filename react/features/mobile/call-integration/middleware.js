@@ -5,18 +5,20 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
-import { SET_AUDIO_ONLY } from '../../base/audio-only';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
+import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    CONFERENCE_WILL_LEAVE,
+    CONFERENCE_WILL_LEAVE
+} from '../../base/conference/actionTypes';
+import {
     getConferenceName,
     getCurrentConference
-} from '../../base/conference';
-import { getInviteURL } from '../../base/connection';
+} from '../../base/conference/functions';
+import { getInviteURL } from '../../base/connection/functions';
 import {
     MEDIA_TYPE,
     isVideoMutedByAudioOnly,

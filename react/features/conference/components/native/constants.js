@@ -1,9 +1,9 @@
 // @flow
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { RecordingExpandedLabel } from '../../../recording';
-import { TranscribingExpandedLabel } from '../../../transcribing';
-import { VideoQualityExpandedLabel } from '../../../video-quality';
+import RecordingExpandedLabel from '../../../recording/components/native/RecordingExpandedLabel';
+import TranscribingExpandedLabel from '../../../transcribing/components/TranscribingExpandedLabel.native';
+import VideoQualityExpandedLabel from '../../../video-quality/components/VideoQualityExpandedLabel.native';
 
 import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
 import RaisedHandsCountExpandedLabel from './RaisedHandsCountExpandedLabel';

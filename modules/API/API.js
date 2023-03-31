@@ -19,16 +19,17 @@ import {
 import { isEnabledFromState } from '../../react/features/av-moderation/functions';
 import {
     endConference,
-    getCurrentConference,
     sendTones,
     setFollowMe,
     setLocalSubject,
     setPassword,
     setSubject
-} from '../../react/features/base/conference';
-import { getWhitelistedJSON, overwriteConfig } from '../../react/features/base/config';
+} from '../../react/features/base/conference/actions';
+import { getCurrentConference } from '../../react/features/base/conference/functions';
+import { overwriteConfig } from '../../react/features/base/config/actions';
+import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
-import { isSupportedBrowser } from '../../react/features/base/environment';
+import { isSupportedBrowser } from '../../react/features/base/environment/environment';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media';
@@ -68,8 +69,8 @@ import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
-import { appendSuffix } from '../../react/features/display-name';
-import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
+import { appendSuffix } from '../../react/features/display-name/functions';
+import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox/functions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import {
     addStageParticipant,
@@ -78,7 +79,7 @@ import {
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
-import { invite } from '../../react/features/invite';
+import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions.any';
@@ -88,23 +89,19 @@ import {
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    hideNotification,
-    showNotification
-} from '../../react/features/notifications';
+import { hideNotification, showNotification } from '../../react/features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
+import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
+import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
@@ -112,9 +109,9 @@ import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-vi
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
-import { setTileView, toggleTileView } from '../../react/features/video-layout';
+import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
-import { setVideoQuality } from '../../react/features/video-quality';
+import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';

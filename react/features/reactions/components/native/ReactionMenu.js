@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { Image, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { isGifEnabled } from '../../../gifs/functions';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';

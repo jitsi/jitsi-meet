@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { openSheet } from '../../../../../base/dialog';
+import { openSheet } from '../../../../../base/dialog/actions';
 import { participantMatchesSearch } from '../../../../functions';
 import CollapsibleList from '../../../native/CollapsibleList';
 import styles from '../../../native/styles';

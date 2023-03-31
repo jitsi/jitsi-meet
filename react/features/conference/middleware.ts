@@ -23,7 +23,7 @@ import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { isCalendarEnabled } from '../calendar-sync/functions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { FeedbackDialog } from '../feedback';
+import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
 import { hideNotification, showNotification } from '../notifications/actions';
 import {

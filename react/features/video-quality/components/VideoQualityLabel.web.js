@@ -3,13 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { openDialog } from '../../base/dialog';
+import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { IconPerformance } from '../../base/icons';
 import { Label } from '../../base/label';
 import { COLORS } from '../../base/label/constants';
 import Tooltip from '../../base/tooltip/components/Tooltip';
-import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayTileView } from '../../video-layout/functions.web';
 
 import AbstractVideoQualityLabel, {
     IProps as AbstractProps,

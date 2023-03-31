@@ -9,8 +9,8 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { stopReceiver } from '../../remote-control/actions';
 import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share/actions';
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
-// @ts-ignore
-import { isScreenshotCaptureEnabled, toggleScreenshotCaptureSummary } from '../../screenshot-capture';
+import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
+import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
 // @ts-ignore
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { getCurrentConference } from '../conference/functions';

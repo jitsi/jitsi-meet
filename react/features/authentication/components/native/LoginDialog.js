@@ -3,9 +3,9 @@ import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { toJid } from '../../../base/connection';
 import { connect } from '../../../base/connection/actions.native';
-import { _abstractMapStateToProps } from '../../../base/dialog';
+import { toJid } from '../../../base/connection/functions';
+import { _abstractMapStateToProps } from '../../../base/dialog/functions';
 import { translate } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.native';

@@ -3,8 +3,10 @@
 import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
-import { isDialogOpen, openDialog } from '../../../base/dialog';
-import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { openDialog } from '../../../base/dialog/actions';
+import { isDialogOpen } from '../../../base/dialog/functions';
+import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { IconRaiseHand } from '../../../base/icons';
 import {

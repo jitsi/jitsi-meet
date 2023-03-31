@@ -1,7 +1,7 @@
 import { openDialog } from '../base/dialog/actions';
 
 // @ts-ignore
-import { DesktopPicker } from './components';
+import DesktopPicker from './components/DesktopPicker';
 
 /**
  * Signals to open a dialog with the DesktopPicker component.

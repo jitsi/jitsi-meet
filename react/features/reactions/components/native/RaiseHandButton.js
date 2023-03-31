@@ -9,7 +9,8 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,

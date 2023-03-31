@@ -12,11 +12,12 @@ import {
     // @ts-ignore
 } from '../../../../../base/modal/components/functions';
 // @ts-ignore
-import { Chat } from '../../../../../chat';
 import { setIsPollsTabFocused } from '../../../../../chat/actions.native';
+// @ts-ignore
+import Chat from '../../../../../chat/components/native/Chat';
 import { resetNbUnreadPollsMessages } from '../../../../../polls/actions';
 // @ts-ignore
-import { PollsPane } from '../../../../../polls/components';
+import PollsPane from '../../../../../polls/components/native/PollsPane';
 // @ts-ignore
 import { screen } from '../../../routes';
 // @ts-ignore

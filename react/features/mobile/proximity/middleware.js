@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native';
 
-import { getCurrentConference } from '../../base/conference';
+import { getCurrentConference } from '../../base/conference/functions';
 import { StateListenerRegistry } from '../../base/redux';
 
 /**

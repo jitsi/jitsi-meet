@@ -1,6 +1,9 @@
 /* global APP, interfaceConfig */
 
-import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
+import {
+    getVerticalFilmstripVisibleAreaWidth,
+    isFilmstripVisible
+} from '../../../react/features/filmstrip/functions';
 
 const Filmstrip = {
     /**

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayTileView } from '../../video-layout/functions.web';
 
 /**
  * Constants to describe the dimensions of the video. Landscape videos

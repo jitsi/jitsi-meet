@@ -4,8 +4,9 @@ import React, { PureComponent } from 'react';
 import { SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { hideDialog, isDialogOpen } from '../../../base/dialog';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { hideDialog } from '../../../base/dialog/actions';
+import { isDialogOpen } from '../../../base/dialog/functions';
 import { getParticipantCount } from '../../../base/participants';
 import type { StyleType } from '../../../base/styles';
 

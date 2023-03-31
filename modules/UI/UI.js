@@ -8,14 +8,14 @@ import EventEmitter from 'events';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util';
-import { setDocumentUrl } from '../../react/features/etherpad';
-import { setFilmstripVisible } from '../../react/features/filmstrip';
+import { setDocumentUrl } from '../../react/features/etherpad/actions';
+import { setFilmstripVisible } from '../../react/features/filmstrip/actions.any';
 import {
-    NOTIFICATION_TIMEOUT_TYPE,
     joinLeaveNotificationsDisabled,
     setNotificationsEnabled,
     showNotification
-} from '../../react/features/notifications';
+} from '../../react/features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../react/features/notifications/constants';
 import {
     dockToolbox,
     setToolboxEnabled,

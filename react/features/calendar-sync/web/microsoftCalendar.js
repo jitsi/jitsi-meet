@@ -8,7 +8,7 @@ import { findWindows } from 'windows-iana';
 
 import { createDeferred } from '../../../../modules/util/helpers';
 import { parseStandardURIString, parseURLParams } from '../../base/util';
-import { getShareInfoText } from '../../invite';
+import { getShareInfoText } from '../../invite/functions';
 import { setCalendarAPIAuthState } from '../actions';
 
 

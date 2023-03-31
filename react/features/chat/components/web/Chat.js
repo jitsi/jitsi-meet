@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import Tabs from '../../../base/ui/components/web/Tabs';
-import { PollsPane } from '../../../polls/components';
+import PollsPane from '../../../polls/components/web/PollsPane';
 import { toggleChat } from '../../actions.web';
 import { CHAT_TABS } from '../../constants';
 import AbstractChat, {

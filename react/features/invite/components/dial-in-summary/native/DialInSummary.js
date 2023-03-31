@@ -6,7 +6,7 @@ import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
-import { openDialog } from '../../../../base/dialog';
+import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';

@@ -6,11 +6,9 @@ import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 
 import { refreshCalendar } from './actions';
-import {
-    UpdateCalendarEventDialog
-
-    // @ts-ignore
-} from './components';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import UpdateCalendarEventDialog from './components/UpdateCalendarEventDialog.native';
 import { addLinkToCalendarEntry } from './functions.native';
 
 export * from './actions.any';

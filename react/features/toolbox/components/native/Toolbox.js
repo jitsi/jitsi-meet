@@ -5,13 +5,13 @@ import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { Platform } from '../../../base/react';
 import { StyleType } from '../../../base/styles';
-import { ChatButton } from '../../../chat';
-import { ReactionsMenuButton } from '../../../reactions/components';
+import ChatButton from '../../../chat/components/native/ChatButton';
+import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
-import { TileViewButton } from '../../../video-layout';
+import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';

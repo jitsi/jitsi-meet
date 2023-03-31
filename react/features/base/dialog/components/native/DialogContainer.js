@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import { ReactionEmoji } from '../../../../reactions/components';
-import { getReactionsQueue } from '../../../../reactions/functions.any';
+import ReactionEmoji from '../../../../reactions/components/native/ReactionEmoji';
+import { getReactionsQueue } from '../../../../reactions/functions.native';
 import AbstractDialogContainer, {
     abstractMapStateToProps
 } from '../AbstractDialogContainer';

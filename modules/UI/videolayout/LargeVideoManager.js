@@ -8,7 +8,7 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
-import { Avatar } from '../../../react/features/base/avatar';
+import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
@@ -25,7 +25,7 @@ import {
     getVideoTrackByParticipant,
     trackStreamingStatusChanged
 } from '../../../react/features/base/tracks';
-import { CHAT_SIZE } from '../../../react/features/chat';
+import { CHAT_SIZE } from '../../../react/features/chat/constants';
 import {
     isTrackStreamingStatusActive,
     isTrackStreamingStatusInactive,
@@ -37,8 +37,8 @@ import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
-import { PresenceLabel } from '../../../react/features/presence-status';
-import { shouldDisplayTileView } from '../../../react/features/video-layout';
+import PresenceLabel from '../../../react/features/presence-status/components/PresenceLabel';
+import { shouldDisplayTileView } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';

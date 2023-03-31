@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { batch, useDispatch } from 'react-redux';
 
-import { BottomSheet, hideSheet } from '../../../../base/dialog';
+import { hideSheet } from '../../../../base/dialog/actions';
+import BottomSheet from '../../../../base/dialog/components/native/BottomSheet';
 import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { highlightMeetingMoment } from '../../../actions.any';

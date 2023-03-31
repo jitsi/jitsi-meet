@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../base/participants';
 import { getLargeVideoParticipant } from '../../large-video/functions';
-import { isLayoutTileView } from '../../video-layout';
+import { isLayoutTileView } from '../../video-layout/functions.web';
 
 import {
     AbstractCaptions,

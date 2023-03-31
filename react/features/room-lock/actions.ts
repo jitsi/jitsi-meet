@@ -12,7 +12,7 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import { SecurityDialog } from '../security/components/security-dialog';
 
 // @ts-ignore
-import { PasswordRequiredPrompt } from './components';
+import PasswordRequiredPrompt from './components/PasswordRequiredPrompt';
 
 /**
  * Cancels a prompt for a password to join a specific conference/room.

@@ -3,7 +3,8 @@
 import { connect } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
-import { SPEAKERSTATS_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { SPEAKERSTATS_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';

@@ -6,10 +6,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
-import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
-import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video';
+import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
 import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
-import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
+import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video/components/LargeVideoBackground';
+import { LAYOUTS } from '../../../react/features/video-layout/constants';
+import { getCurrentLayout } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */
 import UIUtil from '../util/UIUtil';
 

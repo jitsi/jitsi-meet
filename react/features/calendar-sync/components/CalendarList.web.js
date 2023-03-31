@@ -11,7 +11,8 @@ import { translate } from '../../base/i18n';
 import { Icon, IconCalendar } from '../../base/icons';
 import { AbstractPage } from '../../base/react';
 import Spinner from '../../base/ui/components/web/Spinner';
-import { SETTINGS_TABS, openSettingsDialog } from '../../settings';
+import { openSettingsDialog } from '../../settings/actions';
+import { SETTINGS_TABS } from '../../settings/constants';
 import { refreshCalendar } from '../actions';
 import { ERRORS } from '../constants';
 

@@ -4,12 +4,9 @@ import {
     createConnectionEvent,
     sendAnalytics
 } from '../analytics';
-import { SET_ROOM } from '../base/conference';
-import {
-    CONNECTION_ESTABLISHED,
-    CONNECTION_FAILED,
-    getURLWithoutParams
-} from '../base/connection';
+import { SET_ROOM } from '../base/conference/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { getURLWithoutParams } from '../base/connection/utils';
 import { MiddlewareRegistry } from '../base/redux';
 import { inIframe } from '../base/util/iframeUtils';
 
