@@ -18,7 +18,7 @@ import styles from './styles';
 /**
  * The type of the React {@code Component} props of {@link AbstractRecentList}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The redux store's {@code dispatch} function.
@@ -29,13 +29,13 @@ type Props = {
      * The translate function.
      */
     t: Function;
-};
+}
 
 /**
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P extends Props> extends AbstractPage<P> {
+export default class AbstractRecentList<P extends IProps> extends AbstractPage<P> {
     /**
      * Initializes a new {@code RecentList} instance.
      *

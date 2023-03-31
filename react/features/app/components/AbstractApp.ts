@@ -6,7 +6,7 @@ import { getDefaultURL } from '../functions';
 /**
  * The type of React {@code Component} props of {@link AbstractApp}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * XXX Refer to the implementation of loadURLObject: in
@@ -18,14 +18,14 @@ export type Props = {
      * The URL, if any, with which the app was launched.
      */
     url: Object | string;
-};
+}
 
 /**
  * Base (abstract) class for main App component.
  *
  * @abstract
  */
-export class AbstractApp extends BaseApp<Props> {
+export class AbstractApp extends BaseApp<IProps> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
@@ -51,7 +51,7 @@ export class AbstractApp extends BaseApp<Props> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: Props) {
+    async componentDidUpdate(prevProps: IProps) {
         const previousUrl = toURLString(prevProps.url);
         const currentUrl = toURLString(this.props.url);
         const previousTimestamp = prevProps.timestamp;

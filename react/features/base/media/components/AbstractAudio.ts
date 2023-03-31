@@ -17,7 +17,7 @@ export type AudioElement = {
 /**
  * {@code AbstractAudio} Component's property types.
  */
-type Props = {
+interface IProps {
 
     loop?: boolean;
 
@@ -37,13 +37,13 @@ type Props = {
      */
     src: Object | string;
     stream?: Object;
-};
+}
 
 /**
  * The React {@link Component} which is similar to Web's
  * {@code HTMLAudioElement}.
  */
-export default class AbstractAudio extends Component<Props> {
+export default class AbstractAudio extends Component<IProps> {
     /**
      * The {@link AudioElement} instance which implements the audio playback
      * functionality.
@@ -53,10 +53,10 @@ export default class AbstractAudio extends Component<Props> {
     /**
      * Initializes a new {@code AbstractAudio} instance.
      *
-     * @param {Props} props - The read-only properties with which the new
+     * @param {IProps} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

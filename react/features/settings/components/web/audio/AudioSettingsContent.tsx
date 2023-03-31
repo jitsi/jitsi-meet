@@ -90,14 +90,14 @@ export interface IProps extends WithTranslation {
     toggleSuppression: () => void;
 }
 
-type State = {
+interface IState {
 
     /**
     * An list of objects, each containing the microphone label, audio track, device id
     * and track error if the case.
     */
     audioTracks: Array<{ deviceId: string; hasError: boolean; jitsiTrack: any; label: string; }>;
-};
+}
 
 /**
  * Implements a React {@link Component} which displays a list of all
@@ -105,7 +105,7 @@ type State = {
  *
  * @augments Component
  */
-class AudioSettingsContent extends Component<IProps, State> {
+class AudioSettingsContent extends Component<IProps, IState> {
     _componentWasUnmounted: boolean;
     microphoneHeaderId = 'microphone_settings_header';
     speakerHeaderId = 'speaker_settings_header';

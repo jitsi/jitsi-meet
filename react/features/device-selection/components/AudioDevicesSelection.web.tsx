@@ -111,13 +111,13 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link AudioDevicesSelection}.
  */
-type State = {
+interface IState {
 
     /**
      * The JitsiTrack to use for previewing audio input.
      */
     previewAudioTrack?: any | null;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -153,7 +153,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class AudioDevicesSelection extends AbstractDialogTab<IProps, State> {
+class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 
     /**
      * Whether current component is mounted or not.

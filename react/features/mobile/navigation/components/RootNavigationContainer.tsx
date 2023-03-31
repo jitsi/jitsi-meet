@@ -37,7 +37,7 @@ import ConferenceNavigationContainer
 const RootStack = createStackNavigator();
 
 
-type Props = {
+interface IProps {
 
     /**
      * Redux dispatch function.
@@ -48,10 +48,10 @@ type Props = {
     * Is welcome page available?
     */
     isWelcomePageAvailable: boolean;
-};
+}
 
 
-const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
+const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) => {
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
@@ -108,7 +108,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
     return {

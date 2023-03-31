@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { IReduxState } from '../../app/types';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 
-type Props = {
+interface IProps {
 
     /**
      * True of the label should be visible.
@@ -14,12 +14,12 @@ type Props = {
      * Function to be used to translate i18n labels.
      */
     t: Function;
-};
+}
 
 /**
  * Abstract class for the {@Code InsecureRoomNameLabel} component.
  */
-export default class AbstractInsecureRoomNameLabel extends PureComponent<Props> {
+export default class AbstractInsecureRoomNameLabel extends PureComponent<IProps> {
     /**
      * Implements {@code Component#render}.
      *
@@ -47,7 +47,7 @@ export default class AbstractInsecureRoomNameLabel extends PureComponent<Props> 
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState) {
     const { locked, room } = state['features/base/conference'];

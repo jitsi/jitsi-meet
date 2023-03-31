@@ -15,7 +15,7 @@ import Thumbnail from './Thumbnail';
 /**
  * The type of the React {@code Component} props of {@link ThumbnailWrapper}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Whether or not to hide the self view.
@@ -67,21 +67,21 @@ type Props = {
      * The styles coming from react-window.
      */
     style: Object;
-};
+}
 
 /**
  * A wrapper Component for the Thumbnail that translates the react-window specific props
  * to the Thumbnail Component's props.
  */
-class ThumbnailWrapper extends Component<Props> {
+class ThumbnailWrapper extends Component<IProps> {
     shouldComponentUpdate: (p: any, s: any) => boolean;
 
     /**
      * Creates new ThumbnailWrapper instance.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.shouldComponentUpdate = shouldComponentUpdate.bind(this);
@@ -146,7 +146,7 @@ class ThumbnailWrapper extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The props passed to the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
         data: { filmstripType: string; }; index?: number; rowIndex: number; }) {

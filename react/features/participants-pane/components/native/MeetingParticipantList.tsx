@@ -31,7 +31,7 @@ import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
 
-type Props = WithTranslation & {
+interface IProps extends WithTranslation {
 
     /**
      * Current breakout room, if we are in one.
@@ -102,24 +102,19 @@ type Props = WithTranslation & {
      * Function to update the search string.
      */
     setSearchString: Function;
-
-    /**
-     * Translation function.
-     */
-    t: Function;
-};
+}
 
 /**
  *  The meeting participant list component.
  */
-class MeetingParticipantList extends PureComponent<Props> {
+class MeetingParticipantList extends PureComponent<IProps> {
 
     /**
      * Creates new MeetingParticipantList instance.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._keyExtractor = this._keyExtractor.bind(this);
@@ -279,7 +274,7 @@ class MeetingParticipantList extends PureComponent<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState): Object {
     const _participantsCount = getParticipantCountWithFake(state);

@@ -7,7 +7,7 @@ import { NOTIFY_CLICK_MODE } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link HangupContextMenuItem}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Accessibility label for the button.
@@ -39,9 +39,7 @@ type Props = {
      * Callback that performs the actual hangup action.
      */
     onClick: Function;
-};
-
-declare let APP: any;
+}
 
 /**
  * Implementation of a button to be rendered within Hangup context menu.
@@ -49,7 +47,7 @@ declare let APP: any;
  * @param {Object} props - Component's props.
  * @returns {JSX.Element} - Button that would trigger the hangup action.
  */
-export const HangupContextMenuItem = (props: Props) => {
+export const HangupContextMenuItem = (props: IProps) => {
     const shouldNotify = props.notifyMode !== undefined;
     const shouldPreventExecution = props.notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY;
 

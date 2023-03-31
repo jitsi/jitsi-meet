@@ -23,7 +23,7 @@ import logger from '../logger';
 /**
  * The type of the React {@code Component} state of {@link BaseApp}.
  */
-type State = {
+interface IState {
 
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
@@ -37,14 +37,14 @@ type State = {
      * The redux store used by the {@code BaseApp}.
      */
     store?: IStore;
-};
+}
 
 /**
  * Base (abstract) class for main App component.
  *
  * @abstract
  */
-export default class BaseApp<P> extends Component<P, State> {
+export default class BaseApp<P> extends Component<P, IState> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */

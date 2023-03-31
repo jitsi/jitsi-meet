@@ -13,7 +13,7 @@ import Timeline from './Timeline';
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The name of the participant.
@@ -60,9 +60,9 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function;
-};
+}
 
-const SpeakerStatsItem = (props: Props) => {
+const SpeakerStatsItem = (props: IProps) => {
     const rowDisplayClass = `row item ${props.hasLeft ? 'has-left' : ''}`;
     const nameTimeClass = `name-time${
         props.showFaceExpressions ? ' expressions-on' : ''

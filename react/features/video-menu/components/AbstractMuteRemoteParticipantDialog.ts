@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { muteRemote } from '../actions';
@@ -7,7 +8,7 @@ import { muteRemote } from '../actions';
  * The type of the React {@code Component} props of
  * {@link AbstractMuteRemoteParticipantDialog}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * The Redux dispatch function.
@@ -18,19 +19,14 @@ export type Props = {
      * The ID of the remote participant to be muted.
      */
     participantID: string;
-
-    /**
-     * Function to translate i18n labels.
-     */
-    t: Function;
-};
+}
 
 /**
  * Abstract dialog to confirm a remote participant mute action.
  *
  * @augments Component
  */
-export default class AbstractMuteRemoteParticipantDialog<P extends Props = Props, State=void>
+export default class AbstractMuteRemoteParticipantDialog<P extends IProps = IProps, State=void>
     extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.

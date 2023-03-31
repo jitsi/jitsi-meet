@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { ZINDEX_DIALOG_PORTAL } from '../../constants';
 
-type Props = {
+interface IProps {
 
     /**
      * The component(s) to be displayed within the drawer portal.
@@ -37,7 +37,7 @@ type Props = {
      * This is used to determine the correct size of the portal content.
      */
     targetSelector?: string;
-};
+}
 
 /**
  * Component meant to render a drawer at the bottom of the screen,
@@ -45,7 +45,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function DialogPortal({ children, className, style, getRef, setSize, targetSelector }: Props) {
+function DialogPortal({ children, className, style, getRef, setSize, targetSelector }: IProps) {
     const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');

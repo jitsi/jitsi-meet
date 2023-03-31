@@ -7,25 +7,25 @@ import { DialogProps } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link AbstractDialog}.
  */
-export type Props = DialogProps & {
+export interface IProps extends DialogProps {
 
     /**
      * Used to show/hide the dialog on cancel.
      */
     dispatch: IStore['dispatch'];
-};
+}
 
 /**
  * The type of the React {@code Component} state of {@link AbstractDialog}.
  */
-export type State = {
+export interface IState {
     submitting?: boolean;
-};
+}
 
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog<P extends Props, S extends State>
+export default class AbstractDialog<P extends IProps, S extends IState>
     extends Component<P, S> {
 
     _mounted: boolean;

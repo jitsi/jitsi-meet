@@ -5,7 +5,7 @@ import { getFixedPlatformStyle } from '../../styles/functions';
 /**
  * {@code AbstractContainer} Component's property types.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * An optional accessibility label to apply to the container root.
@@ -61,7 +61,7 @@ export type Props = {
      * all.
      */
     visible?: boolean;
-};
+}
 
 /**
  * Abstract (base) class for container of React {@link Component} children with
@@ -69,7 +69,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractContainer<P extends Props> extends Component<P> {
+export default class AbstractContainer<P extends IProps> extends Component<P> {
     /**
      * Renders this {@code AbstractContainer} as a React {@code Component} of a
      * specific type.

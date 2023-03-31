@@ -1,6 +1,7 @@
 import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useRef } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 // @ts-expect-error
@@ -34,23 +35,12 @@ interface IDimensions {
 }
 
 /**
- * The type of the React {@link Component} props of {@link Whiteboard}.
- */
-type Props = {
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function;
-};
-
-/**
  * The Whiteboard component.
  *
  * @param {Props} props - The React props passed to this component.
  * @returns {JSX.Element} - The React component.
  */
-const Whiteboard = (props: Props): JSX.Element => {
+const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 

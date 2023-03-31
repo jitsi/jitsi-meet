@@ -3,7 +3,7 @@ import { IReduxState } from '../../app/types';
 /**
  * The type of the React {@code Component} props of {@link TranscribingLabel}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * True if the label needs to be rendered, false otherwise.
@@ -14,7 +14,7 @@ export type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function;
-};
+}
 
 /**
  * Maps (parts of) the redux state to the associated props of the
