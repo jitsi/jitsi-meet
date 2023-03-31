@@ -13,7 +13,7 @@ import {
 } from './actionTypes';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { FeedbackDialog } from './components';
+import FeedbackDialog from './components/FeedbackDialog';
 import { sendFeedbackToJaaSRequest } from './functions';
 
 /**

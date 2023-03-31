@@ -3,8 +3,9 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
-import { RecentList } from '../../../../../recent-list';
+import CalendarList from '../../../../../calendar-sync/components/CalendarList.native';
+import { isCalendarEnabled } from '../../../../../calendar-sync/functions.native';
+import RecentList from '../../../../../recent-list/components/RecentList.native';
 import {
     calendarListTabBarOptions,
     recentListTabBarOptions,

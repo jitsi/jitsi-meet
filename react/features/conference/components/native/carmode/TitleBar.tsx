@@ -15,7 +15,7 @@ import ConnectionIndicator from '../../../../connection-indicator/components/nat
 // @ts-ignore
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
 // @ts-ignore
-import { VideoQualityLabel } from '../../../../video-quality';
+import VideoQualityLabel from '../../../../video-quality/components/VideoQualityLabel.native';
 
 // @ts-ignore
 import styles from './styles';

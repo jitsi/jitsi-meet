@@ -10,17 +10,13 @@ import {
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
-import { openDisplayNamePrompt } from '../../display-name';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showWarningNotification } from '../../notifications';
+import { openDisplayNamePrompt } from '../../display-name/actions';
+import { showErrorNotification, showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { setIAmVisitor } from '../../visitors/actions';
-import { overwriteConfig } from '../config';
-import {
-    CONNECTION_ESTABLISHED,
-    CONNECTION_FAILED,
-    connectionDisconnected,
-    disconnect
-} from '../connection';
-import { connect } from '../connection/actions';
+import { overwriteConfig } from '../config/actions';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
+import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import {

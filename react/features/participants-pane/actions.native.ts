@@ -7,14 +7,14 @@ import { navigate }
 // @ts-ignore
 import { screen } from '../mobile/navigation/routes';
 // @ts-ignore
-import { SharedVideoMenu } from '../video-menu';
-// @ts-ignore
 import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
 // @ts-ignore
     from '../video-menu/components/native/ConnectionStatusComponent';
 // @ts-ignore
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
+// @ts-ignore
+import SharedVideoMenu from '../video-menu/components/native/SharedVideoMenu';
 
 import { PARTICIPANTS_PANE_OPEN, SET_VOLUME } from './actionTypes';
 import RoomParticipantMenu from './components/native/RoomParticipantMenu';

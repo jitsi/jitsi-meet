@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AlertDialog, openDialog } from '../../../../base/dialog';
+import { openDialog } from '../../../../base/dialog/actions';
+import AlertDialog from '../../../../base/dialog/components/native/AlertDialog';
 import { translate } from '../../../../base/i18n';
 import {
     Icon,
@@ -24,7 +25,7 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import Input from '../../../../base/ui/components/native/Input';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
-import { beginShareRoom } from '../../../../share-room';
+import { beginShareRoom } from '../../../../share-room/actions';
 import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,

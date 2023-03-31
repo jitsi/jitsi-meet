@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
     getParticipantDisplayName,
@@ -12,7 +12,8 @@ import {
 } from '../../../base/participants';
 import { Container, Text } from '../../../base/react';
 import { isLocalTrackMuted } from '../../../base/tracks';
-import { CALLING, PresenceLabel } from '../../../presence-status';
+import PresenceLabel from '../../../presence-status/components/PresenceLabel';
+import { CALLING } from '../../../presence-status/constants';
 
 import styles from './styles';
 

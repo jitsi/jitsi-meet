@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 
-import { Avatar } from '../../../avatar';
+import Avatar from '../../../avatar/components/Avatar';
 import { StyleType } from '../../../styles';
 import { type Item } from '../../Types';
 

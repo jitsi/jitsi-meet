@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ConfirmDialog } from '../../base/dialog';
+import ConfirmDialog from '../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../base/i18n';
 import { updateCalendarEvent } from '../actions';
 

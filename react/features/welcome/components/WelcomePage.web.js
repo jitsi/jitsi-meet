@@ -7,9 +7,10 @@ import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
-import { CalendarList } from '../../calendar-sync';
-import { RecentList } from '../../recent-list';
-import { SETTINGS_TABS, SettingsButton } from '../../settings';
+import CalendarList from '../../calendar-sync/components/CalendarList.web';
+import RecentList from '../../recent-list/components/RecentList.web';
+import SettingsButton from '../../settings/components/web/SettingsButton';
+import { SETTINGS_TABS } from '../../settings/constants';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';

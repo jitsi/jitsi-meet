@@ -3,7 +3,7 @@ import Dialog from 'react-native-dialog';
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
-import { ConfirmDialog } from '../../../base/dialog';
+import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n';
 import AbstractMuteEveryonesVideoDialog, {
     type Props,

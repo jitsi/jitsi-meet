@@ -18,7 +18,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { _openPasswordRequiredPrompt } from './actions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { PasswordRequiredPrompt } from './components';
+import PasswordRequiredPrompt from './components/PasswordRequiredPrompt';
 import { LOCKED_REMOTELY } from './constants';
 import logger from './logger';
 

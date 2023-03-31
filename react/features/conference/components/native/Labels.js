@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { TranscribingLabel } from '../../../transcribing';
-import { VideoQualityLabel } from '../../../video-quality';
+import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.native';
+import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.native';
 
+import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import { LABEL_ID_INSECURE_ROOM_NAME, LABEL_ID_QUALITY, LABEL_ID_TRANSCRIBING, LabelHitSlop } from './constants';
 import styles from './styles';
-
-import { InsecureRoomNameLabel } from './';
 
 type Props = {
 

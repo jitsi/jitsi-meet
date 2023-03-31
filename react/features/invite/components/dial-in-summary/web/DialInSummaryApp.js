@@ -3,7 +3,7 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
-import { BaseApp } from '../../../../base/app';
+import BaseApp from '../../../../base/app/components/BaseApp';
 import { isMobileBrowser } from '../../../../base/environment/utils';
 import GlobalStyles from '../../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../../base/ui/components/JitsiThemeProvider.web';

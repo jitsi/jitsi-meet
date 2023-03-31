@@ -2,7 +2,7 @@
 
 import { Alert } from 'react-native';
 
-import { isRoomValid } from '../../base/conference';
+import { isRoomValid } from '../../base/conference/functions';
 import { i18next } from '../../base/i18n';
 import { MiddlewareRegistry } from '../../base/redux';
 import { TRACK_CREATE_ERROR } from '../../base/tracks';

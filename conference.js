@@ -28,13 +28,8 @@ import {
 import { showModeratedNotification } from './react/features/av-moderation/actions';
 import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
 import {
-    AVATAR_URL_COMMAND,
-    CONFERENCE_LEAVE_REASONS,
-    EMAIL_COMMAND,
     _conferenceWillJoin,
     authStatusChanged,
-    commonUserJoinedHandling,
-    commonUserLeftHandling,
     conferenceFailed,
     conferenceJoinInProgress,
     conferenceJoined,
@@ -47,15 +42,24 @@ import {
     dataChannelClosed,
     dataChannelOpened,
     e2eRttChanged,
-    getConferenceOptions,
-    getVisitorOptions,
     kickedOut,
     lockStateChanged,
     nonParticipantMessageReceived,
     onStartMutedPolicyChanged,
-    p2pStatusChanged,
+    p2pStatusChanged
+} from './react/features/base/conference/actions';
+import {
+    AVATAR_URL_COMMAND,
+    CONFERENCE_LEAVE_REASONS,
+    EMAIL_COMMAND
+} from './react/features/base/conference/constants';
+import {
+    commonUserJoinedHandling,
+    commonUserLeftHandling,
+    getConferenceOptions,
+    getVisitorOptions,
     sendLocalParticipant
-} from './react/features/base/conference';
+} from './react/features/base/conference/functions';
 import { overwriteConfig } from './react/features/base/config/actions';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -126,32 +130,28 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
-import { showDesktopPicker } from './react/features/desktop-picker';
-import { appendSuffix } from './react/features/display-name';
-import {
-    maybeOpenFeedbackDialog,
-    submitFeedback
-} from './react/features/feedback';
+import { showDesktopPicker } from './react/features/desktop-picker/actions';
+import { appendSuffix } from './react/features/display-name/functions';
+import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
+import { hideNotification, showNotification, showWarningNotification } from './react/features/notifications/actions';
 import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
-    NOTIFICATION_TIMEOUT_TYPE,
-    hideNotification,
-    isModerationNotificationDisplayed,
-    showNotification,
-    showWarningNotification
-} from './react/features/notifications';
+    NOTIFICATION_TIMEOUT_TYPE
+} from './react/features/notifications/constants';
+import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
-import { suspendDetected } from './react/features/power-monitor';
+import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
 import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
-import { isScreenAudioShared, setScreenAudioShareState } from './react/features/screen-share/';
-import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
+import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
+import { isScreenAudioShared } from './react/features/screen-share/functions';
+import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
-import { endpointMessageReceived } from './react/features/subtitles';
+import { endpointMessageReceived } from './react/features/subtitles/actions.any';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import { setIAmVisitor } from './react/features/visitors/actions';

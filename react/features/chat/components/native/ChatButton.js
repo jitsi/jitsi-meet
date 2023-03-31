@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
-import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CHAT_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { IconChatUnread, IconMessage } from '../../../base/icons';
 import {

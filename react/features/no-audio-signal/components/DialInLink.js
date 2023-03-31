@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { getDialInfoPageURL, shouldDisplayDialIn } from '../../invite';
+import { getDialInfoPageURL, shouldDisplayDialIn } from '../../invite/functions';
 
 /**
  * The type of the React {@code Component} props of {@link DialInLink}.

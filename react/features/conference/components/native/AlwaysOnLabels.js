@@ -5,9 +5,9 @@ import { TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { RecordingLabel } from '../../../recording';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
+import RecordingLabel from '../../../recording/components/native/RecordingLabel';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';

@@ -4,9 +4,9 @@ import { NativeModules, Platform } from 'react-native';
 import { updateApplicationContext, watchEvents } from 'react-native-watch-connectivity';
 
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app';
-import { CONFERENCE_JOINED } from '../../base/conference';
-import { getCurrentConferenceUrl } from '../../base/connection';
+import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../../base/conference/actionTypes';
+import { getCurrentConferenceUrl } from '../../base/connection/functions';
 import { setAudioMuted } from '../../base/media';
 import {
     MiddlewareRegistry,

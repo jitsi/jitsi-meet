@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { getShareInfoText } from '../invite';
+import { getShareInfoText } from '../invite/functions';
 import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
 import {

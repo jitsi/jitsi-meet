@@ -1,10 +1,7 @@
 /* global APP */
 
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    showErrorNotification,
-    showWarningNotification
-} from '../../../react/features/notifications';
+import { showErrorNotification, showWarningNotification } from '../../../react/features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../react/features/notifications/constants';
 
 const messageHandler = {
     /**

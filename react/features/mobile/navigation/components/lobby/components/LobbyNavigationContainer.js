@@ -3,7 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { LobbyChatScreen, LobbyScreen } from '../../../../../lobby';
+import LobbyChatScreen from '../../../../../lobby/components/native/LobbyChatScreen';
+import LobbyScreen from '../../../../../lobby/components/native/LobbyScreen';
 import { screen } from '../../../routes';
 import {
     lobbyChatScreenOptions,

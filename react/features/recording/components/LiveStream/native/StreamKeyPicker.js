@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { _abstractMapStateToProps } from '../../../../base/dialog';
+import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
 import { translate } from '../../../../base/i18n';
 import { StyleType } from '../../../../base/styles';
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
@@ -43,10 +43,10 @@ type Props = {
 
 type State = {
 
-     /**
-      * The key of the currently selected stream.
-      */
-     streamKey: ?string
+    /**
+     * The key of the currently selected stream.
+     */
+    streamKey: ?string
 }
 
 /**

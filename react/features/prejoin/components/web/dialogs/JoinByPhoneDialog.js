@@ -3,11 +3,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    getConferenceId,
-    getDefaultDialInNumber,
-    updateDialInNumbers
-} from '../../../../invite';
+import { updateDialInNumbers } from '../../../../invite/actions.web';
+import { getConferenceId, getDefaultDialInNumber } from '../../../../invite/functions';
 import {
     dialOut as dialOutAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,

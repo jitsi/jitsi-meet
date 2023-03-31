@@ -5,11 +5,9 @@ import { Platform } from '../base/react';
 import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
-import {
-    DeepLinkingDesktopPage,
-    DeepLinkingMobilePage,
-    NoMobileApp
-} from './components';
+import DeepLinkingDesktopPage from './components/DeepLinkingDesktopPage';
+import DeepLinkingMobilePage from './components/DeepLinkingMobilePage';
+import NoMobileApp from './components/NoMobileApp';
 import { _openDesktopApp } from './openDesktopApp';
 
 /**

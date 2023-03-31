@@ -5,10 +5,11 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
-import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
+import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
 import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';

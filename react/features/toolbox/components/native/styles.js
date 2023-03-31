@@ -1,4 +1,5 @@
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUTTON_SIZE = 48;

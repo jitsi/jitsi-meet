@@ -3,7 +3,8 @@
 import { NativeModules, Platform } from 'react-native';
 import { connect } from 'react-redux';
 
-import { PIP_ENABLED, PIP_WHILE_SCREEN_SHARING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_ENABLED, PIP_WHILE_SCREEN_SHARING_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { IconArrowDown } from '../../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';

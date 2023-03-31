@@ -12,7 +12,7 @@ import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
-import { LargeVideo } from '../../../large-video/components';
+import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';

@@ -2,10 +2,8 @@
 
 import { connect } from 'react-redux';
 
-import {
-    ANDROID_SCREENSHARING_ENABLED,
-    getFeatureFlag
-} from '../../../base/flags';
+import { ANDROID_SCREENSHARING_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { IconScreenshare } from '../../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';

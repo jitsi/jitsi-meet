@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { AlertDialog } from '../../../../base/dialog';
+import AlertDialog from '../../../../base/dialog/components/native/AlertDialog';
 import { translate } from '../../../../base/i18n';
 
 /**

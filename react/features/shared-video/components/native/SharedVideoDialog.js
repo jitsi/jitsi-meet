@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { InputDialog } from '../../../base/dialog';
+import InputDialog from '../../../base/dialog/components/native/InputDialog';
 import { translate } from '../../../base/i18n';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 

@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { hideSheet } from '../../../base/dialog/actions';
 // @ts-ignore
-import { BottomSheet, hideSheet } from '../../../base/dialog';
+import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 // @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';

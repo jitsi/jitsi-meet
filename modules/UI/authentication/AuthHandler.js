@@ -15,7 +15,7 @@ import {
     isTokenAuthEnabled
 } from '../../../react/features/authentication/functions';
 import { getReplaceParticipant } from '../../../react/features/base/config/functions';
-import { isDialogOpen } from '../../../react/features/base/dialog';
+import { isDialogOpen } from '../../../react/features/base/dialog/functions';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 

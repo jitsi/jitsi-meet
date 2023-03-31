@@ -4,7 +4,7 @@ import {
     MD_FONT_SIZE,
     MD_ITEM_HEIGHT,
     MD_ITEM_MARGIN_PADDING
-} from '../../../base/dialog';
+} from '../../../base/dialog/components/native/styles';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 

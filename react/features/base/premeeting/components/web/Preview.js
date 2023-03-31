@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { getDisplayName } from '../../../../base/settings';
-import { Avatar } from '../../../avatar';
+import Avatar from '../../../avatar/components/Avatar';
 import { Video } from '../../../media';
 import { getLocalParticipant } from '../../../participants';
 import { getLocalVideoTrack } from '../../../tracks';

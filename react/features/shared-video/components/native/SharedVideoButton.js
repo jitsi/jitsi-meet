@@ -3,7 +3,8 @@
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { VIDEO_SHARE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n';
 import { IconPlay } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';

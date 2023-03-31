@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import { brandedDialog as styles } from './native';
+import { brandedDialog as styles } from './native/styles';
 
 /**
  * Renders a specific {@code string} which may contain HTML.

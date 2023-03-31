@@ -24,7 +24,7 @@ import {
     trackStreamingStatusChanged
 } from '../../../base/tracks';
 import ConnectionIndicator from '../../../connection-indicator/components/native/ConnectionIndicator';
-import { DisplayNameLabel } from '../../../display-name';
+import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import {
     showContextMenuDetails,

@@ -17,7 +17,7 @@ import conferenceStyles from '../conference/components/native/styles';
 import { shouldDisplayTileView } from '../video-layout/functions.native';
 
 // @ts-ignore
-import { styles } from './components';
+import styles from './components/native/styles';
 
 export * from './functions.any';
 

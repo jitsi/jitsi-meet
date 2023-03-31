@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { isGifMessage } from '../../../gifs/functions';

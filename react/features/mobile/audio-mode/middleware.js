@@ -1,15 +1,16 @@
 // @flow
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
-import { SET_AUDIO_ONLY } from '../../base/audio-only';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
+import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    getCurrentConference
-} from '../../base/conference';
-import { AUDIO_FOCUS_DISABLED, getFeatureFlag } from '../../base/flags';
+    CONFERENCE_LEFT
+} from '../../base/conference/actionTypes';
+import { getCurrentConference } from '../../base/conference/functions';
+import { AUDIO_FOCUS_DISABLED } from '../../base/flags/constants';
+import { getFeatureFlag } from '../../base/flags/functions';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';

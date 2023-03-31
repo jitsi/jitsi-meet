@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS, type ReactionEmojiProps } from '../../constants';
 
