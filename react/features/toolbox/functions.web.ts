@@ -125,6 +125,15 @@ export function showOverflowDrawer(state: IReduxState) {
 }
 
 /**
+ *
+ * @param state
+ * @returns
+ */
+export function showOverflowMenu(state: IReduxState) {
+    return state['features/toolbox'].overflowMenuVisible;
+}
+
+/**
  * Indicates whether the toolbox is enabled or not.
  *
  * @param {IReduxState} state - The state from the Redux store.

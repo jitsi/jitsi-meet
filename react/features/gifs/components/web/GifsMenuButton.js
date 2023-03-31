@@ -4,10 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ReactionButton from '../../../reactions/components/web/ReactionButton';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { setGifDrawerVisibility, setGifMenuVisibility } from '../../actions';
+import { setGifDrawerVisibility, setGifMenuVisibility, setGifOverflowMenuVisibility } from '../../actions';
 import { isGifsMenuOpen } from '../../functions';
 
-const GifsMenuButton = () => {
+interface Props {
+    overflowMenu?: boolean;
+}
+
+/**
+ *
+ * @returns
+ */
+function GifsMenuButton({ overflowMenu = false }: Props) {
     const menuOpen = useSelector(isGifsMenuOpen);
     const overflowDrawer = useSelector(showOverflowDrawer);
     const { t } = useTranslation();
@@ -16,17 +24,18 @@ const GifsMenuButton = () => {
     const icon = (
         <img
             alt = 'GIPHY Logo'
-            height = { 24 }
+            height = { overflowMenu && !overflowDrawer ? 16 : 24 }
             src = 'images/GIPHY_icon.png' />
     );
 
-    const handleClick = useCallback(() =>
+    const handleClick = useCallback(() => {
         dispatch(
-            overflowDrawer
-                ? setGifDrawerVisibility(!menuOpen)
-                : setGifMenuVisibility(!menuOpen)
-        )
-    , [ menuOpen, overflowDrawer ]);
+            overflowMenu && !overflowDrawer ? setGifOverflowMenuVisibility(!menuOpen)
+                : overflowDrawer
+                    ? setGifDrawerVisibility(!menuOpen)
+                    : setGifMenuVisibility(!menuOpen)
+        );
+    }, [ menuOpen, overflowDrawer ]);
 
     return (
         <ReactionButton
@@ -37,6 +46,6 @@ const GifsMenuButton = () => {
             toggled = { true }
             tooltip = { t('toolbar.accessibilityLabel.giphy') } />
     );
-};
+}
 
 export default GifsMenuButton;

@@ -35,17 +35,17 @@ type Props = {
     /**
      * Icon of the button.
      */
-    icon: Function,
+    icon?: Function,
 
     /**
      * Flag used for disabling the small icon.
      */
-    iconDisabled: boolean,
+    iconDisabled?: boolean,
 
     /**
      * The ID of the icon button.
      */
-    iconId: string,
+    iconId?: string,
 
     /**
      * Popover close callback.
@@ -88,6 +88,7 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
         ariaHasPopup,
         ariaLabel,
         children,
+        disableTouchEvents,
         icon,
         iconDisabled,
         iconId,
@@ -95,8 +96,29 @@ export default function ToolboxButtonWithIconPopup(props: Props) {
         onPopoverOpen,
         popoverContent,
         styles,
+        trigger,
         visible
     } = props;
+
+    if (!icon) {
+        return (
+            <div
+                className = 'settings-button-container'
+                styles = { styles }>
+                <Popover
+                    content = { popoverContent }
+                    disableTouchEvents = { disableTouchEvents }
+                    headingLabel = { ariaLabel }
+                    onPopoverClose = { onPopoverClose }
+                    onPopoverOpen = { onPopoverOpen }
+                    position = 'top'
+                    trigger = { trigger }
+                    visible = { visible }>
+                    {children}
+                </Popover>
+            </div>
+        );
+    }
 
     const iconProps = {};
 

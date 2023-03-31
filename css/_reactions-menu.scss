@@ -1,5 +1,24 @@
 @use 'sass:math';
 
+#overflow-context-menu {
+	.reactions-menu {
+		&.with-gif {
+			width: inherit;
+		}
+		.toolbox-icon {
+			width: 24px;
+			height: 24px;
+
+			span.emoji {
+				width: 24px;
+				height: 24px;
+				line-height: 24px;
+				font-size: 16px;
+			}
+		}
+	}
+}
+
 .reactions-menu {
 	width: 280px;
 	background: $menuBG;

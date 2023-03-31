@@ -36,6 +36,7 @@ export const TOOLBAR_BUTTONS = [
     'participants-pane',
     'profile',
     'raisehand',
+    'reactions',
     'recording',
     'security',
     'select-background',

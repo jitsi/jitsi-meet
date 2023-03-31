@@ -299,7 +299,8 @@ class Popover extends Component<IProps, IState> {
             && !this.props.overflowDrawer
             && this._contextMenuRef
             && this._contextMenuRef.contains // @ts-ignore
-            && !this._contextMenuRef.contains(event.target)) {
+            && !this._contextMenuRef.contains(event.target)
+            && !this._containerRef?.current?.contains(event.target)) {
             this._onHideDialog();
         }
     }

@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
@@ -20,7 +19,7 @@ import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
+import { RAISE_HAND_ROW_HEIGHT, REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
 // @ts-ignore
 import ReactionButton from './ReactionButton';
@@ -43,11 +42,6 @@ interface IProps extends WithTranslation {
     _isGifMenuVisible: boolean;
 
     /**
-     * Whether or not it's a mobile browser.
-     */
-    _isMobile: boolean;
-
-    /**
      * The ID of the local participant.
      */
     _localParticipantID?: string;
@@ -67,10 +61,19 @@ interface IProps extends WithTranslation {
      */
     dispatch: Function;
 
+    gifMenuColumns?: number;
+
+    overflowDrawer?: boolean;
+
     /**
      * Whether or not it's displayed in the overflow menu.
      */
     overflowMenu?: boolean;
+
+    /**
+     * Whether to show the raised hand button.
+     */
+    showRaisedHand?: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -83,7 +86,25 @@ const styles = (theme: Theme) => {
             borderRadius: 0,
             position: 'relative' as const,
             boxSizing: 'border-box' as const,
-            height: `${REACTIONS_MENU_HEIGHT}px`
+            height:
+                (props: IProps) => {
+                    const { overflowMenu, overflowDrawer, showRaisedHand, _isGifMenuVisible } = props;
+                    let reactionsMenuHeight = REACTIONS_MENU_HEIGHT;
+
+                    if (overflowMenu) {
+                        if (!showRaisedHand) {
+                            reactionsMenuHeight -= RAISE_HAND_ROW_HEIGHT;
+                        }
+                        if (!overflowDrawer) {
+                            reactionsMenuHeight -= 38;
+                        }
+                        if (!overflowDrawer && _isGifMenuVisible) {
+                            reactionsMenuHeight += 200;
+                        }
+                    }
+
+                    return `${reactionsMenuHeight}px`;
+                }
         }
     };
 };
@@ -197,18 +218,32 @@ class ReactionsMenu extends Component<IProps> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, overflowMenu, _isMobile, classes, _isGifMenuVisible, _isGifEnabled } = this.props;
+        const {
+            _raisedHand,
+            t,
+            overflowMenu,
+            classes,
+            _isGifMenuVisible,
+            _isGifEnabled,
+            gifMenuColumns,
+            showRaisedHand = false
+        } = this.props;
+
+        const buttons = this._getReactionButtons();
+
+        if (_isGifEnabled) {
+            buttons.push(<GifsMenuButton overflowMenu = { overflowMenu } />);
+        }
 
         return (
             <div
                 className = { clsx('reactions-menu', _isGifEnabled && 'with-gif',
                     overflowMenu && `overflow ${classes.overflow}`) }>
-                {_isGifEnabled && _isGifMenuVisible && <GifsMenu />}
+                {_isGifEnabled && _isGifMenuVisible && <GifsMenu columns = { gifMenuColumns } />}
                 <div className = 'reactions-row'>
-                    { this._getReactionButtons() }
-                    {_isGifEnabled && <GifsMenuButton />}
+                    {buttons}
                 </div>
-                {_isMobile && (
+                {showRaisedHand && (
                     <div className = 'raise-hand-row'>
                         {/* @ts-ignore */}
                         <ReactionButton
@@ -236,11 +271,9 @@ class ReactionsMenu extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
-    const { isNarrowLayout } = state['features/base/responsive-ui'];
 
     return {
         _localParticipantID: localParticipant?.id,
-        _isMobile: isMobileBrowser() || isNarrowLayout,
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),
         _raisedHand: hasRaisedHand(localParticipant)

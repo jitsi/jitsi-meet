@@ -157,6 +157,14 @@ const useStyles = makeStyles()(theme => {
                     fill: theme.palette.icon01
                 }
             }
+        },
+        content: {
+            position: 'relative'
+        },
+
+        footer: {
+            position: 'relative',
+            bottom: 0
         }
     };
 });
@@ -166,6 +174,7 @@ const ContextMenu = ({
     children,
     className,
     entity,
+    // footer,
     hidden,
     id,
     inDrawer,
@@ -232,7 +241,12 @@ const ContextMenu = ({
         return (<div
             className = { styles.drawer }
             onClick = { onDrawerClose }>
-            {children}
+            {/* <div className = { styles.content }> */}
+                {children}
+            {/* </div>
+            <div className = { styles.footer }>
+                {footer}
+            </div> */}
         </div>);
     }
 
@@ -244,7 +258,12 @@ const ContextMenu = ({
                 <div
                     className = { styles.drawer }
                     onClick = { onDrawerClose }>
-                    {children}
+                    {/* <div className = { styles.content }> */}
+                        {children}
+                    {/* </div> */}
+                    {/* <div className = { styles.footer }>
+                        {footer}
+                    </div> */}
                 </div>
             </Drawer>
         </JitsiPortal>
@@ -264,7 +283,12 @@ const ContextMenu = ({
             ref = { containerRef }
             role = { role }
             tabIndex = { tabIndex }>
-            {children}
+            {/* <div className = { styles.content }> */}
+                {children}
+            {/* </div> */}
+            {/* <div className = { styles.footer }>
+                {footer}
+            </div> */}
         </div>;
 };
 

@@ -106,8 +106,8 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const isRecordingRunning = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
-    const isButtonDisabled = isHighlightMeetingMomentDisabled(state);
+    const isRecordingRunning = getActiveSession(state, JitsiRecordingConstants.mode.FILE); //false
+    const isButtonDisabled = isHighlightMeetingMomentDisabled(state); // false
     const { webhookProxyUrl } = state['features/base/config'];
 
     const {
