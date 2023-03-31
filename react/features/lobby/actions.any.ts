@@ -207,12 +207,10 @@ export function startKnocking() {
         const { membersOnly } = state['features/base/conference'];
         const localParticipant = getLocalParticipant(state);
 
-        // @ts-ignore
         dispatch(conferenceWillJoin(membersOnly));
 
         // We need to update the conference object with the current display name, if approved
         // we want to send that display name, it was not updated in case when pre-join is disabled
-        // @ts-ignore
         sendLocalParticipant(state, membersOnly);
 
         membersOnly?.joinLobby(localParticipant?.name, localParticipant?.email);

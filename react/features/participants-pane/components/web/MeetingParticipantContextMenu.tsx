@@ -1,73 +1,77 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined
 } from '../../../base/participants/functions';
+import { IParticipant } from '../../../base/participants/types';
 import FakeParticipantContextMenu from '../../../video-menu/components/web/FakeParticipantContextMenu';
 import ParticipantContextMenu from '../../../video-menu/components/web/ParticipantContextMenu';
 
-type Props = {
+interface IProps {
 
     /**
      * Shared video local participant owner.
      */
-    _localVideoOwner: boolean,
+    _localVideoOwner: boolean;
 
     /**
      * Participant reference.
      */
-    _participant: Object,
+    _participant?: IParticipant;
 
     /**
      * Closes a drawer if open.
      */
-    closeDrawer: Function,
+    closeDrawer: () => void;
 
     /**
      * The dispatch function from redux.
      */
-    dispatch: Function,
+    dispatch: IStore['dispatch'];
 
     /**
      * The participant for which the drawer is open.
      * It contains the displayName & participantID.
      */
-    drawerParticipant: Object,
+    drawerParticipant: {
+        displayName: string;
+        participantID: string;
+    };
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget?: HTMLElement,
+    offsetTarget?: HTMLElement;
 
     /**
      * Callback for the mouse entering the component.
      */
-    onEnter: Function,
+    onEnter: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for the mouse leaving the component.
      */
-    onLeave: Function,
+    onLeave: (e?: React.MouseEvent) => void;
 
     /**
      * Callback for making a selection in the menu.
      */
-    onSelect: Function,
+    onSelect: (e?: React.MouseEvent | boolean) => void;
 
     /**
      * The ID of the participant.
      */
-    participantID: string
-};
+    participantID: string;
+}
 
 /**
  * Implements the MeetingParticipantContextMenu component.
  */
-class MeetingParticipantContextMenu extends Component<Props> {
+class MeetingParticipantContextMenu extends Component<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -120,12 +124,12 @@ class MeetingParticipantContextMenu extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, overflowDrawer, drawerParticipant } = ownProps;
     const { ownerId } = state['features/shared-video'];
-    const localParticipantId = getLocalParticipant(state).id;
+    const localParticipantId = getLocalParticipant(state)?.id;
 
     const participant = getParticipantByIdOrUndefined(state,
         overflowDrawer ? drawerParticipant?.participantID : participantID);

@@ -9,7 +9,6 @@ import Dialog from '../../base/ui/components/web/Dialog';
 import Tabs from '../../base/ui/components/web/Tabs';
 import { obtainDesktopSources } from '../functions';
 
-// @ts-ignore
 import DesktopPickerPane from './DesktopPickerPane';
 
 /**
@@ -88,7 +87,7 @@ interface IState {
     /**
      * An object containing all the DesktopCapturerSources.
      */
-    sources: Object;
+    sources: any;
 
     /**
      * The desktop source types to fetch previews for.

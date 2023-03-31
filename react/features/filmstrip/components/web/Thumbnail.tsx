@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -14,6 +13,7 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
@@ -39,7 +39,6 @@ import {
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
-// @ts-ignore
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
@@ -61,13 +60,10 @@ import {
     showGridInVerticalView
 } from '../../functions';
 
-// @ts-ignore
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
-// @ts-ignore
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
-/* eslint-enable lines-around-comment */
 
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.

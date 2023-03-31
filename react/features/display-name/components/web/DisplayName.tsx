@@ -43,7 +43,7 @@ interface IProps {
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string;
+    thumbnailType?: string;
 }
 
 const useStyles = makeStyles()(theme => {

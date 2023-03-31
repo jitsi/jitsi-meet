@@ -9,11 +9,13 @@ import { IReduxState } from '../../../app/types';
  */
 interface IProps extends WithTranslation {
 
+    _premeetingBackground?: any;
+
     /**
      * The browser which is used currently. The text is different for every
      * browser.
      */
-    browser: string;
+    browser?: string;
 }
 
 /**

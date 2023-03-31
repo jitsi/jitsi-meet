@@ -377,7 +377,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
  * @param {IProps} ownProps - The own props of the component.
  * @returns {IProps}
  */
-export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantId } = ownProps;
     const tracks = state['features/base/tracks'];
     const participant = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);

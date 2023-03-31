@@ -1,80 +1,78 @@
-// @flow
-
 import React from 'react';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
-     * The translated ask unmute text for the qiuck action buttons.
+     * The translated ask unmute text for the quick action buttons.
      */
-    askUnmuteText: string,
+    askUnmuteText?: string;
 
     /**
      * Whether or not the local participant is in a breakout room.
      */
-    isInBreakoutRoom: boolean,
+    isInBreakoutRoom: boolean;
 
     /**
      * Callback for the mouse leaving this item.
      */
-    lowerMenu: Function,
-
-    /**
-     * Callback for the activation of this item's context menu.
-     */
-    toggleMenu: Function,
+    lowerMenu: Function;
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
      */
-    muteAudio: Function,
+    muteAudio: Function;
 
     /**
      * The translated text for the mute participant button.
      */
-    muteParticipantButtonText: string,
-
-    /**
-     * The meeting participants.
-     */
-    participantIds: Array<string>,
+    muteParticipantButtonText?: string;
 
     /**
      * Callback used to open an actions drawer for a participant.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * True if an overflow drawer should be displayed.
      */
-    overflowDrawer: boolean,
-
-    /**
-     * The if of the participant for which the context menu should be open.
-     */
-    raiseContextId?: string,
+    overflowDrawer?: boolean;
 
     /**
      * The aria-label for the ellipsis action.
      */
-    participantActionEllipsisLabel: string,
+    participantActionEllipsisLabel: string;
+
+    /**
+     * The meeting participants.
+     */
+    participantIds: Array<string>;
+
+    /**
+     * The if of the participant for which the context menu should be open.
+     */
+    raiseContextId?: string;
 
     /**
      * Current search string.
      */
-    searchString?: string,
+    searchString?: string;
 
     /**
      * Callback used to stop a participant's video.
      */
-    stopVideo: Function,
+    stopVideo: Function;
+
+    /**
+     * Callback for the activation of this item's context menu.
+     */
+    toggleMenu: Function;
 
     /**
      * The translated "you" text.
      */
-    youText: string
+    youText: string;
 }
 
 /**
@@ -95,8 +93,8 @@ function MeetingParticipantItems({
     searchString,
     stopVideo,
     youText
-}: Props) {
-    const renderParticipant = id => (
+}: IProps) {
+    const renderParticipant = (id: string) => (
         <MeetingParticipantItem
             isHighlighted = { raiseContextId === id }
             isInBreakoutRoom = { isInBreakoutRoom }
@@ -113,8 +111,10 @@ function MeetingParticipantItems({
             youText = { youText } />
     );
 
-    return participantIds.map(renderParticipant);
+    return (<>
+        {participantIds.map(renderParticipant)}
+    </>);
 }
 
 // Memoize the component in order to avoid rerender on drawer open/close.
-export default React.memo<Props>(MeetingParticipantItems);
+export default React.memo<IProps>(MeetingParticipantItems);

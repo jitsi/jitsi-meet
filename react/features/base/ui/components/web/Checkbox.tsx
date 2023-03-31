@@ -11,7 +11,7 @@ interface ICheckboxProps {
     /**
      * Whether the input is checked or not.
      */
-    checked: boolean;
+    checked?: boolean;
 
     /**
      * Class name for additional styles.

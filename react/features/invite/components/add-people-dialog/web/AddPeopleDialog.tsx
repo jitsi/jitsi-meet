@@ -30,7 +30,6 @@ import DialInSection from './DialInSection';
 import InviteByEmailSection from './InviteByEmailSection';
 // @ts-ignore
 import InviteContactsSection from './InviteContactsSection';
-// @ts-ignore
 import LiveStreamSection from './LiveStreamSection';
 /* eslint-enable lines-around-comment */
 

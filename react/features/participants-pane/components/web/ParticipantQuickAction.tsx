@@ -17,7 +17,7 @@ interface IProps {
     /**
      * The translated "ask unmute" text.
      */
-    askUnmuteText: string;
+    askUnmuteText?: string;
 
     /**
      * The type of button to be displayed.
@@ -32,7 +32,7 @@ interface IProps {
     /**
      * Label for mute participant button.
      */
-    muteParticipantButtonText: string;
+    muteParticipantButtonText?: string;
 
     /**
      * The ID of the participant.

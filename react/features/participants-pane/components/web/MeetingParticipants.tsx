@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -21,11 +20,8 @@ import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functio
 import { useParticipantDrawer } from '../../hooks';
 
 import { InviteButton } from './InviteButton';
-// @ts-ignore
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
-// @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
-/* eslint-enable lines-around-comment */
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -140,7 +136,6 @@ function MeetingParticipants({
                     overflowDrawer = { overflowDrawer }
                     participantActionEllipsisLabel = { participantActionEllipsisLabel }
                     participantIds = { sortedParticipantIds }
-                    participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.entity }
                     searchString = { normalizeAccents(searchString) }
                     stopVideo = { stopVideo }

@@ -1,25 +1,25 @@
-// @flow
-
 import React from 'react';
+
+import { IParticipant } from '../../../base/participants/types';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 
-type Props = {
+interface IProps {
 
     /**
      * Opens a drawer with actions for a knocking participant.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * If a drawer with actions should be displayed.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
     /**
      * List with the knocking participants.
      */
-    participants: Array<Object>
+    participants: IParticipant[];
 }
 
 /**
@@ -28,7 +28,7 @@ type Props = {
  * @param {Object} props - The props of the component.
  * @returns {ReactNode}
  */
-function LobbyParticipantItems({ openDrawerForParticipant, overflowDrawer, participants }: Props) {
+function LobbyParticipantItems({ openDrawerForParticipant, overflowDrawer, participants }: IProps) {
 
     return (
         <div id = 'lobby-list'>
@@ -44,4 +44,4 @@ function LobbyParticipantItems({ openDrawerForParticipant, overflowDrawer, parti
 }
 
 // Memoize the component in order to avoid rerender on drawer open/close.
-export default React.memo<Props>(LobbyParticipantItems);
+export default React.memo<IProps>(LobbyParticipantItems);

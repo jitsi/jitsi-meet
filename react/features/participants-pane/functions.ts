@@ -57,7 +57,8 @@ export function isForceMuted(participant: IParticipant | undefined, mediaType: M
  * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantAudioMediaState(participant: IParticipant, muted: Boolean, state: IReduxState) {
+export function getParticipantAudioMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     const dominantSpeaker = getDominantSpeakerParticipant(state);
 
     if (muted) {
@@ -83,7 +84,8 @@ export function getParticipantAudioMediaState(participant: IParticipant, muted: 
  * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantVideoMediaState(participant: IParticipant, muted: Boolean, state: IReduxState) {
+export function getParticipantVideoMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
@@ -136,7 +138,7 @@ export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(
  * @returns {string} - The type of the quick action button.
  */
 export function getQuickActionButtonType(
-        participant: IParticipant,
+        participant: IParticipant | undefined,
         isAudioMuted: Boolean,
         isVideoMuted: Boolean,
         state: IReduxState) {
@@ -232,8 +234,9 @@ export function getSortedParticipantIds(stateful: IStateful) {
  * @param {string} searchString - The participants search string.
  * @returns {boolean}
  */
-export function participantMatchesSearch(participant: { displayName: string; jid: string; name?: string; },
-        searchString: string) {
+export function participantMatchesSearch(participant: IParticipant | undefined
+    | { displayName?: string; name?: string; },
+searchString: string) {
     if (searchString === '') {
         return true;
     }
