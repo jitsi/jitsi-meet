@@ -11,7 +11,12 @@ export * from './function.any';
  */
 export function isGifsMenuOpen(state: IReduxState) {
     const overflowDrawer = showOverflowDrawer(state);
-    const { drawerVisible, menuOpen } = state['features/gifs'];
+    const { overflowMenuVisible } = state['features/toolbox'];
+    const { overflowVisible, drawerVisible, menuOpen } = state['features/gifs'];
+
+    if (overflowMenuVisible && !overflowDrawer) {
+        return overflowVisible;
+    }
 
     return overflowDrawer ? drawerVisible : menuOpen;
 }

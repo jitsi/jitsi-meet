@@ -28,6 +28,15 @@ export const HIDE_GIF_FOR_PARTICIPANT = 'HIDE_GIF_FOR_PARTICIPANT';
 export const REMOVE_GIF_FOR_PARTICIPANT = 'REMOVE_GIF_FOR_PARTICIPANT';
 
 /**
+ * Set gif overflow menu visibility.
+ * {{
+ *      type: SET_GIF_DRAWER_VISIBILITY,
+ *      visible: boolean
+ * }}
+ */
+export const SET_GIF_OVERFLOW_MENU_VISIBILITY = 'SET_GIF_OVERFLOW_MENU_VISIBILITY';
+
+/**
  * Set gif menu drawer visibility.
  * {{
  *      type: SET_GIF_DRAWER_VISIBILITY,

@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg';
+import { IconFaceSmile } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux/functions';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
@@ -16,9 +17,35 @@ import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
 // @ts-ignore
-import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';
+
+
+/**
+ * Implementation of a button for raising hand.
+ */
+class ReactionsButton extends AbstractButton<AbstractButtonProps, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
+    icon = IconFaceSmile;
+    label = 'toolbar.raiseHand';
+    toggledLabel = 'toolbar.raiseHand';
+
+    /**
+     * Retrieves tooltip dynamically.
+     */
+    get tooltip() {
+        return 'toolbar.raiseHand';
+    }
+
+    /**
+     * Required by linter due to AbstractButton overwritten prop being writable.
+     *
+     * @param {string} _value - The value.
+     */
+    set tooltip(_value) {
+        // Unused.
+    }
+}
 
 interface IProps extends WithTranslation {
 
@@ -71,54 +98,74 @@ interface IProps extends WithTranslation {
  */
 function ReactionsMenuButton({
     _reactionsEnabled,
+    _isMobile,
     buttonKey,
     dispatch,
-    handleClick,
     isOpen,
     isNarrow,
     notifyMode,
     reactionsQueue,
     t
 }: IProps) {
+    if (!_reactionsEnabled || isNarrow) {
+        return null;
+    }
     const visible = useSelector(getReactionsMenuVisibility);
     const toggleReactionsMenu = useCallback(() => {
+        console.error('Toggle');
         dispatch(toggleReactionsMenuVisibility());
     }, [ dispatch ]);
 
     const openReactionsMenu = useCallback(() => {
+        console.error('Open', visible);
         !visible && toggleReactionsMenu();
+    }, [ visible, toggleReactionsMenu ]);
+
+    const closeReactionsMenu = useCallback(() => {
+        console.error('Close', visible);
+        visible && toggleReactionsMenu();
     }, [ visible, toggleReactionsMenu ]);
 
     const reactionsMenu = (<div className = 'reactions-menu-container'>
         <ReactionsMenu />
     </div>);
 
+    const reactionsButton = _isMobile ? (
+        <ToolboxButtonWithIconPopup
+            ariaControls = 'reactions-menu-dialog'
+            ariaExpanded = { isOpen }
+            ariaHasPopup = { true }
+            ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+            disableTouchEvents = { true }
+            onPopoverClose = { closeReactionsMenu }
+            onPopoverOpen = { openReactionsMenu }
+            trigger = { 'click' }
+            popoverContent = { reactionsMenu }
+            visible = { visible }>
+            <ReactionsButton
+                buttonKey = { buttonKey }
+                // handleClick = { visible ? closeReactionsMenu : openReactionsMenu }
+                notifyMode = { notifyMode } />
+        </ToolboxButtonWithIconPopup>
+    ) : (
+        <ToolboxButtonWithIconPopup
+            ariaControls = 'reactions-menu-dialog'
+            ariaExpanded = { isOpen }
+            ariaHasPopup = { true }
+            ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+            onPopoverClose = { toggleReactionsMenu }
+            onPopoverOpen = { openReactionsMenu }
+            popoverContent = { reactionsMenu }
+            visible = { visible }>
+            <ReactionsButton
+                buttonKey = { buttonKey }
+                notifyMode = { notifyMode } />
+        </ToolboxButtonWithIconPopup>
+    );
+
     return (
         <div className = 'reactions-menu-popup-container'>
-            {!_reactionsEnabled || isNarrow ? (
-                <RaiseHandButton
-                    buttonKey = { buttonKey }
-                    handleClick = { handleClick }
-                    notifyMode = { notifyMode } />)
-                : (
-                    <ToolboxButtonWithIconPopup
-                        ariaControls = 'reactions-menu-dialog'
-                        ariaExpanded = { isOpen }
-                        ariaHasPopup = { true }
-                        ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                        icon = { IconArrowUp }
-                        iconDisabled = { false }
-                        iconId = 'reactions-menu-button'
-                        onPopoverClose = { toggleReactionsMenu }
-                        onPopoverOpen = { openReactionsMenu }
-                        popoverContent = { reactionsMenu }
-                        visible = { visible }>
-                        <RaiseHandButton
-                            buttonKey = { buttonKey }
-                            handleClick = { handleClick }
-                            notifyMode = { notifyMode } />
-                    </ToolboxButtonWithIconPopup>
-                )}
+            {reactionsButton}
             {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                 index = { index }
                 key = { uid }
@@ -139,8 +186,9 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         _reactionsEnabled: isReactionsEnabled(state),
+        _isMobile: isMobileBrowser(),
         isOpen: getReactionsMenuVisibility(state),
-        isNarrow: isMobileBrowser() || isNarrowLayout,
+        isNarrow: isNarrowLayout,
         reactionsQueue: getReactionsQueue(state)
     };
 }

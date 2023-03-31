@@ -7,6 +7,8 @@ import {
     SURPRISE_SOUND_FILES
 } from './sounds';
 
+export const RAISE_HAND_ROW_HEIGHT = 54;
+
 /**
  * Reactions menu height on mobile web (px).
  */

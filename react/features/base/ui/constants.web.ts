@@ -37,6 +37,16 @@ export const commonStyles = (theme: Theme) => {
             }
         },
 
+        // '.not-drawer': {
+        //     '.toolbox-button': {
+        //         'span': {
+        //             lineHeight: '24px',
+        //             width: '24px',
+        //             height: '24px'
+        //         }
+        //     }
+        // },
+
         '.overflow-menu-item': {
             alignItems: 'center',
             color: theme.palette.text01,

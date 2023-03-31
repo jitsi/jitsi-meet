@@ -60,6 +60,7 @@ import { ParticipantsPaneButton } from '../../../participants-pane/components/we
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
+import RaiseHandButton from '../../../reactions/components/web/RaiseHandButton';
 import ReactionsMenuButton from '../../../reactions/components/web/ReactionsMenuButton';
 import { REACTIONS } from '../../../reactions/constants';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
@@ -729,7 +730,6 @@ class Toolbox extends Component<IProps> {
             _hasSalesforce,
             _isIosMobile,
             _isMobile,
-            _isNarrowLayout,
             _isSpeakerStatsDisabled,
             _multiStreamModeEnabled,
             _reactionsEnabled,
@@ -769,12 +769,19 @@ class Toolbox extends Component<IProps> {
             group: 2
         };
 
-        const raisehand = (!_reactionsEnabled || (!_isNarrowLayout && !_isMobile)) && {
+        const raisehand = {
             key: 'raisehand',
-            Content: ReactionsMenuButton,
+            Content: RaiseHandButton,
             handleClick: this._onToolbarToggleRaiseHand,
             group: 2
         };
+
+        const reactions = _reactionsEnabled && {
+            key: 'reactions',
+            Content: ReactionsMenuButton,
+            group: 2
+        };
+
 
         const participants = {
             key: 'participants-pane',
@@ -945,6 +952,7 @@ class Toolbox extends Component<IProps> {
             desktop,
             chat,
             raisehand,
+            reactions,
             participants,
             invite,
             tileview,
@@ -1425,7 +1433,6 @@ class Toolbox extends Component<IProps> {
             _isNarrowLayout,
             _overflowDrawer,
             _overflowMenuVisible,
-            _reactionsEnabled,
             _toolbarButtons,
             classes,
             t
@@ -1435,6 +1442,9 @@ class Toolbox extends Component<IProps> {
         const containerClassName = `toolbox-content${_isMobile || _isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
         const { mainMenuButtons, overflowMenuButtons } = this._getVisibleButtons();
+        const showReactionsInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'reactions');
+        const showRaiseHandInReactionsMenu = showReactionsInOverflowMenu
+            && overflowMenuButtons.some(({ key }) => key === 'raisehand');
 
         return (
             <div className = { containerClassName }>
@@ -1458,44 +1468,34 @@ class Toolbox extends Component<IProps> {
                                 ariaControls = 'overflow-menu'
                                 isOpen = { _overflowMenuVisible }
                                 key = 'overflow-menu'
+                                onToolboxEscKey = { this._onEscKey }
                                 onVisibilityChange = { this._onSetOverflowVisible }
-                                showMobileReactions = {
-                                    _reactionsEnabled && (_isMobile || _isNarrowLayout)
-                                }>
-                                <ContextMenu
-                                    accessibilityLabel = { t(toolbarAccLabel) }
-                                    className = { classes.contextMenu }
-                                    hidden = { false }
-                                    id = 'overflow-context-menu'
-                                    inDrawer = { _overflowDrawer }
-                                    onKeyDown = { this._onEscKey }>
-                                    {overflowMenuButtons.reduce((acc, val) => {
-                                        if (acc.length) {
-                                            const prev = acc[acc.length - 1];
-                                            const group = prev[prev.length - 1].group;
+                                showRaiseHandInReactionsMenu = { showRaiseHandInReactionsMenu }
+                                showReactionsMenu = { showReactionsInOverflowMenu }>
+                                {overflowMenuButtons.reduce((acc, val) => {
+                                    if (val.key === 'reactions' && showReactionsInOverflowMenu) {
+                                        return acc;
+                                    }
 
-                                            if (group === val.group) {
-                                                prev.push(val);
-                                            } else {
-                                                acc.push([ val ]);
-                                            }
+                                    if (val.key === 'raisehand' && showRaiseHandInReactionsMenu) {
+                                        return acc;
+                                    }
+
+                                    if (acc.length) {
+                                        const prev = acc[acc.length - 1];
+                                        const group = prev[prev.length - 1].group;
+
+                                        if (group === val.group) {
+                                            prev.push(val);
                                         } else {
                                             acc.push([ val ]);
                                         }
+                                    } else {
+                                        acc.push([ val ]);
+                                    }
 
-                                        return acc;
-                                    }, []).map((buttonGroup: any) => (
-                                        <ContextMenuItemGroup key = { `group-${buttonGroup[0].group}` }>
-                                            {buttonGroup.map(({ key, Content, ...rest }: any) => (
-                                                key !== 'raisehand' || !_reactionsEnabled)
-                                                && <Content
-                                                    { ...rest }
-                                                    buttonKey = { key }
-                                                    contextMenu = { true }
-                                                    key = { key }
-                                                    showLabel = { true } />)}
-                                        </ContextMenuItemGroup>))}
-                                </ContextMenu>
+                                    return acc;
+                                }, [])}
                             </OverflowMenuButton>
                         )}
 
