@@ -6,7 +6,7 @@ import {
 } from '../analytics';
 import { SET_ROOM } from '../base/conference/actionTypes';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
-import { getURLWithoutParams } from '../base/connection/functions';
+import { getURLWithoutParams } from '../base/connection/utils';
 import { MiddlewareRegistry } from '../base/redux';
 import { inIframe } from '../base/util/iframeUtils';
 

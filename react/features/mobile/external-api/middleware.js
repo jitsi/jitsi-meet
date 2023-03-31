@@ -24,7 +24,7 @@ import {
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY
 } from '../../base/connection/constants';
-import { getURLWithoutParams } from '../../base/connection/functions';
+import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
