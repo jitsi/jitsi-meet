@@ -173,6 +173,12 @@ export const PIP_WHILE_SCREEN_SHARING_ENABLED = 'pip-while-screen-sharing.enable
 export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
 
 /**
+ * Flag indicating if the participant name editing field should be displayed on the prejoin page.
+ * Default: disabled (false).
+ */
+export const PREJOIN_PAGE_HIDE_DISPLAY_NAME = 'prejoinpage.hideDisplayName';
+
+/**
  * Flag indicating if raise hand feature should be enabled.
  * Default: enabled.
  */
