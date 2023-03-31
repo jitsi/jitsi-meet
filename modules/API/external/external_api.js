@@ -409,10 +409,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             // and fires event when it is done
             this._frame.onload = onload;
         }
+        this._frame.src = this._url;
 
         this._frame = this._parentNode.appendChild(this._frame);
-
-        this._frame.src = this._url;
     }
 
     /**
