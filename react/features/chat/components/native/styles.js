@@ -1,4 +1,4 @@
-import { BoxModel } from '../../../base/styles';
+import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;

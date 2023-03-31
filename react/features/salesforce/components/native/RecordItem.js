@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, TouchableHighlight, View } from 'react-native';
 
-import { Icon } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
 import { RECORD_TYPE } from '../../constants';
 
 import styles from './styles';

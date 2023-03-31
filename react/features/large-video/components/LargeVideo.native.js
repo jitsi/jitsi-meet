@@ -7,11 +7,8 @@ import type { Dispatch } from 'redux';
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 import ParticipantView from '../../base/participants/components/ParticipantView.native';
 import { getParticipantById, isLocalScreenshareParticipant } from '../../base/participants/functions';
-import {
-    getVideoTrackByParticipant,
-    isLocalVideoTrackDesktop,
-    trackStreamingStatusChanged
-} from '../../base/tracks';
+import { trackStreamingStatusChanged } from '../../base/tracks/actions.native';
+import { getVideoTrackByParticipant, isLocalVideoTrackDesktop } from '../../base/tracks/functions.native';
 
 import { AVATAR_SIZE } from './styles';
 

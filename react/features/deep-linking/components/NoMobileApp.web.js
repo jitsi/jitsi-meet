@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
+import { createDeepLinkingPageEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 
 

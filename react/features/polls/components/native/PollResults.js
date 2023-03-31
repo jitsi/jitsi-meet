@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import AbstractPollResults from '../AbstractPollResults';

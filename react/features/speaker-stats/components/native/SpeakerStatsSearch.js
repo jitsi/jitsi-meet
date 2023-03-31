@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { withTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IconSearch } from '../../../base/icons';
+import { IconSearch } from '../../../base/icons/svg';
 import Input from '../../../base/ui/components/native/Input';
-import { escapeRegexp } from '../../../base/util';
+import { escapeRegexp } from '../../../base/util/helpers';
 import { initSearch } from '../../actions';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 

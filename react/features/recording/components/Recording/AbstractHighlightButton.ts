@@ -11,9 +11,10 @@ import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../../notificat
 import { highlightMeetingMoment } from '../../actions.any';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { StartRecordingDialog } from '../../components';
 import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
 import { getActiveSession, getRecordButtonProps, isHighlightMeetingMomentDisabled } from '../../functions';
+
+import { StartRecordingDialog } from './index';
 
 export interface IProps extends WithTranslation {
 

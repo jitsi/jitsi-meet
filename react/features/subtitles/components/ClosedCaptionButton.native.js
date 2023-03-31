@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import { CLOSE_CAPTIONS_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { translate } from '../../base/i18n';
-import { IconSubtitles } from '../../base/icons';
+import { translate } from '../../base/i18n/functions';
+import { IconSubtitles } from '../../base/icons/svg';
 
 import {
     AbstractClosedCaptionButton,

@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate, translateToHTML } from '../../../base/i18n';
+import { translate, translateToHTML } from '../../../base/i18n/functions';
 
 import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
     from './AbstractUserMediaPermissionsOverlay';

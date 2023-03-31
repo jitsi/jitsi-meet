@@ -43,7 +43,7 @@ import { isGifEnabled } from '../../../gifs/functions';
 import InviteButton from '../../../invite/components/add-people-dialog/web/InviteButton';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import KeyboardShortcutsButton from '../../../keyboard-shortcuts/components/web/KeyboardShortcutsButton';
-import { NoiseSuppressionButton } from '../../../noise-suppression/components';
+import NoiseSuppressionButton from '../../../noise-suppression/components/NoiseSuppressionButton';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane

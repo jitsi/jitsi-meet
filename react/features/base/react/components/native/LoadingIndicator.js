@@ -3,7 +3,7 @@
 import React, { PureComponent } from 'react';
 import { ActivityIndicator } from 'react-native';
 
-import { ColorPalette } from '../../../styles';
+import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
 
 type Props = {|
 

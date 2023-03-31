@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { openSheet } from '../../../base/dialog/actions';
-import { translate } from '../../../base/i18n';
-import { IconVolumeUp } from '../../../base/icons';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconVolumeUp } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import AudioRoutePickerDialog from './AudioRoutePickerDialog';
 

@@ -5,7 +5,8 @@ import {
     MD_ITEM_HEIGHT,
     MD_ITEM_MARGIN_PADDING
 } from '../../../base/dialog/components/native/styles';
-import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import { ColorPalette } from '../../../base/styles/components/styles/ColorPalette';
+import { createStyleSheet } from '../../../base/styles/functions.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export default createStyleSheet({

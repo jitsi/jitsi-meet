@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import AbstractMessageContainer, { type Props as AbstractProps }
     from '../AbstractMessageContainer';
 

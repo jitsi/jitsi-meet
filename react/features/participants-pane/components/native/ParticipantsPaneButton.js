@@ -3,9 +3,9 @@
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { translate } from '../../../base/i18n';
-import { IconUsers } from '../../../base/icons';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconUsers } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';

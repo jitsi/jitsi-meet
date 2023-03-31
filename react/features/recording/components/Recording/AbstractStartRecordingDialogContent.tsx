@@ -7,8 +7,6 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
-// @ts-ignore
-import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
@@ -23,7 +21,7 @@ export interface IProps extends WithTranslation {
     /**
      * Style of the dialogs feature.
      */
-    _dialogStyles: StyleType;
+    _dialogStyles: any;
 
     /**
      * Whether to hide the storage warning or not.
@@ -53,7 +51,7 @@ export interface IProps extends WithTranslation {
     /**
      * The color-schemed stylesheet of this component.
      */
-    _styles: StyleType;
+    _styles: any;
 
     /**
      * The redux dispatch function.

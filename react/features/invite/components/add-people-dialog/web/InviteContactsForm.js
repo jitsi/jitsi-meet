@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import Avatar from '../../../../base/avatar/components/Avatar';
-import { translate } from '../../../../base/i18n';
-import { Icon, IconPhoneRinging } from '../../../../base/icons';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconPhoneRinging } from '../../../../base/icons/svg';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { hideAddPeopleDialog } from '../../../actions';

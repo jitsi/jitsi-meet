@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { getSharedDocumentUrl } from '../../functions';

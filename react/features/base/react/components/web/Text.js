@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { getFixedPlatformStyle } from '../../../styles';
+import { getFixedPlatformStyle } from '../../../styles/functions.web';
 
 /**
  * Implements a React/Web {@link Component} for displaying text similar to React

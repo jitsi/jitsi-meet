@@ -3,8 +3,9 @@ import { Animated, SafeAreaView, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getName } from '../../app/functions';
-import { translate } from '../../base/i18n';
-import { Icon, IconWarning } from '../../base/icons';
+import { translate } from '../../base/i18n/functions';
+import Icon from '../../base/icons/components/Icon';
+import { IconWarning } from '../../base/icons/svg';
 import { LoadingIndicator, Text } from '../../base/react';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';

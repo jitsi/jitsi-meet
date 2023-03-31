@@ -2,10 +2,8 @@
 
 import Logger from '@jitsi/logger';
 
-import {
-    createApiEvent,
-    sendAnalytics
-} from '../../react/features/analytics';
+import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../react/features/analytics/functions';
 import {
     approveParticipantAudio,
     approveParticipantVideo,
@@ -30,27 +28,30 @@ import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment/environment';
-import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
 import {
-    LOCAL_PARTICIPANT_DEFAULT_ID,
-    getLocalParticipant,
-    getParticipantById,
-    getScreenshareParticipantIds,
-    getVirtualScreenshareParticipantByOwnerId,
     grantModerator,
-    hasRaisedHand,
-    isLocalParticipantModerator,
-    isParticipantModerator,
     kickParticipant,
     overwriteParticipantsNames,
     pinParticipant,
     raiseHand
-} from '../../react/features/base/participants';
-import { updateSettings } from '../../react/features/base/settings';
+} from '../../react/features/base/participants/actions';
+import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    getScreenshareParticipantIds,
+    getVirtualScreenshareParticipantByOwnerId,
+    hasRaisedHand,
+    isLocalParticipantModerator,
+    isParticipantModerator
+} from '../../react/features/base/participants/functions';
+import { updateSettings } from '../../react/features/base/settings/actions';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
-import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+import { toggleCamera } from '../../react/features/base/tracks/actions.any';
+import { isToggleCameraEnabled } from '../../react/features/base/tracks/functions';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,

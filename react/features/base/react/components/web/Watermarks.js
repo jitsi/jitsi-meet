@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { isVpaasMeeting } from '../../../../jaas/functions';
-import { translate } from '../../../i18n';
+import { translate } from '../../../i18n/functions';
 
 
 declare var interfaceConfig: Object;

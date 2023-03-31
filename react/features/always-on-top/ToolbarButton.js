@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { Icon } from '../base/icons';
+import Icon from '../base/icons/components/Icon';
 
 type Props = {
 

@@ -3,8 +3,9 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
-import { translate } from '../../../i18n';
-import { Icon, IconArrowDown } from '../../../icons';
+import { translate } from '../../../i18n/functions';
+import Icon from '../../../icons/components/Icon';
+import { IconArrowDown } from '../../../icons/svg';
 
 import styles from './styles';
 

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from '../../../icons';
+import Icon from '../../../icons/components/Icon';
 import { type StyleType } from '../../../styles';
 
 import styles from './indicatorstyles';

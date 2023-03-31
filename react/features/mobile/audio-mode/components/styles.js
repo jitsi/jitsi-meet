@@ -1,7 +1,7 @@
 // @flow
 
 import { MD_ITEM_HEIGHT } from '../../../base/dialog/components/native/styles';
-import { createStyleSheet } from '../../../base/styles';
+import { createStyleSheet } from '../../../base/styles/functions.any';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**

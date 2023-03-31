@@ -2,7 +2,7 @@
 
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { schemeColor } from '../../../base/color-scheme/functions';
-import { BoxModel } from '../../../base/styles';
+import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');

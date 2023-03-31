@@ -2,7 +2,7 @@
 // files from API modules will be included in external_api.js.
 import { PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
 
-import { getJitsiMeetGlobalNS } from '../../react/features/base/util';
+import { getJitsiMeetGlobalNS } from '../../react/features/base/util/helpers';
 import { API_ID } from '../API/constants';
 
 

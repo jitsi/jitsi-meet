@@ -3,8 +3,8 @@ import { Linking, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
-import { translate } from '../../../../base/i18n';
-import { StyleType } from '../../../../base/styles';
+import { translate } from '../../../../base/i18n/functions';
+import { StyleType } from '../../../../base/styles/functions.native';
 import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';

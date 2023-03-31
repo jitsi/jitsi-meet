@@ -4,9 +4,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { openDialog } from '../../base/dialog/actions';
-import { translate } from '../../base/i18n';
-import { IconPerformance } from '../../base/icons';
-import { Label } from '../../base/label';
+import { translate } from '../../base/i18n/functions';
+import { IconPerformance } from '../../base/icons/svg';
+import Label from '../../base/label/components/web/Label';
 import { COLORS } from '../../base/label/constants';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import { shouldDisplayTileView } from '../../video-layout/functions.web';

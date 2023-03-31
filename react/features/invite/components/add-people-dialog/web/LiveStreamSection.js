@@ -4,8 +4,9 @@
 
 import React, { useState } from 'react';
 
-import { translate } from '../../../../base/i18n';
-import { Icon, IconCheck, IconCopy } from '../../../../base/icons';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconCheck, IconCopy } from '../../../../base/icons/svg';
 import { copyText } from '../../../../base/util/copyText.web';
 
 type Props = {

@@ -1,6 +1,8 @@
 // @flow
 
-import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
+import { BoxModel } from '../../base/styles/components/styles/BoxModel';
+import { ColorPalette } from '../../base/styles/components/styles/ColorPalette';
+import { createStyleSheet } from '../../base/styles/functions.any';
 
 /**
  * The styles of the React {@code Component}s of the feature subtitles.

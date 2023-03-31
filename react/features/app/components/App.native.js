@@ -8,8 +8,9 @@ import DialogContainer from '../../base/dialog/components/native/DialogContainer
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { DimensionsDetector, clientResized, setSafeAreaInsets } from '../../base/responsive-ui';
-import { updateSettings } from '../../base/settings';
+import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actions';
+import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
+import { updateSettings } from '../../base/settings/actions';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 

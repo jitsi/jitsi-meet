@@ -6,7 +6,7 @@ import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 

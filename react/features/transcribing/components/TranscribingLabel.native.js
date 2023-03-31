@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { Label } from '../../base/label';
+import { translate } from '../../base/i18n/functions';
+import Label from '../../base/label/components/native/Label';
 
 import { type Props, _mapStateToProps } from './AbstractTranscribingLabel';
 

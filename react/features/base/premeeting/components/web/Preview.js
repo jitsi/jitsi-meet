@@ -3,11 +3,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { getDisplayName } from '../../../../base/settings';
+import { getDisplayName } from '../../../../base/settings/functions.web';
 import Avatar from '../../../avatar/components/Avatar';
-import { Video } from '../../../media';
-import { getLocalParticipant } from '../../../participants';
-import { getLocalVideoTrack } from '../../../tracks';
+import Video from '../../../media/components/web/Video';
+import { getLocalParticipant } from '../../../participants/functions';
+import { getLocalVideoTrack } from '../../../tracks/functions.web';
 
 declare var APP: Object;
 

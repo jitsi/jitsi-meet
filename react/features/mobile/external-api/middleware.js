@@ -27,24 +27,25 @@ import {
 import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import { MEDIA_TYPE } from '../../base/media/constants';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_LEFT,
     getLocalParticipant,
     getParticipantById,
     getRemoteParticipants,
     isScreenShareParticipant
-} from '../../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
-import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
+} from '../../base/participants/functions';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
+import { toggleScreensharing } from '../../base/tracks/actions.native';
+import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { openChat } from '../../chat/actions';
 import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { muteLocal } from '../../video-menu/actions';
-import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
+import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 
 import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';

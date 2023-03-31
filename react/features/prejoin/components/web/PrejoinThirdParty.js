@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { isVideoMutedByUser } from '../../../base/media';
-import { PreMeetingScreen } from '../../../base/premeeting';
-import { getLocalJitsiVideoTrack } from '../../../base/tracks';
+import { translate } from '../../../base/i18n/functions';
+import { isVideoMutedByUser } from '../../../base/media/functions';
+import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
+import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import { isDeviceStatusVisible } from '../../functions';
 
 type Props = {

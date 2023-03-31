@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
-import { getParticipantCount } from '../../../base/participants';
-import type { StyleType } from '../../../base/styles';
+import { getParticipantCount } from '../../../base/participants/functions';
+import { StyleType } from '../../../base/styles/functions.native';
 
 import ReactionMenu from './ReactionMenu';
 

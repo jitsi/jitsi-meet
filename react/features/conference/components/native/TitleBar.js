@@ -8,7 +8,7 @@ import { getConferenceName, getConferenceTimestamp } from '../../../base/confere
 import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
-import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
+import PictureInPictureButton from '../../../mobile/picture-in-picture/components/PictureInPictureButton';
 import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
 import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';

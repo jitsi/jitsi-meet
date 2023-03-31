@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import { IconVideo, IconVideoOff } from '../base/icons';
+import { IconVideo, IconVideoOff } from '../base/icons/svg';
 import type { Props } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';

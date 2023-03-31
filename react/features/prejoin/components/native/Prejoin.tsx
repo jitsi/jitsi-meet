@@ -29,7 +29,7 @@ import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
+import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 // @ts-ignore
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 // @ts-ignore

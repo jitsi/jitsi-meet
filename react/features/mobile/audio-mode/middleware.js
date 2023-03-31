@@ -11,7 +11,7 @@ import {
 import { getCurrentConference } from '../../base/conference/functions';
 import { AUDIO_FOCUS_DISABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { MiddlewareRegistry } from '../../base/redux';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
 import logger from './logger';

@@ -4,9 +4,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { translate } from '../../../../base/i18n';
-import { IconHighlight } from '../../../../base/icons';
-import { Label } from '../../../../base/label';
+import { translate } from '../../../../base/i18n/functions';
+import { IconHighlight } from '../../../../base/icons/svg';
+import Label from '../../../../base/label/components/native/Label';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import AbstractHighlightButton, {
     type Props as AbstractProps,

@@ -2,7 +2,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { AudioTrack, MEDIA_TYPE } from '../../../base/media';
+import AudioTrack from '../../../base/media/components/web/AudioTrack';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 
 /**
  * The type of the React {@code Component} props of {@link AudioTracksContainer}.

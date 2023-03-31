@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import { approveParticipant } from '../../../av-moderation/actions';
 import { isSupported } from '../../../av-moderation/functions';
-import { translate } from '../../../base/i18n';
-import { IconMic, IconVideo } from '../../../base/icons';
-import { MEDIA_TYPE } from '../../../base/media';
-import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconMic, IconVideo } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isForceMuted } from '../../../participants-pane/functions';
 
 export type Props = AbstractButtonProps & {

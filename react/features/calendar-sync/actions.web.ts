@@ -6,7 +6,7 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { loadGoogleAPI } from '../google-api';
+import { loadGoogleAPI } from '../google-api/actions';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,

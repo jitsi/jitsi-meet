@@ -4,7 +4,8 @@ import { FlatList, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { Icon, IconMessage } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconMessage } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 

@@ -1,4 +1,4 @@
-import { fixAndroidViewClipping } from '../../../base/styles';
+import { fixAndroidViewClipping } from '../../../base/styles/functions.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;

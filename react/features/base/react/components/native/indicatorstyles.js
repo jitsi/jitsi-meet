@@ -1,6 +1,6 @@
 // @flow
 
-import { ColorPalette } from '../../../styles';
+import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
 
 export default {
 

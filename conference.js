@@ -17,9 +17,9 @@ import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
     createStartSilentEvent,
-    createTrackMutedEvent,
-    sendAnalytics
-} from './react/features/analytics';
+    createTrackMutedEvent
+} from './react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from './react/features/analytics/functions';
 import {
     maybeRedirectToWelcomePage,
     redirectToStaticPage,
@@ -86,22 +86,21 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import {
-    MEDIA_TYPE,
-    getStartWithAudioMuted,
-    getStartWithVideoMuted,
-    isVideoMutedByUser,
     setAudioAvailable,
     setAudioMuted,
     setAudioUnmutePermissions,
     setVideoAvailable,
     setVideoMuted,
     setVideoUnmutePermissions
-} from './react/features/base/media';
+} from './react/features/base/media/actions';
+import { MEDIA_TYPE } from './react/features/base/media/constants';
+import {
+    getStartWithAudioMuted,
+    getStartWithVideoMuted,
+    isVideoMutedByUser
+} from './react/features/base/media/functions';
 import {
     dominantSpeakerChanged,
-    getLocalParticipant,
-    getNormalizedDisplayName,
-    getVirtualScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
     localParticipantRoleChanged,
     participantKicked,
@@ -112,23 +111,30 @@ import {
     participantUpdated,
     screenshareParticipantDisplayNameChanged,
     updateRemoteParticipantFeatures
-} from './react/features/base/participants';
-import { updateSettings } from './react/features/base/settings';
+} from './react/features/base/participants/actions';
+import {
+    getLocalParticipant,
+    getNormalizedDisplayName,
+    getVirtualScreenshareParticipantByOwnerId
+} from './react/features/base/participants/functions';
+import { updateSettings } from './react/features/base/settings/actions';
 import {
     addLocalTrack,
-    createLocalTracksF,
     destroyLocalTracks,
+    replaceLocalTrack,
+    toggleScreensharing as toggleScreensharingA,
+    trackAdded,
+    trackRemoved
+} from './react/features/base/tracks/actions';
+import {
+    createLocalTracksF,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
     isLocalTrackMuted,
-    isUserInteractionRequiredForUnmute,
-    replaceLocalTrack,
-    toggleScreensharing as toggleScreensharingA,
-    trackAdded,
-    trackRemoved
-} from './react/features/base/tracks';
+    isUserInteractionRequiredForUnmute
+} from './react/features/base/tracks/functions';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
@@ -145,7 +151,7 @@ import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay
 import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
 import { isPrejoinPageVisible } from './react/features/prejoin/functions';
-import { disableReceiver, stopReceiver } from './react/features/remote-control';
+import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
 import { isScreenAudioShared } from './react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';

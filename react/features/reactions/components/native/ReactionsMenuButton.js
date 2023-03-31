@@ -7,12 +7,12 @@ import { openDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
 import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
-import { IconRaiseHand } from '../../../base/icons';
+import { translate } from '../../../base/i18n/functions';
+import { IconRaiseHand } from '../../../base/icons/svg';
 import {
     getLocalParticipant, hasRaisedHand
-} from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+} from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import ReactionMenuDialog from './ReactionMenuDialog';
 

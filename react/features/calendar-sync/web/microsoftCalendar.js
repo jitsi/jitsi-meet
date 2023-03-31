@@ -7,7 +7,8 @@ import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
 
 import { createDeferred } from '../../../../modules/util/helpers';
-import { parseStandardURIString, parseURLParams } from '../../base/util';
+import { parseURLParams } from '../../base/util/parseURLParams';
+import { parseStandardURIString } from '../../base/util/uri';
 import { getShareInfoText } from '../../invite/functions';
 import { setCalendarAPIAuthState } from '../actions';
 

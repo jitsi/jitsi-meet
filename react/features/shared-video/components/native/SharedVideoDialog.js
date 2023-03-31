@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import InputDialog from '../../../base/dialog/components/native/InputDialog';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**

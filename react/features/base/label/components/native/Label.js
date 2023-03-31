@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Animated, Text } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
-import { type StyleType, combineStyles } from '../../../styles';
+import { StyleType, combineStyles } from '../../../styles/functions.native';
 
 import styles from './styles';
 

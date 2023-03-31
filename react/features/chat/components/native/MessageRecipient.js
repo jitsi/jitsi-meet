@@ -2,8 +2,9 @@ import React from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconCloseLarge } from '../../../base/icons';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import {
     setParams
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';

@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import AbstractMuteRemoteParticipantsVideoDialog, {
     abstractMapStateToProps
 } from '../AbstractMuteRemoteParticipantsVideoDialog';

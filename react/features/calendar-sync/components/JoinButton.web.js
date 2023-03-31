@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
-import { Icon, IconPlus } from '../../base/icons';
+import { translate } from '../../base/i18n/functions';
+import Icon from '../../base/icons/components/Icon';
+import { IconPlus } from '../../base/icons/svg';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 
 /**

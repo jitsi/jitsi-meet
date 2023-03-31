@@ -2,12 +2,10 @@
 
 import React, { Component } from 'react';
 
-import {
-    getLocalizedDateFormatter,
-    getLocalizedDurationFormatter,
-    translate
-} from '../../../i18n';
-import { Icon, IconTrash } from '../../../icons';
+import { getLocalizedDateFormatter, getLocalizedDurationFormatter } from '../../../i18n/dateUtil';
+import { translate } from '../../../i18n/functions';
+import Icon from '../../../icons/components/Icon';
+import { IconTrash } from '../../../icons/svg';
 
 import Container from './Container';
 import Text from './Text';

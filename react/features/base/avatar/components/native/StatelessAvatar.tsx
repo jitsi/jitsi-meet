@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { type StyleType } from '../../../styles';
+import { StyleType } from '../../../styles/functions.native';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
 

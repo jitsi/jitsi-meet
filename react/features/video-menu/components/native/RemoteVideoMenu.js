@@ -9,12 +9,12 @@ import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import {
     getParticipantById,
     getParticipantDisplayName,
     isLocalParticipantModerator
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';

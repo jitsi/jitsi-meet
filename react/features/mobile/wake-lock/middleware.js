@@ -1,7 +1,7 @@
 import KeepAwake from 'react-native-keep-awake';
 
 import { getCurrentConference } from '../../base/conference/functions';
-import { StateListenerRegistry } from '../../base/redux';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 
 /**
  * State listener that activates or deactivates the wake lock accordingly. If

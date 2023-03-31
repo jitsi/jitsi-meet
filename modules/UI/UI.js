@@ -7,7 +7,7 @@ import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
-import { setColorAlpha } from '../../react/features/base/util';
+import { setColorAlpha } from '../../react/features/base/util/helpers';
 import { setDocumentUrl } from '../../react/features/etherpad/actions';
 import { setFilmstripVisible } from '../../react/features/filmstrip/actions.any';
 import {

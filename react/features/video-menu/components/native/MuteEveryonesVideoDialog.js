@@ -4,7 +4,7 @@ import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import AbstractMuteEveryonesVideoDialog, {
     type IProps,
     abstractMapStateToProps as _mapStateToProps } from '../AbstractMuteEveryonesVideoDialog';

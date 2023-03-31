@@ -3,10 +3,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { App } from './features/app/components';
+import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
-import { getJitsiMeetGlobalNS } from './features/base/util';
+import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
 import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 

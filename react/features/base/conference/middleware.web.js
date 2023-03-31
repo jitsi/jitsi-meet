@@ -4,7 +4,7 @@ import {
     setSkipPrejoinOnReload
 } from '../../prejoin/actions.web';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-import { MiddlewareRegistry } from '../redux';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_JOIN_IN_PROGRESS } from './actionTypes';
 import './middleware.any';

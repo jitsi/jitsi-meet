@@ -3,15 +3,15 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getConferenceName } from '../../../base/conference/functions';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
+import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
+import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';

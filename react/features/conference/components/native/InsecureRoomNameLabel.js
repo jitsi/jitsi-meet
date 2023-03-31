@@ -3,8 +3,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { IconWarning } from '../../../base/icons';
-import { Label } from '../../../base/label';
+import { IconWarning } from '../../../base/icons/svg';
+import Label from '../../../base/label/components/native/Label';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 import styles from './styles';

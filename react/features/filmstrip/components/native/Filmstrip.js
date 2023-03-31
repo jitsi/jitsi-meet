@@ -5,7 +5,7 @@ import { FlatList } from 'react-native';
 import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import { Platform } from '../../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';

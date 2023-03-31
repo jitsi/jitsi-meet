@@ -1,6 +1,6 @@
 // @flow
 
-import { MiddlewareRegistry } from '../base/redux';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { OPEN_DESKTOP_APP } from './actionTypes';
 import { openDesktopApp } from './functions';

@@ -1,7 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../base/media';
+import { MEDIA_TYPE } from '../../base/media/constants';
 
 /**
  * Class Implementing the effect interface expected by a JitsiLocalTrack.

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { toggleChat } from '../../actions.web';

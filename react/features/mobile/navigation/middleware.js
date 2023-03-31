@@ -1,7 +1,7 @@
 import { appNavigate } from '../../app/actions';
 import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
-import { MiddlewareRegistry } from '../../base/redux';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
 
 MiddlewareRegistry.register(store => next => action => {

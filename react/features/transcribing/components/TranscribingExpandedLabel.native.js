@@ -1,7 +1,7 @@
 // @flow
 
-import { translate } from '../../base/i18n';
-import { type Props as AbstractProps, ExpandedLabel } from '../../base/label';
+import { translate } from '../../base/i18n/functions';
+import ExpandedLabel, { Props as AbstractProps } from '../../base/label/components/native/ExpandedLabel';
 
 type Props = AbstractProps & {
     t: Function

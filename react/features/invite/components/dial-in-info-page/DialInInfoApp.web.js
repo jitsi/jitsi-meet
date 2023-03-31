@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { i18next } from '../../../base/i18n';
+import i18next from '../../../base/i18n/i18next';
 import { parseURLParams } from '../../../base/util/parseURLParams';
 import { DIAL_IN_INFO_PAGE_PATH_NAME } from '../../constants';
 import { DialInSummary } from '../dial-in-summary';

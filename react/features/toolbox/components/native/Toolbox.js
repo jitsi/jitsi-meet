@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { Platform } from '../../../base/react';
-import { StyleType } from '../../../base/styles';
+import { StyleType } from '../../../base/styles/functions.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
 import { isReactionsEnabled } from '../../../reactions/functions.any';

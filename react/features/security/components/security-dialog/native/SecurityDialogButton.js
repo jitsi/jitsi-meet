@@ -2,7 +2,7 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
 import { navigate } from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';
 import AbstractSecurityDialogButton, {

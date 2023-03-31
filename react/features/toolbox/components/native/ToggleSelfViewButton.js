@@ -2,10 +2,10 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { IconAudioOnlyOff } from '../../../base/icons';
-import { updateSettings } from '../../../base/settings';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconAudioOnlyOff } from '../../../base/icons/svg';
+import { updateSettings } from '../../../base/settings/actions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 /**
  * The type of the React {@code Component} props of {@link ToggleSelfViewButton}.

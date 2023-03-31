@@ -16,13 +16,10 @@ import {
 } from '../../../av-moderation/functions';
 import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
-import {
-    Icon,
-    IconCheck,
-    IconVideoOff
-} from '../../../base/icons';
-import { MEDIA_TYPE } from '../../../base/media';
-import { getParticipantCount, isEveryoneModerator } from '../../../base/participants';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCheck, IconVideoOff } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import { getParticipantCount, isEveryoneModerator } from '../../../base/participants/functions';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 

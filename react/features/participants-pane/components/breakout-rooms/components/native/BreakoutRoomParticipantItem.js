@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { isLocalParticipantModerator, isParticipantModerator } from '../../../../../base/participants';
+import { isLocalParticipantModerator, isParticipantModerator } from '../../../../../base/participants/functions';
 import { showRoomParticipantMenu } from '../../../../actions.native';
 import ParticipantItem from '../../../native/ParticipantItem';
 

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { VideoTrack } from '../../../base/media';
+import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 
