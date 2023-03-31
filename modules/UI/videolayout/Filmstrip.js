@@ -3,7 +3,7 @@
 import {
     getVerticalFilmstripVisibleAreaWidth,
     isFilmstripVisible
-} from '../../../react/features/filmstrip/functions.web';
+} from '../../../react/features/filmstrip/functions';
 
 const Filmstrip = {
     /**

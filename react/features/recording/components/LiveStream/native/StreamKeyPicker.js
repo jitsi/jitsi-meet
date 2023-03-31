@@ -43,10 +43,10 @@ type Props = {
 
 type State = {
 
-    /**
-     * The key of the currently selected stream.
-     */
-    streamKey: ?string
+     /**
+      * The key of the currently selected stream.
+      */
+     streamKey: ?string
 }
 
 /**

@@ -42,7 +42,7 @@ import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../ba
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { openChat } from '../../chat/actions';
 import { closeChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
-import { setRequestingSubtitles } from '../../subtitles/actions.native';
+import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 

@@ -9,7 +9,7 @@ import { IconPerformance } from '../../base/icons';
 import { Label } from '../../base/label';
 import { COLORS } from '../../base/label/constants';
 import Tooltip from '../../base/tooltip/components/Tooltip';
-import { shouldDisplayTileView } from '../../video-layout/functions';
+import { shouldDisplayTileView } from '../../video-layout/functions.web';
 
 import AbstractVideoQualityLabel, {
     IProps as AbstractProps,

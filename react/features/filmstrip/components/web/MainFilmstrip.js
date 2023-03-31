@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { LAYOUTS } from '../../../video-layout/constants';
-import { getCurrentLayout } from '../../../video-layout/functions';
+import { getCurrentLayout } from '../../../video-layout/functions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_BREAKPOINT,
