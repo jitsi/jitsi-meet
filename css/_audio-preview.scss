@@ -7,7 +7,7 @@
         margin-bottom: 4px;
         max-height: calc(100vh - 100px);
         overflow: auto;
-        width: 300px;
+        width: 60vw;
 
         &-ul {
             margin:0;
@@ -38,7 +38,7 @@
             }
 
             .audio-preview-entry-text {
-                max-width: 178px;
+                max-width: 40vw;
                 margin-right: 0;
             }
         }
