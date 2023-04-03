@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment  */
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect, useDispatch } from 'react-redux';
@@ -6,6 +8,7 @@ import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD }
     from '../../base/i18n/i18next';
+// @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { goBack }
     from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -13,6 +16,7 @@ import { setRequestingSubtitles, updateTranslationLanguage }
     from '../actions.native';
 
 import LanguageList from './LanguageList.native';
+// @ts-ignore
 import styles from './styles.native';
 
 interface ILanguageSelectorDialogProps extends WithTranslation {
