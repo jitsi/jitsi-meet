@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
@@ -55,8 +55,7 @@ type Props = {
  * @returns {React.Node}
  */
 const TitleBar = (props: Props) => (<>
-    {props._visible && <View
-        pointerEvents = 'box-none'
+    {props._visible && <TouchableOpacity activeOpacity = { 1 }
         style = { styles.titleBarWrapper }>
         <View style = { styles.pipButtonContainer }>
             <PictureInPictureButton styles = { styles.pipButton } />
@@ -92,7 +91,7 @@ const TitleBar = (props: Props) => (<>
         <View style = { styles.titleBarButtonContainer }>
             <ParticipantsPaneButton styles = { styles.titleBarButton } />
         </View>
-    </View>}
+    </TouchableOpacity>}
 </>);
 
 /**
