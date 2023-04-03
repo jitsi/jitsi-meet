@@ -52,47 +52,56 @@ type Props = {
  * conference screen.
  *
  * @param {Props} props - The React props passed to this component.
- * @returns {React.Node}
+ * @returns {JSX.Element}
  */
-const TitleBar = (props: Props) => (<>
-    {props._visible && <TouchableOpacity activeOpacity = { 1 }
-        style = { styles.titleBarWrapper }>
-        <View style = { styles.pipButtonContainer }>
-            <PictureInPictureButton styles = { styles.pipButton } />
-        </View>
-        <View
-            pointerEvents = 'box-none'
-            style = { styles.roomNameWrapper }>
-            {
-                props._conferenceTimerEnabled
+const TitleBar = (props: Props) => {
+    const { _visible } = props;
+
+    if (!_visible) {
+        return null;
+    }
+
+    return (
+        <TouchableOpacity
+            activeOpacity = { 1 }
+            style = { styles.titleBarWrapper }>
+            <View style = { styles.pipButtonContainer }>
+                <PictureInPictureButton styles = { styles.pipButton } />
+            </View>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.roomNameWrapper }>
+                {
+                    props._conferenceTimerEnabled
                     && <View style = { styles.roomTimerView }>
                         <ConferenceTimer textStyle = { styles.roomTimer } />
                     </View>
-            }
-            {
-                props._meetingNameEnabled
-                        && <View style = { styles.roomNameView }>
-                            <Text
-                                numberOfLines = { 1 }
-                                style = { styles.roomName }>
-                                { props._meetingName }
-                            </Text>
-                        </View>
-            }
-            {/* eslint-disable-next-line react/jsx-no-bind */}
-            <Labels createOnPress = { props._createOnPress } />
-        </View>
-        <View style = { styles.titleBarButtonContainer }>
-            <ToggleCameraButton styles = { styles.titleBarButton } />
-        </View>
-        <View style = { styles.titleBarButtonContainer }>
-            <AudioDeviceToggleButton styles = { styles.titleBarButton } />
-        </View>
-        <View style = { styles.titleBarButtonContainer }>
-            <ParticipantsPaneButton styles = { styles.titleBarButton } />
-        </View>
-    </TouchableOpacity>}
-</>);
+                }
+                {
+                    props._meetingNameEnabled
+                    && <View style = { styles.roomNameView }>
+                        <Text
+                            numberOfLines = { 1 }
+                            style = { styles.roomName }>
+                            { props._meetingName }
+                        </Text>
+                    </View>
+                }
+                {/* eslint-disable-next-line react/jsx-no-bind */}
+                <Labels createOnPress = { props._createOnPress } />
+            </View>
+            <View style = { styles.titleBarButtonContainer }>
+                <ToggleCameraButton styles = { styles.titleBarButton } />
+            </View>
+            <View style = { styles.titleBarButtonContainer }>
+                <AudioDeviceToggleButton styles = { styles.titleBarButton } />
+            </View>
+            <View style = { styles.titleBarButtonContainer }>
+                <ParticipantsPaneButton styles = { styles.titleBarButton } />
+            </View>
+        </TouchableOpacity>
+    );
+};
 
 /**
  * Maps part of the Redux store to the props of this component.
