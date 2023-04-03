@@ -422,22 +422,6 @@ var config = {
     // value will be used when the quality level is selected using "Manage Video Quality" slider.
     // startLastN: 1,
 
-    // Provides a way to use different "last N" values based on the number of participants in the conference.
-    // The keys in an Object represent number of participants and the values are "last N" to be used when number of
-    // participants gets to or above the number.
-    //
-    // For the given example mapping, "last N" will be set to 20 as long as there are at least 5, but less than
-    // 29 participants in the call and it will be lowered to 15 when the 30th participant joins. The 'channelLastN'
-    // will be used as default until the first threshold is reached.
-    //
-    // lastNLimits: {
-    //     5: 20,
-    //     30: 15,
-    //     50: 10,
-    //     70: 5,
-    //     90: 2,
-    // },
-
     // Specify the settings for video quality optimizations on the client.
     // videoQuality: {
     //    // Provides a way to prevent a video codec from being negotiated on the JVB connection. The codec specified
