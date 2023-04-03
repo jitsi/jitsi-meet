@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 
 import React from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
@@ -46,9 +46,9 @@ const TitleBar = (props: IProps): JSX.Element => {
     const localParticipant = useSelector(getLocalParticipant);
     const localParticipantId = localParticipant?.id;
 
-    return (<>
-        <View
-            pointerEvents = 'box-none'
+    return (
+        <TouchableOpacity
+            activeOpacity = { 1 }
             style = { styles.titleBarWrapper as StyleProp<ViewStyle> }>
             <View
                 pointerEvents = 'box-none'
@@ -76,8 +76,8 @@ const TitleBar = (props: IProps): JSX.Element => {
                     </View>
                 }
             </View>
-        </View>
-    </>);
+        </TouchableOpacity>
+    );
 };
 
 /**
