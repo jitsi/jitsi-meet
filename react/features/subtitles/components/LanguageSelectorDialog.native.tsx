@@ -10,10 +10,10 @@ import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD }
     from '../../base/i18n/i18next';
 // @ts-ignore
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
+// @ts-ignore
 import { goBack }
     from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setRequestingSubtitles, updateTranslationLanguage }
-    from '../actions.native';
+import { setRequestingSubtitles, updateTranslationLanguage } from '../actions.native';
 
 import LanguageList from './LanguageList.native';
 // @ts-ignore

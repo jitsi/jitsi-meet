@@ -1,7 +1,10 @@
+/* eslint-disable lines-around-comment  */
+
 import React from 'react';
 import { ScrollView } from 'react-native';
 
 import LanguageListItem from './LanguageListItem.native';
+// @ts-ignore
 import styles from './styles.native';
 
 interface ILanguageListProps {
