@@ -5,9 +5,9 @@ import { translate } from '../../base/i18n/functions';
 import Label from '../../base/label/components/web/Label';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 
-import { Props, _mapStateToProps } from './AbstractTranscribingLabel';
+import { IProps, _mapStateToProps } from './AbstractTranscribingLabel';
 
-const TranscribingLabel = ({ _showLabel, t }: Props) => {
+const TranscribingLabel = ({ _showLabel, t }: IProps) => {
     if (!_showLabel) {
         return null;
     }

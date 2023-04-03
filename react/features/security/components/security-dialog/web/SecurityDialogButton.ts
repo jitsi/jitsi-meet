@@ -7,12 +7,10 @@ import AbstractSecurityDialogButton, {
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractSecurityDialogButton';
 
-type Props = AbstractSecurityDialogButtonProps;
-
 /**
  * Implements an {@link AbstractSecurityDialogButton} to open the security dialog.
  */
-class SecurityDialogButton<P extends Props, S> extends AbstractSecurityDialogButton<P, S> {
+class SecurityDialogButton<P extends AbstractSecurityDialogButtonProps, S> extends AbstractSecurityDialogButton<P, S> {
 
     /**
      * Opens / closes the security dialog.

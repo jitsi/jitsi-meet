@@ -94,17 +94,17 @@ export interface IProps {
     useCORS?: boolean;
 }
 
-type State = {
+interface IState {
     avatarFailed: boolean;
     isUsingCORS: boolean;
-};
+}
 
 export const DEFAULT_SIZE = 65;
 
 /**
  * Implements a class to render avatars in the app.
  */
-class Avatar<P extends IProps> extends PureComponent<P, State> {
+class Avatar<P extends IProps> extends PureComponent<P, IState> {
     /**
      * Default values for {@code Avatar} component's properties.
      *

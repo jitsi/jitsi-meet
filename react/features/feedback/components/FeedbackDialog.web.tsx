@@ -134,7 +134,7 @@ interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link FeedbackDialog}.
  */
-type State = {
+interface IState {
 
     /**
      * The currently entered feedback message.
@@ -153,7 +153,7 @@ type State = {
      * indexed so subtract one to map with SCORES.
      */
     score: number;
-};
+}
 
 /**
  * A React {@code Component} for displaying a dialog to rate the current
@@ -162,7 +162,7 @@ type State = {
  *
  * @augments Component
  */
-class FeedbackDialog extends Component<IProps, State> {
+class FeedbackDialog extends Component<IProps, IState> {
     /**
      * An array of objects with click handlers for each of the scores listed in
      * the constant SCORES. This pattern is used for binding event handlers only

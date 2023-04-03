@@ -19,7 +19,7 @@ export const SCREEN_STATES = {
     VIEW: 3
 };
 
-export type Props = {
+export interface IProps {
 
     /**
      * Indicates whether the device status should be visible.
@@ -95,9 +95,9 @@ export type Props = {
      * Function to be used to translate i18n labels.
      */
     t: Function;
-};
+}
 
-type State = {
+interface IState {
 
     /**
      * The display name value entered into the field.
@@ -128,12 +128,12 @@ type State = {
      * The state of the screen. One of {@code SCREEN_STATES[*]}.
      */
     screenState: number;
-};
+}
 
 /**
  * Abstract class to encapsulate the platform common code of the {@code LobbyScreen}.
  */
-export default class AbstractLobbyScreen<P extends Props = Props> extends PureComponent<P, State> {
+export default class AbstractLobbyScreen<P extends IProps = IProps> extends PureComponent<P, IState> {
     /**
      * Instantiates a new component.
      *
@@ -169,7 +169,7 @@ export default class AbstractLobbyScreen<P extends Props = Props> extends PureCo
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: State) {
+    static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props._passwordJoinFailed && !state.passwordJoinFailed) {
             return {
                 password: '',
@@ -415,7 +415,7 @@ export default class AbstractLobbyScreen<P extends Props = Props> extends PureCo
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);

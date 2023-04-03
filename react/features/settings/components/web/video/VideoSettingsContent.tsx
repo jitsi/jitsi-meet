@@ -62,13 +62,13 @@ export interface IProps extends WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link VideoSettingsContent}.
  */
-type State = {
+interface IState {
 
     /**
      * An array of all the jitsiTracks and eventual errors.
      */
     trackData: { deviceId: string; error?: string; jitsiTrack: any | null; }[];
-};
+}
 
 /**
  * Implements a React {@link Component} which displays a list of video
@@ -76,7 +76,7 @@ type State = {
  *
  * @augments Component
  */
-class VideoSettingsContent extends Component<IProps, State> {
+class VideoSettingsContent extends Component<IProps, IState> {
     _componentWasUnmounted: boolean;
 
     /**

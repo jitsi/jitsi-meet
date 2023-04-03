@@ -91,7 +91,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
 /**
  * The type of the React {@code Component} state of {@link VideoDeviceSelection}.
  */
-type State = {
+interface IState {
 
     /**
      * The JitsiTrack to use for previewing video input.
@@ -102,7 +102,7 @@ type State = {
      * The error message from trying to use a video input device.
      */
     previewVideoTrackError: string | null;
-};
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -124,7 +124,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class VideoDeviceSelection extends AbstractDialogTab<IProps, State> {
+class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
 
     /**
      * Whether current component is mounted or not.

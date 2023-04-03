@@ -24,7 +24,7 @@ import styles from './styles';
 /**
  * Props type of the component.
  */
-type Props = WithTranslation & {
+interface IProps extends WithTranslation {
 
     /**
      * Control for invite other button.
@@ -50,23 +50,18 @@ type Props = WithTranslation & {
      * The Redux Dispatch function.
      */
     dispatch: Function;
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function;
-};
+}
 
 /**
  * Implements the UI elements to be displayed in the lonely meeting experience.
  */
-class LonelyMeetingExperience extends PureComponent<Props> {
+class LonelyMeetingExperience extends PureComponent<IProps> {
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPress = this._onPress.bind(this);
@@ -131,7 +126,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
     const { disableInviteFunctions } = state['features/base/config'];

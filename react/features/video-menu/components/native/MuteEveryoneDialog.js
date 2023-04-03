@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n';
 import AbstractMuteEveryoneDialog, {
-    type Props,
+    type IProps,
     abstractMapStateToProps as _mapStateToProps } from '../AbstractMuteEveryoneDialog';
 
 import styles from './styles';
@@ -17,7 +17,7 @@ import styles from './styles';
  *
  * @augments AbstractMuteEveryoneDialog
  */
-class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
+class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
 
     /**
      * Renders the dialog switch.

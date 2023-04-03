@@ -10,7 +10,7 @@ import { Video } from './_';
 /**
  * The type of the React {@code Component} props of {@link AbstractVideoTrack}.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * The Redux dispatch function.
@@ -45,7 +45,7 @@ export type Props = {
      * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
      */
     zoomEnabled?: boolean;
-};
+}
 
 /**
  * Implements a React {@link Component} that renders video element for a
@@ -53,7 +53,7 @@ export type Props = {
  *
  * @abstract
  */
-export default class AbstractVideoTrack<P extends Props> extends Component<P> {
+export default class AbstractVideoTrack<P extends IProps> extends Component<P> {
     /**
      * Initializes a new AbstractVideoTrack instance.
      *

@@ -13,7 +13,7 @@ import Meter from './Meter';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
-type Props = {
+interface IProps {
 
     /**
      * The text for this component.
@@ -67,30 +67,30 @@ type Props = {
      * Click handler for component.
      */
     onClick: Function;
-};
+}
 
-type State = {
+interface IState {
 
     /**
      * The audio level.
      */
     level: number;
-};
+}
 
 /**
  * React {@code Component} representing an entry for the microphone audio settings.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns { ReactElement}
  */
-export default class MicrophoneEntry extends Component<Props, State> {
+export default class MicrophoneEntry extends Component<IProps, IState> {
     /**
      * Initializes a new {@code MicrophoneEntry} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -168,7 +168,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         if (prevProps.jitsiTrack !== this.props.jitsiTrack) {
             this._stopListening(prevProps.jitsiTrack);
             this._startListening();
