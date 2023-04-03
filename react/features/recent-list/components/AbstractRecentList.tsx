@@ -4,13 +4,8 @@ import { createRecentClickedEvent, createRecentSelectedEvent } from '../../analy
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
 import { IStore } from '../../app/types';
-import {
-    Container,
-    Text
-
-    // @ts-ignore
-} from '../../base/react';
 import AbstractPage from '../../base/react/components/AbstractPage';
+import { Container, Text } from '../../base/react/components/index';
 
 // @ts-ignore
 import styles from './styles';

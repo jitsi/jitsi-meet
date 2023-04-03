@@ -6,7 +6,7 @@ import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context
 import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { Platform } from '../../../base/react';
+import Platform from '../../../base/react/Platform.native';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { isToolboxVisible } from '../../../toolbox/functions';

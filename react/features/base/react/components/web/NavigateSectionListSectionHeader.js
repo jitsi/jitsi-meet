@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import type { Section } from '../../Types';
+import { Section } from '../../types';
 
 import Text from './Text';
 

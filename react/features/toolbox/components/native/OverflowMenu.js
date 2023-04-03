@@ -15,7 +15,7 @@ import LiveStreamButton from '../../../recording/components/LiveStream/native/Li
 import RecordButton from '../../../recording/components/Recording/native/RecordButton';
 import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
-import { SharedVideoButton } from '../../../shared-video/components';
+import SharedVideoButton from '../../../shared-video/components/native/SharedVideoButton';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton.native';

@@ -20,7 +20,7 @@ export interface IProps {
     /**
      * React Elements to display within the component.
      */
-    children: ReactNode;
+    children?: ReactNode;
 
     /**
      * Class names of the component (for web).

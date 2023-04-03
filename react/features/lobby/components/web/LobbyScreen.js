@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
-import { LoadingIndicator } from '../../../base/react';
+import LoadingIndicator from '../../../base/react/components/web/LoadingIndicator';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import ChatInput from '../../../chat/components/web/ChatInput';

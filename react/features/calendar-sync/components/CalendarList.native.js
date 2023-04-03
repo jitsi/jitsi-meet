@@ -9,7 +9,7 @@ import {
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/functions';
-import { AbstractPage } from '../../base/react';
+import AbstractPage from '../../base/react/components/AbstractPage';
 import { openSettings } from '../../mobile/permissions/functions';
 import { refreshCalendar } from '../actions';
 

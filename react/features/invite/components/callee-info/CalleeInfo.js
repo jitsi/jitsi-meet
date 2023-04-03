@@ -10,7 +10,7 @@ import {
     getParticipantPresenceStatus,
     getRemoteParticipants
 } from '../../../base/participants/functions';
-import { Container, Text } from '../../../base/react';
+import { Container, Text } from '../../../base/react/components/index';
 import { isLocalTrackMuted } from '../../../base/tracks/functions.any';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { CALLING } from '../../../presence-status/constants';

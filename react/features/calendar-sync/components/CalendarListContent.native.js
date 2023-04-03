@@ -7,7 +7,7 @@ import { createCalendarClickedEvent, createCalendarSelectedEvent } from '../../a
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n/functions';
-import { NavigateSectionList } from '../../base/react';
+import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
 import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions';
 
 

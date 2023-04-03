@@ -8,7 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 // @ts-ignore
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 // @ts-ignore
-import { LoadingIndicator, TintedView } from '../../../../base/react';
+import LoadingIndicator from '../../../../base/react/components/native/LoadingIndicator';
+// @ts-ignore
+import TintedView from '../../../../base/react/components/native/TintedView';
 import { isLocalVideoTrackDesktop } from '../../../../base/tracks/functions.native';
 // @ts-ignore
 import { setPictureInPictureEnabled } from '../../../../mobile/picture-in-picture/functions';

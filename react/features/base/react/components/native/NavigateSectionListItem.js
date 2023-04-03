@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { IconPlus } from '../../../icons/svg';
 import IconButton from '../../../ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../ui/constants.any';
-import type { Item } from '../../Types';
+import { Item } from '../../types';
 
 import AvatarListItem from './AvatarListItem';
 import Text from './Text';

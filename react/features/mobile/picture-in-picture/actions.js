@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 
 import { PIP_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { Platform } from '../../base/react';
+import Platform from '../../base/react/Platform.native';
 
 import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
 import logger from './logger';

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import type { Item } from '../../Types';
+import { Item } from '../../types';
 
 import Container from './Container';
 import Text from './Text';

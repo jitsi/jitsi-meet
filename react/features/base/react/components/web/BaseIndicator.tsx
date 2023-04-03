@@ -39,7 +39,7 @@ interface IProps extends WithTranslation {
     /**
      * The font size for the icon.
      */
-    iconSize: string;
+    iconSize: string | number;
 
     /**
      * The ID attribute to set on the root element of the component.

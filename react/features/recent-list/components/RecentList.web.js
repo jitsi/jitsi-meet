@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../base/i18n/functions';
-import { MeetingsList } from '../../base/react';
+import MeetingsList from '../../base/react/components/web/MeetingsList';
 import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 

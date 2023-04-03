@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { VIDEO_TYPE } from '../../base/media/constants';
 import { getLocalParticipant } from '../../base/participants/functions';
-import { Watermarks } from '../../base/react';
+import Watermarks from '../../base/react/components/web/Watermarks';
 import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
 import { setColorAlpha } from '../../base/util/helpers';

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { LoadingIndicator } from '../../../base/react';
+import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';

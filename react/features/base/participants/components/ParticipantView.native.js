@@ -11,7 +11,7 @@ import Avatar from '../../avatar/components/Avatar';
 import { translate } from '../../i18n/functions';
 import VideoTrack from '../../media/components/native/VideoTrack';
 import { shouldRenderVideoTrack } from '../../media/functions';
-import { Container } from '../../react';
+import Container from '../../react/components/native/Container';
 import { toState } from '../../redux/functions';
 import TestHint from '../../testing/components/TestHint';
 import { getVideoTrackByParticipant } from '../../tracks/functions';

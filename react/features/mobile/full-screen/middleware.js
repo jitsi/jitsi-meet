@@ -7,7 +7,7 @@ import { getCurrentConference } from '../../base/conference/functions';
 import { isAnyDialogOpen } from '../../base/dialog/functions';
 import { FULLSCREEN_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { Platform } from '../../base/react';
+import Platform from '../../base/react/Platform.native';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 

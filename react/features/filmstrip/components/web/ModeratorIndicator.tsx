@@ -1,9 +1,7 @@
 import React from 'react';
 
 import { IconModerator } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { BaseIndicator } from '../../../base/react';
+import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 
 /**
  * The type of the React {@code Component} props of {@link ModeratorIndicator}.
@@ -13,7 +11,7 @@ interface IProps {
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string;
+    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
 }
 
 /**

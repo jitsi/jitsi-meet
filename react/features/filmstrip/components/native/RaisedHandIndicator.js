@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IconRaiseHand } from '../../../base/icons/svg';
-import { BaseIndicator } from '../../../base/react';
+import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 import AbstractRaisedHandIndicator, {
     _mapStateToProps
 } from '../AbstractRaisedHandIndicator';

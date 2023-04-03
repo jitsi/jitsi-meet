@@ -7,7 +7,7 @@ import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
-import { Watermarks } from '../../base/react';
+import Watermarks from '../../base/react/components/web/Watermarks';
 import CalendarList from '../../calendar-sync/components/CalendarList.web';
 import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';

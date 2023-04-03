@@ -4,14 +4,12 @@ import React, { Component } from 'react';
 
 // TODO: Maybe try to make all NavigateSectionList components to work for both
 // mobile and web, and move them to NavigateSectionList component.
-import type { Section } from '../Types';
+import { Section } from '../../types';
 
-import {
-    NavigateSectionListEmptyComponent,
-    NavigateSectionListItem,
-    NavigateSectionListSectionHeader,
-    SectionList
-} from './_';
+import NavigateSectionListEmptyComponent from './NavigateSectionListEmptyComponent';
+import NavigateSectionListItem from './NavigateSectionListItem';
+import NavigateSectionListSectionHeader from './NavigateSectionListSectionHeader';
+import SectionList from './SectionList';
 
 type Props = {
 

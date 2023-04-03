@@ -20,7 +20,8 @@ import {
     IconShare
 } from '../../../../base/icons/svg';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
-import { AvatarListItem, type Item } from '../../../../base/react';
+import AvatarListItem from '../../../../base/react/components/native/AvatarListItem';
+import { Item } from '../../../../base/react/types';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import Input from '../../../../base/ui/components/native/Input';
 import HeaderNavigationButton

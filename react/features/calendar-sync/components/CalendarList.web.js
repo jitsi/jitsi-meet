@@ -8,7 +8,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCalendar } from '../../base/icons/svg';
-import { AbstractPage } from '../../base/react';
+import AbstractPage from '../../base/react/components/AbstractPage';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';

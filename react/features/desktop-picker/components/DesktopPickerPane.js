@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n/functions';
-import { Platform } from '../../base/react';
+import Platform from '../../base/react/Platform.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import Spinner from '../../base/ui/components/web/Spinner';
 

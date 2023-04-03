@@ -8,7 +8,7 @@ import { getFixedPlatformStyle } from '../../../styles/functions.web';
  *
  * @augments Component
  */
-export default class Text extends Component {
+export default class Text extends Component<React.HTMLProps<HTMLSpanElement>> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -16,7 +16,7 @@ export default class Text extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // eslint-disable-next-line react/prop-types
+        // @ts-ignore
         const _style = getFixedPlatformStyle(this.props.style);
 
         return React.createElement('span', {

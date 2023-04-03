@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 // @ts-ignore
-import { LoadingIndicator } from '../../../../base/react';
+import LoadingIndicator from '../../../../base/react/components/native/LoadingIndicator';
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';

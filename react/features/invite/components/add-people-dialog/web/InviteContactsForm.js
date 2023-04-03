@@ -9,7 +9,7 @@ import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconPhoneRinging } from '../../../../base/icons/svg';
-import { MultiSelectAutocomplete } from '../../../../base/react';
+import MultiSelectAutocomplete from '../../../../base/react/components/web/MultiSelectAutocomplete';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { hideAddPeopleDialog } from '../../../actions';
 import { INVITE_TYPES } from '../../../constants';

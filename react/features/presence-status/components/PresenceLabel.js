@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/functions';
 import { getParticipantById } from '../../base/participants/functions';
-import { Text } from '../../base/react';
+import { Text } from '../../base/react/components/index';
 import { STATUS_TO_I18N_KEY } from '../constants';
 import { presenceStatusDisabled } from '../functions';
 
