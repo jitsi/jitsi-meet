@@ -245,8 +245,8 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
         = getLocalizedDateFormatter(eventToShow.startDate).fromNow();
     const icon = NOTIFICATION_ICON.WARNING;
     const title = (eventToShow.startDate < now) && (eventToShow.endDate > now)
-        ? `${i18n.t('calendarSync.ongoingMeeting')}: ${eventToShow.title}`
-        : `${i18n.t('calendarSync.nextMeeting')}: ${eventToShow.title}`;
+        ? `${i18n.t('calendarSync.ongoingMeeting')}: \n${eventToShow.title}`
+        : `${i18n.t('calendarSync.nextMeeting')}: \n${eventToShow.title}`;
     const uid = CALENDAR_NOTIFICATION_ID;
 
     dispatch(showNotification({
