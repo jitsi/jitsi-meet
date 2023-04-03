@@ -400,9 +400,6 @@ export interface IConfig {
     jaasActuatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;
-    lastNLimits?: {
-        [key: number]: number;
-    };
     legalUrls?: {
         helpCentre: string;
         privacy: string;

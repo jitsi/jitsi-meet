@@ -16,15 +16,11 @@ import {
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT
 } from '../participants/actionTypes';
-import {
-    getParticipantById,
-    getParticipantCount
-} from '../participants/functions';
+import { getParticipantById } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
-import { limitLastN } from './functions';
 import logger from './logger';
 
 /**
@@ -48,8 +44,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
-    const { lastNLimits } = state['features/base/lastn'];
-    const participantCount = getParticipantCount(state);
     const { carMode } = state['features/video-layout'];
 
     // Select the (initial) lastN value based on the following preference order.
@@ -57,13 +51,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 2. The last-n value from 'channelLastN' if specified in config.js.
     // 3. -1 as the default value.
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
-
-    // Apply last N limit based on the # of participants and config settings.
-    const limitedLastN = limitLastN(participantCount, lastNLimits);
-
-    if (limitedLastN !== undefined) {
-        lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
-    }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
