@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD }
     from '../../base/i18n/i18next';
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
-import { connect } from '../../base/redux/functions';
 import { goBack }
     from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setRequestingSubtitles, updateTranslationLanguage }
