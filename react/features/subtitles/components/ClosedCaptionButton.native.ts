@@ -13,8 +13,8 @@ import { screen } from '../../mobile/navigation/routes';
 
 import {
     AbstractClosedCaptionButton,
-    _abstractMapStateToProps,
-    IAbstractProps
+    IAbstractProps,
+    _abstractMapStateToProps
 } from './AbstractClosedCaptionButton';
 
 
