@@ -6,7 +6,7 @@ import {
     SafeAreaView
 } from 'react-native';
 
-import type { Section } from '../../Types';
+import { Section } from '../../types';
 
 import styles from './styles';
 

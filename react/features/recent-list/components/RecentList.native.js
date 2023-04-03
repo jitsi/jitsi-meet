@@ -6,7 +6,8 @@ import type { Dispatch } from 'redux';
 import { getDefaultURL } from '../../app/functions';
 import { openSheet } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
-import { NavigateSectionList, type Section } from '../../base/react';
+import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
+import { Section } from '../../base/react/types';
 import styles from '../../welcome/components/styles';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 

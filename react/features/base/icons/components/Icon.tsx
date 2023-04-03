@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 
-// @ts-ignore
-import { Container } from '../../react/base';
+import { Container } from '../../react/components/index';
 import { styleTypeToObject } from '../../styles/functions';
 
 interface IProps {

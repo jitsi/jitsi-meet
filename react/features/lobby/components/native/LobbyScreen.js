@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { LoadingIndicator } from '../../../base/react';
+import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';

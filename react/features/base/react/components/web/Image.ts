@@ -6,7 +6,7 @@ import React, { Component } from 'react';
  *
  * @augments Component
  */
-export default class Image extends Component {
+export default class Image extends Component<React.HTMLProps<HTMLImageElement>> {
     /**
      * Implements React's {@link Component#render()}.
      *

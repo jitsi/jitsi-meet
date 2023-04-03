@@ -2,7 +2,7 @@
 
 import { Alert, Linking, NativeModules } from 'react-native';
 
-import { Platform } from '../../base/react';
+import Platform from '../../base/react/Platform.native';
 
 /**
  * Opens the settings panel for the current platform.

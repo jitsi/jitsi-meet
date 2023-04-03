@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 
 import Avatar from '../../../avatar/components/Avatar';
 import { StyleType } from '../../../styles';
-import { type Item } from '../../Types';
+import { Item } from '../../types';
 
 import Container from './Container';
 import styles, { AVATAR_SIZE, UNDERLAY_COLOR } from './styles';

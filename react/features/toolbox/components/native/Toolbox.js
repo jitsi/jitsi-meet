@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import { Platform } from '../../../base/react';
+import Platform from '../../../base/react/Platform.native';
 import { StyleType } from '../../../base/styles/functions.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';

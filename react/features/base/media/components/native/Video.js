@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
-import { Pressable } from '../../../react';
+import Pressable from '../../../react/components/native/Pressable';
 
 import VideoTransform from './VideoTransform';
 import styles from './styles';

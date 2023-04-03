@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n/functions';
-import { Linkify } from '../../../base/react';
+import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifMessage } from '../../../gifs/functions';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';

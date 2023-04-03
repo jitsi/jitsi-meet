@@ -2,7 +2,7 @@ import React, { type Node, PureComponent } from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { SlidingView } from '../../../react';
+import SlidingView from '../../../react/components/native/SlidingView';
 import { hideSheet } from '../../actions';
 
 import { bottomSheetStyles as styles } from './styles';

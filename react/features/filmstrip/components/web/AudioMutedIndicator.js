@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { IconMicSlash } from '../../../base/icons/svg';
-import { BaseIndicator } from '../../../base/react';
+import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
 
 /**
  * The type of the React {@code Component} props of {@link AudioMutedIndicator}.

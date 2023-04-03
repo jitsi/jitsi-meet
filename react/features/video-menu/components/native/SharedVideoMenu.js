@@ -13,7 +13,7 @@ import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants/functions';
-import { SharedVideoButton } from '../../../shared-video/components';
+import SharedVideoButton from '../../../shared-video/components/native/SharedVideoButton';
 
 import styles from './styles';
 

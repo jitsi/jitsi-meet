@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import type { SetionListSection } from '../../Types';
+import { SectionListSection } from '../../types';
 
 import Container from './Container';
 import Text from './Text';
@@ -13,7 +13,7 @@ type Props = {
     /**
      * A section containing the data to be rendered.
      */
-    section: SetionListSection
+    section: SectionListSection
 }
 
 /**

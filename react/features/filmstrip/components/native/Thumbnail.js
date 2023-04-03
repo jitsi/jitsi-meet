@@ -17,7 +17,7 @@ import {
     isScreenShareParticipant
 } from '../../../base/participants/functions';
 import { FakeParticipant } from '../../../base/participants/types';
-import { Container } from '../../../base/react';
+import Container from '../../../base/react/components/native/Container';
 import { trackStreamingStatusChanged } from '../../../base/tracks/actions.native';
 import {
     getTrackByMediaTypeAndParticipant,
