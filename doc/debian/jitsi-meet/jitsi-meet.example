@@ -157,6 +157,13 @@ server {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
+    # Matches /(TENANT)/pwa-worker.js or /(TENANT)/manifest.json to rewrite to / and look for file
+    location ~ ^/([^/?&:'"]+)/(pwa-worker.js|manifest.json)$ {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        rewrite ^/([^/?&:'"]+)/(pwa-worker.js|manifest.json)$ /$2;
+    }
+
     # BOSH for subdomains
     location ~ ^/([^/?&:'"]+)/http-bind {
         set $subdomain "$1.";
