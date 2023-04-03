@@ -2,20 +2,10 @@ import debounce from 'lodash/debounce';
 
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
-import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
-import {
-    SET_CAR_MODE,
-    SET_TILE_VIEW,
-    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
-} from '../../video-layout/actionTypes';
+import { SET_CAR_MODE } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
-import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_KICKED,
-    PARTICIPANT_LEFT
-} from '../participants/actionTypes';
 import { getParticipantById } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
@@ -88,15 +78,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_KICKED:
-    case PARTICIPANT_LEFT:
-    case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
     case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
-    case SET_TILE_VIEW:
-    case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         _updateLastN(store);
         break;
     }
