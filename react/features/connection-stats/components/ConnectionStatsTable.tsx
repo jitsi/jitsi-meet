@@ -548,6 +548,21 @@ const ConnectionStatsTable = ({
         </tr>
     );
 
+    const _renderE2EEVerified = () => {
+        if (e2eeVerified === undefined) {
+            return;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{t('connectionindicator.e2eeVerified')}</span>
+                </td>
+                <td>{t(`connectionindicator.${e2eeVerified ? 'yes' : 'no'}`)}</td>
+            </tr>
+        );
+    };
+
     const _renderAdditionalStats = () => (
         <table>
             <tbody>
@@ -558,6 +573,7 @@ const ConnectionStatsTable = ({
                 {_renderAudioSsrc()}
                 {_renderVideoSsrc()}
                 {_renderParticipantId()}
+                {_renderE2EEVerified()}
             </tbody>
         </table>
     );
@@ -604,23 +620,6 @@ const ConnectionStatsTable = ({
                     <span>{t('connectionindicator.codecs')}</span>
                 </td>
                 <td>{codecString}</td>
-            </tr>
-        );
-    };
-
-    const _renderE2EEVerified = () => {
-        if (e2eeVerified === undefined) {
-            return;
-        }
-
-        const status = e2eeVerified ? '\u{2705}' : '\u{274C}';
-
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.e2eeVerified')}</span>
-                </td>
-                <td>{status}</td>
             </tr>
         );
     };
@@ -707,7 +706,6 @@ const ConnectionStatsTable = ({
                 {_renderResolution()}
                 {_renderFrameRate()}
                 {_renderCodecs()}
-                {_renderE2EEVerified()}
             </tbody>
         </table>
     );

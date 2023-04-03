@@ -156,6 +156,7 @@
         "localport_plural": "Local ports:",
         "maxEnabledResolution": "send max",
         "more": "Show more",
+        "no": "no",
         "packetloss": "Packet loss:",
         "participant_id": "Participant id:",
         "quality": {
@@ -174,7 +175,8 @@
         "status": "Connection:",
         "transport": "Transport:",
         "transport_plural": "Transports:",
-        "video_ssrc": "Video SSRC:"
+        "video_ssrc": "Video SSRC:",
+        "yes": "yes"
     },
     "dateUtils": {
         "earlier": "Earlier",
