@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { reloadNow } from '../../../app/actions';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 
 /**
  * The type of the React {@code Component} props of {@link ReloadButton}.

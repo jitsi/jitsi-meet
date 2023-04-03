@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { AudioLevelIndicator } from '../../../audio-level-indicator';
+import AudioLevelIndicator from '../../../audio-level-indicator/components/AudioLevelIndicator';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;

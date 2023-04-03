@@ -16,7 +16,7 @@ import {
 } from '../../../react/features/authentication/functions';
 import { getReplaceParticipant } from '../../../react/features/base/config/functions';
 import { isDialogOpen } from '../../../react/features/base/dialog/functions';
-import { setJWT } from '../../../react/features/base/jwt';
+import { setJWT } from '../../../react/features/base/jwt/actions';
 import UIUtil from '../util/UIUtil';
 
 import ExternalLoginDialog from './LoginDialog';

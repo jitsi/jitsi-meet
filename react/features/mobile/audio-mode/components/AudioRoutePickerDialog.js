@@ -6,15 +6,15 @@ import { connect } from 'react-redux';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
 import {
-    Icon,
     IconBluetooth,
     IconCar,
     IconDeviceHeadphone,
     IconPhoneRinging,
     IconVolumeUp
-} from '../../../base/icons';
+} from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';

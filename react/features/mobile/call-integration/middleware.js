@@ -3,7 +3,8 @@
 import { Alert, NativeModules, Platform } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 
-import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
+import { createTrackMutedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
@@ -19,18 +20,16 @@ import {
     getCurrentConference
 } from '../../base/conference/functions';
 import { getInviteURL } from '../../base/connection/functions';
-import {
-    MEDIA_TYPE,
-    isVideoMutedByAudioOnly,
-    setAudioMuted
-} from '../../base/media';
-import { MiddlewareRegistry } from '../../base/redux';
+import { setAudioMuted } from '../../base/media/actions';
+import { MEDIA_TYPE } from '../../base/media/constants';
+import { isVideoMutedByAudioOnly } from '../../base/media/functions';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import {
     TRACK_ADDED,
     TRACK_REMOVED,
-    TRACK_UPDATED,
-    isLocalTrackMuted
-} from '../../base/tracks';
+    TRACK_UPDATED
+} from '../../base/tracks/actionTypes';
+import { isLocalTrackMuted } from '../../base/tracks/functions.any';
 
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';

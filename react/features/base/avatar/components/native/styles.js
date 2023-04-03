@@ -2,7 +2,7 @@
 
 import { StyleSheet } from 'react-native';
 
-import { ColorPalette } from '../../../styles';
+import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
 const DEFAULT_SIZE = 65;

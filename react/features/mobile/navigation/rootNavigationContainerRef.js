@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { toState } from '../../base/redux';
+import { toState } from '../../base/redux/functions';
 import { isWelcomePageEnabled } from '../../welcome/functions';
 import { _sendReadyToClose } from '../external-api/functions';
 

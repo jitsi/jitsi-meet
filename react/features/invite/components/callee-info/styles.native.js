@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import { ColorPalette } from '../../../base/styles/components/styles/ColorPalette';
+import { createStyleSheet } from '../../../base/styles/functions.native';
 
 export default createStyleSheet({
     // XXX The names below were preserved for the purposes of compatibility

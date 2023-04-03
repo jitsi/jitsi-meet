@@ -1,5 +1,4 @@
-// @ts-ignore
-import type { AudioElement } from '../media';
+import { AudioElement } from '../media/components/AbstractAudio';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 

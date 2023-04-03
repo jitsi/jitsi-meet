@@ -1,19 +1,19 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName,
     hasRaisedHand,
     isParticipantModerator
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import { FakeParticipant } from '../../../base/participants/types';
 import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
-} from '../../../base/tracks';
+} from '../../../base/tracks/functions.native';
 import { showConnectionStatus, showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
 import type { MediaState } from '../../constants';
 import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';

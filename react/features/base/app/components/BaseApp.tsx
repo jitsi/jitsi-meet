@@ -15,7 +15,7 @@ import ReducerRegistry from '../../redux/ReducerRegistry';
 import StateListenerRegistry from '../../redux/StateListenerRegistry';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { SoundCollection } from '../../sounds';
+import SoundCollection from '../../sounds/components/SoundCollection';
 import { createDeferred } from '../../util/helpers';
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';

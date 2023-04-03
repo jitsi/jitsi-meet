@@ -4,7 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { closeChat } from '../../actions.native';

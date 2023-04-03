@@ -3,17 +3,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { MEDIA_TYPE } from '../../../base/media';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import {
-    PARTICIPANT_ROLE,
     getParticipantByIdOrUndefined,
     isScreenShareParticipantById
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
     isRemoteTrackMuted
-} from '../../../base/tracks';
+} from '../../../base/tracks/functions.web';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import AudioMutedIndicator from './AudioMutedIndicator';

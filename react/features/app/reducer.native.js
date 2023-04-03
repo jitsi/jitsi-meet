@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { _ROOT_NAVIGATION_READY } from '../mobile/navigation/actionTypes';
 
 /**

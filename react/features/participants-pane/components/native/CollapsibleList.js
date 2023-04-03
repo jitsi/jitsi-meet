@@ -3,8 +3,9 @@
 import React, { useCallback, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
-import { StyleType } from '../../../base/styles';
+import Icon from '../../../base/icons/components/Icon';
+import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
+import { StyleType } from '../../../base/styles/functions.native';
 import styles from '../breakout-rooms/components/native/styles';
 
 type Props = {

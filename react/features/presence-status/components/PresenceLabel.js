@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { getParticipantById } from '../../base/participants';
+import { translate } from '../../base/i18n/functions';
+import { getParticipantById } from '../../base/participants/functions';
 import { Text } from '../../base/react';
 import { STATUS_TO_I18N_KEY } from '../constants';
 import { presenceStatusDisabled } from '../functions';

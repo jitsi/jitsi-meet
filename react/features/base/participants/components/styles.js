@@ -1,6 +1,7 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../styles';
+import { BoxModel } from '../../styles/components/styles/BoxModel';
+import { ColorPalette } from '../../styles/components/styles/ColorPalette';
 
 /**
  * The styles of the feature base/participants.

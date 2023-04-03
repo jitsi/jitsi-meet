@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../../i18n';
+import { translate } from '../../../i18n/functions';
 import Button from '../../../ui/components/web/Button';
 
 

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { IconMicSlash } from '../../../base/icons';
+import { IconMicSlash } from '../../../base/icons/svg';
 import { BaseIndicator } from '../../../base/react';
 
 /**

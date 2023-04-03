@@ -1,1 +1,1 @@
-export * from './web';
+export { default as NotificationsContainer } from './web/NotificationsContainer';

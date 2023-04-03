@@ -5,19 +5,17 @@ import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
 
-import {
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
+import { raiseHand } from '../../../base/participants/actions';
 import {
     getLocalParticipant,
-    hasRaisedHand,
-    raiseHand
-} from '../../../base/participants';
-import { type AbstractButtonProps } from '../../../base/toolbox/components';
+    hasRaisedHand
+} from '../../../base/participants/functions';
+import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 

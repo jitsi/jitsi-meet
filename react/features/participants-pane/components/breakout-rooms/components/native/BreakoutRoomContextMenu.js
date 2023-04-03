@@ -4,15 +4,13 @@ import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../../analytics/functions';
 import { hideSheet } from '../../../../../base/dialog/actions';
 import BottomSheet from '../../../../../base/dialog/components/native/BottomSheet';
-import {
-    Icon,
-    IconCloseLarge,
-    IconRingGroup
-} from '../../../../../base/icons';
-import { isLocalParticipantModerator } from '../../../../../base/participants';
+import Icon from '../../../../../base/icons/components/Icon';
+import { IconCloseLarge, IconRingGroup } from '../../../../../base/icons/svg';
+import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
 import { getBreakoutRoomsConfig } from '../../../../../breakout-rooms/functions';
 import styles from '../../../native/styles';

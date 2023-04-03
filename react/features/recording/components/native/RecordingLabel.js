@@ -3,8 +3,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { Label } from '../../../base/label';
+import { translate } from '../../../base/i18n/functions';
+import Label from '../../../base/label/components/native/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import AbstractRecordingLabel, {
     _mapStateToProps

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 import Button from '../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
 

@@ -3,7 +3,8 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createGifSentEvent, sendAnalytics } from '../../../analytics';
+import { createGifSentEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import Input from '../../../base/ui/components/native/Input';
 import { sendMessage } from '../../../chat/actions.any';

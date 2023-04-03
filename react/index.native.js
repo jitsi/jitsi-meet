@@ -11,7 +11,7 @@ import './features/mobile/polyfills';
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
 
-import { App } from './features/app/components';
+import { App } from './features/app/components/App.native';
 import { _initLogging } from './features/base/logging/functions';
 import JitsiThemePaperProvider from './features/base/ui/components/JitsiThemeProvider';
 

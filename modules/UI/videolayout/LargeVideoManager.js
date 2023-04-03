@@ -7,24 +7,23 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
-import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
+import { createScreenSharingIssueEvent } from '../../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../react/features/analytics/functions';
 import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import { i18next } from '../../../react/features/base/i18n';
+import i18next from '../../../react/features/base/i18n/i18next';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { VIDEO_TYPE } from '../../../react/features/base/media/constants';
 import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName,
     isLocalScreenshareParticipant,
     isScreenShareParticipant
-} from '../../../react/features/base/participants';
+} from '../../../react/features/base/participants/functions';
 import { getHideSelfView } from '../../../react/features/base/settings/functions.any';
-import {
-    getVideoTrackByParticipant,
-    trackStreamingStatusChanged
-} from '../../../react/features/base/tracks';
+import { trackStreamingStatusChanged } from '../../../react/features/base/tracks/actions.any';
+import { getVideoTrackByParticipant } from '../../../react/features/base/tracks/functions.any';
 import { CHAT_SIZE } from '../../../react/features/chat/constants';
 import {
     isTrackStreamingStatusActive,

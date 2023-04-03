@@ -4,9 +4,10 @@ import React, { useCallback } from 'react';
 import { Text, TouchableHighlight } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { createReactionMenuEvent, sendAnalytics } from '../../../analytics';
-import { translate } from '../../../base/i18n';
-import type { StyleType } from '../../../base/styles';
+import { createReactionMenuEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { translate } from '../../../base/i18n/functions';
+import { StyleType } from '../../../base/styles/functions.native';
 import { addReactionToBuffer } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 

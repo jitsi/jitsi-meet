@@ -1,4 +1,4 @@
-import { createStyleSheet } from '../../../base/styles';
+import { createStyleSheet } from '../../../base/styles/functions.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 

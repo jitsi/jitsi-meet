@@ -1,6 +1,6 @@
 // @flow
 
-import { toState } from '../../redux';
+import { toState } from '../../redux/functions';
 
 /**
  *

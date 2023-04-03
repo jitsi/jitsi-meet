@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent, sendAnalytics } from '../../../../analytics';
+import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
 import logger from '../../logger';
 
 /**

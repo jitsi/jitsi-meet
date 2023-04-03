@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import jqueryI18next from 'jquery-i18next';
 
-import { i18next } from '../../react/features/base/i18n';
+import i18next from '../../react/features/base/i18n/i18next';
 
 
 type DocumentElement = {

@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import FakeParticipantContextMenu from '../../../video-menu/components/web/FakeParticipantContextMenu';
 import ParticipantContextMenu from '../../../video-menu/components/web/ParticipantContextMenu';
 

@@ -5,9 +5,9 @@ import Logger from '@jitsi/logger';
 import {
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED,
-    createShortcutEvent,
-    sendAnalytics
-} from '../../react/features/analytics';
+    createShortcutEvent
+} from '../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../react/features/analytics/functions';
 import { clickOnVideo } from '../../react/features/filmstrip/actions';
 import { openSettingsDialog } from '../../react/features/settings/actions';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';

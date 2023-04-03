@@ -4,20 +4,20 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../../base/media';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
     isParticipantModerator
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
     isParticipantAudioMuted,
     isParticipantVideoMuted
-} from '../../../base/tracks';
+} from '../../../base/tracks/functions.web';
 import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,

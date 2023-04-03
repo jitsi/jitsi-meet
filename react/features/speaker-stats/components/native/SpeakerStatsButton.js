@@ -2,10 +2,11 @@
 
 import { connect } from 'react-redux';
 
-import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { SPEAKERSTATS_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n/functions';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AbstractSpeakerStatsButton from '../AbstractSpeakerStatsButton';

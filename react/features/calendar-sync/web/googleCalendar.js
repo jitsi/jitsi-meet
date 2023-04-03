@@ -4,12 +4,12 @@ import type { Dispatch } from 'redux';
 
 import {
     getCalendarEntries,
-    googleApi,
     loadGoogleAPI,
     signIn,
     updateCalendarEvent,
     updateProfile
-} from '../../google-api';
+} from '../../google-api/actions';
+import googleApi from '../../google-api/googleApi.web';
 
 /**
  * A stateless collection of action creators that implements the expected

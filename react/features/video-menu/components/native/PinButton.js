@@ -2,10 +2,10 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { IconEnlarge } from '../../../base/icons';
-import { pinParticipant } from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconEnlarge } from '../../../base/icons/svg';
+import { pinParticipant } from '../../../base/participants/actions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 export type Props = AbstractButtonProps & {

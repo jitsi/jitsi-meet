@@ -7,7 +7,8 @@ import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 
-import { Icon, IconVolumeUp } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconVolumeUp } from '../../../base/icons/svg';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 

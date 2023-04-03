@@ -2,8 +2,8 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractMuteEveryoneElseButton from '../AbstractMuteEveryoneElseButton';
 
 /**

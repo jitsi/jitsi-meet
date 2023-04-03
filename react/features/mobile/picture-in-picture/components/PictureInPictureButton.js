@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 
 import { PIP_ENABLED, PIP_WHILE_SCREEN_SHARING_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
-import { IconArrowDown } from '../../../base/icons';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconArrowDown } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions';
 import { enterPictureInPicture } from '../actions';
 

@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { equals } from '../../../base/redux';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { equals } from '../../../base/redux/functions';
 import {
     getBreakoutRooms,
     getCurrentRoomId,

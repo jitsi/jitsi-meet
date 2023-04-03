@@ -6,8 +6,6 @@ import { translate } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import Spinner from '../../../../base/ui/components/web/Spinner';
 import {
-    GOOGLE_API_STATES,
-    GoogleSignInButton,
     loadGoogleAPI,
     requestAvailableYouTubeBroadcasts,
     requestLiveStreamsForYouTubeBroadcast,
@@ -16,7 +14,15 @@ import {
     updateProfile
 
     // @ts-ignore
-} from '../../../../google-api';
+} from '../../../../google-api/actions';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.web';
+import {
+    GOOGLE_API_STATES
+
+    // @ts-ignore
+} from '../../../../google-api/constants';
 import AbstractStartLiveStreamDialog, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps

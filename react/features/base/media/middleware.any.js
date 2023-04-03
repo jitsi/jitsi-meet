@@ -4,10 +4,10 @@ import {
     createStartAudioOnlyEvent,
     createStartMutedConfigurationEvent,
     createSyncTrackStateEvent,
-    createTrackMutedEvent,
-    sendAnalytics
-} from '../../analytics';
-import { APP_STATE_CHANGED } from '../../mobile/background';
+    createTrackMutedEvent
+} from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { isForceMuted } from '../../participants-pane/functions';
@@ -17,16 +17,12 @@ import { setAudioOnly } from '../audio-only/actions';
 import { SET_ROOM } from '../conference/actionTypes';
 import { isRoomValid } from '../conference/functions';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
-import { getLocalParticipant } from '../participants';
-import { MiddlewareRegistry } from '../redux';
-import { getPropertyValue } from '../settings';
-import {
-    TRACK_ADDED,
-    destroyLocalTracks,
-    isLocalTrackMuted,
-    isLocalVideoTrackDesktop,
-    setTrackMuted
-} from '../tracks';
+import { getLocalParticipant } from '../participants/functions';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { getPropertyValue } from '../settings/functions.any';
+import { TRACK_ADDED } from '../tracks/actionTypes';
+import { destroyLocalTracks } from '../tracks/actions.any';
+import { isLocalTrackMuted, isLocalVideoTrackDesktop, setTrackMuted } from '../tracks/functions.any';
 
 import {
     SET_AUDIO_MUTED,

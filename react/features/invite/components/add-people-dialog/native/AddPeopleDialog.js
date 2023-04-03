@@ -10,15 +10,15 @@ import { connect } from 'react-redux';
 
 import { openDialog } from '../../../../base/dialog/actions';
 import AlertDialog from '../../../../base/dialog/components/native/AlertDialog';
-import { translate } from '../../../../base/i18n';
+import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
 import {
-    Icon,
     IconCheck,
     IconCloseCircle,
     IconPhoneRinging,
     IconSearch,
     IconShare
-} from '../../../../base/icons';
+} from '../../../../base/icons/svg';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { AvatarListItem, type Item } from '../../../../base/react';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';

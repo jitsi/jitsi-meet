@@ -3,12 +3,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    createCalendarClickedEvent,
-    sendAnalytics
-} from '../../analytics';
-import { translate } from '../../base/i18n';
-import { Icon, IconCalendar } from '../../base/icons';
+import { createCalendarClickedEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { translate } from '../../base/i18n/functions';
+import Icon from '../../base/icons/components/Icon';
+import { IconCalendar } from '../../base/icons/svg';
 import { AbstractPage } from '../../base/react';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { openSettingsDialog } from '../../settings/actions';

@@ -7,12 +7,12 @@ import {
 import {
     getAudioOutputDeviceId
 } from '../../react/features/base/devices/functions.web';
+import { updateSettings } from '../../react/features/base/settings/actions';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
-    getUserSelectedOutputDeviceId,
-    updateSettings
-} from '../../react/features/base/settings';
+    getUserSelectedOutputDeviceId
+} from '../../react/features/base/settings/functions';
 
 /**
  * Determines if currently selected audio output device should be changed after

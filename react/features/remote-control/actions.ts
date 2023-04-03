@@ -28,7 +28,7 @@ import {
 } from './actionTypes';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { RemoteControlAuthorizationDialog } from './components';
+import RemoteControlAuthorizationDialog from './components/RemoteControlAuthorizationDialog';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
     EVENTS,

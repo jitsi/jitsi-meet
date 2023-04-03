@@ -6,11 +6,11 @@ import { navigate }
     from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../mobile/navigation/routes';
-// @ts-ignore
-import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
 // @ts-ignore
     from '../video-menu/components/native/ConnectionStatusComponent';
+// @ts-ignore
+import LocalVideoMenu from '../video-menu/components/native/LocalVideoMenu';
 // @ts-ignore
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
 // @ts-ignore

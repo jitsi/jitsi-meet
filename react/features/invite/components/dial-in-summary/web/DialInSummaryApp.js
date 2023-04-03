@@ -7,7 +7,7 @@ import BaseApp from '../../../../base/app/components/BaseApp';
 import { isMobileBrowser } from '../../../../base/environment/utils';
 import GlobalStyles from '../../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../../base/ui/components/JitsiThemeProvider.web';
-import { parseURLParams } from '../../../../base/util';
+import { parseURLParams } from '../../../../base/util/parseURLParams';
 import { DIAL_IN_INFO_PAGE_PATH_NAME } from '../../../constants';
 import NoRoomError from '../../dial-in-info-page/NoRoomError.web';
 

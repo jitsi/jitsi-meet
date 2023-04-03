@@ -4,8 +4,7 @@ import { IStore } from '../../../app/types';
 import { trackVideoStarted } from '../../tracks/actions';
 import { shouldRenderVideoTrack } from '../functions';
 
-// @ts-ignore
-import { Video } from './_';
+import { Video } from './index';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractVideoTrack}.

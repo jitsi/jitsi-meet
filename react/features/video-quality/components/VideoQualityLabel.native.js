@@ -3,9 +3,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { Label } from '../../base/label';
-import { type StyleType, combineStyles } from '../../base/styles';
+import { translate } from '../../base/i18n/functions';
+import Label from '../../base/label/components/native/Label';
+import { StyleType, combineStyles } from '../../base/styles/functions.native';
 
 import AbstractVideoQualityLabel, {
     IProps as AbstractProps,

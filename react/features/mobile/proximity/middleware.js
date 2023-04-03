@@ -1,7 +1,7 @@
 import { NativeModules } from 'react-native';
 
 import { getCurrentConference } from '../../base/conference/functions';
-import { StateListenerRegistry } from '../../base/redux';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 
 /**
  * State listener which enables / disables the proximity sensor based on the

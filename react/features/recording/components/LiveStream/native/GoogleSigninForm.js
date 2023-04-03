@@ -5,15 +5,15 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
-import { translate } from '../../../../base/i18n';
-import { StyleType } from '../../../../base/styles';
+import { translate } from '../../../../base/i18n/functions';
+import { StyleType } from '../../../../base/styles/functions.native';
+import { setGoogleAPIState } from '../../../../google-api/actions';
+import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.native';
 import {
     GOOGLE_API_STATES,
-    GOOGLE_SCOPE_YOUTUBE,
-    GoogleSignInButton,
-    googleApi,
-    setGoogleAPIState
-} from '../../../../google-api';
+    GOOGLE_SCOPE_YOUTUBE
+} from '../../../../google-api/constants';
+import googleApi from '../../../../google-api/googleApi.native';
 import logger from '../../../logger';
 
 import styles from './styles';

@@ -8,7 +8,8 @@ import { isAnyDialogOpen } from '../../base/dialog/functions';
 import { FULLSCREEN_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
-import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 import { _setImmersiveListener as _setImmersiveListenerA } from './actions';

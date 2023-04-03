@@ -4,9 +4,10 @@ import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Icon, IconConnection, IconConnectionInactive } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconConnection, IconConnectionInactive } from '../../../base/icons/svg';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-import { trackStreamingStatusChanged } from '../../../base/tracks';
+import { trackStreamingStatusChanged } from '../../../base/tracks/actions.web';
 
 type Props = {
 

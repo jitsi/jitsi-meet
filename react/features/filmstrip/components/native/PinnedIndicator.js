@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconPin } from '../../../base/icons';
+import { IconPin } from '../../../base/icons/svg';
 import { BaseIndicator } from '../../../base/react';
 
 /**

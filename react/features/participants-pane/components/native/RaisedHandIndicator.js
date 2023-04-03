@@ -1,7 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { Icon, IconRaiseHand } from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconRaiseHand } from '../../../base/icons/svg';
 
 import styles from './styles';
 

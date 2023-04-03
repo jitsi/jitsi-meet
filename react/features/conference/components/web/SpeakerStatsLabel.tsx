@@ -7,7 +7,7 @@ import { IconUsers } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
 import { getParticipantCount } from '../../../base/participants/functions';
-import { SpeakerStats } from '../../../speaker-stats';
+import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import { iAmVisitor } from '../../../visitors/functions';
 

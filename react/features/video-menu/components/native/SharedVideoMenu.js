@@ -12,7 +12,7 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import {
     getParticipantById,
     getParticipantDisplayName
-} from '../../../base/participants';
+} from '../../../base/participants/functions';
 import { SharedVideoButton } from '../../../shared-video/components';
 
 import styles from './styles';

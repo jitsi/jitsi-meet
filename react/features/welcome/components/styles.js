@@ -2,7 +2,7 @@
 
 import { StyleSheet } from 'react-native';
 
-import { BoxModel } from '../../base/styles';
+import { BoxModel } from '../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const AVATAR_SIZE = 104;

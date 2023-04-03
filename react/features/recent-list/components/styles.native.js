@@ -1,4 +1,5 @@
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { ColorPalette } from '../../base/styles/components/styles/ColorPalette';
+import { createStyleSheet } from '../../base/styles/functions.native';
 
 /**
  * The styles of the React {@code Component}s of the feature recent-list i.e.

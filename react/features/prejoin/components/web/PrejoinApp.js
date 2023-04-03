@@ -7,7 +7,7 @@ import { batch } from 'react-redux';
 import BaseApp from '../../../base/app/components/BaseApp';
 import { getConferenceOptions } from '../../../base/conference/functions';
 import { setConfig } from '../../../base/config/actions';
-import { createPrejoinTracks } from '../../../base/tracks';
+import { createPrejoinTracks } from '../../../base/tracks/functions.web';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../../base/ui/components/web/DialogContainer';

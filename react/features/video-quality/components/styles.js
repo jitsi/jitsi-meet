@@ -1,4 +1,5 @@
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { ColorPalette } from '../../base/styles/components/styles/ColorPalette';
+import { createStyleSheet } from '../../base/styles/functions.any';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const AUD_LABEL_COLOR = ColorPalette.green;

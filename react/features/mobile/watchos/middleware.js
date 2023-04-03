@@ -7,12 +7,10 @@ import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../../base/conference/actionTypes';
 import { getCurrentConferenceUrl } from '../../base/connection/functions';
-import { setAudioMuted } from '../../base/media';
-import {
-    MiddlewareRegistry,
-    StateListenerRegistry,
-    toState
-} from '../../base/redux';
+import { setAudioMuted } from '../../base/media/actions';
+import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
+import { toState } from '../../base/redux/functions';
 
 import { setConferenceTimestamp, setSessionId, setWatchReachable } from './actions';
 import { CMD_HANG_UP, CMD_JOIN_CONFERENCE, CMD_SET_MUTED, MAX_RECENT_URLS } from './constants';

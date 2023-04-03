@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import { setAudioOnly, toggleAudioOnly } from '../../../base/audio-only/actions';
 import { AUDIO_ONLY_BUTTON_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n';
-import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import {
     navigate
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';

@@ -1,6 +1,6 @@
 // @flow
 
-import { createStyleSheet } from '../../base/styles';
+import { createStyleSheet } from '../../base/styles/functions.any';
 
 /**
  * For styling explanations, see:

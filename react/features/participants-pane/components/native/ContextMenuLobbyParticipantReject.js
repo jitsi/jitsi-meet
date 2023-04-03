@@ -6,9 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
-import {
-    Icon, IconCloseLarge
-} from '../../../base/icons';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
 import { getKnockingParticipantsById } from '../../../lobby/functions';
 

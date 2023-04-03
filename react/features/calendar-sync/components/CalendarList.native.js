@@ -8,9 +8,9 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 import { AbstractPage } from '../../base/react';
-import { openSettings } from '../../mobile/permissions';
+import { openSettings } from '../../mobile/permissions/functions';
 import { refreshCalendar } from '../actions';
 
 import CalendarListContent from './CalendarListContent';

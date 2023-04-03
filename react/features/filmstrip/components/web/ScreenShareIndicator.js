@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IconScreenshare } from '../../../base/icons';
+import { IconScreenshare } from '../../../base/icons/svg';
 import { BaseIndicator } from '../../../base/react';
 
 
