@@ -27,6 +27,7 @@ import ConnectionIndicator from '../../../connection-indicator/components/native
 import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import {
+    showConnectionStatus,
     showContextMenuDetails,
     showSharedVideoMenu
 } from '../../../participants-pane/actions.native';
@@ -187,13 +188,13 @@ class Thumbnail extends PureComponent<Props> {
 
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
-        }
-
-        // TODO: add support for getting info about the virtual screen shares.
-
-        if (!_fakeParticipant) {
-            dispatch(showContextMenuDetails(_participantId, _local));
-        }
+        } else if (!_fakeParticipant) {
+            if (_local) {
+                dispatch(showConnectionStatus(_participantId));
+            } else {
+                dispatch(showContextMenuDetails(_participantId));
+            }
+        } // else no-op
     }
 
     /**
