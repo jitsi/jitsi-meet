@@ -29,10 +29,14 @@ class ClosedCaptionButton
     icon = IconSubtitles;
     label = 'toolbar.startSubtitles';
     labelProps = {
+        // @ts-ignore
         language: this.props.t(this.props._language),
+        // @ts-ignore
         languages: this.props.t(this.props.languages),
+        // @ts-ignore
         languagesHead: this.props.t(this.props.languagesHead)
     };
+    // @ts-ignore
     toggledLabel = 'transcribing.stop';
 
     /**
