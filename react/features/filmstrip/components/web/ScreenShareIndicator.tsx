@@ -2,13 +2,14 @@ import React from 'react';
 
 import { IconScreenshare } from '../../../base/icons/svg';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
+import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
 
 interface IProps {
 
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
+    tooltipPosition: TOOLTIP_POSITION;
 }
 
 /**

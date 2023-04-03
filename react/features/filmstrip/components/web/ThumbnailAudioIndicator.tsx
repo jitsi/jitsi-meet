@@ -4,6 +4,7 @@ import AudioLevelIndicator from '../../../audio-level-indicator/components/Audio
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
+import { ITrack } from '../../../base/tracks/types';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
@@ -12,7 +13,7 @@ interface IProps {
     /**
      * The audio track related to the participant.
      */
-    _audioTrack?: any;
+    _audioTrack?: ITrack;
 }
 
 const ThumbnailAudioIndicator = ({

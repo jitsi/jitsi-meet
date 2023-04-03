@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Tooltip from '../../../base/tooltip/components/Tooltip';
+import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
 import AbstractToolbarButton, {
     IProps as AbstractToolbarButtonProps
 } from '../../../toolbox/components/AbstractToolbarButton';
@@ -24,7 +25,7 @@ interface IProps extends AbstractToolbarButtonProps {
      * From which direction the tooltip should appear, relative to the
      * button.
      */
-    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
+    tooltipPosition: TOOLTIP_POSITION;
 }
 
 /**

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 // @ts-ignore
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
+import { ITrack } from '../../../base/tracks/types';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 
@@ -95,7 +96,7 @@ interface IProps {
     /**
      * JitsiTrack instance.
      */
-    videoTrack: any;
+    videoTrack: ITrack;
 }
 
 const VirtualScreenshareParticipant = ({

@@ -18,6 +18,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks/functions.web';
+import { ITrack } from '../../../base/tracks/types';
 import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
@@ -40,7 +41,7 @@ interface IProps {
     /**
      * The audio track related to the participant.
      */
-    _audioTrack?: any;
+    _audioTrack?: ITrack;
 
     /**
      * Whether or not to disable the moderator indicator.
@@ -305,7 +306,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     const _matchesSearch = participantMatchesSearch(participant, searchString);
 
-    const _isAudioMuted = isParticipantAudioMuted(participant, state);
+    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);

@@ -36,6 +36,7 @@ import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
+import { ITrack } from '../../../base/tracks/types';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
@@ -99,7 +100,7 @@ export interface IProps extends WithTranslation {
     /**
      * The audio track related to the participant.
      */
-    _audioTrack?: Object;
+    _audioTrack?: ITrack;
 
     /**
      * Indicates whether the local video flip feature is disabled or not.

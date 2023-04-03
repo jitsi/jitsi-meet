@@ -53,7 +53,7 @@ export function isParticipantMediaMuted(participant: IParticipant | undefined,
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is audio muted for the participant.
  */
-export function isParticipantAudioMuted(participant: IParticipant | undefined, state: IReduxState) {
+export function isParticipantAudioMuted(participant: IParticipant, state: IReduxState) {
     return isParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO, state);
 }
 

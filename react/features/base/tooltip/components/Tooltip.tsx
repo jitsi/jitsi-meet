@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../environment/utils';
 import Popover from '../../popover/components/Popover.web';
 import { withPixelLineHeight } from '../../styles/functions.web';
+import { TOOLTIP_POSITION } from '../../ui/constants.any';
 import { hideTooltip, showTooltip } from '../actions';
 
 const TOOLTIP_DELAY = 300;
@@ -16,7 +17,7 @@ interface IProps {
     children: ReactElement;
     containerClassName?: string;
     content: string;
-    position?: 'top' | 'bottom' | 'left' | 'right';
+    position?: TOOLTIP_POSITION;
 }
 
 const useStyles = makeStyles()(theme => {
