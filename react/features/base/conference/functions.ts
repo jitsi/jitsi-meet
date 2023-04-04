@@ -255,6 +255,33 @@ export function getConferenceOptions(stateful: IStateful) {
 }
 
 /**
+ * Returns the restored conference options if anything is available to be restored or undefined.
+ *
+ * @param {IStateful} stateful - The redux store state.
+ * @returns {Object?}
+ */
+export function restoreConferenceOptions(stateful: IStateful) {
+    const config = toState(stateful)['features/base/config'];
+
+    if (config.oldConfig) {
+        return {
+            hosts: {
+                domain: config.oldConfig.hosts.domain,
+                muc: config.oldConfig.hosts.muc
+            },
+            focusUserJid: config.oldConfig.focusUserJid,
+            disableFocus: false,
+            bosh: config.oldConfig.bosh,
+            websocket: config.oldConfig.websocket,
+            oldConfig: undefined
+        };
+    }
+
+    // nothing to return
+    return;
+}
+
+/**
  * Override the global config (that is, window.config) with XMPP configuration required to join as a visitor.
  *
  * @param {IStateful} stateful - The redux store state.
@@ -284,7 +311,8 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
                 focusUserJid: focusJid,
                 bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
                 websocket: config.oldConfig.websocket
-                    && appendURLParam(config.oldConfig.websocket, 'customusername', username)
+                    && appendURLParam(config.oldConfig.websocket, 'customusername', username),
+                oldConfig: undefined // clears it up
             };
         }
 
@@ -296,6 +324,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
             domain: config.hosts.domain,
             muc: config.hosts.muc
         },
+        focusUserJid: config.focusUserJid,
         bosh: config.bosh,
         websocket: config.websocket
     };
