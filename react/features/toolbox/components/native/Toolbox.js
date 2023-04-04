@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
@@ -92,8 +92,7 @@ function Toolbox(props: Props) {
     }
 
     return (
-        <TouchableOpacity
-            activeOpacity = { 1 }
+        <View
             style = { styles.toolboxContainer }>
             <SafeAreaView
                 accessibilityRole = 'toolbar'
@@ -135,7 +134,7 @@ function Toolbox(props: Props) {
                         styles = { hangupButtonStyles } />
                 }
             </SafeAreaView>
-        </TouchableOpacity>
+        </View>
     );
 }
 
