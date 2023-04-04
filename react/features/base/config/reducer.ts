@@ -86,6 +86,7 @@ export interface IConfigState extends IConfig {
     error?: Error;
     oldConfig?: {
         bosh?: string;
+        focusUserJid?: string;
         hosts: {
             domain: string;
             muc: string;

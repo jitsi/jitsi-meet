@@ -58,6 +58,7 @@ import {
     commonUserLeftHandling,
     getConferenceOptions,
     getVisitorOptions,
+    restoreConferenceOptions,
     sendLocalParticipant
 } from './react/features/base/conference/functions';
 import { overwriteConfig } from './react/features/base/config/actions';
@@ -402,10 +403,28 @@ class ConferenceConnector {
             room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
             break;
 
-        case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
+        case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
             APP.UI.notifyMaxUsersLimitReached();
-            break;
 
+            // in case of max users(it can be from a visitor node), let's restore
+            // oldConfig if any as we will be back to the main prosody
+            const newConfig = restoreConferenceOptions(APP.store.getState());
+
+            if (newConfig) {
+                APP.store.dispatch(overwriteConfig(newConfig))
+                    .then(this._conference.leaveRoom())
+                    .then(() => {
+                        _connectionPromise = connect(this._conference.roomName);
+
+                        return _connectionPromise;
+                    })
+                    .then(con => {
+                        APP.connection = connection = con;
+                    });
+            }
+
+            break;
+        }
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
             APP.store.dispatch(reloadWithStoredParams());
             break;

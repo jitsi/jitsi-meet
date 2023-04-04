@@ -52,7 +52,8 @@ import {
     _removeLocalTracksFromConference,
     forEachConference,
     getCurrentConference,
-    getVisitorOptions
+    getVisitorOptions,
+    restoreConferenceOptions
 } from './functions';
 import logger from './logger';
 
@@ -174,6 +175,23 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
             titleKey: 'connection.CONNFAIL'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        break;
+    }
+    case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
+        if (typeof APP === 'undefined') {
+            // in case of max users(it can be from a visitor node), let's restore
+            // oldConfig if any as we will be back to the main prosody
+            const newConfig = restoreConferenceOptions(getState);
+
+            if (newConfig) {
+                dispatch(overwriteConfig(newConfig))
+                    .then(dispatch(conferenceWillLeave(conference)))
+                    .then(conference.leave())
+                    .then(dispatch(disconnect()))
+                    .then(dispatch(connect()));
+            }
+        }
 
         break;
     }
