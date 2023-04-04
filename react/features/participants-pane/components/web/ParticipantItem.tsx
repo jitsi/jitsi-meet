@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
@@ -32,7 +32,7 @@ interface IProps extends WithTranslation {
     /**
      * React children.
      */
-    children?: ReactElement | boolean;
+    children?: ReactNode;
 
     /**
      * Whether or not to disable the moderator indicator.

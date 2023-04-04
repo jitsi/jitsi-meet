@@ -1,23 +1,24 @@
-// @flow
-
 import React, { useEffect, useState } from 'react';
 
 import AudioLevelIndicator from '../../../audio-level-indicator/components/AudioLevelIndicator';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
+import { ITrack } from '../../../base/tracks/types';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
-type Props = {
+interface IProps {
 
     /**
      * The audio track related to the participant.
      */
-    _audioTrack: ?Object
+    _audioTrack?: ITrack;
 }
 
 const ThumbnailAudioIndicator = ({
     _audioTrack
-}: Props) => {
+}: IProps) => {
     const [ audioLevel, setAudioLevel ] = useState(0);
 
     useEffect(() => {
@@ -25,14 +26,14 @@ const ThumbnailAudioIndicator = ({
         if (_audioTrack) {
             const { jitsiTrack } = _audioTrack;
 
-            jitsiTrack && jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, setAudioLevel);
+            jitsiTrack?.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, setAudioLevel);
         }
 
         return () => {
             if (_audioTrack) {
                 const { jitsiTrack } = _audioTrack;
 
-                jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, setAudioLevel);
+                jitsiTrack?.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, setAudioLevel);
             }
         };
     }, [ _audioTrack ]);

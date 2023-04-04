@@ -494,7 +494,7 @@ function _reportError(msg: string, err: Error) {
  */
 export function sendLocalParticipant(
         stateful: IStateful,
-        conference: IJitsiConference) {
+        conference?: IJitsiConference) {
     const {
         avatarURL,
         email,

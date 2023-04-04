@@ -14,7 +14,6 @@ import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
-// @ts-ignore
 import LobbyParticipantItems from './LobbyParticipantItems';
 
 const useStyles = makeStyles()(theme => {

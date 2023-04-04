@@ -1,37 +1,32 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { reloadNow } from '../../../app/actions';
+import { reloadNow } from '../../../app/actions.web';
+import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 
 /**
  * The type of the React {@code Component} props of {@link ReloadButton}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Reloads the page.
      */
-    _reloadNow: Function,
-
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function,
+    _reloadNow: () => void;
 
     /**
      * The translation key for the text in the button.
      */
-    textKey: string
-};
+    textKey: string;
+}
 
 /**
  * Implements a React Component for button for the overlays that will reload
  * the page.
  */
-class ReloadButton extends Component<Props> {
+class ReloadButton extends Component<IProps> {
     /**
      * Renders the button for relaod the page if necessary.
      *
@@ -63,7 +58,7 @@ class ReloadButton extends Component<Props> {
  * @private
  * @returns {Object}
  */
-function _mapDispatchToProps(dispatch: Function) {
+function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         /**
          * Dispatches the redux action to reload the page.

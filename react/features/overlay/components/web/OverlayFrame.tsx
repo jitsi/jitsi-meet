@@ -1,4 +1,4 @@
-import React, { Component, ReactChildren } from 'react';
+import React, { Component, ReactNode } from 'react';
 
 /**
  * The type of the React {@code Component} props of {@link OverlayFrame}.
@@ -8,7 +8,7 @@ interface IProps {
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children: ReactChildren;
+    children: ReactNode;
 
     /**
      * Indicates the css style of the overlay. If true, then lighter; darker,
@@ -19,7 +19,7 @@ interface IProps {
     /**
      * The style property.
      */
-    style: Object;
+    style?: Object;
 }
 
 /**

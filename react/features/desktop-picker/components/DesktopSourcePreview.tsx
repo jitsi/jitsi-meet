@@ -1,6 +1,5 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
 
@@ -9,56 +8,51 @@ import { translate } from '../../base/i18n/functions';
  * The type of the React {@code Component} props of
  * {@link DesktopSourcePreview}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The callback to invoke when the component is clicked. The id of the
      * clicked on DesktopCapturerSource will be passed in.
      */
-    onClick: Function,
+    onClick: Function;
 
     /**
      * The callback to invoke when the component is double clicked. The id of
      * the DesktopCapturerSource will be passed in.
      */
-    onDoubleClick: Function,
+    onDoubleClick: Function;
 
     /**
      * The indicator which determines whether this DesktopSourcePreview is
      * selected. If true, the 'is-selected' CSS class will be added to the root
      * of Component.
      */
-    selected: boolean,
+    selected: boolean;
 
     /**
      * The DesktopCapturerSource to display.
      */
-    source: Object,
+    source: any;
 
     /**
      * The source type of the DesktopCapturerSources to display.
      */
-    type: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    type: string;
+}
 
 /**
  * React component for displaying a preview of a DesktopCapturerSource.
  *
  * @augments Component
  */
-class DesktopSourcePreview extends Component<Props> {
+class DesktopSourcePreview extends Component<IProps> {
     /**
      * Initializes a new DesktopSourcePreview instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onClick = this._onClick.bind(this);
@@ -93,8 +87,6 @@ class DesktopSourcePreview extends Component<Props> {
         );
     }
 
-    _onClick: () => void;
-
     /**
      * Invokes the passed in onClick callback.
      *
@@ -105,8 +97,6 @@ class DesktopSourcePreview extends Component<Props> {
 
         this.props.onClick(source.id, type);
     }
-
-    _onDoubleClick: () => void;
 
     /**
      * Invokes the passed in onDoubleClick callback.

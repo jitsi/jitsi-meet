@@ -1,8 +1,8 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { getParticipantById } from '../../base/participants/functions';
 import { Text } from '../../base/react/components/index';
@@ -12,40 +12,35 @@ import { presenceStatusDisabled } from '../functions';
 /**
  * The type of the React {@code Component} props of {@link PresenceLabel}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The current present status associated with the passed in participantID
      * prop.
      */
-    _presence: string,
+    _presence: string;
 
     /**
      * Class name for the presence label.
      */
-    className: string,
+    className: string;
 
     /**
      * Default presence status that will be displayed if user's presence status
      * is not available.
      */
-    defaultPresence: string,
+    defaultPresence: string;
 
     /**
      * The ID of the participant whose presence status should display.
      */
-    participantID: string,
+    participantID: string;
 
     /**
      * Styles for the presence label.
      */
-    style: Object,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    style: Object;
+}
 
 /**
  * React {@code Component} for displaying the current presence status of a
@@ -53,7 +48,7 @@ type Props = {
  *
  * @augments Component
  */
-class PresenceLabel extends Component<Props> {
+class PresenceLabel extends Component<IProps> {
     /**
      * The default values for {@code PresenceLabel} component's property types.
      *
@@ -98,7 +93,7 @@ class PresenceLabel extends Component<Props> {
             return null;
         }
 
-        const i18nKey = STATUS_TO_I18N_KEY[_presence];
+        const i18nKey = STATUS_TO_I18N_KEY[_presence as keyof typeof STATUS_TO_I18N_KEY];
 
         if (!i18nKey) { // fallback to status value
             return _presence;
@@ -120,7 +115,7 @@ class PresenceLabel extends Component<Props> {
  *     _presence: (string|undefined)
  * }}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const participant = getParticipantById(state, ownProps.participantID);
 
     return {

@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import Tooltip from '../../../tooltip/components/Tooltip';
+import { TOOLTIP_POSITION } from '../../../ui/constants.any';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
@@ -56,7 +57,7 @@ interface IProps extends WithTranslation {
      * From which side of the indicator the tooltip should appear from,
      * defaulting to "top".
      */
-    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
+    tooltipPosition: TOOLTIP_POSITION;
 }
 
 const useStyles = makeStyles()(() => {

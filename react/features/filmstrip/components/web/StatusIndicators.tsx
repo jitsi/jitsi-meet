@@ -1,14 +1,10 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import {
-    getParticipantByIdOrUndefined,
-    isScreenShareParticipantById
-} from '../../../base/participants/functions';
+import { getParticipantByIdOrUndefined, isScreenShareParticipantById } from '../../../base/participants/functions';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
@@ -20,45 +16,43 @@ import AudioMutedIndicator from './AudioMutedIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 
-declare var interfaceConfig: Object;
-
 /**
  * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Indicates if the audio muted indicator should be visible or not.
      */
-    _showAudioMutedIndicator: Boolean,
+    _showAudioMutedIndicator: Boolean;
 
     /**
      * Indicates if the moderator indicator should be visible or not.
      */
-    _showModeratorIndicator: Boolean,
+    _showModeratorIndicator: Boolean;
 
     /**
      * Indicates if the screen share indicator should be visible or not.
      */
-    _showScreenShareIndicator: Boolean,
+    _showScreenShareIndicator: Boolean;
 
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String,
+    participantID: String;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string
-};
+    thumbnailType: string;
+}
 
 /**
  * React {@code Component} for showing the status bar in a thumbnail.
  *
  * @augments Component
  */
-class StatusIndicators extends Component<Props> {
+class StatusIndicators extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -96,7 +90,7 @@ class StatusIndicators extends Component<Props> {
  *     _showScreenShareIndicator: boolean
  * }}
 */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, audio, moderator, screenshare } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.

@@ -1,8 +1,7 @@
-// @flow
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -12,12 +11,14 @@ import {
     hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants/functions';
+import { IParticipant } from '../../../base/participants/types';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks/functions.web';
+import { ITrack } from '../../../base/tracks/types';
 import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
 import {
     getParticipantAudioMediaState,
@@ -30,57 +31,57 @@ import ParticipantActionEllipsis from './ParticipantActionEllipsis';
 import ParticipantItem from './ParticipantItem';
 import ParticipantQuickAction from './ParticipantQuickAction';
 
-type Props = {
+interface IProps {
 
     /**
      * Media state for audio.
      */
-    _audioMediaState: MediaState,
+    _audioMediaState: MediaState;
 
     /**
      * The audio track related to the participant.
      */
-    _audioTrack: ?Object,
+    _audioTrack?: ITrack;
 
     /**
      * Whether or not to disable the moderator indicator.
      */
-    _disableModeratorIndicator: boolean,
+    _disableModeratorIndicator: boolean;
 
     /**
      * The display name of the participant.
      */
-    _displayName: string,
+    _displayName: string;
 
     /**
      * Whether or not moderation is supported.
      */
-    _isModerationSupported: boolean,
+    _isModerationSupported: boolean;
 
     /**
      * True if the participant is the local participant.
      */
-    _local: boolean,
+    _local: boolean;
 
     /**
      * Whether or not the local participant is moderator.
      */
-    _localModerator: boolean,
+    _localModerator: boolean;
 
     /**
      * Shared video local participant owner.
      */
-    _localVideoOwner: boolean,
+    _localVideoOwner: boolean;
 
     /**
      * Whether or not the participant name matches the search string.
      */
-    _matchesSearch: boolean,
+    _matchesSearch: boolean;
 
     /**
      * The participant.
      */
-    _participant: Object,
+    _participant?: IParticipant;
 
     /**
      * The participant ID.
@@ -88,94 +89,94 @@ type Props = {
      * NOTE: This ID may be different from participantID prop in the case when we pass undefined for the local
      * participant. In this case the local participant ID will be filled through _participantID prop.
      */
-    _participantID: string,
+    _participantID: string;
 
     /**
      * The type of button to be rendered for the quick action.
      */
-    _quickActionButtonType: string,
+    _quickActionButtonType: string;
 
     /**
      * True if the participant have raised hand.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * Media state for video.
      */
-    _videoMediaState: MediaState,
+    _videoMediaState: MediaState;
 
     /**
-     * The translated ask unmute text for the qiuck action buttons.
+     * The translated ask unmute text for the quick action buttons.
      */
-    askUnmuteText: string,
+    askUnmuteText: string;
 
     /**
      * Is this item highlighted.
      */
-    isHighlighted: boolean,
+    isHighlighted: boolean;
 
     /**
      * Whether or not the local participant is in a breakout room.
      */
-    isInBreakoutRoom: boolean,
+    isInBreakoutRoom: boolean;
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
      */
-    muteAudio: Function,
+    muteAudio: Function;
 
     /**
      * The translated text for the mute participant button.
      */
-    muteParticipantButtonText: string,
+    muteParticipantButtonText: string;
 
     /**
      * Callback for the activation of this item's context menu.
      */
-    onContextMenu: Function,
+    onContextMenu: () => void;
 
     /**
      * Callback for the mouse leaving this item.
      */
-    onLeave: Function,
+    onLeave: (e?: React.MouseEvent) => void;
 
     /**
      * Callback used to open an actions drawer for a participant.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant: Function;
 
     /**
      * True if an overflow drawer should be displayed.
      */
-    overflowDrawer: boolean,
+    overflowDrawer: boolean;
 
 
     /**
      * The aria-label for the ellipsis action.
      */
-    participantActionEllipsisLabel: string,
+    participantActionEllipsisLabel: string;
 
     /**
      * The ID of the participant.
      */
-    participantID: ?string,
+    participantID?: string;
 
     /**
      * Callback used to stop a participant's video.
     */
-    stopVideo: Function,
+    stopVideo: Function;
 
     /**
      * The translated "you" text.
      */
-    youText: string
-};
+    youText: string;
+}
 
 /**
  * Implements the MeetingParticipantItem component.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
 function MeetingParticipantItem({
@@ -201,7 +202,7 @@ function MeetingParticipantItem({
     participantActionEllipsisLabel,
     stopVideo,
     youText
-}: Props) {
+}: IProps) {
 
     const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
     const [ registeredEvent, setRegisteredEvent ] = useState(false);
@@ -227,7 +228,7 @@ function MeetingParticipantItem({
             if (_audioTrack && registeredEvent) {
                 const { jitsiTrack } = _audioTrack;
 
-                jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
+                jitsiTrack?.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
             }
         };
     }, [ _audioTrack ]);
@@ -292,20 +293,20 @@ function MeetingParticipantItem({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
-    const localParticipantId = getLocalParticipant(state).id;
+    const localParticipantId = getLocalParticipant(state)?.id;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
 
-    const _displayName = getParticipantDisplayName(state, participant?.id);
+    const _displayName = getParticipantDisplayName(state, participant?.id ?? '');
 
     const _matchesSearch = participantMatchesSearch(participant, searchString);
 
-    const _isAudioMuted = isParticipantAudioMuted(participant, state);
+    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
@@ -320,13 +321,13 @@ function _mapStateToProps(state, ownProps) {
     return {
         _audioMediaState,
         _audioTrack,
-        _disableModeratorIndicator: disableModeratorIndicator,
+        _disableModeratorIndicator: Boolean(disableModeratorIndicator),
         _displayName,
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _matchesSearch,
         _participant: participant,
-        _participantID: participant?.id,
+        _participantID: participant?.id ?? '',
         _quickActionButtonType,
         _raisedHand: hasRaisedHand(participant),
         _videoMediaState

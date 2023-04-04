@@ -3,6 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { GestureResponderEvent } from 'react-native';
 
 import type { StyleType } from '../../styles/functions.any';
+import { TOOLTIP_POSITION } from '../../ui/constants.any';
 
 export type Styles = {
 
@@ -94,7 +95,7 @@ export interface IProps extends WithTranslation {
      * From which direction the tooltip should appear, relative to the
      * item. Used only on web.
      */
-    tooltipPosition: 'top' | 'bottom' | 'left' | 'right';
+    tooltipPosition: TOOLTIP_POSITION;
 
     /**
      * Whether this item is visible or not.

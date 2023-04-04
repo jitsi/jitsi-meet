@@ -26,3 +26,6 @@ export const BUTTON_MODES: {
     CONTAINED: 'contained',
     TEXT: 'text'
 };
+
+
+export type TOOLTIP_POSITION = 'top' | 'bottom' | 'left' | 'right';

@@ -1,102 +1,102 @@
-// @flow
-
 import clsx from 'clsx';
-import React from 'react';
+import React, { TouchEventHandler } from 'react';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
+import { ITrack } from '../../../base/tracks/types';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 
-type Props = {
+interface IProps {
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any;
 
     /**
      * The class name that will be used for the container.
      */
-    containerClassName: string,
+    containerClassName: string;
 
     /**
      * Indicates whether the thumbnail is hovered or not.
      */
-    isHovered: boolean,
+    isHovered: boolean;
 
     /**
      * Indicates whether the thumbnail is for local screenshare or not.
      */
-    isLocal: boolean,
+    isLocal: boolean;
 
     /**
      * Indicates whether we are currently running in a mobile browser.
      */
-    isMobile: boolean,
+    isMobile: boolean;
 
     /**
      * Click handler.
      */
-    onClick: Function,
+    onClick: (e?: React.MouseEvent) => void;
 
     /**
      * Mouse enter handler.
      */
-    onMouseEnter: Function,
+    onMouseEnter: (e?: React.MouseEvent) => void;
 
     /**
      * Mouse leave handler.
      */
-    onMouseLeave: Function,
+    onMouseLeave: (e?: React.MouseEvent) => void;
 
-     /**
+    /**
      * Mouse move handler.
      */
-    onMouseMove: Function,
+    onMouseMove: (e?: React.MouseEvent) => void;
 
     /**
      * Touch end handler.
      */
-    onTouchEnd: Function,
+    onTouchEnd: TouchEventHandler;
 
     /**
      * Touch move handler.
      */
-    onTouchMove: Function,
+    onTouchMove: TouchEventHandler;
 
     /**
      * Touch start handler.
      */
-    onTouchStart: Function,
+    onTouchStart: TouchEventHandler;
 
     /**
      * The ID of the virtual screen share participant.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * Whether or not to display a tint background over tile.
      */
-    shouldDisplayTintBackground: boolean,
+    shouldDisplayTintBackground: boolean;
 
     /**
      * An object with the styles for thumbnail.
      */
-    styles: Object,
+    styles: any;
 
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string,
+    thumbnailType: string;
 
     /**
      * JitsiTrack instance.
      */
-    videoTrack: Object
+    videoTrack: ITrack;
 }
 
 const VirtualScreenshareParticipant = ({
@@ -117,7 +117,7 @@ const VirtualScreenshareParticipant = ({
     styles,
     videoTrack,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const currentLayout = useSelector(getCurrentLayout);
     const videoTrackId = videoTrack?.jitsiTrack?.getId();
     const video = videoTrack && <VideoTrack
@@ -152,7 +152,6 @@ const VirtualScreenshareParticipant = ({
                         currentLayout === LAYOUTS.TILE_VIEW && 'tile-view-mode'
                 ) }>
                 <ThumbnailTopIndicators
-                    currentLayout = { currentLayout }
                     isHovered = { isHovered }
                     participantId = { participantId }
                     thumbnailType = { thumbnailType } />
@@ -165,7 +164,6 @@ const VirtualScreenshareParticipant = ({
                 ) }>
                 <ThumbnailBottomIndicators
                     className = { classes.indicatorsBackground }
-                    currentLayout = { currentLayout }
                     local = { false }
                     participantId = { participantId }
                     showStatusIndicators = { true } />

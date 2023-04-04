@@ -29,7 +29,8 @@ export const getTrackState = (state: IReduxState) => state['features/base/tracks
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is the media type muted for the participant.
  */
-export function isParticipantMediaMuted(participant: IParticipant, mediaType: MediaType, state: IReduxState) {
+export function isParticipantMediaMuted(participant: IParticipant | undefined,
+        mediaType: MediaType, state: IReduxState) {
     if (!participant) {
         return false;
     }
@@ -63,7 +64,7 @@ export function isParticipantAudioMuted(participant: IParticipant, state: IRedux
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is video muted for the participant.
  */
-export function isParticipantVideoMuted(participant: IParticipant, state: IReduxState) {
+export function isParticipantVideoMuted(participant: IParticipant | undefined, state: IReduxState) {
     return isParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO, state);
 }
 

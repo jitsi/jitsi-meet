@@ -13,7 +13,6 @@ import {
 } from '../../../base/lib-jitsi-meet/functions.web';
 import logger from '../../logger';
 
-// @ts-ignore
 import ReloadButton from './ReloadButton';
 
 /**
@@ -26,7 +25,7 @@ export interface IProps extends WithTranslation {
      * The details is an object containing more information about the connection
      * failed (shard changes, was the computer suspended, etc.).
      */
-    details: Object;
+    details?: Object;
 
     /**
      * Redux dispatch function.
@@ -36,7 +35,7 @@ export interface IProps extends WithTranslation {
     /**
      * The error that caused the display of the overlay.
      */
-    error: Error;
+    error?: any;
 
     /**
      * The indicator which determines whether the reload was caused by network
@@ -48,7 +47,7 @@ export interface IProps extends WithTranslation {
      * The reason for the error that will cause the reload.
      * NOTE: Used by PageReloadOverlay only.
      */
-    reason: string;
+    reason?: string;
 }
 
 /**
@@ -167,7 +166,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
         }
 
         sendAnalytics(createPageReloadScheduledEvent(
-            this.props.reason,
+            this.props.reason ?? '',
             this.state.timeoutSeconds,
             this.props.details));
 

@@ -79,17 +79,17 @@ interface IProps {
     /**
      * Hides popover.
      */
-    hidePopover: Function;
+    hidePopover?: Function;
 
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean;
+    popoverVisible?: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function;
+    showPopover?: Function;
 
     /**
      * The type of the thumbnail.
@@ -141,12 +141,12 @@ const LocalVideoMenuTriggerButton = ({
     const { t } = useTranslation();
 
     const _onPopoverOpen = useCallback(() => {
-        showPopover();
+        showPopover?.();
         dispatch(setParticipantContextMenuOpen(true));
     }, []);
 
     const _onPopoverClose = useCallback(() => {
-        hidePopover();
+        hidePopover?.();
         batch(() => {
             dispatch(setParticipantContextMenuOpen(false));
             dispatch(renderConnectionStatus(false));
@@ -194,7 +194,7 @@ const LocalVideoMenuTriggerButton = ({
                 onPopoverClose = { _onPopoverClose }
                 onPopoverOpen = { _onPopoverOpen }
                 position = { _menuPosition }
-                visible = { popoverVisible }>
+                visible = { Boolean(popoverVisible) }>
                 {buttonVisible && !isMobileBrowser() && (
                     <Button
                         accessibilityLabel = { t('dialog.localUserControls') }

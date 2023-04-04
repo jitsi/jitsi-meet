@@ -108,7 +108,6 @@ StateListenerRegistry.register(
             });
         } else if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             setTimeout(() => {
-                // @ts-ignore
                 store.dispatch(openPageReloadDialog());
             }, 500);
         }

@@ -75,7 +75,7 @@ interface IProps {
     /**
      * Hides popover.
      */
-    hidePopover: Function;
+    hidePopover?: Function;
 
     /**
      * The ID for the participant on which the remote video menu will act.
@@ -85,12 +85,12 @@ interface IProps {
     /**
      * Whether the popover is visible or not.
      */
-    popoverVisible: boolean;
+    popoverVisible?: boolean;
 
     /**
      * Shows popover.
      */
-    showPopover: Function;
+    showPopover?: Function;
 
     /**
      * The type of the thumbnail.
@@ -139,12 +139,12 @@ const RemoteVideoMenuTriggerButton = ({
     const { t } = useTranslation();
 
     const _onPopoverOpen = useCallback(() => {
-        showPopover();
+        showPopover?.();
         dispatch(setParticipantContextMenuOpen(true));
     }, []);
 
     const _onPopoverClose = useCallback(() => {
-        hidePopover();
+        hidePopover?.();
         batch(() => {
             dispatch(setParticipantContextMenuOpen(false));
             dispatch(renderConnectionStatus(false));
@@ -197,7 +197,7 @@ const RemoteVideoMenuTriggerButton = ({
             onPopoverClose = { _onPopoverClose }
             onPopoverOpen = { _onPopoverOpen }
             position = { _menuPosition }
-            visible = { popoverVisible }>
+            visible = { Boolean(popoverVisible) }>
             {buttonVisible && !_disabled && (
                 !isMobileBrowser() && <Button
                     accessibilityLabel = { t('dialog.remoteUserControls', { username }) }

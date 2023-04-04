@@ -43,7 +43,6 @@ import {
     shouldRemoteVideosBeVisible
 } from '../../functions';
 
-// @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';

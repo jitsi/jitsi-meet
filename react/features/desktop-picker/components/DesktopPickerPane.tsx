@@ -1,6 +1,5 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
@@ -12,50 +11,45 @@ import DesktopSourcePreview from './DesktopSourcePreview';
 /**
  * The type of the React {@code Component} props of {@link DesktopPickerPane}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The handler to be invoked when a DesktopSourcePreview is clicked.
      */
-    onClick: Function,
+    onClick: Function;
 
     /**
      * The handler to be invoked when a DesktopSourcePreview is double clicked.
      */
-    onDoubleClick: Function,
+    onDoubleClick: Function;
 
     /**
      * The handler to be invoked if the users checks the audio screen sharing checkbox.
      */
-    onShareAudioChecked: Function,
+    onShareAudioChecked: Function;
 
     /**
      * The id of the DesktopCapturerSource that is currently selected.
      */
-    selectedSourceId: string,
+    selectedSourceId: string;
 
     /**
      * An array of DesktopCapturerSources.
      */
-    sources: Array<Object>,
+    sources: Array<any>;
 
     /**
      * The source type of the DesktopCapturerSources to display.
      */
-    type: string,
-
-    /**
-     * Used to obtain translations.
-     */
-    t: Function
-};
+    type: string;
+}
 
 /**
  * React component for showing a grid of DesktopSourcePreviews.
  *
  * @augments Component
  */
-class DesktopPickerPane extends Component<Props> {
+class DesktopPickerPane extends Component<IProps> {
 
     /**
      * Initializes a new DesktopPickerPane instance.
@@ -63,13 +57,11 @@ class DesktopPickerPane extends Component<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onShareAudioCheck = this._onShareAudioCheck.bind(this);
     }
-
-    _onShareAudioCheck: (Object) => void;
 
     /**
      * Function to be called when the Checkbox is used.
@@ -77,7 +69,7 @@ class DesktopPickerPane extends Component<Props> {
      * @param {boolean} checked - Checkbox status (checked or not).
      * @returns {void}
      */
-    _onShareAudioCheck({ target: { checked } }) {
+    _onShareAudioCheck({ target: { checked } }: { target: { checked: boolean; }; }) {
         this.props.onShareAudioChecked(checked);
     }
 

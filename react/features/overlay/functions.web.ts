@@ -1,13 +1,9 @@
-/* eslint-disable lines-around-comment */
-
 import { IReduxState } from '../app/types';
 
-// @ts-ignore
 import PageReloadOverlay from './components/web/PageReloadOverlay';
-// @ts-ignore
 import SuspendedOverlay from './components/web/SuspendedOverlay';
-// @ts-ignore
 import UserMediaPermissionsOverlay from './components/web/UserMediaPermissionsOverlay';
+
 /**
  * Returns the overlay to be currently rendered.
  *

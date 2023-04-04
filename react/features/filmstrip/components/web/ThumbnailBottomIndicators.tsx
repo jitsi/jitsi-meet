@@ -10,7 +10,6 @@ import {
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import DisplayName from '../../../display-name/components/web/DisplayName';
 
-// @ts-ignore
 import StatusIndicators from './StatusIndicators';
 
 interface IProps {
@@ -38,7 +37,7 @@ interface IProps {
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string;
+    thumbnailType?: string;
 }
 
 const useStyles = makeStyles()(() => {

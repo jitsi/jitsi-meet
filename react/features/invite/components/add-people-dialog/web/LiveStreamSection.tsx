@@ -1,25 +1,19 @@
-// @flow
-
 /* eslint-disable react/jsx-no-bind */
 
 import React, { useState } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCheck, IconCopy } from '../../../../base/icons/svg';
 import { copyText } from '../../../../base/util/copyText.web';
 
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The current known URL for a live stream in progress.
      */
-    liveStreamViewURL: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    liveStreamViewURL: string;
 }
 
 /**
@@ -28,7 +22,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function LiveStreamSection({ liveStreamViewURL, t }: Props) {
+function LiveStreamSection({ liveStreamViewURL, t }: IProps) {
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
 

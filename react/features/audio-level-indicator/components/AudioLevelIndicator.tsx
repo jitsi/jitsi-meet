@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 
 /**
@@ -17,21 +15,21 @@ const CENTER_DOT_INDEX = Math.floor(AUDIO_LEVEL_DOTS / 2);
 /**
  * The type of the React {@code Component} props of {@link AudioLevelIndicator}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The current audio level to display. The value should be a number between
      * 0 and 1.
      */
-    audioLevel: number
-};
+    audioLevel: number;
+}
 
 /**
  * Creates a ReactElement responsible for drawing audio levels.
  *
  * @augments {Component}
  */
-class AudioLevelIndicator extends Component<Props> {
+class AudioLevelIndicator extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
