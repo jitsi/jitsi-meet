@@ -106,10 +106,6 @@ export const commonStyles = (theme: Theme) => {
             }
         },
 
-        '.participant-avatar': {
-            margin: `${theme.spacing(2)} ${theme.spacing(3)} ${theme.spacing(2)} 0`
-        },
-
         '.prejoin-dialog': {
             backgroundColor: theme.palette.uiBackground,
             boxShadow: '0px 2px 20px rgba(0, 0, 0, 0.5)',

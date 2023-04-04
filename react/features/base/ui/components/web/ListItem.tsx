@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { ACTION_TRIGGER } from '../../../participants-pane/constants';
-import { isMobileBrowser } from '../../environment/utils';
-import { withPixelLineHeight } from '../../styles/functions.web';
-import participantsPaneTheme from '../themes/participantsPaneTheme.json';
+import { ACTION_TRIGGER } from '../../../../participants-pane/constants';
+import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
+import { isMobileBrowser } from '../../../environment/utils';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface IProps {
 
@@ -81,9 +81,9 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             color: theme.palette.text01,
             display: 'flex',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
             margin: `0 -${participantsPaneTheme.panePadding}px`,
-            padding: `0 ${participantsPaneTheme.panePadding}px`,
+            padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
             boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)',
             minHeight: '40px',
@@ -105,8 +105,8 @@ const useStyles = makeStyles()(theme => {
             },
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
-                padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`
+                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+                padding: `${theme.spacing(3)} ${participantsPaneTheme.panePadding}px`
             }
         },
 
@@ -191,8 +191,8 @@ const ListItem = ({
     textChildren,
     trigger
 }: IProps) => {
-    const { classes: styles, cx } = useStyles();
-    const _isMobile = isMobileBrowser();
+    const { classes, cx } = useStyles();
+    const isMobile = isMobileBrowser();
     let timeoutHandler: number;
 
     /**
@@ -230,14 +230,14 @@ const ListItem = ({
     return (
         <div
             className = { cx('list-item-container',
-                styles.container,
-                isHighlighted && styles.highlighted,
+                classes.container,
+                isHighlighted && classes.highlighted,
                 className
             ) }
             data-testid = { testId }
             id = { id }
             onClick = { onClick }
-            { ...(_isMobile
+            { ...(isMobile
                 ? {
                     onTouchEnd: _onTouchEnd,
                     onTouchMove: _onTouchMove,
@@ -248,15 +248,15 @@ const ListItem = ({
                 }
             ) }>
             <div> {icon} </div>
-            <div className = { styles.detailsContainer }>
-                <div className = { styles.name }>
+            <div className = { classes.detailsContainer }>
+                <div className = { classes.name }>
                     {textChildren}
                 </div>
                 {indicators && (
                     <div
                         className = { cx('indicators',
-                            styles.indicators,
-                            (isHighlighted || trigger === ACTION_TRIGGER.PERMANENT) && styles.indicatorsHidden
+                            classes.indicators,
+                            (isHighlighted || trigger === ACTION_TRIGGER.PERMANENT) && classes.indicatorsHidden
                         ) }>
                         {indicators}
                     </div>
@@ -264,9 +264,9 @@ const ListItem = ({
                 {!hideActions && (
                     <div
                         className = { cx('actions',
-                            styles.actionsContainer,
-                            trigger === ACTION_TRIGGER.PERMANENT && styles.actionsPermanent,
-                            isHighlighted && styles.actionsVisible
+                            classes.actionsContainer,
+                            trigger === ACTION_TRIGGER.PERMANENT && classes.actionsPermanent,
+                            isHighlighted && classes.actionsVisible
                         ) }>
                         {actions}
                     </div>

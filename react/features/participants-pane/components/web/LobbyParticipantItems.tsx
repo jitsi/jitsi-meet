@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { IParticipant } from '../../../base/participants/types';
 
@@ -22,6 +23,14 @@ interface IProps {
     participants: IParticipant[];
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+        container: {
+            margin: `${theme.spacing(3)} 0`
+        }
+    };
+});
+
 /**
  * Component used to display a list of knocking participants.
  *
@@ -29,9 +38,12 @@ interface IProps {
  * @returns {ReactNode}
  */
 function LobbyParticipantItems({ openDrawerForParticipant, overflowDrawer, participants }: IProps) {
+    const { classes } = useStyles();
 
     return (
-        <div id = 'lobby-list'>
+        <div
+            className = { classes.container }
+            id = 'lobby-list'>
             {participants.map(p => (
                 <LobbyParticipantItem
                     key = { p.id }

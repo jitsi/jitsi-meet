@@ -31,7 +31,7 @@ const useStyles = makeStyles()(theme => {
         heading: {
             color: theme.palette.text02,
             ...withPixelLineHeight(theme.typography.bodyShortBold),
-            margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
+            marginBottom: theme.spacing(3),
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
                 ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
@@ -39,6 +39,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         search: {
+            margin: `${theme.spacing(3)} 0`,
+
             '& input': {
                 textAlign: 'center',
                 paddingRight: '16px'
@@ -111,10 +113,11 @@ function MeetingParticipants({
                 role = 'heading'>
                 { t('participantsPane.title') }
             </span>
-            <div className = { cx(styles.heading, styles.headingW) }>
-                {visitorsCount > 0
-                    ? t('participantsPane.headings.visitors', { count: visitorsCount }) : undefined}
-            </div>
+            {visitorsCount > 0 && (
+                <div className = { cx(styles.heading, styles.headingW) }>
+                    {t('participantsPane.headings.visitors', { count: visitorsCount })}
+                </div>
+            )}
             <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
