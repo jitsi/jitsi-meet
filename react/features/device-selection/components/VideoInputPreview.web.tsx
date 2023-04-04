@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import Video from '../../base/media/components/Video.web';
+import { Video } from '../../base/media/components/index';
 
 /**
  * The type of the React {@code Component} props of {@link VideoInputPreview}.

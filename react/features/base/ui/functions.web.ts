@@ -34,8 +34,6 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
         spacing,
         palette: createColorTokens(colorMap, colors),
         shape,
-
-        // @ts-ignore
         typography: {
             // @ts-ignore
             font,

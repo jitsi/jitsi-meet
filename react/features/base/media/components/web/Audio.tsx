@@ -1,9 +1,6 @@
-// @flow
-
 import React from 'react';
 
-import AbstractAudio from '../AbstractAudio';
-import type { AudioElement } from '../AbstractAudio';
+import AbstractAudio, { IProps } from '../AbstractAudio';
 
 /**
  * The React/Web {@link Component} which is similar to and wraps around
@@ -18,7 +15,7 @@ export default class Audio extends AbstractAudio {
     /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
-    _ref: ?AudioElement;
+    _ref?: HTMLAudioElement | null;
 
     /**
      * Creates new <code>Audio</code> element instance with given props.
@@ -26,12 +23,12 @@ export default class Audio extends AbstractAudio {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
         this._onCanPlayThrough = this._onCanPlayThrough.bind(this);
-        this._setRef = this._setRef.bind(this);
+        this._setRef = this._setRef?.bind(this);
     }
 
     /**
@@ -46,8 +43,6 @@ export default class Audio extends AbstractAudio {
                 loop = { Boolean(this.props.loop) }
                 onCanPlayThrough = { this._onCanPlayThrough }
                 preload = 'auto'
-
-                // $FlowFixMe
                 ref = { this._setRef }
                 src = { this.props.src } />
         );
@@ -61,8 +56,6 @@ export default class Audio extends AbstractAudio {
     stop() {
         if (this._ref) {
             this._ref.pause();
-
-            // $FlowFixMe
             this._ref.currentTime = 0;
         }
     }
@@ -81,8 +74,6 @@ export default class Audio extends AbstractAudio {
         }
     }
 
-    _onCanPlayThrough: () => void;
-
     /**
      * Called when 'canplaythrough' event is triggered on the audio element,
      * which means that the whole file has been loaded.
@@ -95,8 +86,6 @@ export default class Audio extends AbstractAudio {
         this._maybeSetAudioElementImpl();
     }
 
-    _setRef: (?AudioElement) => void;
-
     /**
      * Sets the reference to the HTML audio element.
      *
@@ -104,7 +93,7 @@ export default class Audio extends AbstractAudio {
      * @private
      * @returns {void}
      */
-    _setRef(audioElement: ?AudioElement) {
+    _setRef(audioElement?: HTMLAudioElement | null) {
         this._ref = audioElement;
 
         if (audioElement) {

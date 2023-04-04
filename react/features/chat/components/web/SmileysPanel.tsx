@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import Emoji from 'react-emoji-render';
 
@@ -8,28 +6,28 @@ import { smileys } from '../../smileys';
 /**
  * The type of the React {@code Component} props of {@link SmileysPanel}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Callback to invoke when a smiley is selected. The smiley will be passed
      * back.
      */
-    onSmileySelect: Function
-};
+    onSmileySelect: Function;
+}
 
 /**
  * Implements a React Component showing smileys that can be be shown in chat.
  *
  * @augments Component
  */
-class SmileysPanel extends PureComponent<Props> {
+class SmileysPanel extends PureComponent<IProps> {
     /**
      * Initializes a new {@code SmileysPanel} instance.
      *
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -38,8 +36,6 @@ class SmileysPanel extends PureComponent<Props> {
         this._onEscKey = this._onEscKey.bind(this);
     }
 
-    _onEscKey: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -47,7 +43,7 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onEscKey(e) {
+    _onEscKey(e: React.KeyboardEvent) {
         // Escape handling does not work in onKeyPress
         if (e.key === 'Escape') {
             e.preventDefault();
@@ -56,8 +52,6 @@ class SmileysPanel extends PureComponent<Props> {
         }
     }
 
-    _onKeyPress: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -65,14 +59,12 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.key === ' ') {
-            e.preventDefault();
+            e.preventDefault(); // @ts-ignore
             this.props.onSmileySelect(e.target.id && smileys[e.target.id]);
         }
     }
-
-    _onClick: (Object) => void;
 
     /**
      * Click handler for to select emoji.
@@ -81,9 +73,9 @@ class SmileysPanel extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    _onClick(e) {
+    _onClick(e: React.MouseEvent) {
         e.preventDefault();
-        this.props.onSmileySelect(e.currentTarget.id && smileys[e.currentTarget.id]);
+        this.props.onSmileySelect(e.currentTarget.id && smileys[e.currentTarget.id as keyof typeof smileys]);
     }
 
     /**
@@ -105,7 +97,7 @@ class SmileysPanel extends PureComponent<Props> {
                 tabIndex = { 0 }>
                 <Emoji
                     onlyEmojiClassName = 'smiley'
-                    text = { smileys[smileyKey] } />
+                    text = { smileys[smileyKey as keyof typeof smileys] } />
             </div>
         ));
 

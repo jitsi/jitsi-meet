@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState, IStore } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
 import { IconImage } from '../../../../base/icons/svg';
-import Video from '../../../../base/media/components/Video.web';
+import { Video } from '../../../../base/media/components/index';
 import { equals } from '../../../../base/redux/functions';
 import { updateSettings } from '../../../../base/settings/actions';
 import Checkbox from '../../../../base/ui/components/web/Checkbox';

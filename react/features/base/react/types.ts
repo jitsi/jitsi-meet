@@ -1,10 +1,11 @@
 import React from 'react';
+import { GestureResponderEvent } from 'react-native';
 
 export interface IIconButtonProps {
     accessibilityLabel?: string;
     color?: string;
     disabled?: boolean;
-    onPress?: Function;
+    onPress?: (e?: GestureResponderEvent) => void;
     size?: number | string;
     src: Function;
     style?: Object | undefined;

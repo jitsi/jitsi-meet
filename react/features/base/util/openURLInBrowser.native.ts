@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { Linking } from 'react-native';
 
 import logger from './logger';

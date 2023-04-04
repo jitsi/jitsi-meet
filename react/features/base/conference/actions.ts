@@ -569,7 +569,6 @@ export function checkIfCanJoin() {
 
         const replaceParticipant = getReplaceParticipant(getState());
 
-        // @ts-ignore
         authRequired && dispatch(_conferenceWillJoin(authRequired));
         authRequired?.join(password, replaceParticipant);
     };

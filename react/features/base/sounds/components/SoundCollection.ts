@@ -1,35 +1,34 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { AudioElement } from '../../media/components/AbstractAudio';
 import { Audio } from '../../media/components/index';
 import { _addAudioElement, _removeAudioElement } from '../actions';
-import type { Sound } from '../reducer';
+import { Sound } from '../reducer';
 
 /**
  * {@link SoundCollection}'s properties.
  */
-type Props = {
+interface IProps {
 
     /**
      * Dispatches {@link _ADD_AUDIO_ELEMENT} Redux action which will store the
      * {@link AudioElement} for a sound in the Redux store.
      */
-    _addAudioElement: Function,
+    _addAudioElement: Function;
 
     /**
      * Dispatches {@link _REMOVE_AUDIO_ELEMENT} Redux action which will remove
      * the sound's {@link AudioElement} from the Redux store.
      */
-    _removeAudioElement: Function,
+    _removeAudioElement: Function;
 
     /**
      * It's the 'base/sounds' reducer's state mapped to a property. It's used to
      * render audio elements for every registered sound.
      */
-    _sounds: Map<string, Sound>
+    _sounds: Map<string, Sound>;
 }
 
 /**
@@ -41,7 +40,7 @@ type Props = {
  * state. When that happens the sound can be played using the {@link playSound}
  * action.
  */
-class SoundCollection extends Component<Props> {
+class SoundCollection extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -58,10 +57,10 @@ class SoundCollection extends Component<Props> {
             sounds.push(
                 React.createElement(
                     Audio, {
-                        key,
+                        key, // @ts-ignore
                         setRef: this._setRef.bind(this, soundId),
                         src,
-                        loop: options.loop
+                        loop: options?.loop
                     }));
             key += 1;
         }
@@ -80,7 +79,7 @@ class SoundCollection extends Component<Props> {
      * @protected
      * @returns {void}
      */
-    _setRef(soundId: string, element: ?AudioElement) {
+    _setRef(soundId: string, element?: AudioElement) {
         if (element) {
             this.props._addAudioElement(soundId, element);
         } else {
@@ -98,7 +97,7 @@ class SoundCollection extends Component<Props> {
  *     _sounds: Map<string, Sound>
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _sounds: state['features/base/sounds']
     };
@@ -114,7 +113,7 @@ function _mapStateToProps(state) {
  *     _removeAudioElement: void
  * }}
  */
-export function _mapDispatchToProps(dispatch: Function) {
+export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         /**
          * Dispatches action to store the {@link AudioElement} for

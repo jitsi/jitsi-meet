@@ -10,7 +10,6 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled } from '../../functions';
 
-// @ts-ignore
 import SmileysPanel from './SmileysPanel';
 
 /**

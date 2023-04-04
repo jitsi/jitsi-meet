@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import Audio from '../../base/media/components/Audio.web';
+import { Audio } from '../../base/media/components/index';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
 
@@ -130,7 +128,7 @@ class AudioOutputPreview extends Component<IProps> {
      */
     _setAudioSink() {
         this._audioElement
-            && this.props.deviceId // @ts-ignore
+            && this.props.deviceId
             && this._audioElement.setSinkId(this.props.deviceId);
     }
 }

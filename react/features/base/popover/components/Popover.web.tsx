@@ -190,8 +190,8 @@ class Popover extends Component<IProps, IState> {
      * @param {MouseEvent} e - The click event.
      * @returns {void}
      */
-    _onOutsideClick(e: React.MouseEvent) { // @ts-ignore
-        if (!this._containerRef?.current?.contains(e.target) && this.props.visible) {
+    _onOutsideClick(e: React.MouseEvent) {
+        if (!this._containerRef?.current?.contains(e.target as Node) && this.props.visible) {
             this._onHideDialog();
         }
     }
@@ -303,8 +303,8 @@ class Popover extends Component<IProps, IState> {
         if (this.props.visible
             && !this.props.overflowDrawer
             && this._contextMenuRef
-            && this._contextMenuRef.contains // @ts-ignore
-            && !this._contextMenuRef.contains(event.target)) {
+            && this._contextMenuRef.contains
+            && !this._contextMenuRef.contains(event.target as Node)) {
             this._onHideDialog();
         }
     }

@@ -9,8 +9,6 @@ import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { hideNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../../notifications/constants';
 import { highlightMeetingMoment } from '../../actions.any';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
 import { getActiveSession, getRecordButtonProps, isHighlightMeetingMomentDisabled } from '../../functions';
 

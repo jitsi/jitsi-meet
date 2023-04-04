@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -28,10 +27,10 @@ import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInLimit from './DialInLimit';
 import DialInSection from './DialInSection';
 import InviteByEmailSection from './InviteByEmailSection';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import InviteContactsSection from './InviteContactsSection';
 import LiveStreamSection from './LiveStreamSection';
-/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 

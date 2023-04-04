@@ -64,7 +64,7 @@ export function validateLastNLimits(lastNLimits: any) {
  * @returns {number|undefined} - A "last N" number if there was a corresponding "last N" value matched with the number
  * of participants or {@code undefined} otherwise.
  */
-export function limitLastN(participantsCount: number, lastNLimits: Map<number, number>) {
+export function limitLastN(participantsCount: number, lastNLimits?: Map<number, number>) {
     if (!lastNLimits || !lastNLimits.keys) {
         return undefined;
     }

@@ -27,7 +27,7 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
  */
 function HangupMenu() {
     const dispatch = useDispatch();
-    const _styles: any = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
+    const _styles: any = useSelector((state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox'));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerator = useSelector((state: IReduxState) =>
         getLocalParticipant(state)?.role === PARTICIPANT_ROLE.MODERATOR);

@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 // @ts-ignore
 import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';

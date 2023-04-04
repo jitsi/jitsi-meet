@@ -232,8 +232,6 @@ export function restoreConfig(baseURL: string) {
     return undefined;
 }
 
-/* eslint-disable max-params */
-
 /**
  * Inspects the hash part of the location URI and overrides values specified
  * there in the corresponding config objects given as the arguments. The syntax

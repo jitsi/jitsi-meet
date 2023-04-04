@@ -8,7 +8,6 @@ import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
-// @ts-ignore
 import KeyboardAvoider from './KeyboardAvoider';
 
 /**

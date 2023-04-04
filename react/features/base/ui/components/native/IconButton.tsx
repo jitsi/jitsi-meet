@@ -54,8 +54,6 @@ const IconButton: React.FC<IIconButtonProps> = ({
         <TouchableRipple
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
-
-            // @ts-ignore
             onPress = { onPress }
             rippleColor = { rippleColor }
             style = { [
