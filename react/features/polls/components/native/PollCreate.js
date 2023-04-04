@@ -109,6 +109,9 @@ const PollCreate = (props: AbstractProps) => {
                     onChange = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
+
+                    // This is set to help the touch event not be propagated to any subviews.
+                    pointerEvents = { 'auto' }
                     ref = { input => registerFieldRef(index, input) }
                     value = { answers[index] } />
                 {
@@ -133,6 +136,9 @@ const PollCreate = (props: AbstractProps) => {
                     onChange = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
+
+                    // This is set to help the touch event not be propagated to any subviews.
+                    pointerEvents = { 'auto' }
                     value = { question } />
                 <Divider style = { styles.fieldSeparator } />
                 <FlatList
