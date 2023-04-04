@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 
 /**
@@ -59,8 +59,6 @@ export function set<T extends Object>(state: T, property: keyof T, value: any): 
     return _set(state, property, value, /* copyOnWrite */ true);
 }
 
-/* eslint-disable max-params */
-
 /**
  * Sets a specific property of a specific state to a specific value. Prevents
  * unnecessary state changes (when the specified {@code value} is equal to the
@@ -113,6 +111,16 @@ function _set<T extends Object>(
 /* eslint-enable max-params */
 
 /**
+ * Whether or not the entity is of type IStore.
+ *
+ * @param {IStateful} stateful - The entity to check.
+ * @returns {boolean}
+ */
+function isStore(stateful: IStateful): stateful is IStore {
+    return 'getState' in stateful && typeof stateful.getState === 'function';
+}
+
+/**
  * Returns redux state from the specified {@code stateful} which is presumed to
  * be related to the redux state (e.g. The redux store, the redux
  * {@code getState} function).
@@ -128,14 +136,10 @@ export function toState(stateful: IStateful): IReduxState {
             return stateful();
         }
 
-        // @ts-ignore
-        const { getState } = stateful;
-
-        if (typeof getState === 'function') {
-            return getState();
+        if (isStore(stateful)) {
+            return stateful.getState();
         }
     }
 
-    // @ts-ignore
     return stateful;
 }

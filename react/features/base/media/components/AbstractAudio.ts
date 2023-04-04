@@ -17,7 +17,7 @@ export type AudioElement = {
 /**
  * {@code AbstractAudio} Component's property types.
  */
-interface IProps {
+export interface IProps {
 
     loop?: boolean;
 
@@ -35,7 +35,7 @@ interface IProps {
      *
      * @type {Object | string}
      */
-    src: Object | string;
+    src: any | string;
     stream?: Object;
 }
 
@@ -48,7 +48,7 @@ export default class AbstractAudio extends Component<IProps> {
      * The {@link AudioElement} instance which implements the audio playback
      * functionality.
      */
-    _audioElementImpl: AudioElement | undefined;
+    _audioElementImpl?: AudioElement | null;
 
     /**
      * Initializes a new {@code AbstractAudio} instance.
@@ -69,7 +69,7 @@ export default class AbstractAudio extends Component<IProps> {
      * @public
      * @returns {void}
      */
-    pause(): void {
+    pause() {
         this._audioElementImpl?.pause();
     }
 
@@ -79,7 +79,7 @@ export default class AbstractAudio extends Component<IProps> {
      * @public
      * @returns {void}
      */
-    play(): void {
+    play() {
         this._audioElementImpl?.play();
     }
 
@@ -92,10 +92,9 @@ export default class AbstractAudio extends Component<IProps> {
      * @protected
      * @returns {void}
      */
-    setAudioElementImpl(element?: AudioElement): void {
+    setAudioElementImpl(element?: AudioElement | null) {
         this._audioElementImpl = element;
 
-        // setRef
         const { setRef } = this.props;
 
         typeof setRef === 'function' && setRef(element ? this : null);
@@ -108,7 +107,7 @@ export default class AbstractAudio extends Component<IProps> {
      * @param {string} sinkId - The sink ID (output device ID).
      * @returns {void}
      */
-    setSinkId(sinkId: string): void {
+    setSinkId(sinkId: string) {
         this._audioElementImpl
             && typeof this._audioElementImpl.setSinkId === 'function'
             && this._audioElementImpl.setSinkId(sinkId)
@@ -121,7 +120,7 @@ export default class AbstractAudio extends Component<IProps> {
      * @public
      * @returns {void}
      */
-    stop(): void {
+    stop() {
         this._audioElementImpl?.stop();
     }
 }

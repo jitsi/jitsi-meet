@@ -10,9 +10,7 @@ import { validateLastNLimits } from './functions';
 
 export interface ILastNState {
     lastN?: number;
-    lastNLimits?: {
-        [key: number]: number;
-    };
+    lastNLimits?: Map<number, number>;
 }
 
 ReducerRegistry.register<ILastNState>('features/base/lastn', (state = {}, action): ILastNState => {

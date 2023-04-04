@@ -59,7 +59,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
     // Apply last N limit based on the # of participants and config settings.
-    // @ts-ignore
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {

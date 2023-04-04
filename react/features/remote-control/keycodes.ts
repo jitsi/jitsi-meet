@@ -72,7 +72,6 @@ export const KEYS = {
     PLUS: '+'
 };
 
-/* eslint-disable max-len */
 /**
  * Mapping between the key codes and keys defined in KEYS.
  * The mappings are based on

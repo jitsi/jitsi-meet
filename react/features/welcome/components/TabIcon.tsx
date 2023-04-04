@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Icon from '../../base/icons/components/Icon';
+import { StyleType } from '../../base/styles/functions.any';
 import BaseTheme from '../../base/ui/components/BaseTheme';
 import { INACTIVE_TAB_COLOR } from '../constants';
 
@@ -19,7 +20,7 @@ interface IProps {
     /**
      * The component's external style.
      */
-    style?: Object;
+    style?: StyleType;
 }
 
 const TabIcon = ({ focused, src, style }: IProps) => (

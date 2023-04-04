@@ -393,7 +393,6 @@ const googleApi = {
             });
     },
 
-    /* eslint-disable max-params */
     /**
      * Updates the calendar event and adds a location and text.
      *
@@ -435,7 +434,6 @@ const googleApi = {
 
             });
     },
-    /* eslint-enable max-params */
 
     /**
      * Returns the global Google API Client Library object. Direct use of this

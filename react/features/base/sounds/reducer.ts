@@ -24,7 +24,9 @@ export type Sound = {
     /**
      * This field is container for all optional parameters related to the sound.
      */
-    options?: Object;
+    options?: {
+        loop: boolean;
+    };
 
     /**
      * This field describes the source of the audio resource to be played. It

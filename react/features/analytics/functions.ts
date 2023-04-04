@@ -62,7 +62,7 @@ export function resetAnalytics() {
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export async function createHandlers({ getState }: { getState: Function; }) {
+export async function createHandlers({ getState }: IStore) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
 
     if (!isAnalyticsEnabled(getState)) {
@@ -236,7 +236,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
  * loaded or the analytics is disabled.
  */
 function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object) {
-    const promises = [];
+    const promises: Promise<{ error?: Error; type: string; url?: string; }>[] = [];
 
     for (const url of scriptURLs) {
         promises.push(
@@ -255,7 +255,7 @@ function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object
 
     return Promise.all(promises).then(values => {
         for (const el of values) {
-            if (el.type === 'error') { // @ts-ignore
+            if (el.type === 'error') {
                 logger.warn(`Failed to load ${el.url}: ${el.error}`);
             }
         }

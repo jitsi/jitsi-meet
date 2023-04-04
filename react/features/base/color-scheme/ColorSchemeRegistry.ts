@@ -1,3 +1,4 @@
+import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 import { StyleType } from '../styles/functions.any';
 
@@ -38,7 +39,7 @@ class ColorSchemeRegistry {
      * want to retrieve.
      * @returns {StyleType}
      */
-    get(stateful: Object | Function, componentName: string): StyleType {
+    get(stateful: IStateful, componentName: string): StyleType {
         let schemedStyle = this._schemedStyles.get(componentName);
 
         if (!schemedStyle) {
@@ -85,7 +86,7 @@ class ColorSchemeRegistry {
      * @returns {StyleType}
      */
     _applyColorScheme(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
             style: StyleType): StyleType {
         let schemedStyle: any;
@@ -144,18 +145,15 @@ class ColorSchemeRegistry {
      * @returns {string}
      */
     _getColor(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
             colorDefinition: string): string {
-        // @ts-ignore
         const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
 
         return {
             ...defaultScheme._defaultTheme,
             ...colorScheme._defaultTheme,
-
-            // @ts-ignore
-            ...defaultScheme[componentName],
+            ...defaultScheme[componentName as keyof typeof defaultScheme],
             ...colorScheme[componentName]
         }[colorDefinition];
     }

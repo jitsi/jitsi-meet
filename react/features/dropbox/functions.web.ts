@@ -146,8 +146,7 @@ export function getSpaceUsage(token: string, appKey: string) {
  * @returns {boolean}
  */
 export function isEnabled(state: IReduxState) {
-    const { dropbox = {} } = state['features/base/config'];
+    const { dropbox = { appKey: undefined } } = state['features/base/config'];
 
-    // @ts-ignore
     return typeof dropbox.appKey === 'string';
 }

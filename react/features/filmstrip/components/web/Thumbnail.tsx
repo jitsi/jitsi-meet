@@ -1264,12 +1264,16 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     case THUMBNAIL_TYPE.HORIZONTAL: {
         const {
             horizontalViewDimensions = {
-                local: {},
-                remote: {}
+                local: { width: undefined,
+                    height: undefined },
+                remote: { width: undefined,
+                    height: undefined }
             },
             verticalViewDimensions = {
-                local: {},
-                remote: {},
+                local: { width: undefined,
+                    height: undefined },
+                remote: { width: undefined,
+                    height: undefined },
                 gridView: {}
             }
         } = state['features/filmstrip'];
@@ -1278,8 +1282,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
             = tileType === THUMBNAIL_TYPE.VERTICAL
                 ? verticalViewDimensions : horizontalViewDimensions;
 
-        // @ts-ignore
-        const { width, height } = (isLocal ? local : remote) ?? {};
+        const { width, height } = (isLocal ? local : remote) ?? { width: undefined,
+            height: undefined };
 
         size = {
             _width: width,
@@ -1301,8 +1305,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         break;
     }
     case THUMBNAIL_TYPE.TILE: {
-        // @ts-ignore
-        const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+        const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions ?? { thumbnailSize: undefined };
         const {
             stageFilmstripDimensions = {
                 thumbnailSize: {}

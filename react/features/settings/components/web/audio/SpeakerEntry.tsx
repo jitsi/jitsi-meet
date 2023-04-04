@@ -91,7 +91,7 @@ const SpeakerEntry = (props: IProps) => {
     async function _onTestButtonClick(e: React.KeyboardEvent | React.MouseEvent) {
         e.stopPropagation();
 
-        try { // @ts-ignore
+        try {
             await audioRef.current?.setSinkId(props.deviceId);
             audioRef.current?.play();
         } catch (err) {

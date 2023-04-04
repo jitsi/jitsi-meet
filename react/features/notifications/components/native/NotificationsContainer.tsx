@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment  */
-
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
@@ -12,6 +10,7 @@ import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import styles from './styles';
 

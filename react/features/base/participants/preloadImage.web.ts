@@ -11,7 +11,7 @@ import { isIconUrl } from './functions';
  * @returns {Promise}
  */
 export function preloadImage(
-        src: string | Object,
+        src: string,
         useCORS = false,
         tryOnce = false
 ): Promise<{ isUsingCORS?: boolean; src: string | Object; }> {
@@ -41,7 +41,6 @@ export function preloadImage(
 
         image.referrerPolicy = 'no-referrer';
 
-        // @ts-ignore
         image.src = src;
     });
 }

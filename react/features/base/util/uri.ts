@@ -263,7 +263,6 @@ export function parseStandardURIString(str: string) {
             authority = authority.substring(userinfoEndIndex + 1);
         }
 
-        // @ts-ignore
         obj.host = authority;
 
         // port

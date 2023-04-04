@@ -259,7 +259,6 @@ function _onMuteReactionsCommand(attributes: IMuteCommandAttributes = {}, id: st
 
     const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
 
-    // @ts-ignore
     const newState = attributes.startReactionsMuted === 'true';
 
     if (oldState !== newState) {

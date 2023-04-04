@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment  */
-
 import React, { forwardRef, useCallback, useState } from 'react';
 import {
     KeyboardTypeOptions,
@@ -24,7 +22,7 @@ import styles from './inputStyles';
 
 interface IProps extends IInputProps {
     accessibilityLabel?: any;
-    autoCapitalize?: string | undefined;
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
     autoFocus?: boolean;
     blurOnSubmit?: boolean | undefined;
     customStyles?: ICustomStyles;
@@ -117,7 +115,6 @@ const Input = forwardRef<TextInput, IInputProps>(({
                 style = { styles.icon } />}
             <TextInput
                 accessibilityLabel = { accessibilityLabel }
-                // @ts-ignore
                 autoCapitalize = { autoCapitalize }
                 autoComplete = { 'off' }
                 autoCorrect = { false }
@@ -126,6 +123,8 @@ const Input = forwardRef<TextInput, IInputProps>(({
                 editable = { !disabled }
                 keyboardType = { keyboardType }
                 maxLength = { maxLength }
+
+                // @ts-ignore
                 minHeight = { minHeight }
                 multiline = { multiline }
                 numberOfLines = { numberOfLines }

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
-import Video from '../../base/media/components/Video';
+import { Video } from '../../base/media/components/index';
 import { equals } from '../../base/redux/functions';
 import { getCurrentCameraDeviceId } from '../../base/settings/functions.web';
 import { createLocalTracksF } from '../../base/tracks/functions';

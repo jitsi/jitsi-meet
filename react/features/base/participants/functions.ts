@@ -27,7 +27,7 @@ import { FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from '.
  */
 const AVATAR_QUEUE: Object[] = [];
 const AVATAR_CHECKED_URLS = new Map();
-/* eslint-disable arrow-body-style, no-unused-vars */
+/* eslint-disable arrow-body-style */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant: IParticipant) => {
         return participant?.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
@@ -53,7 +53,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return null;
     }
 ];
-/* eslint-enable arrow-body-style, no-unused-vars */
+/* eslint-enable arrow-body-style */
 
 /**
  * Returns the list of active speakers that should be moved to the top of the sorted list of participants so that the

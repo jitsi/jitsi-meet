@@ -1,149 +1,179 @@
-/* @flow */
+import React, { Component, ReactEventHandler } from 'react';
 
-import React, { Component } from 'react';
+import { ITrack } from '../../../tracks/types';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
-type Props = {
+interface IProps {
+
+    /**
+     * Used to determine the value of the autoplay attribute of the underlying
+     * video element.
+     */
+    autoPlay: boolean;
 
     /**
      * CSS classes to add to the video element.
      */
-    className: string,
+    className: string;
+
+    /**
+     * A map of the event handlers for the video HTML element.
+     */
+    eventHandlers?: {
+
+        /**
+         * OnAbort event handler.
+         */
+        onAbort?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnCanPlay event handler.
+         */
+        onCanPlay?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnCanPlayThrough event handler.
+         */
+        onCanPlayThrough?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnEmptied event handler.
+         */
+        onEmptied?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnEnded event handler.
+         */
+        onEnded?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnError event handler.
+         */
+        onError?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnLoadStart event handler.
+         */
+        onLoadStart?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnLoadedData event handler.
+         */
+        onLoadedData?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnLoadedMetadata event handler.
+         */
+        onLoadedMetadata?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnPause event handler.
+         */
+        onPause?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnPlay event handler.
+         */
+        onPlay?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnPlaying event handler.
+         */
+        onPlaying?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnRateChange event handler.
+         */
+        onRateChange?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnStalled event handler.
+         */
+        onStalled?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnSuspend event handler.
+         */
+        onSuspend?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnWaiting event handler.
+         */
+        onWaiting?: ReactEventHandler<HTMLVideoElement>;
+    };
 
     /**
      * The value of the id attribute of the video. Used by the torture tests to
      * locate video elements.
      */
-    id: string,
+    id: string;
 
     /**
-     * Optional callback to invoke once the video starts playing.
+     * Used on native.
      */
-    onVideoPlaying?: Function,
-
-    /**
-     * The JitsiLocalTrack to display.
-     */
-    videoTrack: ?Object,
-
-    /**
-     * Used to determine the value of the autoplay attribute of the underlying
-     * video element.
-     */
-    autoPlay: boolean,
-
-    /**
-     * Used to determine the value of the autoplay attribute of the underlying
-     * video element.
-     */
-    playsinline: boolean,
-
-    /**
-     * A map of the event handlers for the video HTML element.
-     */
-    eventHandlers?: {|
-
-        /**
-         * OnAbort event handler.
-         */
-        onAbort?: ?Function,
-
-        /**
-         * OnCanPlay event handler.
-         */
-        onCanPlay?: ?Function,
-
-        /**
-         * OnCanPlayThrough event handler.
-         */
-        onCanPlayThrough?: ?Function,
-
-        /**
-         * OnEmptied event handler.
-         */
-        onEmptied?: ?Function,
-
-        /**
-         * OnEnded event handler.
-         */
-        onEnded?: ?Function,
-
-        /**
-         * OnError event handler.
-         */
-        onError?: ?Function,
-
-        /**
-         * OnLoadedData event handler.
-         */
-        onLoadedData?: ?Function,
-
-        /**
-         * OnLoadedMetadata event handler.
-         */
-        onLoadedMetadata?: ?Function,
-
-        /**
-         * OnLoadStart event handler.
-         */
-        onLoadStart?: ?Function,
-
-        /**
-         * OnPause event handler.
-         */
-        onPause?: ?Function,
-
-        /**
-         * OnPlay event handler.
-         */
-        onPlay?: ?Function,
-
-        /**
-         * OnPlaying event handler.
-         */
-        onPlaying?: ?Function,
-
-        /**
-         * OnRateChange event handler.
-         */
-        onRateChange?: ?Function,
-
-        /**
-         * OnStalled event handler.
-         */
-        onStalled?: ?Function,
-
-        /**
-         * OnSuspend event handler.
-         */
-        onSuspend?: ?Function,
-
-        /**
-         * OnWaiting event handler.
-         */
-        onWaiting?: ?Function
-    |},
-
-    /**
-     * A styles that will be applied on the video element.
-     */
-    style?: Object,
+    mirror?: boolean;
 
     /**
      * The value of the muted attribute for the underlying video element.
      */
-    muted?: boolean
-};
+    muted?: boolean;
+
+    /**
+     * Used on native.
+     */
+    onPlaying?: Function;
+
+    /**
+     * Used on native.
+     */
+    onPress?: Function;
+
+    /**
+     * Optional callback to invoke once the video starts playing.
+     */
+    onVideoPlaying?: Function;
+
+    /**
+     * Used to determine the value of the autoplay attribute of the underlying
+     * video element.
+     */
+    playsinline: boolean;
+
+    /**
+     * Used on native.
+     */
+    stream?: any;
+
+    /**
+     * A styles that will be applied on the video element.
+     */
+    style?: Object;
+
+    /**
+     * The JitsiLocalTrack to display.
+     */
+    videoTrack?: Partial<ITrack>;
+
+    /**
+     * Used on native.
+     */
+    zOrder?: number;
+
+    /**
+     * Used on native.
+     */
+    zoomEnabled?: boolean;
+}
 
 /**
  * Component that renders a video element for a passed in video track.
  *
  * @augments Component
  */
-class Video extends Component<Props> {
-    _videoElement: ?Object;
+class Video extends Component<IProps> {
+    _videoElement?: HTMLVideoElement | null;
     _mounted: boolean;
 
     /**
@@ -164,7 +194,7 @@ class Video extends Component<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         /**
@@ -235,11 +265,9 @@ class Video extends Component<Props> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps: Props) {
-        const currentJitsiTrack = this.props.videoTrack
-            && this.props.videoTrack.jitsiTrack;
-        const nextJitsiTrack = nextProps.videoTrack
-            && nextProps.videoTrack.jitsiTrack;
+    shouldComponentUpdate(nextProps: IProps) {
+        const currentJitsiTrack = this.props.videoTrack?.jitsiTrack;
+        const nextJitsiTrack = nextProps.videoTrack?.jitsiTrack;
 
         if (currentJitsiTrack !== nextJitsiTrack) {
             this._detachTrack(this.props.videoTrack);
@@ -292,7 +320,7 @@ class Video extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _attachTrack(videoTrack) {
+    _attachTrack(videoTrack?: Partial<ITrack>) {
         if (!videoTrack || !videoTrack.jitsiTrack) {
             return;
         }
@@ -310,13 +338,11 @@ class Video extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _detachTrack(videoTrack) {
+    _detachTrack(videoTrack?: Partial<ITrack>) {
         if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
             videoTrack.jitsiTrack.detach(this._videoElement);
         }
     }
-
-    _onVideoPlaying: () => void;
 
     /**
      * Invokes the onvideoplaying callback if defined.
@@ -330,8 +356,6 @@ class Video extends Component<Props> {
         }
     }
 
-    _setVideoElement: () => void;
-
     /**
      * Sets an instance variable for the component's video element so it can be
      * referenced later for attaching and detaching a JitsiLocalTrack.
@@ -340,7 +364,7 @@ class Video extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _setVideoElement(element) {
+    _setVideoElement(element: HTMLVideoElement | null) {
         this._videoElement = element;
     }
 }

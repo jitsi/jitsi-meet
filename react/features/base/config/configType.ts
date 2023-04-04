@@ -130,6 +130,7 @@ export interface IConfig {
     _screenshotHistoryRegionUrl?: string;
     analytics?: {
         amplitudeAPPKey?: string;
+        blackListedEvents?: string[];
         disabled?: boolean;
         googleAnalyticsTrackingId?: string;
         matomoEndpoint?: string;
@@ -141,6 +142,7 @@ export interface IConfig {
         rtcstatsSendSdp?: boolean;
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
+        whiteListedEvents?: string[];
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
     appId?: string;
@@ -223,6 +225,9 @@ export interface IConfig {
     defaultLogoUrl?: string;
     defaultRemoteDisplayName?: string;
     deploymentInfo?: {
+        envType?: string;
+        environment?: string;
+        product?: string;
         region?: string;
         shard?: string;
         userRegion?: string;

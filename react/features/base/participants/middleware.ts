@@ -548,11 +548,11 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
 
     const settings = getState()['features/base/settings'];
 
-    // @ts-ignore
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
-        name: settings.displayName
+        name: settings.displayName,
+        id: ''
     }));
 
     return result;

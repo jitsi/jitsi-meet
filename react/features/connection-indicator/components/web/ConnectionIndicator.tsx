@@ -30,7 +30,6 @@ import AbstractConnectionIndicator, {
     mapStateToProps as _abstractMapStateToProps
 } from '../AbstractConnectionIndicator';
 
-// @ts-ignore
 import ConnectionIndicatorContent from './ConnectionIndicatorContent';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
@@ -247,8 +246,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
                 onPopoverClose = { this._onHidePopover }
                 onPopoverOpen = { this._onShowPopover }
                 position = { statsPopoverPosition }
-
-                // @ts-ignore
                 visible = { this.state.popoverVisible }>
                 { this._renderIndicator() }
             </Popover>

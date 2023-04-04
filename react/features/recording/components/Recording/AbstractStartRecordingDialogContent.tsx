@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment  */
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 

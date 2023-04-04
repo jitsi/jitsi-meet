@@ -131,7 +131,7 @@ interface IProps extends WithTranslation {
     /**
      * The participants in the call.
      */
-    _remoteParticipants: Array<Object>;
+    _remoteParticipants: Array<string>;
 
     /**
      * The length of the remote participants array.
@@ -596,7 +596,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      * @param {Object} data - An object with the indexes identifying the ThumbnailWrapper instance.
      * @returns {string} - The key.
      */
-    _gridItemKey({ columnIndex, rowIndex }: { columnIndex: number; rowIndex: number; }) {
+    _gridItemKey({ columnIndex, rowIndex }: { columnIndex: number; rowIndex: number; }): string {
         const {
             _disableSelfView,
             _columns,
@@ -698,8 +698,6 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemData = {{ filmstripType }}
-
-                    // @ts-ignore
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
                     overscanRowCount = { 1 }

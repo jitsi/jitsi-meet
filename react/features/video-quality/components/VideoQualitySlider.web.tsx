@@ -117,7 +117,12 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class VideoQualitySlider extends Component<IProps> {
-    _sliderOptions: Array<Object>;
+    _sliderOptions: Array<{
+        audioOnly?: boolean;
+        onSelect: Function;
+        textKey: string;
+        videoQuality?: number;
+    }>;
 
     /**
      * Initializes a new {@code VideoQualitySlider} instance.
@@ -278,15 +283,14 @@ class VideoQualitySlider extends Component<IProps> {
 
         if (_audioOnly) {
             const audioOnlyOption = _sliderOptions.find(
-                ({ audioOnly }: any) => audioOnly);
+                ({ audioOnly }) => audioOnly);
 
             // @ts-ignore
             return _sliderOptions.indexOf(audioOnlyOption);
         }
 
         for (let i = 0; i < _sliderOptions.length; i++) {
-            // @ts-ignore
-            if (_sliderOptions[i].videoQuality >= _sendrecvVideoQuality) {
+            if (Number(_sliderOptions[i].videoQuality) >= _sendrecvVideoQuality) {
                 return i;
             }
         }

@@ -266,7 +266,7 @@ export function moveToRoom(roomId?: string) {
  * @param {string} participantId - ID of the given participant.
  * @returns {string|undefined} - The participant connection JID if found.
  */
-function _findParticipantJid(getState: Function, participantId: string) {
+function _findParticipantJid(getState: IStore['getState'], participantId: string) {
     const conference = getCurrentConference(getState);
 
     if (!conference) {

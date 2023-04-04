@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { Container } from '../../react/components/index';
-import { styleTypeToObject } from '../../styles/functions';
+import { StyleType, styleTypeToObject } from '../../styles/functions';
 
 interface IProps {
 
@@ -93,7 +93,7 @@ interface IProps {
     /**
      * Style object to be applied.
      */
-    style?: Object;
+    style?: StyleType;
 
     /**
      * TabIndex  for the Icon.
@@ -144,8 +144,6 @@ export default function Icon(props: IProps) {
         color: styleColor,
         fontSize: styleSize,
         ...restStyle
-
-        // @ts-ignore
     } = styleTypeToObject(style ?? {});
     const calculatedColor = color ?? styleColor ?? DEFAULT_COLOR;
     const calculatedSize = size ?? styleSize ?? DEFAULT_SIZE;

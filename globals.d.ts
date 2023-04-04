@@ -37,4 +37,9 @@ declare global {
     const config: IConfig;
 
     const JitsiMeetJS: any;
+
+    interface HTMLMediaElement {
+        setSinkId: (id: string) => Promise<undefined>;
+        stop: () => void;
+    }
 }

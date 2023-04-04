@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 
-import { getFixedPlatformStyle } from '../../styles/functions';
+import { StyleType, getFixedPlatformStyle } from '../../styles/functions';
 
 /**
  * {@code AbstractContainer} Component's property types.
@@ -40,7 +40,7 @@ export interface IProps {
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */
-    style?: Array<string | undefined> | Object;
+    style?: StyleType;
 
     /**
      * If this instance is to provide visual feedback when touched, then
@@ -100,7 +100,6 @@ export default class AbstractContainer<P extends IProps> extends Component<P> {
             ...filteredProps
         } = props || this.props;
 
-        // @ts-ignore
         const _style = getFixedPlatformStyle(style);
 
         return React.createElement(type, {

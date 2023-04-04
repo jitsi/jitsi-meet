@@ -18,11 +18,7 @@ import {
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.web';
-import {
-    GOOGLE_API_STATES
-
-    // @ts-ignore
-} from '../../../../google-api/constants';
+import { GOOGLE_API_STATES } from '../../../../google-api/constants';
 import AbstractStartLiveStreamDialog, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
