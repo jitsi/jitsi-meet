@@ -12,7 +12,6 @@ const DEFAULT_STATE = {
 export interface IVisitorsState {
     count?: number;
     iAmVisitor: boolean;
-    showNotification: boolean;
 }
 ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_STATE, action): IVisitorsState => {
     switch (action.type) {
@@ -35,8 +34,7 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
     case I_AM_VISITOR_MODE: {
         return {
             ...state,
-            iAmVisitor: action.enabled,
-            showNotification: true
+            iAmVisitor: action.enabled
         };
     }
     }

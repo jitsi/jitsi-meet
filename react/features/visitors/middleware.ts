@@ -21,7 +21,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case CONFERENCE_JOINED: {
-        if (getState()['features/visitors'].showNotification) {
+        if (getState()['features/visitors'].iAmVisitor) {
             dispatch(showNotification({
                 titleKey: 'visitors.notification.title',
                 descriptionKey: 'visitors.notification.description'
