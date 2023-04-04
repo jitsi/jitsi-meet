@@ -102,6 +102,7 @@ export interface IJitsiConference {
     sendPrivateTextMessage: Function;
     sendTextMessage: Function;
     sessionId: string;
+    setAssumedBandwidthBps: (value: number) => void;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
