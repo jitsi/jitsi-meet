@@ -154,7 +154,7 @@ const useStyles = makeStyles()(theme => {
             ...withPixelLineHeight(theme.typography.labelBold),
 
             '&.iconButton': {
-                padding: '6px'
+                padding: theme.spacing(1)
             }
         },
 

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../../../base/environment/utils';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
@@ -31,7 +32,16 @@ interface IProps {
     searchString: string;
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+        topMargin: {
+            marginTop: theme.spacing(3)
+        }
+    };
+});
+
 export const RoomList = ({ searchString }: IProps) => {
+    const { classes } = useStyles();
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
                     .filter((room: IRoom) => room.id !== currentRoomId)
@@ -53,9 +63,11 @@ export const RoomList = ({ searchString }: IProps) => {
 
     return (
         <>
-            {inBreakoutRoom && <LeaveButton />}
-            {showAutoAssign && <AutoAssignButton />}
-            <div id = 'breakout-rooms-list'>
+            {inBreakoutRoom && <LeaveButton className = { classes.topMargin } />}
+            {showAutoAssign && <AutoAssignButton className = { classes.topMargin } />}
+            <div
+                className = { classes.topMargin }
+                id = 'breakout-rooms-list'>
                 {rooms.map(room => (
                     <React.Fragment key = { room.id }>
                         <CollapsibleRoom

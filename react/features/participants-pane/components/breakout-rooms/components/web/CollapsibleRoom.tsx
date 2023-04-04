@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../../app/types';
-import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
+import ListItem from '../../../../../base/ui/components/web/ListItem';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
@@ -92,8 +92,7 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
-            padding: '12px 0'
+            ...withPixelLineHeight(theme.typography.bodyLongBold)
         },
 
         arrowContainer: {

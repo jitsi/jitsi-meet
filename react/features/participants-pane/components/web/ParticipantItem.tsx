@@ -3,9 +3,9 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../base/avatar/components/Avatar';
-import ListItem from '../../../base/components/participants-pane-list/ListItem';
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import ListItem from '../../../base/ui/components/web/ListItem';
 import {
     ACTION_TRIGGER,
     type ActionTrigger,
@@ -110,8 +110,12 @@ const useStyles = makeStyles()(theme => {
         },
 
         moderatorLabel: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text03
+        },
+
+        avatar: {
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -146,11 +150,11 @@ function ParticipantItem({
             displayName
         }), []);
 
-    const { classes: styles } = useStyles();
+    const { classes } = useStyles();
 
     const icon = (
         <Avatar
-            className = 'participant-avatar'
+            className = { classes.avatar }
             displayName = { displayName }
             participantId = { participantID }
             size = { 32 } />
@@ -158,13 +162,13 @@ function ParticipantItem({
 
     const text = (
         <>
-            <div className = { styles.nameContainer }>
-                <div className = { styles.name }>
+            <div className = { classes.nameContainer }>
+                <div className = { classes.name }>
                     {displayName}
                 </div>
                 {local ? <span>&nbsp;({youText})</span> : null}
             </div>
-            {isModerator && !disableModeratorIndicator && <div className = { styles.moderatorLabel }>
+            {isModerator && !disableModeratorIndicator && <div className = { classes.moderatorLabel }>
                 {t('videothumbnail.moderator')}
             </div>}
         </>
