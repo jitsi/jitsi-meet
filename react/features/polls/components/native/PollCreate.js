@@ -109,6 +109,7 @@ const PollCreate = (props: AbstractProps) => {
                     onChange = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
+                    pointerEvents = { 'auto' }
                     ref = { input => registerFieldRef(index, input) }
                     value = { answers[index] } />
                 {
@@ -133,6 +134,7 @@ const PollCreate = (props: AbstractProps) => {
                     onChange = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
+                    pointerEvents = { 'auto' }
                     value = { question } />
                 <Divider style = { styles.fieldSeparator } />
                 <FlatList

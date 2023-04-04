@@ -38,6 +38,7 @@ interface IProps extends IInputProps {
     onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
     onKeyPress?: ((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void) | undefined;
     onSubmitEditing?: (value: string) => void;
+    pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto' | undefined;
     returnKeyType?: ReturnKeyTypeOptions | undefined;
     secureTextEntry?: boolean | undefined;
     textContentType?: any;
@@ -70,6 +71,7 @@ const Input = forwardRef<TextInput, IInputProps>(({
     onKeyPress,
     onSubmitEditing,
     placeholder,
+    pointerEvents,
     returnKeyType,
     secureTextEntry,
     textContentType,
@@ -134,6 +136,7 @@ const Input = forwardRef<TextInput, IInputProps>(({
                 onSubmitEditing = { handleSubmitEditing }
                 placeholder = { placeholder }
                 placeholderTextColor = { BaseTheme.palette.text02 }
+                pointerEvents = { pointerEvents }
                 ref = { ref }
                 returnKeyType = { returnKeyType }
                 secureTextEntry = { secureTextEntry }
