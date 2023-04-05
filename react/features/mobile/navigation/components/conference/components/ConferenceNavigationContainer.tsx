@@ -39,7 +39,7 @@ import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 import LanguageSelectorDialog
 // @ts-ignore
-    from '../../../../../subtitles/components/LanguageSelectorDialog.native';
+    from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {

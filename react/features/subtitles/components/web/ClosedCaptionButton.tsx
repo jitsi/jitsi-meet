@@ -1,13 +1,12 @@
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n/functions';
-import { IconSubtitles } from '../../base/icons/svg';
-import { toggleLanguageSelectorDialog } from '../actions.web';
-
+import { translate } from '../../../base/i18n/functions';
+import { IconSubtitles } from '../../../base/icons/svg';
+import { toggleLanguageSelectorDialog } from '../../actions.web';
 import {
     AbstractClosedCaptionButton,
     _abstractMapStateToProps
-} from './AbstractClosedCaptionButton';
+} from '../AbstractClosedCaptionButton';
 
 /**
  * A button which starts/stops the transcriptions.

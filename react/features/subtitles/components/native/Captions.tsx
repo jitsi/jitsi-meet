@@ -2,14 +2,14 @@ import React, { ReactElement } from 'react';
 import { GestureResponderEvent, StyleProp } from 'react-native';
 import { connect } from 'react-redux';
 
-import Container from '../../base/react/components/native/Container';
-import Text from '../../base/react/components/native/Text';
-
+import Container from '../../../base/react/components/native/Container';
+import Text from '../../../base/react/components/native/Text';
 import {
     AbstractCaptions,
     type IAbstractCaptionsProps,
     _abstractMapStateToProps
-} from './AbstractCaptions';
+} from '../AbstractCaptions';
+
 import styles from './styles';
 
 
@@ -40,7 +40,7 @@ class Captions extends AbstractCaptions<IProps> {
             <Text
                 key = { id }
                 onPress = { this.props.onPress }
-                style = { styles.subtitle as StyleProp<Object> } >
+                style = { styles.captionsSubtitles as StyleProp<Object> } >
                 { text }
             </Text>
         );
@@ -56,7 +56,7 @@ class Captions extends AbstractCaptions<IProps> {
      */
     _renderSubtitlesContainer(paragraphs: Array<ReactElement>): ReactElement {
         return (
-            <Container style = { styles.subtitlesContainer } >
+            <Container style = { styles.captionsSubtitlesContainer } >
                 { paragraphs }
             </Container>
         );

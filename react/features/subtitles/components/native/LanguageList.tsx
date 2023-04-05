@@ -1,23 +1,17 @@
+/* eslint-disable lines-around-comment  */
+
 import React from 'react';
-import { makeStyles } from 'tss-react/mui';
+import { ScrollView } from 'react-native';
 
-
-import LanguageListItem from './LanguageListItem.web';
+import LanguageListItem from './LanguageListItem';
+// @ts-ignore
+import styles from './styles.native';
 
 interface ILanguageListProps {
     items: Array<ILanguageItem>;
     onLanguageSelected: (lang: string) => void;
     selectedLanguage: string;
 }
-
-const useStyles = makeStyles()(() => {
-    return {
-        itemsContainer: {
-            display: 'flex',
-            flexFlow: 'column'
-        }
-    };
-});
 
 
 interface ILanguageItem {
@@ -31,12 +25,8 @@ interface ILanguageItem {
  *
  * @returns {React$Element<any>}
  */
-const LanguageList = ({
-    items,
-    onLanguageSelected
-}: ILanguageListProps) => {
-    const { classes: styles } = useStyles();
-    const listItems = items.map(item => (
+const LanguageList = ({ items, onLanguageSelected }: ILanguageListProps) => {
+    const listItems = items?.map(item => (
         <LanguageListItem
             key = { item.id }
             lang = { item.lang }
@@ -45,7 +35,11 @@ const LanguageList = ({
     ));
 
     return (
-        <div className = { styles.itemsContainer }>{listItems}</div>
+        <ScrollView
+            bounces = { false }
+            style = { styles.itemsContainer }>
+            { listItems }
+        </ScrollView>
     );
 };
 

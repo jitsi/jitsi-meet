@@ -1,4 +1,8 @@
-import BaseTheme from '../../base/ui/components/BaseTheme.native';
+import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
+import {
+    ColorPalette
+} from '../../../base/styles/components/styles/ColorPalette';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
  * The styles of the React {@code Component}s of the feature subtitles.
@@ -28,6 +32,28 @@ export default {
     subtitlesContainer: {
         backgroundColor: BaseTheme.palette.ui01,
         flex: 1
+    },
+
+    /**
+     * Style for subtitle paragraph.
+     */
+    captionsSubtitles: {
+        backgroundColor: ColorPalette.black,
+        borderRadius: BoxModel.margin / 4,
+        color: ColorPalette.white,
+        marginBottom: BoxModel.margin,
+        padding: BoxModel.padding / 2
+    },
+
+    /**
+     * Style for the subtitles container.
+     */
+    captionsSubtitlesContainer: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        flexGrow: 0,
+        justifyContent: 'flex-end',
+        margin: BoxModel.margin
     },
 
     itemsContainer: {

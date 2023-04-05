@@ -2,22 +2,21 @@
 
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
-import { CLOSE_CAPTIONS_ENABLED } from '../../base/flags/constants';
-import { getFeatureFlag } from '../../base/flags/functions';
-import { translate } from '../../base/i18n/functions';
-import { IconSubtitles } from '../../base/icons/svg';
+import { IReduxState } from '../../../app/types';
+import { CLOSE_CAPTIONS_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { translate } from '../../../base/i18n/functions';
+import { IconSubtitles } from '../../../base/icons/svg';
 import { navigate }
 // @ts-ignore
-    from '../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+    from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
-import { screen } from '../../mobile/navigation/routes';
-
+import { screen } from '../../../mobile/navigation/routes';
 import {
     AbstractClosedCaptionButton,
     IAbstractProps,
     _abstractMapStateToProps
-} from './AbstractClosedCaptionButton';
+} from '../AbstractClosedCaptionButton';
 
 
 /**
@@ -29,15 +28,10 @@ class ClosedCaptionButton
     icon = IconSubtitles;
     label = 'toolbar.startSubtitles';
     labelProps = {
-        // @ts-ignore
         language: this.props.t(this.props._language),
-        // @ts-ignore
-        languages: this.props.t(this.props.languages),
-        // @ts-ignore
-        languagesHead: this.props.t(this.props.languagesHead)
+        languages: this.props.t(this.props.languages ?? ''),
+        languagesHead: this.props.t(this.props.languagesHead ?? '')
     };
-    // @ts-ignore
-    toggledLabel = 'transcribing.stop';
 
     /**
      * Toggle language selection dialog.

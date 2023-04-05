@@ -1,16 +1,15 @@
 import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
-import { getLocalParticipant } from '../../base/participants/functions';
-import { getLargeVideoParticipant } from '../../large-video/functions';
-import { isLayoutTileView } from '../../video-layout/functions.web';
-
+import { IReduxState } from '../../../app/types';
+import { getLocalParticipant } from '../../../base/participants/functions';
+import { getLargeVideoParticipant } from '../../../large-video/functions';
+import { isLayoutTileView } from '../../../video-layout/functions.web';
 import {
     AbstractCaptions,
     type AbstractCaptionsProps,
     _abstractMapStateToProps
-} from './AbstractCaptions';
+} from '../AbstractCaptions';
 
 
 interface IProps extends AbstractCaptionsProps {

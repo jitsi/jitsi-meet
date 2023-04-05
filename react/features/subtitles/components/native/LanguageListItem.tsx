@@ -5,9 +5,9 @@ import { WithTranslation } from 'react-i18next';
 import { TouchableHighlight, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-import { translate } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconCheck } from '../../base/icons/svg';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCheck } from '../../../base/icons/svg';
 
 // @ts-ignore
 import styles from './styles.native';

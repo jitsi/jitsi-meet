@@ -73,7 +73,7 @@ import SettingsButton from '../../../settings/components/web/SettingsButton';
 import SharedVideoButton from '../../../shared-video/components/web/SharedVideoButton';
 import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import SpeakerStatsButton from '../../../speaker-stats/components/web/SpeakerStatsButton';
-import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton.web';
+import ClosedCaptionButton from '../../../subtitles/components/web/ClosedCaptionButton';
 import { toggleTileView } from '../../../video-layout/actions.web';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { shouldDisplayTileView } from '../../../video-layout/functions.web';
