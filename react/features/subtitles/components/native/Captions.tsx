@@ -2,7 +2,10 @@ import React, { ReactElement } from 'react';
 import { GestureResponderEvent, StyleProp } from 'react-native';
 import { connect } from 'react-redux';
 
+// @ts-ignore
 import Container from '../../../base/react/components/native/Container';
+
+// @ts-ignore
 import Text from '../../../base/react/components/native/Text';
 import {
     AbstractCaptions,
@@ -10,6 +13,7 @@ import {
     _abstractMapStateToProps
 } from '../AbstractCaptions';
 
+// @ts-ignore
 import styles from './styles';
 
 
