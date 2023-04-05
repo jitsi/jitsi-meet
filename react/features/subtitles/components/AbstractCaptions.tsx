@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 
 import { IReduxState } from '../../app/types';
 
@@ -6,7 +6,7 @@ import { IReduxState } from '../../app/types';
 /**
  * {@code AbstractCaptions} Properties.
  */
-export type AbstractCaptionsProps = {
+export interface IAbstractCaptionsProps {
 
     /**
      * Whether local participant is requesting to see subtitles.
@@ -18,22 +18,22 @@ export type AbstractCaptionsProps = {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts?: Map<string, string>;
-};
+    _transcripts: Map<string, string> | any;
+}
 
 /**
  * Abstract React {@code Component} which can display speech-to-text results
  * from Jigasi as subtitles.
  */
-export class AbstractCaptions<P extends AbstractCaptionsProps>
-    extends Component<P> {
+export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Component<P> {
 
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {React$Element}
+     * @returns {ReactElement}
      */
+    // @ts-ignore
     render() {
         const { _requestingSubtitles, _transcripts } = this.props;
 
@@ -59,7 +59,7 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
      * @param {string} _text - Subtitles text formatted with the participant's
      * name.
      * @protected
-     * @returns {React$Element} - The React element which displays the text.
+     * @returns {ReactElement} - The React element which displays the text.
      */
     _renderParagraph(_id: string, _text: string) {
         return <></>;
@@ -69,10 +69,10 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
      * Renders the subtitles container.
      *
      * @abstract
-     * @param {Array<React$Element>} _el - An array of elements created
+     * @param {Array<ReactElement>} _el - An array of elements created
      * for each subtitle using the {@link _renderParagraph} method.
      * @protected
-     * @returns {React$Element} - The subtitles container.
+     * @returns {ReactElement} - The subtitles container.
      */
     _renderSubtitlesContainer(_el: Array<React.ReactElement>) {
         return <></>;

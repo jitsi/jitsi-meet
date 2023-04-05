@@ -17,7 +17,7 @@ interface IProps extends AbstractCaptionsProps {
     /**
      * Whether the subtitles container is lifted above the invite box.
      */
-    _isLifted: boolean;
+    _isLifted: boolean | undefined;
 }
 
 /**
