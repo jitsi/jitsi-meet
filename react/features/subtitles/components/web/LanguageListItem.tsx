@@ -9,17 +9,17 @@ import { IconCheck } from '../../../base/icons/svg';
 interface ILanguageListItemProps extends WithTranslation {
 
     /**
-     * Whether or not the button should be full width.
+     * Language string.
      */
     lang: string;
 
     /**
-     * Click callback.
+     * Callback for language selection.
      */
     onLanguageSelected: (lang: string) => void;
 
     /**
-     * The id of the button.
+     * If language item is selected or not.
      */
     selected?: boolean;
 }

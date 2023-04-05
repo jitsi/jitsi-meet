@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native';
 
 import LanguageListItem from './LanguageListItem';
 // @ts-ignore
-import styles from './styles.native';
+import styles from './styles';
 
 interface ILanguageListProps {
     items: Array<ILanguageItem>;
@@ -26,9 +26,11 @@ interface ILanguageItem {
  * @returns {React$Element<any>}
  */
 const LanguageList = ({ items, onLanguageSelected }: ILanguageListProps) => {
+
     const listItems = items?.map(item => (
         <LanguageListItem
             key = { item.id }
+            // @ts-ignore
             lang = { item.lang }
             onLanguageSelected = { onLanguageSelected }
             selected = { item.selected } />

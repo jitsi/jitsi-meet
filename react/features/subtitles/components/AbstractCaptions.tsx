@@ -33,8 +33,7 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
      * @inheritdoc
      * @returns {ReactElement}
      */
-    // @ts-ignore
-    render() {
+    render(): any {
         const { _requestingSubtitles, _transcripts } = this.props;
 
         if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
@@ -47,6 +46,7 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
             paragraphs.push(this._renderParagraph(id, text));
         }
 
+        // @ts-ignore
         return this._renderSubtitlesContainer(paragraphs);
     }
 

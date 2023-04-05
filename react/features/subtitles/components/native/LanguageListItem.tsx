@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { TouchableHighlight, View } from 'react-native';
+import { StyleProp, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n/functions';
@@ -10,22 +10,23 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconCheck } from '../../../base/icons/svg';
 
 // @ts-ignore
-import styles from './styles.native';
+import styles from './styles';
+
 
 interface ILanguageListItemProps extends WithTranslation {
 
     /**
-     * Whether or not the button should be full width.
+     * Language string.
      */
     lang: string;
 
     /**
-     * Click callback.
+     * Callback for language selection.
      */
     onLanguageSelected: (lang: string) => void;
 
     /**
-     * The id of the button.
+     * If language item is selected or not.
      */
     selected?: boolean;
 }
@@ -43,7 +44,7 @@ const LanguageListItem = ({ t, lang, selected, onLanguageSelected
         = useCallback(() => onLanguageSelected(lang), [ lang ]);
 
     return (
-        <View style = { styles.languageItemWrapper }>
+        <View style = { styles.languageItemWrapper as StyleProp<ViewStyle> }>
             <View style = { styles.iconWrapper }>
                 {
                     selected
