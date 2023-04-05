@@ -255,11 +255,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
         -- a message from visitor occupant of known visitor node
         stanza.attr.from = to;
         for _, o in room:each_occupant() do
-            -- Ignore sending messages to configured domains (jibri and transcribers)
-            if not ignore_list:contains(jid.host(o.bare_jid)) then
-                 -- send it to the nick to be able to route it to the room (ljm multiple rooms) from unknown occupant
-                room:route_to_occupant(o, stanza);
-            end
+            -- send it to the nick to be able to route it to the room (ljm multiple rooms) from unknown occupant
+            room:route_to_occupant(o, stanza);
         end
 
         -- now we need to send to rest of visitor nodes
