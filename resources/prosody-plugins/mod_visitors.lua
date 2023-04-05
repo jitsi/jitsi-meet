@@ -40,6 +40,10 @@ if main_muc_component_config == nil then
     return ;
 end
 
+-- A list of domains which to be ignored for visitors. For occupants using those domain we do not propagate them
+-- to visitor nodes and we do not update them with presence changes
+local ignore_list = module:get_option_set('visitors_ignore_list', {});
+
 -- Advertise the component for discovery via disco#items
 module:add_identity('component', 'visitors', 'visitors.'..module.host);
 
@@ -150,8 +154,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-pre-change', function (event)
         local room, stanza, occupant = event.room, event.stanza, event.dest_occupant;
 
-        -- filter focus
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil then
+        -- filter focus and configured domains (used for jibri and transcribers)
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
+            or ignore_list:contains(jid.host(occupant.bare_jid)) then
             return;
         end
 
@@ -170,7 +175,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-left', function (event)
         local room, stanza, occupant = event.room, event.stanza, event.occupant;
 
-        if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil then
+        -- ignore configured domains (jibri and transcribers)
+        if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
+            or ignore_list:contains(jid.host(occupant.bare_jid)) then
             return;
         end
 
@@ -198,8 +205,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-joined', function (event)
         local room, stanza, occupant = event.room, event.stanza, event.occupant;
 
-        -- filter focus
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil then
+        -- filter focus, ignore configured domains (jibri and transcribers)
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
+            or ignore_list:contains(jid.host(occupant.bare_jid)) then
             return;
         end
 
@@ -217,7 +225,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook("muc-occupant-groupchat", function(event)
         local room, stanza, occupant = event.room, event.stanza, event.occupant;
 
-        if not visitors_nodes[room.jid] then
+        -- filter sending messages from transcribers/jibris to visitors
+        if not visitors_nodes[room.jid] or ignore_list:contains(jid.host(occupant.bare_jid)) then
             return;
         end
 
@@ -246,8 +255,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
         -- a message from visitor occupant of known visitor node
         stanza.attr.from = to;
         for _, o in room:each_occupant() do
-            -- send it to the nick to be able to route it to the room (ljm multiple rooms) from unknown occupant
-            room:route_to_occupant(o, stanza);
+            -- Ignore sending messages to configured domains (jibri and transcribers)
+            if not ignore_list:contains(jid.host(o.bare_jid)) then
+                 -- send it to the nick to be able to route it to the room (ljm multiple rooms) from unknown occupant
+                room:route_to_occupant(o, stanza);
+            end
         end
 
         -- now we need to send to rest of visitor nodes

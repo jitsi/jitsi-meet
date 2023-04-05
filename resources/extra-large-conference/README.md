@@ -80,6 +80,7 @@ s2s_whitelist = {
 
 - Make sure s2s is not in modules_disabled
 - Enable `"visitors";` module under the main virtual host (e.g. [here](https://github.com/jitsi/jitsi-meet/blob/f42772ec5bcc87ff6de17423d36df9bcad6e770d/doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example#L57))
+  You can add under main virtual host the config: `visitors_ignore_list = { "recorder.jitmeet.example.com" }` to ignore jibri and transcribers from the visitor logic and use them only in the main prosody conference.
 - Create the visitors component in /etc/prosody/conf.d/jitmeet.example.com.cfg.lua:
 ```
 Component "visitors.jitmeet.example.com" "visitors_component"
