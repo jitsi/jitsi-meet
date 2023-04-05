@@ -35,6 +35,11 @@ local fmuc_main_domain;
 
 local sent_iq_cache = require 'util.cache'.new(200);
 
+local um_is_admin = require 'core.usermanager'.is_admin;
+local function is_admin(jid)
+    return um_is_admin(jid, module.host);
+end
+
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
     local occupant, session = event.occupant, event.origin;
@@ -48,6 +53,48 @@ module:hook('muc-occupant-pre-join', function (event)
         end
     end
 end, 3);
+
+-- Returns the main participants count and the visitors count
+local function get_occupant_counts(room)
+    local main_count = 0;
+    local visitors_count = 0;
+
+    for _, o in room:each_occupant() do
+        if o.role == 'visitor' then
+            visitors_count = visitors_count + 1;
+        elseif not is_admin(o.bare_jid) then
+            main_count = main_count + 1;
+        end
+    end
+
+    return main_count, visitors_count;
+end
+
+local function cancel_destroy_timer(room)
+    if room.visitors_destroy_timer then
+        room.visitors_destroy_timer:stop();
+        room.visitors_destroy_timer = nil;
+    end
+end
+
+-- schedules a new destroy timer which will destroy the room if there are no visitors after the timeout
+local function schedule_destroy_timer(room)
+    cancel_destroy_timer(room);
+
+    room.visitors_destroy_timer = module:add_timer(15, function()
+        -- if the room is being destroyed, ignore
+        if room.destroying then
+            return;
+        end
+
+        local main_count, visitors_count = get_occupant_counts(room);
+
+        if visitors_count == 0 then
+            module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
+            room:destroy(nil, 'No visitors.');
+        end
+    end);
+end
 
 -- when occupant is leaving forward presences to jicofo for visitors
 -- do not check occupant.role as it maybe already reset
@@ -75,38 +122,24 @@ module:hook('muc-occupant-left', function (event)
             jid = occupant.bare_jid }):up():up());
     end
 
-    if not room.destroying then
-        if room.visitors_destroy_timer then
-            room.visitors_destroy_timer:stop();
-        end
+    -- if the room is being destroyed, ignore
+    if room.destroying then
+        return;
+    end
 
-        room.visitors_destroy_timer = module:add_timer(15, function()
-            -- let's check are all visitors in the room, if all a visitors - destroy it
-            -- if all are main-participants also destroy it
-            local main_count = 0;
-            local visitors_count = 0;
+    -- if there are no main participants, the main room will be destroyed and
+    -- we can destroy and the visitor one as when jicofo leaves all visitors will reload
+    -- if there are no visitors give them 15 secs to reconnect, if not destroy it
+    local main_count, visitors_count = get_occupant_counts(room);
 
-            for _, o in room:each_occupant() do
-                -- if there are visitors and main participant there is no point continue
-                if main_count > 0 and visitors_count > 0 then
-                    return;
-                end
+    if main_count == 0 then
+        module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
+        room:destroy(nil, 'No main participants.');
+        return;
+    end
 
-                if o.role == 'visitor' then
-                    visitors_count = visitors_count + 1;
-                else
-                    main_count = main_count + 1;
-                end
-            end
-
-            if main_count == 0 then
-                module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
-                room:destroy(nil, 'No main participants.');
-            elseif visitors_count == 0 then
-                module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
-                room:destroy(nil, 'No visitors.');
-            end
-        end);
+    if visitors_count == 0 then
+        schedule_destroy_timer(room);
     end
 end);
 
