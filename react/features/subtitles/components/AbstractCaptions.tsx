@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { IReduxState } from '../../app/types';
 
+
 /**
  * {@code AbstractCaptions} Properties.
  */
@@ -129,7 +130,7 @@ export function _abstractMapStateToProps(state: IReduxState) {
     return {
         _requestingSubtitles,
 
-        // avoid rerenders by setting to props new empty Map instances.
+        // avoid re-renders by setting to prop new empty Map instances.
         _transcripts: transcripts.size === 0 ? undefined : transcripts
     };
 }

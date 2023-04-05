@@ -24,7 +24,7 @@ interface ITranscriptMessage {
 export interface ISubtitlesState {
     _language: string;
     _requestingSubtitles: boolean;
-    _transcriptMessages: Map<string, ITranscriptMessage>;
+    _transcriptMessages: Map<string, ITranscriptMessage> | any;
 }
 
 /**

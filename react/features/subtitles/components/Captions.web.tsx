@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
@@ -11,6 +11,7 @@ import {
     type AbstractCaptionsProps,
     _abstractMapStateToProps
 } from './AbstractCaptions';
+
 
 interface IProps extends AbstractCaptionsProps {
 
@@ -34,9 +35,9 @@ class Captions extends AbstractCaptions<IProps> {
      * @param {string} text - Subtitles text formatted with the participant's
      * name.
      * @protected
-     * @returns {React$Element} - The React element which displays the text.
+     * @returns {ReactElement} - The React element which displays the text.
      */
-    _renderParagraph(id: string, text: string) {
+    _renderParagraph(id: string, text: string): ReactElement {
         return (
             <p key = { id }>
                 <span>{ text }</span>
@@ -47,14 +48,15 @@ class Captions extends AbstractCaptions<IProps> {
     /**
      * Renders the subtitles container.
      *
-     * @param {Array<React$Element>} paragraphs - An array of elements created
+     * @param {Array<ReactElement>} paragraphs - An array of elements created
      * for each subtitle using the {@link _renderParagraph} method.
      * @protected
-     * @returns {React$Element} - The subtitles container.
+     * @returns {ReactElement} - The subtitles container.
      */
-    _renderSubtitlesContainer(paragraphs: Array<React.ReactElement>) {
-
-        const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
+    _renderSubtitlesContainer(paragraphs: Array<ReactElement>): ReactElement {
+        const className = this.props._isLifted
+            ? 'transcription-subtitles lifted'
+            : 'transcription-subtitles';
 
         return (
             <div className = { className } >
