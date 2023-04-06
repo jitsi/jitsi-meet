@@ -1,7 +1,4 @@
-// @flow
-
-import type { Dispatch } from 'redux';
-
+import { IStore } from '../app/types';
 import { getShareInfoText } from '../invite/functions';
 import { getLiveStreaming } from '../recording/components/LiveStream/functions';
 
@@ -10,7 +7,9 @@ import {
     SET_GOOGLE_API_STATE
 } from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
-import googleApi from './googleApi';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import googleApi from './googleApi.web';
 
 /**
  * Retrieves the current calendar events.
@@ -20,7 +19,7 @@ import googleApi from './googleApi';
  * @returns {function(Dispatch<any>): Promise<CalendarEntries>}
  */
 export function getCalendarEntries(
-        fetchStartDays: ?number, fetchEndDays: ?number) {
+        fetchStartDays?: number, fetchEndDays?: number) {
     return () =>
         googleApi.get()
         .then(() =>
@@ -33,7 +32,7 @@ export function getCalendarEntries(
  * @returns {Function}
  */
 export function loadGoogleAPI() {
-    return (dispatch: Dispatch<any>, getState: Function) =>
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
         googleApi.get()
         .then(() => {
             const {
@@ -54,7 +53,7 @@ export function loadGoogleAPI() {
         .then(() => dispatch(setGoogleAPIState(GOOGLE_API_STATES.LOADED)))
         .then(() => googleApi.signInIfNotSignedIn())
         .then(() => googleApi.isSignedIn())
-        .then(isSignedIn => {
+        .then((isSignedIn: boolean) => {
             if (isSignedIn) {
                 dispatch(setGoogleAPIState(GOOGLE_API_STATES.SIGNED_IN));
             }
@@ -70,13 +69,13 @@ export function loadGoogleAPI() {
 export function requestAvailableYouTubeBroadcasts() {
     return () =>
         googleApi.requestAvailableYouTubeBroadcasts()
-        .then(response => {
+        .then((response: any) => {
             // Takes in a list of broadcasts from the YouTube API,
             // removes dupes, removes broadcasts that cannot get a stream key,
             // and parses the broadcasts into flat objects.
             const broadcasts = response.result.items;
 
-            const parsedBroadcasts = {};
+            const parsedBroadcasts: any = {};
 
             for (let i = 0; i < broadcasts.length; i++) {
                 const broadcast = broadcasts[i];
@@ -109,11 +108,9 @@ export function requestAvailableYouTubeBroadcasts() {
 export function requestLiveStreamsForYouTubeBroadcast(boundStreamID: string) {
     return () =>
         googleApi.requestLiveStreamsForYouTubeBroadcast(boundStreamID)
-            .then(response => {
+            .then((response: any) => {
                 const broadcasts = response.result.items;
-                const streamName = broadcasts
-                    && broadcasts[0]
-                    && broadcasts[0].cdn.ingestionInfo.streamName;
+                const streamName = broadcasts?.[0]?.cdn.ingestionInfo.streamName;
                 const streamKey = streamName || '';
 
                 return {
@@ -134,7 +131,7 @@ export function requestLiveStreamsForYouTubeBroadcast(boundStreamID: string) {
  * }}
  */
 export function setGoogleAPIState(
-        googleAPIState: number, googleResponse: ?Object) {
+        googleAPIState: number, googleResponse?: Object) {
     return {
         type: SET_GOOGLE_API_STATE,
         googleAPIState,
@@ -160,7 +157,7 @@ export function showAccountSelection() {
  * @returns {function(Dispatch<any>): Promise<string | never>}
  */
 export function signIn() {
-    return (dispatch: Dispatch<any>) => googleApi.get()
+    return (dispatch: IStore['dispatch']) => googleApi.get()
             .then(() => googleApi.signInIfNotSignedIn(true))
             .then(() => dispatch({
                 type: SET_GOOGLE_API_STATE,
@@ -174,7 +171,7 @@ export function signIn() {
  * @returns {function(Dispatch<any>): Promise<string | never>}
  */
 export function signOut() {
-    return (dispatch: Dispatch<any>) =>
+    return (dispatch: IStore['dispatch']) =>
         googleApi.get()
             .then(() => googleApi.signOut())
             .then(() => {
@@ -195,14 +192,14 @@ export function signOut() {
  * @returns {function(Dispatch<any>): Promise<string | never>}
  */
 export function updateProfile() {
-    return (dispatch: Dispatch<any>) => googleApi.get()
+    return (dispatch: IStore['dispatch']) => googleApi.get()
         .then(() => googleApi.signInIfNotSignedIn())
         .then(() => dispatch({
             type: SET_GOOGLE_API_STATE,
             googleAPIState: GOOGLE_API_STATES.SIGNED_IN
         }))
         .then(() => googleApi.getCurrentUserProfile())
-        .then(profile => {
+        .then((profile: any) => {
             dispatch({
                 type: SET_GOOGLE_API_PROFILE,
                 profileEmail: profile.email
@@ -222,7 +219,7 @@ export function updateProfile() {
  */
 export function updateCalendarEvent(
         id: string, calendarId: string, location: string) {
-    return (dispatch: Dispatch<any>, getState: Function) =>
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
         getShareInfoText(getState(), location)
             .then(text =>
                 googleApi._updateCalendarEntry(id, calendarId, location, text));

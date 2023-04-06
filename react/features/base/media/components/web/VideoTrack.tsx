@@ -1,132 +1,130 @@
-/* @flow */
-
-import React from 'react';
+import React, { ReactEventHandler } from 'react';
 import { connect } from 'react-redux';
 
-import AbstractVideoTrack from '../AbstractVideoTrack';
-import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
+import { IReduxState } from '../../../../app/types';
+import AbstractVideoTrack, { IProps as AbstractVideoTrackProps } from '../AbstractVideoTrack';
 
 import Video from './Video';
 
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
-type Props = AbstractVideoTrackProps & {
-
-    /**
-     * CSS classes to add to the video element.
-     */
-    className: string,
-
-    /**
-     * The value of the id attribute of the video. Used by the torture tests
-     * to locate video elements.
-     */
-    id: string,
+interface IProps extends AbstractVideoTrackProps {
 
     /**
      *
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean,
+    _noAutoPlayVideo: boolean;
+
+    /**
+     * CSS classes to add to the video element.
+     */
+    className: string;
 
     /**
      * A map of the event handlers for the video HTML element.
      */
-    eventHandlers?: {|
+    eventHandlers?: {
 
         /**
          * OnAbort event handler.
          */
-        onAbort?: ?Function,
+        onAbort?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnCanPlay event handler.
          */
-        onCanPlay?: ?Function,
+        onCanPlay?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnCanPlayThrough event handler.
          */
-        onCanPlayThrough?: ?Function,
+        onCanPlayThrough?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnEmptied event handler.
          */
-        onEmptied?: ?Function,
+        onEmptied?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnEnded event handler.
          */
-        onEnded?: ?Function,
+        onEnded?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnError event handler.
          */
-        onError?: ?Function,
-
-        /**
-         * OnLoadedData event handler.
-         */
-        onLoadedData?: ?Function,
-
-        /**
-         * OnLoadedMetadata event handler.
-         */
-        onLoadedMetadata?: ?Function,
+        onError?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnLoadStart event handler.
          */
-        onLoadStart?: ?Function,
+        onLoadStart?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnLoadedData event handler.
+         */
+        onLoadedData?: ReactEventHandler<HTMLVideoElement>;
+
+        /**
+         * OnLoadedMetadata event handler.
+         */
+        onLoadedMetadata?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnPause event handler.
          */
-        onPause?: ?Function,
+        onPause?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnPlay event handler.
          */
-        onPlay?: ?Function,
+        onPlay?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnPlaying event handler.
          */
-        onPlaying?: ?Function,
+        onPlaying?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnRateChange event handler.
          */
-        onRateChange?: ?Function,
+        onRateChange?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnStalled event handler.
          */
-        onStalled?: ?Function,
+        onStalled?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnSuspend event handler.
          */
-        onSuspend?: ?Function,
+        onSuspend?: ReactEventHandler<HTMLVideoElement>;
 
         /**
          * OnWaiting event handler.
          */
-        onWaiting?: ?Function,
-    |},
+        onWaiting?: ReactEventHandler<HTMLVideoElement>;
+    };
 
     /**
-     * A styles that will be applied on the video element.
+     * The value of the id attribute of the video. Used by the torture tests
+     * to locate video elements.
      */
-    style: Object,
+    id: string;
 
     /**
      * The value of the muted attribute for the underlying element.
      */
-    muted?: boolean
-};
+    muted?: boolean;
+
+    /**
+     * A styles that will be applied on the video element.
+     */
+    style: Object;
+}
 
 /**
  * Component that renders a video element for a passed in video track and
@@ -134,7 +132,7 @@ type Props = AbstractVideoTrackProps & {
  *
  * @augments AbstractVideoTrack
  */
-class VideoTrack extends AbstractVideoTrack<Props> {
+class VideoTrack extends AbstractVideoTrack<IProps> {
     /**
      * Default values for {@code VideoTrack} component's properties.
      *
@@ -176,8 +174,6 @@ class VideoTrack extends AbstractVideoTrack<Props> {
                 videoTrack = { videoTrack } />
         );
     }
-
-    _onVideoPlaying: () => void;
 }
 
 
@@ -190,11 +186,11 @@ class VideoTrack extends AbstractVideoTrack<Props> {
  *     _noAutoPlayVideo: boolean
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const testingConfig = state['features/base/config'].testing;
 
     return {
-        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
+        _noAutoPlayVideo: Boolean(testingConfig?.noAutoPlayVideo)
     };
 }
 

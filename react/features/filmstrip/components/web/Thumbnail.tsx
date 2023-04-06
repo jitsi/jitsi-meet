@@ -13,8 +13,6 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';

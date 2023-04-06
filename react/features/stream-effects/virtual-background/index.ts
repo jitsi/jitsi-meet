@@ -1,17 +1,22 @@
+/* eslint-disable lines-around-comment */
+import { IStore } from '../../app/types';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 
-import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
+import JitsiStreamBackgroundEffect, { IBackgroundEffectOptions } from './JitsiStreamBackgroundEffect';
+// @ts-expect-error
 import createTFLiteModule from './vendor/tflite/tflite';
+// @ts-expect-error
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 const models = {
     modelLandscape: 'libs/selfie_segmentation_landscape.tflite'
 };
+/* eslint-enable lines-around-comment */
 
-let modelBuffer;
-let tflite;
+let modelBuffer: ArrayBuffer;
+let tflite: any;
 let wasmCheck;
 let isWasmDisabled = false;
 
@@ -31,13 +36,14 @@ const segmentationDimensions = {
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {Promise<JitsiStreamBackgroundEffect>}
  */
-export async function createVirtualBackgroundEffect(virtualBackground: Object, dispatch: Function) {
+export async function createVirtualBackgroundEffect(virtualBackground: IBackgroundEffectOptions['virtualBackground'],
+        dispatch?: IStore['dispatch']) {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
     }
 
     if (isWasmDisabled) {
-        dispatch(showWarningNotification({
+        dispatch?.(showWarningNotification({
             titleKey: 'virtualBackground.backgroundEffectError'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
@@ -58,16 +64,16 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
             } else {
                 tflite = await timeout(tfliteTimeout, createTFLiteModule());
             }
-        } catch (err) {
+        } catch (err: any) {
             if (err?.message === '408') {
                 logger.error('Failed to download tflite model!');
-                dispatch(showWarningNotification({
+                dispatch?.(showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError'
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             } else {
                 isWasmDisabled = true;
                 logger.error('Looks like WebAssembly is disabled or not supported on this browser', err);
-                dispatch(showWarningNotification({
+                dispatch?.(showWarningNotification({
                     titleKey: 'virtualBackground.webAssemblyWarning',
                     descriptionKey: 'virtualBackground.webAssemblyWarningDescription'
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG));

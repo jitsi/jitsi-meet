@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import React, { TouchEventHandler } from 'react';
 import { useSelector } from 'react-redux';
 
-// @ts-ignore
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { ITrack } from '../../../base/tracks/types';
 import { LAYOUTS } from '../../../video-layout/constants';

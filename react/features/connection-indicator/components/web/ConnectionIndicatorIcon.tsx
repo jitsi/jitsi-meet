@@ -1,46 +1,49 @@
-// @flow
-
-import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconConnection, IconConnectionInactive } from '../../../base/icons/svg';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { trackStreamingStatusChanged } from '../../../base/tracks/actions.web';
+import { ITrack } from '../../../base/tracks/types';
 
-type Props = {
+interface IProps {
 
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: any;
 
     /**
      * A CSS class that interprets the current connection status as a color.
      */
-    colorClass: string,
+    colorClass: string;
 
     /**
      * Disable/enable inactive indicator.
      */
-    connectionIndicatorInactiveDisabled: boolean,
-
-    /**
-     * JitsiTrack instance.
-     */
-    track: Object,
+    connectionIndicatorInactiveDisabled: boolean;
 
     /**
      * Whether or not the connection status is inactive.
      */
-    isConnectionStatusInactive: boolean,
+    isConnectionStatusInactive: boolean;
 
     /**
      * Whether or not the connection status is interrupted.
      */
-    isConnectionStatusInterrupted: boolean,
+    isConnectionStatusInterrupted?: boolean;
+
+    /**
+     * JitsiTrack instance.
+     */
+    track?: ITrack;
 }
+
+const useStyles = makeStyles()(() => {
+    return {};
+});
 
 export const ConnectionIndicatorIcon = ({
     classes,
@@ -49,11 +52,12 @@ export const ConnectionIndicatorIcon = ({
     isConnectionStatusInactive,
     isConnectionStatusInterrupted,
     track
-}: Props) => {
+}: IProps) => {
+    const { cx } = useStyles();
     const dispatch = useDispatch();
     const sourceName = track?.jitsiTrack?.getSourceName();
 
-    const handleTrackStreamingStatusChanged = (jitsiTrack, streamingStatus) => {
+    const handleTrackStreamingStatusChanged = (jitsiTrack: any, streamingStatus: string) => {
         dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     };
 
@@ -86,7 +90,7 @@ export const ConnectionIndicatorIcon = ({
         return (
             <span className = 'connection_ninja'>
                 <Icon
-                    className = { clsx(classes.icon, classes.inactiveIcon, colorClass) }
+                    className = { cx(classes.icon, classes.inactiveIcon, colorClass) }
                     size = { 24 }
                     src = { IconConnectionInactive } />
             </span>
@@ -103,7 +107,7 @@ export const ConnectionIndicatorIcon = ({
     return (
         <span className = { emptyIconWrapperClassName }>
             <Icon
-                className = { clsx(classes.icon, colorClass) }
+                className = { cx(classes.icon, colorClass) }
                 size = { 16 }
                 src = { IconConnection } />
         </span>

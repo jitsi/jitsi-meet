@@ -8,7 +8,7 @@ import AbstractPage from '../../base/react/components/AbstractPage';
 import { Container, Text } from '../../base/react/components/index';
 
 // @ts-ignore
-import styles from './styles';
+import styles from './styles.web';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractRecentList}.

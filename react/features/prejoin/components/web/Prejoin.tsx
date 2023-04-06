@@ -31,7 +31,6 @@ import {
     isPrejoinDisplayNameVisible
 } from '../../functions';
 
-// @ts-ignore
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 
 interface IProps extends WithTranslation {
@@ -407,7 +406,7 @@ class Prejoin extends Component<IProps, IState> {
                     </div>
                 </div>
                 { showDialog && (
-                    <JoinByPhoneDialog
+                    <JoinByPhoneDialog // @ts-ignore
                         joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
                         onClose = { _closeDialog } />
                 )}

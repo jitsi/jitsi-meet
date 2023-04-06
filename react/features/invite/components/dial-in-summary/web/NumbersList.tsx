@@ -41,13 +41,13 @@ interface IProps extends WithTranslation {
     /**
      * The conference ID for dialing in.
      */
-    conferenceID: number;
+    conferenceID: number | null;
 
     /**
      * The phone numbers to display. Can be an array of number Objects or an
      * object with countries as keys and an array of numbers as values.
      */
-    numbers: INumbersMapping;
+    numbers: INumbersMapping | null;
 
 }
 

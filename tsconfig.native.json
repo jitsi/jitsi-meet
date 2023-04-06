@@ -33,6 +33,7 @@
         "react/features/screenshot-capture",
         "react/features/stream-effects/noise-suppression",
         "react/features/stream-effects/rnnoise",
+        "react/features/stream-effects/virtual-background",
         "react/features/virtual-background",
         "react/features/web-hid",
         "react/features/whiteboard",
