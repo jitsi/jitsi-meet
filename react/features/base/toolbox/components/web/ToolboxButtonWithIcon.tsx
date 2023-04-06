@@ -110,7 +110,7 @@ export default function ToolboxButtonWithIcon(props: IProps) {
             = 'settings-button-small-icon settings-button-small-icon--disabled';
     } else {
         className = 'settings-button-small-icon';
-        iconProps.onClick = () => {
+        iconProps.onClick = (e: React.MouseEvent) => {
             if (typeof APP !== 'undefined' && notifyMode) {
                 APP.API.notifyToolbarButtonClicked(
                     buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
@@ -118,7 +118,7 @@ export default function ToolboxButtonWithIcon(props: IProps) {
             }
 
             if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
-                onIconClick();
+                onIconClick(e);
             }
         };
         iconProps.onKeyDown = onIconKeyDown;

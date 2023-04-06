@@ -1,25 +1,31 @@
 .popover {
-    margin: -16px -24px;
     z-index: $popoverZ;
 
     .popover-content {
-        margin: 16px 24px;
         position: relative;
+    }
 
-        &.top {
-            bottom: 8px;
-        }
+    &.hover {
+        margin: -16px -24px;
 
-        &.bottom {
-            top: 4px;
-        }
+        .popover-content {
+            margin: 16px 24px;
 
-        &.left {
-            right: 4px;
-        }
+            &.top {
+                bottom: 8px;
+            }
 
-        &.right {
-            left: 4px;
+            &.bottom {
+                top: 4px;
+            }
+
+            &.left {
+                right: 4px;
+            }
+
+            &.right {
+                left: 4px;
+            }
         }
     }
 }
