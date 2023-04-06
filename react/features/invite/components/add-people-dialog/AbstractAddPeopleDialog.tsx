@@ -3,13 +3,11 @@ import { Component } from 'react';
 import { createInviteDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
-import { showNotification } from '../../../notifications/actions';
+import { showErrorNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
-import { INotificationProps } from '../../../notifications/types';
-import { invite } from '../../actions';
+import { invite } from '../../actions.web';
 import { INVITE_TYPES } from '../../constants';
 import {
-    GetInviteResultsOptions,
     getInviteResultsForQuery,
     getInviteTypeCounts,
     isAddPeopleEnabled,
@@ -17,15 +15,18 @@ import {
     isSipInviteEnabled
 } from '../../functions';
 import logger from '../../logger';
-import { IInvitee } from '../../types';
+import { IInvitee, InviteSelectItem } from '../../types';
 
-export interface IProps {
+export type Props = {
 
     /**
      * Whether or not to show Add People functionality.
      */
     _addPeopleEnabled: boolean;
 
+    /**
+     * The app id of the user.
+     */
     _appId: string;
 
     /**
@@ -48,17 +49,17 @@ export interface IProps {
      */
     _dialOutRegionUrl: string;
 
-    /**
+     /**
      * The JWT token.
      */
     _jwt: string;
 
-    /**
+     /**
      * The query types used when searching people.
      */
     _peopleSearchQueryTypes: Array<string>;
 
-    /**
+     /**
      * The URL pointing to the service allowing for people search.
      */
     _peopleSearchUrl: string;
@@ -66,15 +67,15 @@ export interface IProps {
     /**
      * Whether or not to allow sip invites.
      */
-    _sipInviteEnabled: boolean;
+     _sipInviteEnabled: boolean;
 
     /**
      * The Redux dispatch function.
      */
     dispatch: Function;
-}
+};
 
-export interface IState {
+export type State = {
 
     /**
      * Indicating that an error occurred when adding people to the call.
@@ -90,14 +91,13 @@ export interface IState {
     /**
      * The list of invite items.
      */
-    inviteItems: Array<Object>;
-}
+    inviteItems: Array<InviteSelectItem>;
+};
 
 /**
  * Implements an abstract dialog to invite people to the conference.
  */
-export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
-    extends Component<P, S> {
+export default class AbstractAddPeopleDialog<P extends Props, S extends State> extends Component<P, S> {
     /**
      * Constructor of the component.
      *
@@ -106,13 +106,13 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
     constructor(props: P) {
         super(props);
 
-        this._query = this._query.bind(this);
+        this._query = this._query?.bind(this);
     }
 
     /**
      * Retrieves the notification display name for the invitee.
      *
-     * @param {Object} invitee - The invitee object.
+     * @param {IInvitee} invitee - The invitee object.
      * @returns {string}
      */
     _getDisplayName(invitee: IInvitee) {
@@ -124,7 +124,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
             return invitee.address;
         }
 
-        return invitee.name;
+        return invitee.name ?? '';
     }
 
     /**
@@ -135,8 +135,8 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
      * no invites left to send. If any are left, that means an invite failed
      * and an error state should display.
      *
-     * @param {Array<Object>} invitees - The items to be invited.
-     * @returns {Promise<Array<Object>>}
+     * @param {Array<IInvitee>} invitees - The items to be invited.
+     * @returns {Promise<Array<any>>}
      */
     _invite(invitees: IInvitee[]) {
         const inviteTypeCounts = getInviteTypeCounts(invitees);
@@ -176,19 +176,18 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                         'error', 'invite', {
                             ...erroredInviteTypeCounts
                         }));
-
-                    this.setState({
-                        addToCallError: true
-                    });
+                    dispatch(showErrorNotification({
+                        titleKey: 'addPeople.failedToAdd'
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                 } else if (!_callFlowsEnabled) {
                     const invitedCount = invitees.length;
-                    let notificationProps: INotificationProps | undefined;
+                    let notificationProps;
 
                     if (invitedCount >= 3) {
                         notificationProps = {
                             titleArguments: {
                                 name: this._getDisplayName(invitees[0]),
-                                count: invitedCount - 1
+                                count: `${invitedCount - 1}`
                             },
                             titleKey: 'notify.invitedThreePlusMembers'
                         };
@@ -250,7 +249,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
             _peopleSearchUrl: peopleSearchUrl,
             _sipInviteEnabled: sipInviteEnabled
         } = this.props;
-        const options: GetInviteResultsOptions = {
+        const options = {
             addPeopleEnabled,
             appId,
             dialOutAuthUrl,
@@ -292,14 +291,14 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         _addPeopleEnabled: isAddPeopleEnabled(state),
-        _appId: state['features/base/jwt']?.tenant,
-        _callFlowsEnabled: callFlowsEnabled,
-        _dialOutAuthUrl: dialOutAuthUrl,
-        _dialOutRegionUrl: dialOutRegionUrl,
+        _appId: state['features/base/jwt']?.tenant ?? '',
+        _callFlowsEnabled: callFlowsEnabled ?? false,
+        _dialOutAuthUrl: dialOutAuthUrl ?? '',
+        _dialOutRegionUrl: dialOutRegionUrl ?? '',
         _dialOutEnabled: isDialOutEnabled(state),
-        _jwt: state['features/base/jwt'].jwt,
-        _peopleSearchQueryTypes: peopleSearchQueryTypes,
-        _peopleSearchUrl: peopleSearchUrl,
+        _jwt: state['features/base/jwt'].jwt ?? '',
+        _peopleSearchQueryTypes: peopleSearchQueryTypes ?? [],
+        _peopleSearchUrl: peopleSearchUrl ?? '',
         _sipInviteEnabled: isSipInviteEnabled(state)
     };
 }

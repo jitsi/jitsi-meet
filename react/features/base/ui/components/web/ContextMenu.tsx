@@ -119,6 +119,8 @@ interface IProps {
      * Tab index for the menu.
      */
     tabIndex?: number;
+
+    useEntityWidth?: boolean;
 }
 
 const MAX_HEIGHT = 400;
@@ -178,6 +180,7 @@ const ContextMenu = ({
     onMouseLeave,
     role,
     tabIndex,
+    useEntityWidth,
     ...aria
 }: IProps) => {
     const [ isHidden, setIsHidden ] = useState(true);
@@ -216,6 +219,9 @@ const ContextMenu = ({
                 : `${offsetTop}`;
 
             setIsHidden(false);
+            if (useEntityWidth) {
+                container.style.width = `${offsetTarget.offsetWidth}px`;
+            }
         } else {
             hidden === undefined && setIsHidden(true);
         }

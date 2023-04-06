@@ -1,25 +1,16 @@
-// @flow
-
 import React from 'react';
-
-import { translate } from '../../../../base/i18n/functions';
+import { useTranslation } from 'react-i18next';
 
 import InviteContactsForm from './InviteContactsForm';
-
-type Props = {
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
 
 /**
  * Component that represents the invitation section of the {@code AddPeopleDialog}.
  *
  * @returns {ReactElement$<any>}
  */
-function InviteContactsSection({ t }: Props) {
+function InviteContactsSection() {
+    const { t } = useTranslation();
+
     return (
         <>
             <span>{t('addPeople.addContacts')}</span>
@@ -29,4 +20,4 @@ function InviteContactsSection({ t }: Props) {
     );
 }
 
-export default translate(InviteContactsSection);
+export default InviteContactsSection;
