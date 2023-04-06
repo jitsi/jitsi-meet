@@ -365,6 +365,10 @@ class ConferenceConnector {
                 // we do not clear local tracks on error, so we need to manually clear them
                 .then(APP.store.dispatch(destroyLocalTracks()))
                 .then(() => {
+                    // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
+                    VideoLayout.initLargeVideo();
+                    VideoLayout.resizeVideoArea();
+
                     connect(this._conference.roomName).then(con => {
                         this._conference.startConference(con, []);
                     });
