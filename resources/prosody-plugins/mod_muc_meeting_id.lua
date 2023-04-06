@@ -4,6 +4,11 @@ local main_util = module:require "util";
 local ends_with = main_util.ends_with;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 
+local um_is_admin = require 'core.usermanager'.is_admin;
+local function is_admin(jid)
+    return um_is_admin(jid, module.host);
+end
+
 local QUEUE_MAX_SIZE = 100;
 
 -- Module that generates a unique meetingId, attaches it to the room
@@ -49,6 +54,15 @@ module:hook("muc-config-submitted/muc#roomconfig_moderatedroom", function()
     return true;
 end, 99);
 module:hook("muc-config-submitted/muc#roomconfig_presencebroadcast", function()
+    return true;
+end, 99);
+module:hook("muc-config-submitted/muc#roominfo_meetingId", function(event)
+    -- we allow jicofo to overwrite the meetingId
+    if is_admin(event.actor) then
+        event.room._data.meetingId = event.value;
+        return;
+    end
+
     return true;
 end, 99);
 
