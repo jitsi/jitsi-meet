@@ -43,6 +43,7 @@ import {
     conferenceFailed,
     conferenceWillLeave,
     createConference,
+    leaveConference,
     setLocalSubject,
     setSubject
 } from './actions';
@@ -152,6 +153,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             } else {
                 APP.API.notifyReadyToClose();
             }
+            dispatch(leaveConference());
         }
 
         break;
