@@ -39,3 +39,8 @@ export const CONFERENCE_LEAVE_REASONS = {
     SWITCH_ROOM: 'switch_room',
     UNRECOVERABLE_ERROR: 'unrecoverable_error'
 };
+
+/**
+ * Timeout for properly leaving the conference if it was destroyed.
+ */
+export const CONFERENCE_DESTROYED_LEAVE_TIMEOUT = 10000;

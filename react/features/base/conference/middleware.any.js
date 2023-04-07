@@ -47,7 +47,11 @@ import {
     setLocalSubject,
     setSubject
 } from './actions';
-import { CONFERENCE_LEAVE_REASONS, TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
+import {
+    CONFERENCE_DESTROYED_LEAVE_TIMEOUT,
+    CONFERENCE_LEAVE_REASONS,
+    TRIGGER_READY_TO_CLOSE_REASONS
+} from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -153,7 +157,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             } else {
                 APP.API.notifyReadyToClose();
             }
-            dispatch(leaveConference());
+            setTimeout(() => dispatch(leaveConference()), CONFERENCE_DESTROYED_LEAVE_TIMEOUT);
         }
 
         break;
