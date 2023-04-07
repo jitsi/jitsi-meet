@@ -12,11 +12,7 @@ import {
     showAccountSelection,
     signIn,
     updateProfile
-
-    // @ts-ignore
 } from '../../../../google-api/actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.web';
 import { GOOGLE_API_STATES } from '../../../../google-api/constants';
 import AbstractStartLiveStreamDialog, {

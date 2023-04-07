@@ -14,7 +14,7 @@ interface IProps extends WithTranslation {
     /**
      * The number to call in order to join the conference.
      */
-    number: string;
+    number: string | null;
 
     /**
      * Handler used when clicking the back button.
@@ -39,7 +39,7 @@ interface IProps extends WithTranslation {
     /**
      * The passCode of the conference.
      */
-    passCode: string;
+    passCode?: string | number;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -108,7 +108,7 @@ function DialinDialog(props: IProps) {
     } = props;
     const { classes } = useStyles();
     const flagClassName = `prejoin-dialog-flag iti-flag ${getCountryCodeFromPhone(
-        number
+        number ?? ''
     )}`;
 
     return (

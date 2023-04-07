@@ -21,11 +21,6 @@ interface IProps extends WithTranslation {
     onClose: Function;
 
     /**
-     * Handler used on hangup click.
-     */
-    onHangup: Function;
-
-    /**
      * The status of the call.
      */
     status: string;

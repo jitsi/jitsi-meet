@@ -1,98 +1,97 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { updateDialInNumbers } from '../../../../invite/actions.web';
 import { getConferenceId, getDefaultDialInNumber } from '../../../../invite/functions';
 import {
     dialOut as dialOutAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     openDialInPage as openDialInPageAction
-} from '../../../actions';
+} from '../../../actions.web';
 import { getDialOutStatus, getFullDialOutNumber } from '../../../functions';
 
 import CallingDialog from './CallingDialog';
 import DialInDialog from './DialInDialog';
 import DialOutDialog from './DialOutDialog';
 
-type Props = {
+interface IProps {
 
     /**
      * The number to call in order to join the conference.
      */
-    dialInNumber: string,
-
-    /**
-     * The status of the call when the meeting calls the user.
-     */
-    dialOutStatus: string,
+    dialInNumber: string | null;
 
     /**
      * The action by which the meeting calls the user.
      */
-    dialOut: Function,
+    dialOut: Function;
 
     /**
      * The number the conference should call.
      */
-    dialOutNumber: string,
+    dialOutNumber: string;
+
+    /**
+     * The status of the call when the meeting calls the user.
+     */
+    dialOutStatus: string;
 
     /**
      * Fetches conference dial in numbers & conference id.
      */
-    fetchConferenceDetails: Function,
+    fetchConferenceDetails: Function;
 
     /**
      * Joins the conference without audio.
      */
-    joinConferenceWithoutAudio: Function,
+    joinConferenceWithoutAudio: Function;
 
     /**
      * Closes the dialog.
      */
-    onClose: Function,
+    onClose: (e?: React.MouseEvent) => void;
 
     /**
      * Opens a web page with all the dial in numbers.
      */
-    openDialInPage: Function,
+    openDialInPage: (e?: React.MouseEvent) => void;
 
     /**
      * The passCode of the conference used when joining a meeting by phone.
      */
-    passCode: string,
-};
+    passCode?: string | number;
+}
 
 type State = {
 
     /**
      * The dialout call is ongoing, 'CallingDialog' is shown;.
      */
-    isCalling: boolean,
+    isCalling: boolean;
 
     /**
      * If should show 'DialInDialog'.
      */
-    showDialIn: boolean,
+    showDialIn: boolean;
 
     /**
      * If should show 'DialOutDialog'.
      */
-    showDialOut: boolean
-}
+    showDialOut: boolean;
+};
 
 /**
  * This is the dialog shown when a user wants to join with phone audio.
  */
-class JoinByPhoneDialog extends PureComponent<Props, State> {
+class JoinByPhoneDialog extends PureComponent<IProps, State> {
     /**
      * Initializes a new {@code JoinByPhoneDialog} instance.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -105,8 +104,6 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
         this._showDialInDialog = this._showDialInDialog.bind(this);
         this._showDialOutDialog = this._showDialOutDialog.bind(this);
     }
-
-    _dialOut: () => void;
 
     /**
      * Meeting calls the user & shows the 'CallingDialog'.
@@ -124,8 +121,6 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
         dialOut(joinConferenceWithoutAudio, this._showDialOutDialog);
     }
 
-    _showDialInDialog: () => void;
-
     /**
      * Shows the 'DialInDialog'.
      *
@@ -138,8 +133,6 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
             showDialIn: true
         });
     }
-
-    _showDialOutDialog: () => void;
 
     /**
      * Shows the 'DialOutDialog'.
@@ -225,7 +218,7 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     return {
         dialInNumber: getDefaultDialInNumber(state),
         dialOutNumber: getFullDialOutNumber(state),

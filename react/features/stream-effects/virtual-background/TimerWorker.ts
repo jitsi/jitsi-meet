@@ -56,4 +56,5 @@ const code = `
     };
 `;
 
+// @ts-ignore
 export const timerWorkerScript = URL.createObjectURL(new Blob([ code ], { type: 'application/javascript' }));

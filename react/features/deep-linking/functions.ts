@@ -1,14 +1,18 @@
-/* global interfaceConfig */
-
+/* eslint-disable lines-around-comment */
+import { IReduxState } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import Platform from '../base/react/Platform';
 import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 
+// @ts-ignore
 import DeepLinkingDesktopPage from './components/DeepLinkingDesktopPage';
+// @ts-ignore
 import DeepLinkingMobilePage from './components/DeepLinkingMobilePage';
+// @ts-ignore
 import NoMobileApp from './components/NoMobileApp';
 import { _openDesktopApp } from './openDesktopApp';
+/* eslint-enable lines-around-comment */
 
 /**
  * Generates a deep linking URL based on the current window URL.
@@ -17,7 +21,7 @@ import { _openDesktopApp } from './openDesktopApp';
  *
  * @returns {string} - The generated URL.
  */
-export function generateDeepLinkingURL(state) {
+export function generateDeepLinkingURL(state: IReduxState) {
     // If the user installed the app while this Component was displayed
     // (e.g. the user clicked the Download the App button), then we would
     // like to open the current URL in the mobile app. The only way to do it
@@ -27,6 +31,7 @@ export function generateDeepLinkingURL(state) {
     const { href } = window.location;
     const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
+    // @ts-ignore
     const mobileConfig = state['features/base/config'].deeplinking?.[Platform.OS] || {};
 
     const { appScheme, appPackage } = mobileConfig;
@@ -51,11 +56,11 @@ export function generateDeepLinkingURL(state) {
  * @param {Object} state - Object containing current redux state.
  * @returns {Promise<Component>}
  */
-export function getDeepLinkingPage(state) {
+export function getDeepLinkingPage(state: IReduxState) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
     const deeplinking = state['features/base/config'].deeplinking || {};
-    const { appScheme } = deeplinking?.[Platform.OS] || {};
+    const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 
     // Show only if we are about to join a conference.
     if (launchInWeb
@@ -87,6 +92,6 @@ export function getDeepLinkingPage(state) {
  * @returns {Promise<boolean>} - Resolves with true if the attempt to open the desktop app was successful and resolves
  * with false otherwise.
  */
-export function openDesktopApp(state) {
+export function openDesktopApp(state: IReduxState) {
     return _openDesktopApp(state);
 }

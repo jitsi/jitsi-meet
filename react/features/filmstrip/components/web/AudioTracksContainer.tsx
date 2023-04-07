@@ -2,8 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import AudioTrack from '../../../base/media/components/web/AudioTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { ITrack } from '../../../base/tracks/types';

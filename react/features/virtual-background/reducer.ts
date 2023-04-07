@@ -10,7 +10,7 @@ export interface IVirtualBackground {
     backgroundType?: string;
     blurValue?: number;
     selectedThumbnail?: string;
-    virtualSource?: { videoType: string; };
+    virtualSource?: string;
 }
 
 /**

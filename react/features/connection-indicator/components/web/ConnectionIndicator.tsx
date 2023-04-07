@@ -31,8 +31,6 @@ import AbstractConnectionIndicator, {
 } from '../AbstractConnectionIndicator';
 
 import ConnectionIndicatorContent from './ConnectionIndicatorContent';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { ConnectionIndicatorIcon } from './ConnectionIndicatorIcon';
 
 /**

@@ -1,63 +1,62 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
+import { IReduxState } from '../../../../app/types';
+import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Represents muted property of the underlying audio element.
      */
-    _muted: ?Boolean,
+    _muted?: boolean;
 
     /**
      * Represents volume property of the underlying audio element.
      */
-    _volume: ?number,
-
-    /**
-     * The value of the id attribute of the audio element.
-     */
-    id: string,
-
+    _volume?: number | boolean;
 
     /**
      * The audio track.
      */
-    audioTrack: ?Object,
+    audioTrack?: ITrack;
 
     /**
      * Used to determine the value of the autoplay attribute of the underlying
      * audio element.
      */
-    autoPlay: boolean,
+    autoPlay: boolean;
+
+    /**
+     * The value of the id attribute of the audio element.
+     */
+    id: string;
 
     /**
      * The ID of the participant associated with the audio element.
      */
-    participantId: string
-};
+    participantId: string;
+}
 
 /**
  * The React/Web {@link Component} which is similar to and wraps around {@code HTMLAudioElement}.
  */
-class AudioTrack extends Component<Props> {
+class AudioTrack extends Component<IProps> {
     /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
-    _ref: ?HTMLAudioElement;
+    _ref: HTMLAudioElement | null;
 
     /**
      * The current timeout ID for play() retries.
      */
-    _playTimeout: ?TimeoutID;
+    _playTimeout: number | undefined;
 
     /**
      * Default values for {@code AudioTrack} component's properties.
@@ -76,7 +75,7 @@ class AudioTrack extends Component<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -106,6 +105,7 @@ class AudioTrack extends Component<Props> {
                 this._ref.muted = _muted;
             }
 
+            // @ts-ignore
             this._ref.addEventListener('error', this._errorHandler);
         }
     }
@@ -119,7 +119,9 @@ class AudioTrack extends Component<Props> {
      */
     componentWillUnmount() {
         this._detachTrack(this.props.audioTrack);
-        this._ref.removeEventListener('error', this._errorHandler);
+
+        // @ts-ignore
+        this._ref?.removeEventListener('error', this._errorHandler);
     }
 
     /**
@@ -130,7 +132,7 @@ class AudioTrack extends Component<Props> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps: Props) {
+    shouldComponentUpdate(nextProps: IProps) {
         const currentJitsiTrack = this.props.audioTrack?.jitsiTrack;
         const nextJitsiTrack = nextProps.audioTrack?.jitsiTrack;
 
@@ -182,7 +184,7 @@ class AudioTrack extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _attachTrack(track) {
+    _attachTrack(track?: ITrack) {
         if (!track || !track.jitsiTrack) {
             return;
         }
@@ -199,7 +201,7 @@ class AudioTrack extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _detachTrack(track) {
+    _detachTrack(track?: ITrack) {
         if (this._ref && track && track.jitsiTrack) {
             clearTimeout(this._playTimeout);
             this._playTimeout = undefined;
@@ -207,22 +209,18 @@ class AudioTrack extends Component<Props> {
         }
     }
 
-    _errorHandler: (?Error) => void;
-
     /**
      * Reattaches the audio track to the underlying HTMLAudioElement when an 'error' event is fired.
      *
      * @param {Error} error - The error event fired on the HTMLAudioElement.
      * @returns {void}
      */
-    _errorHandler(error) {
+    _errorHandler(error: Error) {
         logger.error(`Error ${error?.message} called on audio track ${this.props.audioTrack?.jitsiTrack}. `
             + 'Attempting to reattach the audio track to the element and execute play on it');
         this._detachTrack(this.props.audioTrack);
         this._attachTrack(this.props.audioTrack);
     }
-
-    _play: ?number => void;
 
     /**
      * Plays the underlying HTMLAudioElement.
@@ -254,7 +252,7 @@ class AudioTrack extends Component<Props> {
                 logger.error(`Failed to play audio track! retry: ${retries} ; Error: ${e}`);
 
                 if (retries < 3) {
-                    this._playTimeout = setTimeout(() => this._play(retries + 1), 1000);
+                    this._playTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
 
                     if (retries === 0) {
                         // send only 1 error event.
@@ -267,8 +265,6 @@ class AudioTrack extends Component<Props> {
         }
     }
 
-    _setRef: (?HTMLAudioElement) => void;
-
     /**
      * Sets the reference to the HTML audio element.
      *
@@ -276,7 +272,7 @@ class AudioTrack extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _setRef(audioElement: ?HTMLAudioElement) {
+    _setRef(audioElement: HTMLAudioElement | null) {
         this._ref = audioElement;
     }
 }
@@ -287,9 +283,9 @@ class AudioTrack extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The props passed to the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
 
     return {

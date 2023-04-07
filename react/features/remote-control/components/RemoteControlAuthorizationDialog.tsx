@@ -1,59 +1,56 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { getParticipantById } from '../../base/participants/functions';
 import { getLocalVideoTrack } from '../../base/tracks/functions.any';
 import Dialog from '../../base/ui/components/web/Dialog';
 import { deny, grant } from '../actions';
 
-declare var APP: Object;
-
 /**
  * The type of the React {@code Component} props of
  * {@link RemoteControlAuthorizationDialog}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The display name of the participant who is requesting authorization for
      * remote desktop control session.
      */
-    _displayName: string,
+    _displayName: string;
 
-    _isScreenSharing: boolean,
-    _sourceType: string,
+    _isScreenSharing: boolean;
+    _sourceType: string;
 
     /**
      * Used to show/hide the dialog on cancel.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The ID of the participant who is requesting authorization for remote
      * desktop control session.
      */
-    participantId: string,
+    participantId: string;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-};
+    t: Function;
+}
 
 /**
  * Implements a dialog for remote control authorization.
  */
-class RemoteControlAuthorizationDialog extends Component<Props> {
+class RemoteControlAuthorizationDialog extends Component<IProps> {
     /**
      * Initializes a new RemoteControlAuthorizationDialog instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
@@ -105,8 +102,6 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Notifies the remote control module about the denial of the remote control
      * request.
@@ -121,8 +116,6 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
 
         return true;
     }
-
-    _onSubmit: () => boolean;
 
     /**
      * Notifies the remote control module that the remote control request is
@@ -158,7 +151,7 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
  *     _sourceType: string
  * }}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _displayName, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
     const tracks = state['features/base/tracks'];

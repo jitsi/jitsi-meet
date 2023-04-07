@@ -1,5 +1,3 @@
-// @flow
-
 import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 
 import {
@@ -9,30 +7,35 @@ import {
     timerWorkerScript
 } from './TimerWorker';
 
+export interface IBackgroundEffectOptions {
+    height: number;
+    virtualBackground: {
+        backgroundType?: string;
+        blurValue?: number;
+        virtualSource?: string;
+    };
+    width: number;
+}
+
 /**
  * Represents a modified MediaStream that adds effects to video background.
  * <tt>JitsiStreamBackgroundEffect</tt> does the processing of the original
  * video stream.
  */
 export default class JitsiStreamBackgroundEffect {
-    _model: Object;
-    _options: Object;
-    _stream: Object;
+    _model: any;
+    _options: IBackgroundEffectOptions;
+    _stream: any;
     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
-    _onMaskFrameTimer: Function;
     _maskFrameTimerWorker: Worker;
     _outputCanvasElement: HTMLCanvasElement;
-    _outputCanvasCtx: Object;
-    _segmentationMaskCtx: Object;
-    _segmentationMask: Object;
-    _segmentationMaskCanvas: Object;
-    _renderMask: Function;
+    _outputCanvasCtx: CanvasRenderingContext2D | null;
+    _segmentationMaskCtx: CanvasRenderingContext2D | null;
+    _segmentationMask: ImageData;
+    _segmentationMaskCanvas: HTMLCanvasElement;
     _virtualImage: HTMLImageElement;
     _virtualVideo: HTMLVideoElement;
-    isEnabled: Function;
-    startEffect: Function;
-    stopEffect: Function;
 
     /**
      * Represents a modified video MediaStream track.
@@ -41,13 +44,13 @@ export default class JitsiStreamBackgroundEffect {
      * @param {Object} model - Meet model.
      * @param {Object} options - Segmentation dimensions.
      */
-    constructor(model: Object, options: Object) {
+    constructor(model: Object, options: IBackgroundEffectOptions) {
         this._options = options;
 
         if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
-            this._virtualImage.src = this._options.virtualBackground.virtualSource;
+            this._virtualImage.src = this._options.virtualBackground.virtualSource ?? '';
         }
         this._model = model;
         this._segmentationPixelCount = this._options.width * this._options.height;
@@ -68,7 +71,7 @@ export default class JitsiStreamBackgroundEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    _onMaskFrameTimer(response: Object) {
+    _onMaskFrameTimer(response: { data: { id: number; }; }) {
         if (response.data.id === TIMEOUT_TICK) {
             this._renderMask();
         }
@@ -85,6 +88,10 @@ export default class JitsiStreamBackgroundEffect {
         const { height, width } = track.getSettings() ?? track.getConstraints();
         const { backgroundType } = this._options.virtualBackground;
 
+        if (!this._outputCanvasCtx) {
+            return;
+        }
+
         this._outputCanvasElement.height = height;
         this._outputCanvasElement.width = width;
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
@@ -93,7 +100,7 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        this._outputCanvasCtx.drawImage(
+        this._outputCanvasCtx?.drawImage( // @ts-ignore
             this._segmentationMaskCanvas,
             0,
             0,
@@ -108,12 +115,13 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        // @ts-ignore
+        this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
 
         // Draw the background.
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-            this._outputCanvasCtx.drawImage(
+            this._outputCanvasCtx?.drawImage( // @ts-ignore
                 backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
                     ? this._virtualImage : this._virtualVideo,
                 0,
@@ -123,7 +131,9 @@ export default class JitsiStreamBackgroundEffect {
             );
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
-            this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+
+            // @ts-ignore
+            this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
         }
     }
 
@@ -143,7 +153,7 @@ export default class JitsiStreamBackgroundEffect {
             this._segmentationMask.data[(i * 4) + 3] = 255 * person;
 
         }
-        this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
+        this._segmentationMaskCtx?.putImageData(this._segmentationMask, 0, 0);
     }
 
     /**
@@ -169,7 +179,7 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     resizeSource() {
-        this._segmentationMaskCtx.drawImage(
+        this._segmentationMaskCtx?.drawImage( // @ts-ignore
             this._inputVideoElement,
             0,
             0,
@@ -181,7 +191,7 @@ export default class JitsiStreamBackgroundEffect {
             this._options.height
         );
 
-        const imageData = this._segmentationMaskCtx.getImageData(
+        const imageData = this._segmentationMaskCtx?.getImageData(
             0,
             0,
             this._options.width,
@@ -190,9 +200,9 @@ export default class JitsiStreamBackgroundEffect {
         const inputMemoryOffset = this._model._getInputMemoryOffset() / 4;
 
         for (let i = 0; i < this._segmentationPixelCount; i++) {
-            this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
-            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
-            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3)] = Number(imageData?.data[i * 4]) / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = Number(imageData?.data[(i * 4) + 1]) / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = Number(imageData?.data[(i * 4) + 2]) / 255;
         }
     }
 
@@ -203,7 +213,7 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {boolean} - Returns true if this effect can run on the specified track
      * false otherwise.
      */
-    isEnabled(jitsiLocalTrack: Object) {
+    isEnabled(jitsiLocalTrack: any) {
         return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera';
     }
 
