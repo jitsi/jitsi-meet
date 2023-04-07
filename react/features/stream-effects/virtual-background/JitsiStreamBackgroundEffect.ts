@@ -88,18 +88,18 @@ export default class JitsiStreamBackgroundEffect {
         const { height, width } = track.getSettings() ?? track.getConstraints();
         const { backgroundType } = this._options.virtualBackground;
 
+        if (!this._outputCanvasCtx) {
+            return;
+        }
+
         this._outputCanvasElement.height = height;
         this._outputCanvasElement.width = width;
-        if (this._outputCanvasCtx) {
-            this._outputCanvasCtx.globalCompositeOperation = 'copy';
-        }
+        this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
 
         // Smooth out the edges.
-        if (this._outputCanvasCtx) {
-            this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        }
+        this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
         this._outputCanvasCtx?.drawImage( // @ts-ignore
             this._segmentationMaskCanvas,
             0,
@@ -121,9 +121,7 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
 
         // Draw the background.
-        if (this._outputCanvasCtx) {
-            this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        }
+        this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx?.drawImage( // @ts-ignore
                 backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
@@ -134,9 +132,7 @@ export default class JitsiStreamBackgroundEffect {
                 this._outputCanvasElement.height
             );
         } else {
-            if (this._outputCanvasCtx) {
-                this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
-            }
+            this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
 
             // @ts-ignore
             this._outputCanvasCtx?.drawImage(this._inputVideoElement, 0, 0);
