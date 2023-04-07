@@ -29,17 +29,17 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator
 } from '../../../base/participants/functions';
-import { getLocalVideoTrack } from '../../../base/tracks/functions';
+import { getLocalVideoTrack } from '../../../base/tracks/functions.web';
 import { ITrack } from '../../../base/tracks/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { toggleChat } from '../../../chat/actions.web';
 import ChatButton from '../../../chat/components/web/ChatButton';
 import EmbedMeetingButton from '../../../embed-meeting/components/EmbedMeetingButton';
-import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton';
-import FeedbackButton from '../../../feedback/components/FeedbackButton';
+import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.web';
+import FeedbackButton from '../../../feedback/components/FeedbackButton.web';
 import { setGifMenuVisibility } from '../../../gifs/actions';
-import { isGifEnabled } from '../../../gifs/functions';
+import { isGifEnabled } from '../../../gifs/functions.web';
 import InviteButton from '../../../invite/components/add-people-dialog/web/InviteButton';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import KeyboardShortcutsButton from '../../../keyboard-shortcuts/components/web/KeyboardShortcutsButton';
@@ -50,11 +50,13 @@ import {
 } from '../../../participants-pane/actions.web';
 import ParticipantsPaneButton from '../../../participants-pane/components/web/ParticipantsPaneButton';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
-import { addReactionToBuffer } from '../../../reactions/actions.any';
-import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
+import {
+    addReactionToBuffer,
+    toggleReactionsMenuVisibility
+} from '../../../reactions/actions.web';
 import ReactionsMenuButton from '../../../reactions/components/web/ReactionsMenuButton';
 import { REACTIONS } from '../../../reactions/constants';
-import { isReactionsEnabled } from '../../../reactions/functions.any';
+import { isReactionsEnabled } from '../../../reactions/functions.web';
 import LiveStreamButton from '../../../recording/components/LiveStream/web/LiveStreamButton';
 import RecordButton from '../../../recording/components/Recording/web/RecordButton';
 import { isSalesforceEnabled } from '../../../salesforce/functions';
@@ -71,12 +73,12 @@ import SettingsButton from '../../../settings/components/web/SettingsButton';
 import SharedVideoButton from '../../../shared-video/components/web/SharedVideoButton';
 import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import SpeakerStatsButton from '../../../speaker-stats/components/web/SpeakerStatsButton';
-import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton';
+import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton.web';
 import { toggleTileView } from '../../../video-layout/actions.web';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { shouldDisplayTileView } from '../../../video-layout/functions.web';
-import VideoQualityButton from '../../../video-quality/components/VideoQualityButton';
-import VideoQualityDialog from '../../../video-quality/components/VideoQualityDialog';
+import VideoQualityButton from '../../../video-quality/components/VideoQualityButton.web';
+import VideoQualityDialog from '../../../video-quality/components/VideoQualityDialog.web';
 import VideoBackgroundButton from '../../../virtual-background/components/VideoBackgroundButton';
 import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/web/WhiteboardButton';
@@ -87,10 +89,13 @@ import {
     setOverflowMenuVisible,
     setToolbarHovered,
     showToolbox
-} from '../../actions';
+} from '../../actions.web';
 import { NOTIFY_CLICK_MODE, NOT_APPLICABLE, THRESHOLDS } from '../../constants';
-import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
-import { getJwtDisabledButtons } from '../../functions.any';
+import {
+    getJwtDisabledButtons,
+    isDesktopShareButtonDisabled,
+    isToolboxVisible
+} from '../../functions.web';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
