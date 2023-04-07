@@ -111,10 +111,8 @@ export default class JitsiStreamBackgroundEffect {
             this._inputVideoElement.width,
             this._inputVideoElement.height
         );
-        if (this._outputCanvasCtx) {
-            this._outputCanvasCtx.globalCompositeOperation = 'source-in';
-            this._outputCanvasCtx.filter = 'none';
-        }
+        this._outputCanvasCtx.globalCompositeOperation = 'source-in';
+        this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
         // @ts-ignore
