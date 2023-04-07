@@ -96,11 +96,13 @@ class AudioSettingsButton extends Component<IProps> {
     /**
      * Click handler for the more actions entries.
      *
+     * @param {MouseEvent} e - Mouse event.
      * @returns {void}
      */
-    _onClick() {
+    _onClick(e?: React.MouseEvent) {
         const { onAudioOptionsClick } = this.props;
 
+        e?.stopPropagation();
         onAudioOptionsClick();
     }
 

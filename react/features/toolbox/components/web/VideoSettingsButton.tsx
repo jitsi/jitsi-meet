@@ -113,11 +113,13 @@ class VideoSettingsButton extends Component<IProps> {
     /**
      * Click handler for the more actions entries.
      *
+     * @param {MouseEvent} e - Mousw event.
      * @returns {void}
      */
-    _onClick() {
+    _onClick(e?: React.MouseEvent) {
         const { onVideoOptionsClick } = this.props;
 
+        e?.stopPropagation();
         onVideoOptionsClick();
     }
 

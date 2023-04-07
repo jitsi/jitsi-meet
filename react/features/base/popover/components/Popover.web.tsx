@@ -424,11 +424,11 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position } = this.props;
+        const { content, position, trigger } = this.props;
 
         return (
             <div
-                className = 'popover'
+                className = { `popover ${trigger}` }
                 onKeyDown = { this._onEscKey }>
                 <div className = { `popover-content ${position.split('-')[0]}` }>
                     { content }
