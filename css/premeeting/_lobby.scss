@@ -208,3 +208,26 @@
 .lobby-button-margin {
     margin-bottom: 16px;
 }
+
+.lobby-prejoin-error {
+    background-color: #E04757;
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: white;
+    font-size: 12px;
+    line-height: 16px;
+    margin-bottom: 16px;
+    margin-top: -8px;
+    padding: 4px;
+    text-align: center;
+    width: 100%;
+}
+
+.lobby-prejoin-input {
+    margin-bottom: 16px;
+    width: 100%;
+
+    & input {
+        text-align: center;
+    }
+}

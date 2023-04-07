@@ -187,7 +187,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <Input
-                className = 'prejoin-input'
+                className = 'lobby-prejoin-input'
                 onChange = { this._onChangeDisplayName }
                 placeholder = { t('lobby.nameField') }
                 testId = 'lobby.nameField'
@@ -206,7 +206,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <>
                 <Input
-                    className = { `prejoin-input ${_passwordJoinFailed ? 'error' : ''}` }
+                    className = { `lobby-prejoin-input ${_passwordJoinFailed ? 'error' : ''}` }
                     onChange = { this._onChangePassword }
                     placeholder = { t('lobby.passwordField') }
                     testId = 'lobby.password'
@@ -214,7 +214,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     value = { this.state.password } />
 
                 {_passwordJoinFailed && <div
-                    className = 'prejoin-error'
+                    className = 'lobby-prejoin-error'
                     data-testid = 'lobby.errorMessage'>{t('lobby.invalidPassword')}</div>}
             </>
         );
