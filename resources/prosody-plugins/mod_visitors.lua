@@ -20,17 +20,6 @@ end
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
--- get/infer focus component hostname so we can intercept IQ bound for it
-local focus_component_host = module:get_option_string('focus_component');
-if not focus_component_host then
-    local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
-    if not muc_domain_base then
-        module:log('error', 'Could not infer focus domain. Disabling %s', module:get_name());
-        return;
-    end
-    focus_component_host = 'focus.'..muc_domain_base;
-end
-
 -- required parameter for custom muc component prefix, defaults to 'conference'
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 

@@ -375,20 +375,7 @@ end
 -- Retrieves the focus from the room and cache it in the room object
 -- @param room The room name for which to find the occupant
 local function get_focus_occupant(room)
-    local focus_occupant = room._data.focus_occupant;
-
-    if focus_occupant then
-        return focus_occupant;
-    end
-
-    for _, n_occupant in room:each_occupant() do
-        if jid.node(n_occupant.jid) == 'focus' then
-            room._data.focus_occupant = n_occupant;
-            return n_occupant;
-        end
-    end
-
-    return nil;
+    return room:get_occupant_by_nick(room.jid..'/focus');
 end
 
 return {
