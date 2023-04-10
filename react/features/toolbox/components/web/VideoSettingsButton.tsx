@@ -117,9 +117,11 @@ class VideoSettingsButton extends Component<IProps> {
      * @returns {void}
      */
     _onClick(e?: React.MouseEvent) {
-        const { onVideoOptionsClick } = this.props;
+        const { onVideoOptionsClick, isOpen } = this.props;
 
-        e?.stopPropagation();
+        if (isOpen) {
+            e?.stopPropagation();
+        }
         onVideoOptionsClick();
     }
 
