@@ -28,7 +28,7 @@ const DEFAULT_STATE = {
 
 export interface ICalendarSyncState {
     authorization?: string;
-    error?: Object;
+    error?: { error: string; };
     events: Array<{
         calendarId: string;
         endDate: string;

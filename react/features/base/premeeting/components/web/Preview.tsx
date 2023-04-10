@@ -1,51 +1,48 @@
-// @flow
-
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { getDisplayName } from '../../../../base/settings/functions.web';
+import { IReduxState } from '../../../../app/types';
 import Avatar from '../../../avatar/components/Avatar';
 import Video from '../../../media/components/web/Video';
 import { getLocalParticipant } from '../../../participants/functions';
+import { getDisplayName } from '../../../settings/functions.web';
 import { getLocalVideoTrack } from '../../../tracks/functions.web';
 
-declare var APP: Object;
-
-export type Props = {
+export interface IProps {
 
     /**
      * Local participant id.
      */
-    _participantId: string,
+    _participantId: string;
 
     /**
      * Flag controlling whether the video should be flipped or not.
      */
-    flipVideo: boolean,
+    flipVideo: boolean;
 
     /**
      * The name of the user that is about to join.
      */
-    name: string,
+    name: string;
 
     /**
      * Flag signaling the visibility of camera preview.
      */
-    videoMuted: boolean,
+    videoMuted: boolean;
 
     /**
      * The JitsiLocalTrack to display.
      */
-    videoTrack: ?Object,
-};
+    videoTrack?: Object;
+}
 
 /**
  * Component showing the video preview and device status.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-function Preview(props: Props) {
+function Preview(props: IProps) {
     const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
@@ -83,19 +80,19 @@ function Preview(props: Props) {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {Props}
+ * @param {IProps} ownProps - The own props of the component.
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const name = getDisplayName(state);
-    const { id: _participantId } = getLocalParticipant(state);
+    const { id: _participantId } = getLocalParticipant(state) ?? {};
 
     return {
-        _participantId,
-        flipVideo: state['features/base/settings'].localFlipX,
+        _participantId: _participantId ?? '',
+        flipVideo: Boolean(state['features/base/settings'].localFlipX),
         name,
         videoMuted: ownProps.videoTrack ? ownProps.videoMuted : state['features/base/media'].video.muted,
-        videoTrack: ownProps.videoTrack || (getLocalVideoTrack(state['features/base/tracks']) || {}).jitsiTrack
+        videoTrack: ownProps.videoTrack || getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
 

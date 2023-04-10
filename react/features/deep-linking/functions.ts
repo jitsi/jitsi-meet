@@ -60,6 +60,8 @@ export function getDeepLinkingPage(state: IReduxState) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
     const deeplinking = state['features/base/config'].deeplinking || {};
+
+    // @ts-ignore
     const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 
     // Show only if we are about to join a conference.

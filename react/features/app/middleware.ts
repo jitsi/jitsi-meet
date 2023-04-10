@@ -1,4 +1,4 @@
-// @flow
+import { AnyAction } from 'redux';
 
 import { createConnectionEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -10,6 +10,7 @@ import { inIframe } from '../base/util/iframeUtils';
 
 import { reloadNow } from './actions';
 import { _getRouteToRender } from './getRouteToRender';
+import { IStore } from './types';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -39,7 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _connectionEstablished(store, next, action) {
+function _connectionEstablished(store: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     // In the Web app we explicitly do not want to display the hash and
@@ -47,6 +48,7 @@ function _connectionEstablished(store, next, action) {
     // importantly, its params are used not only in jitsi-meet but also in
     // lib-jitsi-meet. Consequently, the time to remove the params is
     // determined by when no one needs them anymore.
+    // @ts-ignore
     const { history, location } = window;
 
     if (inIframe()) {
@@ -57,12 +59,14 @@ function _connectionEstablished(store, next, action) {
             && location
             && history.length
             && typeof history.replaceState === 'function') {
+        // @ts-ignore
         const replacement = getURLWithoutParams(location);
 
+        // @ts-ignore
         if (location !== replacement) {
             history.replaceState(
                 history.state,
-                (document && document.title) || '',
+                document?.title || '',
                 replacement);
         }
     }
@@ -81,7 +85,7 @@ function _connectionEstablished(store, next, action) {
  * @returns {Object}
  * @private
  */
-function _connectionFailed({ dispatch, getState }, next, action) {
+function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // In the case of a split-brain error, reload early and prevent further
     // handling of the action.
     if (_isMaybeSplitBrainError(getState, action)) {
@@ -104,7 +108,7 @@ function _connectionFailed({ dispatch, getState }, next, action) {
  * @private
  * @returns {boolean}
  */
-function _isMaybeSplitBrainError(getState, action) {
+function _isMaybeSplitBrainError(getState: IStore['getState'], action: AnyAction) {
     const { error } = action;
     const isShardChangedError = error
         && error.message === 'item-not-found'
@@ -116,7 +120,7 @@ function _isMaybeSplitBrainError(getState, action) {
         const { timeEstablished } = state['features/base/connection'];
         const { _immediateReloadThreshold } = state['features/base/config'];
 
-        const timeSinceConnectionEstablished = timeEstablished && Date.now() - timeEstablished;
+        const timeSinceConnectionEstablished = Number(timeEstablished && Date.now() - timeEstablished);
         const reloadThreshold = typeof _immediateReloadThreshold === 'number' ? _immediateReloadThreshold : 1500;
 
         const isWithinSplitBrainThreshold = !timeEstablished || timeSinceConnectionEstablished <= reloadThreshold;
@@ -142,7 +146,7 @@ function _isMaybeSplitBrainError(getState, action) {
  * @private
  * @returns {void}
  */
-function _navigate({ getState }) {
+function _navigate({ getState }: IStore) {
     const state = getState();
     const { app } = state['features/base/app'];
 
@@ -163,7 +167,7 @@ function _navigate({ getState }) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setRoom(store, next, action) {
+function _setRoom(store: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     _navigate(store);

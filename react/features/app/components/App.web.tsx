@@ -43,7 +43,7 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createMainElement(component, props) {
+    _createMainElement(component: React.ComponentType, props: any) {
         return (
             <JitsiThemeProvider>
                 <AtlasKitThemeProvider mode = 'dark'>

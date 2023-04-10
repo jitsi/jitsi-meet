@@ -112,8 +112,8 @@ export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
 export interface IDeeplinkingConfig {
     android?: IDeeplinkingMobileConfig;
     desktop?: IDeeplinkingPlatformConfig;
-    disabled: boolean;
-    hideLogo: boolean;
+    disabled?: boolean;
+    hideLogo?: boolean;
     ios?: IDeeplinkingMobileConfig;
 }
 
@@ -127,7 +127,8 @@ export interface INoiseSuppressionConfig {
 
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
-    _screenshotHistoryRegionUrl?: string;
+    _immediateReloadThreshold?: string;
+    _screenshotHistoryRegionUrl?: number;
     analytics?: {
         amplitudeAPPKey?: string;
         blackListedEvents?: string[];

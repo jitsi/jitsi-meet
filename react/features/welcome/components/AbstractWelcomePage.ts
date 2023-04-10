@@ -1,6 +1,7 @@
 // @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { createWelcomePageEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
@@ -14,7 +15,7 @@ import { isRecentListEnabled } from '../../recent-list/functions';
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
-export interface IProps {
+export interface IProps extends WithTranslation {
 
     /**
      * Whether the calendar functionality is enabled or not.
@@ -57,12 +58,23 @@ export interface IProps {
     dispatch: IStore['dispatch'];
 }
 
+interface IState {
+    animateTimeoutId?: number;
+    generateRoomNames?: string;
+    generatedRoomName: string;
+    insecureRoomName: boolean;
+    joining: boolean;
+    room: string;
+    roomPlaceholder: string;
+    updateTimeoutId?: number;
+}
+
 /**
  * Base (abstract) class for container component rendering the welcome page.
  *
  * @abstract
  */
-export class AbstractWelcomePage<P extends IProps> extends Component<P> {
+export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> {
     _mounted: boolean | undefined;
 
     /**
@@ -81,6 +93,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P> {
     state = {
         animateTimeoutId: undefined,
         generatedRoomName: '',
+        generateRoomNames: undefined,
         insecureRoomName: false,
         joining: false,
         room: '',
@@ -142,7 +155,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P> {
 
         if (word.length > 1) {
             animateTimeoutId
-                = setTimeout(
+                = window.setTimeout(
                     () => {
                         this._animateRoomNameChanging(
                             word.substring(1, word.length));
@@ -171,7 +184,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P> {
      *
      * @returns {ReactElement}
      */
-    _doRenderInsecureRoomNameWarning: () => React.Component<any>;
+    _doRenderInsecureRoomNameWarning(): JSX.Element | null {
+        return null;
+    }
 
     /**
      * Handles joining. Either by clicking on 'Join' button
@@ -213,7 +228,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P> {
     _onRoomChange(value: string) {
         this.setState({
             room: value,
-            insecureRoomName: this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value)
+            insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
         });
     }
 
@@ -240,7 +255,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P> {
     _updateRoomName() {
         const generatedRoomName = generateRoomWithoutSeparator();
         const roomPlaceholder = '';
-        const updateTimeoutId = setTimeout(this._updateRoomName, 10000);
+        const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 
         this._clearTimeouts();
         this.setState(
@@ -268,7 +283,7 @@ export function _mapStateToProps(state: IReduxState) {
         _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
         _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
-        _room: state['features/base/conference'].room,
+        _room: state['features/base/conference'].room ?? '',
         _settings: state['features/base/settings']
     };
 }

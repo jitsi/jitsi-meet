@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import { Item } from '../../types';
@@ -11,18 +9,18 @@ import Text from './Text';
  * The type of the React {@code Component} props of
  * {@link NavigateSectionListItem}.
  */
-type Props = {
-
-    /**
-     * Function to be invoked when an item is pressed. The item's URL is passed.
-     */
-    onPress: ?Function,
+interface IProps {
 
     /**
      * A item containing data to be rendered.
      */
-    item: Item
-};
+    item: Item;
+
+    /**
+     * Function to be invoked when an item is pressed. The item's URL is passed.
+     */
+    onPress?: Function;
+}
 
 /**
  * Implements a React/Web {@link Component} for displaying an item in a
@@ -30,7 +28,7 @@ type Props = {
  *
  * @augments Component
  */
-export default class NavigateSectionListItem<P: Props>
+export default class NavigateSectionListItem<P extends IProps>
     extends Component<P> {
 
     /**

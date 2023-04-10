@@ -1,56 +1,47 @@
-// @flow
-
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import MeetingsList from '../../base/react/components/web/MeetingsList';
 import { deleteRecentListEntry } from '../actions';
-import { isRecentListEnabled, toDisplayableList } from '../functions';
+import { isRecentListEnabled, toDisplayableList } from '../functions.web';
 
 import AbstractRecentList from './AbstractRecentList';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}.
  */
-type Props = {
-
-    /**
-     * Renders the list disabled.
-     */
-    disabled: boolean,
-
-    /**
-     * The redux store's {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>,
-
-    /**
-     * The translate function.
-     */
-    t: Function,
+interface IProps extends WithTranslation {
 
     /**
      * The recent list from the Redux store.
      */
-    _recentList: Array<Object>
-};
+    _recentList: Array<any>;
+
+    /**
+     * Renders the list disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * The redux store's {@code dispatch} function.
+     */
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * The cross platform container rendering the list of the recently joined rooms.
  *
  */
-class RecentList extends AbstractRecentList<Props> {
-    _getRenderListEmptyComponent: () => React$Node;
-    _onPress: string => {};
-
+class RecentList extends AbstractRecentList<IProps> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._getRenderListEmptyComponent
@@ -59,15 +50,13 @@ class RecentList extends AbstractRecentList<Props> {
         this._onItemDelete = this._onItemDelete.bind(this);
     }
 
-    _onItemDelete: Object => void;
-
     /**
      * Deletes a recent entry.
      *
      * @param {Object} entry - The entry to be deleted.
      * @inheritdoc
      */
-    _onItemDelete(entry) {
+    _onItemDelete(entry: Object) {
         this.props.dispatch(deleteRecentListEntry(entry));
     }
 
@@ -88,7 +77,7 @@ class RecentList extends AbstractRecentList<Props> {
 
         return (
             <MeetingsList
-                disabled = { disabled }
+                disabled = { Boolean(disabled) }
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
@@ -107,7 +96,7 @@ class RecentList extends AbstractRecentList<Props> {
  *     _recentList: Array
  * }}
  */
-export function _mapStateToProps(state: Object) {
+export function _mapStateToProps(state: IReduxState) {
     return {
         _recentList: state['features/recent-list']
     };
