@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+/* eslint-disable react/no-multi-comp */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
-import { translate } from '../../../../base/i18n/functions';
 import { IconMic, IconVolumeUp } from '../../../../base/icons/svg';
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet';
 import { equals } from '../../../../base/redux/functions';
@@ -35,7 +36,7 @@ function transformDefaultDeviceLabel(deviceId: string, label: string, t: Functio
         : label;
 }
 
-export interface IProps extends WithTranslation {
+export interface IProps {
 
     /**
     * The deviceId of the microphone in use.
@@ -90,50 +91,63 @@ export interface IProps extends WithTranslation {
     toggleSuppression: () => void;
 }
 
-interface IState {
+const useStyles = makeStyles()(theme => {
+    return {
+        contextMenu: {
+            position: 'relative',
+            right: 'auto',
+            margin: 0,
+            marginBottom: theme.spacing(1),
+            maxHeight: 'calc(100vh - 100px)',
+            overflow: 'auto',
+            width: '300px'
+        },
 
-    /**
-    * An list of objects, each containing the microphone label, audio track, device id
-    * and track error if the case.
-    */
-    audioTracks: Array<{ deviceId: string; hasError: boolean; jitsiTrack: any; label: string; }>;
-}
+        header: {
+            '&:hover': {
+                backgroundColor: 'initial',
+                cursor: 'initial'
+            }
+        },
 
-/**
- * Implements a React {@link Component} which displays a list of all
- * the audio input & output devices to choose from.
- *
- * @augments Component
- */
-class AudioSettingsContent extends Component<IProps, IState> {
-    _componentWasUnmounted: boolean;
-    microphoneHeaderId = 'microphone_settings_header';
-    speakerHeaderId = 'speaker_settings_header';
+        list: {
+            margin: 0,
+            padding: 0,
+            listStyleType: 'none'
+        },
 
+        checkboxContainer: {
+            padding: '10px 16px'
+        }
+    };
+});
 
-    /**
-     * Initializes a new {@code AudioSettingsContent} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onMicrophoneEntryClick = this._onMicrophoneEntryClick.bind(this);
-        this._onSpeakerEntryClick = this._onSpeakerEntryClick.bind(this);
-
-        this.state = {
-            audioTracks: props.microphoneDevices.map(({ deviceId, label }) => {
-                return {
-                    deviceId,
-                    hasError: false,
-                    jitsiTrack: null,
-                    label
-                };
-            })
+const AudioSettingsContent = ({
+    currentMicDeviceId,
+    currentOutputDeviceId,
+    measureAudioLevels,
+    microphoneDevices,
+    noiseSuppressionEnabled,
+    outputDevices,
+    prejoinVisible,
+    setAudioInputDevice,
+    setAudioOutputDevice,
+    toggleSuppression
+}: IProps) => {
+    const _componentWasUnmounted = useRef(false);
+    const microphoneHeaderId = 'microphone_settings_header';
+    const speakerHeaderId = 'speaker_settings_header';
+    const { classes } = useStyles();
+    const [ audioTracks, setAudioTracks ] = useState(microphoneDevices.map(({ deviceId, label }) => {
+        return {
+            deviceId,
+            hasError: false,
+            jitsiTrack: null,
+            label
         };
-    }
+    }));
+    const microphoneDevicesRef = useRef(microphoneDevices);
+    const { t } = useTranslation();
 
     /**
      * Click handler for the microphone entries.
@@ -141,9 +155,9 @@ class AudioSettingsContent extends Component<IProps, IState> {
      * @param {string} deviceId - The deviceId for the clicked microphone.
      * @returns {void}
      */
-    _onMicrophoneEntryClick(deviceId: string) {
-        this.props.setAudioInputDevice(deviceId);
-    }
+    const _onMicrophoneEntryClick = useCallback((deviceId: string) => {
+        setAudioInputDevice(deviceId);
+    }, [ setAudioInputDevice ]);
 
     /**
      * Click handler for the speaker entries.
@@ -151,9 +165,9 @@ class AudioSettingsContent extends Component<IProps, IState> {
      * @param {string} deviceId - The deviceId for the clicked speaker.
      * @returns {void}
      */
-    _onSpeakerEntryClick(deviceId: string) {
-        this.props.setAudioOutputDevice(deviceId);
-    }
+    const _onSpeakerEntryClick = useCallback((deviceId: string) => {
+        setAudioOutputDevice(deviceId);
+    }, [ setAudioOutputDevice ]);
 
     /**
      * Renders a single microphone entry.
@@ -161,14 +175,13 @@ class AudioSettingsContent extends Component<IProps, IState> {
      * @param {Object} data - An object with the deviceId, jitsiTrack & label of the microphone.
      * @param {number} index - The index of the element, used for creating a key.
      * @param {length} length - The length of the microphone list.
-     * @param {Function} t - The translation function.
      * @returns {React$Node}
      */
-    _renderMicrophoneEntry(data: { deviceId: string; hasError: boolean; jitsiTrack: any; label: string; },
-            index: number, length: number, t: Function) {
+    const _renderMicrophoneEntry = (data: { deviceId: string; hasError: boolean; jitsiTrack: any; label: string; },
+            index: number, length: number) => {
         const { deviceId, jitsiTrack, hasError } = data;
         const label = transformDefaultDeviceLabel(deviceId, data.label, t);
-        const isSelected = deviceId === this.props.currentMicDeviceId;
+        const isSelected = deviceId === currentMicDeviceId;
 
         return (
             <MicrophoneEntry
@@ -179,13 +192,13 @@ class AudioSettingsContent extends Component<IProps, IState> {
                 jitsiTrack = { jitsiTrack }
                 key = { `me-${index}` }
                 length = { length }
-                listHeaderId = { this.microphoneHeaderId }
-                measureAudioLevels = { this.props.measureAudioLevels }
-                onClick = { this._onMicrophoneEntryClick }>
+                listHeaderId = { microphoneHeaderId }
+                measureAudioLevels = { measureAudioLevels }
+                onClick = { _onMicrophoneEntryClick }>
                 {label}
             </MicrophoneEntry>
         );
-    }
+    };
 
     /**
      * Renders a single speaker entry.
@@ -193,14 +206,13 @@ class AudioSettingsContent extends Component<IProps, IState> {
      * @param {Object} data - An object with the deviceId and label of the speaker.
      * @param {number} index - The index of the element, used for creating a key.
      * @param {length} length - The length of the speaker list.
-     * @param {Function} t - The translation function.
      * @returns {React$Node}
      */
-    _renderSpeakerEntry(data: { deviceId: string; label: string; }, index: number, length: number, t: Function) {
+    const _renderSpeakerEntry = (data: { deviceId: string; label: string; }, index: number, length: number) => {
         const { deviceId } = data;
         const label = transformDefaultDeviceLabel(deviceId, data.label, t);
         const key = `se-${index}`;
-        const isSelected = deviceId === this.props.currentOutputDeviceId;
+        const isSelected = deviceId === currentOutputDeviceId;
 
         return (
             <SpeakerEntry
@@ -209,19 +221,31 @@ class AudioSettingsContent extends Component<IProps, IState> {
                 isSelected = { isSelected }
                 key = { key }
                 length = { length }
-                listHeaderId = { this.speakerHeaderId }
-                onClick = { this._onSpeakerEntryClick }>
+                listHeaderId = { speakerHeaderId }
+                onClick = { _onSpeakerEntryClick }>
                 {label}
             </SpeakerEntry>
         );
-    }
+    };
+
+    /**
+     * Disposes the audio tracks.
+     *
+     * @param {Object} tracks - The object holding the audio tracks.
+     * @returns {void}
+     */
+    const _disposeTracks = (tracks: Array<{ jitsiTrack: any; }>) => {
+        tracks.forEach(({ jitsiTrack }) => {
+            jitsiTrack?.dispose();
+        });
+    };
 
     /**
      * Creates and updates the audio tracks.
      *
      * @returns {void}
      */
-    async _setTracks() {
+    const _setTracks = async () => {
         if (browser.isWebKitBased()) {
 
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
@@ -230,130 +254,92 @@ class AudioSettingsContent extends Component<IProps, IState> {
             return;
         }
 
-        this._disposeTracks(this.state.audioTracks);
+        _disposeTracks(audioTracks);
 
-        const audioTracks = await createLocalAudioTracks(this.props.microphoneDevices, 5000);
+        const newAudioTracks = await createLocalAudioTracks(microphoneDevices, 5000);
 
-        if (this._componentWasUnmounted) {
-            this._disposeTracks(audioTracks);
+        if (_componentWasUnmounted.current) {
+            _disposeTracks(newAudioTracks);
         } else {
-            this.setState({
-                audioTracks
-            });
+            setAudioTracks(newAudioTracks);
         }
-    }
+    };
 
-    /**
-     * Disposes the audio tracks.
-     *
-     * @param {Object} audioTracks - The object holding the audio tracks.
-     * @returns {void}
-     */
-    _disposeTracks(audioTracks: Array<{ jitsiTrack: any; }>) {
-        audioTracks.forEach(({ jitsiTrack }) => {
-            jitsiTrack?.dispose();
-        });
-    }
+    useEffect(() => {
+        _setTracks();
 
-    /**
-     * Implements React's {@link Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._setTracks();
-    }
+        return () => {
+            _componentWasUnmounted.current = true;
+            _disposeTracks(audioTracks);
+        };
+    }, []);
 
-    /**
-     * Implements React's {@link Component#componentWillUnmount}.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this._componentWasUnmounted = true;
-        this._disposeTracks(this.state.audioTracks);
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps: IProps) {
-        if (!equals(this.props.microphoneDevices, prevProps.microphoneDevices)) {
-            this._setTracks();
+    useEffect(() => {
+        if (!equals(microphoneDevices, microphoneDevicesRef.current)) {
+            _setTracks();
+            microphoneDevicesRef.current = microphoneDevices;
         }
-    }
+    }, [ microphoneDevices ]);
 
-
-    /**
-     * Implements React's {@link Component#render}.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const { outputDevices, t, noiseSuppressionEnabled, toggleSuppression, prejoinVisible } = this.props;
-
-        return (
-            <ContextMenu
-                aria-labelledby = 'audio-settings-button'
-                className = 'audio-preview-content'
-                hidden = { false }
-                id = 'audio-settings-dialog'
-                tabIndex = { -1 }>
+    return (
+        <ContextMenu
+            aria-labelledby = 'audio-settings-button'
+            className = { classes.contextMenu }
+            hidden = { false }
+            id = 'audio-settings-dialog'
+            tabIndex = { -1 }>
+            <ContextMenuItemGroup>
+                <ContextMenuItem
+                    accessibilityLabel = { t('settings.microphones') }
+                    className = { classes.header }
+                    icon = { IconMic }
+                    id = { microphoneHeaderId }
+                    text = { t('settings.microphones') } />
+                <ul
+                    aria-labelledby = { microphoneHeaderId }
+                    className = { classes.list }
+                    role = 'radiogroup'
+                    tabIndex = { -1 }>
+                    {audioTracks.map((data, i) =>
+                        _renderMicrophoneEntry(data, i, audioTracks.length)
+                    )}
+                </ul>
+            </ContextMenuItemGroup>
+            {outputDevices.length > 0 && (
                 <ContextMenuItemGroup>
                     <ContextMenuItem
-                        accessibilityLabel = { t('settings.microphones') }
-                        className = 'audio-preview-header'
-                        icon = { IconMic }
-                        id = { this.microphoneHeaderId }
-                        text = { t('settings.microphones') } />
+                        accessibilityLabel = { t('settings.speakers') }
+                        className = { classes.header }
+                        icon = { IconVolumeUp }
+                        id = { speakerHeaderId }
+                        text = { t('settings.speakers') } />
                     <ul
-                        aria-labelledby = { this.microphoneHeaderId }
-                        className = 'audio-preview-content-ul'
+                        aria-labelledby = { speakerHeaderId }
+                        className = { classes.list }
                         role = 'radiogroup'
                         tabIndex = { -1 }>
-                        {this.state.audioTracks.map((data, i) =>
-                            this._renderMicrophoneEntry(data, i, this.state.audioTracks.length, t)
+                        {outputDevices.map((data: any, i: number) =>
+                            _renderSpeakerEntry(data, i, outputDevices.length)
                         )}
                     </ul>
+                </ContextMenuItemGroup>)
+            }
+            {!prejoinVisible && (
+                <ContextMenuItemGroup>
+                    <div
+                        className = { classes.checkboxContainer }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onClick = { e => e.stopPropagation() }>
+                        <Checkbox
+                            checked = { noiseSuppressionEnabled }
+                            label = { t('toolbar.noiseSuppression') }
+                            onChange = { toggleSuppression } />
+                    </div>
                 </ContextMenuItemGroup>
-                { outputDevices.length > 0 && (
-                    <ContextMenuItemGroup>
-                        <ContextMenuItem
-                            accessibilityLabel = { t('settings.speakers') }
-                            className = 'audio-preview-header'
-                            icon = { IconVolumeUp }
-                            id = { this.speakerHeaderId }
-                            text = { t('settings.speakers') } />
-                        <ul
-                            aria-labelledby = { this.speakerHeaderId }
-                            className = 'audio-preview-content-ul'
-                            role = 'radiogroup'
-                            tabIndex = { -1 }>
-                            { outputDevices.map((data, i) =>
-                                this._renderSpeakerEntry(data, i, outputDevices.length, t)
-                            )}
-                        </ul>
-                    </ContextMenuItemGroup>)
-                }
-                {!prejoinVisible && (
-                    <ContextMenuItemGroup>
-                        <div
-                            className = 'audio-preview-checkbox-container'
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onClick = { e => e.stopPropagation() }>
-                            <Checkbox
-                                checked = { noiseSuppressionEnabled }
-                                label = { t('toolbar.noiseSuppression') }
-                                onChange = { toggleSuppression } />
-                        </div>
-                    </ContextMenuItemGroup>
-                )}
-            </ContextMenu>
-        );
-    }
-}
+            )}
+        </ContextMenu>
+    );
+};
 
 const mapStateToProps = (state: IReduxState) => {
     return {
@@ -370,4 +356,4 @@ const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
     };
 };
 
-export default translate(connect(mapStateToProps, mapDispatchToProps)(AudioSettingsContent));
+export default connect(mapStateToProps, mapDispatchToProps)(AudioSettingsContent);
