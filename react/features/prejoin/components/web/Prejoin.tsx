@@ -209,7 +209,7 @@ const Prejoin = ({
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    const _onJoinButtonClick = () => {
+    const onJoinButtonClick = () => {
         if (showErrorOnJoin) {
             return;
         }
@@ -221,7 +221,7 @@ const Prejoin = ({
      *
      * @returns {void}
      */
-    const _onDropdownClose = () => {
+    const onDropdownClose = () => {
         setShowJoinByPhoneButtons(false);
     };
 
@@ -231,7 +231,7 @@ const Prejoin = ({
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    const _onOptionsClick = (e?: React.KeyboardEvent | React.MouseEvent | undefined) => {
+    const onOptionsClick = (e?: React.KeyboardEvent | React.MouseEvent | undefined) => {
         e?.stopPropagation();
 
         setShowJoinByPhoneButtons(show => !show);
@@ -243,7 +243,7 @@ const Prejoin = ({
      * @param {string} displayName - Participant name.
      * @returns {void}
      */
-    const _setName = (displayName: string) => {
+    const setName = (displayName: string) => {
         dispatchUpdateSettings({
             displayName
         });
@@ -254,7 +254,7 @@ const Prejoin = ({
      *
      * @returns {undefined}
      */
-    const _closeDialog = () => {
+    const closeDialog = () => {
         setJoinByPhoneDialogVisiblity(false);
     };
 
@@ -263,9 +263,9 @@ const Prejoin = ({
      *
      * @returns {undefined}
      */
-    const _showDialog = () => {
+    const doShowDialog = () => {
         setJoinByPhoneDialogVisiblity(true);
-        _onDropdownClose();
+        onDropdownClose();
     };
 
     /**
@@ -275,10 +275,10 @@ const Prejoin = ({
      *
      * @returns {void}
      */
-    const _showDialogKeyPress = (e: React.KeyboardEvent) => {
+    const showDialogKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            _showDialog();
+            doShowDialog();
         }
     };
 
@@ -289,7 +289,7 @@ const Prejoin = ({
      *
      * @returns {void}
      */
-    const _onJoinConferenceWithoutAudioKeyPress = (e: React.KeyboardEvent) => {
+    const onJoinConferenceWithoutAudioKeyPress = (e: React.KeyboardEvent) => {
         if (joinConferenceWithoutAudio
             && (e.key === ' '
                 || e.key === 'Enter')) {
@@ -303,14 +303,14 @@ const Prejoin = ({
      *
      * @returns {Object} - The list of extra buttons.
      */
-    const _getExtraJoinButtons = () => {
+    const getExtraJoinButtons = () => {
         const noAudio = {
             key: 'no-audio',
             testId: 'prejoin.joinWithoutAudio',
             icon: IconVolumeOff,
             label: t('prejoin.joinWithoutAudio'),
             onClick: joinConferenceWithoutAudio,
-            onKeyPress: _onJoinConferenceWithoutAudioKeyPress
+            onKeyPress: onJoinConferenceWithoutAudioKeyPress
         };
 
         const byPhone = {
@@ -318,8 +318,8 @@ const Prejoin = ({
             testId: 'prejoin.joinByPhone',
             icon: IconPhoneRinging,
             label: t('prejoin.joinAudioByPhone'),
-            onClick: _showDialog,
-            onKeyPress: _showDialogKeyPress
+            onClick: doShowDialog,
+            onKeyPress: showDialogKeyPress
         };
 
         return {
@@ -334,13 +334,13 @@ const Prejoin = ({
      * @param {KeyboardEvent} e - Keyboard event.
      * @returns {void}
      */
-    const _onInputKeyPress = (e: React.KeyboardEvent) => {
+    const onInputKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             joinConference();
         }
     };
 
-    const extraJoinButtons = _getExtraJoinButtons();
+    const extraJoinButtons = getExtraJoinButtons();
     let extraButtonsToRender = Object.values(extraJoinButtons).filter((val: any) =>
         !(prejoinConfig?.hideExtraJoinButtons || []).includes(val.key)
     );
@@ -364,8 +364,8 @@ const Prejoin = ({
                     autoFocus = { true }
                     className = { classes.input }
                     error = { showErrorOnJoin }
-                    onChange = { _setName }
-                    onKeyPress = { _onInputKeyPress }
+                    onChange = { setName }
+                    onKeyPress = { onInputKeyPress }
                     placeholder = { t('dialog.enterDisplayName') }
                     readOnly = { readOnlyName }
                     value = { name } />
@@ -396,7 +396,7 @@ const Prejoin = ({
                                     { ...rest } />
                             ))}
                         </div> }
-                        onPopoverClose = { _onDropdownClose }
+                        onPopoverClose = { onDropdownClose }
                         position = 'bottom'
                         trigger = 'click'
                         visible = { showJoinByPhoneButtons }>
@@ -407,8 +407,8 @@ const Prejoin = ({
                             ariaPressed = { showJoinByPhoneButtons }
                             disabled = { joiningInProgress }
                             hasOptions = { hasExtraJoinButtons }
-                            onClick = { _onJoinButtonClick }
-                            onOptionsClick = { _onOptionsClick }
+                            onClick = { onJoinButtonClick }
+                            onOptionsClick = { onOptionsClick }
                             role = 'button'
                             tabIndex = { 0 }
                             testId = 'prejoin.joinMeeting'
@@ -419,9 +419,9 @@ const Prejoin = ({
                 </div>
             </div>
             {showDialog && (
-                <JoinByPhoneDialog // @ts-ignore
+                <JoinByPhoneDialog
                     joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
-                    onClose = { _closeDialog } />
+                    onClose = { closeDialog } />
             )}
         </PreMeetingScreen>
     );

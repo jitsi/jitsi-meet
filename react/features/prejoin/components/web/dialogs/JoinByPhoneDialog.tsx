@@ -216,9 +216,10 @@ class JoinByPhoneDialog extends PureComponent<IProps, State> {
  * Maps (parts of) the redux state to the React {@code Component} props.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} _ownProps - Component's own props.
  * @returns {Object}
  */
-function mapStateToProps(state: IReduxState) {
+function mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         dialInNumber: getDefaultDialInNumber(state),
         dialOutNumber: getFullDialOutNumber(state),
