@@ -9,6 +9,15 @@ import { IconTrash } from '../../../icons/svg';
 import Container from './Container';
 import Text from './Text';
 
+interface IMeeting {
+    date: Date;
+    duration?: number;
+    elementAfter?: React.ReactElement;
+    time: Date[];
+    title: string;
+    url: string;
+}
+
 interface IProps extends WithTranslation {
 
     /**
@@ -29,14 +38,7 @@ interface IProps extends WithTranslation {
     /**
      * An array of meetings.
      */
-    meetings: Array<{
-        date: Date;
-        duration?: number;
-        elementAfter?: React.ReactElement;
-        time: Date[];
-        title: string;
-        url: string;
-    }>;
+    meetings: IMeeting[];
 
     /**
      * Handler for deleting an item.
@@ -205,10 +207,7 @@ class MeetingsList extends Component<IProps> {
      * @param {number} index - The index of the item.
      * @returns {Node}
      */
-    _renderItem(meeting: {
-        date: Date; duration?: number; elementAfter?: React.ReactElement;
-        time: Date[]; title: string; url: string;
-    }, index: number) {
+    _renderItem(meeting: IMeeting, index: number) {
         const {
             date,
             duration,

@@ -31,9 +31,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     _additionalToolbarContentRef: HTMLDivElement | null;
     _additionalCardRef: HTMLDivElement | null;
     _roomInputRef: HTMLInputElement | null;
-    _additionalCardTemplate: HTMLElement | null;
-    _additionalContentTemplate: HTMLElement | null;
-    _additionalToolbarContentTemplate: HTMLElement | null;
+    _additionalCardTemplate: HTMLTemplateElement | null;
+    _additionalContentTemplate: HTMLTemplateElement | null;
+    _additionalToolbarContentTemplate: HTMLTemplateElement | null;
 
     /**
      * Default values for {@code WelcomePage} component's properties.
@@ -89,7 +89,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalCardTemplate = document.getElementById(
-            'welcome-page-additional-card-template');
+            'welcome-page-additional-card-template') as HTMLTemplateElement;
 
         /**
          * The template to use as the main content for the welcome page. If
@@ -99,7 +99,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalContentTemplate = document.getElementById(
-            'welcome-page-additional-content-template');
+            'welcome-page-additional-content-template') as HTMLTemplateElement;
 
         /**
          * The template to use as the additional content for the welcome page header toolbar.
@@ -110,7 +110,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
          */
         this._additionalToolbarContentTemplate = document.getElementById(
             'settings-toolbar-additional-content-template'
-        );
+        ) as HTMLTemplateElement;
 
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
@@ -142,19 +142,19 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         }
 
         if (this._shouldShowAdditionalContent()) {
-            this._additionalContentRef?.appendChild( // @ts-ignore
-                this._additionalContentTemplate?.content.cloneNode(true));
+            this._additionalContentRef?.appendChild(
+                this._additionalContentTemplate?.content.cloneNode(true) as Node);
         }
 
         if (this._shouldShowAdditionalToolbarContent()) {
-            this._additionalToolbarContentRef?.appendChild( // @ts-ignore
-                this._additionalToolbarContentTemplate?.content.cloneNode(true)
+            this._additionalToolbarContentRef?.appendChild(
+                this._additionalToolbarContentTemplate?.content.cloneNode(true) as Node
             );
         }
 
         if (this._shouldShowAdditionalCard()) {
-            this._additionalCardRef?.appendChild( // @ts-ignore
-                this._additionalCardTemplate?.content.cloneNode(true)
+            this._additionalCardRef?.appendChild(
+                this._additionalCardTemplate?.content.cloneNode(true) as Node
             );
         }
     }
@@ -483,7 +483,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalCard() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD
-            && this._additionalCardTemplate // @ts-ignore
+            && this._additionalCardTemplate
             && this._additionalCardTemplate.content
             && this._additionalCardTemplate.innerHTML.trim();
     }
@@ -497,7 +497,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalContent() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
-            && this._additionalContentTemplate // @ts-ignore
+            && this._additionalContentTemplate
             && this._additionalContentTemplate.content
             && this._additionalContentTemplate.innerHTML.trim();
     }
@@ -511,7 +511,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalToolbarContent() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT
-            && this._additionalToolbarContentTemplate // @ts-ignore
+            && this._additionalToolbarContentTemplate
             && this._additionalToolbarContentTemplate.content
             && this._additionalToolbarContentTemplate.innerHTML.trim();
     }
