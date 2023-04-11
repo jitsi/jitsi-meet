@@ -221,7 +221,13 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getNotificationsTabProps>) => {
                 return {
                     ...newProps,
-                    enabledNotifications: tabState?.enabledNotifications || {}
+                    enabledNotifications: tabState?.enabledNotifications || {},
+                    soundsIncomingMessage: tabState?.soundsIncomingMessage,
+                    soundsParticipantJoined: tabState?.soundsParticipantJoined,
+                    soundsParticipantKnocking: tabState?.soundsParticipantKnocking,
+                    soundsParticipantLeft: tabState?.soundsParticipantLeft,
+                    soundsReactions: tabState?.soundsReactions,
+                    soundsTalkWhileMuted: tabState?.soundsTalkWhileMuted
                 };
             },
             props: getNotificationsTabProps(state, showSoundsSettings),
