@@ -1,6 +1,7 @@
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../app/types';
 import CopyButton from '../../base/buttons/CopyButton.web';
@@ -17,12 +18,26 @@ interface IProps extends WithTranslation {
     url: string;
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+        container: {
+            paddingTop: theme.spacing(1)
+        },
+
+        button: {
+            marginTop: theme.spacing(3)
+        }
+    };
+});
+
 /**
  * Allow users to embed a jitsi meeting in an iframe.
  *
  * @returns {React$Element<any>}
  */
 function EmbedMeeting({ t, url }: IProps) {
+    const { classes } = useStyles();
+
     /**
      * Get the embed code for a jitsi meeting.
      *
@@ -37,7 +52,7 @@ function EmbedMeeting({ t, url }: IProps) {
             cancel = {{ hidden: true }}
             ok = {{ hidden: true }}
             titleKey = { 'embedMeeting.title' }>
-            <div className = 'embed-meeting-dialog'>
+            <div className = { classes.container }>
                 <Input
                     accessibilityLabel = { t('dialog.embedMeeting') }
                     readOnly = { true }
@@ -45,7 +60,7 @@ function EmbedMeeting({ t, url }: IProps) {
                     value = { getEmbedCode() } />
                 <CopyButton
                     aria-label = { t('addPeople.copyLink') }
-                    className = 'embed-meeting-copy'
+                    className = { classes.button }
                     displayedText = { t('dialog.copy') }
                     textOnCopySuccess = { t('dialog.copied') }
                     textOnHover = { t('dialog.copy') }
