@@ -1,71 +1,64 @@
-// @flow
-
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { createCalendarClickedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCalendar } from '../../base/icons/svg';
 import AbstractPage from '../../base/react/components/AbstractPage';
 import Spinner from '../../base/ui/components/web/Spinner';
-import { openSettingsDialog } from '../../settings/actions';
+import { openSettingsDialog } from '../../settings/actions.web';
 import { SETTINGS_TABS } from '../../settings/constants';
-import { refreshCalendar } from '../actions';
+import { refreshCalendar } from '../actions.web';
 import { ERRORS } from '../constants';
 
-import CalendarListContent from './CalendarListContent';
-
-declare var interfaceConfig: Object;
+import CalendarListContent from './CalendarListContent.web';
 
 /**
  * The type of the React {@code Component} props of {@link CalendarList}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The error object containing details about any error that has occurred
      * while interacting with calendar integration.
      */
-    _calendarError: ?Object,
+    _calendarError?: { error: string; };
 
     /**
      * Whether or not a calendar may be connected for fetching calendar events.
      */
-    _hasIntegrationSelected: boolean,
+    _hasIntegrationSelected: boolean;
 
     /**
      * Whether or not events have been fetched from a calendar.
      */
-    _hasLoadedEvents: boolean,
+    _hasLoadedEvents: boolean;
 
     /**
      * Indicates if the list is disabled or not.
      */
-    disabled: boolean,
+    disabled?: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
-
-    /**
-     * The translate function.
-     */
-    t: Function
-};
+    dispatch: Function;
+}
 
 /**
  * Component to display a list of events from the user's calendar.
  */
-class CalendarList extends AbstractPage<Props> {
+class CalendarList extends AbstractPage<IProps> {
     /**
      * Initializes a new {@code CalendarList} instance.
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -87,7 +80,7 @@ class CalendarList extends AbstractPage<Props> {
         return (
             CalendarListContent
                 ? <CalendarListContent
-                    disabled = { disabled }
+                    disabled = { Boolean(disabled) }
                     listEmptyComponent
                         = { this._getRenderListEmptyComponent() } />
                 : null
@@ -102,7 +95,7 @@ class CalendarList extends AbstractPage<Props> {
      * @returns {React$Component}
      */
     _getErrorMessage() {
-        const { _calendarError = {}, t } = this.props;
+        const { _calendarError = { error: undefined }, t } = this.props;
 
         let errorMessageKey = 'calendarSync.error.generic';
         let showRefreshButton = true;
@@ -141,8 +134,6 @@ class CalendarList extends AbstractPage<Props> {
             </div>
         );
     }
-
-    _getRenderListEmptyComponent: () => Object;
 
     /**
      * Returns a list empty component if a custom one has to be rendered instead
@@ -210,8 +201,6 @@ class CalendarList extends AbstractPage<Props> {
         );
     }
 
-    _onOpenSettings: () => void;
-
     /**
      * Opens {@code SettingsDialog}.
      *
@@ -224,8 +213,6 @@ class CalendarList extends AbstractPage<Props> {
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }
 
-    _onKeyPressOpenSettings: (Object) => void;
-
     /**
      * KeyPress handler for accessibility.
      *
@@ -233,14 +220,12 @@ class CalendarList extends AbstractPage<Props> {
      *
      * @returns {void}
      */
-    _onKeyPressOpenSettings(e) {
+    _onKeyPressOpenSettings(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this._onOpenSettings();
         }
     }
-
-    _onRefreshEvents: () => void;
 
 
     /**
@@ -266,7 +251,7 @@ class CalendarList extends AbstractPage<Props> {
  *     _hasLoadedEvents: boolean
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const {
         error,
         events,

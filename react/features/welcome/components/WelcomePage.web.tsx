@@ -1,5 +1,3 @@
-/* global interfaceConfig */
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -13,7 +11,7 @@ import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
 
-import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
+import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 /**
@@ -28,7 +26,15 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
  *
  * @augments AbstractWelcomePage
  */
-class WelcomePage extends AbstractWelcomePage {
+class WelcomePage extends AbstractWelcomePage<IProps> {
+    _additionalContentRef: HTMLDivElement | null;
+    _additionalToolbarContentRef: HTMLDivElement | null;
+    _additionalCardRef: HTMLDivElement | null;
+    _roomInputRef: HTMLInputElement | null;
+    _additionalCardTemplate: HTMLTemplateElement | null;
+    _additionalContentTemplate: HTMLTemplateElement | null;
+    _additionalToolbarContentTemplate: HTMLTemplateElement | null;
+
     /**
      * Default values for {@code WelcomePage} component's properties.
      *
@@ -44,7 +50,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -83,7 +89,7 @@ class WelcomePage extends AbstractWelcomePage {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalCardTemplate = document.getElementById(
-            'welcome-page-additional-card-template');
+            'welcome-page-additional-card-template') as HTMLTemplateElement;
 
         /**
          * The template to use as the main content for the welcome page. If
@@ -93,7 +99,7 @@ class WelcomePage extends AbstractWelcomePage {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalContentTemplate = document.getElementById(
-            'welcome-page-additional-content-template');
+            'welcome-page-additional-content-template') as HTMLTemplateElement;
 
         /**
          * The template to use as the additional content for the welcome page header toolbar.
@@ -104,7 +110,7 @@ class WelcomePage extends AbstractWelcomePage {
          */
         this._additionalToolbarContentTemplate = document.getElementById(
             'settings-toolbar-additional-content-template'
-        );
+        ) as HTMLTemplateElement;
 
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
@@ -136,19 +142,19 @@ class WelcomePage extends AbstractWelcomePage {
         }
 
         if (this._shouldShowAdditionalContent()) {
-            this._additionalContentRef.appendChild(
-                this._additionalContentTemplate.content.cloneNode(true));
+            this._additionalContentRef?.appendChild(
+                this._additionalContentTemplate?.content.cloneNode(true) as Node);
         }
 
         if (this._shouldShowAdditionalToolbarContent()) {
-            this._additionalToolbarContentRef.appendChild(
-                this._additionalToolbarContentTemplate.content.cloneNode(true)
+            this._additionalToolbarContentRef?.appendChild(
+                this._additionalToolbarContentTemplate?.content.cloneNode(true) as Node
             );
         }
 
         if (this._shouldShowAdditionalCard()) {
-            this._additionalCardRef.appendChild(
-                this._additionalCardTemplate.content.cloneNode(true)
+            this._additionalCardRef?.appendChild(
+                this._additionalCardTemplate?.content.cloneNode(true) as Node
             );
         }
     }
@@ -236,7 +242,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     className = 'welcome-page-button'
                                     id = 'enter_room_button'
                                     onClick = { this._onFormSubmit }
-                                    tabIndex = '0'
+                                    tabIndex = { 0 }
                                     type = 'button'>
                                     { t('welcomepage.startMeeting') }
                                 </button>
@@ -301,7 +307,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _onFormSubmit(event) {
+    _onFormSubmit(event: React.FormEvent) {
         event.preventDefault();
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
@@ -319,7 +325,9 @@ class WelcomePage extends AbstractWelcomePage {
      * the EventTarget.
      * @protected
      */
-    _onRoomChange(event) {
+    // @ts-ignore
+    // eslint-disable-next-line require-jsdoc
+    _onRoomChange(event: React.ChangeEvent<HTMLInputElement>) {
         super._onRoomChange(event.target.value);
     }
 
@@ -332,8 +340,9 @@ class WelcomePage extends AbstractWelcomePage {
         const {
             t,
             _deeplinkingCfg: {
-                ios = {},
-                android = {}
+                ios = { downloadLink: undefined },
+                android = { fDroidUrl: undefined,
+                    downloadLink: undefined }
             }
         } = this.props;
 
@@ -424,7 +433,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _setAdditionalCardRef(el) {
+    _setAdditionalCardRef(el: HTMLDivElement) {
         this._additionalCardRef = el;
     }
 
@@ -437,7 +446,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _setAdditionalContentRef(el) {
+    _setAdditionalContentRef(el: HTMLDivElement) {
         this._additionalContentRef = el;
     }
 
@@ -450,7 +459,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _setAdditionalToolbarContentRef(el) {
+    _setAdditionalToolbarContentRef(el: HTMLDivElement) {
         this._additionalToolbarContentRef = el;
     }
 
@@ -462,7 +471,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _setRoomInputRef(el) {
+    _setRoomInputRef(el: HTMLInputElement) {
         this._roomInputRef = el;
     }
 

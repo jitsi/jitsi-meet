@@ -1,6 +1,5 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { getLocalizedDateFormatter, getLocalizedDurationFormatter } from '../../../i18n/dateUtil';
 import { translate } from '../../../i18n/functions';
@@ -10,43 +9,47 @@ import { IconTrash } from '../../../icons/svg';
 import Container from './Container';
 import Text from './Text';
 
-type Props = {
+interface IMeeting {
+    date: Date;
+    duration?: number;
+    elementAfter?: React.ReactElement;
+    time: Date[];
+    title: string;
+    url: string;
+}
+
+interface IProps extends WithTranslation {
 
     /**
      * Indicates if the list is disabled or not.
      */
-    disabled: boolean,
+    disabled: boolean;
 
     /**
      * Indicates if the URL should be hidden or not.
      */
-    hideURL: boolean,
-
-    /**
-     * Function to be invoked when an item is pressed. The item's URL is passed.
-     */
-    onPress: Function,
+    hideURL?: boolean;
 
     /**
      * Rendered when the list is empty. Should be a rendered element.
      */
-    listEmptyComponent: Object,
+    listEmptyComponent: React.ReactNode;
 
     /**
      * An array of meetings.
      */
-    meetings: Array<Object>,
+    meetings: IMeeting[];
 
     /**
      * Handler for deleting an item.
      */
-    onItemDelete?: Function,
+    onItemDelete?: Function;
 
     /**
-     * Invoked to obtain translated strings.
+     * Function to be invoked when an item is pressed. The item's URL is passed.
      */
-    t: Function
-};
+    onPress: Function;
+}
 
 /**
  * Generates a date string for a given date.
@@ -55,7 +58,7 @@ type Props = {
  * @private
  * @returns {string}
  */
-function _toDateString(date) {
+function _toDateString(date: Date) {
     return getLocalizedDateFormatter(date).format('ll');
 }
 
@@ -67,7 +70,7 @@ function _toDateString(date) {
  * @private
  * @returns {string}
  */
-function _toTimeString(times) {
+function _toTimeString(times: Date[]) {
     if (times && times.length > 0) {
         return (
             times
@@ -84,13 +87,13 @@ function _toTimeString(times) {
  *
  * @augments Component
  */
-class MeetingsList extends Component<Props> {
+class MeetingsList extends Component<IProps> {
     /**
      * Constructor of the MeetingsList component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onPress = this._onPress.bind(this);
@@ -123,8 +126,6 @@ class MeetingsList extends Component<Props> {
         return null;
     }
 
-    _onPress: string => Function;
-
     /**
      * Returns a function that is used in the onPress callback of the items.
      *
@@ -132,17 +133,15 @@ class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onPress(url) {
+    _onPress(url: string) {
         const { disabled, onPress } = this.props;
 
         if (!disabled && url && typeof onPress === 'function') {
             return () => onPress(url);
         }
 
-        return null;
+        return undefined;
     }
-
-    _onKeyPress: string => Function;
 
     /**
      * Returns a function that is used in the onPress callback of the items.
@@ -151,21 +150,19 @@ class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onKeyPress(url) {
+    _onKeyPress(url: string) {
         const { disabled, onPress } = this.props;
 
         if (!disabled && url && typeof onPress === 'function') {
-            return e => {
+            return (e: React.KeyboardEvent) => {
                 if (e.key === ' ' || e.key === 'Enter') {
                     onPress(url);
                 }
             };
         }
 
-        return null;
+        return undefined;
     }
-
-    _onDelete: Object => Function;
 
     /**
      * Returns a function that is used on the onDelete callback.
@@ -174,17 +171,15 @@ class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onDelete(item) {
+    _onDelete(item: Object) {
         const { onItemDelete } = this.props;
 
-        return evt => {
+        return (evt: React.MouseEvent) => {
             evt.stopPropagation();
 
-            onItemDelete && onItemDelete(item);
+            onItemDelete?.(item);
         };
     }
-
-    _onDeleteKeyPress: Object => Function;
 
     /**
      * Returns a function that is used on the onDelete keypress callback.
@@ -193,10 +188,10 @@ class MeetingsList extends Component<Props> {
      * @private
      * @returns {Function}
      */
-    _onDeleteKeyPress(item) {
+    _onDeleteKeyPress(item: Object) {
         const { onItemDelete } = this.props;
 
-        return e => {
+        return (e: React.KeyboardEvent) => {
             if (onItemDelete && (e.key === ' ' || e.key === 'Enter')) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -205,8 +200,6 @@ class MeetingsList extends Component<Props> {
         };
     }
 
-    _renderItem: (Object, number) => React$Node;
-
     /**
      * Renders an item for the list.
      *
@@ -214,7 +207,7 @@ class MeetingsList extends Component<Props> {
      * @param {number} index - The index of the item.
      * @returns {Node}
      */
-    _renderItem(meeting, index) {
+    _renderItem(meeting: IMeeting, index: number) {
         const {
             date,
             duration,

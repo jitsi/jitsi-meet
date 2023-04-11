@@ -1,38 +1,29 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../i18n/functions';
 import Button from '../../../ui/components/web/Button';
 
-
-declare var interfaceConfig: Object;
-
 /**
  * The type of the React {@code Component} props of {@link InlineDialogFailure}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Allows to retry the call that previously didn't succeed.
      */
-    onRetry: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    onRetry: Function;
 
     /**
      * Indicates whether the support link should be shown in case of an error.
      */
-     showSupportLink: Boolean,
-};
+    showSupportLink: Boolean;
+}
 
 /**
  * Inline dialog that represents a failure and allows a retry.
  */
-class InlineDialogFailure extends Component<Props> {
+class InlineDialogFailure extends Component<IProps> {
     /**
      * Renders the content of this component.
      *

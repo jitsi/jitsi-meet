@@ -1,17 +1,15 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import { Section } from '../../types';
 
 import Text from './Text';
 
-type Props = {
+interface IProps {
 
     /**
      * A section containing the data to be rendered.
      */
-    section: Section
+    section: Section;
 }
 
 /**
@@ -20,7 +18,7 @@ type Props = {
  *
  * @augments Component
  */
-export default class NavigateSectionListSectionHeader extends Component<Props> {
+export default class NavigateSectionListSectionHeader extends Component<IProps> {
     /**
      * Renders the content of this component.
      *

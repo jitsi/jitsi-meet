@@ -1,6 +1,5 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
@@ -10,30 +9,25 @@ import Tooltip from '../../base/tooltip/components/Tooltip';
 /**
  * The type of the React {@code Component} props of {@link JoinButton}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The function called when the button is pressed.
      */
-    onPress: Function,
+    onPress: Function;
 
     /**
      * The meeting URL associated with the {@link JoinButton} instance.
      */
-    url: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+    url: string;
+}
 
 /**
  * A React Component for joining an existing calendar meeting.
  *
  * @augments Component
  */
-class JoinButton extends Component<Props> {
+class JoinButton extends Component<IProps> {
 
     /**
      * Initializes a new {@code JoinButton} instance.
@@ -41,7 +35,7 @@ class JoinButton extends Component<Props> {
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -73,8 +67,6 @@ class JoinButton extends Component<Props> {
         );
     }
 
-    _onClick: (Object) => void;
-
     /**
      * Callback invoked when the component is clicked.
      *
@@ -82,11 +74,9 @@ class JoinButton extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onClick(event) {
+    _onClick(event?: React.MouseEvent) {
         this.props.onPress(event, this.props.url);
     }
-
-    _onKeyPress: (Object) => void;
 
     /**
      * KeyPress handler for accessibility.
@@ -95,7 +85,7 @@ class JoinButton extends Component<Props> {
      *
      * @returns {void}
      */
-    _onKeyPress(e) {
+    _onKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this._onClick();
