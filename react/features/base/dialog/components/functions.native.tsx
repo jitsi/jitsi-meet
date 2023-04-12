@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TextStyle } from 'react-native';
 
 import { brandedDialog as styles } from './native/styles';
 
@@ -10,7 +10,7 @@ import { brandedDialog as styles } from './native/styles';
  * contain HTML to render.
  * @returns {ReactElement[]|string}
  */
-export function renderHTML(html) {
+export function renderHTML(html?: string) {
     if (typeof html === 'string') {
         // At the time of this writing, the specified HTML contains a couple
         // of spaces one after the other. They do not cause a visible
@@ -36,7 +36,7 @@ export function renderHTML(html) {
             if (c = closing.exec(html)) {
                 r.push(html.substring(prevClosingLastIndex, o.index));
                 r.push(
-                    <Text style = { styles.boldDialogText }>
+                    <Text style = { (styles.boldDialogText as TextStyle) }>
                         { html.substring(opening.lastIndex, c.index) }
                     </Text>);
                 opening.lastIndex

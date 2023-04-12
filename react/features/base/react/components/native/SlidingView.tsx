@@ -1,76 +1,75 @@
-// @flow
-
-import React, { type Node, PureComponent } from 'react';
+import React, { PureComponent, ReactNode } from 'react';
 import {
     Animated,
     BackHandler,
     Dimensions,
     TouchableWithoutFeedback,
-    View
+    View,
+    ViewStyle
 } from 'react-native';
 
-import { type StyleType } from '../../../styles';
+import { StyleType } from '../../../styles/functions.any';
 
 import styles from './slidingviewstyles';
 
 /**
  * The type of the React {@code Component} props of {@link SlidingView}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The children of {@code SlidingView}.
      */
-    children: Node,
+    children: ReactNode;
 
     /**
      * Callback to notify the containing {@code Component} that the view is
      * closing.
      */
-    onHide: Function,
+    onHide: Function;
 
     /**
      * Position of the SlidingView: 'left', 'right', 'top', 'bottom'.
      * Later).
      */
-    position: string,
+    position: string;
 
     /**
      * Whether the {@code SlidingView} is to be displayed/rendered/shown or not.
      */
-    show: boolean,
+    show: boolean;
 
     /**
      * Style of the animated view.
      */
-    style: StyleType
-};
+    style: StyleType;
+}
 
 /**
  * The type of the React {@code Component} state of {@link SlidingView}.
  */
-type State = {
-
-    /**
-     * Whether the sliding overlay should be displayed/rendered/shown.
-     */
-    showOverlay: boolean,
-
-    /**
-     * The native animation object.
-     */
-    sliderAnimation: Animated.Value,
+interface IState {
 
     /**
      * Offset to move the view out of the screen.
      */
-    positionOffset: number
-};
+    positionOffset: number;
+
+    /**
+     * Whether the sliding overlay should be displayed/rendered/shown.
+     */
+    showOverlay: boolean;
+
+    /**
+     * The native animation object.
+     */
+    sliderAnimation: Animated.Value;
+}
 
 /**
  * A generic animated slider view to be used for animated menus.
  */
-export default class SlidingView extends PureComponent<Props, State> {
+export default class SlidingView extends PureComponent<IProps, IState> {
     /**
      * True if the component is mounted.
      */
@@ -81,7 +80,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, prevState: State) {
+    static getDerivedStateFromProps(props: IProps, prevState: IState) {
         return {
             showOverlay: props.show || prevState.showOverlay
         };
@@ -92,7 +91,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const { height, width } = Dimensions.get('window');
@@ -132,7 +131,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         const { show } = this.props;
 
         if (prevProps.show !== show) {
@@ -173,14 +172,12 @@ export default class SlidingView extends PureComponent<Props, State> {
                 </TouchableWithoutFeedback>
                 <Animated.View
                     pointerEvents = 'box-none'
-                    style = { this._getContentStyle() }>
+                    style = { this._getContentStyle() as ViewStyle }>
                     { this.props.children }
                 </Animated.View>
             </View>
         );
     }
-
-    _getContentStyle: () => Array<Object>;
 
     /**
      * Assembles a style array for the SlideView content.
@@ -221,8 +218,6 @@ export default class SlidingView extends PureComponent<Props, State> {
         return style;
     }
 
-    _onHardwareBackPress: () => boolean;
-
     /**
      * Callback to handle the hardware back button.
      *
@@ -233,8 +228,6 @@ export default class SlidingView extends PureComponent<Props, State> {
 
         return true;
     }
-
-    _onHide: () => void;
 
     /**
      * Hides the slider.
@@ -247,11 +240,9 @@ export default class SlidingView extends PureComponent<Props, State> {
             .then(() => {
                 const { onHide } = this.props;
 
-                onHide && onHide();
+                onHide?.();
             });
     }
-
-    _setShow: (boolean) => Promise<*>;
 
     /**
      * Shows/hides the slider menu.
@@ -261,8 +252,8 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @private
      * @returns {Promise}
      */
-    _setShow(show) {
-        return new Promise(resolve => {
+    _setShow(show: boolean) {
+        return new Promise<void>(resolve => {
             if (!this._mounted) {
                 resolve();
 

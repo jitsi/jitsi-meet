@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import ReactionEmoji from '../../../../reactions/components/native/ReactionEmoji';
 import { getReactionsQueue } from '../../../../reactions/functions.native';
 import AbstractDialogContainer, {
@@ -47,7 +48,7 @@ class DialogContainer extends AbstractDialogContainer {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: IReduxState) => {
     return {
         ...abstractMapStateToProps(state),
         _reactionsQueue: getReactionsQueue(state)

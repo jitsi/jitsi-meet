@@ -1,11 +1,12 @@
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import Dialog from 'react-native-dialog';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n/functions';
 import { renderHTML } from '../functions.native';
 
-import AbstractDialog from './AbstractDialog';
+import AbstractDialog, { IProps as AbstractProps } from './AbstractDialog';
 import styles from './styles';
 
 
@@ -13,43 +14,38 @@ import styles from './styles';
  * The type of the React {@code Component} props of
  * {@link ConfirmDialog}.
  */
-type Props = {
+interface IProps extends AbstractProps, WithTranslation {
 
     /**
      * The i18n key of the text label for the cancel button.
      */
-    cancelLabel: string,
+    cancelLabel: string;
 
     /**
      * The React {@code Component} children.
      */
-    children?: Node,
+    children?: React.ReactNode;
 
     /**
      * The i18n key of the text label for the confirm button.
      */
-    confirmLabel: string,
+    confirmLabel: string;
 
     /**
      * Dialog description key for translations.
      */
-    descriptionKey?: string | Object,
+    descriptionKey?: string | { key: string; params: string; };
 
     /**
      * Whether or not the nature of the confirm button is destructive.
      */
-    isConfirmDestructive?: Boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
+    isConfirmDestructive?: Boolean;
 
     /**
      * Dialog title.
      */
-    title?: string
-};
+    title?: string;
+}
 
 /**
  * React Component for getting confirmation to stop a file recording session in
@@ -57,7 +53,7 @@ type Props = {
  *
  * @augments Component
  */
-class ConfirmDialog extends AbstractDialog<Props> {
+class ConfirmDialog extends AbstractDialog<IProps> {
     /**
      * Default values for {@code ConfirmDialog} component's properties.
      *
@@ -78,7 +74,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
             = typeof descriptionKey === 'string'
                 ? t(descriptionKey)
                 : renderHTML(
-                    t(descriptionKey?.key, descriptionKey?.params)
+                    t(descriptionKey?.key ?? '', descriptionKey?.params)
                 );
 
         return (
@@ -129,10 +125,6 @@ class ConfirmDialog extends AbstractDialog<Props> {
             </Dialog.Container>
         );
     }
-
-    _onCancel: () => void;
-
-    _onSubmit: (?string) => void;
 }
 
 export default translate(connect()(ConfirmDialog));

@@ -24,9 +24,4 @@ export interface IAvatarProps {
      * Expected size of the avatar.
      */
     size?: number;
-
-    /**
-     * The URL of the avatar to render.
-     */
-    url?: string | Function;
 }

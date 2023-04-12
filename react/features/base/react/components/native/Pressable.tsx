@@ -1,27 +1,25 @@
-// @flow
-
 import React, { Component } from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { GestureResponderEvent, TouchableWithoutFeedback } from 'react-native';
 
 /**
  * The type of the React {@link Component} props of {@link Pressable}.
  */
-type Props = {
-    children: React$Node,
+interface IProps {
+    children: React.ReactNode;
 
     /**
      * Called when the touch is released, but not if cancelled (e.g. By a scroll
      * that steals the responder lock).
      */
-    onPress: Function
-};
+    onPress?: (event: GestureResponderEvent) => void;
+}
 
 /**
  * Adds support for {@code onPress} to a child React {@link Component} (which
  * should probably not support the prop in question; otherwise, there's little
  * point of using {@code Pressable} then in the first place).
  */
-export default class Pressable extends Component<Props> {
+export default class Pressable extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

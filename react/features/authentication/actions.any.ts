@@ -8,8 +8,6 @@ import {
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
 } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
 

@@ -25,7 +25,7 @@ export interface IProps {
  *
  * @abstract
  */
-export class AbstractApp extends BaseApp<IProps> {
+export class AbstractApp<P extends IProps = IProps> extends BaseApp<P> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */

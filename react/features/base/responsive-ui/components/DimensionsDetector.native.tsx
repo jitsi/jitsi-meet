@@ -1,41 +1,39 @@
-// @flow
-
 import React, { useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type Props = {
-
-    /**
-     * The "onLayout" handler.
-     */
-    onDimensionsChanged: Function,
-
-    /**
-     * The safe are insets handler.
-     */
-    onSafeAreaInsetsChanged: Function,
+interface IProps {
 
     /**
      * Any nested components.
      */
-    children: React$Node
-};
+    children: React.ReactNode;
+
+    /**
+     * The "onLayout" handler.
+     */
+    onDimensionsChanged?: Function;
+
+    /**
+     * The safe are insets handler.
+     */
+    onSafeAreaInsetsChanged?: Function;
+}
 
 /**
  * A {@link View} which captures the 'onLayout' event and calls a prop with the
  * component size.
  *
- * @param {Props} props - The read-only properties with which the new
+ * @param {IProps} props - The read-only properties with which the new
  * instance is to be initialized.
  * @returns {Component} - Renders the root view and it's children.
  */
-export default function DimensionsDetector(props: Props) {
+export default function DimensionsDetector(props: IProps) {
     const { top = 0, right = 0, bottom = 0, left = 0 } = useSafeAreaInsets();
     const { children, onDimensionsChanged, onSafeAreaInsetsChanged } = props;
 
     useEffect(() => {
-        onSafeAreaInsetsChanged && onSafeAreaInsetsChanged({
+        onSafeAreaInsetsChanged?.({
             top,
             right,
             bottom,
@@ -53,7 +51,7 @@ export default function DimensionsDetector(props: Props) {
      * @returns {void}
      */
     const onLayout = useCallback(({ nativeEvent: { layout: { height, width } } }) => {
-        onDimensionsChanged && onDimensionsChanged(width, height);
+        onDimensionsChanged?.(width, height);
     }, [ onDimensionsChanged ]);
 
     return (

@@ -25,7 +25,7 @@ export interface IState {
 /**
  * An abstract implementation of a dialog on Web/React and mobile/react-native.
  */
-export default class AbstractDialog<P extends IProps, S extends IState>
+export default class AbstractDialog<P extends IProps, S extends IState = IState>
     extends Component<P, S> {
 
     _mounted: boolean;

@@ -1,7 +1,5 @@
-// @flow
-
 import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
-import BaseTheme from '../../../ui/components/BaseTheme';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 /**
  * The default color of the {@code Label} and {@code ExpandedLabel}.

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IReduxState, IStore } from '../../../app/types';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { connect } from '../../../base/connection/actions.native';
 import { toJid } from '../../../base/connection/functions';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
@@ -13,61 +14,68 @@ import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.native';
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
  */
-type Props = {
+interface IProps {
 
     /**
      * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
-    _conference: Object,
+    _conference?: IJitsiConference;
 
     /**
      * The server hosts specified in the global config.
      */
-    _configHosts: Object,
+    _configHosts?: {
+        anonymousdomain?: string;
+        authdomain?: string;
+        domain: string;
+        focus?: string;
+        muc: string;
+        visitorFocus: string;
+    };
 
     /**
      * Indicates if the dialog should display "connecting" status message.
      */
-    _connecting: boolean,
+    _connecting: boolean;
 
     /**
      * The error which occurred during login/authentication.
      */
-    _error: Object,
+    _error: any;
 
     /**
      * The progress in the floating range between 0 and 1 of the authenticating
      * and upgrading the role of the local participant/user.
      */
-    _progress: number,
+    _progress?: number;
 
     /**
      * Redux store dispatch method.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-};
+    t: Function;
+}
 
 /**
  * The type of the React {@link Component} state of {@link LoginDialog}.
  */
-type State = {
+interface IState {
 
     /**
      * The user entered password for the conference.
      */
-    password: string,
+    password: string;
 
     /**
      * The user entered local participant name.
      */
-    username: string
-};
+    username: string;
+}
 
 /**
  * Dialog asks user for username and password.
@@ -96,14 +104,14 @@ type State = {
  * See {@link https://github.com/jitsi/jicofo#secure-domain} for a description
  * of the configuration parameters.
  */
-class LoginDialog extends Component<Props, State> {
+class LoginDialog extends Component<IProps, IState> {
     /**
      * Initializes a new LoginDialog instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -179,7 +187,7 @@ class LoginDialog extends Component<Props, State> {
         } = this.props;
 
         let messageKey;
-        const messageOptions = {};
+        const messageOptions = { msg: '' };
 
         if (progress && progress < 1) {
             messageKey = 'connection.FETCH_SESSION_ID';
@@ -196,7 +204,7 @@ class LoginDialog extends Component<Props, State> {
                         && credentials.jid
                             === toJid(
                                 this.state.username,
-                                this.props._configHosts)
+                                this.props._configHosts ?? {})
                         && credentials.password === this.state.password) {
                     messageKey = 'dialog.incorrectPassword';
                 }
@@ -222,7 +230,7 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      * @private
      */
-    _onUsernameChange(text) {
+    _onUsernameChange(text: string) {
         this.setState({
             username: text.trim()
         });
@@ -235,7 +243,7 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      * @private
      */
-    _onPasswordChange(text) {
+    _onPasswordChange(text: string) {
         this.setState({
             password: text
         });
@@ -261,7 +269,7 @@ class LoginDialog extends Component<Props, State> {
     _onLogin() {
         const { _conference: conference, dispatch } = this.props;
         const { password, username } = this.state;
-        const jid = toJid(username, this.props._configHosts);
+        const jid = toJid(username, this.props._configHosts ?? {});
         let r;
 
         // If there's a conference it means that the connection has succeeded,
@@ -282,9 +290,9 @@ class LoginDialog extends Component<Props, State> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const {
         error: authenticateAndUpgradeRoleError,
         progress,

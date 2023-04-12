@@ -1,11 +1,8 @@
-/* @flow */
-
 import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import AbstractVideoTrack from '../AbstractVideoTrack';
-import type { Props } from '../AbstractVideoTrack';
+import AbstractVideoTrack, { IProps } from '../AbstractVideoTrack';
 
 import styles from './styles';
 
@@ -14,7 +11,7 @@ import styles from './styles';
  *
  * @augments AbstractVideoTrack
  */
-class VideoTrack extends AbstractVideoTrack<Props> {
+class VideoTrack extends AbstractVideoTrack<IProps> {
     /**
      * Renders the video element for the associated video track.
      *

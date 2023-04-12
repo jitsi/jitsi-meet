@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import { ColorPalette } from '../../../styles/components/styles/ColorPalette';

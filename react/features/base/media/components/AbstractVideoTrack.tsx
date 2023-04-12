@@ -113,6 +113,8 @@ export default class AbstractVideoTrack<P extends IProps> extends Component<P> {
             <Video
                 mirror = { videoTrack?.mirror }
                 onPlaying = { this._onVideoPlaying }
+
+                // @ts-ignore
                 onPress = { this.props.onPress }
                 stream = { stream }
                 zOrder = { this.props.zOrder }

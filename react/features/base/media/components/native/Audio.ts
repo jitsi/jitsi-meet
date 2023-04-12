@@ -1,5 +1,3 @@
-/* @flow */
-
 import Sound from 'react-native-sound';
 
 import logger from '../../logger';
@@ -14,7 +12,7 @@ export default class Audio extends AbstractAudio {
     /**
      * Reference to 'react-native-sound} {@link Sound} instance.
      */
-    _sound: ?Sound;
+    _sound: Sound | undefined | null;
 
     /**
      * A callback passed to the 'react-native-sound''s {@link Sound} instance,
@@ -25,7 +23,7 @@ export default class Audio extends AbstractAudio {
      * @returns {void}
      * @private
      */
-    _soundLoadedCallback(error) {
+    _soundLoadedCallback(error: Error) {
         if (error) {
             logger.error('Failed to load sound', error);
         } else {
@@ -42,7 +40,7 @@ export default class Audio extends AbstractAudio {
         this._sound
             = this.props.src
                 ? new Sound(
-                    this.props.src, null,
+                    this.props.src, undefined,
                     this._soundLoadedCallback.bind(this))
                 : null;
     }
@@ -69,8 +67,6 @@ export default class Audio extends AbstractAudio {
     play() {
         if (this._sound) {
             this._sound.setNumberOfLoops(this.props.loop ? -1 : 0);
-
-            // $FlowExpectedError
             this._sound.play(success => {
                 if (!success) {
                     logger.warn(`Failed to play ${this.props.src}`);

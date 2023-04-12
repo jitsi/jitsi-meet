@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
@@ -14,14 +14,13 @@ import { updateSettings } from '../../base/settings/actions';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
-import { AbstractApp } from './AbstractApp';
-import type { Props as AbstractAppProps } from './AbstractApp';
+import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
 
 // Register middlewares and reducers.
-import '../middlewares';
-import '../reducers';
+import '../middlewares.native';
+import '../reducers.native';
 
-declare var __DEV__;
+declare let __DEV__: any;
 
 const { AppInfo } = NativeModules;
 
@@ -32,37 +31,33 @@ const DialogContainerWrapper = Platform.select({
 /**
  * The type of React {@code Component} props of {@link App}.
  */
-type Props = AbstractAppProps & {
+interface IProps extends AbstractAppProps {
 
     /**
      * An object with the feature flags.
      */
-    flags: Object,
+    flags: Object;
 
     /**
      * An object with user information (display name, email, avatar URL).
      */
-    userInfo: ?Object
-};
+    userInfo?: Object;
+}
 
 /**
  * Root app {@code Component} on mobile/React Native.
  *
  * @augments AbstractApp
  */
-export class App extends AbstractApp {
-    /**
-     * The deferred for the initialisation {{promise, resolve, reject}}.
-     */
-    _init: Object;
+export class App extends AbstractApp<IProps> {
 
     /**
      * Initializes a new {@code App} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // In the Release configuration, React Native will (intentionally) throw
@@ -99,10 +94,11 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     async _extraInit() {
-        const { dispatch, getState } = this.state.store;
+        const { dispatch, getState } = this.state.store ?? {};
+        const { flags } = this.props;
 
         // We set these early enough so then we avoid any unnecessary re-renders.
-        dispatch(updateFlags(this.props.flags));
+        dispatch?.(updateFlags(flags));
 
         const route = await _getRouteToRender();
 
@@ -113,8 +109,9 @@ export class App extends AbstractApp {
         // Wait until the root navigator is ready.
         // We really need to break the inheritance relationship between App,
         // AbstractApp and BaseApp, it's very inflexible and cumbersome right now.
-        const rootNavigationReady = new Promise(resolve => {
+        const rootNavigationReady = new Promise<void>(resolve => {
             const i = setInterval(() => {
+                // @ts-ignore
                 const { ready } = getState()['features/app'] || {};
 
                 if (ready) {
@@ -127,26 +124,27 @@ export class App extends AbstractApp {
         await rootNavigationReady;
 
         // Check if serverURL is configured externally and not allowed to change.
-        const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+        const serverURLChangeEnabled = getState && getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
 
         if (!serverURLChangeEnabled) {
             // As serverURL is provided externally, so we push it to settings.
             if (typeof this.props.url !== 'undefined') {
+                // @ts-ignore
                 const { serverURL } = this.props.url;
 
                 if (typeof serverURL !== 'undefined') {
-                    dispatch(updateSettings({ serverURL }));
+                    dispatch?.(updateSettings({ serverURL }));
                 }
             }
         }
 
-        dispatch(updateSettings(this.props.userInfo || {}));
+        dispatch?.(updateSettings(this.props.userInfo || {}));
 
         // Update settings with feature-flag.
-        const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+        const callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         if (typeof callIntegrationEnabled !== 'undefined') {
-            dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+            dispatch?.(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
         }
     }
 
@@ -156,7 +154,7 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createMainElement(component, props) {
+    _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <SafeAreaProvider>
                 <DimensionsDetector
@@ -196,16 +194,18 @@ export class App extends AbstractApp {
             return;
         }
 
+        // @ts-ignore
         const oldHandler = global.ErrorUtils.getGlobalHandler();
         const newHandler = _handleException;
 
         if (!oldHandler || oldHandler !== newHandler) {
+            // @ts-ignore
             newHandler.next = oldHandler;
+
+            // @ts-ignore
             global.ErrorUtils.setGlobalHandler(newHandler);
         }
     }
-
-    _onDimensionsChanged: (width: number, height: number) => void;
 
     /**
      * Updates the known available size for the app to occupy.
@@ -216,9 +216,9 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onDimensionsChanged(width: number, height: number) {
-        const { dispatch } = this.state.store;
+        const { dispatch } = this.state.store ?? {};
 
-        dispatch(clientResized(width, height));
+        dispatch?.(clientResized(width, height));
     }
 
     /**
@@ -232,10 +232,10 @@ export class App extends AbstractApp {
      * @private
      * @returns {void}
      */
-    _onSafeAreaInsetsChanged(insets) {
-        const { dispatch } = this.state.store;
+    _onSafeAreaInsetsChanged(insets: Object) {
+        const { dispatch } = this.state.store ?? {};
 
-        dispatch(setSafeAreaInsets(insets));
+        dispatch?.(setSafeAreaInsets(insets));
     }
 
     /**
@@ -266,7 +266,7 @@ export class App extends AbstractApp {
  * @private
  * @returns {void}
  */
-function _handleException(error, fatal) {
+function _handleException(error: Error, fatal: boolean) {
     if (fatal) {
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
@@ -275,6 +275,7 @@ function _handleException(error, fatal) {
         logger.error(error);
     } else {
         // Forward to the next globalHandler of ErrorUtils.
+        // @ts-ignore
         const { next } = _handleException;
 
         typeof next === 'function' && next(error, fatal);

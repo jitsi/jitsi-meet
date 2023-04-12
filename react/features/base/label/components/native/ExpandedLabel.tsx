@@ -1,37 +1,35 @@
-// @flow
-
 import React, { Component } from 'react';
 import { Animated, Text, View } from 'react-native';
 
 import styles, { DEFAULT_COLOR } from './styles';
 
-export type Props = {
+export interface IProps {
 
     /**
      * The position of the parent element (from right to left) to display the
      * arrow.
      */
-    parentPosition: number,
+    parentPosition: number;
 
     /**
      * Custom styles.
      */
-    style: ?Object
-};
+    style?: Object;
+}
 
-type State = {
+interface IState {
 
     /**
      * The opacity animation Object.
      */
-    opacityAnimation: Object
-};
+    opacityAnimation: Animated.Value;
+}
 
 /**
  * A react {@code Component} that implements an expanded label as tooltip-like
  * component to explain the meaning of the {@code Label}.
  */
-export default class ExpandedLabel<P: Props> extends Component<P, State> {
+export default class ExpandedLabel<P extends IProps> extends Component<P, IState> {
     /**
      * Instantiates a new {@code ExpandedLabel} instance.
      *
@@ -55,7 +53,7 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
             toValue: 1,
             velocity: 1,
             useNativeDriver: true
-        }).start();
+        } as Animated.DecayAnimationConfig).start();
     }
 
     /**
@@ -88,8 +86,6 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
      * @returns {string}
      */
     _getLabel: () => string;
-
-    _getColor: () => string;
 
     /**
      * Defines the color of the expanded label. This function returns a default

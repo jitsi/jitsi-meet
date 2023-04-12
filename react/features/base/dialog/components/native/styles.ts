@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import ColorSchemeRegistry from '../../../color-scheme/ColorSchemeRegistry';
 import { schemeColor } from '../../../color-scheme/functions';
 import { BoxModel } from '../../../styles/components/styles/BoxModel';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
 const BORDER_RADIUS = 5;

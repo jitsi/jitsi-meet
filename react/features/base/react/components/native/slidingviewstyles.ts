@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import { OVERLAY_Z_INDEX } from '../../constants';

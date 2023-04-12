@@ -1,4 +1,6 @@
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
+import { TextStyle } from 'react-native';
 import Dialog from 'react-native-dialog';
 import { connect } from 'react-redux';
 
@@ -6,67 +8,62 @@ import { translate } from '../../../i18n/functions';
 import { _abstractMapStateToProps } from '../../functions';
 
 import AbstractDialog, {
-    type Props as AbstractProps,
-    type State as AbstractState
+    IProps as AbstractProps,
+    IState as AbstractState
 } from './AbstractDialog';
 import { inputDialog as styles } from './styles';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps, WithTranslation {
 
     /**
      * The dialog descriptionKey.
      */
-    descriptionKey: string,
+    descriptionKey: string;
 
     /**
      * An optional initial value to initiate the field with.
      */
-    initialValue?: ?string,
+    initialValue?: string;
 
     /**
      * A message key to be shown for the user (e.g. An error that is defined after submitting the form).
      */
-    messageKey?: string,
-
-    /**
-     * The translate function.
-     */
-    t: Function,
+    messageKey?: string;
 
     /**
      * Props for the text input.
      */
-    textInputProps: ?Object,
+    textInputProps?: Object;
 
     /**
      * The untranslated i18n key for the dialog title.
      */
-    titleKey?: string,
+    titleKey?: string;
 
     /**
      * Validating of the input.
      */
-    validateInput: ?Function
+    validateInput?: Function;
 }
 
-type State = AbstractState & {
+interface IState extends AbstractState {
 
     /**
      * The current value of the field.
      */
-    fieldValue: ?string
-};
+    fieldValue?: string;
+}
 
 /**
  * Implements a single field input dialog component.
  */
-class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
+class InputDialog extends AbstractDialog<IProps, IState> {
     /**
      * Instantiates a new {@code InputDialog}.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -96,7 +93,7 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 coverScreen = { false }
                 visible = { true }>
                 <Dialog.Title>
-                    { t(titleKey) }
+                    { t(titleKey ?? '') }
                 </Dialog.Title>
                 {
                     descriptionKey && (
@@ -113,7 +110,7 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 {
                     messageKey && (
                         <Dialog.Description
-                            style = { styles.formMessage }>
+                            style = { styles.formMessage as TextStyle }>
                             { t(messageKey) }
                         </Dialog.Description>
                     )
@@ -128,17 +125,13 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
         );
     }
 
-    _onCancel: () => void;
-
-    _onChangeText: string => void;
-
     /**
      * Callback to be invoked when the text in the field changes.
      *
      * @param {string} fieldValue - The updated field value.
      * @returns {void}
      */
-    _onChangeText(fieldValue) {
+    _onChangeText(fieldValue: string) {
         if (this.props.validateInput && !this.props.validateInput(fieldValue)) {
             return;
         }
@@ -147,10 +140,6 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
             fieldValue
         });
     }
-
-    _onSubmit: (?string) => boolean;
-
-    _onSubmitValue: () => boolean;
 
     /**
      * Callback to be invoked when the value of this dialog is submitted.
