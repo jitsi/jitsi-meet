@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IStore } from '../../../app/types';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
 import { cancelWaitForOwner, openLoginDialog } from '../../actions.native';
@@ -9,18 +9,18 @@ import { cancelWaitForOwner, openLoginDialog } from '../../actions.native';
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
-};
+    t: Function;
+}
 
 /**
  * The dialog is display in XMPP password + guest access configuration, after
@@ -28,14 +28,14 @@ type Props = {
  *
  * See {@link LoginDialog} description for more details.
  */
-class WaitForOwnerDialog extends Component<Props> {
+class WaitForOwnerDialog extends Component<IProps> {
     /**
      * Initializes a new WaitForWonderDialog instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

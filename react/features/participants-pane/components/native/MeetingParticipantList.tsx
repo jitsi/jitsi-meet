@@ -196,8 +196,6 @@ class MeetingParticipantList extends PureComponent<IProps> {
             t
         } = this.props;
         const title = _currentRoom?.name
-
-            // $FlowExpectedError
             ? `${_currentRoom.name} (${_participantsCount})`
             : t('participantsPane.headings.participantsList',
                 { count: _participantsCount });

@@ -1,22 +1,20 @@
-// @flow
-
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { removeReaction } from '../../actions.any';
-import { REACTIONS, type ReactionEmojiProps } from '../../constants';
+import { IReactionEmojiProps, REACTIONS } from '../../constants';
 
-
-type Props = ReactionEmojiProps & {
+interface IProps extends IReactionEmojiProps {
 
     /**
      * Index of reaction on the queue.
      * Used to differentiate between first and other animations.
      */
-    index: number
-};
+    index: number;
+}
 
 
 /**
@@ -24,16 +22,16 @@ type Props = ReactionEmojiProps & {
  *
  * @returns {ReactElement}
  */
-function ReactionEmoji({ reaction, uid, index }: Props) {
-    const _styles = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
-    const _height = useSelector(state => state['features/base/responsive-ui'].clientHeight);
+function ReactionEmoji({ reaction, uid, index }: IProps) {
+    const _styles: any = useSelector((state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox'));
+    const _height = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientHeight);
     const dispatch = useDispatch();
 
     const animationVal = useRef(new Animated.Value(0)).current;
 
     const vh = useState(_height / 100)[0];
 
-    const randomInt = (min, max) => Math.floor((Math.random() * (max - min + 1)) + min);
+    const randomInt = (min: number, max: number) => Math.floor((Math.random() * (max - min + 1)) + min);
 
     const animationIndex = useMemo(() => index % 21, [ index ]);
 
@@ -68,31 +66,23 @@ function ReactionEmoji({ reaction, uid, index }: Props) {
                 transform: [
                     { translateY: animationVal.interpolate({
                         inputRange: [ 0, 0.70, 0.75, 1 ],
-
-                        // $FlowExpectedError
                         outputRange: [ 0, coordinates.topY * vh, coordinates.topY * vh, coordinates.bottomY * vh ]
                     })
                     }, {
                         translateX: animationVal.interpolate({
                             inputRange: [ 0, 0.70, 0.75, 1 ],
-
-                            // $FlowExpectedError
                             outputRange: [ 0, coordinates.topX, coordinates.topX,
                                 coordinates.topX < 0 ? -coordinates.bottomX : coordinates.bottomX ]
                         })
                     }, {
                         scale: animationVal.interpolate({
                             inputRange: [ 0, 0.70, 0.75, 1 ],
-
-                            // $FlowExpectedError
                             outputRange: [ 0.6, 1.5, 1.5, 1 ]
                         })
                     }
                 ],
                 opacity: animationVal.interpolate({
                     inputRange: [ 0, 0.7, 0.75, 1 ],
-
-                    // $FlowExpectedError
                     outputRange: [ 1, 1, 1, 0 ]
                 })
             }}>

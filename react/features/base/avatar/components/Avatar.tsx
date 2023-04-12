@@ -185,6 +185,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             id?: string;
             status?: string;
             testId?: string;
+            url?: string;
             useCORS?: boolean;
         } = {
             className,

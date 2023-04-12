@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, TextStyle, View, ViewStyle } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import { StyleType } from '../../../styles/functions.native';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
 
-// @ts-ignore
 import styles from './styles';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -23,6 +22,11 @@ interface IProps extends IAvatarProps {
      * External style passed to the component.
      */
     style?: StyleType;
+
+    /**
+     * The URL of the avatar to render.
+     */
+    url?: string;
 }
 
 /**
@@ -66,7 +70,7 @@ export default class StatelessAvatar extends Component<IProps> {
             <View>
                 <View
                     style = { [
-                        styles.avatarContainer(size),
+                        styles.avatarContainer(size) as ViewStyle,
                         style
                     ] }>
                     { avatar }
@@ -90,7 +94,7 @@ export default class StatelessAvatar extends Component<IProps> {
 
         return (
             <View style = { styles.badgeContainer }>
-                <View style = { styles.badge(size, status) } />
+                <View style = { styles.badge(size, status) as ViewStyle } />
             </View>
         );
     }
@@ -125,7 +129,7 @@ export default class StatelessAvatar extends Component<IProps> {
         return (
             <View
                 style = { [
-                    styles.initialsContainer,
+                    styles.initialsContainer as ViewStyle,
                     {
                         backgroundColor: color
                     }
@@ -148,12 +152,12 @@ export default class StatelessAvatar extends Component<IProps> {
         return (
             <View
                 style = { [
-                    styles.initialsContainer,
+                    styles.initialsContainer as ViewStyle,
                     {
                         backgroundColor: color
                     }
                 ] }>
-                <Text style = { styles.initialsText(size) }> { initials } </Text>
+                <Text style = { styles.initialsText(size) as TextStyle }> { initials } </Text>
             </View>
         );
     }
@@ -166,9 +170,11 @@ export default class StatelessAvatar extends Component<IProps> {
     _renderURLAvatar() {
         const { onAvatarLoadError, size, url } = this.props;
 
-        return ( // @ts-ignore
+        return (
             <Image
                 defaultSource = { DEFAULT_AVATAR }
+
+                // @ts-ignore
                 onError = { onAvatarLoadError }
                 resizeMode = 'cover'
                 source = {{ uri: url }}

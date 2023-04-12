@@ -1,6 +1,5 @@
-// @flow
 import React, { Component } from 'react';
-import { Animated, Text } from 'react-native';
+import { Animated, Text, ViewStyle } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import { StyleType, combineStyles } from '../../../styles/functions.native';
@@ -17,41 +16,41 @@ const STATUS_IN_PROGRESS = 'in_progress';
  */
 const STATUS_OFF = 'off';
 
-type Props = {
+interface IProps {
 
     /**
      * An SVG icon to be rendered as the content of the label.
      */
-    icon?: Function,
+    icon?: Function;
 
     /**
      * Color for the icon.
      */
-    iconColor?: ?string,
+    iconColor?: string;
 
     /**
      * Status of the label. This prop adds some additional styles based on its
      * value. E.g. If status = off, it will render the label symbolising that
      * the thing it displays (e.g. Recording) is off.
      */
-    status: ('in_progress' | 'off' | 'on'),
+    status?: 'in_progress' | 'off' | 'on';
 
     /**
      * Style of the label.
      */
-    style?: ?StyleType,
+    style?: StyleType;
 
     /**
      * String or component that will be rendered as the label itself.
      */
-    text?: string,
+    text?: string;
 
     /**
      * Custom styles for the text.
      */
-    textStyle?: ?StyleType
+    textStyle?: StyleType;
 
-};
+}
 
 type State = {
 
@@ -59,25 +58,25 @@ type State = {
      * An animation object handling the opacity changes of the in progress
      * label.
      */
-    pulseAnimation: Object
-}
+    pulseAnimation: Animated.Value;
+};
 
 /**
  * Renders a circular indicator to be used for status icons, such as recording
  * on, audio-only conference, video quality and similar.
  */
-export default class Label extends Component<Props, State> {
+export default class Label extends Component<IProps, State> {
     /**
      * A reference to the started animation of this label.
      */
-    animationReference: Object;
+    animationReference: Animated.CompositeAnimation;
 
     /**
      * Instantiates a new instance of {@code Label}.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -99,7 +98,7 @@ export default class Label extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         this._maybeToggleAnimation(prevProps, this.props);
     }
 
@@ -127,8 +126,8 @@ export default class Label extends Component<Props, State> {
         return (
             <Animated.View
                 style = { [
-                    combineStyles(styles.labelContainer, style),
-                    extraStyle
+                    combineStyles(styles.labelContainer, style ?? {}),
+                    extraStyle as ViewStyle
                 ] }>
                 { icon && <Icon
                     color = { iconColor }
@@ -145,11 +144,11 @@ export default class Label extends Component<Props, State> {
      * Checks if the animation has to be started or stopped and acts
      * accordingly.
      *
-     * @param {Props} oldProps - The previous values of the Props.
-     * @param {Props} newProps - The new values of the Props.
+     * @param {IProps} oldProps - The previous values of the Props.
+     * @param {IProps} newProps - The new values of the Props.
      * @returns {void}
      */
-    _maybeToggleAnimation(oldProps, newProps) {
+    _maybeToggleAnimation(oldProps: Partial<IProps>, newProps: IProps) {
         const { status: oldStatus } = oldProps;
         const { status: newStatus } = newProps;
         const { pulseAnimation } = this.state;

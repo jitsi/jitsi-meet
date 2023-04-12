@@ -92,7 +92,7 @@ export default class AbstractAudio extends Component<IProps> {
      * @protected
      * @returns {void}
      */
-    setAudioElementImpl(element?: AudioElement | null) {
+    setAudioElementImpl(element?: AudioElement | null | any) {
         this._audioElementImpl = element;
 
         const { setRef } = this.props;

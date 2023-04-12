@@ -13,6 +13,6 @@ const route = {
  * @param {any} _stateful - Used on web.
  * @returns {Promise<Object>}
  */
-export function _getRouteToRender(_stateful: any) {
+export function _getRouteToRender(_stateful?: any) {
     return Promise.resolve(route);
 }

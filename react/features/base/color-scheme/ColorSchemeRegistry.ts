@@ -65,7 +65,7 @@ class ColorSchemeRegistry {
      * @param {StyleType} style - The style definition to register.
      * @returns {void}
      */
-    register(componentName: string, style: StyleType): void {
+    register(componentName: string, style: any): void {
         this._styleTemplates.set(componentName, style);
 
         // If this is a style overwrite, we need to delete the processed version
@@ -120,7 +120,6 @@ class ColorSchemeRegistry {
                 } else if (typeof styleValue === 'function') {
                     // The value is a function, which indicates that it's a
                     // dynamic, schemed color we need to resolve.
-                    // $FlowExpectedError
                     const value = styleValue();
 
                     schemedStyle[styleName]

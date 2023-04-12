@@ -1,7 +1,6 @@
-// @flow
-
 import React, { Component } from 'react';
-import { RTCView } from 'react-native-webrtc';
+import { GestureResponderEvent } from 'react-native';
+import { MediaStream, RTCView } from 'react-native-webrtc';
 
 import Pressable from '../../../react/components/native/Pressable';
 
@@ -11,17 +10,17 @@ import styles from './styles';
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
-type Props = {
-    mirror: boolean,
+interface IProps {
+    mirror: boolean;
 
-    onPlaying: Function,
+    onPlaying: Function;
 
     /**
      * Callback to invoke when the {@code Video} is clicked/pressed.
      */
-    onPress: Function,
+    onPress?: (event: GestureResponderEvent) => void;
 
-    stream: Object,
+    stream: MediaStream;
 
     /**
      * Similarly to the CSS property z-index, specifies the z-order of this
@@ -46,20 +45,20 @@ type Props = {
      * values: 0 for the remote video(s) which appear in the background, and
      * 1 for the local video(s) which appear above the remote video(s).
      */
-    zOrder: number,
+    zOrder?: number;
 
     /**
      * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
      */
-    zoomEnabled: boolean
-};
+    zoomEnabled: boolean;
+}
 
 /**
  * The React Native {@link Component} which is similar to Web's
  * {@code HTMLVideoElement} and wraps around react-native-webrtc's
  * {@link RTCView}.
  */
-export default class Video extends Component<Props> {
+export default class Video extends Component<IProps> {
     /**
      * React Component method that executes once component is mounted.
      *
@@ -70,7 +69,7 @@ export default class Video extends Component<Props> {
         // onPlaying callback when <RTCView> is rendered.
         const { onPlaying } = this.props;
 
-        onPlaying && onPlaying();
+        onPlaying?.();
     }
 
     /**
@@ -88,7 +87,7 @@ export default class Video extends Component<Props> {
             const objectFit
                 = zoomEnabled
                     ? 'contain'
-                    : (style && style.objectFit) || 'cover';
+                    : 'cover';
             const rtcView
                 = (
                     <RTCView

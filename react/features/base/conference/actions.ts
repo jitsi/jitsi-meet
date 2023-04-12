@@ -530,8 +530,6 @@ export function createConference(overrideRoom?: string | String) {
         if (tmp.domain) {
             // eslint-disable-next-line no-new-wrappers
             _room = new String(tmp);
-
-            // $FlowExpectedError
             _room.domain = tmp.domain;
         }
 

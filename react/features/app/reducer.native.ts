@@ -9,7 +9,7 @@ import { _ROOT_NAVIGATION_READY } from '../mobile/navigation/actionTypes';
  * @param {string} action.type - Type of action.
  * @returns {Object}
  */
-ReducerRegistry.register('features/app', (state = {}, action) => {
+ReducerRegistry.register('features/app', (state: Object = {}, action) => {
     switch (action.type) {
     case _ROOT_NAVIGATION_READY:
         return {

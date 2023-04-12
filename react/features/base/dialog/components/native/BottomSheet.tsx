@@ -1,5 +1,5 @@
-import React, { type Node, PureComponent } from 'react';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import React, { PureComponent, ReactNode } from 'react';
+import { SafeAreaView, ScrollView, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import SlidingView from '../../../react/components/native/SlidingView';
@@ -15,43 +15,43 @@ type Props = {
     /**
      * Whether to add padding to scroll view.
      */
-    addScrollViewPadding?: boolean,
+    addScrollViewPadding?: boolean;
 
     /**
      * The children to be displayed within this component.
      */
-    children: Node,
+    children: ReactNode;
 
     /**
      * Redux Dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Handler for the cancel event, which happens when the user dismisses
      * the sheet.
      */
-    onCancel: ?Function,
-
-    /**
-     * Function to render a bottom sheet header element, if necessary.
-     */
-    renderHeader: ?Function,
+    onCancel?: Function;
 
     /**
      * Function to render a bottom sheet footer element, if necessary.
      */
-    renderFooter: ?Function,
+    renderFooter?: Function;
+
+    /**
+     * Function to render a bottom sheet header element, if necessary.
+     */
+    renderHeader?: Function;
 
     /**
      * Whether to show sliding view or not.
      */
-    showSlidingView?: boolean,
+    showSlidingView?: boolean;
 
     /**
      * The component's external style.
      */
-    style: Object
+    style?: Object;
 };
 
 /**
@@ -109,19 +109,19 @@ class BottomSheet extends PureComponent<Props> {
         } = this.props;
 
         return (
-            <SlidingView
+            <SlidingView // @ts-ignore
                 accessibilityRole = 'menu'
                 accessibilityViewIsModal = { true }
                 onHide = { this._onCancel }
                 position = 'bottom'
-                show = { showSlidingView }>
+                show = { Boolean(showSlidingView) }>
                 <View
                     pointerEvents = 'box-none'
-                    style = { styles.sheetContainer }>
+                    style = { styles.sheetContainer as ViewStyle }>
                     <View
                         pointerEvents = 'box-none'
                         style = { styles.sheetAreaCover } />
-                    { renderHeader && renderHeader() }
+                    { renderHeader?.() }
                     <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
@@ -140,7 +140,7 @@ class BottomSheet extends PureComponent<Props> {
                             ] } >
                             { this.props.children }
                         </ScrollView>
-                        { renderFooter && renderFooter() }
+                        { renderFooter?.() }
                     </SafeAreaView>
                 </View>
             </SlidingView>

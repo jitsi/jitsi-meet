@@ -36,6 +36,11 @@ interface IProps extends IAvatarProps {
     testId?: string;
 
     /**
+     * The URL of the avatar to render.
+     */
+    url?: string | Function;
+
+    /**
      * Indicates whether to load the avatar using CORS or not.
      */
     useCORS?: boolean;
