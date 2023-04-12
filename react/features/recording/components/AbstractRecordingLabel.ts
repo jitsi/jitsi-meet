@@ -192,7 +192,7 @@ export default class AbstractRecordingLabel
  *     _status: ?string
  * }}
  */
-export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {

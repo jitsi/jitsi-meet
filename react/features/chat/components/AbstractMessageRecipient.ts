@@ -67,9 +67,10 @@ export function _mapDispatchToProps(dispatch: Function) {
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {any} _ownProps - Components' own props.
  * @returns {IProps}
  */
-export function _mapStateToProps(state: IReduxState) {
+export function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { privateMessageRecipient, lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
 
     return {

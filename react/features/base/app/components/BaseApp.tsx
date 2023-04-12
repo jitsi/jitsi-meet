@@ -250,7 +250,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {Promise}
      */
     _navigate(route: {
-        component?: ComponentType;
+        component?: ComponentType<any>;
         href?: string;
         props?: Object;
     }): Promise<any> {

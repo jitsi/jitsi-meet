@@ -1,7 +1,7 @@
-// @flow
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { LAYOUTS } from '../../../video-layout/constants';
@@ -17,80 +17,80 @@ import { isFilmstripResizable, showGridInVerticalView } from '../../functions.we
 
 import Filmstrip from './Filmstrip';
 
-type Props = {
+interface IProps {
 
     /**
      * The number of columns in tile view.
      */
-    _columns: number,
-
-    /**
-     * The width of the filmstrip.
-     */
-    _filmstripWidth: number,
+    _columns: number;
 
     /**
      * The height of the filmstrip.
      */
-    _filmstripHeight: number,
+    _filmstripHeight?: number;
+
+    /**
+     * The width of the filmstrip.
+     */
+    _filmstripWidth?: number;
 
     /**
      * Whether the filmstrip has scroll or not.
      */
-    _hasScroll: boolean,
+    _hasScroll: boolean;
 
     /**
      * Whether or not the current layout is vertical filmstrip.
      */
-    _isVerticalFilmstrip: boolean,
+    _isVerticalFilmstrip: boolean;
 
     /**
      * The participants in the call.
      */
-    _remoteParticipants: Array<Object>,
+    _remoteParticipants: Array<Object>;
 
     /**
      * The length of the remote participants array.
      */
-    _remoteParticipantsLength: number,
+    _remoteParticipantsLength: number;
 
     /**
      * Whether or not the filmstrip should be user-resizable.
      */
-    _resizableFilmstrip: boolean,
+    _resizableFilmstrip: boolean;
 
     /**
      * The number of rows in tile view.
      */
-    _rows: number,
+    _rows: number;
 
     /**
      * The height of the thumbnail.
      */
-    _thumbnailHeight: number,
+    _thumbnailHeight?: number;
 
     /**
      * The width of the thumbnail.
      */
-    _thumbnailWidth: number,
+    _thumbnailWidth?: number;
 
     /**
      * Whether or not the vertical filmstrip should have a background color.
      */
-    _verticalViewBackground: boolean,
+    _verticalViewBackground: boolean;
 
     /**
      * Whether or not the vertical filmstrip should be displayed as grid.
      */
-    _verticalViewGrid: boolean,
+    _verticalViewGrid: boolean;
 
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
-    _videosClassName: string
-};
+    _videosClassName: string;
+}
 
-const MainFilmstrip = (props: Props) => (
+const MainFilmstrip = (props: IProps) => (
     <span>
         <Filmstrip
             { ...props }
@@ -102,20 +102,22 @@ const MainFilmstrip = (props: Props) => (
  * Maps (parts of) the Redux state to the associated {@code Filmstrip}'s props.
  *
  * @param {Object} state - The Redux state.
+ * @param {any} _ownProps - Components' own props.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const toolbarButtons = getToolbarButtons(state);
     const { remoteParticipants, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const {
-        gridDimensions: dimensions = {},
+        gridDimensions: dimensions = { columns: undefined,
+            rows: undefined },
         filmstripHeight,
         filmstripWidth,
         hasScroll: tileViewHasScroll,
         thumbnailSize: tileViewThumbnailSize
-    } = state['features/filmstrip'].tileViewDimensions;
+    } = state['features/filmstrip'].tileViewDimensions ?? {};
     const _currentLayout = getCurrentLayout(state);
     const _resizableFilmstrip = isFilmstripResizable(state);
     const _verticalViewGrid = showGridInVerticalView(state);
@@ -123,7 +125,7 @@ function _mapStateToProps(state) {
     let _hasScroll = false;
 
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const availableSpace = clientHeight - filmstripHeight;
+    const availableSpace = clientHeight - Number(filmstripHeight);
     let filmstripPadding = 0;
 
     if (availableSpace > 0) {
@@ -150,7 +152,8 @@ function _mapStateToProps(state) {
     case LAYOUTS.TILE_VIEW:
         _hasScroll = Boolean(tileViewHasScroll);
         _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
+        remoteFilmstripHeight = Number(filmstripHeight) - (
+            collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -163,14 +166,15 @@ function _mapStateToProps(state) {
         } = state['features/filmstrip'].verticalViewDimensions;
 
         _hasScroll = Boolean(hasScroll);
-        remoteFilmstripHeight = remoteVideosContainer?.height - (!_verticalViewGrid && shouldReduceHeight
+        remoteFilmstripHeight = Number(remoteVideosContainer?.height) - (!_verticalViewGrid && shouldReduceHeight
             ? TOOLBAR_HEIGHT : 0);
         remoteFilmstripWidth = remoteVideosContainer?.width;
 
         if (_verticalViewGrid) {
-            gridDimensions = gridView.gridDimensions;
-            _thumbnailSize = gridView.thumbnailSize;
-            _hasScroll = gridView.hasScroll;
+            gridDimensions = gridView?.gridDimensions ?? { columns: undefined,
+                rows: undefined };
+            _thumbnailSize = gridView?.thumbnailSize;
+            _hasScroll = Boolean(gridView?.hasScroll);
         } else {
             _thumbnailSize = remote;
         }
@@ -188,17 +192,18 @@ function _mapStateToProps(state) {
     }
 
     return {
-        _columns: gridDimensions.columns,
+        _columns: gridDimensions.columns ?? 1,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
         _remoteParticipants: remoteParticipants,
         _resizableFilmstrip,
-        _rows: gridDimensions.rows,
+        _rows: gridDimensions.rows ?? 1,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
         _verticalViewGrid,
-        _verticalViewBackground: verticalFilmstripWidth.current + FILMSTRIP_BREAKPOINT_OFFSET >= FILMSTRIP_BREAKPOINT
+        _verticalViewBackground: Number(verticalFilmstripWidth.current)
+            + FILMSTRIP_BREAKPOINT_OFFSET >= FILMSTRIP_BREAKPOINT
     };
 }
 

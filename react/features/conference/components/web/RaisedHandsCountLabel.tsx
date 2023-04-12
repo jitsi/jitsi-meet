@@ -28,7 +28,7 @@ const RaisedHandsCountLabel = () => {
         dispatch(openParticipantsPane());
     }, []);
 
-    return raisedHandsCount > 0 && (<Tooltip
+    return raisedHandsCount > 0 ? (<Tooltip
         content = { t('raisedHandsLabel') }
         position = { 'bottom' }>
         <Label
@@ -38,7 +38,7 @@ const RaisedHandsCountLabel = () => {
             id = 'raisedHandsCountLabel'
             onClick = { onClick }
             text = { `${raisedHandsCount}` } />
-    </Tooltip>);
+    </Tooltip>) : null;
 };
 
 export default RaisedHandsCountLabel;

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import { IReduxState } from '../../app/types';
 
@@ -17,7 +17,7 @@ export type AbstractCaptionsProps = {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: Map<string, string>;
+    _transcripts?: Map<string, string>;
 };
 
 /**
@@ -42,7 +42,7 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
 
         const paragraphs = [];
 
-        for (const [ id, text ] of _transcripts) {
+        for (const [ id, text ] of _transcripts ?? []) {
             paragraphs.push(this._renderParagraph(id, text));
         }
 
@@ -53,25 +53,29 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
      * Renders the transcription text.
      *
      * @abstract
-     * @param {string} id - The ID of the transcript message from which the
+     * @param {string} _id - The ID of the transcript message from which the
      * {@code text} has been created.
-     * @param {string} text - Subtitles text formatted with the participant's
+     * @param {string} _text - Subtitles text formatted with the participant's
      * name.
      * @protected
      * @returns {React$Element} - The React element which displays the text.
      */
-    _renderParagraph: (id: string, text: string) => React.ReactElement;
+    _renderParagraph(_id: string, _text: string) {
+        return <></>;
+    }
 
     /**
      * Renders the subtitles container.
      *
      * @abstract
-     * @param {Array<React$Element>} paragraphs - An array of elements created
+     * @param {Array<React$Element>} _el - An array of elements created
      * for each subtitle using the {@link _renderParagraph} method.
      * @protected
      * @returns {React$Element} - The subtitles container.
      */
-    _renderSubtitlesContainer: (el: Array<React.ReactElement>) => React.ReactElement;
+    _renderSubtitlesContainer(_el: Array<React.ReactElement>) {
+        return <></>;
+    }
 }
 
 /**

@@ -16,13 +16,13 @@ const ToggleTopPanelLabel = () => {
         dispatch(setTopPanelVisible(true));
     }, []);
 
-    return topPanelHidden && (<Tooltip
+    return topPanelHidden ? (<Tooltip
         content = { t('toggleTopPanelLabel') }
         position = { 'bottom' }>
         <Label
             icon = { IconArrowDown }
             onClick = { onClick } />
-    </Tooltip>);
+    </Tooltip>) : null;
 };
 
 export default ToggleTopPanelLabel;

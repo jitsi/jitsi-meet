@@ -872,7 +872,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { iAmRecorder } = state['features/base/config'];

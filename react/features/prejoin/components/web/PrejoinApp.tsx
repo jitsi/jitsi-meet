@@ -1,7 +1,5 @@
-// @flow
-
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { batch } from 'react-redux';
 
 import BaseApp from '../../../base/app/components/BaseApp';
@@ -11,7 +9,7 @@ import { createPrejoinTracks } from '../../../base/tracks/functions.web';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../../base/ui/components/web/DialogContainer';
-import { initPrejoin, makePrecallTest } from '../../actions';
+import { initPrejoin, makePrecallTest } from '../../actions.web';
 
 import PrejoinThirdParty from './PrejoinThirdParty';
 
@@ -20,8 +18,8 @@ type Props = {
     /**
      * Indicates the style type that needs to be applied.
      */
-    styleType: string
-}
+    styleType: string;
+};
 
 /**
  * Wrapper application for prejoin.
@@ -29,10 +27,6 @@ type Props = {
  * @augments BaseApp
  */
 export default class PrejoinApp extends BaseApp<Props> {
-    /**
-     * The deferred for the initialisation {{promise, resolve, reject}}.
-     */
-    _init: Object;
 
     /**
      * Navigates to {@link Prejoin} upon mount.
@@ -43,7 +37,7 @@ export default class PrejoinApp extends BaseApp<Props> {
         await super.componentDidMount();
 
         const { store } = this.state;
-        const { dispatch } = store;
+        const { dispatch } = store ?? {};
         const { styleType } = this.props;
 
         super._navigate({
@@ -53,9 +47,12 @@ export default class PrejoinApp extends BaseApp<Props> {
             }
         });
 
-        const { startWithAudioMuted, startWithVideoMuted } = store.getState()['features/base/settings'];
+        const { startWithAudioMuted, startWithVideoMuted } = store
+            ? store.getState()['features/base/settings']
+            : { startWithAudioMuted: undefined,
+                startWithVideoMuted: undefined };
 
-        dispatch(setConfig({
+        dispatch?.(setConfig({
             prejoinConfig: {
                 enabled: true
             },
@@ -68,8 +65,8 @@ export default class PrejoinApp extends BaseApp<Props> {
         const tracks = await tryCreateLocalTracks;
 
         batch(() => {
-            dispatch(initPrejoin(tracks, errors));
-            dispatch(makePrecallTest(getConferenceOptions(store.getState())));
+            dispatch?.(initPrejoin(tracks, errors));
+            store && dispatch?.(makePrecallTest(getConferenceOptions(store.getState())));
         });
     }
 
@@ -79,7 +76,7 @@ export default class PrejoinApp extends BaseApp<Props> {
      *
      * @override
      */
-    _createMainElement(component, props) {
+    _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
                 <AtlasKitThemeProvider mode = 'dark'>

@@ -1,14 +1,14 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+import { IReduxState } from '../../../app/types';
 
 import CalleeInfo from './CalleeInfo';
 
 /**
  * The type of the React {@code Component} props of {@code CalleeInfoContainer}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The indicator which determines whether {@code CalleeInfo} is to be
@@ -16,8 +16,8 @@ type Props = {
      *
      * @private
      */
-    _calleeInfoVisible: boolean
-};
+    _calleeInfoVisible: boolean;
+}
 
 /**
  * Implements a React {@link Component} which depicts the establishment of a
@@ -25,7 +25,7 @@ type Props = {
  *
  * @augments Component
  */
-class CalleeInfoContainer extends Component<Props> {
+class CalleeInfoContainer extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -48,7 +48,7 @@ class CalleeInfoContainer extends Component<Props> {
  *     _calleeInfoVisible: boolean
  * }}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     return {
         /**
          * The indicator which determines whether {@code CalleeInfo} is to be
@@ -57,7 +57,7 @@ function _mapStateToProps(state: Object) {
          * @private
          * @type {boolean}
          */
-        _calleeInfoVisible: state['features/invite'].calleeInfoVisible
+        _calleeInfoVisible: Boolean(state['features/invite'].calleeInfoVisible)
     };
 }
 

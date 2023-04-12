@@ -1508,7 +1508,7 @@ class Toolbox extends Component<IProps> {
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { conference } = state['features/base/conference'];
     const { isNarrowLayout } = state['features/base/responsive-ui'];
     const endConferenceSupported = conference?.isEndConferenceSupported() && isLocalParticipantModerator(state);

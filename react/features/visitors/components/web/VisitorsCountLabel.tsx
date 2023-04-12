@@ -25,7 +25,7 @@ const VisitorsCountLabel = () => {
         state['features/visitors'].count || 0);
     const { t } = useTranslation();
 
-    return !visitorsMode && visitorsCount > 0 && (<Tooltip
+    return !visitorsMode && visitorsCount > 0 ? (<Tooltip
         content = { t('visitors.labelTooltip', { count: visitorsCount }) }
         position = { 'bottom' }>
         <Label
@@ -34,7 +34,7 @@ const VisitorsCountLabel = () => {
             iconColor = { theme.palette.icon04 }
             id = 'visitorsCountLabel'
             text = { `${getVisitorsShortText(visitorsCount)}` } />
-    </Tooltip>);
+    </Tooltip>) : null;
 };
 
 export default VisitorsCountLabel;

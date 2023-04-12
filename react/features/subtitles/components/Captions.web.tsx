@@ -1,8 +1,7 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isLayoutTileView } from '../../video-layout/functions.web';
@@ -13,20 +12,19 @@ import {
     _abstractMapStateToProps
 } from './AbstractCaptions';
 
-type Props = {
+interface IProps extends AbstractCaptionsProps {
 
     /**
      * Whether the subtitles container is lifted above the invite box.
      */
-    _isLifted: boolean
-} & AbstractCaptionsProps;
+    _isLifted: boolean;
+}
 
 /**
  * React {@code Component} which can display speech-to-text results from
  * Jigasi as subtitles.
  */
-class Captions
-    extends AbstractCaptions<Props> {
+class Captions extends AbstractCaptions<IProps> {
 
     /**
      * Renders the transcription text.
@@ -38,7 +36,7 @@ class Captions
      * @protected
      * @returns {React$Element} - The React element which displays the text.
      */
-    _renderParagraph(id: string, text: string): React$Element<*> {
+    _renderParagraph(id: string, text: string) {
         return (
             <p key = { id }>
                 <span>{ text }</span>
@@ -54,8 +52,7 @@ class Captions
      * @protected
      * @returns {React$Element} - The subtitles container.
      */
-    _renderSubtitlesContainer(
-            paragraphs: Array<React$Element<*>>): React$Element<*> {
+    _renderSubtitlesContainer(paragraphs: Array<React.ReactElement>) {
 
         const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
 
@@ -75,14 +72,14 @@ class Captions
  * @private
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     const isTileView = isLayoutTileView(state);
     const largeVideoParticipant = getLargeVideoParticipant(state);
     const localParticipant = getLocalParticipant(state);
 
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView
+        _isLifted: Boolean(largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView)
     };
 }
 
