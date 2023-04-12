@@ -75,6 +75,19 @@ class RTCStats {
     }
 
     /**
+     * Wrapper method for the underlying trace object to be used as a static reference from inside the wrapped
+     * PeerConnection.
+     *
+     * @param {any[]} data - the stats entry to send to the rtcstats endpoint.
+     * @returns {void}
+     */
+    statsEntry(...data) {
+        if (this.trace) {
+            this.trace.statsEntry(data);
+        }
+    }
+
+    /**
      * Initialize the rtcstats components. First off we initialize the trace, which is a wrapped websocket
      * that does the actual communication with the server. Secondly, the rtcstats component is initialized,
      * it overwrites GUM and PeerConnection global functions and adds a proxy over them used to capture stats.
@@ -112,7 +125,7 @@ class RTCStats {
                 eventCallback: this.handleRtcstatsEvent.bind(this)
             };
 
-            rtcstatsInit(this.trace, rtcstatsOptions);
+            rtcstatsInit(this, rtcstatsOptions);
             this.isPeerConnectionWrapped = true;
         }
         this.options = options;
