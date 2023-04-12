@@ -82,9 +82,7 @@ class RTCStats {
      * @returns {void}
      */
     statsEntry(...data) {
-        if (this.trace) {
-            this.trace.statsEntry(data);
-        }
+        this.trace?.statsEntry(data);
     }
 
     /**
