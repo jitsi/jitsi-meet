@@ -18,7 +18,7 @@ interface IProps extends WithTranslation {
     /**
      * Closes the dialog.
      */
-    onClose: Function;
+    onClose: (e?: React.MouseEvent) => void;
 
     /**
      * The status of the call.

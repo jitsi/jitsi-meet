@@ -1,6 +1,6 @@
 /* eslint-disable lines-around-comment */
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { StatusBar } from 'react-native';
@@ -66,7 +66,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
             independent = { true }
             onReady = { onReady }
             ref = { rootNavigationRef }
-            theme = { navigationContainerTheme }>
+            theme = { navigationContainerTheme as Theme }>
             <StatusBar
                 animated = { true }
                 backgroundColor = 'transparent'
@@ -77,7 +77,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
                 {
                     isWelcomePageAvailable
                         && <>
-                            <RootStack.Screen
+                            <RootStack.Screen // @ts-ignore
                                 component = { WelcomePage }
                                 name = { screen.welcome.main }
                                 options = { welcomeScreenOptions } />

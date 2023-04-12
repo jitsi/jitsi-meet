@@ -1,5 +1,3 @@
-// @flow
-
 import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';

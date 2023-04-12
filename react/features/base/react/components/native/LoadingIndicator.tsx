@@ -1,30 +1,28 @@
-/* @flow */
-
 import React, { PureComponent } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
 
-type Props = {|
+interface IProps {
 
     /**
      * The color of the spinner.
      */
-    color: ?string,
+    color?: string;
 
     /**
      * Prop to set the size of the indicator. This is the same as the
      * prop of the native component.
      */
-    size: 'large' | 'small'
-|};
+    size?: 'large' | 'small' | 'medium';
+}
 
 /**
  * An animated, large react-native {@link ActivityIndicator} which is considered
  * a suitable visualization of long-running processes with indeterminate amounts
  * of work to be done.
  */
-export default class LoadingIndicator extends PureComponent<Props> {
+export default class LoadingIndicator extends PureComponent<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -40,7 +38,6 @@ export default class LoadingIndicator extends PureComponent<Props> {
         }
 
         const props = {
-            animating: true,
             color,
             ...this.props,
             size

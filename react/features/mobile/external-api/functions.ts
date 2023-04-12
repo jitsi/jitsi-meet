@@ -1,9 +1,7 @@
-// @flow
-
 import debounce from 'lodash/debounce';
 import { NativeModules } from 'react-native';
 
-import { readyToClose } from '../external-api/actions';
+import { readyToClose } from './actions';
 
 
 /**

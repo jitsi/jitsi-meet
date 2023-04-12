@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,16 +21,16 @@ const SettingsStack = createStackNavigator();
 /**
  * The type of the React {@code Component} props of {@link SettingsNavigationContainer}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Is the navigator part of Welcome page?
      */
-    isInWelcomePage: boolean
-};
+    isInWelcomePage?: boolean;
+}
 
 
-const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
+const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
     const baseSettingsScreenOptions = isInWelcomePage ? welcomeScreenOptions : settingsScreenOptions;
     const { t } = useTranslation();
 
@@ -39,14 +39,13 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: Props) => {
             <SettingsView
                 addBottomInset = { !isInWelcomePage }
                 scrollBounces = { isInWelcomePage } />
-        )
-    );
+        ), []);
 
     return (
         <NavigationContainer
             independent = { true }
             ref = { settingsNavigationContainerRef }
-            theme = { navigationContainerTheme }>
+            theme = { navigationContainerTheme as Theme }>
             <SettingsStack.Navigator
                 initialRouteName = { screen.settings.main }>
                 <SettingsStack.Screen

@@ -12,9 +12,11 @@ export default class AbstractPage<P> extends Component<P> {
      * Note: It is a static method as the {@code Component} may not be
      * initialized yet when the UI invokes refresh (e.g. Tab change).
      *
+     * @param {any} _p1 - Param 1.
+     * @param {any} _p2 - Param 2.
      * @returns {void}
      */
-    static refresh() {
+    static refresh(_p1?: any, _p2?: any) {
         // No implementation in abstract class.
     }
 }

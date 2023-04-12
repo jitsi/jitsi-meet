@@ -169,7 +169,7 @@ interface IProps extends WithTranslation {
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object;
+    navigation?: Object;
 
     /**
      * Bounce when scrolling.

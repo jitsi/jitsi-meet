@@ -71,7 +71,7 @@ export default class AbstractRecentList<P extends IProps> extends AbstractPage<P
                 className = 'meetings-list-empty'
                 role = 'region'
                 style = { styles.emptyListContainer }>
-                <Text
+                <Text // @ts-ignore
                     className = 'description'
                     id = { descriptionId }
                     style = { styles.emptyListText }>

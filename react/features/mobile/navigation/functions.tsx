@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform } from 'react-native';
+import { GestureResponderEvent, Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 
-import { appNavigate } from '../../app/actions';
+import { appNavigate } from '../../app/actions.native';
+import { IStateful } from '../../base/app/types';
 import { PREJOIN_PAGE_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import { IconCloseLarge } from '../../base/icons/svg';
@@ -20,7 +21,7 @@ import HeaderNavigationButton from './components/HeaderNavigationButton';
  * @param {Function} goBack - Goes back to the previous screen function.
  * @returns {React.Component}
  */
-export function screenHeaderCloseButton(goBack: Function) {
+export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | React.MouseEvent) => void) {
     const { t } = useTranslation();
 
     if (Platform.OS === 'ios') {
@@ -47,7 +48,7 @@ export function screenHeaderCloseButton(goBack: Function) {
  * @returns {boolean} If the {@code Prejoin} is enabled by the app, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isPrejoinPageEnabled(stateful: Function | Object) {
+export function isPrejoinPageEnabled(stateful: IStateful) {
     return getFeatureFlag(toState(stateful), PREJOIN_PAGE_ENABLED, true);
 }
 
@@ -86,7 +87,7 @@ export function lobbyScreenHeaderCloseButton() {
  * function.
  * @returns {boolean}
  */
-export function shouldEnableAutoKnock(stateful: Function | Object) {
+export function shouldEnableAutoKnock(stateful: IStateful) {
     const state = toState(stateful);
     const { displayName } = state['features/base/settings'];
 

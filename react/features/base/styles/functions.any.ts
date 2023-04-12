@@ -3,7 +3,7 @@ import Platform from '../react/Platform';
 import { ColorPalette } from './components/styles/ColorPalette';
 
 declare type StyleSheet = {
-    [key: string]: string | number;
+    [key: string]: string | number | { [key: string]: string | number; };
 };
 
 export type StyleType = StyleSheet | Array<StyleSheet>;
@@ -46,7 +46,7 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * @param {Styletype} st - The complex style type.
  * @returns {Object}
  */
-export function styleTypeToObject(st: StyleType): { [key: string]: string | number; } {
+export function styleTypeToObject(st: StyleType) {
     if (!st) {
         return {};
     }

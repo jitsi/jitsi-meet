@@ -1,6 +1,7 @@
+import { NavigationContainerRef } from '@react-navigation/native';
 import React from 'react';
 
-export const settingsNavigationContainerRef = React.createRef();
+export const lobbyNavigationContainerRef = React.createRef<NavigationContainerRef<any>>();
 
 /**
  * User defined navigation action included inside the reference to the container.
@@ -10,7 +11,7 @@ export const settingsNavigationContainerRef = React.createRef();
  * @returns {Function}
  */
 export function navigate(name: string, params: Object) {
-    return settingsNavigationContainerRef.current?.navigate(name, params);
+    return lobbyNavigationContainerRef.current?.navigate(name, params);
 }
 
 /**
@@ -19,5 +20,5 @@ export function navigate(name: string, params: Object) {
  * @returns {Function}
  */
 export function goBack() {
-    return settingsNavigationContainerRef.current?.goBack();
+    return lobbyNavigationContainerRef.current?.goBack();
 }

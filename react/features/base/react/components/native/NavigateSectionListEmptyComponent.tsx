@@ -1,7 +1,6 @@
-// @flow
-
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { WithTranslation } from 'react-i18next';
+import { Text, View, ViewStyle } from 'react-native';
 
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
@@ -9,21 +8,13 @@ import { IconArrowDown } from '../../../icons/svg';
 
 import styles from './styles';
 
-type Props = {
-
-    /**
-     * The translate function.
-     */
-    t: Function,
-};
-
 /**
  * Implements a React Native {@link Component} that is to be displayed when the
  * list is empty.
  *
  * @augments Component
  */
-class NavigateSectionListEmptyComponent extends Component<Props> {
+class NavigateSectionListEmptyComponent extends Component<WithTranslation> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -34,7 +25,7 @@ class NavigateSectionListEmptyComponent extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <View style = { styles.pullToRefresh }>
+            <View style = { styles.pullToRefresh as ViewStyle }>
                 <Text style = { styles.pullToRefreshText }>
                     { t('sectionList.pullToRefresh') }
                 </Text>

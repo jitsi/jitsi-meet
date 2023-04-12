@@ -1,8 +1,17 @@
 import React from 'react';
-import { Animated, SafeAreaView, TouchableHighlight, View } from 'react-native';
+import { Animated,
+    NativeSyntheticEvent,
+    SafeAreaView,
+    TextInputFocusEventData,
+    TextStyle,
+    TouchableHighlight,
+    View,
+    ViewStyle
+} from 'react-native';
 import { connect } from 'react-redux';
 
-import { getName } from '../../app/functions';
+import { getName } from '../../app/functions.native';
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
@@ -16,37 +25,35 @@ import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
 import {
-    type Props as AbstractProps,
+    IProps as AbstractProps,
     AbstractWelcomePage,
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import styles from './styles';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
 
     /**
      * Default prop for navigating between screen components(React Navigation).
      */
-    navigation: Object,
-
-    /**
-     * The translate function.
-     */
-    t: Function
-};
+    navigation: any;
+}
 
 /**
  * The native container rendering the welcome page.
  *
  * @augments AbstractWelcomePage
  */
-class WelcomePage extends AbstractWelcomePage<*> {
+class WelcomePage extends AbstractWelcomePage<IProps> {
+    _onFieldBlur: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+    _onFieldFocus: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+
     /**
      * Constructor of the Component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state._fieldFocused = false;
@@ -66,16 +73,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
         this._onSettingsScreenFocused = this._onSettingsScreenFocused.bind(this);
     }
-
-    _onFieldBlur: () => void;
-
-    _onFieldFocus: () => void;
-
-    _onJoin: () => void;
-
-    _onRoomChange: (string) => void;
-
-    _updateRoomName: () => void;
 
     /**
      * Implements React's {@link Component#componentDidMount()}. Invoked
@@ -148,7 +145,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
             <View
                 style = { [
                     styles.messageContainer,
-                    styles.insecureRoomNameWarningContainer
+                    styles.insecureRoomNameWarningContainer as ViewStyle
                 ] }>
                 <Icon
                     src = { IconWarning }
@@ -176,8 +173,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
         ];
     }
 
-    _onFieldFocusChange: (boolean) => void;
-
     /**
      * Callback for when the room field's focus changes so the hint box
      * must be rendered or removed.
@@ -186,7 +181,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
      * @param {boolean} focused - The focused state of the field.
      * @returns {void}
      */
-    _onFieldFocusChange(focused) {
+    _onFieldFocusChange(focused: boolean) {
         if (focused) {
             // Stop placeholder animation.
             this._clearTimeouts();
@@ -218,8 +213,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     }));
     }
 
-    _onSettingsScreenFocused: boolean => void;
-
     /**
      * Callback for when the settings screen is focused.
      *
@@ -227,7 +220,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
      * @param {boolean} focused - The focused state of the screen.
      * @returns {void}
      */
-    _onSettingsScreenFocused(focused) {
+    _onSettingsScreenFocused(focused: boolean) {
         this.setState({
             isSettingsScreenFocused: focused
         });
@@ -246,8 +239,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
             .start();
     }
 
-    _renderHintBox: () => React.ReactElement;
-
     /**
      * Renders the hint box if necessary.
      *
@@ -259,13 +250,13 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
         if (this.state._fieldFocused) {
             return (
-                <Animated.View style = { this._getHintBoxStyle() }>
+                <Animated.View style = { this._getHintBoxStyle() as ViewStyle }>
                     <View style = { styles.hintTextContainer } >
-                        <Text style = { styles.hintText }>
+                        <Text style = { styles.hintText as TextStyle }>
                             { t('welcomepage.roomnameHint') }
                         </Text>
                     </View>
-                    <View style = { styles.hintButtonContainer } >
+                    <View style = { styles.hintButtonContainer as ViewStyle } >
                         { this._renderJoinButton() }
                     </View>
                 </Animated.View>
@@ -295,7 +286,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     accessibilityLabel =
                         { t('welcomepage.accessibilityLabel.join') }
                     onPress = { this._onJoin }
-                    style = { styles.button }>
+                    style = { styles.button as ViewStyle }>
                     <View>
                         <LoadingIndicator
                             color = { BaseTheme.palette.icon01 }
@@ -310,7 +301,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     labelKey = { 'welcomepage.join' }
                     labelStyle = { styles.joinButtonLabel }
                     onClick = { this._onJoin }
-                    style = { styles.buttonText }
                     type = { BUTTON_TYPES.PRIMARY } />
             );
         }
@@ -335,7 +325,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     isSettingsScreenFocused && styles.roomNameInputContainer,
                     { opacity: this.state.roomNameInputAnimation }
                 ] }>
-                <SafeAreaView style = { styles.roomContainer }>
+                <SafeAreaView style = { styles.roomContainer as ViewStyle }>
                     <View style = { styles.joinControls } >
                         <Text style = { styles.enterRoomText }>
                             { t('welcomepage.roomname') }
@@ -343,8 +333,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         <Input
                             accessibilityLabel = { t(roomnameAccLabel) }
                             autoCapitalize = { 'none' }
-                            autoComplete = { 'off' }
-                            autoCorrect = { false }
                             autoFocus = { false }
                             customStyles = {{ input: styles.customInput }}
                             onBlur = { this._onFieldBlur }
@@ -375,9 +363,9 @@ class WelcomePage extends AbstractWelcomePage<*> {
         return (
             <>
                 { this._renderRoomNameInput() }
-                <View style = { styles.welcomePage }>
+                <View style = { styles.welcomePage as ViewStyle }>
                     <WelcomePageTabs
-                        disabled = { this.state._fieldFocused }
+                        disabled = { Boolean(this.state._fieldFocused) } // @ts-ignore
                         onListContainerPress = { this._onFieldBlur }
                         onSettingsScreenFocused = { this._onSettingsScreenFocused } />
                 </View>
@@ -394,7 +382,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
         const { t } = this.props;
 
         return (
-            <View style = { styles.reducedUIContainer }>
+            <View style = { styles.reducedUIContainer as ViewStyle }>
                 <Text style = { styles.reducedUIText }>
                     { t('welcomepage.reducedUIText', { app: getName() }) }
                 </Text>
@@ -409,7 +397,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
  * @param {Object} state - The Redux state.
  * @returns {Object}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state)
 

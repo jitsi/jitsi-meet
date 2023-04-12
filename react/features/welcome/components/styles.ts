@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import { BoxModel } from '../../base/styles/components/styles/BoxModel';
