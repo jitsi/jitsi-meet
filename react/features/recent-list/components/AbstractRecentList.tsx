@@ -70,11 +70,11 @@ export default class AbstractRecentList<P extends IProps> extends AbstractPage<P
                 aria-label = { t('welcomepage.recentList') }
                 className = 'meetings-list-empty'
                 role = 'region'
-                style = { styles.emptyListContainer }>
+                style = { styles.emptyListContainer as any }>
                 <Text // @ts-ignore
                     className = 'description'
                     id = { descriptionId }
-                    style = { styles.emptyListText }>
+                    style = { styles.emptyListText as any }>
                     { t('welcomepage.recentListEmpty') }
                 </Text>
             </Container>
