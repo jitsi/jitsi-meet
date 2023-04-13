@@ -30,7 +30,7 @@ const useStyles = makeStyles()(theme => {
     return {
         contextMenu: {
             position: 'relative' as const,
-            marginTop: 0,
+            marginTop: '8px',
             right: 'auto',
             padding: '0',
             boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.75)'

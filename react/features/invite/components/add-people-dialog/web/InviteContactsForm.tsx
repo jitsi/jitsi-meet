@@ -1,15 +1,12 @@
-/* eslint-disable lines-around-comment */
 import { withStyles } from '@mui/styles';
 import React from 'react';
 import { connect } from 'react-redux';
 
-// @ts-ignore
 import { IReduxState, IStore } from '../../../../app/types';
-// @ts-ignore
-import { Avatar } from '../../../../base/avatar';
+import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
-import { Icon, IconPhoneRinging } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconPhoneRinging } from '../../../../base/icons/svg';
 import MultiSelectAutocomplete from '../../../../base/react/components/web/MultiSelectAutocomplete';
 import Button from '../../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.any';
@@ -305,6 +302,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         return (
             <Avatar
                 className = { className }
+                size = { 32 }
                 status = { user.status }
                 url = { user.avatar } />
         );
