@@ -358,7 +358,7 @@ class DesktopPicker extends PureComponent<IProps, IState> {
                 type => {
                     return {
                         accessibilityLabel: t(TAB_LABELS[type as keyof typeof TAB_LABELS]),
-                        id: `${type}-tab`,
+                        id: `${type}`,
                         controlsId: `${type}-panel`,
                         label: t(TAB_LABELS[type as keyof typeof TAB_LABELS])
                     };
@@ -369,7 +369,7 @@ class DesktopPicker extends PureComponent<IProps, IState> {
                 accessibilityLabel = { t('dialog.sharingTabs') }
                 className = 'desktop-picker-tabs-container'
                 onChange = { this._onTabSelected }
-                selected = { `${this.state.selectedTab}-tab` }
+                selected = { `${this.state.selectedTab}` }
                 tabs = { tabs } />);
     }
 
