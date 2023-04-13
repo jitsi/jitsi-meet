@@ -3,6 +3,7 @@ import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
+import { getStartWithAudioMuted } from '../media/functions';
 import { toState } from '../redux/functions';
 import {
     getUserSelectedCameraDeviceId,
@@ -106,7 +107,8 @@ export function createPrejoinTracks() {
     const initialDevices = [ 'audio' ];
     const requestedAudio = true;
     let requestedVideo = false;
-    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const startWithAudioMuted = getStartWithAudioMuted(APP.store.getState());
 
     // Always get a handle on the audio input device so that we have statistics even if the user joins the
     // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
@@ -121,62 +123,26 @@ export function createPrejoinTracks() {
         requestedVideo = true;
     }
 
-    let tryCreateLocalTracks;
+    let tryCreateLocalTracks = Promise.resolve([]);
 
-    if (!requestedAudio && !requestedVideo) {
-        // Resolve with no tracks
-        tryCreateLocalTracks = Promise.resolve([]);
-    } else {
+    if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
             devices: initialDevices,
             firePermissionPromptIsShownEvent: true
         }, APP.store)
-                .catch((err: Error) => {
-                    if (requestedAudio && requestedVideo) {
+        .catch((err: Error) => {
+            if (requestedAudio && requestedVideo) {
+                errors.audioAndVideoError = err;
+            } else if (requestedAudio) {
+                errors.audioOnlyError = err;
+            } else {
+                errors.videoOnlyError = err;
+            }
 
-                        // Try audio only...
-                        errors.audioAndVideoError = err;
+            logger.error(`Media track creation failed with error ${err}`);
 
-                        return (
-                            createLocalTracksF({
-                                devices: [ 'audio' ],
-                                firePermissionPromptIsShownEvent: true
-                            }));
-                    } else if (requestedAudio && !requestedVideo) {
-                        errors.audioOnlyError = err;
-
-                        return [];
-                    } else if (requestedVideo && !requestedAudio) {
-                        errors.videoOnlyError = err;
-
-                        return [];
-                    }
-                    logger.error('Should never happen');
-                })
-                .catch((err: Error) => {
-                    // Log this just in case...
-                    if (!requestedAudio) {
-                        logger.error('The impossible just happened', err);
-                    }
-                    errors.audioOnlyError = err;
-
-                    // Try video only...
-                    return requestedVideo
-                        ? createLocalTracksF({
-                            devices: [ 'video' ],
-                            firePermissionPromptIsShownEvent: true
-                        })
-                        : [];
-                })
-                .catch((err: Error) => {
-                    // Log this just in case...
-                    if (!requestedVideo) {
-                        logger.error('The impossible just happened', err);
-                    }
-                    errors.videoOnlyError = err;
-
-                    return [];
-                });
+            return [];
+        });
     }
 
     return {

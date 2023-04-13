@@ -559,7 +559,7 @@ export default {
             );
         }
 
-        let tryCreateLocalTracks;
+        let tryCreateLocalTracks = Promise.resolve([]);
 
         // On Electron there is no permission prompt for granting permissions. That's why we don't need to
         // spend much time displaying the overlay screen. If GUM is not resolved within 15 seconds it will
@@ -600,76 +600,34 @@ export default {
 
                     return [];
                 });
-        } else if (!requestedAudio && !requestedVideo) {
-            // Resolve with no tracks
-            tryCreateLocalTracks = Promise.resolve([]);
-        } else {
+        } else if (requestedAudio || requestedVideo) {
             tryCreateLocalTracks = createLocalTracksF({
                 devices: initialDevices,
                 timeout,
                 firePermissionPromptIsShownEvent: true
             })
-                .catch(err => {
-                    if (requestedAudio && requestedVideo) {
-
-                        // Try audio only...
-                        errors.audioAndVideoError = err;
-
-                        if (err.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
-                            // In this case we expect that the permission prompt is still visible. There is no point of
-                            // executing GUM with different source. Also at the time of writing the following
-                            // inconsistency have been noticed in some browsers - if the permissions prompt is visible
-                            // and another GUM is executed the prompt does not change its content but if the user
-                            // clicks allow the user action isassociated with the latest GUM call.
-                            errors.audioOnlyError = err;
-                            errors.videoOnlyError = err;
-
-                            return [];
-                        }
-
-                        return createLocalTracksF(audioOptions);
-                    } else if (requestedAudio && !requestedVideo) {
-                        errors.audioOnlyError = err;
-
-                        return [];
-                    } else if (requestedVideo && !requestedAudio) {
-                        errors.videoOnlyError = err;
-
-                        return [];
-                    }
-                    logger.error('Should never happen');
-                })
-                .catch(err => {
-                    // Log this just in case...
-                    if (!requestedAudio) {
-                        logger.error('The impossible just happened', err);
-                    }
+            .catch(err => {
+                if (requestedAudio && requestedVideo) {
+                    errors.audioAndVideoError = err;
+                } else if (requestedAudio) {
                     errors.audioOnlyError = err;
-
-                    // Try video only...
-                    return requestedVideo
-                        ? createLocalTracksF({
-                            devices: [ MEDIA_TYPE.VIDEO ],
-                            firePermissionPromptIsShownEvent: true
-                        })
-                        : [];
-                })
-                .catch(err => {
-                    // Log this just in case...
-                    if (!requestedVideo) {
-                        logger.error('The impossible just happened', err);
-                    }
+                } else {
                     errors.videoOnlyError = err;
+                }
 
-                    return [];
-                });
+                // If gUM is taking longer than the configured timeout of 60 secs, either we are waiting for the user
+                // to grant permission to use devices and we expect the permission prompt to be still visible or the
+                // browser is taking too long to create the media tracks. In either of these cases, there is no point
+                // in executing gUM again.
+                logger.error(`Media track creation failed with error ${err}`);
+
+                return [];
+            });
         }
 
-        // Hide the permissions prompt/overlay as soon as the tracks are
-        // created. Don't wait for the connection to be made, since in some
-        // cases, when auth is required, for instance, that won't happen until
-        // the user inputs their credentials, but the dialog would be
-        // overshadowed by the overlay.
+        // Hide the permissions prompt/overlay as soon as the tracks are created. Don't wait for the connection to
+        // be established, as in some cases like when auth is required, connection won't be established until the user
+        // inputs their credentials, but the dialog would be overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
             APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
 
