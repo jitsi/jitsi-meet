@@ -63,10 +63,15 @@ const useStyles = makeStyles()(theme => {
                 lineHeight: '24px',
                 margin: theme.spacing(1),
                 padding: theme.spacing(2),
+                userSelect: 'text',
 
                 '& .prejoin-dialog-dialin-num-container': {
                     minHeight: '48px',
                     margin: `${theme.spacing(2)} 0`
+                },
+
+                '& span': {
+                    userSelect: 'text'
                 }
             },
 
