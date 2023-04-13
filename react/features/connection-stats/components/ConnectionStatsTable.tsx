@@ -234,7 +234,21 @@ const useStyles = makeStyles()(theme => {
         status: {
             fontWeight: 'bold'
         },
-        upload: {}
+        upload: {},
+        link: {
+            cursor: 'pointer',
+            color: theme.palette.link01,
+            transition: 'color .2s ease',
+
+            '&:hover': {
+                color: theme.palette.link01Hover,
+                textDecoration: 'underline'
+            },
+
+            '&:active': {
+                color: theme.palette.link01Active
+            }
+        }
     };
 });
 
@@ -670,7 +684,7 @@ const ConnectionStatsTable = ({
     const _renderSaveLogs = () => (
         <span>
             <a
-                className = 'savelogs link'
+                className = { cx(classes.link, 'savelogs') }
                 onClick = { onSaveLogs }
                 role = 'button'
                 tabIndex = { 0 }>
@@ -688,7 +702,7 @@ const ConnectionStatsTable = ({
 
         return (
             <a
-                className = 'showmore link'
+                className = { cx(classes.link, 'showmore') }
                 onClick = { onShowMore }
                 role = 'button'
                 tabIndex = { 0 }>

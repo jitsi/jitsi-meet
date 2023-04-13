@@ -70,9 +70,6 @@ const styles = (theme: Theme) => {
     };
 };
 
-const scoreAnimationClass
-    = interfaceConfig.ENABLE_FEEDBACK_ANIMATION ? 'shake-rotate' : '';
-
 /**
  * The scores to display for selecting. The score is the index in the array and
  * the value of the index is a translation key used for display in the dialog.
@@ -282,7 +279,7 @@ class FeedbackDialog extends Component<IProps, IState> {
                 const isFilled = index <= scoreToDisplayAsSelected;
                 const activeClass = isFilled ? 'active' : '';
                 const className
-                    = `${classes.starBtn} ${scoreAnimationClass} ${activeClass}`;
+                    = `${classes.starBtn} ${activeClass}`;
 
                 return (
                     <span
