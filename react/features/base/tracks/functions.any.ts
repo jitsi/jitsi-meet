@@ -4,6 +4,7 @@ import {
 } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { IMediaState } from '../media/reducer';
 import {
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
@@ -359,7 +360,7 @@ export function isUserInteractionRequiredForUnmute(state: IReduxState) {
  * @param {Object} state - The redux state.
  * @returns {Promise}
  */
-export function setTrackMuted(track: any, muted: boolean, state: IReduxState) {
+export function setTrackMuted(track: any, muted: boolean, state: IReduxState | IMediaState) {
     muted = Boolean(muted); // eslint-disable-line no-param-reassign
 
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the

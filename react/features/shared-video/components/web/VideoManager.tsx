@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
-    Props,
+    IProps,
     _mapDispatchToProps,
     _mapStateToProps
 } from './AbstractVideoManager';
@@ -13,7 +13,9 @@ import AbstractVideoManager, {
 /**
  * Manager of shared video.
  */
-class VideoManager extends AbstractVideoManager<Props> {
+class VideoManager extends AbstractVideoManager {
+    playerRef: React.RefObject<HTMLVideoElement>;
+
     /**
      * Initializes a new VideoManager instance.
      *
@@ -21,7 +23,7 @@ class VideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {void}
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this.playerRef = React.createRef();
@@ -89,7 +91,7 @@ class VideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {void}
      */
-    seek(time) {
+    seek(time: number) {
         if (this.player) {
             this.player.currentTime = time;
         }
@@ -143,7 +145,7 @@ class VideoManager extends AbstractVideoManager<Props> {
     getPlayerOptions() {
         const { _isOwner, videoId } = this.props;
 
-        let options = {
+        let options: any = {
             autoPlay: true,
             src: videoId,
             controls: _isOwner,

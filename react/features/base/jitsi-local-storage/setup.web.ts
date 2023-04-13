@@ -1,6 +1,7 @@
-// @flow
-
+// @ts-ignore
 import Bourne from '@hapi/bourne';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 
 import { browser } from '../lib-jitsi-meet';
@@ -8,9 +9,6 @@ import { inIframe } from '../util/iframeUtils';
 import { parseURLParams } from '../util/parseURLParams';
 
 import logger from './logger';
-
-declare var APP: Object;
-declare var config: Object;
 
 
 /**
@@ -29,7 +27,7 @@ function onFakeLocalStorageChanged() {
  * @returns {boolean} - True if the local storage of the host page needs to be used instead jitsi-meet's local storage
  * and false otherwise.
  */
-function shouldUseHostPageLocalStorage(urlParams) {
+function shouldUseHostPageLocalStorage(urlParams: { 'config.useHostPageLocalStorage'?: boolean; }) {
     // NOTE: normally the url params and the config will be merged into the redux store. But we want to setup the local
     // storage as soon as possible, the store is not created yet and the merging of the URL params and the config
     // haven't been executed yet. That's why we need to manually parse the URL params and also access the config through
@@ -58,6 +56,7 @@ function shouldUseHostPageLocalStorage(urlParams) {
  * @returns {void}
  */
 function setupJitsiLocalStorage() {
+    // @ts-ignore
     const urlParams = parseURLParams(window.location);
 
     if (shouldUseHostPageLocalStorage(urlParams)) {

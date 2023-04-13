@@ -283,6 +283,7 @@ export function updateProfile(calendarType: string) {
             return Promise.reject('No integration found');
         }
 
+        // @ts-ignore
         return dispatch(integration.getCurrentEmail())
             .then((email: string) => {
                 dispatch(setCalendarProfileEmail(email));

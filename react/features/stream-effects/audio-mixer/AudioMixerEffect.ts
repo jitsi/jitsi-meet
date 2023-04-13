@@ -1,5 +1,3 @@
-// @flow
-
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media/constants';
 
@@ -12,12 +10,12 @@ export class AudioMixerEffect {
     /**
      * JitsiLocalTrack that is going to be mixed into the track that uses this effect.
      */
-    _mixAudio: Object;
+    _mixAudio: any;
 
     /**
      * MediaStream resulted from mixing.
      */
-    _mixedMediaStream: Object;
+    _mixedMediaStream: any;
 
     /**
      * MediaStreamTrack obtained from mixed stream.
@@ -32,19 +30,19 @@ export class AudioMixerEffect {
     /**
      * MediaStreamTrack obtained from the original MediaStream.
      */
-    _originalTrack: Object;
+    _originalTrack: any;
 
     /**
      * Lib-jitsi-meet AudioMixer.
      */
-    _audioMixer: Object;
+    _audioMixer: any;
 
     /**
      * Creates AudioMixerEffect.
      *
      * @param {JitsiLocalTrack} mixAudio - JitsiLocalTrack which will be mixed with the original track.
      */
-    constructor(mixAudio: Object) {
+    constructor(mixAudio: any) {
         if (mixAudio.getType() !== MEDIA_TYPE.AUDIO) {
             throw new Error('AudioMixerEffect only supports audio JitsiLocalTracks; effect will not work!');
         }
@@ -58,7 +56,7 @@ export class AudioMixerEffect {
      * @param {JitsiLocalTrack} sourceLocalTrack - Track to which the effect will be applied.
      * @returns {boolean} - Returns true if this effect can run on the specified track, false otherwise.
      */
-    isEnabled(sourceLocalTrack: Object) {
+    isEnabled(sourceLocalTrack: any) {
         // Both JitsiLocalTracks need to be audio i.e. contain an audio MediaStreamTrack
         return sourceLocalTrack.isAudioTrack() && this._mixAudio.isAudioTrack();
     }

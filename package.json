@@ -197,6 +197,7 @@
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
+    "tsc-test": "tsc --project tsconfig.native.json --listFilesOnly",
     "start": "make dev"
   },
   "resolutions": {
