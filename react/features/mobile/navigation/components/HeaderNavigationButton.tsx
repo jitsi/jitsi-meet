@@ -1,4 +1,5 @@
 import React from 'react';
+import { GestureResponderEvent } from 'react-native';
 
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
@@ -6,32 +7,32 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import { navigationStyles } from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * Is the button disabled?
      */
-    disabled?: boolean,
+    disabled?: boolean;
 
     /**
      * Label of the button.
      */
-    label?: string,
+    label?: string;
 
     /**
      * Callback to invoke when the {@code HeaderNavigationButton} is clicked/pressed.
      */
-    onPress?: Function,
+    onPress?: (e?: GestureResponderEvent | React.MouseEvent) => void;
 
     /**
      * The ImageSource to be rendered as image.
      */
-    src?: Object,
+    src?: any;
 
     /**
      * Header has two actions.
      */
-    twoActions?: boolean
+    twoActions?: boolean;
 }
 
 const HeaderNavigationButton
@@ -41,7 +42,7 @@ const HeaderNavigationButton
         onPress,
         src,
         twoActions
-    }: Props) =>
+    }: IProps) =>
         (
             <>
                 {

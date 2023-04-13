@@ -74,7 +74,7 @@ class PresenceLabel extends Component<IProps> {
         const { style, className } = this.props;
 
         return (
-            <Text
+            <Text // @ts-ignore
                 className = { className }
                 { ...style }>
                 { text }

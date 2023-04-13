@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GestureResponderEvent } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import CalendarList from '../../../../../calendar-sync/components/CalendarList.native';
@@ -18,38 +19,36 @@ import SettingsNavigationContainer
 
 const WelcomePage = createBottomTabNavigator();
 
-
 /**
  * The type of the React {@code Component} props of {@link WelcomePageTabs}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Renders the lists disabled.
      */
-    disabled: boolean,
+    disabled: boolean;
 
     /**
      * Callback to be invoked when pressing the list container.
      */
-    onListContainerPress?: Function,
+    onListContainerPress?: (e?: GestureResponderEvent) => void;
 
     /**
      * Callback to be invoked when settings screen is focused.
      */
-    onSettingsScreenFocused: Function
-};
+    onSettingsScreenFocused: Function;
+}
 
 
-const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: Props) => {
+const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocused }: IProps) => {
     const { t } = useTranslation();
     const RecentListScreen = useCallback(() =>
         (
             <RecentList
                 disabled = { disabled }
                 onListContainerPress = { onListContainerPress } />
-        )
-    );
+        ), []);
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
@@ -57,15 +56,13 @@ const WelcomePageTabs = ({ disabled, onListContainerPress, onSettingsScreenFocus
         (
             <CalendarList
                 disabled = { disabled } />
-        )
-    );
+        ), []);
 
     const SettingsScreen = useCallback(() =>
         (
             <SettingsNavigationContainer
                 isInWelcomePage = { true } />
-        )
-    );
+        ), []);
 
     return (
         <WelcomePage.Navigator

@@ -1,52 +1,48 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { createCalendarClickedEvent, createCalendarSelectedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
-import { getLocalizedDateFormatter, translate } from '../../base/i18n/functions';
+import { appNavigate } from '../../app/actions.native';
+import { IReduxState } from '../../app/types';
+import { getLocalizedDateFormatter } from '../../base/i18n/dateUtil';
+import { translate } from '../../base/i18n/functions';
 import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
-import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions';
+import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions.native';
 
 
 /**
  * The type of the React {@code Component} props of
  * {@link CalendarListContent}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * The calendar event list.
      */
-    _eventList: Array<Object>,
+    _eventList: Array<any>;
 
     /**
      * Indicates if the list is disabled or not.
      */
-    disabled: boolean,
+    disabled: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      *
      */
-    listEmptyComponent: React$Node,
-
-    /**
-     * The translate function.
-     */
-    t: Function
-};
+    listEmptyComponent: React.ReactElement<any>;
+}
 
 /**
  * Component to display a list of events from a connected calendar.
  */
-class CalendarListContent extends Component<Props> {
+class CalendarListContent extends Component<IProps> {
     /**
      * Default values for the component's props.
      */
@@ -59,7 +55,7 @@ class CalendarListContent extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -103,8 +99,6 @@ class CalendarListContent extends Component<Props> {
         );
     }
 
-    _onPress: (string, ?string) => void;
-
     /**
      * Handles the list's navigate action.
      *
@@ -114,13 +108,11 @@ class CalendarListContent extends Component<Props> {
      * associated with this action.
      * @returns {void}
      */
-    _onPress(url, analyticsEventName = 'meeting.tile') {
+    _onPress(url: string, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
 
         this.props.dispatch(appNavigate(url));
     }
-
-    _onRefresh: () => void;
 
     /**
      * Callback to execute when the list is doing a pull-to-refresh.
@@ -132,8 +124,6 @@ class CalendarListContent extends Component<Props> {
         this.props.dispatch(refreshCalendar(true));
     }
 
-    _onSecondaryAction: string => void;
-
     /**
      * Handles the list's secondary action.
      *
@@ -142,11 +132,9 @@ class CalendarListContent extends Component<Props> {
      * performed.
      * @returns {void}
      */
-    _onSecondaryAction(id) {
-        this.props.dispatch(openUpdateCalendarEventDialog(id, ''));
+    _onSecondaryAction(id: string) {
+        this.props.dispatch(openUpdateCalendarEventDialog(id));
     }
-
-    _toDateString: Object => string;
 
     /**
      * Generates a date string for a given event.
@@ -155,14 +143,12 @@ class CalendarListContent extends Component<Props> {
      * @private
      * @returns {string}
      */
-    _toDateString(event) {
+    _toDateString(event: any) {
         const startDateTime
             = getLocalizedDateFormatter(event.startDate).format('MMM Do, YYYY');
 
         return `${startDateTime}`;
     }
-
-    _toDisplayableItem: Object => Object;
 
     /**
      * Creates a displayable object from an event.
@@ -171,7 +157,7 @@ class CalendarListContent extends Component<Props> {
      * @private
      * @returns {Object}
      */
-    _toDisplayableItem(event) {
+    _toDisplayableItem(event: any) {
         return {
             id: event.id,
             key: `${event.id}-${event.startDate}`,
@@ -183,8 +169,6 @@ class CalendarListContent extends Component<Props> {
             url: event.url
         };
     }
-
-    _toDisplayableList: () => Array<Object>;
 
     /**
      * Transforms the event list to a displayable list with sections.
@@ -233,8 +217,6 @@ class CalendarListContent extends Component<Props> {
         return Array.from(sectionMap.values());
     }
 
-    _toTimeString: Object => string;
-
     /**
      * Generates a time (interval) string for a given event.
      *
@@ -242,7 +224,7 @@ class CalendarListContent extends Component<Props> {
      * @private
      * @returns {string}
      */
-    _toTimeString(event) {
+    _toTimeString(event: any) {
         const startDateTime
             = getLocalizedDateFormatter(event.startDate).format('lll');
         const endTime
@@ -256,9 +238,9 @@ class CalendarListContent extends Component<Props> {
  * Maps redux state to component props.
  *
  * @param {Object} state - The redux state.
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _eventList: state['features/calendar-sync'].events
     };

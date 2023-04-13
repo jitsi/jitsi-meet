@@ -1,30 +1,32 @@
-// @flow
-
 import React from 'react';
 import {
+    GestureResponderEvent,
     TouchableHighlight,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
 
-import AbstractContainer from '../AbstractContainer';
-import type { Props as AbstractProps } from '../AbstractContainer';
+import AbstractContainer, { IProps as AbstractProps } from '../AbstractContainer';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
+
+    onClick?: (e: GestureResponderEvent) => void;
 
     /**
      * The event handler/listener to be invoked when this
      * {@code AbstractContainer} is long pressed on React Native.
      */
-    onLongPress?: ?Function,
-};
+    onLongPress?: (e: GestureResponderEvent) => void;
+
+    pointerEvents?: string;
+}
 
 /**
  * Represents a container of React Native/mobile {@link Component} children.
  *
  * @augments AbstractContainer
  */
-export default class Container<P: Props> extends AbstractContainer<P> {
+export default class Container extends AbstractContainer<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -40,8 +42,6 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             touchFeedback = Boolean(onClick || onLongPress),
             underlayColor,
             visible = true,
-
-            // $FlowExpectedError
             ...props
         } = this.props;
 

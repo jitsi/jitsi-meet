@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IStore } from '../../app/types';
 import { hideSheet } from '../../base/dialog/actions';
 import BottomSheet from '../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../base/dialog/components/native/styles';
@@ -9,31 +10,31 @@ import { Item } from '../../base/react/types';
 
 import DeleteItemButton from './DeleteItemButton.native';
 import ShowDialInInfoButton from './ShowDialInInfoButton.native';
-import styles from './styles';
+import styles from './styles.native';
 
-type Props = {
+interface IProps {
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function,
+    dispatch: IStore['dispatch'];
 
     /**
      * Item being rendered in this menu.
      */
-    item: Item
+    item: Item;
 }
 
 /**
  * Class to implement a popup menu that opens upon long pressing a recent list item.
  */
-class RecentListItemMenu extends PureComponent<Props> {
+class RecentListItemMenu extends PureComponent<IProps> {
     /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
@@ -85,12 +86,12 @@ class RecentListItemMenu extends PureComponent<Props> {
             <View
                 style = { [
                     bottomSheetStyles.sheet,
-                    styles.entryNameContainer
+                    styles.entryNameContainer as ViewStyle
                 ] }>
                 <Text
                     ellipsizeMode = { 'middle' }
                     numberOfLines = { 1 }
-                    style = { styles.entryNameLabel }>
+                    style = { styles.entryNameLabel as TextStyle }>
                     { item.title }
                 </Text>
             </View>

@@ -1,5 +1,3 @@
-// @flow
-
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/functions';
@@ -7,28 +5,18 @@ import { IconTrash } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { deleteRecentListEntry } from '../actions';
 
-export type Props = AbstractButtonProps & {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
+export interface IProps extends AbstractButtonProps {
 
     /**
      * The ID of the entry to be deleted.
      */
-    itemId: Object,
-
-    /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    itemId: Object;
+}
 
 /**
  * A recent list menu button which deletes the selected entry.
  */
-class DeleteItemButton extends AbstractButton<Props, *> {
+class DeleteItemButton extends AbstractButton<IProps> {
     accessibilityLabel = 'welcomepage.recentListDelete';
     icon = IconTrash;
     label = 'welcomepage.recentListDelete';

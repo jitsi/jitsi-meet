@@ -2,14 +2,12 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, Text, View, ViewStyle } from 'react-native';
 
 // @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-// @ts-ignore
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 
-// @ts-ignore
 import { TEXT_COLOR, navigationStyles } from './styles';
 
 
@@ -18,12 +16,11 @@ const ConnectingPage = () => {
 
     return (
         <JitsiScreen style = { navigationStyles.connectingScreenContainer }>
-            <View style = { navigationStyles.connectingScreenContent }>
+            <View style = { navigationStyles.connectingScreenContent as ViewStyle }>
                 <SafeAreaView>
                     <LoadingIndicator
                         color = { TEXT_COLOR }
-                        size = 'large'
-                        style = { navigationStyles.connectingScreenIndicator } />
+                        size = 'large' />
                     <Text style = { navigationStyles.connectingScreenText }>
                         { t('connectingOverlay.joiningRoom') }
                     </Text>

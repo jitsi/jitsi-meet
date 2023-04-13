@@ -1,5 +1,3 @@
-// @flow
-
 import {
     READY_TO_CLOSE,
     SCREEN_SHARE_PARTICIPANTS_UPDATED

@@ -3,7 +3,9 @@ import React, { useCallback } from 'react';
 import { Container } from '../../react/components/index';
 import { StyleType, styleTypeToObject } from '../../styles/functions';
 
-interface IProps {
+import { IIconProps } from './types';
+
+interface IProps extends IIconProps {
 
     /**
      * The id of the element this button icon controls.
@@ -59,11 +61,6 @@ interface IProps {
      * Id prop (mainly for autotests).
      */
     id?: string;
-
-    /**
-     * Function to invoke on click.
-     */
-    onClick?: Function;
 
     /**
      * Keydown handler.

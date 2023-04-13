@@ -1,5 +1,3 @@
-// @flow
-
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/functions';
@@ -8,28 +6,18 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbo
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 
-export type Props = AbstractButtonProps & {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function,
+export interface IProps extends AbstractButtonProps {
 
     /**
      * The ID of the entry to be deleted.
      */
-    itemId: Object,
-
-    /**
-     * The function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    itemId: any;
+}
 
 /**
  * A recent list menu button which opens the dial-in info dialog.
  */
-class ShowDialInInfoButton extends AbstractButton<Props, *> {
+class ShowDialInInfoButton extends AbstractButton<IProps> {
     accessibilityLabel = 'welcomepage.info';
     icon = IconInfoCircle;
     label = 'welcomepage.info';

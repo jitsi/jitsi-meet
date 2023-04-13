@@ -36,7 +36,9 @@ export type Item = {
     /**
      * Unique ID of the item.
      */
-    id: Object | string;
+    id: string;
+
+    key?: string;
 
     /**
      * Lines[0] - date

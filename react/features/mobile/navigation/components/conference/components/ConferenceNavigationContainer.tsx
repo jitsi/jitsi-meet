@@ -1,6 +1,6 @@
 /* eslint-disable lines-around-comment */
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,7 +92,7 @@ const ConferenceNavigationContainer = () => {
         <NavigationContainer
             independent = { true }
             ref = { conferenceNavigationRef }
-            theme = { navigationContainerTheme }>
+            theme = { navigationContainerTheme as Theme }>
             <ConferenceStack.Navigator
                 screenOptions = {{
                     presentation: 'modal'
@@ -179,6 +179,7 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
+                    // @ts-ignore
                     component = { SettingsNavigationContainer }
                     name = { screen.settings.main }
                     options = { settingsNavigationContainerScreenOptions } />

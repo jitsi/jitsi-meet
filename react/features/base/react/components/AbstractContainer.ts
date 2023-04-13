@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ComponentType, ReactNode } from 'react';
 
 import { StyleType, getFixedPlatformStyle } from '../../styles/functions';
 
@@ -27,6 +27,8 @@ export interface IProps {
      */
     className?: string;
 
+    id?: string;
+
     /**
      * The event handler/listener to be invoked when this
      * {@code AbstractContainer} is clicked on Web or pressed on React
@@ -36,11 +38,19 @@ export interface IProps {
      */
     onClick?: Function;
 
+    onKeyDown?: Function;
+
+    onKeyPress?: Function;
+
+    role?: string;
+
     /**
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */
     style?: StyleType;
+
+    tabIndex?: number;
 
     /**
      * If this instance is to provide visual feedback when touched, then
@@ -82,7 +92,7 @@ export default class AbstractContainer<P extends IProps> extends Component<P> {
      * @protected
      * @returns {ReactElement}
      */
-    _render(type: string, props?: P) {
+    _render(type: string | ComponentType<any>, props?: P) {
         const {
             children,
             style,

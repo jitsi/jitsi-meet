@@ -47,7 +47,7 @@ interface ICustomStyles {
     input?: Object;
 }
 
-const Input = forwardRef<TextInput, IInputProps>(({
+const Input = forwardRef<TextInput, IProps>(({
     accessibilityLabel,
     autoCapitalize,
     autoFocus,

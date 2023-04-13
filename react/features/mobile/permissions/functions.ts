@@ -1,5 +1,3 @@
-// @flow
-
 import { Alert, Linking, NativeModules } from 'react-native';
 
 import Platform from '../../base/react/Platform.native';

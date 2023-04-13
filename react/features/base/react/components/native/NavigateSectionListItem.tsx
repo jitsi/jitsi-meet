@@ -1,6 +1,5 @@
-// @flow
-
 import React, { Component } from 'react';
+import { GestureResponderEvent } from 'react-native';
 
 import { IconPlus } from '../../../icons/svg';
 import IconButton from '../../../ui/components/native/IconButton';
@@ -11,27 +10,27 @@ import AvatarListItem from './AvatarListItem';
 import Text from './Text';
 import styles from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * Item containing data to be rendered.
      */
-    item: Item,
+    item: Item;
 
     /**
      * Function to be invoked when an item is long pressed. The item is passed.
      */
-    onLongPress: ?Function,
+    onLongPress?: (e?: GestureResponderEvent) => void;
 
     /**
      * Function to be invoked when an Item is pressed. The Item's URL is passed.
      */
-    onPress: ?Function,
+    onPress?: (e?: GestureResponderEvent) => void;
 
     /**
      * Function to be invoked when secondary action was performed on an Item.
      */
-    secondaryAction: ?Function
+    secondaryAction?: (e?: GestureResponderEvent) => void;
 }
 
 /**
@@ -40,20 +39,18 @@ type Props = {
  *
  * @augments Component
  */
-export default class NavigateSectionListItem extends Component<Props> {
+export default class NavigateSectionListItem extends Component<IProps> {
     /**
      * Constructor of the NavigateSectionList component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._renderItemLine = this._renderItemLine.bind(this);
         this._renderItemLines = this._renderItemLines.bind(this);
     }
-
-    _renderItemLine: (string, number) => React$Node;
 
     /**
      * Renders a single line from the additional lines.
@@ -63,7 +60,7 @@ export default class NavigateSectionListItem extends Component<Props> {
      * @private
      * @returns {React$Node}
      */
-    _renderItemLine(line, index) {
+    _renderItemLine(line: string, index: number) {
         if (!line) {
             return null;
         }
@@ -78,8 +75,6 @@ export default class NavigateSectionListItem extends Component<Props> {
         );
     }
 
-    _renderItemLines: Array<string> => Array<React$Node>;
-
     /**
      * Renders the additional item lines, if any.
      *
@@ -87,8 +82,8 @@ export default class NavigateSectionListItem extends Component<Props> {
      * @private
      * @returns {Array<React$Node>}
      */
-    _renderItemLines(lines) {
-        return lines && lines.length ? lines.map(this._renderItemLine) : null;
+    _renderItemLines(lines?: string[]) {
+        return lines?.length ? lines.map(this._renderItemLine) : null;
     }
 
     /**

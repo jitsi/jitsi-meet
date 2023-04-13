@@ -59,12 +59,16 @@ export interface IProps extends WithTranslation {
 }
 
 interface IState {
+    _fieldFocused?: boolean;
     animateTimeoutId?: number;
     generateRoomNames?: string;
     generatedRoomName: string;
+    hintBoxAnimation?: any;
     insecureRoomName: boolean;
+    isSettingsScreenFocused?: boolean;
     joining: boolean;
     room: string;
+    roomNameInputAnimation?: any;
     roomPlaceholder: string;
     updateTimeoutId?: number;
 }
@@ -90,7 +94,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @property {number|null} updateTimeoutId - Identifier of the timeout
      * updating the generated room name.
      */
-    state = {
+    state: IState = {
         animateTimeoutId: undefined,
         generatedRoomName: '',
         generateRoomNames: undefined,
@@ -98,7 +102,11 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         joining: false,
         room: '',
         roomPlaceholder: '',
-        updateTimeoutId: undefined
+        updateTimeoutId: undefined,
+        _fieldFocused: false,
+        isSettingsScreenFocused: false,
+        roomNameInputAnimation: 0,
+        hintBoxAnimation: 0
     };
 
     /**

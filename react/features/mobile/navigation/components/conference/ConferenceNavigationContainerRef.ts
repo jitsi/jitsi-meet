@@ -1,6 +1,7 @@
+import { NavigationContainerRef } from '@react-navigation/native';
 import React from 'react';
 
-export const conferenceNavigationRef = React.createRef();
+export const conferenceNavigationRef = React.createRef<NavigationContainerRef<any>>();
 
 /**
  * User defined navigation action included inside the reference to the container.

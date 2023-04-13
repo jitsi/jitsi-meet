@@ -1,6 +1,5 @@
-// @flow
-
 import React, { Component } from 'react';
+import { TextStyle } from 'react-native';
 
 import { SectionListSection } from '../../types';
 
@@ -8,12 +7,12 @@ import Container from './Container';
 import Text from './Text';
 import styles from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * A section containing the data to be rendered.
      */
-    section: SectionListSection
+    section: SectionListSection;
 }
 
 /**
@@ -22,7 +21,7 @@ type Props = {
  *
  * @augments Component
  */
-export default class NavigateSectionListSectionHeader extends Component<Props> {
+export default class NavigateSectionListSectionHeader extends Component<IProps> {
     /**
      * Renders the content of this component.
      *
@@ -33,7 +32,7 @@ export default class NavigateSectionListSectionHeader extends Component<Props> {
 
         return (
             <Container style = { styles.listSection }>
-                <Text style = { styles.listSectionText }>
+                <Text style = { styles.listSectionText as TextStyle }>
                     { section.title }
                 </Text>
             </Container>

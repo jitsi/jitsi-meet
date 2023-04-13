@@ -1,12 +1,15 @@
+import { NavigationContainerRef } from '@react-navigation/native';
 import React from 'react';
 
+import { IStore } from '../../app/types';
+import { IStateful } from '../../base/app/types';
 import { toState } from '../../base/redux/functions';
 import { isWelcomePageEnabled } from '../../welcome/functions';
 import { _sendReadyToClose } from '../external-api/functions';
 
 import { screen } from './routes';
 
-export const rootNavigationRef = React.createRef();
+export const rootNavigationRef = React.createRef<NavigationContainerRef<any>>();
 
 
 /**
@@ -36,7 +39,7 @@ export function goBack() {
  * @param {Function} dispatch - Redux dispatch function.
  * @returns {void}
  */
-export function goBackToRoot(stateful: Function | Object, dispatch: Function) {
+export function goBackToRoot(stateful: IStateful, dispatch: IStore['dispatch']) {
     const state = toState(stateful);
 
     if (isWelcomePageEnabled(state)) {

@@ -1,83 +1,81 @@
-// @flow
-
 import React, { Component } from 'react';
-import { Text } from 'react-native';
+import { GestureResponderEvent, Text, TextStyle } from 'react-native';
 
 import Avatar from '../../../avatar/components/Avatar';
-import { StyleType } from '../../../styles';
+import { StyleType } from '../../../styles/functions.native';
 import { Item } from '../../types';
 
 import Container from './Container';
 import styles, { AVATAR_SIZE, UNDERLAY_COLOR } from './styles';
 
-type Props = {
+interface IProps {
 
     /**
      * If true, only the avatar gets rendered, no lines of text.
      */
-    avatarOnly?: boolean,
+    avatarOnly?: boolean;
 
     /**
      * Preferred size of the avatar.
      */
-    avatarSize?: number,
+    avatarSize?: number;
 
     /**
      * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
      */
-    avatarStatus?: ?string,
+    avatarStatus?: string;
 
     /**
      * External style to be applied to the avatar (icon).
      */
-    avatarStyle?: StyleType,
+    avatarStyle?: StyleType;
 
     /**
      * External style to be applied to the avatar (text).
      */
-    avatarTextStyle?: StyleType,
+    avatarTextStyle?: StyleType;
 
     /**
      * Children of the component.
      */
-    children?: React$Node,
+    children?: React.ReactNode;
 
     /**
      * Item containing data to be rendered.
      */
-    item: Item,
+    item: Item;
 
     /**
      * External style prop to be applied to the extra lines.
      */
-    linesStyle?: StyleType,
+    linesStyle?: StyleType;
 
     /**
      * Function to invoke on long press.
      */
-    onLongPress: ?Function,
+    onLongPress?: (e: GestureResponderEvent) => void;
 
     /**
      * Function to invoke on press.
      */
-    onPress: ?Function,
+    onPress?: (e: GestureResponderEvent) => void;
 
     /**
      * External style prop to be applied to the title.
      */
-    titleStyle?: StyleType
-};
+    titleStyle?: StyleType;
+}
 
 /**
  * Implements a list item with an avatar rendered for it.
  */
-export default class AvatarListItem extends Component<Props> {
+export default class AvatarListItem extends Component<IProps> {
     /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._renderItemLine = this._renderItemLine.bind(this);
@@ -93,7 +91,6 @@ export default class AvatarListItem extends Component<Props> {
             avatarOnly,
             avatarSize = AVATAR_SIZE,
             avatarStatus,
-            avatarStyle,
             onLongPress,
             onPress
         } = this.props;
@@ -110,14 +107,13 @@ export default class AvatarListItem extends Component<Props> {
                     displayName = { title }
                     size = { avatarSize }
                     status = { avatarStatus }
-                    style = { avatarStyle }
                     url = { avatar } />
                 { avatarOnly || <Container style = { styles.listItemDetails }>
                     <Text
                         numberOfLines = { 1 }
                         style = { [
                             styles.listItemText,
-                            styles.listItemTitle,
+                            styles.listItemTitle as TextStyle,
                             this.props.titleStyle
                         ] }>
                         { title }
@@ -129,8 +125,6 @@ export default class AvatarListItem extends Component<Props> {
         );
     }
 
-    _renderItemLine: (string, number) => React$Node;
-
     /**
      * Renders a single line from the additional lines.
      *
@@ -139,7 +133,7 @@ export default class AvatarListItem extends Component<Props> {
      * @private
      * @returns {React$Node}
      */
-    _renderItemLine(line, index) {
+    _renderItemLine(line: string, index: number) {
         if (!line) {
             return null;
         }
@@ -157,8 +151,6 @@ export default class AvatarListItem extends Component<Props> {
         );
     }
 
-    _renderItemLines: Array<string> => Array<React$Node>;
-
     /**
      * Renders the additional item lines, if any.
      *
@@ -166,7 +158,7 @@ export default class AvatarListItem extends Component<Props> {
      * @private
      * @returns {Array<React$Node>}
      */
-    _renderItemLines(lines) {
-        return lines && lines.length ? lines.map(this._renderItemLine) : null;
+    _renderItemLines(lines?: string[]) {
+        return lines?.length ? lines.map(this._renderItemLine) : null;
     }
 }

@@ -174,8 +174,8 @@ class MeetingsList extends Component<IProps> {
     _onDelete(item: Object) {
         const { onItemDelete } = this.props;
 
-        return (evt: React.MouseEvent) => {
-            evt.stopPropagation();
+        return (evt?: React.MouseEvent) => {
+            evt?.stopPropagation();
 
             onItemDelete?.(item);
         };
