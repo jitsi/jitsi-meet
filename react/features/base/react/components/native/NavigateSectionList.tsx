@@ -142,7 +142,7 @@ class NavigateSectionList extends Component<IProps> {
             return () => onLongPress(item);
         }
 
-        return undefined;
+        return;
     }
 
     /**
@@ -159,7 +159,7 @@ class NavigateSectionList extends Component<IProps> {
             return () => onPress(url);
         }
 
-        return undefined;
+        return;
     }
 
     /**
