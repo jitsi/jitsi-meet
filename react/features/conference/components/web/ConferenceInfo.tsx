@@ -1,21 +1,19 @@
-// @flow
-
 /* eslint-disable react/no-multi-comp */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
-import { showToolbox } from '../../../toolbox/actions';
+import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
 import VisitorsCountLabel from '../../../visitors/components/web/VisitorsCountLabel';
 import ConferenceTimer from '../ConferenceTimer';
-import { getConferenceInfo } from '../functions';
+import { getConferenceInfo } from '../functions.web';
 
 import ConferenceInfoContainer from './ConferenceInfoContainer';
 import InsecureRoomNameLabel from './InsecureRoomNameLabel';
@@ -27,25 +25,31 @@ import ToggleTopPanelLabel from './ToggleTopPanelLabel';
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The conference info labels to be shown in the conference header.
      */
-    _conferenceInfo: Object,
-
-    /**
-     * Invoked to active other features of the app.
-     */
-    dispatch: Function;
+    _conferenceInfo: {
+        alwaysVisible?: string[];
+        autoHide?: string[];
+    };
 
     /**
      * Indicates whether the component should be visible or not.
      */
-    _visible: boolean
-};
+    _visible: boolean;
 
-const COMPONENTS = [
+    /**
+     * Invoked to active other features of the app.
+     */
+    dispatch: IStore['dispatch'];
+}
+
+const COMPONENTS: Array<{
+    Component: React.ComponentType<any>;
+    id: string;
+}> = [
     {
         Component: HighlightButton,
         id: 'highlight-moment'
@@ -107,22 +111,20 @@ const COMPONENTS = [
  * @param {Object} props - The props of the component.
  * @returns {React$None}
  */
-class ConferenceInfo extends Component<Props> {
+class ConferenceInfo extends Component<IProps> {
     /**
      * Initializes a new {@code ConferenceInfo} instance.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
+     * @param {IProps} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._renderAutoHide = this._renderAutoHide.bind(this);
         this._renderAlwaysVisible = this._renderAlwaysVisible.bind(this);
         this._onTabIn = this._onTabIn.bind(this);
     }
-
-    _onTabIn: () => void;
 
     /**
      * Callback invoked when the component is focused to show the conference
@@ -135,8 +137,6 @@ class ConferenceInfo extends Component<Props> {
             this.props.dispatch(showToolbox());
         }
     }
-
-    _renderAutoHide: () => void;
 
     /**
      * Renders auto-hidden info header labels.
@@ -164,8 +164,6 @@ class ConferenceInfo extends Component<Props> {
             </ConferenceInfoContainer>
         );
     }
-
-    _renderAlwaysVisible: () => void;
 
     /**
      * Renders the always visible info header labels.
@@ -223,7 +221,7 @@ class ConferenceInfo extends Component<Props> {
  *     _conferenceInfo: Object
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _visible: isToolboxVisible(state),
         _conferenceInfo: getConferenceInfo(state)

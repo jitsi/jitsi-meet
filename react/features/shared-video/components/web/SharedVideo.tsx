@@ -1,54 +1,55 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+// @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
+import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 
+// @ts-ignore
 import VideoManager from './VideoManager';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import YoutubeVideoManager from './YoutubeVideoManager';
 
-declare var interfaceConfig: Object;
-
-type Props = {
+interface IProps {
 
     /**
      * The available client width.
      */
-    clientHeight: number,
+    clientHeight: number;
 
     /**
      * The available client width.
      */
-    clientWidth: number,
+    clientWidth: number;
 
     /**
      * Whether the (vertical) filmstrip is visible or not.
      */
-    filmstripVisible: boolean,
+    filmstripVisible: boolean;
 
     /**
      * The width of the vertical filmstrip.
      */
-    filmstripWidth: number,
+    filmstripWidth: number;
 
     /**
      * Is the video shared by the local user.
      */
-    isOwner: boolean,
+    isOwner: boolean;
 
     /**
      * Whether or not the user is actively resizing the filmstrip.
      */
-    isResizing: boolean,
+    isResizing: boolean;
 
     /**
      * The shared video url.
      */
-    videoUrl: string,
+    videoUrl?: string;
 }
 
 /** .
@@ -57,7 +58,7 @@ type Props = {
  *
  * @augments Component
  */
-class SharedVideo extends Component<Props> {
+class SharedVideo extends Component<IProps> {
     /**
      * Computes the width and the height of the component.
      *
@@ -140,9 +141,9 @@ class SharedVideo extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const { ownerId, videoUrl } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];

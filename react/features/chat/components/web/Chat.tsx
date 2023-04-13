@@ -8,7 +8,7 @@ import PollsPane from '../../../polls/components/web/PollsPane';
 import { toggleChat } from '../../actions.web';
 import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
-    type Props,
+    IProps,
     _mapStateToProps
 } from '../AbstractChat';
 
@@ -23,7 +23,7 @@ import MessageRecipient from './MessageRecipient';
  * React Component for holding the chat feature in a side panel that slides in
  * and out of view.
  */
-class Chat extends AbstractChat<Props> {
+class Chat extends AbstractChat<IProps> {
 
     /**
      * Reference to the React Component for displaying chat messages. Used for
@@ -37,7 +37,7 @@ class Chat extends AbstractChat<Props> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._messageContainerRef = React.createRef();
@@ -66,7 +66,6 @@ class Chat extends AbstractChat<Props> {
                 onKeyDown = { this._onEscClick } >
                 <ChatHeader
                     className = 'chat-header'
-                    id = 'chat-header'
                     isPollsEnabled = { _isPollsEnabled }
                     onCancel = { this._onToggleChat } />
                 { _showNamePrompt
@@ -76,15 +75,13 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
-    _onChatTabKeyDown: (KeyboardEvent) => void;
-
     /**
      * Key press handler for the chat tab.
      *
      * @param {KeyboardEvent} event - The event.
      * @returns {void}
      */
-    _onChatTabKeyDown(event) {
+    _onChatTabKeyDown(event: React.KeyboardEvent) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             event.stopPropagation();
@@ -92,15 +89,13 @@ class Chat extends AbstractChat<Props> {
         }
     }
 
-    _onEscClick: (KeyboardEvent) => void;
-
     /**
      * Click handler for the chat sidenav.
      *
      * @param {KeyboardEvent} event - Esc key click to close the popup.
      * @returns {void}
      */
-    _onEscClick(event) {
+    _onEscClick(event: React.KeyboardEvent) {
         if (event.key === 'Escape' && this.props._isOpen) {
             event.preventDefault();
             event.stopPropagation();
@@ -108,15 +103,13 @@ class Chat extends AbstractChat<Props> {
         }
     }
 
-    _onPollsTabKeyDown: (KeyboardEvent) => void;
-
     /**
      * Key press handler for the polls tab.
      *
      * @param {KeyboardEvent} event - The event.
      * @returns {void}
      */
-    _onPollsTabKeyDown(event) {
+    _onPollsTabKeyDown(event: React.KeyboardEvent) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             event.stopPropagation();
@@ -201,10 +194,6 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
-    _onSendMessage: (string) => void;
-
-    _onToggleChat: () => void;
-
     /**
     * Toggles the chat window.
     *
@@ -213,9 +202,6 @@ class Chat extends AbstractChat<Props> {
     _onToggleChat() {
         this.props.dispatch(toggleChat());
     }
-    _onTogglePollsTab: () => void;
-    _onToggleChatTab: () => void;
-    _onChangeTab: (string) => void;
 
     /**
      * Change selected tab.
@@ -223,7 +209,7 @@ class Chat extends AbstractChat<Props> {
      * @param {string} id - Id of the clicked tab.
      * @returns {void}
      */
-    _onChangeTab(id) {
+    _onChangeTab(id: string) {
         id === CHAT_TABS.CHAT ? this._onToggleChatTab() : this._onTogglePollsTab();
     }
 }

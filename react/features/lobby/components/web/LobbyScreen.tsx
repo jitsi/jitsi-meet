@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -13,19 +11,19 @@ import Input from '../../../base/ui/components/web/Input';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
-    type Props,
+    IProps,
     _mapStateToProps
 } from '../AbstractLobbyScreen';
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
  */
-class LobbyScreen extends AbstractLobbyScreen<Props> {
+class LobbyScreen extends AbstractLobbyScreen<IProps> {
     /**
      * Reference to the React Component for displaying chat messages. Used for
      * scrolling to the end of the chat messages.
      */
-    _messageContainerRef: Object;
+    _messageContainerRef: React.RefObject<MessageContainer>;
 
     /**
        * Initializes a new {@code LobbyScreen} instance.
@@ -33,10 +31,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
        * @param {Object} props - The read-only properties with which the new
        * instance is to be initialized.
        */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
-        this._messageContainerRef = React.createRef();
+        this._messageContainerRef = React.createRef<MessageContainer>();
     }
 
     /**
@@ -53,7 +51,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
        *
        * @inheritdoc
        */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
         if (this.props._lobbyChatMessages !== prevProps._lobbyChatMessages) {
             this._scrollMessageContainerToBottom(true);
         } else if (this.props._isLobbyChatActive && !prevProps._isLobbyChatActive) {
@@ -79,34 +77,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
             </PreMeetingScreen>
         );
     }
-
-    _getScreenTitleKey: () => string;
-
-    _onAskToJoin: () => boolean;
-
-    _onCancel: () => boolean;
-
-    _onChangeDisplayName: Object => void;
-
-    _onChangeEmail: Object => void;
-
-    _onChangePassword: Object => void;
-
-    _onEnableEdit: () => void;
-
-    _onJoinWithPassword: () => void;
-
-    _onSendMessage: () => void;
-
-    _onSubmit: () => boolean;
-
-    _onSwitchToKnockMode: () => void;
-
-    _onSwitchToPasswordMode: () => void;
-
-    _onToggleChat: () => void;
-
-    _renderContent: () => React$Element<*>;
 
     /**
      * Renders the joining (waiting) fragment of the screen.
@@ -293,9 +263,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @private
      * @returns {void}
      */
-    _scrollMessageContainerToBottom(withAnimation) {
+    _scrollMessageContainerToBottom(withAnimation: boolean) {
         if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToElement(withAnimation);
+            this._messageContainerRef.current.scrollToElement(withAnimation, null);
         }
     }
 }

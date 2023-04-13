@@ -1,7 +1,5 @@
-// @flow
-
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
+import React, { ComponentType } from 'react';
 
 import BaseApp from '../../../../base/app/components/BaseApp';
 import { isMobileBrowser } from '../../../../base/environment/utils';
@@ -18,12 +16,7 @@ import DialInSummary from './DialInSummary';
  *
  * @augments BaseApp
  */
-export default class DialInSummaryApp extends BaseApp {
-    /**
-     * The deferred for the initialisation {{promise, resolve, reject}}.
-     */
-    _init: Object;
-
+export default class DialInSummaryApp extends BaseApp<any> {
     /**
      * Navigates to {@link Prejoin} upon mount.
      *
@@ -32,6 +25,7 @@ export default class DialInSummaryApp extends BaseApp {
     async componentDidMount() {
         await super.componentDidMount();
 
+        // @ts-ignore
         const { room } = parseURLParams(window.location, true, 'search');
         const { href } = window.location;
         const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
@@ -58,7 +52,7 @@ export default class DialInSummaryApp extends BaseApp {
      *
      * @override
      */
-    _createMainElement(component, props) {
+    _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
                 <AtlasKitThemeProvider mode = 'dark'>

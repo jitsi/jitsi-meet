@@ -6,11 +6,12 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import i18next from '../../../base/i18n/i18next';
 import { parseURLParams } from '../../../base/util/parseURLParams';
 import { DIAL_IN_INFO_PAGE_PATH_NAME } from '../../constants';
-import { DialInSummary } from '../dial-in-summary';
+import DialInSummary from '../dial-in-summary/web/DialInSummary';
 
-import NoRoomError from './NoRoomError';
+import NoRoomError from './NoRoomError.web';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // @ts-ignore
     const { room } = parseURLParams(window.location, true, 'search');
     const { href } = window.location;
     const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
@@ -30,6 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 });
 
-window.addEventListener('beforeunload', () => {
+window.addEventListener('beforeunload', () => { // @ts-ignore
     ReactDOM.unmountComponentAtNode(document.getElementById('react'));
 });

@@ -1,4 +1,4 @@
-// @flow
+import { IReduxState } from '../../app/types';
 
 import { CONFERENCE_INFO } from './constants';
 
@@ -8,7 +8,7 @@ import { CONFERENCE_INFO } from './constants';
  * @param {Object} state - The redux state.
  * @returns {Object} The conferenceInfo object.
  */
-export const getConferenceInfo = (state: Object) => {
+export const getConferenceInfo = (state: IReduxState) => {
     const { conferenceInfo } = state['features/base/config'];
 
     if (conferenceInfo) {

@@ -1,8 +1,7 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../app/types';
 import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { IconPerformance } from '../../base/icons/svg';
@@ -17,25 +16,23 @@ import AbstractVideoQualityLabel, {
 } from './AbstractVideoQualityLabel';
 import VideoQualityDialog from './VideoQualityDialog.web';
 
-declare var interfaceConfig: Object;
-
-type Props = AbstractProps & {
-
-    /**
-     * The redux dispatch function.
-     */
-    dispatch: Function,
+interface IProps extends AbstractProps {
 
     /**
      * The message to show within the label's tooltip.
      */
-    _tooltipKey: string,
+    _tooltipKey: string;
 
     /**
      * Flag controlling visibility of the component.
      */
-    _visible: boolean,
-};
+    _visible: boolean;
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * React {@code Component} responsible for displaying a label that indicates
@@ -44,7 +41,7 @@ type Props = AbstractProps & {
  * Will display if not in audio only mode and a high-definition large video is
  * being displayed.
  */
-export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
+export class VideoQualityLabel extends AbstractVideoQualityLabel<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -108,7 +105,7 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
  *     _visible: boolean
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state),
         _visible: !(shouldDisplayTileView(state) || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED)

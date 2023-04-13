@@ -1,10 +1,11 @@
-// @flow
-
 import _ from 'lodash';
 import React from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect as reactReduxConnect } from 'react-redux';
 
+// @ts-expect-error
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
+import { IReduxState, IStore } from '../../../app/types';
 import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { connect, disconnect } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -28,7 +29,7 @@ import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import Toolbox from '../../../toolbox/components/web/Toolbox';
 import { LAYOUT_CLASSNAMES } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.any';
-import { maybeShowSuboptimalExperienceNotification } from '../../functions';
+import { maybeShowSuboptimalExperienceNotification } from '../../functions.web';
 import {
     AbstractConference,
     abstractMapStateToProps
@@ -37,10 +38,6 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
-
-
-declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -58,66 +55,58 @@ const FULL_SCREEN_EVENTS = [
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
-type Props = AbstractProps & {
+interface IProps extends AbstractProps, WithTranslation {
 
     /**
      * The alpha(opacity) of the background.
      */
-    _backgroundAlpha: number,
+    _backgroundAlpha?: number;
 
     /**
      * Are any overlays visible?
      */
-    _isAnyOverlayVisible: boolean,
+    _isAnyOverlayVisible: boolean;
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
      * application layout.
      */
-    _layoutClassName: string,
+    _layoutClassName: string;
 
     /**
      * The config specified interval for triggering mouseMoved iframe api events.
      */
-    _mouseMoveCallbackInterval: number,
+    _mouseMoveCallbackInterval?: number;
 
     /**
      *Whether or not the notifications should be displayed in the overflow drawer.
      */
-    _overflowDrawer: boolean,
+    _overflowDrawer: boolean;
 
     /**
      * Name for this conference room.
      */
-    _roomName: string,
+    _roomName: string;
 
     /**
      * If lobby page is visible or not.
      */
-    _showLobby: boolean,
+    _showLobby: boolean;
 
     /**
      * If prejoin page is visible or not.
      */
-    _showPrejoin: boolean,
+    _showPrejoin: boolean;
 
-    dispatch: Function,
-    t: Function
+    dispatch: IStore['dispatch'];
 }
 
 /**
  * The conference page of the Web application.
  */
-class Conference extends AbstractConference<Props, *> {
-    _onFullScreenChange: Function;
-    _onMouseEnter: Function;
-    _onMouseLeave: Function;
-    _onMouseMove: Function;
-    _onShowToolbar: Function;
-    _onVidespaceTouchStart: Function;
+class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
-    _setBackground: Function;
 
     /**
      * Initializes a new Conference instance.
@@ -125,7 +114,7 @@ class Conference extends AbstractConference<Props, *> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         const { _mouseMoveCallbackInterval } = props;
@@ -173,7 +162,7 @@ class Conference extends AbstractConference<Props, *> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
         if (this.props._shouldDisplayTileView
             === prevProps._shouldDisplayTileView) {
             return;
@@ -284,7 +273,7 @@ class Conference extends AbstractConference<Props, *> {
      * @private
      * @returns {void}
      */
-    _setBackground(element) {
+    _setBackground(element: HTMLDivElement) {
         if (!element) {
             return;
         }
@@ -331,7 +320,7 @@ class Conference extends AbstractConference<Props, *> {
      * @private
      * @returns {void}
      */
-    _onMouseEnter(event) {
+    _onMouseEnter(event: React.MouseEvent) {
         APP.API.notifyMouseEnter(event);
     }
 
@@ -342,7 +331,7 @@ class Conference extends AbstractConference<Props, *> {
      * @private
      * @returns {void}
      */
-    _onMouseLeave(event) {
+    _onMouseLeave(event: React.MouseEvent) {
         APP.API.notifyMouseLeave(event);
     }
 
@@ -353,7 +342,7 @@ class Conference extends AbstractConference<Props, *> {
      * @private
      * @returns {void}
      */
-    _onMouseMove(event) {
+    _onMouseMove(event: React.MouseEvent) {
         APP.API.notifyMouseMove(event);
     }
 
@@ -397,9 +386,9 @@ class Conference extends AbstractConference<Props, *> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
     const { overflowDrawer } = state['features/toolbox'];
 
@@ -407,7 +396,7 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
         _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
-        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
+        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ''],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),

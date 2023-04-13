@@ -1,47 +1,42 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { isVideoMutedByUser } from '../../../base/media/functions';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import { isDeviceStatusVisible } from '../../functions';
 
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Indicates the className that needs to be applied.
     */
-    className: string,
+    className: string;
 
     /**
      * Flag signaling if the device status is visible or not.
      */
-    deviceStatusVisible: boolean,
+    deviceStatusVisible: boolean;
 
     /**
      * Flag signaling the visibility of camera preview.
      */
-    showCameraPreview: boolean,
-
-    /**
-     * Used for translation.
-     */
-    t: Function,
+    showCameraPreview: boolean;
 
     /**
      * The JitsiLocalTrack to display.
      */
-    videoTrack: ?Object
-};
+    videoTrack?: Object;
+}
 
 
 /**
  * This component is displayed before joining a meeting.
  */
-class PrejoinThirdParty extends Component<Props> {
+class PrejoinThirdParty extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -75,7 +70,7 @@ class PrejoinThirdParty extends Component<Props> {
  * @param {Object} ownProps - The props passed to the component.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: IReduxState) {
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
         showCameraPreview: !isVideoMutedByUser(state),

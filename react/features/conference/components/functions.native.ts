@@ -1,3 +1,5 @@
+import { IReduxState } from '../../app/types';
+
 export * from './functions.any';
 
 /**
@@ -6,7 +8,7 @@ export * from './functions.any';
  * @param {Object} state - The redux state.
  * @returns {boolean} Whether conference is connecting.
  */
-export const isConnecting = (state: Object) => {
+export const isConnecting = (state: IReduxState) => {
     const { connecting, connection } = state['features/base/connection'];
     const {
         conference,

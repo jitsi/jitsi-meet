@@ -1,10 +1,9 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { createDeepLinkingPageEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 
 
@@ -12,20 +11,20 @@ import { IDeeplinkingConfig } from '../../base/config/configType';
  * The type of the React {@code Component} props of
  * {@link NoMobileApp}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The deeplinking config.
      */
-    _deeplinkingCfg: IDeeplinkingConfig,
-};
+    _deeplinkingCfg: IDeeplinkingConfig;
+}
 
 /**
  * React component representing no mobile app page.
  *
  * @class NoMobileApp
  */
-class NoMobileApp<P : Props> extends Component<P> {
+class NoMobileApp extends Component<IProps> {
     /**
      * Implements the Component's componentDidMount method.
      *
@@ -44,7 +43,8 @@ class NoMobileApp<P : Props> extends Component<P> {
      */
     render() {
         const ns = 'no-mobile-app';
-        const { desktop: { appName } } = this.props._deeplinkingCfg;
+        const { desktop } = this.props._deeplinkingCfg;
+        const { appName } = desktop ?? {};
 
         return (
             <div className = { ns }>
@@ -66,9 +66,9 @@ class NoMobileApp<P : Props> extends Component<P> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
         _deeplinkingCfg: state['features/base/config'].deeplinking || {}
     };

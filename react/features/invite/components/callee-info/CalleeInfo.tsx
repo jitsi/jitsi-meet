@@ -1,8 +1,7 @@
-// @flow
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -10,25 +9,29 @@ import {
     getParticipantPresenceStatus,
     getRemoteParticipants
 } from '../../../base/participants/functions';
-import { Container, Text } from '../../../base/react/components/index';
+import { Container, Text } from '../../../base/react/components/index.web';
 import { isLocalTrackMuted } from '../../../base/tracks/functions.any';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { CALLING } from '../../../presence-status/constants';
 
-import styles from './styles';
+import styles from './styles.web';
 
 /**
  * The type of the React {@code Component} props of {@link CalleeInfo}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The callee's information such as display name.
      */
-    _callee: Object,
+    _callee?: {
+        id: string;
+        name: string;
+        status?: string;
+    };
 
-    _isVideoMuted: boolean
-};
+    _isVideoMuted: boolean;
+}
 
 
 /**
@@ -37,7 +40,7 @@ type Props = {
  *
  * @augments Component
  */
-class CalleeInfo extends Component<Props> {
+class CalleeInfo extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -49,8 +52,8 @@ class CalleeInfo extends Component<Props> {
             id,
             name,
             status = CALLING
-        } = this.props._callee;
-        const className = this.props._isVideoMuted ? 'solidBG' : undefined;
+        } = this.props._callee ?? {};
+        const className = this.props._isVideoMuted ? 'solidBG' : '';
 
         return (
             <Container
@@ -88,9 +91,9 @@ class CalleeInfo extends Component<Props> {
      *     style: Object
      * }}
      */
-    _style(...classNames: Array<?string>) {
+    _style(...classNames: Array<string | undefined>) {
         let className = '';
-        let style;
+        let style: Object = {};
 
         for (const aClassName of classNames) {
             if (aClassName) {
@@ -99,7 +102,7 @@ class CalleeInfo extends Component<Props> {
                     // React Native will accept an Array as the value of the
                     // style prop. However, I do not know about React.
                     style = {
-                        ...style,
+                        ...style, // @ts-ignore
                         ...styles[aClassName]
                     };
                 } else {
@@ -111,7 +114,10 @@ class CalleeInfo extends Component<Props> {
 
         // Choose which of the className and/or style props has a value and,
         // consequently, must be returned.
-        const props = {};
+        const props = {
+            className: '',
+            style: {}
+        };
 
         if (className) {
             props.className = className.trim();
@@ -133,7 +139,7 @@ class CalleeInfo extends Component<Props> {
  *     _callee: Object
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const _isVideoMuted
         = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 

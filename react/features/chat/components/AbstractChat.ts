@@ -5,6 +5,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { sendMessage, setIsPollsTabFocused } from '../actions';
 import { SMALL_WIDTH_THRESHOLD } from '../constants';
+import { IMessage } from '../reducer';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
@@ -34,7 +35,7 @@ export interface IProps extends WithTranslation {
     /**
      * All the chat messages in the conference.
      */
-    _messages: Array<Object>;
+    _messages: IMessage[];
 
     /**
      * Number of unread chat messages.
@@ -141,6 +142,7 @@ export default class AbstractChat<P extends IProps> extends Component<P> {
  * props.
  *
  * @param {Object} state - The redux store/state.
+ * @param {any} _ownProps - Components' own props.
  * @private
  * @returns {{
  *     _isOpen: boolean,
@@ -148,7 +150,7 @@ export default class AbstractChat<P extends IProps> extends Component<P> {
  *     _showNamePrompt: boolean
  * }}
  */
-export function _mapStateToProps(state: IReduxState) {
+export function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);

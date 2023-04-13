@@ -10,6 +10,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { getFieldValue } from '../../base/react/functions';
 import { updateSettings } from '../../base/settings/actions';
+import { IMessage } from '../../chat/reducer';
 import { isDeviceStatusVisible } from '../../prejoin/functions';
 import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
 
@@ -39,12 +40,12 @@ export interface IProps {
     /**
     * Lobby messages between moderator and the participant.
     */
-    _lobbyChatMessages: Object;
+    _lobbyChatMessages: IMessage[];
 
     /**
      * Name of the lobby chat recipient.
      */
-    _lobbyMessageRecipient: string;
+    _lobbyMessageRecipient?: string;
 
     /**
      * The name of the meeting we're about to join.
@@ -54,22 +55,22 @@ export interface IProps {
     /**
      * The members only conference if any,.
      */
-    _membersOnlyConference: IJitsiConference;
+    _membersOnlyConference?: IJitsiConference;
 
     /**
      * The email of the participant about to knock/join.
      */
-    _participantEmail: string;
+    _participantEmail?: string;
 
     /**
      * The id of the participant about to knock/join. This is the participant ID in the lobby room, at this point.
      */
-    _participantId: string;
+    _participantId?: string;
 
     /**
      * The name of the participant about to knock/join.
      */
-    _participantName: string;
+    _participantName?: string;
 
     /**
      * True if a recent attempt to join with password failed.
@@ -373,42 +374,54 @@ export default class AbstractLobbyScreen<P extends IProps = IProps> extends Pure
      *
      * @returns {React$Element}
      */
-    _renderJoining: () => React.ReactElement;
+    _renderJoining() {
+        return <></>;
+    }
 
     /**
      * Renders the participant form to let the knocking participant enter its details.
      *
      * @returns {React$Element}
      */
-    _renderParticipantForm: () => React.ReactElement;
+    _renderParticipantForm() {
+        return <></>;
+    }
 
     /**
      * Renders the participant info fragment when we have all the required details of the user.
      *
      * @returns {React$Element}
      */
-    _renderParticipantInfo: () => React.ReactElement;
+    _renderParticipantInfo() {
+        return <></>;
+    }
 
     /**
      * Renders the password form to let the participant join by using a password instead of knocking.
      *
      * @returns {React$Element}
      */
-    _renderPasswordForm: () => React.ReactElement;
+    _renderPasswordForm() {
+        return <></>;
+    }
 
     /**
      * Renders the password join button (set).
      *
      * @returns {React$Element}
      */
-    _renderPasswordJoinButtons: () => React.ReactElement;
+    _renderPasswordJoinButtons() {
+        return <></>;
+    }
 
     /**
      * Renders the standard (pre-knocking) button set.
      *
      * @returns {React$Element}
      */
-    _renderStandardButtons: () => React.ReactElement;
+    _renderStandardButtons() {
+        return <></>;
+    }
 }
 
 /**
