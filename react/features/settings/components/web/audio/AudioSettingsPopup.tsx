@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import { areAudioLevelsEnabled } from '../../../../base/config/functions.web';
@@ -83,6 +84,14 @@ interface IProps {
     setAudioOutputDevice: Function;
 }
 
+const useStyles = makeStyles()(() => {
+    return {
+        container: {
+            display: 'inline-block'
+        }
+    };
+});
+
 /**
  * Popup with audio settings.
  *
@@ -101,8 +110,10 @@ function AudioSettingsPopup({
     popupPlacement,
     measureAudioLevels
 }: IProps) {
+    const { classes, cx } = useStyles();
+
     return (
-        <div className = 'audio-preview'>
+        <div className = { cx(classes.container, 'audio-preview') }>
             <Popover
                 allowClick = { true }
                 content = { <AudioSettingsContent

@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import React, { useRef } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { IconCheck } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
@@ -47,6 +47,41 @@ interface IProps {
     onClick: Function;
 }
 
+const useStyles = makeStyles()(() => {
+    return {
+        container: {
+            position: 'relative',
+
+            [[ '&:hover', '&:focus', '&:focus-within' ] as any]: {
+                '& .entryText': {
+                    maxWidth: '178px',
+                    marginRight: 0
+                },
+
+                '& .testButton': {
+                    display: 'inline-block'
+                }
+            }
+        },
+
+        entryText: {
+            maxWidth: '238px',
+
+            '&.left-margin': {
+                marginLeft: '36px'
+            }
+        },
+
+        testButton: {
+            display: 'none',
+            padding: '4px 10px',
+            position: 'absolute',
+            right: '16px',
+            top: '6px'
+        }
+    };
+});
+
 /**
  * Implements a React {@link Component} which displays an audio
  * output settings entry. The user can click and play a test sound.
@@ -56,6 +91,7 @@ interface IProps {
  */
 const SpeakerEntry = (props: IProps) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { classes, cx } = useStyles();
 
     /**
      * Click handler for the entry.
@@ -110,7 +146,7 @@ const SpeakerEntry = (props: IProps) => {
             aria-labelledby = { labelledby }
             aria-posinset = { index }
             aria-setsize = { length }
-            className = 'audio-preview-speaker'
+            className = { classes.container }
             onClick = { _onClick }
             onKeyPress = { _onKeyPress }
             role = 'radio'
@@ -121,9 +157,9 @@ const SpeakerEntry = (props: IProps) => {
                 overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
                 text = { children }
-                textClassName = { clsx('audio-preview-entry-text', !isSelected && 'left-margin') }>
+                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') }>
                 <Button
-                    className = 'audio-preview-test-button'
+                    className = { cx(classes.testButton, 'testButton') }
                     label = 'Test'
                     onClick = { _onTestButtonClick }
                     onKeyPress = { _onTestButtonClick }
