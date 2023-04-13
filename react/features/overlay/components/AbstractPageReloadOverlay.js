@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
+import { isJwtTokenExpired } from '../../base/jwt';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
@@ -48,7 +49,12 @@ export type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The jwt token to pass to the component.
+     */
+    jwt: string
 };
 
 /**
@@ -76,7 +82,7 @@ type State = {
     /**
      * The translation key for the title of the overlay.
      */
-    title: string
+    title: string,
 };
 
 /**
@@ -117,6 +123,11 @@ export default class AbstractPageReloadOverlay<P: Props>
         const conferenceError = state['features/base/conference'].error;
         const configError = state['features/base/config'].error;
         const connectionError = state['features/base/connection'].error;
+        const jwt = state['features/base/jwt'].jwt;
+
+        if (isJwtTokenExpired(jwt)) {
+            return false;
+        }
 
         return (
             (connectionError && isFatalJitsiConnectionError(connectionError))
@@ -195,6 +206,16 @@ export default class AbstractPageReloadOverlay<P: Props>
         this._interval
             = setInterval(
                 () => {
+                    if (isJwtTokenExpired(this.props.jwt)) {
+                        if (this._interval) {
+                            clearInterval(this._interval);
+                            this._interval = undefined;
+                        }
+
+                        return;
+                    }
+
+
                     if (this.state.timeLeft === 0) {
                         if (this._interval) {
                             clearInterval(this._interval);
@@ -281,11 +302,13 @@ export function abstractMapStateToProps(state: Object) {
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
     const { fatalError } = state['features/overlay'];
+    const { jwt } = state['features/base/jwt'];
 
     return {
         details: fatalError && fatalError.details,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,
-        reason: fatalError && (fatalError.message || fatalError.name)
+        reason: fatalError && (fatalError.message || fatalError.name),
+        jwt
     };
 }

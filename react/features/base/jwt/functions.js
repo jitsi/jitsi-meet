@@ -145,3 +145,18 @@ export function validateJwt(jwt: string) {
 
     return errors;
 }
+
+
+/**
+ * Check whether the JWT token has expired.
+ *
+ * @param {string} jwt - Jwt token.
+ * @returns {boolean} - Whether JWT token has expired.
+ */
+export function isJwtTokenExpired(jwt: string) {
+    try {
+        return Date.now() >= jwtDecode(jwt).exp * 1000;
+    } catch (error) {
+        return true;
+    }
+}
