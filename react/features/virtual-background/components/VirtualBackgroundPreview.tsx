@@ -17,8 +17,6 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
 import logger from '../logger';
 
-const videoClassName = 'video-preview-video';
-
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
@@ -88,22 +86,32 @@ const styles = (theme: Theme) => {
             zIndex: 2,
             borderRadius: '3px',
             backgroundColor: theme.palette.uiBackground,
-            position: 'relative' as const,
+            position: 'relative' as const
+        },
 
-            '& .video-preview-loader': {
-                height: '220px',
+        previewLoader: {
+            height: '220px',
 
-                '& svg': {
-                    position: 'absolute' as const,
-                    top: '40%',
-                    left: '45%'
-                }
-            },
-
-            '& .video-preview-error': {
-                height: '220px',
-                position: 'relative'
+            '& svg': {
+                position: 'absolute' as const,
+                top: '40%',
+                left: '45%'
             }
+        },
+
+        previewVideo: {
+            height: '100%',
+            width: '100%',
+            objectFit: 'cover' as const
+        },
+
+        error: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '220px',
+            position: 'relative' as const
         }
     };
 };
@@ -206,7 +214,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      */
     _loadVideoPreview() {
         return (
-            <div className = 'video-preview-loader'>
+            <div className = { this.props.classes.previewLoader }>
                 <Spinner size = 'large' />
             </div>
         );
@@ -219,20 +227,20 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      * @returns {React$Node}
      */
     _renderPreviewEntry(data: Object) {
-        const { t } = this.props;
+        const { classes, t } = this.props;
 
         if (this.state.loading) {
             return this._loadVideoPreview();
         }
         if (!data) {
             return (
-                <div className = 'video-preview-error'>{t('deviceSelection.previewUnavailable')}</div>
+                <div className = { classes.error }>{t('deviceSelection.previewUnavailable')}</div>
             );
         }
 
         return (
             <Video
-                className = { videoClassName }
+                className = { classes.previewVideo }
                 playsinline = { true }
                 videoTrack = {{ jitsiTrack: data }} />
         );

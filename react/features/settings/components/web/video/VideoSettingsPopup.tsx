@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import {
@@ -55,6 +56,15 @@ interface IProps {
     videoDeviceIds: string[];
 }
 
+const useStyles = makeStyles()(() => {
+    return {
+        container: {
+            background: 'none',
+            display: 'inline-block'
+        }
+    };
+});
+
 /**
  * Popup with a preview of all the video devices.
  *
@@ -69,8 +79,10 @@ function VideoSettingsPopup({
     setVideoInputDevice,
     videoDeviceIds
 }: IProps) {
+    const { classes, cx } = useStyles();
+
     return (
-        <div className = 'video-preview'>
+        <div className = { cx('video-preview', classes.container) }>
             <Popover
                 allowClick = { true }
                 content = { <VideoSettingsContent
