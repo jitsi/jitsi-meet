@@ -70,6 +70,8 @@ class RTCStats {
 
             if (newOptions.meetingFqn && newOptions.endpoint) {
                 this.init(newOptions);
+            } else {
+                logger.warn('RTCStats is enabled but it has not been configured.');
             }
         }
     }
@@ -78,10 +80,10 @@ class RTCStats {
      * Wrapper method for the underlying trace object to be used as a static reference from inside the wrapped
      * PeerConnection.
      *
-     * @param {any[]} data - the stats entry to send to the rtcstats endpoint.
+     * @param {any[]} data - The stats entry to send to the rtcstats endpoint.
      * @returns {void}
      */
-    statsEntry(...data) {
+    statsEntry(...data: any[]) {
         this.trace?.statsEntry(data);
     }
 
