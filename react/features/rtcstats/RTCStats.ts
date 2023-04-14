@@ -116,7 +116,6 @@ class RTCStats {
 
         this.trace = traceInit(traceOptions);
         if (!this.isPeerConnectionWrapped) {
-            // FIXME we cannot unwrap the peer connection, so this has to be done once.
             const rtcstatsOptions = {
                 connectionFilter,
                 pollInterval,
@@ -149,8 +148,6 @@ class RTCStats {
      */
     reset() {
         delete this.options;
-
-        // FIXME unwrap the peer connection.
 
         if (this.trace) {
             this.trace.close();
