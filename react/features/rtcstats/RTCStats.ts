@@ -125,7 +125,9 @@ class RTCStats {
                 eventCallback: this.handleRtcstatsEvent.bind(this)
             };
 
-            rtcstatsInit(this, rtcstatsOptions);
+            const statsEntryCallback = { statsEntry: this.statsEntry.bind(this) };
+
+            rtcstatsInit(statsEntryCallback, rtcstatsOptions);
             this.isPeerConnectionWrapped = true;
         }
         this.options = options;
