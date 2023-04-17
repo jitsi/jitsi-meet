@@ -155,6 +155,7 @@ export function validateJwt(jwt: string) {
  */
 export function isJwtTokenExpired(jwt: string) {
     try {
+        // we need to *1000 here since jwtDecode(jwt).exp returns seconds not miliseconds
         return Date.now() >= jwtDecode(jwt).exp * 1000;
     } catch (error) {
         return true;
