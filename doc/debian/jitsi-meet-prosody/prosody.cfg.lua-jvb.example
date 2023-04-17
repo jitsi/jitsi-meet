@@ -78,6 +78,7 @@ Component "conference.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "polls";
@@ -92,6 +93,7 @@ Component "breakout.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "muc_rate_limit";
@@ -105,6 +107,7 @@ Component "breakout.jitmeet.example.com" "muc"
 Component "internal.auth.jitmeet.example.com" "muc"
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "ping";
     }
     admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
@@ -139,6 +142,7 @@ Component "lobby.jitmeet.example.com" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
     modules_enabled = {
+        "muc_hide_all";
         "muc_rate_limit";
         "polls";
     }
