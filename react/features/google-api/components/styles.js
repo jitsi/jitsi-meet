@@ -35,7 +35,7 @@ export default createStyleSheet({
      */
     signOutButton: {
         alignSelf: 'center',
-        maxWidth: 104,
+        maxWidth: 120,
         width: 'auto'
     }
 });
