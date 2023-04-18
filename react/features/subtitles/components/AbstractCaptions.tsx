@@ -74,7 +74,7 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
      * @protected
      * @returns {ReactElement} - The subtitles container.
      */
-    _renderSubtitlesContainer(_el: Array<React.ReactElement>) {
+    _renderSubtitlesContainer(_el: Array<ReactElement>) {
         return <></>;
     }
 }
