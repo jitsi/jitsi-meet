@@ -1,5 +1,6 @@
 import { IReduxState } from '../../app/types';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
+
 import { IConfig, IDeeplinkingConfig, IDeeplinkingMobileConfig, IDeeplinkingPlatformConfig } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
