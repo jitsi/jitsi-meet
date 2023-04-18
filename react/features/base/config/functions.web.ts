@@ -1,4 +1,5 @@
 import { IReduxState } from '../../app/types';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 
 import { IConfig, IDeeplinkingConfig, IDeeplinkingMobileConfig, IDeeplinkingPlatformConfig } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
@@ -75,8 +76,7 @@ export function isToolbarButtonEnabled(buttonName: string, state: IReduxState | 
  * @returns {boolean}
  */
 export function areAudioLevelsEnabled(state: IReduxState): boolean {
-    // Default to false for React Native as audio levels are of no interest to the mobile app.
-    return navigator.product !== 'ReactNative' && !state['features/base/config'].disableAudioLevels;
+    return !state['features/base/config'].disableAudioLevels && JitsiMeetJS.isCollectingLocalStats();
 }
 
 /**

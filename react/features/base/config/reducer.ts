@@ -45,17 +45,8 @@ const INITIAL_NON_RN_STATE: IConfig = {
 const INITIAL_RN_STATE: IConfig = {
     analytics: {},
 
-    // FIXME The support for audio levels in lib-jitsi-meet polls the statistics
-    // of WebRTC at a short interval multiple times a second. Unfortunately,
-    // React Native is slow to fetch these statistics from the native WebRTC
-    // API, through the React Native bridge and eventually to JavaScript.
-    // Because the audio levels are of no interest to the mobile app, it is
-    // fastest to merely disable them.
-    disableAudioLevels: true,
-
     // FIXME: Mobile codecs should probably be configurable separately, rather
     // than requiring this override here...
-
     p2p: {
         disabledCodec: 'vp9',
         preferredCodec: 'vp8'
