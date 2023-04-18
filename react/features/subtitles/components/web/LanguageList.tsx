@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 
-import LanguageListItem from './LanguageListItem.web';
+import LanguageListItem from './LanguageListItem';
 
 interface ILanguageListProps {
     items: Array<ILanguageItem>;
@@ -36,11 +36,13 @@ const LanguageList = ({
     onLanguageSelected
 }: ILanguageListProps) => {
     const { classes: styles } = useStyles();
-    const listItems = items.map(item => (<LanguageListItem
-        key = { item.id }
-        lang = { item.lang }
-        onLanguageSelected = { onLanguageSelected }
-        selected = { item.selected } />));
+    const listItems = items.map(item => (
+        <LanguageListItem
+            key = { item.id }
+            lang = { item.lang }
+            onLanguageSelected = { onLanguageSelected }
+            selected = { item.selected } />
+    ));
 
     return (
         <div className = { styles.itemsContainer }>{listItems}</div>

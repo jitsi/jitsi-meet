@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 
 import { IReduxState } from '../../app/types';
+
 
 /**
  * {@code AbstractCaptions} Properties.
  */
-export type AbstractCaptionsProps = {
+export interface IAbstractCaptionsProps {
 
     /**
      * Whether local participant is requesting to see subtitles.
@@ -17,23 +18,22 @@ export type AbstractCaptionsProps = {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts?: Map<string, string>;
-};
+    _transcripts: Map<string, string>;
+}
 
 /**
  * Abstract React {@code Component} which can display speech-to-text results
  * from Jigasi as subtitles.
  */
-export class AbstractCaptions<P extends AbstractCaptionsProps>
-    extends Component<P> {
+export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Component<P> {
 
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {React$Element}
+     * @returns {ReactElement}
      */
-    render() {
+    render(): any {
         const { _requestingSubtitles, _transcripts } = this.props;
 
         if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
@@ -42,10 +42,12 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
 
         const paragraphs = [];
 
+        // @ts-ignore
         for (const [ id, text ] of _transcripts ?? []) {
             paragraphs.push(this._renderParagraph(id, text));
         }
 
+        // @ts-ignore
         return this._renderSubtitlesContainer(paragraphs);
     }
 
@@ -58,7 +60,7 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
      * @param {string} _text - Subtitles text formatted with the participant's
      * name.
      * @protected
-     * @returns {React$Element} - The React element which displays the text.
+     * @returns {ReactElement} - The React element which displays the text.
      */
     _renderParagraph(_id: string, _text: string) {
         return <></>;
@@ -68,12 +70,12 @@ export class AbstractCaptions<P extends AbstractCaptionsProps>
      * Renders the subtitles container.
      *
      * @abstract
-     * @param {Array<React$Element>} _el - An array of elements created
+     * @param {Array<ReactElement>} _el - An array of elements created
      * for each subtitle using the {@link _renderParagraph} method.
      * @protected
-     * @returns {React$Element} - The subtitles container.
+     * @returns {ReactElement} - The subtitles container.
      */
-    _renderSubtitlesContainer(_el: Array<React.ReactElement>) {
+    _renderSubtitlesContainer(_el: Array<ReactElement>) {
         return <></>;
     }
 }
@@ -129,7 +131,7 @@ export function _abstractMapStateToProps(state: IReduxState) {
     return {
         _requestingSubtitles,
 
-        // avoid rerenders by setting to props new empty Map instances.
+        // avoid re-renders by setting to prop new empty Map instances.
         _transcripts: transcripts.size === 0 ? undefined : transcripts
     };
 }

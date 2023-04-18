@@ -18,7 +18,7 @@ import SecurityDialogButton
 import SharedVideoButton from '../../../shared-video/components/native/SharedVideoButton';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
-import ClosedCaptionButton from '../../../subtitles/components/ClosedCaptionButton.native';
+import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCaptionButton';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import { getMovableButtons } from '../../functions.native';

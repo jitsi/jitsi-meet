@@ -14,7 +14,7 @@ import StageParticipantNameLabel from '../../display-name/components/web/StagePa
 import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
 import SharedVideo from '../../shared-video/components/web/SharedVideo';
-import Captions from '../../subtitles/components/Captions.web';
+import Captions from '../../subtitles/components/web/Captions';
 import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';

@@ -37,6 +37,9 @@ import SecurityDialog
 import SpeakerStats
 // @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
+import LanguageSelectorDialog
+// @ts-ignore
+    from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
@@ -54,7 +57,8 @@ import {
     securityScreenOptions,
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
-    speakerStatsScreenOptions
+    speakerStatsScreenOptions,
+    subtitlesScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
 // @ts-ignore
@@ -190,6 +194,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...carmodeScreenOptions,
                         title: t('carmode.labels.title')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { LanguageSelectorDialog }
+                    name = { screen.conference.subtitles }
+                    options = {{
+                        ...subtitlesScreenOptions,
+                        title: t('transcribing.subtitles')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>

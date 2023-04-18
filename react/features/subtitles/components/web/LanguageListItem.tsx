@@ -2,24 +2,24 @@ import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { translate } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconCheck } from '../../base/icons/svg';
+import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCheck } from '../../../base/icons/svg';
 
 interface ILanguageListItemProps extends WithTranslation {
 
     /**
-     * Whether or not the button should be full width.
+     * Language string.
      */
     lang: string;
 
     /**
-     * Click callback.
+     * Callback for language selection.
      */
     onLanguageSelected: (lang: string) => void;
 
     /**
-     * The id of the button.
+     * If language item is selected or not.
      */
     selected?: boolean;
 }

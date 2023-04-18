@@ -38,7 +38,7 @@ import { navigate }
 import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
-import Captions from '../../../subtitles/components/Captions.native';
+import Captions from '../../../subtitles/components/native/Captions';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions';

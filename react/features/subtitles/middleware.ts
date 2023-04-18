@@ -11,7 +11,7 @@ import {
 import {
     removeTranscriptMessage,
     updateTranscriptMessage
-} from './actions';
+} from './actions.any';
 import logger from './logger';
 
 /**
