@@ -7,23 +7,29 @@ local st = require 'util.stanza';
 
 local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
 
-local messages_per_room = module:get_option_number('muc_limit_messages_count');
+local messages_per_room;
+local drop_limits_authenticated;
+
+local function load_config()
+    messages_per_room = module:get_option_number('muc_limit_messages_count');
+    drop_limits_authenticated = module:get_option_boolean('muc_limit_messages_check_token', false);
+end
+load_config();
+
 if not messages_per_room then
     module:log('warn', "No 'muc_limit_messages_count' option set, disabling module");
     return
 end
 
-local drop_limits_authenticated = module:get_option_boolean('muc_limit_messages_check_token', false);
-
 module:log('info', 'Loaded muc limits for %s, limit:%s, will check for authenticated users:%s',
     module.host, messages_per_room, drop_limits_authenticated);
 
-local error_text = 'This room has limit of '..messages_per_room..' messages.';
+local error_text = 'The message limit for the room has been reached. Messaging is now disabled.';
 
 function on_message(event)
     local stanza = event.stanza;
     local body = stanza:get_child('body');
-    -- we ignore any message without a body (messages used by lobby), messages with type groupchat
+    -- we ignore any non groupchat message without a body (messages used by lobby), messages with type groupchat
     -- are used by polls
     if not body and stanza.attr.type ~= 'groupchat' then
         return;
@@ -81,3 +87,5 @@ end
 -- 'message/host' is used for breakout rooms
 module:hook('message/full', on_message); -- private messages
 module:hook('message/bare', on_message); -- room messages
+
+module:hook_global('config-reloaded', load_config);
