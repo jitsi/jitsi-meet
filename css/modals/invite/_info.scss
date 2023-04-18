@@ -57,6 +57,10 @@
     line-height: 24px;
     border-collapse: collapse;
 
+    * {
+        user-select: text;
+    }
+
     thead {
         text-align: left;
     }
