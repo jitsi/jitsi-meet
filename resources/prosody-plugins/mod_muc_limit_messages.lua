@@ -7,22 +7,22 @@ local st = require 'util.stanza';
 
 local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
 
-local messages_per_room;
-local drop_limits_authenticated;
+local count;
+local check_token;
 
 local function load_config()
-    messages_per_room = module:get_option_number('muc_limit_messages_count');
-    drop_limits_authenticated = module:get_option_boolean('muc_limit_messages_check_token', false);
+    count = module:get_option_number('muc_limit_messages_count');
+    check_token = module:get_option_boolean('muc_limit_messages_check_token', false);
 end
 load_config();
 
-if not messages_per_room then
+if not count then
     module:log('warn', "No 'muc_limit_messages_count' option set, disabling module");
     return
 end
 
 module:log('info', 'Loaded muc limits for %s, limit:%s, will check for authenticated users:%s',
-    module.host, messages_per_room, drop_limits_authenticated);
+    module.host, count, check_token);
 
 local error_text = 'The message limit for the room has been reached. Messaging is now disabled.';
 
@@ -55,7 +55,7 @@ function on_message(event)
         return false;
     end
 
-    if drop_limits_authenticated and session.auth_token then
+    if check_token and session.auth_token then
         -- there is an authenticated participant drop all limits
         room._muc_messages_limit = false;
     end
@@ -72,7 +72,7 @@ function on_message(event)
     room._muc_messages_limit_count = room._muc_messages_limit_count + 1;
 
     -- on the first message above the limit we set the limit and we send an announcement to the room
-    if room._muc_messages_limit_count == messages_per_room + 1 then
+    if room._muc_messages_limit_count == count + 1 then
         module:log('warn', 'Room message limit reached: %s', room.jid);
 
         -- send a message to the room
