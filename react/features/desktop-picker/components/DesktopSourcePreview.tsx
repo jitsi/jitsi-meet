@@ -110,7 +110,7 @@ class DesktopSourcePreview extends Component<IProps> {
      * @param {string} src - Of the image.
      * @returns {Object} - Thumbnail image.
      */
-    _renderThumbnailImage(src) {
+    _renderThumbnailImage(src: string) {
         return (
             <img
                 alt = { this.props.t('welcomepage.logo.desktopPreviewThumbnail') }
