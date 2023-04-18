@@ -29,10 +29,17 @@ local error_text = 'The message limit for the room has been reached. Messaging i
 function on_message(event)
     local stanza = event.stanza;
     local body = stanza:get_child('body');
-    -- we ignore any non groupchat message without a body (messages used by lobby), messages with type groupchat
-    -- are used by polls
-    if not body and stanza.attr.type ~= 'groupchat' then
-        return;
+    -- we ignore any non groupchat message without a body
+    if not body then
+        if stanza.attr.type ~= 'groupchat' then -- lobby messages
+            return;
+        else
+            -- we want to pass through only polls answers
+            local json_data = stanza:get_child_text('json-message', 'http://jitsi.org/jitmeet');
+            if json_data and string.find(json_data, 'answer-poll', 1, true) then
+                return;
+            end
+        end
     end
 
     local session = event.origin;
