@@ -41,7 +41,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
     switch (action.type) {
     case LIB_WILL_INIT: {
-        if (isRtcstatsEnabled(state) && !RTCStats.isInitialized()) {
+        if (isRtcstatsEnabled(state)) {
             // RTCStats "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
             // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
@@ -54,7 +54,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
-                RTCStats.init({
+
+                RTCStats.maybeInit({
                     endpoint: analytics?.rtcstatsEndpoint,
                     meetingFqn: extractFqnFromPath(state),
                     useLegacy,
@@ -64,6 +65,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
             }
+        } else {
+            RTCStats.reset();
         }
         break;
     }
