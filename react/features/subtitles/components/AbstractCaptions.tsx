@@ -18,7 +18,7 @@ export interface IAbstractCaptionsProps {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: Map<string, string> | any;
+    _transcripts: Map<string, string>;
 }
 
 /**
@@ -42,6 +42,7 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
 
         const paragraphs = [];
 
+        // @ts-ignore
         for (const [ id, text ] of _transcripts ?? []) {
             paragraphs.push(this._renderParagraph(id, text));
         }

@@ -7,12 +7,12 @@ import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isLayoutTileView } from '../../../video-layout/functions.web';
 import {
     AbstractCaptions,
-    type AbstractCaptionsProps,
+    type IAbstractCaptionsProps,
     _abstractMapStateToProps
 } from '../AbstractCaptions';
 
 
-interface IProps extends AbstractCaptionsProps {
+interface IProps extends IAbstractCaptionsProps {
 
     /**
      * Whether the subtitles container is lifted above the invite box.
