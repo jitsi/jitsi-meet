@@ -277,13 +277,13 @@ function on_message(event)
             end
         end
         if not occupant then
-            log('warn', 'No occupant %s found for %s', from, room.jid);
+            module:log('warn', 'No occupant %s found for %s', from, room.jid);
             return false;
         end
     end
 
     if occupant.role ~= 'moderator' then
-        log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+        module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
         return false;
     end
 

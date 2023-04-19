@@ -71,7 +71,7 @@ function provider.get_sasl_handler(session)
         -- retrieve custom public key from server and save it on the session
         local pre_event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
         if pre_event_result ~= nil and pre_event_result.res == false then
-            log("warn",
+            module:log("warn",
                 "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
             session.auth_token = nil;
             return pre_event_result.res, pre_event_result.error, pre_event_result.reason;
@@ -79,7 +79,7 @@ function provider.get_sasl_handler(session)
 
         local res, error, reason = token_util:process_and_verify_token(session);
         if res == false then
-            log("warn",
+            module:log("warn",
                 "Error verifying token err:%s, reason:%s", error, reason);
             session.auth_token = nil;
             return res, error, reason;
@@ -87,7 +87,7 @@ function provider.get_sasl_handler(session)
 
         local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
         if shouldAllow == false then
-            log("warn", "user is banned")
+            module:log("warn", "user is banned")
             return false, "not-allowed", "user is banned";
         end
 
@@ -109,7 +109,7 @@ function provider.get_sasl_handler(session)
 
         local post_event_result = prosody.events.fire_event("post-jitsi-authentication", session);
         if post_event_result ~= nil and post_event_result.res == false then
-            log("warn",
+            module:log("warn",
                 "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
             session.auth_token = nil;
             return post_event_result.res, post_event_result.error, post_event_result.reason;

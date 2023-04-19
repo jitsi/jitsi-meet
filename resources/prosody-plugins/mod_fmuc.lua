@@ -230,7 +230,7 @@ local function stanza_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
-        log('warn', 'No room found %s', room_jid);
+        module:log('warn', 'No room found %s', room_jid);
         return;
     end
 
