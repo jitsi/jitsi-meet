@@ -13,8 +13,8 @@ export interface IInvitee {
     user_id?: string;
 }
 
-export type InviteSelectItem = MultiSelectItem & {
+export interface IInviteSelectItem extends MultiSelectItem {
     filterValues?: string[];
     item: IInvitee;
     tag?: any;
-};
+}

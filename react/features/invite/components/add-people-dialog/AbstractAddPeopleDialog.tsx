@@ -5,7 +5,8 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { showErrorNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
-import { invite } from '../../actions.web';
+import { INotificationProps } from '../../../notifications/types';
+import { invite } from '../../actions';
 import { INVITE_TYPES } from '../../constants';
 import {
     getInviteResultsForQuery,
@@ -15,9 +16,9 @@ import {
     isSipInviteEnabled
 } from '../../functions';
 import logger from '../../logger';
-import { IInvitee, InviteSelectItem } from '../../types';
+import { IInviteSelectItem, IInvitee } from '../../types';
 
-export type Props = {
+export interface IProps {
 
     /**
      * Whether or not to show Add People functionality.
@@ -73,9 +74,9 @@ export type Props = {
      * The Redux dispatch function.
      */
     dispatch: Function;
-};
+}
 
-export type State = {
+export interface IState {
 
     /**
      * Indicating that an error occurred when adding people to the call.
@@ -91,13 +92,13 @@ export type State = {
     /**
      * The list of invite items.
      */
-    inviteItems: Array<InviteSelectItem>;
-};
+    inviteItems: Array<IInviteSelectItem>;
+}
 
 /**
  * Implements an abstract dialog to invite people to the conference.
  */
-export default class AbstractAddPeopleDialog<P extends Props, S extends State> extends Component<P, S> {
+export default class AbstractAddPeopleDialog<P extends IProps, S extends IState> extends Component<P, S> {
     /**
      * Constructor of the component.
      *
@@ -106,7 +107,7 @@ export default class AbstractAddPeopleDialog<P extends Props, S extends State> e
     constructor(props: P) {
         super(props);
 
-        this._query = this._query?.bind(this);
+        this._query = this._query.bind(this);
     }
 
     /**
@@ -181,7 +182,7 @@ export default class AbstractAddPeopleDialog<P extends Props, S extends State> e
                     }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                 } else if (!_callFlowsEnabled) {
                     const invitedCount = invitees.length;
-                    let notificationProps;
+                    let notificationProps: INotificationProps | undefined;
 
                     if (invitedCount >= 3) {
                         notificationProps = {

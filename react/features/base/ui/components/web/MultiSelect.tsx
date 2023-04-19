@@ -8,7 +8,7 @@ import { MultiSelectItem } from '../types';
 import ClickableIcon from './ClickableIcon';
 import Input from './Input';
 
-type Props = {
+interface IProps {
     autoFocus?: boolean;
     disabled?: boolean;
     error?: boolean;
@@ -22,19 +22,19 @@ type Props = {
     onSelected: (item: any) => void;
     placeholder?: string;
     selectedItems?: MultiSelectItem[];
-};
+}
 
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            position: 'relative' as const
+            position: 'relative'
         },
         items: {
             '&.found': {
-                position: 'absolute' as const,
+                position: 'absolute',
                 boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.75)'
             },
-            marginTop: '8px',
+            marginTop: theme.spacing(2),
             width: '100%',
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui04}`,
@@ -48,21 +48,31 @@ const useStyles = makeStyles()(theme => {
         listItem: {
             boxSizing: 'border-box',
             display: 'flex',
-            padding: '8px 16px',
+            padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
             alignItems: 'center',
             '& .content': {
+                // 38px because of the icon before the content
                 inlineSize: 'calc(100% - 38px)',
                 overflowWrap: 'break-word',
-                marginLeft: '8px',
+                marginLeft: theme.spacing(2),
                 color: theme.palette.text01,
                 '&.with-remove': {
+                    // 60px because of the icon before the content and the remove button
                     inlineSize: 'calc(100% - 60px)',
-                    marginRight: '8px'
+                    marginRight: theme.spacing(2),
+                    '&.without-before': {
+                        marginLeft: 0,
+                        inlineSize: 'calc(100% - 38px)'
+                    }
+                },
+                '&.without-before': {
+                    marginLeft: 0,
+                    inlineSize: '100%'
                 }
             },
             '&.found': {
                 cursor: 'pointer',
-                padding: '10px 16px',
+                padding: `10px ${theme.spacing(3)}`,
                 '&:hover': {
                     backgroundColor: theme.palette.ui02
                 }
@@ -76,8 +86,8 @@ const useStyles = makeStyles()(theme => {
             }
         },
         errorMessage: {
-            position: 'absolute' as const,
-            marginTop: '8px',
+            position: 'absolute',
+            marginTop: theme.spacing(2),
             width: '100%'
         }
     };
@@ -97,7 +107,7 @@ const MultiSelect = ({
     onSelected,
     selectedItems,
     onRemoved
-}: Props) => {
+}: IProps) => {
     const { classes } = useStyles();
     const inputRef = useRef();
     const selectItem = useCallback(item => () => onSelected(item), [ onSelected ]);
@@ -112,7 +122,7 @@ const MultiSelect = ({
                             key = { item.value }
                             onClick = { item.isDisabled ? undefined : selectItem(item) }>
                             {item.elemBefore}
-                            <div className = 'content'>
+                            <div className = { `content ${item.elemBefore ? '' : 'without-before'}` }>
                                 {item.content}
                                 {item.description && <p>{item.description}</p>}
                             </div>
@@ -121,14 +131,12 @@ const MultiSelect = ({
                     : <div>{noMatchesText}</div>
             }
         </div>
-    )
-    , [ items ]);
+    ), [ items ]);
 
     const errorMessageDialog = useMemo(() =>
         error && <div className = { classes.errorMessage }>
             { errorDialog }
-        </div>
-    , [ error ]);
+        </div>, [ error ]);
 
     return (
         <div className = { classes.container }>
@@ -148,7 +156,7 @@ const MultiSelect = ({
                             className = { `${classes.listItem} ${item.isDisabled ? 'disabled' : ''}` }
                             key = { item.value }>
                             {item.elemBefore}
-                            <div className = 'content with-remove'>
+                            <div className = { `content with-remove ${item.elemBefore ? '' : 'without-before'}` }>
                                 <p>{item.content}</p>
                             </div>
                             <ClickableIcon
@@ -156,14 +164,10 @@ const MultiSelect = ({
                                 icon = { IconCloseLarge }
                                 id = 'modal-header-close-button'
                                 onClick = { removeItem(item) } />
-
-
                         </div>
-                    ))
-                    }
+                    ))}
                 </div>
-            )
-            }
+            )}
         </div>
     );
 };

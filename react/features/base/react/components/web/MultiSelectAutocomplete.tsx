@@ -5,14 +5,13 @@ import { MultiSelectItem } from '../../../ui/components/types';
 import MultiSelect from '../../../ui/components/web/MultiSelect';
 import logger from '../../logger';
 
-// @ts-ignore
 import InlineDialogFailure from './InlineDialogFailure';
 
 /**
  * The type of the React {@code Component} props of
  * {@link MultiSelectAutocomplete}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The default value of the selected item.
@@ -75,13 +74,13 @@ type Props = {
      * Indicates whether the support link should be shown in case of an error.
      */
     showSupportLink: Boolean;
-};
+}
 
 /**
  * The type of the React {@code Component} state of
  * {@link MultiSelectAutocomplete}.
  */
-type State = {
+interface IState {
 
     /**
      * Indicates if there was an error.
@@ -112,19 +111,19 @@ type State = {
      * The list of selected items.
      */
     selectedItems: Array<MultiSelectItem>;
-};
+}
 
 /**
  * A MultiSelect that is also auto-completing.
  */
-class MultiSelectAutocomplete extends Component<Props, State> {
+class MultiSelectAutocomplete extends Component<IProps, IState> {
     /**
      * Initializes a new {@code MultiSelectAutocomplete} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const defaultValue = this.props.defaultValue || [];

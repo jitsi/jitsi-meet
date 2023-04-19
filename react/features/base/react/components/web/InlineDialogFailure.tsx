@@ -15,7 +15,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             padding: `${theme.spacing(3)} 10`,
-            '& button': {
+            '& .retry-button': {
                 margin: '16px auto 0 auto'
             }
         }
@@ -25,7 +25,7 @@ const useStyles = makeStyles()(theme => {
 /**
  * The type of the React {@code Component} props of {@link InlineDialogFailure}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Allows to retry the call that previously didn't succeed.
@@ -36,7 +36,7 @@ type Props = {
      * Indicates whether the support link should be shown in case of an error.
      */
     showSupportLink: Boolean;
-};
+}
 
 /**
  * Inline dialog that represents a failure and allows a retry.
@@ -46,7 +46,7 @@ type Props = {
 const InlineDialogFailure = ({
     onRetry,
     showSupportLink
-}: Props) => {
+}: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyles();
 
@@ -77,7 +77,7 @@ const InlineDialogFailure = ({
             </div>
             { supportLinkElem }
             <Button
-                className = 'button'
+                className = 'retry-button'
                 label = { t('inlineDialogFailure.retry') }
                 onClick = { onRetry } />
         </div>
