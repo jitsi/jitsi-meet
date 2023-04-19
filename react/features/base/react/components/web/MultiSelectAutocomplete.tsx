@@ -1,7 +1,6 @@
 import _debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 
-import Popover from '../../../popover/components/Popover.web';
 import { MultiSelectItem } from '../../../ui/components/types';
 import MultiSelect from '../../../ui/components/web/MultiSelect';
 import logger from '../../logger';
@@ -139,20 +138,10 @@ class MultiSelectAutocomplete extends Component<Props, State> {
             selectedItems: [ ...defaultValue ]
         };
 
-        this.hideList = this.hideList.bind(this);
         this._onFilterChange = this._onFilterChange.bind(this);
         this._onRetry = this._onRetry.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._sendQuery = _debounce(this._sendQuery.bind(this), 200);
-    }
-
-    /**
-     * Hide multi select list.
-     *
-     * @returns {void}
-     */
-    hideList() {
-        this.setState({ isOpen: false });
     }
 
     /**
@@ -176,14 +165,16 @@ class MultiSelectAutocomplete extends Component<Props, State> {
         const disabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';
         const noMatchesFound = this.props.noMatchesFound || '';
+        const errorDialog = this._renderError();
 
         return (
             <div>
                 <MultiSelect
                     autoFocus = { autoFocus }
                     disabled = { disabled }
+                    error = { this.state.error }
+                    errorDialog = { errorDialog }
                     filterValue = { this.state.filterValue }
-                    hideList = { this.hideList }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
                     noMatchesText = { noMatchesFound }
@@ -192,7 +183,6 @@ class MultiSelectAutocomplete extends Component<Props, State> {
                     onSelected = { this._onSelectionChange }
                     placeholder = { placeholder }
                     selectedItems = { this.state.selectedItems } />
-                { this._renderError() }
             </div>
         );
     }
@@ -265,21 +255,12 @@ class MultiSelectAutocomplete extends Component<Props, State> {
         if (!this.state.error) {
             return null;
         }
-        const content = (
-            <div className = 'autocomplete-error'>
-                <InlineDialogFailure
-                    onRetry = { this._onRetry }
-                    showSupportLink = { this.props.showSupportLink } />
-            </div>
-        );
 
         return (
 
-            // @ts-ignore
-            <Popover
-                content = { content }
-                position = 'bottom'
-                visible = { true } />
+            <InlineDialogFailure
+                onRetry = { this._onRetry }
+                showSupportLink = { this.props.showSupportLink } />
         );
     }
 

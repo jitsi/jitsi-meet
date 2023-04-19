@@ -2,20 +2,18 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCloseLarge } from '../../../icons/svg';
-import Popover from '../../../popover/components/Popover.web';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 import { MultiSelectItem } from '../types';
 
 import ClickableIcon from './ClickableIcon';
-import ContextMenu from './ContextMenu';
-import ContextMenuItem from './ContextMenuItem';
-import ContextMenuItemGroup from './ContextMenuItemGroup';
 import Input from './Input';
 
 type Props = {
     autoFocus?: boolean;
     disabled?: boolean;
+    error?: boolean;
+    errorDialog?: JSX.Element | null;
     filterValue?: string;
-    hideList: Function;
     isOpen?: boolean;
     items: MultiSelectItem[];
     noMatchesText?: string;
@@ -28,40 +26,59 @@ type Props = {
 
 const useStyles = makeStyles()(theme => {
     return {
-        contextMenu: {
-            position: 'relative' as const,
-            marginTop: '8px',
-            right: 'auto',
-            padding: '0',
-            boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.75)'
+        container: {
+            position: 'relative' as const
         },
-        selectedList: {
-            position: 'static' as const,
-            padding: 0,
-            maxHeight: '200px',
-            marginTop: '8px',
-            boxSizing: 'border-box'
-        },
-        selectedItem: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '100%',
-            '&:hover': {
-                backgroundColor: theme.palette.ui01
+        items: {
+            '&.found': {
+                position: 'absolute' as const,
+                boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.75)'
             },
-            cursor: 'auto',
-            paddingTop: '0px',
-            paddingBottom: '0px',
-            paddingLeft: '16px',
-            paddingRight: '6px'
+            marginTop: '8px',
+            width: '100%',
+            backgroundColor: theme.palette.ui01,
+            border: `1px solid ${theme.palette.ui04}`,
+            borderRadius: `${Number(theme.shape.borderRadius)}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            zIndex: 2,
+            maxHeight: '400px',
+            overflowY: 'auto',
+            padding: '0'
         },
-        contentListItem: {
-            inlineSize: 'calc(100% - 38px)',
-            overflowWrap: 'break-word'
+        listItem: {
+            boxSizing: 'border-box',
+            display: 'flex',
+            padding: '8px 16px',
+            alignItems: 'center',
+            '& .content': {
+                inlineSize: 'calc(100% - 38px)',
+                overflowWrap: 'break-word',
+                marginLeft: '8px',
+                color: theme.palette.text01,
+                '&.with-remove': {
+                    inlineSize: 'calc(100% - 60px)',
+                    marginRight: '8px'
+                }
+            },
+            '&.found': {
+                cursor: 'pointer',
+                padding: '10px 16px',
+                '&:hover': {
+                    backgroundColor: theme.palette.ui02
+                }
+            },
+            '&.disabled': {
+                cursor: 'not-allowed',
+                '&:hover': {
+                    backgroundColor: theme.palette.ui01
+                },
+                color: theme.palette.text03
+            }
         },
-        contentSelectedItem: {
-            inlineSize: 'calc(100% - 82px)',
-            overflowWrap: 'break-word'
+        errorMessage: {
+            position: 'absolute' as const,
+            marginTop: '8px',
+            width: '100%'
         }
     };
 });
@@ -69,6 +86,8 @@ const useStyles = makeStyles()(theme => {
 const MultiSelect = ({
     autoFocus,
     disabled,
+    error,
+    errorDialog,
     placeholder,
     items,
     filterValue,
@@ -77,95 +96,73 @@ const MultiSelect = ({
     noMatchesText,
     onSelected,
     selectedItems,
-    onRemoved,
-    hideList
+    onRemoved
 }: Props) => {
     const { classes } = useStyles();
     const inputRef = useRef();
     const selectItem = useCallback(item => () => onSelected(item), [ onSelected ]);
     const removeItem = useCallback(item => () => onRemoved(item), [ onRemoved ]);
-    const content = useMemo(() => (
-        <ContextMenu
-            className = { classes.contextMenu }
-            entity = { inputRef.current }
-            hidden = { false }
-            offsetTarget = { inputRef.current }
-            useEntityWidth = { true }>
-            <ContextMenuItemGroup>
-                {
-                    items.length > 0
-                        ? items.map(item => (
-                            <ContextMenuItem
-                                accessibilityLabel = { `multi-select-${item.value}` }
-                                disabled = { item.isDisabled }
-                                key = { item.value }
-                                onClick = { selectItem(item) }>
-                                {item.elemBefore}
-                                <div className = { classes.contentListItem }>
-                                    {item.content}
-                                    { item.description && <p>{item.description}</p> }
-                                </div>
-                            </ContextMenuItem>))
-                        : (
-                            <ContextMenuItem accessibilityLabel = 'multi-select-no-matches' >
-                                <div className = { classes.contentListItem }>
-                                    {noMatchesText}
-                                </div>
-                            </ContextMenuItem>
-                        )
-                }
-            </ContextMenuItemGroup>
-        </ContextMenu>
+    const foundItems = useMemo(() => (
+        <div className = { `${classes.items} found` }>
+            {
+                items.length > 0
+                    ? items.map(item => (
+                        <div
+                            className = { `${classes.listItem} ${item.isDisabled ? 'disabled' : ''} found` }
+                            key = { item.value }
+                            onClick = { item.isDisabled ? undefined : selectItem(item) }>
+                            {item.elemBefore}
+                            <div className = 'content'>
+                                {item.content}
+                                {item.description && <p>{item.description}</p>}
+                            </div>
+                        </div>
+                    ))
+                    : <div>{noMatchesText}</div>
+            }
+        </div>
     )
     , [ items ]);
 
+    const errorMessageDialog = useMemo(() =>
+        error && <div className = { classes.errorMessage }>
+            { errorDialog }
+        </div>
+    , [ error ]);
+
     return (
-        <div>
-            <Popover
-                content = { content }
-                onPopoverClose = { hideList }
-                position = 'bottom'
-                trigger = 'click'
-                visible = { isOpen ?? false }>
-                <Input
-                    autoFocus = { autoFocus }
-                    disabled = { disabled }
-                    onChange = { onFilterChange }
-                    placeholder = { placeholder }
-                    ref = { inputRef }
-                    value = { filterValue ?? '' } />
-            </Popover>
-            { selectedItems && selectedItems?.length > 0
-            && <ContextMenu
-                className = { classes.selectedList }
-                entity = { inputRef.current }
-                hidden = { false }
-                offsetTarget = { inputRef.current }
-                useEntityWidth = { true }>
+        <div className = { classes.container }>
+            <Input
+                autoFocus = { autoFocus }
+                disabled = { disabled }
+                onChange = { onFilterChange }
+                placeholder = { placeholder }
+                ref = { inputRef }
+                value = { filterValue ?? '' } />
+            {isOpen && foundItems}
+            { errorMessageDialog }
+            { selectedItems && selectedItems?.length > 0 && (
+                <div className = { classes.items }>
+                    { selectedItems.map(item => (
+                        <div
+                            className = { `${classes.listItem} ${item.isDisabled ? 'disabled' : ''}` }
+                            key = { item.value }>
+                            {item.elemBefore}
+                            <div className = 'content with-remove'>
+                                <p>{item.content}</p>
+                            </div>
+                            <ClickableIcon
+                                accessibilityLabel = { 'multi-select-unselect' }
+                                icon = { IconCloseLarge }
+                                id = 'modal-header-close-button'
+                                onClick = { removeItem(item) } />
 
-                <ContextMenuItemGroup>
-                    {
-                        selectedItems.map(item => (
-                            <ContextMenuItem
-                                accessibilityLabel = { `multi-select-${item.value}` }
-                                className = { classes.selectedItem }
-                                key = { item.value }>
-                                {item.elemBefore}
-                                <div className = { classes.contentSelectedItem }>
-                                    {item.content}
-                                </div>
-                                <ClickableIcon
-                                    accessibilityLabel = { 'multi-select-unselect' }
-                                    icon = { IconCloseLarge }
-                                    id = 'modal-header-close-button'
-                                    onClick = { removeItem(item) } />
 
-                            </ContextMenuItem>))
+                        </div>
+                    ))
                     }
-                </ContextMenuItemGroup>
-
-
-            </ContextMenu>
+                </div>
+            )
             }
         </div>
     );
