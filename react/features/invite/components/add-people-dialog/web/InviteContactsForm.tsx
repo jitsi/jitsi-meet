@@ -30,7 +30,7 @@ const styles = (theme: Theme) => {
             display: 'flex',
             justifyContent: 'end',
             marginTop: theme.spacing(2),
-            '&.invite-button': {
+            '& .invite-button': {
                 marginLeft: theme.spacing(2)
             }
         }
