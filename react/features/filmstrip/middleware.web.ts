@@ -210,7 +210,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (participantId === WHITEBOARD_ID) {
             // If the whiteboard is pinned, this action should clear the other pins.
-            queue = [ { participantId } ];
+            queue = [ {
+                participantId,
+                pinned: true
+            } ];
         } else if (isWhiteboardActive && Array.isArray(queue)) {
             // When another participant is pinned, remove the whiteboard from the stage area.
             queue = queue.filter(p => p?.participantId !== WHITEBOARD_ID);
