@@ -44,6 +44,11 @@ function on_message(event)
 
     local session = event.origin;
     if not session or not session.jitsi_web_query_room then
+        -- if this is a message from visitor, pass it through. Limits are applied in the visitor node.
+        if event.origin.type == 's2sin' then
+            return;
+        end
+
         return false;
     end
 
