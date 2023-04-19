@@ -130,7 +130,7 @@ export function appNavigate(uri?: string) {
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
 
-        if (Number(API_ID) === API_ID && getState()['features/base/config'].disableIframeAPI) {
+        if (inIframe() && getState()['features/base/config'].disableIframeAPI) {
             // in case iframeAPI is disabled redirect to the promotional page
             dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
 
