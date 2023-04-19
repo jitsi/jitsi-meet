@@ -253,6 +253,7 @@ export interface IConfig {
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
+    disableIframeAPI?: boolean;
     disableIncomingMessageSound?: boolean;
     disableInitialGUM?: boolean;
     disableInviteFunctions?: boolean;
