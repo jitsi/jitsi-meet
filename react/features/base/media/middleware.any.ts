@@ -234,7 +234,7 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
     // the state of base/tracks will or will not agree with the desires.
     dispatch(setAudioMuted(audioMuted));
     dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    dispatch(setVideoMuted(Boolean(videoMuted)));
+    dispatch(setVideoMuted(videoMuted));
 
     // startAudioOnly
     //

@@ -29,7 +29,7 @@ import {
     AbstractWelcomePage,
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
-import styles from './styles';
+import styles from './styles.native';
 
 interface IProps extends AbstractProps {
 

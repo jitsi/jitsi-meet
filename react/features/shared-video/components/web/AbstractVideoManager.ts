@@ -373,8 +373,8 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @returns {number}
      */
-    getVolume(): number | undefined {
-        return;
+    getVolume() {
+        return 1;
     }
 
     /**
@@ -418,8 +418,8 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @returns {number}
      */
-    getTime(): number | undefined {
-        return;
+    getTime() {
+        return 0;
     }
 
     /**

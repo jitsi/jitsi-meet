@@ -72,7 +72,7 @@ class VideoManager extends AbstractVideoManager {
      * @returns {number}
      */
     getVolume() {
-        return this.player?.volume;
+        return Number(this.player?.volume);
     }
 
     /**
@@ -81,7 +81,7 @@ class VideoManager extends AbstractVideoManager {
      * @returns {number}
      */
     getTime() {
-        return this.player?.currentTime;
+        return Number(this.player?.currentTime);
     }
 
     /**
