@@ -50,9 +50,20 @@ export const navigationStyles = {
         ...headerNavigationButtonLabel
     },
 
+    headerNavigationButtonLabelDisabled: {
+        ...headerNavigationButtonLabel,
+        color: BaseTheme.palette.text03
+    },
+
     headerNavigationButtonLabelBold: {
         ...headerNavigationButtonLabel,
         ...BaseTheme.typography.bodyShortRegularLarge
+    },
+
+    headerNavigationButtonLabelBoldDisabled: {
+        ...headerNavigationButtonLabel,
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text03
     },
 
     unreadCounterContainer: {

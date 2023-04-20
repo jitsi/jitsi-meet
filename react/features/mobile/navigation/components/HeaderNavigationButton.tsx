@@ -42,32 +42,46 @@ const HeaderNavigationButton
         onPress,
         src,
         twoActions
-    }: IProps) =>
-        (
-            <>
-                {
-                    src ? (
-                        <IconButton
-                            onPress = { onPress }
-                            size = { 24 }
-                            src = { src }
-                            style = { navigationStyles.headerNavigationButton } />
-                    ) : (
-                        <Button
-                            disabled = { disabled }
-                            labelKey = { label }
-                            labelStyle = {
-                                twoActions
-                                    ? navigationStyles.headerNavigationButtonLabelBold
-                                    : navigationStyles.headerNavigationButtonLabel
-                            }
-                            onClick = { onPress }
-                            style = { navigationStyles.headerNavigationButton }
-                            type = { BUTTON_TYPES.TERTIARY }
-                            useRippleColor = { false } />
-                    )}
-            </>
-        );
+    }: IProps) => {
+
+    let labelStyle;
+
+    if (disabled) {
+        if (twoActions) {
+            labelStyle = navigationStyles.headerNavigationButtonLabelBoldDisabled;
+        } else {
+            labelStyle = navigationStyles.headerNavigationButtonLabelDisabled;
+        }
+    } else {
+        if (twoActions) {
+            labelStyle = navigationStyles.headerNavigationButtonLabelBold;
+        } else {
+            labelStyle = navigationStyles.headerNavigationButtonLabel;
+        }
+    }
+
+    return (
+        <>
+            {
+                src ? (
+                    <IconButton
+                        onPress = { onPress }
+                        size = { 24 }
+                        src = { src }
+                        style = { navigationStyles.headerNavigationButton } />
+                ) : (
+                    <Button
+                        disabled = { disabled }
+                        labelKey = { label }
+                        labelStyle = { labelStyle }
+                        onClick = { onPress }
+                        style = { navigationStyles.headerNavigationButton }
+                        type = { BUTTON_TYPES.TERTIARY }
+                        useRippleColor = { false } />
+                )}
+        </>
+    );
+}
 
 
 export default HeaderNavigationButton;
