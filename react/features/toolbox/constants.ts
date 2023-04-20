@@ -40,4 +40,4 @@ export const NOTIFY_CLICK_MODE = {
 };
 
 // Around 300 to be displayed above components like chat
-export const ZINDEX_DIALOG_PORTAL = 300;
+export const ZINDEX_DIALOG_PORTAL = 302;

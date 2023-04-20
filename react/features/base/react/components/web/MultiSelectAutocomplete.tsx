@@ -1,10 +1,8 @@
-// @flow
-
-import AKInlineDialog from '@atlaskit/inline-dialog';
-import { MultiSelectStateless } from '@atlaskit/multi-select';
 import _debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 
+import { MultiSelectItem } from '../../../ui/components/types';
+import MultiSelect from '../../../ui/components/web/MultiSelect';
 import logger from '../../logger';
 
 import InlineDialogFailure from './InlineDialogFailure';
@@ -13,119 +11,119 @@ import InlineDialogFailure from './InlineDialogFailure';
  * The type of the React {@code Component} props of
  * {@link MultiSelectAutocomplete}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The default value of the selected item.
      */
-    defaultValue: Array<Object>,
+    defaultValue?: Array<any>;
 
     /**
      * Optional footer to show as a last element in the results.
      * Should be of type {content: <some content>}.
      */
-    footer: Object,
+    footer?: any;
 
     /**
      * Indicates if the component is disabled.
      */
-    isDisabled: boolean,
+    isDisabled: boolean;
 
     /**
      * Text to display while a query is executing.
      */
-    loadingMessage: string,
+    loadingMessage: string;
 
     /**
      * The text to show when no matches are found.
      */
-    noMatchesFound: string,
+    noMatchesFound: string;
 
     /**
      * The function called immediately before a selection has been actually
      * selected. Provides an opportunity to do any formatting.
      */
-    onItemSelected: Function,
+    onItemSelected: Function;
 
     /**
      * The function called when the selection changes.
      */
-    onSelectionChange: Function,
+    onSelectionChange: Function;
 
     /**
      * The placeholder text of the input component.
      */
-    placeholder: string,
+    placeholder: string;
 
     /**
      * The service providing the search.
      */
-    resourceClient: { makeQuery: Function, parseResults: Function },
+    resourceClient: { makeQuery: Function; parseResults: Function; };
 
     /**
      * Indicates if the component should fit the container.
      */
-    shouldFitContainer: boolean,
+    shouldFitContainer: boolean;
 
     /**
      * Indicates if we should focus.
      */
-    shouldFocus: boolean,
+    shouldFocus: boolean;
 
     /**
      * Indicates whether the support link should be shown in case of an error.
      */
-    showSupportLink: Boolean,
-};
+    showSupportLink: Boolean;
+}
 
 /**
  * The type of the React {@code Component} state of
  * {@link MultiSelectAutocomplete}.
  */
-type State = {
-
-    /**
-     * Indicates if the dropdown is open.
-     */
-    isOpen: boolean,
-
-    /**
-     * The text that filters the query result of the search.
-     */
-    filterValue: string,
-
-    /**
-     * Indicates if the component is currently loading results.
-     */
-    loading: boolean,
+interface IState {
 
     /**
      * Indicates if there was an error.
      */
-    error: boolean,
+    error: boolean;
+
+    /**
+     * The text that filters the query result of the search.
+     */
+    filterValue: string;
+
+    /**
+     * Indicates if the dropdown is open.
+     */
+    isOpen: boolean;
 
     /**
      * The list of result items.
      */
-    items: Array<Object>,
+    items: Array<MultiSelectItem>;
+
+    /**
+     * Indicates if the component is currently loading results.
+     */
+    loading: boolean;
 
     /**
      * The list of selected items.
      */
-    selectedItems: Array<Object>
-};
+    selectedItems: Array<MultiSelectItem>;
+}
 
 /**
  * A MultiSelect that is also auto-completing.
  */
-class MultiSelectAutocomplete extends Component<Props, State> {
+class MultiSelectAutocomplete extends Component<IProps, IState> {
     /**
      * Initializes a new {@code MultiSelectAutocomplete} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         const defaultValue = this.props.defaultValue || [];
@@ -148,11 +146,11 @@ class MultiSelectAutocomplete extends Component<Props, State> {
     /**
      * Sets the items to display as selected.
      *
-     * @param {Array<Object>} selectedItems - The list of items to display as
+     * @param {Array<MultiSelectItem>} selectedItems - The list of items to display as
      * having been selected.
      * @returns {void}
      */
-    setSelectedItems(selectedItems: Array<Object> = []) {
+    setSelectedItems(selectedItems: Array<MultiSelectItem> = []) {
         this.setState({ selectedItems });
     }
 
@@ -162,37 +160,32 @@ class MultiSelectAutocomplete extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const shouldFitContainer = this.props.shouldFitContainer || false;
-        const shouldFocus = this.props.shouldFocus || false;
-        const isDisabled = this.props.isDisabled || false;
+        const autoFocus = this.props.shouldFocus || false;
+        const disabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';
         const noMatchesFound = this.props.noMatchesFound || '';
+        const errorDialog = this._renderError();
 
         return (
             <div>
-                <MultiSelectStateless
+                <MultiSelect
+                    autoFocus = { autoFocus }
+                    disabled = { disabled }
+                    error = { this.state.error }
+                    errorDialog = { errorDialog }
                     filterValue = { this.state.filterValue }
-                    footer = { this.props.footer }
-                    icon = { null }
-                    isDisabled = { isDisabled }
-                    isLoading = { this.state.loading }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
-                    loadingMessage = { this.props.loadingMessage }
-                    noMatchesFound = { noMatchesFound }
+                    noMatchesText = { noMatchesFound }
                     onFilterChange = { this._onFilterChange }
                     onRemoved = { this._onSelectionChange }
                     onSelected = { this._onSelectionChange }
                     placeholder = { placeholder }
-                    selectedItems = { this.state.selectedItems }
-                    shouldFitContainer = { shouldFitContainer }
-                    shouldFocus = { shouldFocus } />
-                { this._renderError() }
+                    selectedItems = { this.state.selectedItems } />
             </div>
         );
     }
 
-    _onFilterChange: (string) => void;
 
     /**
      * Sets the state and sends a query on filter change.
@@ -201,7 +194,7 @@ class MultiSelectAutocomplete extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onFilterChange(filterValue) {
+    _onFilterChange(filterValue: string) {
         this.setState({
             // Clean the error if the filterValue is empty.
             error: this.state.error && Boolean(filterValue),
@@ -215,8 +208,6 @@ class MultiSelectAutocomplete extends Component<Props, State> {
         }
     }
 
-    _onRetry: () => void;
-
     /**
      * Retries the query on retry.
      *
@@ -227,18 +218,16 @@ class MultiSelectAutocomplete extends Component<Props, State> {
         this._sendQuery(this.state.filterValue);
     }
 
-    _onSelectionChange: (Object) => void;
-
     /**
      * Updates the selected items when a selection event occurs.
      *
-     * @param {Object} item - The selected item.
+     * @param {any} item - The selected item.
      * @private
      * @returns {void}
      */
-    _onSelectionChange(item) {
+    _onSelectionChange(item: any) {
         const existing
-            = this.state.selectedItems.find(k => k.value === item.value);
+            = this.state.selectedItems.find((k: any) => k.value === item.value);
         let selectedItems = this.state.selectedItems;
 
         if (existing) {
@@ -265,22 +254,14 @@ class MultiSelectAutocomplete extends Component<Props, State> {
         if (!this.state.error) {
             return null;
         }
-        const content = (
-            <div className = 'autocomplete-error'>
-                <InlineDialogFailure
-                    onRetry = { this._onRetry }
-                    showSupportLink = { this.props.showSupportLink } />
-            </div>
-        );
 
         return (
-            <AKInlineDialog
-                content = { content }
-                isOpen = { true } />
+
+            <InlineDialogFailure
+                onRetry = { this._onRetry }
+                showSupportLink = { this.props.showSupportLink } />
         );
     }
-
-    _sendQuery: (string) => void;
 
     /**
      * Sends a query to the resourceClient.
@@ -288,7 +269,7 @@ class MultiSelectAutocomplete extends Component<Props, State> {
      * @param {string} filterValue - The string to use for the search.
      * @returns {void}
      */
-    _sendQuery(filterValue) {
+    _sendQuery(filterValue: string) {
         if (!filterValue) {
             return;
         }
@@ -299,11 +280,11 @@ class MultiSelectAutocomplete extends Component<Props, State> {
 
         const resourceClient = this.props.resourceClient || {
             makeQuery: () => Promise.resolve([]),
-            parseResults: results => results
+            parseResults: (results: any) => results
         };
 
         resourceClient.makeQuery(filterValue)
-            .then(results => {
+            .then((results: any) => {
                 if (this.state.filterValue !== filterValue) {
                     this.setState({
                         error: false
@@ -311,20 +292,15 @@ class MultiSelectAutocomplete extends Component<Props, State> {
 
                     return;
                 }
-                const itemGroups = [
-                    {
-                        items: resourceClient.parseResults(results)
-                    }
-                ];
 
                 this.setState({
-                    items: itemGroups,
+                    items: resourceClient.parseResults(results),
                     isOpen: true,
                     loading: false,
                     error: false
                 });
             })
-            .catch(error => {
+            .catch((error: Error) => {
                 logger.error('MultiSelectAutocomplete error in query', error);
 
                 this.setState({
