@@ -46,7 +46,7 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * @param {Styletype} st - The complex style type.
  * @returns {Object}
  */
-export function styleTypeToObject(st: StyleType) {
+export function styleTypeToObject(st: StyleType | StyleType[]) {
     if (!st) {
         return {};
     }

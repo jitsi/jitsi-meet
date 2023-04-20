@@ -15,7 +15,7 @@ import { IconFavorite, IconFavoriteSolid } from '../../base/icons/svg';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Dialog from '../../base/ui/components/web/Dialog';
 import Input from '../../base/ui/components/web/Input';
-import { cancelFeedback, submitFeedback } from '../actions';
+import { cancelFeedback, submitFeedback } from '../actions.web';
 
 const styles = (theme: Theme) => {
     return {

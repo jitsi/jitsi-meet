@@ -1,3 +1,5 @@
+import { GestureResponderEvent } from 'react-native';
+
 import { IReduxState } from '../../../app/types';
 import { isTestModeEnabled } from '../functions';
 
@@ -28,7 +30,7 @@ export type TestHintProps = {
      * The optional "on press" handler which can be used to bind a click handler
      * to a {@link TestHint}.
      */
-    onPress?: Function;
+    onPress?: (e?: GestureResponderEvent) => void;
 
     /**
      * The test hint's (text) value which is to be consumed by the tests.

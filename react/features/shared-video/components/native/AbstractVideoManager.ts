@@ -1,7 +1,7 @@
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -28,7 +28,7 @@ export interface IProps {
     /**
      * The current conference.
      */
-    _conference: IJitsiConference;
+    _conference?: IJitsiConference;
 
     /**
      * Is the video shared by the local user.
@@ -40,12 +40,12 @@ export interface IProps {
     /**
      * The shared video owner id.
      */
-    _ownerId: string;
+    _ownerId?: string;
 
     /**
      * The shared video status.
      */
-    _status: string;
+    _status?: string;
 
     /**
      * Seek time in seconds.
@@ -56,12 +56,12 @@ export interface IProps {
     /**
      * The video url.
      */
-    _videoUrl: string;
+    _videoUrl?: string;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
       * The player's height.
@@ -82,7 +82,7 @@ export interface IProps {
 /**
  * Manager of shared video.
  */
-class AbstractVideoManager extends PureComponent<IProps> {
+class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
     throttledFireUpdateSharedVideoEvent: Function;
 
     /**
@@ -198,7 +198,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
         } = this.props;
 
         dispatch(setSharedVideoStatus({
-            videoUrl: _videoUrl,
+            videoUrl: _videoUrl ?? '',
             status,
             time,
             ownerId: _ownerId
@@ -208,34 +208,57 @@ class AbstractVideoManager extends PureComponent<IProps> {
     /**
      * Seeks video to provided time.
      *
-     * @param {number} time
+     * @param {number} _time - Time to seek to.
+     * @returns {void}
      */
-    seek: (time: number) => void;
+    seek(_time: number) {
+        // to be implemented by subclass
+    }
 
     /**
      * Indicates the playback state of the video.
+     *
+     * @returns {string}
      */
-    getPlaybackStatus: () => string;
+    getPlaybackStatus() {
+        return '';
+    }
 
     /**
      * Plays video.
+     *
+     * @returns {void}
      */
-    play: () => void;
+    play() {
+        // to be implemented by sub-class
+    }
 
     /**
      * Pauses video.
+     *
+     * @returns {void}
      */
-    pause: () => void;
+    pause() {
+        // to be implemented by sub-class
+    }
 
     /**
      * Retrieves current time.
+     *
+     * @returns {number}
      */
-    getTime: () => number;
+    getTime() {
+        return 0;
+    }
 
     /**
      * Disposes current video player.
+     *
+     * @returns {void}
      */
-    dispose: () => void;
+    dispose() {
+        // to be implemented by sub-class
+    }
 }
 
 
@@ -256,7 +279,7 @@ export function _mapStateToProps(state: IReduxState) {
         _isOwner: ownerId === localParticipant?.id,
         _ownerId: ownerId,
         _status: status,
-        _time: time,
+        _time: Number(time),
         _videoUrl: videoUrl
     };
 }
