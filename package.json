@@ -181,6 +181,11 @@
     "webpack-cli": "4.9.0",
     "webpack-dev-server": "4.7.3"
   },
+  "overrides": {
+    "strophe.js@1.6.0": {
+        "@xmldom/xmldom": "0.8.7"
+    }
+  },
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
