@@ -4,10 +4,11 @@ import {
     ActivityIndicator,
     FlatList,
     TouchableOpacity,
-    View
+    View, ViewStyle
 } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { openDialog } from '../../../../base/dialog/actions';
 import AlertDialog from '../../../../base/dialog/components/native/AlertDialog';
 import { translate } from '../../../../base/i18n/functions';
@@ -29,12 +30,15 @@ import HeaderNavigationButton
 import { beginShareRoom } from '../../../../share-room/actions';
 import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
+    // @ts-ignore
     type Props as AbstractProps,
+    // @ts-ignore
     type State as AbstractState,
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractAddPeopleDialog';
 
 import styles, { AVATAR_SIZE } from './styles';
+
 
 type Props = AbstractProps & {
 
@@ -105,7 +109,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      */
 
     /* eslint-disable-next-line no-undef */
-    searchTimeout: TimeoutID;
+    searchTimeout: number | null;
 
     /**
      * Contrustor of the component.
@@ -212,7 +216,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         data = { inviteItems }
                         horizontal = { true }
                         keyExtractor = { this._keyExtractor }
-                        renderItem = { this._renderInvitedItem } />
+                        renderItem = { this._renderInvitedItem as any } />
                 </View> }
                 <View style = { styles.resultList }>
                     <FlatList
@@ -220,7 +224,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         data = { selectableItems }
                         extraData = { inviteItems }
                         keyExtractor = { this._keyExtractor }
-                        renderItem = { this._renderItem } />
+                        renderItem = { this._renderItem as any } />
                 </View>
             </JitsiScreen>
         );
@@ -262,12 +266,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
     }
 
-    _invite: Array<Object> => Promise<Array<Object>>;
-
-    _isAddDisabled: () => boolean;
-
-    _keyExtractor: Object => string;
-
     /**
      * Key extractor for the flatlist.
      *
@@ -278,8 +276,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _keyExtractor(item) {
         return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
     }
-
-    _onClearField: () => void;
 
     /**
      * Callback to clear the text field.
@@ -292,10 +288,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         });
 
         // Clear search results
+        // @ts-ignore
         this._onTypeQuery('');
     }
-
-    _onInvite: () => void;
 
     /**
      * Invites the selected entries.
@@ -313,8 +308,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 }
             });
     }
-
-    _onPressItem: Item => Function;
 
     /**
      * Function to prepare a callback for the onPress event of the touchable.
@@ -345,8 +338,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         };
     }
 
-    _onShareMeeting: () => void;
-
     /**
      * Shows the system share sheet to share the meeting information.
      *
@@ -361,8 +352,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
     }
 
-    _onTypeQuery: string => void;
-
     /**
      * Handles the typing event of the text field on the dialog and performs the
      * search.
@@ -376,6 +365,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         });
 
         clearTimeout(this.searchTimeout);
+        // @ts-ignore
         this.searchTimeout = setTimeout(() => {
             this.setState({
                 searchInprogress: true
@@ -404,10 +394,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         });
     }
 
-    _query: (string) => Promise<Array<Object>>;
-
-    _renderInvitedItem: Object => ReactElement | null;
-
     /**
      * Renders a single item in the invited {@code FlatList}.
      *
@@ -424,14 +410,14 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             <TouchableOpacity onPress = { this._onPressItem(item) } >
                 <View
                     pointerEvents = 'box-only'
-                    style = { styles.itemWrapper }>
+                    style = { styles.itemWrapper as ViewStyle }>
                     <AvatarListItem
                         avatarOnly = { true }
                         avatarSize = { AVATAR_SIZE }
                         avatarStatus = { item.status }
                         avatarStyle = { styles.avatar }
                         avatarTextStyle = { styles.avatarText }
-                        item = { renderableItem }
+                        item = { renderableItem as any }
                         key = { index }
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
@@ -442,8 +428,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             </TouchableOpacity>
         );
     }
-
-    _renderItem: Object => ReactElement | null;
 
     /**
      * Renders a single item in the search result {@code FlatList}.
@@ -480,13 +464,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             <TouchableOpacity onPress = { this._onPressItem(item) } >
                 <View
                     pointerEvents = 'box-only'
-                    style = { styles.itemWrapper }>
+                    style = { styles.itemWrapper as ViewStyle }>
                     <AvatarListItem
                         avatarSize = { AVATAR_SIZE }
                         avatarStatus = { item.status }
                         avatarStyle = { styles.avatar }
                         avatarTextStyle = { styles.avatarText }
-                        item = { renderableItem }
+                        item = { renderableItem as any }
                         key = { index }
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
@@ -497,8 +481,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             </TouchableOpacity>
         );
     }
-
-    _renderSeparator: () => ReactElement | null;
 
     /**
      * Renders the item separator.
@@ -511,19 +493,16 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderShareMeetingButton: () => ReactElement;
-
     /**
      * Renders a button to share the meeting info.
      *
      * @returns {React#Element<*>}
      */
     _renderShareMeetingButton() {
-
         return (
             <View
                 style = { [
-                    styles.bottomBar,
+                    styles.bottomBar as ViewStyle,
                     this.state.bottomPadding ? styles.extraBarPadding : null
                 ] }>
                 <TouchableOpacity
@@ -536,15 +515,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderIcon: () => ReactElement;
-
     /**
      * Renders an icon.
      *
      * @returns {React#Element<*>}
      */
     _renderIcon() {
-
         if (this.state.searchInprogress) {
             return (
                 <ActivityIndicator
@@ -586,7 +562,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
  *     _isVisible: boolean
  * }}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state)
     };
