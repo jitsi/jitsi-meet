@@ -1,11 +1,13 @@
 import React from 'react';
 import { GestureResponderEvent } from 'react-native';
 
+import { StyleType } from '../../../base/styles/functions.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import { navigationStyles } from './styles';
+
 
 interface IProps {
 
@@ -30,20 +32,28 @@ interface IProps {
     src?: any;
 
     /**
+     * Style of the button.
+     */
+    style?: StyleType;
+
+    /**
      * Header has two actions.
      */
     twoActions?: boolean;
 }
 
-const HeaderNavigationButton = ({ disabled, label, onPress, src, twoActions }: IProps) => {
+const HeaderNavigationButton = ({ disabled, label, onPress, src, style, twoActions }: IProps) => {
 
+    let btnStyle;
     let labelStyle;
 
     if (disabled) {
+        btnStyle = navigationStyles.headerNavigationButtonDisabled;
         labelStyle = twoActions
             ? navigationStyles.headerNavigationButtonLabelBoldDisabled
             : navigationStyles.headerNavigationButtonLabelDisabled;
     } else {
+        btnStyle = navigationStyles.headerNavigationButton;
         labelStyle = twoActions
             ? navigationStyles.headerNavigationButtonLabelBold
             : navigationStyles.headerNavigationButtonLabel;
@@ -57,14 +67,20 @@ const HeaderNavigationButton = ({ disabled, label, onPress, src, twoActions }: I
                         onPress = { onPress }
                         size = { 24 }
                         src = { src }
-                        style = { navigationStyles.headerNavigationButton } />
+                        style = { [
+                            navigationStyles.headerNavigationButton,
+                            style
+                        ] } />
                 ) : (
                     <Button
                         disabled = { disabled }
                         labelKey = { label }
                         labelStyle = { labelStyle }
                         onClick = { onPress }
-                        style = { navigationStyles.headerNavigationButton }
+                        style = { [
+                            btnStyle,
+                            style
+                        ] }
                         type = { BUTTON_TYPES.TERTIARY }
                         useRippleColor = { false } />
                 )}

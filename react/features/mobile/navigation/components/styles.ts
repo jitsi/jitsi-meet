@@ -46,6 +46,11 @@ export const navigationStyles = {
         marginLeft: BaseTheme.spacing[2]
     },
 
+    headerNavigationButtonDisabled: {
+        backgroundColor: 'transparent',
+        marginLeft: BaseTheme.spacing[2]
+    },
+
     headerNavigationButtonLabel: {
         ...headerNavigationButtonLabel
     },
