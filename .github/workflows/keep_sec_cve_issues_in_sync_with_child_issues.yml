@@ -1,0 +1,14 @@
+name: Keep SEC CVE issues in sync with dependabot and Child Issues
+
+on:
+  schedule:
+    - cron: '37 2 * * 1-5'
+  workflow_dispatch:
+
+
+jobs:
+  call-sec-cve-syncer:
+    uses: janeapp/reusable-workflows/.github/workflows/keep-sec-issues-in-sync-with-cve-issues.yml@main
+    with:
+      repo_name: video-chat
+    secrets: inherit
