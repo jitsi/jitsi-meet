@@ -27,14 +27,14 @@ import styles from './styles';
 interface IProps extends WithTranslation {
 
     /**
-     * Checks if add-people functionality is enabled.
-     */
-    _isAddPeopleEnabled: boolean;
-
-    /**
      * Control for invite other button.
      */
     _inviteOthersControl: any;
+
+    /**
+     * Checks if add-people functionality is enabled.
+     */
+    _isAddPeopleEnabled: boolean;
 
     /**
      * True if currently in a breakout room.

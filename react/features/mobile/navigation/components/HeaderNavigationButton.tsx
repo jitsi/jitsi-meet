@@ -35,29 +35,18 @@ interface IProps {
     twoActions?: boolean;
 }
 
-const HeaderNavigationButton
-    = ({
-        disabled,
-        label,
-        onPress,
-        src,
-        twoActions
-    }: IProps) => {
+const HeaderNavigationButton = ({ disabled, label, onPress, src, twoActions }: IProps) => {
 
     let labelStyle;
 
     if (disabled) {
-        if (twoActions) {
-            labelStyle = navigationStyles.headerNavigationButtonLabelBoldDisabled;
-        } else {
-            labelStyle = navigationStyles.headerNavigationButtonLabelDisabled;
-        }
+        labelStyle = twoActions
+            ? navigationStyles.headerNavigationButtonLabelBoldDisabled
+            : navigationStyles.headerNavigationButtonLabelDisabled;
     } else {
-        if (twoActions) {
-            labelStyle = navigationStyles.headerNavigationButtonLabelBold;
-        } else {
-            labelStyle = navigationStyles.headerNavigationButtonLabel;
-        }
+        labelStyle = twoActions
+            ? navigationStyles.headerNavigationButtonLabelBold
+            : navigationStyles.headerNavigationButtonLabel;
     }
 
     return (
@@ -81,7 +70,6 @@ const HeaderNavigationButton
                 )}
         </>
     );
-}
-
+};
 
 export default HeaderNavigationButton;

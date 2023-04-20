@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import {
@@ -22,7 +24,6 @@ import {
 } from '../../../../base/icons/svg';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import AvatarListItem from '../../../../base/react/components/native/AvatarListItem';
-import { Item } from '../../../../base/react/types';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import Input from '../../../../base/ui/components/native/Input';
 import HeaderNavigationButton
@@ -45,22 +46,22 @@ type Props = AbstractProps & {
     /**
      * True if the invite dialog should be open, false otherwise.
      */
-    _isVisible: boolean,
+    _isVisible: boolean;
 
     /**
      * Default prop for navigation between screen components(React Navigation).
      */
-    navigation: Object,
+    navigation: Object;
 
     /**
      * Function used to translate i18n labels.
      */
-    t: Function,
+    t: Function;
 
     /**
      * Theme used for styles.
      */
-    theme: Object
+    theme: Object;
 };
 
 type State = AbstractState & {
@@ -68,23 +69,23 @@ type State = AbstractState & {
     /**
      * Boolean to show if an extra padding needs to be added to the bottom bar.
      */
-    bottomPadding: boolean,
+    bottomPadding: boolean;
 
     /**
      * State variable to keep track of the search field value.
      */
-    fieldValue: string,
+    fieldValue: string;
 
     /**
      * True if a search is in progress, false otherwise.
      */
-    searchInprogress: boolean,
+    searchInprogress: boolean;
 
     /**
      * An array of items that are selectable on this dialog. This is usually
      * populated by an async search.
      */
-    selectableItems: Array<Object>
+    selectableItems: Array<Object>;
 };
 
 /**
