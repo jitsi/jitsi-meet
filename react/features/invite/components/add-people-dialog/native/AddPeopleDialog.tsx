@@ -150,6 +150,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 <HeaderNavigationButton
                     disabled = { this._isAddDisabled() }
                     label = { t('inviteDialog.send') }
+                    style = { styles.sendBtn }
                     twoActions = { true } />
             )
         });
@@ -170,6 +171,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     disabled = { this._isAddDisabled() }
                     label = { t('inviteDialog.send') }
                     onPress = { this._onInvite }
+                    style = { styles.sendBtn }
                     twoActions = { true } />
             )
         });

@@ -113,5 +113,9 @@ export default {
         left: AVATAR_SIZE / -3,
         position: 'relative',
         top: AVATAR_SIZE / -3
+    },
+
+    sendBtn: {
+        marginRight: BaseTheme.spacing[2]
     }
 };
