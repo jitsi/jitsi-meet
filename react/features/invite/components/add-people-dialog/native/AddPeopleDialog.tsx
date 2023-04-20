@@ -6,7 +6,8 @@ import {
     ActivityIndicator,
     FlatList,
     TouchableOpacity,
-    View, ViewStyle
+    View,
+    ViewStyle
 } from 'react-native';
 import { connect } from 'react-redux';
 
