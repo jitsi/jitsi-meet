@@ -13,7 +13,7 @@ type Props = {
     /**
      * Adds bottom padding.
      */
-    addBottomPadding: boolean,
+    addBottomPadding?: boolean,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView content container.
