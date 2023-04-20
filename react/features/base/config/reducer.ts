@@ -46,15 +46,17 @@ const INITIAL_RN_STATE: IConfig = {
     analytics: {},
 
     // FIXME: Mobile codecs should probably be configurable separately, rather
-    // than requiring this override here...
+    // FIXME: than requiring this override here...
+
+    // TODO: Remove comments later, after next release, so that the fix is applied
     p2p: {
-        disabledCodec: 'vp9',
-        preferredCodec: 'vp8'
+        // disabledCodec: 'vp9',
+        // preferredCodec: 'vp8'
     },
 
     videoQuality: {
-        disabledCodec: 'vp9',
-        preferredCodec: 'vp8'
+        // disabledCodec: 'vp9',
+        // preferredCodec: 'vp8'
     }
 };
 
