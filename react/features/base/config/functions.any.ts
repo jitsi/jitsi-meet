@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
 import { browser } from '../lib-jitsi-meet';
+import { IMediaState } from '../media/reducer';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -65,7 +66,7 @@ export function getMeetingRegion(state: IReduxState) {
  * @param {Object} _state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState) {
+export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState | IMediaState) {
     return browser.supportsUnifiedPlan();
 }
 

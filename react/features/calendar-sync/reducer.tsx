@@ -39,7 +39,7 @@ export interface ICalendarSyncState {
     integrationReady: boolean;
     integrationType?: string;
     isLoadingEvents?: boolean;
-    msAuthState?: Object;
+    msAuthState?: any;
     profileEmail?: string;
 }
 

@@ -7,6 +7,7 @@ import { createSharedVideoEvent as createEvent } from '../../../analytics/Analyt
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
+import { IJitsiConference } from '../../../base/conference/reducer';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { isLocalTrackMuted } from '../../../base/tracks/functions';
@@ -39,7 +40,7 @@ export interface IProps {
     /**
      * The current conference.
      */
-    _conference: Object;
+    _conference?: IJitsiConference;
 
     /**
      * Warning that indicates an incorrect video url.
@@ -71,12 +72,12 @@ export interface IProps {
     /**
      * Store flag for muted state.
      */
-    _muted: boolean;
+    _muted?: boolean;
 
     /**
      * The shared video owner id.
      */
-    _ownerId: string;
+    _ownerId?: string;
 
     /**
      * Updates the shared video status.
@@ -86,7 +87,7 @@ export interface IProps {
     /**
      * The shared video status.
      */
-    _status: string;
+    _status?: string;
 
     /**
      * Action to stop video sharing.
@@ -97,12 +98,12 @@ export interface IProps {
      * Seek time in seconds.
      *
      */
-    _time: number;
+    _time?: number;
 
     /**
      * The video url.
      */
-    _videoUrl: string;
+    _videoUrl?: string;
 
     /**
       * The video id.
@@ -185,8 +186,8 @@ class AbstractVideoManager extends PureComponent<IProps> {
 
         const playerTime = this.getTime();
 
-        if (shouldSeekToPosition(_time, playerTime)) {
-            this.seek(_time);
+        if (shouldSeekToPosition(Number(_time), Number(playerTime))) {
+            this.seek(Number(_time));
         }
 
         if (this.getPlaybackStatus() !== _status) {
@@ -214,7 +215,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @param {Object|undefined} e - The error returned by the API or none.
      * @returns {void}
      */
-    onError(e: any) {
+    onError(e?: any) {
         logger.error('Error in the video player', e?.data,
             e?.data ? 'Check error code at https://developers.google.com/youtube/iframe_api_reference#onError' : '');
         this.props._stopSharedVideo();
@@ -251,7 +252,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
         const volume = this.getVolume();
         const muted = this.isMuted();
 
-        if (volume > 0 && !muted) {
+        if (Number(volume) > 0 && !muted) {
             this.smartAudioMute();
         }
 
@@ -290,7 +291,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
 
         const status = this.getPlaybackStatus();
 
-        if (!Object.values(PLAYBACK_STATUSES).includes(status)) {
+        if (!Object.values(PLAYBACK_STATUSES).includes(status ?? '')) {
             return;
         }
 
@@ -320,7 +321,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
     isSharedVideoVolumeOn() {
         return this.getPlaybackStatus() === PLAYBACK_STATUSES.PLAYING
                 && !this.isMuted()
-                && this.getVolume() > 0;
+                && Number(this.getVolume()) > 0;
     }
 
     /**
@@ -342,54 +343,93 @@ class AbstractVideoManager extends PureComponent<IProps> {
     /**
      * Seeks video to provided time.
      *
-     * @param {number} time
+     * @param {number} _time - Time to seek to.
+     * @returns {void}
      */
-    seek: (time: number) => void;
+    seek(_time: number) {
+        // to be implemented by subclass
+    }
 
     /**
      * Indicates the playback state of the video.
+     *
+     * @returns {string}
      */
-    getPlaybackStatus: () => string;
+    getPlaybackStatus(): string | undefined {
+        return;
+    }
 
     /**
      * Indicates whether the video is muted.
+     *
+     * @returns {boolean}
      */
-    isMuted: () => boolean;
+    isMuted(): boolean | undefined {
+        return;
+    }
 
     /**
      * Retrieves current volume.
+     *
+     * @returns {number}
      */
-    getVolume: () => number;
+    getVolume() {
+        return 1;
+    }
 
     /**
      * Plays video.
+     *
+     * @returns {void}
      */
-    play: () => void;
+    play() {
+        // to be implemented by subclass
+    }
 
     /**
      * Pauses video.
+     *
+     * @returns {void}
      */
-    pause: () => void;
+    pause() {
+        // to be implemented by subclass
+    }
 
     /**
      * Mutes video.
+     *
+     * @returns {void}
      */
-    mute: () => void;
+    mute() {
+        // to be implemented by subclass
+    }
 
     /**
      * Unmutes video.
+     *
+     * @returns {void}
      */
-    unMute: () => void;
+    unMute() {
+        // to be implemented by subclass
+    }
 
     /**
      * Retrieves current time.
+     *
+     * @returns {number}
      */
-    getTime: () => number;
+    getTime() {
+        return 0;
+    }
 
     /**
      * Disposes current video player.
+     *
+     * @returns {void}
      */
-    dispose: () => void;
+    dispose() {
+        // to be implemented by subclass
+    }
 }
 
 

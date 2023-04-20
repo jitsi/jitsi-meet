@@ -60,6 +60,7 @@ export interface IJitsiConference {
     getMetadataHandler: Function;
     getName: Function;
     getParticipantById: Function;
+    getParticipantCount: Function;
     getParticipants: Function;
     getRole: Function;
     getSpeakerStats: () => ISpeakerStats;
@@ -101,6 +102,7 @@ export interface IJitsiConference {
     sendMessage: Function;
     sendPrivateTextMessage: Function;
     sendTextMessage: Function;
+    sendTones: Function;
     sessionId: string;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;

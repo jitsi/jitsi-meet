@@ -6,6 +6,7 @@ import YouTube from 'react-youtube';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
+    IProps,
     _mapDispatchToProps,
     _mapStateToProps
 } from './AbstractVideoManager';
@@ -16,6 +17,9 @@ import AbstractVideoManager, {
  * @returns {void}
  */
 class YoutubeVideoManager extends AbstractVideoManager {
+    isPlayerAPILoaded: boolean;
+    player?: any;
+
     /**
      * Initializes a new YoutubeVideoManager instance.
      *
@@ -23,7 +27,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      *
      * @returns {void}
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this.isPlayerAPILoaded = false;
@@ -88,7 +92,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      *
      * @returns {void}
      */
-    seek(time) {
+    seek(time: number) {
         return this.player?.seekTo(time);
     }
 
@@ -147,7 +151,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      *
      * @returns {void}
      */
-    onPlayerStateChange = event => {
+    onPlayerStateChange = (event: any) => {
         if (event.data === YouTube.PlayerState.PLAYING) {
             this.onPlay();
         } else if (event.data === YouTube.PlayerState.PAUSED) {
@@ -162,7 +166,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      *
      * @returns {void}
      */
-    onPlayerReady = event => {
+    onPlayerReady = (event: any) => {
         const { _isOwner } = this.props;
 
         this.player = event.target;
@@ -201,7 +205,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
                     'rel': 0
                 }
             },
-            onError: e => this.onError(e),
+            onError: (e: any) => this.onError(e),
             onReady: this.onPlayerReady,
             onStateChange: this.onPlayerStateChange,
             videoId

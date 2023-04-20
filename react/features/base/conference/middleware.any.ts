@@ -1,6 +1,5 @@
-// @flow
+import { AnyAction } from 'redux';
 
-import { readyToClose } from '../../../features/mobile/external-api/actions';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -9,8 +8,10 @@ import {
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { reloadNow } from '../../app/actions';
+import { IReduxState, IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
+import { readyToClose } from '../../mobile/external-api/actions';
 import { showErrorNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { setIAmVisitor } from '../../visitors/actions';
@@ -62,12 +63,10 @@ import {
 } from './functions';
 import logger from './logger';
 
-declare var APP: Object;
-
 /**
  * Handler for before unload event.
  */
-let beforeUnloadHandler;
+let beforeUnloadHandler: Function | undefined;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -129,7 +128,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceFailed({ dispatch, getState }, next, action) {
+function _conferenceFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { conference, error } = action;
 
     if (error.name === JitsiConferenceErrors.REDIRECTED) {
@@ -191,7 +190,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             const newConfig = restoreConferenceOptions(getState);
 
             if (newConfig) {
-                dispatch(overwriteConfig(newConfig))
+                dispatch(overwriteConfig(newConfig)) // @ts-ignore
                     .then(dispatch(conferenceWillLeave(conference)))
                     .then(conference.leave())
                     .then(dispatch(disconnect()))
@@ -217,7 +216,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
             const [ vnode ] = error.params;
 
-            dispatch(overwriteConfig(newConfig))
+            dispatch(overwriteConfig(newConfig)) // @ts-ignore
                 .then(dispatch(conferenceWillLeave(conference)))
                 .then(conference.leave())
                 .then(dispatch(disconnect()))
@@ -234,7 +233,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     if (typeof APP === 'undefined') {
         !error.recoverable
         && conference
-        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch(reason => {
+        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch((reason: Error) => {
             // Even though we don't care too much about the failure, it may be
             // good to know that it happen, so log it (on the info level).
             logger.info('JitsiConference.leave() rejected with:', reason);
@@ -267,7 +266,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceJoined({ dispatch, getState }, next, action) {
+function _conferenceJoined({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
@@ -288,6 +287,8 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     beforeUnloadHandler = () => {
         dispatch(conferenceWillLeave(conference));
     };
+
+    // @ts-ignore
     window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
 
     if (requireDisplayName
@@ -313,7 +314,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch }, next, action) {
+function _connectionEstablished({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -330,7 +331,7 @@ function _connectionEstablished({ dispatch }, next, action) {
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-function _logJwtErrors(message, state) {
+function _logJwtErrors(message: string, state: IReduxState) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {
@@ -357,7 +358,7 @@ function _logJwtErrors(message, state) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionFailed({ dispatch, getState }, next, action) {
+function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     _logJwtErrors(action.error.message, getState());
 
     const result = next(action);
@@ -417,7 +418,7 @@ function _connectionFailed({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceSubjectChanged({ dispatch, getState }, next, action) {
+function _conferenceSubjectChanged({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const { subject } = getState()['features/base/conference'];
 
@@ -442,7 +443,7 @@ function _conferenceSubjectChanged({ dispatch, getState }, next, action) {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _conferenceWillLeave({ getState }: { getState: Function }) {
+function _conferenceWillLeave({ getState }: IStore) {
     _removeUnloadHandler(getState);
 }
 
@@ -460,7 +461,7 @@ function _conferenceWillLeave({ getState }: { getState: Function }) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _pinParticipant({ getState }, next, action) {
+function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -473,7 +474,7 @@ function _pinParticipant({ getState }, next, action) {
     const pinnedParticipant = getPinnedParticipant(state);
     const actionName = id ? ACTION_PINNED : ACTION_UNPINNED;
     const local
-        = (participantById && participantById.local)
+        = participantById?.local
             || (!id && pinnedParticipant && pinnedParticipant.local);
     let participantIdForEvent;
 
@@ -481,7 +482,7 @@ function _pinParticipant({ getState }, next, action) {
         participantIdForEvent = local;
     } else {
         participantIdForEvent
-            = actionName === ACTION_PINNED ? id : pinnedParticipant && pinnedParticipant.id;
+            = actionName === ACTION_PINNED ? id : pinnedParticipant?.id;
     }
 
     sendAnalytics(createPinnedEvent(
@@ -501,10 +502,11 @@ function _pinParticipant({ getState }, next, action) {
  * @param {Function} getState - The redux getState function.
  * @returns {void}
  */
-function _removeUnloadHandler(getState) {
+function _removeUnloadHandler(getState: IStore['getState']) {
     if (typeof beforeUnloadHandler !== 'undefined') {
         const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
 
+        // @ts-ignore
         window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = undefined;
     }
@@ -522,7 +524,7 @@ function _removeUnloadHandler(getState) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _sendTones({ getState }, next, action) {
+function _sendTones({ getState }: IStore, next: Function, action: AnyAction) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -549,15 +551,15 @@ function _sendTones({ getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setRoom({ dispatch, getState }, next, action) {
+function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const state = getState();
     const { localSubject, subject } = state['features/base/config'];
     const { room } = action;
 
     if (room) {
         // Set the stored subject.
-        dispatch(setLocalSubject(localSubject));
-        dispatch(setSubject(subject));
+        dispatch(setLocalSubject(localSubject ?? ''));
+        dispatch(setSubject(subject ?? ''));
     }
 
     return next(action);
@@ -572,7 +574,7 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {Promise}
  */
-function _syncConferenceLocalTracksWithState({ getState }, action) {
+function _syncConferenceLocalTracksWithState({ getState }: IStore, action: AnyAction) {
     const conference = getCurrentConference(getState);
     let promise;
 
@@ -603,7 +605,7 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _trackAddedOrRemoved(store, next, action) {
+function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAction) {
     const track = action.track;
 
     // TODO All track swapping should happen here instead of conference.js.
@@ -628,7 +630,7 @@ function _trackAddedOrRemoved(store, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _updateLocalParticipantInConference({ dispatch, getState }, next, action) {
+function _updateLocalParticipantInConference({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { conference } = getState()['features/base/conference'];
     const { participant } = action;
     const result = next(action);

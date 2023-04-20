@@ -9,12 +9,12 @@ import {
     getParticipantPresenceStatus,
     getRemoteParticipants
 } from '../../../base/participants/functions';
-import { Container, Text } from '../../../base/react/components/index.web';
+import { Container, Text } from '../../../base/react/components/index';
 import { isLocalTrackMuted } from '../../../base/tracks/functions.any';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { CALLING } from '../../../presence-status/constants';
 
-import styles from './styles.web';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link CalleeInfo}.

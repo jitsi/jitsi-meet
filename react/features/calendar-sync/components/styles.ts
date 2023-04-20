@@ -1,6 +1,6 @@
 import { ColorPalette } from '../../base/styles/components/styles/ColorPalette';
 import { createStyleSheet } from '../../base/styles/functions.any';
-import BaseTheme from '../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../base/ui/components/BaseTheme';
 
 const NOTIFICATION_SIZE = 55;
 

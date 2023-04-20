@@ -1,4 +1,4 @@
-// @flow
+import { AnyAction } from 'redux';
 
 import {
     createStartAudioOnlyEvent,
@@ -7,6 +7,7 @@ import {
     createTrackMutedEvent
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { IStore } from '../../app/types';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
@@ -23,6 +24,7 @@ import { getPropertyValue } from '../settings/functions.any';
 import { TRACK_ADDED } from '../tracks/actionTypes';
 import { destroyLocalTracks } from '../tracks/actions.any';
 import { isLocalTrackMuted, isLocalVideoTrackDesktop, setTrackMuted } from '../tracks/functions.any';
+import { ITrack } from '../tracks/types';
 
 import {
     SET_AUDIO_MUTED,
@@ -155,7 +157,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _appStateChanged({ dispatch, getState }, next, action) {
+function _appStateChanged({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     if (navigator.product === 'ReactNative') {
         const { appState } = action;
         const mute = appState !== 'active' && !isLocalVideoTrackDesktop(getState());
@@ -180,7 +182,7 @@ function _appStateChanged({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAudioOnly({ dispatch, getState }, next, action) {
+function _setAudioOnly({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { audioOnly } = action;
     const state = getState();
 
@@ -209,7 +211,7 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _setRoom({ dispatch, getState }, next, action) {
+function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // Figure out the desires/intents i.e. the state of base/media. There are
     // multiple desires/intents ordered by precedence such as server-side
     // config, config overrides in the user-supplied URL, user's own app
@@ -222,7 +224,7 @@ function _setRoom({ dispatch, getState }, next, action) {
     const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
 
     sendAnalytics(
-        createStartMutedConfigurationEvent('local', audioMuted, videoMuted));
+        createStartMutedConfigurationEvent('local', audioMuted, Boolean(videoMuted)));
     logger.log(
         `Start muted: ${audioMuted ? 'audio, ' : ''}${
             videoMuted ? 'video' : ''}`);
@@ -295,7 +297,7 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState({ getState }, track) {
+function _syncTrackMutedState({ getState }: IStore, track: ITrack) {
     const state = getState()['features/base/media'];
     const mediaType = track.mediaType;
     const muted = Boolean(state[mediaType].muted);

@@ -72,7 +72,7 @@ export type ConnectionFailedError = {
  *     connection: JitsiConnection
  * }}
  */
-export function connectionDisconnected(connection: Object) {
+export function connectionDisconnected(connection?: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
         connection
