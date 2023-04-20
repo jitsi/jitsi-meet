@@ -27,6 +27,11 @@ import styles from './styles';
 interface IProps extends WithTranslation {
 
     /**
+     * Checks if add-people functionality is enabled.
+     */
+    _isAddPeopleEnabled: boolean;
+
+    /**
      * Control for invite other button.
      */
     _inviteOthersControl: any;
@@ -116,8 +121,15 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
      * @returns {void}
      */
     _onPress() {
-        this.props.dispatch(toggleShareDialog(true));
-        this.props.dispatch(doInvitePeople());
+        const { _isAddPeopleEnabled, dispatch } = this.props;
+
+        if (_isAddPeopleEnabled) {
+            dispatch(toggleShareDialog(false));
+        } else {
+            dispatch(toggleShareDialog(true));
+        }
+
+        dispatch(doInvitePeople());
     }
 }
 
@@ -136,6 +148,7 @@ function _mapStateToProps(state: IReduxState) {
     const _isInBreakoutRoom = isInBreakoutRoom(state);
 
     return {
+        _isAddPeopleEnabled: flag,
         _inviteOthersControl,
         _isInBreakoutRoom,
         _isInviteFunctionsDisabled: Boolean(!flag || disableInviteFunctions),
