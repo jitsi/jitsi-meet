@@ -20,7 +20,10 @@ import { getParticipantCount } from '../../../base/participants/functions';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import TintedView from '../../../base/react/components/native/TintedView';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import {
+    ASPECT_RATIO_NARROW,
+    ASPECT_RATIO_WIDE
+} from '../../../base/responsive-ui/constants';
 import TestConnectionInfo from '../../../base/testing/components/TestConnectionInfo';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.native';
 import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
@@ -377,7 +380,9 @@ class Conference extends AbstractConference<Props, State> {
      */
     _renderContent() {
         const {
+            _aspectRatio,
             _connecting,
+            _filmstripVisible,
             _isOneToOneConference,
             _largeVideoParticipantId,
             _reducedUI,
@@ -385,8 +390,20 @@ class Conference extends AbstractConference<Props, State> {
             _toolboxVisible
         } = this.props;
 
+        let alwaysOnTitleBarStyles;
+
         if (_reducedUI) {
             return this._renderContentForReducedUi();
+        }
+
+        if (_aspectRatio === ASPECT_RATIO_WIDE) {
+            alwaysOnTitleBarStyles
+                = !_shouldDisplayTileView && _filmstripVisible
+                    ? styles.alwaysOnTitleBarWide
+                    : styles.alwaysOnTitleBar;
+        } else {
+            alwaysOnTitleBarStyles = styles.alwaysOnTitleBar;
+
         }
 
         return (
@@ -465,7 +482,7 @@ class Conference extends AbstractConference<Props, State> {
                     </View>
                     <View
                         pointerEvents = 'box-none'
-                        style = { styles.alwaysOnTitleBar }>
+                        style = { alwaysOnTitleBarStyles }>
                         {/* eslint-disable-next-line react/jsx-no-bind */}
                         <AlwaysOnLabels createOnPress = { this._createOnPress } />
                     </View>
