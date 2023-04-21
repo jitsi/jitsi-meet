@@ -1,4 +1,3 @@
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { ComponentType } from 'react';
 import { batch } from 'react-redux';
 
@@ -79,10 +78,8 @@ export default class PrejoinApp extends BaseApp<Props> {
     _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <GlobalStyles />
-                    { super._createMainElement(component, props) }
-                </AtlasKitThemeProvider>
+                <GlobalStyles />
+                { super._createMainElement(component, props) }
             </JitsiThemeProvider>
         );
     }
@@ -95,9 +92,7 @@ export default class PrejoinApp extends BaseApp<Props> {
     _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <DialogContainer />
-                </AtlasKitThemeProvider>
+                <DialogContainer />
             </JitsiThemeProvider>
         );
     }

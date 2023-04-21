@@ -1,4 +1,3 @@
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { ComponentType } from 'react';
 
 import BaseApp from '../../../../base/app/components/BaseApp';
@@ -55,10 +54,8 @@ export default class DialInSummaryApp extends BaseApp<any> {
     _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <GlobalStyles />
-                    {super._createMainElement(component, props)}
-                </AtlasKitThemeProvider>
+                <GlobalStyles />
+                {super._createMainElement(component, props)}
             </JitsiThemeProvider>
         );
     }
