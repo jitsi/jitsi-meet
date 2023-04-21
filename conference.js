@@ -162,6 +162,7 @@ import { endpointMessageReceived } from './react/features/subtitles/actions.any'
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import { setIAmVisitor } from './react/features/visitors/actions';
+import { iAmVisitor } from './react/features/visitors/functions';
 import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
@@ -804,13 +805,14 @@ export default {
      * @returns {Promise}
      */
     async init({ roomName }) {
+        const state = APP.store.getState();
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
-            startWithAudioMuted: getStartWithAudioMuted(APP.store.getState())
-                || isUserInteractionRequiredForUnmute(APP.store.getState()),
-            startWithVideoMuted: getStartWithVideoMuted(APP.store.getState())
-                || isUserInteractionRequiredForUnmute(APP.store.getState())
+            startWithAudioMuted: getStartWithAudioMuted(state)
+                || isUserInteractionRequiredForUnmute(state),
+            startWithVideoMuted: getStartWithVideoMuted(state)
+                || isUserInteractionRequiredForUnmute(state)
         };
 
         this.roomName = roomName;
@@ -840,7 +842,7 @@ export default {
             return tracks;
         };
 
-        if (isPrejoinPageVisible(APP.store.getState())) {
+        if (isPrejoinPageVisible(state)) {
             _connectionPromise = connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
                 // to gather logs
@@ -863,7 +865,7 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            if (isPrejoinPageVisible(APP.store.getState())) {
+            if (isPrejoinPageVisible(state)) {
                 return APP.store.dispatch(initPrejoin(tracks, errors));
             }
 
@@ -873,7 +875,7 @@ export default {
 
             let localTracks = handleStartAudioMuted(initialOptions, tracks);
 
-            // in case where gum is slow and resolves after the startAudio/VideoMuted coming from jicofo, we can be
+            // In case where gUM is slow and resolves after the startAudio/VideoMuted coming from jicofo, we can be
             // join unmuted even though jicofo had instruct us to mute, so let's respect that before passing the tracks
             if (!browser.isWebKitBased()) {
                 if (room?.isStartAudioMuted()) {
@@ -883,6 +885,11 @@ export default {
 
             if (room?.isStartVideoMuted()) {
                 localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
+            }
+
+            // Do not add the tracks if the user has joined the call as a visitor.
+            if (iAmVisitor(state)) {
+                return Promise.resolve();
             }
 
             return this._setLocalAudioVideoStreams(localTracks);

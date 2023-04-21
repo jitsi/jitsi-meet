@@ -15,6 +15,7 @@ import { readyToClose } from '../../mobile/external-api/actions';
 import { showErrorNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { setIAmVisitor } from '../../visitors/actions';
+import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
@@ -575,14 +576,19 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
  * @returns {Promise}
  */
 function _syncConferenceLocalTracksWithState({ getState }: IStore, action: AnyAction) {
-    const conference = getCurrentConference(getState);
+    const state = getState();
+    const conference = getCurrentConference(state);
     let promise;
 
     if (conference) {
         const track = action.track.jitsiTrack;
 
         if (action.type === TRACK_ADDED) {
-            promise = _addLocalTracksToConference(conference, [ track ]);
+            // If gUM is slow and tracks are created after the user has already joined the conference, avoid
+            // adding the tracks to the conference if the user is a visitor.
+            if (!iAmVisitor(state)) {
+                promise = _addLocalTracksToConference(conference, [ track ]);
+            }
         } else {
             promise = _removeLocalTracksFromConference(conference, [ track ]);
         }
