@@ -10,6 +10,7 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
 import {
+    addPeopleFeatureControl,
     getParticipantCountWithFake,
     setShareDialogVisiblity
 } from '../../../base/participants/functions';
@@ -17,7 +18,6 @@ import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { isAddPeopleEnabled, isDialOutEnabled } from '../../../invite/functions';
 import { getInviteOthersControl } from '../../../share-room/functions';
 
 // @ts-ignore
@@ -35,9 +35,9 @@ interface IProps extends WithTranslation {
     _inviteOthersControl: any;
 
     /**
-     * Checks if add-people functionality is enabled.
+     * Checks if add-people feature is enabled.
      */
-    _isAddPeopleEnabled: boolean;
+    _isAddPeopleFeatureEnabled: boolean;
 
     /**
      * True if currently in a breakout room.
@@ -124,9 +124,9 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
      * @returns {void}
      */
     _onPress() {
-        const { _isAddPeopleEnabled, dispatch } = this.props;
+        const { _isAddPeopleFeatureEnabled, dispatch } = this.props;
 
-        setShareDialogVisiblity(_isAddPeopleEnabled, dispatch);
+        setShareDialogVisiblity(_isAddPeopleFeatureEnabled, dispatch);
 
         dispatch(doInvitePeople());
     }
@@ -144,12 +144,11 @@ function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const _inviteOthersControl = getInviteOthersControl(state);
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
-    const _isAddPeopleEnabled
-        = flag && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
+    const _isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const _isInBreakoutRoom = isInBreakoutRoom(state);
 
     return {
-        _isAddPeopleEnabled,
+        _isAddPeopleFeatureEnabled,
         _inviteOthersControl,
         _isInBreakoutRoom,
         _isInviteFunctionsDisabled: Boolean(!flag || disableInviteFunctions),
