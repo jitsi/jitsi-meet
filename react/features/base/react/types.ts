@@ -52,6 +52,8 @@ export type Item = {
      */
     title: string;
 
+    type: string;
+
     /**
      * Item url.
      */
