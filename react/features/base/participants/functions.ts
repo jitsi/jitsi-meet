@@ -3,15 +3,18 @@ import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
 import { getCurrentConference } from '../conference/functions';
+import { ADD_PEOPLE_ENABLED } from '../flags/constants';
+import { getFeatureFlag } from '../flags/functions';
 import i18next from '../i18n/i18next';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
-import { getScreenShareTrack } from '../tracks/functions';
+import { getScreenShareTrack } from '../tracks/functions.any';
 import { createDeferred } from '../util/helpers';
 
 import {
@@ -710,14 +713,28 @@ export function hasRaisedHand(participant?: IParticipant): boolean {
 }
 
 /**
+ * Add people feature enabling/disabling.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export const addPeopleFeatureControl = (stateful: IStateful) => {
+    const state = toState(stateful);
+
+    return getFeatureFlag(state, ADD_PEOPLE_ENABLED, true)
+    && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
+};
+
+/**
  * Controls share dialog visibility.
  *
- * @param {boolean} isAddPeopleEnabled - Checks if add people functionality is enabled.
+ * @param {boolean} addPeopleFeatureEnabled - Checks if add people functionality is enabled.
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {boolean}
  */
-export const setShareDialogVisiblity = (isAddPeopleEnabled: boolean, dispatch: Function) => {
-    if (isAddPeopleEnabled) {
+export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispatch: Function) => {
+    if (addPeopleFeatureEnabled) {
         dispatch(toggleShareDialog(false));
     } else {
         dispatch(toggleShareDialog(true));
