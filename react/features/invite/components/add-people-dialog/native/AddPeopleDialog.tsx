@@ -116,7 +116,7 @@ class AddPeopleDialog
      */
 
     /* eslint-disable-next-line no-undef */
-    searchTimeout: number | null;
+    searchTimeout: number;
 
     /**
      * Contrustor of the component.
@@ -314,7 +314,7 @@ class AddPeopleDialog
     _onInvite() {
         // @ts-ignore
         this._invite(this.state.inviteItems)
-            .then(invitesLeftToSend => {
+            .then((invitesLeftToSend: ArrayLike<any>) => {
                 if (invitesLeftToSend.length) {
                     this.setState({
                         // @ts-ignore
@@ -343,7 +343,7 @@ class AddPeopleDialog
                 this.setState({
                     // @ts-ignore
                     inviteItems: inviteItems.filter(
-                        element => item[finderKey] !== element[finderKey])
+                        (element: any) => item[finderKey] !== element[finderKey])
                 });
             } else {
                 // Item is not selected yet, need to add to the list.
@@ -590,5 +590,5 @@ function _mapStateToProps(state: IReduxState) {
         ..._abstractMapStateToProps(state)
     };
 }
-
+// @ts-ignore
 export default translate(connect(_mapStateToProps)(AddPeopleDialog));
