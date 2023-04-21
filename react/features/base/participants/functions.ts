@@ -3,6 +3,7 @@ import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+import { toggleShareDialog } from '../../share-room/actions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
@@ -21,6 +22,7 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 import { FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from './types';
+
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -706,3 +708,18 @@ export function getRaiseHandsQueue(stateful: IStateful): Array<{ id: string; rai
 export function hasRaisedHand(participant?: IParticipant): boolean {
     return Boolean(participant?.raisedHandTimestamp);
 }
+
+/**
+ * Controls share dialog visibility.
+ *
+ * @param {boolean} isAddPeopleEnabled - Checks if add people functionality is enabled.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @returns {boolean}
+ */
+export const setShareDialogVisiblity = (isAddPeopleEnabled: boolean, dispatch: Function) => {
+    if (isAddPeopleEnabled) {
+        dispatch(toggleShareDialog(false));
+    } else {
+        dispatch(toggleShareDialog(true));
+    }
+};
