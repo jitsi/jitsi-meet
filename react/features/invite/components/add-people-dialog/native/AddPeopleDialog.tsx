@@ -338,7 +338,8 @@ class AddPeopleDialog
             const finderKey = item.type === INVITE_TYPES.PHONE ? 'number' : 'user_id';
 
             if (inviteItems.find(
-                    _.matchesProperty(finderKey, item[finderKey]))) {
+                // @ts-ignore
+                _.matchesProperty(finderKey, item[finderKey]))) {
                 // Item is already selected, need to unselect it.
                 this.setState({
                     // @ts-ignore
