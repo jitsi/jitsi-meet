@@ -344,6 +344,7 @@ class AddPeopleDialog
                 this.setState({
                     // @ts-ignore
                     inviteItems: inviteItems.filter(
+                        // @ts-ignore
                         (element: any) => item[finderKey] !== element[finderKey])
                 });
             } else {
