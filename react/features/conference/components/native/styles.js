@@ -16,6 +16,20 @@ const titleBarSafeView = {
     top: 0
 };
 
+const alwaysOnTitleBar = {
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, .5)',
+    borderRadius: BaseTheme.shape.borderRadius,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: BaseTheme.spacing[3],
+    paddingRight: BaseTheme.spacing[0],
+    '&:not(:empty)': {
+        padding: BaseTheme.spacing[1]
+    }
+};
+
 /**
  * The styles of the feature conference.
  */
@@ -109,18 +123,13 @@ export default {
     },
 
     alwaysOnTitleBar: {
-        alignItems: 'center',
-        alignSelf: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, .5)',
-        borderRadius: BaseTheme.shape.borderRadius,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginRight: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[0],
-        '&:not(:empty)': {
-            padding: BaseTheme.spacing[1]
-        }
+        ...alwaysOnTitleBar,
+        marginRight: BaseTheme.spacing[2]
+    },
+
+    alwaysOnTitleBarWide: {
+        ...alwaysOnTitleBar,
+        marginRight: BaseTheme.spacing[12]
     },
 
     expandedLabelWrapper: {
@@ -193,8 +202,8 @@ export default {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius,
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[0],
-        marginBottom: BaseTheme.spacing[0]
+        marginBottom: BaseTheme.spacing[0],
+        marginLeft: BaseTheme.spacing[0]
     },
 
     raisedHandsCountLabelText: {
