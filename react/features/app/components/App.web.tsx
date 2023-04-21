@@ -1,4 +1,3 @@
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
 import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
@@ -46,11 +45,9 @@ export class App extends AbstractApp {
     _createMainElement(component: React.ComponentType, props: any) {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <GlobalStyles />
-                    <ChromeExtensionBanner />
-                    { super._createMainElement(component, props) }
-                </AtlasKitThemeProvider>
+                <GlobalStyles />
+                <ChromeExtensionBanner />
+                { super._createMainElement(component, props) }
             </JitsiThemeProvider>
         );
     }
@@ -63,9 +60,7 @@ export class App extends AbstractApp {
     _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <DialogContainer />
-                </AtlasKitThemeProvider>
+                <DialogContainer />
             </JitsiThemeProvider>
         );
     }

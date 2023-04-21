@@ -1,5 +1,5 @@
 import React, { ReactNode, useRef } from 'react';
-import { keyframes } from 'styled-components';
+import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
 import { TEXT_OVERFLOW_TYPES } from '../../constants.web';
