@@ -731,7 +731,7 @@ export const addPeopleFeatureControl = (stateful: IStateful) => {
  *
  * @param {boolean} addPeopleFeatureEnabled - Checks if add people functionality is enabled.
  * @param {Function} dispatch - The Redux dispatch function.
- * @returns {boolean}
+ * @returns {Function}
  */
 export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispatch: Function) => {
     if (addPeopleFeatureEnabled) {
