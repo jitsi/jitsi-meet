@@ -6,7 +6,7 @@ import { IReduxState } from '../../../app/types';
 import { showErrorNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { INotificationProps } from '../../../notifications/types';
-import { invite } from '../../actions';
+import { invite } from '../../actions.any';
 import { INVITE_TYPES } from '../../constants';
 import {
     getInviteResultsForQuery,

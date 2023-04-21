@@ -46,13 +46,29 @@ export const navigationStyles = {
         marginLeft: BaseTheme.spacing[2]
     },
 
+    headerNavigationButtonDisabled: {
+        backgroundColor: 'transparent',
+        marginLeft: BaseTheme.spacing[2]
+    },
+
     headerNavigationButtonLabel: {
         ...headerNavigationButtonLabel
+    },
+
+    headerNavigationButtonLabelDisabled: {
+        ...headerNavigationButtonLabel,
+        color: BaseTheme.palette.text03
     },
 
     headerNavigationButtonLabelBold: {
         ...headerNavigationButtonLabel,
         ...BaseTheme.typography.bodyShortRegularLarge
+    },
+
+    headerNavigationButtonLabelBoldDisabled: {
+        ...headerNavigationButtonLabel,
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text03
     },
 
     unreadCounterContainer: {

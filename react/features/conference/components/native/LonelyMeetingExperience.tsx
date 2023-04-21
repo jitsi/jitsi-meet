@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -9,12 +9,15 @@ import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
-import { getParticipantCountWithFake } from '../../../base/participants/functions';
+import {
+    addPeopleFeatureControl,
+    getParticipantCountWithFake,
+    setShareDialogVisiblity
+} from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { toggleShareDialog } from '../../../share-room/actions';
 import { getInviteOthersControl } from '../../../share-room/functions';
 
 // @ts-ignore
@@ -30,6 +33,11 @@ interface IProps extends WithTranslation {
      * Control for invite other button.
      */
     _inviteOthersControl: any;
+
+    /**
+     * Checks if add-people feature is enabled.
+     */
+    _isAddPeopleFeatureEnabled: boolean;
 
     /**
      * True if currently in a breakout room.
@@ -87,7 +95,7 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
         }
 
         return (
-            <View style = { styles.lonelyMeetingContainer }>
+            <View style = { styles.lonelyMeetingContainer as ViewStyle }>
                 <Text style = { styles.lonelyMessage }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
@@ -116,8 +124,11 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
      * @returns {void}
      */
     _onPress() {
-        this.props.dispatch(toggleShareDialog(true));
-        this.props.dispatch(doInvitePeople());
+        const { _isAddPeopleFeatureEnabled, dispatch } = this.props;
+
+        setShareDialogVisiblity(_isAddPeopleFeatureEnabled, dispatch);
+
+        dispatch(doInvitePeople());
     }
 }
 
@@ -133,9 +144,11 @@ function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const _inviteOthersControl = getInviteOthersControl(state);
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
+    const _isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const _isInBreakoutRoom = isInBreakoutRoom(state);
 
     return {
+        _isAddPeopleFeatureEnabled,
         _inviteOthersControl,
         _isInBreakoutRoom,
         _isInviteFunctionsDisabled: Boolean(!flag || disableInviteFunctions),

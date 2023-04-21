@@ -10,18 +10,25 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
 import {
+    addPeopleFeatureControl,
     getLocalParticipant,
     getParticipantCountWithFake,
-    getRemoteParticipants
+    getRemoteParticipants,
+    setShareDialogVisiblity
 } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    getCurrentRoomId
+} from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { toggleShareDialog } from '../../../share-room/actions';
 import { getInviteOthersControl } from '../../../share-room/functions';
-import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
+import {
+    participantMatchesSearch,
+    shouldRenderInviteButton
+} from '../../functions';
 
 // @ts-ignore
 import CollapsibleList from './CollapsibleList';
@@ -42,6 +49,11 @@ interface IProps extends WithTranslation {
      * Control for invite other button.
      */
     _inviteOthersControl: any;
+
+    /**
+     * Checks if add-people feature is enabled.
+     */
+    _isAddPeopleFeatureEnabled: boolean;
 
     /**
      * The local participant.
@@ -139,8 +151,11 @@ class MeetingParticipantList extends PureComponent<IProps> {
      * @returns {void}
      */
     _onInvite() {
-        this.props.dispatch(toggleShareDialog(true));
-        this.props.dispatch(doInvitePeople());
+        const { _isAddPeopleFeatureEnabled, dispatch } = this.props;
+
+        setShareDialogVisiblity(_isAddPeopleFeatureEnabled, dispatch);
+
+        dispatch(doInvitePeople());
     }
 
     /**
@@ -279,6 +294,7 @@ function _mapStateToProps(state: IReduxState): Object {
     const { remoteParticipants } = state['features/filmstrip'];
     const { shareDialogVisible } = state['features/share-room'];
     const _inviteOthersControl = getInviteOthersControl(state);
+    const _isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const _showInviteButton = shouldRenderInviteButton(state);
     const _remoteParticipants = getRemoteParticipants(state);
     const currentRoomId = getCurrentRoomId(state);
@@ -286,6 +302,7 @@ function _mapStateToProps(state: IReduxState): Object {
 
     return {
         _currentRoom,
+        _isAddPeopleFeatureEnabled,
         _inviteOthersControl,
         _participantsCount,
         _remoteParticipants,
