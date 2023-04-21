@@ -82,7 +82,7 @@ export interface IProps {
 /**
  * Manager of shared video.
  */
-class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
+abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
     throttledFireUpdateSharedVideoEvent: Function;
 
     /**
@@ -207,49 +207,30 @@ class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
 
     /**
      * Seeks video to provided time.
-     *
-     * @param {number} _time - Time to seek to.
-     * @returns {void}
      */
-    seek(_time: number) {
-        // to be implemented by subclass
-    }
+    abstract seek(time: number): void;
 
     /**
      * Indicates the playback state of the video.
-     *
-     * @returns {string}
      */
-    getPlaybackStatus() {
-        return '';
-    }
+    abstract getPlaybackStatus(): string;
 
     /**
      * Plays video.
-     *
-     * @returns {void}
      */
-    play() {
-        // to be implemented by sub-class
-    }
+    abstract play(): void;
 
     /**
      * Pauses video.
      *
      * @returns {void}
      */
-    pause() {
-        // to be implemented by sub-class
-    }
+    abstract pause(): void;
 
     /**
      * Retrieves current time.
-     *
-     * @returns {number}
      */
-    getTime() {
-        return 0;
-    }
+    abstract getTime(): number;
 
     /**
      * Disposes current video player.
@@ -257,7 +238,7 @@ class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      * @returns {void}
      */
     dispose() {
-        // to be implemented by sub-class
+        // optional abstract method to be implemented by sub-class
     }
 }
 
