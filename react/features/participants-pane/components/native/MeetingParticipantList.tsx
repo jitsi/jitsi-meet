@@ -6,22 +6,31 @@ import { FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { INVITE_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,
-    getRemoteParticipants
+    getRemoteParticipants,
+    setShareDialogVisiblity
 } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    getCurrentRoomId
+} from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { toggleShareDialog } from '../../../share-room/actions';
+import { isAddPeopleEnabled, isDialOutEnabled } from '../../../invite/functions';
 import { getInviteOthersControl } from '../../../share-room/functions';
-import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
+import {
+    participantMatchesSearch,
+    shouldRenderInviteButton
+} from '../../functions';
 
 // @ts-ignore
 import CollapsibleList from './CollapsibleList';
@@ -42,6 +51,11 @@ interface IProps extends WithTranslation {
      * Control for invite other button.
      */
     _inviteOthersControl: any;
+
+    /**
+     * Checks if add-people functionality is enabled.
+     */
+    _isAddPeopleEnabled: boolean;
 
     /**
      * The local participant.
@@ -139,8 +153,11 @@ class MeetingParticipantList extends PureComponent<IProps> {
      * @returns {void}
      */
     _onInvite() {
-        this.props.dispatch(toggleShareDialog(true));
-        this.props.dispatch(doInvitePeople());
+        const { _isAddPeopleEnabled, dispatch } = this.props;
+
+        setShareDialogVisiblity(_isAddPeopleEnabled, dispatch);
+
+        dispatch(doInvitePeople());
     }
 
     /**
@@ -279,6 +296,9 @@ function _mapStateToProps(state: IReduxState): Object {
     const { remoteParticipants } = state['features/filmstrip'];
     const { shareDialogVisible } = state['features/share-room'];
     const _inviteOthersControl = getInviteOthersControl(state);
+    const _isAddPeopleEnabled
+        = getFeatureFlag(state, INVITE_ENABLED, true)
+        && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
     const _showInviteButton = shouldRenderInviteButton(state);
     const _remoteParticipants = getRemoteParticipants(state);
     const currentRoomId = getCurrentRoomId(state);
@@ -286,6 +306,7 @@ function _mapStateToProps(state: IReduxState): Object {
 
     return {
         _currentRoom,
+        _isAddPeopleEnabled,
         _inviteOthersControl,
         _participantsCount,
         _remoteParticipants,
