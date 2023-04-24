@@ -3,8 +3,6 @@ import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 
-// @ts-expect-error
-import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
@@ -30,6 +28,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Wether the keyboard shortcuts are enabled or not.
      */
     keyboardShortcutsEnabled: boolean;
+
+    /**
+     * The keyboard shortcuts descriptions.
+     */
+    keyboardShortcutsHelpDescriptions: Map<string, string>;
 }
 
 const styles = (theme: Theme) => {
@@ -145,11 +148,12 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
         const {
             classes,
             displayShortcuts,
+            keyboardShortcutsHelpDescriptions,
             keyboardShortcutsEnabled,
             t
         } = this.props;
         const shortcutDescriptions: Map<string, string> = displayShortcuts
-            ? keyboardShortcut.getShortcutsDescriptions()
+            ? keyboardShortcutsHelpDescriptions
             : new Map();
 
         return (

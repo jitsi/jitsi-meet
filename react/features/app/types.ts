@@ -43,6 +43,7 @@ import { IGifsState } from '../gifs/reducer';
 import { IGoogleApiState } from '../google-api/reducer';
 import { IInviteState } from '../invite/reducer';
 import { IJaaSState } from '../jaas/reducer';
+import { IKeyboardShortcutsState } from '../keyboard-shortcuts/types';
 import { ILargeVideoState } from '../large-video/reducer';
 import { ILobbyState } from '../lobby/reducer';
 import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
@@ -133,6 +134,7 @@ export interface IReduxState {
     'features/google-api': IGoogleApiState;
     'features/invite': IInviteState;
     'features/jaas': IJaaSState;
+    'features/keyboard-shortcuts': IKeyboardShortcutsState;
     'features/large-video': ILargeVideoState;
     'features/lobby': ILobbyState;
     'features/mobile/audio-mode': IMobileAudioModeState;

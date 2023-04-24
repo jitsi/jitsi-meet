@@ -698,9 +698,6 @@ export function resume() {
 
         logger.log('Resuming remote control controller.');
 
-        // FIXME: Once the keyboard shortcuts are using react/redux.
-        APP.keyboardshortcut.enable(false);
-
         area.mousemove((event: React.MouseEvent) => {
             dispatch(mouseMoved(event));
         });
@@ -746,9 +743,6 @@ export function pause() {
         }
 
         logger.log('Pausing remote control controller.');
-
-        // FIXME: Once the keyboard shortcuts are using react/redux.
-        APP.keyboardshortcut.enable(true);
 
         const area = getRemoteConrolEventCaptureArea();
 

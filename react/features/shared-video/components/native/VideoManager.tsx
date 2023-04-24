@@ -1,4 +1,3 @@
-// @ts-expect-error
 import Logger from '@jitsi/logger';
 import React, { RefObject } from 'react';
 import Video from 'react-native-video';
