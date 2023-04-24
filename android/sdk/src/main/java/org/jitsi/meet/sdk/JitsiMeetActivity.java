@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -298,6 +299,7 @@ public class JitsiMeetActivity extends AppCompatActivity
         JitsiMeetActivityDelegate.requestPermissions(this, permissions, requestCode, listener);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
