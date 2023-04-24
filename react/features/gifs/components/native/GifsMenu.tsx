@@ -1,4 +1,4 @@
-import { GiphyContent, GiphyGridView, GiphyMediaType } from '@giphy/react-native-sdk';
+import { GiphyContent, GiphyGridView, GiphyMediaType, GiphyRating } from '@giphy/react-native-sdk';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import Input from '../../../base/ui/components/native/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { formatGifUrlMessage, getGifRating, getGifUrl, getGiphyProxyUrl } from '../../functions';
+import { formatGifUrlMessage, getGifRating, getGifUrl, getGiphyProxyUrl } from '../../functions.native';
 
 import GifsMenuFooter from './GifsMenuFooter';
 import styles from './styles';
@@ -18,7 +18,7 @@ const GifsMenu = () => {
     const [ searchQuery, setSearchQuery ] = useState('');
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const rating = useSelector(getGifRating);
+    const rating = useSelector(getGifRating) as GiphyRating;
     const proxyUrl = useSelector(getGiphyProxyUrl);
 
     const options = {

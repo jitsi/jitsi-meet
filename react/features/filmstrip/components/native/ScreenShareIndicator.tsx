@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { IconScreenshare } from '../../../base/icons/svg';

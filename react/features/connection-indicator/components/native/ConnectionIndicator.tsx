@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
@@ -12,12 +10,10 @@ import {
     getParticipantById,
     isScreenShareParticipant
 } from '../../../base/participants/functions';
-// @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 import {
     getTrackByMediaTypeAndParticipant
 } from '../../../base/tracks/functions.native';
-// @ts-ignore
 import indicatorStyles from '../../../filmstrip/components/native/styles';
 import {
     isTrackStreamingStatusInactive,
@@ -50,12 +46,12 @@ type IProps = AbstractProps & {
     /**
      * Whether the connection is inactive or not.
      */
-    _isConnectionStatusInactive: boolean;
+    _isConnectionStatusInactive?: boolean;
 
     /**
      * Whether the connection is interrupted or not.
      */
-    _isConnectionStatusInterrupted: boolean;
+    _isConnectionStatusInterrupted?: boolean;
 
     /**
      * Whether the current participant is a virtual screenshare.
@@ -70,7 +66,7 @@ type IProps = AbstractProps & {
     /**
      * Icon style override.
      */
-    iconStyle: any;
+    iconStyle?: any;
 };
 
 type IState = {
@@ -127,12 +123,10 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
             _isVirtualScreenshareParticipant,
             _isConnectionStatusInactive,
             _isConnectionStatusInterrupted
-            // @ts-ignore
         } = this.props;
         const {
             showIndicator,
             stats
-            // @ts-ignore
         } = this.state;
         const { percent } = stats;
 
@@ -167,10 +161,8 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
                     indicatorStyles.indicatorContainer as StyleProp<ViewStyle>,
                     { backgroundColor: indicatorColor }
                 ] }>
-                {/* @ts-ignore */}
                 <BaseIndicator
                     icon = { IconConnection }
-                    // @ts-ignore
                     iconStyle = { this.props.iconStyle || iconStyle } />
             </View>
         );
@@ -185,7 +177,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
  * @param {IProps} ownProps - The own props of the component.
  * @returns {IProps}
  */
-export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantId } = ownProps;
     const tracks = state['features/base/tracks'];
     const participant = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
@@ -212,5 +204,4 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     };
 }
 
-// @ts-ignore
 export default connect(_mapStateToProps)(ConnectionIndicator);

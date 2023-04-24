@@ -48,7 +48,7 @@ export interface IProps {
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */
-    style?: StyleType;
+    style?: StyleType | StyleType[];
 
     tabIndex?: number;
 

@@ -1,12 +1,11 @@
-// @flow
-
 import React from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IconRaiseHand } from '../../../base/icons/svg';
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 import AbstractRaisedHandIndicator, {
+    IProps,
     _mapStateToProps
 } from '../AbstractRaisedHandIndicator';
 
@@ -18,7 +17,7 @@ import styles from './styles';
  *
  * @augments Component
  */
-class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
+class RaisedHandIndicator extends AbstractRaisedHandIndicator<IProps> {
     /**
      * Renders the platform specific indicator element.
      *
@@ -26,7 +25,7 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
      */
     _renderIndicator() {
         return (
-            <View style = { styles.raisedHandIndicator }>
+            <View style = { styles.raisedHandIndicator as ViewStyle }>
                 <BaseIndicator
                     icon = { IconRaiseHand }
                     iconStyle = { styles.raisedHandIcon } />

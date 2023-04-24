@@ -1,16 +1,17 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import {
     FlatList,
+    GestureResponderEvent,
     SafeAreaView,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    ViewToken
 } from 'react-native';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants/functions';
+import { ILocalParticipant } from '../../../base/participants/types';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { setVisibleRemoteParticipants } from '../../actions.web';
 
@@ -20,74 +21,74 @@ import styles from './styles';
 /**
  * The type of the React {@link Component} props of {@link TileView}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Application's aspect ratio.
      */
-    _aspectRatio: Symbol,
+    _aspectRatio: Symbol;
 
     /**
      * The number of columns.
      */
-    _columns: number,
+    _columns: number;
 
     /**
      * Whether or not to hide the self view.
      */
-    _disableSelfView: boolean,
+    _disableSelfView: boolean;
 
     /**
      * Application's viewport height.
      */
-    _height: number,
+    _height: number;
 
     /**
      * The local participant.
      */
-    _localParticipant: Object,
+    _localParticipant?: ILocalParticipant;
 
     /**
      * The number of participants in the conference.
      */
-    _participantCount: number,
+    _participantCount: number;
 
     /**
      * An array with the IDs of the remote participants in the conference.
      */
-    _remoteParticipants: Array<string>,
+    _remoteParticipants: Array<string>;
 
     /**
      * The thumbnail height.
      */
-    _thumbnailHeight: number,
+    _thumbnailHeight?: number;
 
     /**
      * Application's viewport height.
      */
-    _width: number,
+    _width: number;
 
     /**
      * Invoked to update the receiver video quality.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
      * Object containing the safe area insets.
      */
-    insets: Object,
+    insets: EdgeInsets;
 
     /**
      * Callback to invoke when tile view is tapped.
      */
-    onClick: Function
-};
+    onClick: (e?: GestureResponderEvent) => void;
+}
 
 /**
  * An empty array. The purpose of the constant is to use the same reference every time we need an empty array.
  * This will prevent unnecessary re-renders.
  */
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: any[] = [];
 
 /**
  * Implements a React {@link PureComponent} which displays thumbnails in a two
@@ -95,17 +96,17 @@ const EMPTY_ARRAY = [];
  *
  * @augments PureComponent
  */
-class TileView extends PureComponent<Props> {
+class TileView extends PureComponent<IProps> {
 
     /**
      * The styles for the content container of the FlatList.
      */
-    _contentContainerStyles: Object;
+    _contentContainerStyles: any;
 
     /**
      * The styles for the FlatList.
      */
-    _flatListStyles: Object;
+    _flatListStyles: any;
 
     /**
      * The FlatList's viewabilityConfig.
@@ -115,9 +116,9 @@ class TileView extends PureComponent<Props> {
     /**
      * Creates new TileView component.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._keyExtractor = this._keyExtractor.bind(this);
@@ -137,19 +138,15 @@ class TileView extends PureComponent<Props> {
         };
     }
 
-    _keyExtractor: string => string;
-
     /**
      * Returns a key for a passed item of the list.
      *
      * @param {string} item - The user ID.
      * @returns {string} - The user ID.
      */
-    _keyExtractor(item) {
+    _keyExtractor(item: string) {
         return item;
     }
-
-    _onViewableItemsChanged: Object => void;
 
     /**
      * A handler for visible items changes.
@@ -158,7 +155,7 @@ class TileView extends PureComponent<Props> {
      * @param {Array<Object>} data.viewableItems - The visible items array.
      * @returns {void}
      */
-    _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: Array<Object> }) {
+    _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: ViewToken[]; }) {
         const { _disableSelfView } = this.props;
 
         if (viewableItems[0]?.index === 0 && !_disableSelfView) {
@@ -172,8 +169,8 @@ class TileView extends PureComponent<Props> {
         }
 
         // We are off by one in the remote participants array.
-        const startIndex = viewableItems[0].index - (_disableSelfView ? 0 : 1);
-        const endIndex = viewableItems[viewableItems.length - 1].index - (_disableSelfView ? 0 : 1);
+        const startIndex = Number(viewableItems[0].index) - (_disableSelfView ? 0 : 1);
+        const endIndex = Number(viewableItems[viewableItems.length - 1].index) - (_disableSelfView ? 0 : 1);
 
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
@@ -187,7 +184,7 @@ class TileView extends PureComponent<Props> {
     render() {
         const { _columns, _height, _thumbnailHeight, _width, onClick } = this.props;
         const participants = this._getSortedParticipants();
-        const initialRowsToRender = Math.ceil(_height / (_thumbnailHeight + (2 * styles.thumbnail.margin)));
+        const initialRowsToRender = Math.ceil(_height / (Number(_thumbnailHeight) + (2 * styles.thumbnail.margin)));
 
         if (this._flatListStyles.minHeight !== _height || this._flatListStyles.minWidth !== _width) {
             this._flatListStyles = {
@@ -250,15 +247,13 @@ class TileView extends PureComponent<Props> {
         return [ _localParticipant?.id, ..._remoteParticipants ];
     }
 
-    _renderThumbnail: Object => Object;
-
     /**
      * Creates React Element to display each participant in a thumbnail.
      *
      * @private
      * @returns {ReactElement}
      */
-    _renderThumbnail({ item/* , index , separators */ }) {
+    _renderThumbnail({ item }: { item: string; }) {
         const { _thumbnailHeight } = this.props;
 
         return (
@@ -278,18 +273,18 @@ class TileView extends PureComponent<Props> {
  * @param {Object} state - The redux state.
  * @param {Object} ownProps - Component props.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const responsiveUi = state['features/base/responsive-ui'];
     const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
     const disableSelfView = getHideSelfView(state);
-    const { height } = tileViewDimensions.thumbnailSize;
-    const { columns } = tileViewDimensions;
+    const { height } = tileViewDimensions?.thumbnailSize ?? {};
+    const { columns } = tileViewDimensions ?? {};
 
     return {
         _aspectRatio: responsiveUi.aspectRatio,
-        _columns: columns,
+        _columns: columns ?? 1,
         _disableSelfView: disableSelfView,
         _height: responsiveUi.clientHeight - (ownProps.insets?.top || 0),
         _insets: ownProps.insets,

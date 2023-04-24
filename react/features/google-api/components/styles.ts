@@ -1,5 +1,3 @@
-// @flow
-
 import { createStyleSheet } from '../../base/styles/functions.any';
 
 /**
