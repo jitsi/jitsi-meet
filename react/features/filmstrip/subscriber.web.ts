@@ -106,10 +106,8 @@ StateListenerRegistry.register(
         const { innerWidth, innerHeight } = window;
 
         if (isChatOpen) {
-            // $FlowFixMe
             document.body.classList.add('shift-right');
         } else {
-            // $FlowFixMe
             document.body.classList.remove('shift-right');
         }
 

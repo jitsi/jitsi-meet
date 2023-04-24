@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Type of action which sets the current state of screen audio sharing.
  *

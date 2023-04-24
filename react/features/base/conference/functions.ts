@@ -159,7 +159,6 @@ export function forEachConference(
         // Does the value of the base/conference's property look like a
         // JitsiConference?
         if (v && typeof v === 'object') {
-            // $FlowFixMe
             const url: URL = v[JITSI_CONFERENCE_URL_KEY];
 
             // XXX The Web version of Jitsi Meet does not utilize

@@ -61,6 +61,5 @@ export function isScreenVideoShared(state: IReduxState) {
     }
     const localVideo = getLocalVideoTrack(tracks);
 
-    // $FlowFixMe - No support for optional chain method calls in flow atm.
     return localVideo?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP;
 }
