@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 // @ts-expect-error
-import { API_ID } from '../../../modules/API';
+import { API_ID } from '../../../modules/API/constants';
 import { appNavigate } from '../app/actions';
 import { redirectToStaticPage } from '../app/actions.any';
 import { IReduxState, IStore } from '../app/types';
