@@ -43,7 +43,7 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
      * @returns {void}
      */
     _onKeyPress(event?: React.KeyboardEvent) {
-        if (event?.key === 'Enter' || event?.key === ' ') {
+        if (event?.key === 'Enter') {
             event.preventDefault();
             this.props.onClick();
         }
