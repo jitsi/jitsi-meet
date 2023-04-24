@@ -1,5 +1,5 @@
 import { withStyles } from '@mui/styles';
-import React, { Component } from 'react';
+import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
@@ -359,6 +359,8 @@ const styles = () => {
  * @augments Component
  */
 class Toolbox extends Component<IProps> {
+    _toolboxRef: RefObject<HTMLDivElement>;
+
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -367,6 +369,8 @@ class Toolbox extends Component<IProps> {
      */
     constructor(props: IProps) {
         super(props);
+
+        this._toolboxRef = React.createRef();
 
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
@@ -506,7 +510,6 @@ class Toolbox extends Component<IProps> {
     componentDidUpdate(prevProps: IProps) {
         const { _dialog, _visible, dispatch } = this.props;
 
-
         if (prevProps._overflowMenuVisible
             && !prevProps._dialog
             && _dialog) {
@@ -518,6 +521,13 @@ class Toolbox extends Component<IProps> {
             && !_visible) {
             this._onSetHangupVisible(false);
             dispatch(setToolbarHovered(false));
+        }
+
+        if (!_visible && prevProps._visible !== _visible) {
+            if (document.activeElement instanceof HTMLElement
+                && this._toolboxRef.current?.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
         }
     }
 
@@ -1415,7 +1425,9 @@ class Toolbox extends Component<IProps> {
                         onMouseOver: this._onMouseOver
                     }) }>
 
-                    <div className = 'toolbox-content-items'>
+                    <div
+                        className = 'toolbox-content-items'
+                        ref = { this._toolboxRef }>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
                                 { ...rest }
