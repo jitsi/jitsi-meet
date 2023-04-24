@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of (redux) action which signals that local media duration has changed.
  *

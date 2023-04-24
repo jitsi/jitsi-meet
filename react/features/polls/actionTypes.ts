@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of the action which signals that a Poll will be changed
  *

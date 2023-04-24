@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The size of the chat.
  */
