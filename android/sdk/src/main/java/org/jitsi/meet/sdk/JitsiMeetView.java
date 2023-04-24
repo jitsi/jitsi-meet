@@ -158,6 +158,14 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Internal method which aborts running RN by passing empty props.
+     * This is only meant to be used from the enclosing Activity's onDestroy.
+     */
+    public void abort() {
+        setProps(new Bundle());
+    }
+
+    /**
      * Creates the {@code ReactRootView} for the given app name with the given
      * props. Once created it's set as the view of this {@code FrameLayout}.
      *
