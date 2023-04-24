@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -227,11 +226,9 @@ class ReactInstanceManagerHolder {
      * time. All {@code ReactRootView} instances will be tied to the one and
      * only {@code ReactInstanceManager}.
      *
-     * This method is only meant to be called when integrating with {@code JitsiReactNativeHost}.
-     *
-     * @param app {@code Application} current running Application.
+     * @param activity {@code Activity} current running Activity.
      */
-    static void initReactInstanceManager(Application app) {
+    static void initReactInstanceManager(Activity activity) {
         if (reactInstanceManager != null) {
             return;
         }
@@ -244,34 +241,7 @@ class ReactInstanceManagerHolder {
         options.videoDecoderFactory = new H264AndSoftwareVideoDecoderFactory(eglContext);
         options.videoEncoderFactory = new H264AndSoftwareVideoEncoderFactory(eglContext);
 
-        Log.d(TAG, "initializing RN with Application");
-
-        reactInstanceManager
-            = ReactInstanceManager.builder()
-                .setApplication(app)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index.android")
-                .setJavaScriptExecutorFactory(getReactNativeJSFactory())
-                .addPackages(getReactNativePackages())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
-                .build();
-    }
-
-    /**
-     * Internal method to initialize the React Native instance manager. We
-     * create a single instance in order to load the JavaScript bundle a single
-     * time. All {@code ReactRootView} instances will be tied to the one and
-     * only {@code ReactInstanceManager}.
-     *
-     * @param activity {@code Activity} current running Activity.
-     */
-    static void initReactInstanceManager(Activity activity) {
-        if (reactInstanceManager != null) {
-            return;
-        }
-
-        Log.d(ReactInstanceManagerHolder.class.getCanonicalName(), "initializing RN with Activity");
+        Log.d(TAG, "initializing RN with Activity");
 
         reactInstanceManager
             = ReactInstanceManager.builder()
