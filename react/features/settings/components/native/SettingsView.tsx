@@ -286,6 +286,7 @@ class SettingsView extends Component<IProps, IState> {
         return (
             <JitsiScreen
                 disableForcedKeyboardDismiss = { true }
+                // @ts-ignore
                 safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) }
                 style = { styles.settingsViewContainer }>
                 <ScrollView bounces = { scrollBounces }>

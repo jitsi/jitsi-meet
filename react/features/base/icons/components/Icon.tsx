@@ -90,7 +90,7 @@ interface IProps extends IIconProps {
     /**
      * Style object to be applied.
      */
-    style?: StyleType;
+    style?: StyleType | StyleType[];
 
     /**
      * TabIndex  for the Icon.

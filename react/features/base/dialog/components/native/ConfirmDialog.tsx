@@ -19,7 +19,7 @@ interface IProps extends AbstractProps, WithTranslation {
     /**
      * The i18n key of the text label for the cancel button.
      */
-    cancelLabel: string;
+    cancelLabel?: string;
 
     /**
      * The React {@code Component} children.
@@ -29,7 +29,7 @@ interface IProps extends AbstractProps, WithTranslation {
     /**
      * The i18n key of the text label for the confirm button.
      */
-    confirmLabel: string;
+    confirmLabel?: string;
 
     /**
      * Dialog description key for translations.
