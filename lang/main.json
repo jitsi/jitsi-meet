@@ -675,6 +675,7 @@
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
         "dataChannelClosed": "Video quality impaired",
         "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
+        "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disconnected": "disconnected",
         "displayNotifications": "Display notifications for",
         "dontRemindMe": "Do not remind me",

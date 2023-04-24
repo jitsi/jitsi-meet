@@ -1,8 +1,11 @@
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 
+// @ts-expect-error
+import { API_ID } from '../../../modules/API/constants';
 import { appNavigate } from '../app/actions';
-import { IStore } from '../app/types';
+import { redirectToStaticPage } from '../app/actions.any';
+import { IReduxState, IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -15,16 +18,19 @@ import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import { browser } from '../base/lib-jitsi-meet';
 import { pinParticipant } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
+import { inIframe } from '../base/util/iframeUtils';
 import { isCalendarEnabled } from '../calendar-sync/functions';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
+import { isVpaasMeeting } from '../jaas/functions';
 import { hideNotification, showNotification } from '../notifications/actions';
 import {
     CALENDAR_NOTIFICATION_ID,
@@ -36,6 +42,7 @@ import { setToolboxEnabled } from '../toolbox/actions.any';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
 import { dismissCalendarNotification, notifyKickedOut } from './actions';
+import { IFRAME_DISABLED_TIMEOUT_MINUTES, IFRAME_EMBED_ALLOWED_LOCATIONS } from './constants';
 
 
 let intervalID: any;
@@ -155,6 +162,44 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
     }
 
     dispatch(showSalesforceNotification());
+    _checkIframe(getState(), dispatch);
+}
+
+/**
+ * Additional checks for embedding in iframe.
+ *
+ * @param {IReduxState} state - The current state of the app.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
+ */
+function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
+    let allowIframe = false;
+
+    if (document.referrer === '') {
+        // no iframe
+        allowIframe = true;
+    } else {
+        try {
+            allowIframe = IFRAME_EMBED_ALLOWED_LOCATIONS.includes(new URL(document.referrer).hostname);
+        } catch (e) {
+            // wrong URL in referrer
+        }
+    }
+
+    if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
+        && !isVpaasMeeting(state) && !allowIframe) {
+        // show sticky notification and redirect in 5 minutes
+        dispatch(showNotification({
+            descriptionKey: 'notify.disabledIframe',
+            descriptionArguments: { timeout: IFRAME_DISABLED_TIMEOUT_MINUTES }
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+        setTimeout(() => {
+            // redirect to the promotional page
+            dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
+        }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+    }
 }
 
 /**
