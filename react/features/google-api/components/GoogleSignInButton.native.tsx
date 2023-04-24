@@ -1,13 +1,11 @@
-// @flow
-
-import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { GestureResponderEvent, Image, ImageStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { translate } from '../../base/i18n/functions';
 import Button from '../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
 
-import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 import styles from './styles';
 
 // eslint-disable-next-line
@@ -21,12 +19,31 @@ const GOOGLE_BRAND_IMAGE = require('../../../../images/btn_google_signin_dark_no
  * this way), hence the custom button implementation.
  */
 
+interface IProps extends WithTranslation {
+
+    /**
+     * The callback to invoke when the button is clicked.
+     */
+    onClick: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+
+    /**
+     * True if the user is signed in, so it needs to render a different label
+     * and maybe different style (for the future).
+     */
+    signedIn?: boolean;
+
+    /**
+     * The text to display within {@code GoogleSignInButton}.
+     */
+    text?: string;
+}
+
 /**
  * A React Component showing a button to sign in with Google.
  *
  * @augments Component
  */
-class GoogleSignInButton extends AbstractGoogleSignInButton {
+class GoogleSignInButton extends Component<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -51,11 +68,11 @@ class GoogleSignInButton extends AbstractGoogleSignInButton {
         return (
             <TouchableOpacity
                 onPress = { onClick }
-                style = { styles.signInButton } >
+                style = { styles.signInButton as ViewStyle } >
                 <Image
                     resizeMode = { 'contain' }
                     source = { GOOGLE_BRAND_IMAGE }
-                    style = { styles.signInImage } />
+                    style = { styles.signInImage as ImageStyle } />
             </TouchableOpacity>
         );
     }

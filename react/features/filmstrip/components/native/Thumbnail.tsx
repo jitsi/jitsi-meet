@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Image, View } from 'react-native';
+import { Image, ImageStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
@@ -18,14 +18,16 @@ import {
 } from '../../../base/participants/functions';
 import { FakeParticipant } from '../../../base/participants/types';
 import Container from '../../../base/react/components/native/Container';
+import { StyleType } from '../../../base/styles/functions.any';
 import { trackStreamingStatusChanged } from '../../../base/tracks/actions.native';
 import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions.native';
+import { ITrack } from '../../../base/tracks/types';
 import ConnectionIndicator from '../../../connection-indicator/components/native/ConnectionIndicator';
 import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
-import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
+import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions.native';
 import {
     showConnectionStatus,
     showContextMenuDetails,
@@ -44,42 +46,42 @@ import styles, { AVATAR_SIZE } from './styles';
 /**
  * Thumbnail component's property types.
  */
-type Props = {
+interface IProps {
 
     /**
      * Whether local audio (microphone) is muted or not.
      */
-    _audioMuted: boolean,
-
-    /**
-     * URL of GIF sent by this participant, null if there's none.
-     */
-    _gifSrc: ?string,
+    _audioMuted: boolean;
 
     /**
      * The type of participant if the participant is fake.
      */
-    _fakeParticipant?: FakeParticipant,
+    _fakeParticipant?: FakeParticipant;
+
+    /**
+     * URL of GIF sent by this participant, null if there's none.
+     */
+    _gifSrc?: string;
 
     /**
      * Indicates whether the participant is screen sharing.
      */
-    _isScreenShare: boolean,
+    _isScreenShare: boolean;
 
     /**
      * Indicates whether the thumbnail is for a virtual screenshare participant.
      */
-    _isVirtualScreenshare: boolean,
+    _isVirtualScreenshare: boolean;
 
     /**
      * Indicates whether the participant is local.
      */
-    _local: boolean,
+    _local?: boolean;
 
     /**
      * Shared video local participant owner.
      */
-    _localVideoOwner: boolean,
+    _localVideoOwner: boolean;
 
     /**
      * The ID of the participant obtain from the participant object in Redux.
@@ -87,79 +89,77 @@ type Props = {
      * NOTE: Generally it should be the same as the participantID prop except the case where the passed
      * participantID doesn't correspond to any of the existing participants.
      */
-    _participantId: string,
+    _participantId: string;
 
     /**
      * Indicates whether the participant is pinned or not.
      */
-    _pinned: boolean,
+    _pinned?: boolean;
 
     /**
      * Whether or not the participant has the hand raised.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * Whether to show the dominant speaker indicator or not.
      */
-    _renderDominantSpeakerIndicator: boolean,
+    _renderDominantSpeakerIndicator?: boolean;
 
     /**
      * Whether to show the moderator indicator or not.
      */
-    _renderModeratorIndicator: boolean,
+    _renderModeratorIndicator: boolean;
 
     /**
      * The video track that will be displayed in the thumbnail.
      */
-    _videoTrack: ?Object,
+    _videoTrack?: ITrack;
 
     /**
      * Invoked to trigger state changes in Redux.
      */
-    dispatch: Dispatch<any>,
+    dispatch: IStore['dispatch'];
 
     /**
-     * The height of the thumnail.
+     * The height of the thumbnail.
      */
-    height: ?number,
+    height?: number;
 
     /**
      * The ID of the participant related to the thumbnail.
      */
-    participantID: ?string,
+    participantID?: string;
 
     /**
      * Whether to display or hide the display name of the participant in the thumbnail.
      */
-    renderDisplayName: ?boolean,
+    renderDisplayName?: boolean;
 
     /**
      * If true, it tells the thumbnail that it needs to behave differently. E.g. React differently to a single tap.
      */
-    tileView?: boolean
-};
+    tileView?: boolean;
+}
 
 /**
  * React component for video thumbnail.
  */
-class Thumbnail extends PureComponent<Props> {
+class Thumbnail extends PureComponent<IProps> {
 
     /**
      * Creates new Thumbnail component.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      * @returns {Thumbnail}
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onClick = this._onClick.bind(this);
         this._onThumbnailLongPress = this._onThumbnailLongPress.bind(this);
         this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
     }
-
-    _onClick: () => void;
 
     /**
      * Thumbnail click handler.
@@ -175,8 +175,6 @@ class Thumbnail extends PureComponent<Props> {
             dispatch(pinParticipant(_pinned ? null : _participantId));
         }
     }
-
-    _onThumbnailLongPress: () => void;
 
     /**
      * Thumbnail long press handler.
@@ -219,11 +217,11 @@ class Thumbnail extends PureComponent<Props> {
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
                 key = 'top-left-indicators'
-                style = { styles.thumbnailTopLeftIndicatorContainer }>
+                style = { styles.thumbnailTopLeftIndicatorContainer as ViewStyle }>
                 { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
                 { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
                 { tileView && (isScreenShare || _isVirtualScreenshare) && (
-                    <View style = { styles.screenShareIndicatorContainer }>
+                    <View style = { styles.screenShareIndicatorContainer as ViewStyle }>
                         <ScreenShareIndicator />
                     </View>
                 ) }
@@ -231,7 +229,9 @@ class Thumbnail extends PureComponent<Props> {
             indicators.push(<Container
                 key = 'bottom-indicators'
                 style = { styles.thumbnailIndicatorContainer }>
-                <Container style = { (audioMuted || renderModeratorIndicator) && styles.bottomIndicatorsContainer }>
+                <Container
+                    style = { ((audioMuted || renderModeratorIndicator) && styles.bottomIndicatorsContainer
+                        ) as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
@@ -275,7 +275,7 @@ class Thumbnail extends PureComponent<Props> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: IProps) {
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
         const { _videoTrack, dispatch } = this.props;
@@ -323,7 +323,7 @@ class Thumbnail extends PureComponent<Props> {
      * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
      * @returns {void}
      */
-    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
+    handleTrackStreamingStatusChanged(jitsiTrack: any, streamingStatus: string) {
         this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     }
 
@@ -363,11 +363,11 @@ class Thumbnail extends PureComponent<Props> {
                     styleOverrides,
                     _raisedHand && !_isVirtualScreenshare ? styles.thumbnailRaisedHand : null,
                     _renderDominantSpeakerIndicator && !_isVirtualScreenshare ? styles.thumbnailDominantSpeaker : null
-                ] }
+                ] as StyleType[] }
                 touchFeedback = { false }>
                 { _gifSrc ? <Image
                     source = {{ uri: _gifSrc }}
-                    style = { styles.thumbnailGif } />
+                    style = { styles.thumbnailGif as ImageStyle } />
                     : <>
                         <ParticipantView
                             avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
@@ -388,36 +388,36 @@ class Thumbnail extends PureComponent<Props> {
  * Function that maps parts of Redux state tree into component props.
  *
  * @param {Object} state - Redux state.
- * @param {Props} ownProps - Properties of component.
+ * @param {IProps} ownProps - Properties of component.
  * @returns {Object}
  */
-function _mapStateToProps(state, ownProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { ownerId } = state['features/shared-video'];
     const tracks = state['features/base/tracks'];
     const { participantID, tileView } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const localParticipantId = getLocalParticipant(state).id;
+    const localParticipantId = getLocalParticipant(state)?.id;
     const id = participant?.id;
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack = getVideoTrackByParticipant(state, participant);
     const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
-    const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
+    const renderDominantSpeakerIndicator = participant?.dominantSpeaker && participantCount > 2;
     const _isEveryoneModerator = isEveryoneModerator(state);
     const renderModeratorIndicator = tileView && !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
-    const { gifUrl: gifSrc } = getGifForParticipant(state, id);
+    const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
         _fakeParticipant: participant?.fakeParticipant,
-        _gifSrc: mode === 'chat' ? null : gifSrc,
+        _gifSrc: mode === 'chat' ? undefined : gifSrc,
         _isScreenShare: isScreenShare,
         _isVirtualScreenshare: isScreenShareParticipant(participant),
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
-        _participantId: id,
+        _participantId: id ?? '',
         _pinned: participant?.pinned,
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,

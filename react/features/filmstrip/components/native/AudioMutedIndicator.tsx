@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import { IconMicSlash } from '../../../base/icons/svg';

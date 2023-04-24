@@ -1,10 +1,9 @@
-// @flow
-
 import React, { PureComponent } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, ViewStyle, ViewToken } from 'react-native';
 import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import Platform from '../../../base/react/Platform.native';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -24,54 +23,54 @@ import styles from './styles';
 
 
 // Immutable reference to avoid re-renders.
-const NO_REMOTE_VIDEOS = [];
+const NO_REMOTE_VIDEOS: any[] = [];
 
 /**
  * Filmstrip component's property types.
  */
-type Props = {
+interface IProps {
 
     /**
      * Application's aspect ratio.
      */
-    _aspectRatio: Symbol,
+    _aspectRatio: Symbol;
 
-    _clientWidth: number,
+    _clientHeight: number;
 
-    _clientHeight: number,
+    _clientWidth: number;
 
     /**
      * Whether or not to hide the self view.
      */
-    _disableSelfView: boolean,
+    _disableSelfView: boolean;
 
-    /**
-     * Whether or not the toolbox is displayed.
-     */
-    _toolboxVisible: Boolean,
-
-    _localParticipantId: string,
+    _localParticipantId: string;
 
     /**
      * The participants in the conference.
      */
-    _participants: Array<any>,
+    _participants: Array<any>;
+
+    /**
+     * Whether or not the toolbox is displayed.
+     */
+    _toolboxVisible: Boolean;
 
     /**
      * The indicator which determines whether the filmstrip is visible.
      */
-    _visible: boolean,
+    _visible: boolean;
 
     /**
      * Invoked to trigger state changes in Redux.
      */
-    dispatch: Function,
+    dispatch: IStore['dispatch'];
 
     /**
      * Object containing the safe area insets.
      */
-    insets: Object,
-};
+    insets: Object;
+}
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on
@@ -79,7 +78,7 @@ type Props = {
  *
  * @augments Component
  */
-class Filmstrip extends PureComponent<Props> {
+class Filmstrip extends PureComponent<IProps> {
     /**
      * Whether the local participant should be rendered separately from the
      * remote participants ie outside of their {@link ScrollView}.
@@ -96,7 +95,7 @@ class Filmstrip extends PureComponent<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         // XXX Our current design is to have the local participant separate from
@@ -129,15 +128,13 @@ class Filmstrip extends PureComponent<Props> {
         this._renderThumbnail = this._renderThumbnail.bind(this);
     }
 
-    _keyExtractor: string => string;
-
     /**
      * Returns a key for a passed item of the list.
      *
      * @param {string} item - The user ID.
      * @returns {string} - The user ID.
      */
-    _keyExtractor(item) {
+    _keyExtractor(item: string) {
         return item;
     }
 
@@ -166,16 +163,14 @@ class Filmstrip extends PureComponent<Props> {
         });
     }
 
-    _getItemLayout: (?Array<string>, number) => {length: number, offset: number, index: number};
-
     /**
      * Optimization for FlatList. Returns the length, offset and index for an item.
      *
-     * @param {Array<string>} data - The data array with user IDs.
+     * @param {Array<string>} _data - The data array with user IDs.
      * @param {number} index - The index number of the item.
      * @returns {Object}
      */
-    _getItemLayout(data, index) {
+    _getItemLayout(_data: string[] | null | undefined, index: number) {
         const { _aspectRatio } = this.props;
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const length = isNarrowAspectRatio ? styles.thumbnail.width : styles.thumbnail.height;
@@ -187,8 +182,6 @@ class Filmstrip extends PureComponent<Props> {
         };
     }
 
-    _onViewableItemsChanged: Object => void;
-
     /**
      * A handler for visible items changes.
      *
@@ -196,7 +189,7 @@ class Filmstrip extends PureComponent<Props> {
      * @param {Array<Object>} data.viewableItems - The visible items array.
      * @returns {void}
      */
-    _onViewableItemsChanged({ viewableItems = [] }) {
+    _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: ViewToken[]; }) {
         const { _disableSelfView } = this.props;
 
         if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
@@ -209,8 +202,8 @@ class Filmstrip extends PureComponent<Props> {
             return;
         }
 
-        let startIndex = viewableItems[0].index;
-        let endIndex = viewableItems[viewableItems.length - 1].index;
+        let startIndex = Number(viewableItems[0].index);
+        let endIndex = Number(viewableItems[viewableItems.length - 1].index);
 
         if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
@@ -221,15 +214,13 @@ class Filmstrip extends PureComponent<Props> {
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
 
-    _renderThumbnail: Object => Object;
-
     /**
      * Creates React Element to display each participant in a thumbnail.
      *
      * @private
      * @returns {ReactElement}
      */
-    _renderThumbnail({ item /* , index , separators */ }) {
+    _renderThumbnail({ item }: { item: string; }) {
         return (
             <Thumbnail
                 key = { item }
@@ -277,9 +268,9 @@ class Filmstrip extends PureComponent<Props> {
         }
 
         return (
-            <SafeAreaView
+            <SafeAreaView // @ts-ignore
                 edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }
-                style = { filmstripStyle }>
+                style = { filmstripStyle as ViewStyle }>
                 {
                     this._separateLocalThumbnail
                         && !isNarrowAspectRatio
@@ -317,9 +308,9 @@ class Filmstrip extends PureComponent<Props> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     const { enabled, remoteParticipants } = state['features/filmstrip'];
     const disableSelfView = getHideSelfView(state);
     const showRemoteVideos = shouldRemoteVideosBeVisible(state);
@@ -330,7 +321,7 @@ function _mapStateToProps(state) {
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
-        _localParticipantId: getLocalParticipant(state)?.id,
+        _localParticipantId: getLocalParticipant(state)?.id ?? '',
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)

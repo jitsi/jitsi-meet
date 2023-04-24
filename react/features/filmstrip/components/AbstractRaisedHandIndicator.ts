@@ -20,7 +20,7 @@ export interface IProps {
 /**
  * Implements an abstract class for the RaisedHandIndicator component.
  */
-export default class AbstractRaisedHandIndicator<P extends IProps>
+export default abstract class AbstractRaisedHandIndicator<P extends IProps>
     extends Component<P> {
 
     /**
@@ -41,7 +41,7 @@ export default class AbstractRaisedHandIndicator<P extends IProps>
      *
      * @returns {React$Element<*>}
      */
-    _renderIndicator: () => React.ReactElement;
+    abstract _renderIndicator(): React.ReactElement;
 
 }
 

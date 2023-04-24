@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { IconPin } from '../../../base/icons/svg';
