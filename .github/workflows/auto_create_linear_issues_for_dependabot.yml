@@ -1,0 +1,21 @@
+name: Automatically Create Linear issues for Dependabot alerts
+
+on:
+  schedule:
+    - cron: '37 2 * * 1-5'
+  pull_request: {}
+  workflow_dispatch:
+    inputs:
+      time_period: 
+        description: 'Time period for fetched alerts'
+        type: number
+        required: false
+        default: 4
+
+jobs:
+  call-process-dependabot-alerts:
+    uses: janeapp/reusable-workflows/.github/workflows/process-dependabot-alerts.yml@main
+    with:
+      repo_name: video-chat
+      time_period: ${{ inputs.time_period || 4 }}
+    secrets: inherit
