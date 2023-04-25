@@ -873,6 +873,7 @@
         "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
+        "unsafeRoomConsent": "I understand the risks, I want to join the meeting",
         "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
         "viewAllNumbers": "view all numbers"
