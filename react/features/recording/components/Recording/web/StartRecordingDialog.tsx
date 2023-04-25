@@ -109,11 +109,12 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
  * Maps redux state to component props.
  *
  * @param {Object} state - Redux state.
+ * @param {any} ownProps - Component's own props.
  * @returns {Object}
  */
-function mapStateToProps(state: IReduxState) {
+function mapStateToProps(state: IReduxState, ownProps: any) {
     return {
-        ...abstractMapStateToProps(state),
+        ...abstractMapStateToProps(state, ownProps),
         _screenshotCaptureEnabled: isScreenshotCaptureEnabled(state, true, false)
     };
 }

@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { createLiveStreamingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -10,7 +11,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
  * The type of the React {@code Component} props of
  * {@link AbstractStartLiveStreamDialog}.
  */
-export interface IProps {
+export interface IProps extends WithTranslation {
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -39,10 +40,7 @@ export interface IProps {
      */
     dispatch: Function;
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function;
+    navigation?: any;
 }
 
 /**

@@ -92,7 +92,7 @@ export interface IProps extends WithTranslation {
     /**
      * Whether or not we should only record the local streams.
      */
-    localRecordingOnlySelf: boolean;
+    localRecordingOnlySelf?: boolean;
 
     /**
      * The function will be called when there are changes related to the
@@ -103,7 +103,7 @@ export interface IProps extends WithTranslation {
     /**
      * Callback to change the local recording only self setting.
      */
-    onLocalRecordingSelfChange: () => void;
+    onLocalRecordingSelfChange?: () => void;
 
     /**
      * Callback to be invoked on sharing setting change.

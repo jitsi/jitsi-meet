@@ -1,11 +1,10 @@
-// @flow
-
 import React, { useCallback } from 'react';
 import { Image, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import { isGifEnabled } from '../../../gifs/functions';
+import { isGifEnabled } from '../../../gifs/functions.native';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { REACTIONS } from '../../constants';
@@ -16,18 +15,18 @@ import ReactionButton from './ReactionButton';
 /**
  * The type of the React {@code Component} props of {@link ReactionMenu}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Used to close the overflow menu after raise hand is clicked.
      */
-    onCancel: Function,
+    onCancel: Function;
 
     /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean
-};
+    overflowMenu: boolean;
+}
 
 /**
  * Animated reaction emoji.
@@ -37,8 +36,8 @@ type Props = {
 function ReactionMenu({
     onCancel,
     overflowMenu
-}: Props) {
-    const _styles = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
+}: IProps) {
+    const _styles: any = useSelector((state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox'));
     const gifEnabled = useSelector(isGifEnabled);
 
     const openGifMenu = useCallback(() => {
@@ -62,7 +61,7 @@ function ReactionMenu({
                         <ReactionButton
                             onClick = { openGifMenu }
                             styles = { _styles.reactionButton }>
-                            <Image
+                            <Image // @ts-ignore
                                 height = { 22 }
                                 source = { require('../../../../../images/GIPHY_icon.png') } />
                         </ReactionButton>

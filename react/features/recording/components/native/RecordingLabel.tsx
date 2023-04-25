@@ -1,11 +1,10 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import Label from '../../../base/label/components/native/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { StyleType } from '../../../base/styles/functions.any';
 import AbstractRecordingLabel, {
     _mapStateToProps
 } from '../AbstractRecordingLabel';
@@ -26,7 +25,7 @@ class RecordingLabel extends AbstractRecordingLabel {
      * @inheritdoc
      */
     _renderLabel() {
-        let status = 'on';
+        let status: 'on' | 'in_progress' | 'off' = 'on';
 
         switch (this.props._status) {
         case JitsiRecordingConstants.status.PENDING:
@@ -40,12 +39,10 @@ class RecordingLabel extends AbstractRecordingLabel {
         return (
             <Label
                 status = { status }
-                style = { styles.indicatorStyle }
-                text = { this.props.t(this._getLabelKey()) } />
+                style = { styles.indicatorStyle as StyleType }
+                text = { this.props.t(this._getLabelKey() ?? '') } />
         );
     }
-
-    _getLabelKey: () => ?string;
 }
 
 export default translate(connect(_mapStateToProps)(RecordingLabel));

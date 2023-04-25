@@ -1,18 +1,19 @@
-// @flow
-
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { WithTranslation } from 'react-i18next';
+import { Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
 import { translate } from '../../../../base/i18n/functions';
-import { StyleType } from '../../../../base/styles/functions.native';
 import { setGoogleAPIState } from '../../../../google-api/actions';
 import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.native';
 import {
     GOOGLE_API_STATES,
     GOOGLE_SCOPE_YOUTUBE
 } from '../../../../google-api/constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import googleApi from '../../../../google-api/googleApi.native';
 import logger from '../../../logger';
 
@@ -21,52 +22,47 @@ import styles from './styles';
 /**
  * Prop type of the component {@code GoogleSigninForm}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Style of the dialogs feature.
      */
-    _dialogStyles: StyleType,
+    _dialogStyles: any;
 
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * The current state of the Google api as defined in {@code constants.js}.
      */
-    googleAPIState: number,
+    googleAPIState: number;
 
     /**
      * The recently received Google response.
      */
-    googleResponse: Object,
+    googleResponse: any;
 
     /**
      * A callback to be invoked when an authenticated user changes, so
      * then we can get (or clear) the YouTube stream key.
      */
-    onUserChanged: Function,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function
-};
+    onUserChanged: Function;
+}
 
 /**
  * Class to render a google sign in form, or a google stream picker dialog.
  *
  * @augments Component
  */
-class GoogleSigninForm extends Component<Props> {
+class GoogleSigninForm extends Component<IProps> {
     /**
      * Instantiates a new {@code GoogleSigninForm} component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._logGoogleError = this._logGoogleError.bind(this);
@@ -86,7 +82,7 @@ class GoogleSigninForm extends Component<Props> {
                     scopes: [ GOOGLE_SCOPE_YOUTUBE ]
                 });
 
-                googleApi.signInSilently().then(response => {
+                googleApi.signInSilently().then((response: any) => {
                     this._setApiState(response
                         ? GOOGLE_API_STATES.SIGNED_IN
                         : GOOGLE_API_STATES.LOADED,
@@ -95,7 +91,7 @@ class GoogleSigninForm extends Component<Props> {
                     this._setApiState(GOOGLE_API_STATES.LOADED);
                 });
             })
-            .catch(error => {
+            .catch((error: Error) => {
                 this._logGoogleError(error);
                 this._setApiState(GOOGLE_API_STATES.NOT_AVAILABLE);
             });
@@ -109,9 +105,7 @@ class GoogleSigninForm extends Component<Props> {
     render() {
         const { _dialogStyles, t } = this.props;
         const { googleAPIState, googleResponse } = this.props;
-        const signedInUser = googleResponse
-            && googleResponse.user
-            && googleResponse.user.email;
+        const signedInUser = googleResponse?.user?.email;
 
         if (googleAPIState === GOOGLE_API_STATES.NOT_AVAILABLE
                 || googleAPIState === GOOGLE_API_STATES.NEEDS_LOADING
@@ -124,8 +118,8 @@ class GoogleSigninForm extends Component<Props> {
             : t('liveStreaming.signInCTA');
 
         return (
-            <View style = { styles.formWrapper }>
-                <View style = { styles.helpText }>
+            <View style = { styles.formWrapper as ViewStyle }>
+                <View style = { styles.helpText as ViewStyle }>
                     <Text
                         style = { [
                             _dialogStyles.text,
@@ -142,8 +136,6 @@ class GoogleSigninForm extends Component<Props> {
         );
     }
 
-    _logGoogleError: Object => void;
-
     /**
      * A helper function to log developer related errors.
      *
@@ -151,13 +143,11 @@ class GoogleSigninForm extends Component<Props> {
      * @param {Object} error - The error to be logged.
      * @returns {void}
      */
-    _logGoogleError(error) {
+    _logGoogleError(error: Error) {
         // NOTE: This is a developer error message, not intended for the
         // user to see.
         logger.error('Google API error. Possible cause: bad config.', error);
     }
-
-    _onGoogleButtonPress: () => void;
 
     /**
      * Callback to be invoked when the user presses the Google button,
@@ -169,15 +159,13 @@ class GoogleSigninForm extends Component<Props> {
     _onGoogleButtonPress() {
         const { googleResponse } = this.props;
 
-        if (googleResponse && googleResponse.user) {
+        if (googleResponse?.user) {
             // the user is signed in
             this._onSignOut();
         } else {
             this._onSignIn();
         }
     }
-
-    _onSignIn: () => void;
 
     /**
      * Initiates a sign in if the user is not signed in yet.
@@ -186,12 +174,10 @@ class GoogleSigninForm extends Component<Props> {
      * @returns {void}
      */
     _onSignIn() {
-        googleApi.signIn().then(response => {
+        googleApi.signIn().then((response: any) => {
             this._setApiState(GOOGLE_API_STATES.SIGNED_IN, response);
         }, this._logGoogleError);
     }
-
-    _onSignOut: () => void;
 
     /**
      * Initiates a sign out if the user is signed in.
@@ -200,7 +186,7 @@ class GoogleSigninForm extends Component<Props> {
      * @returns {void}
      */
     _onSignOut() {
-        googleApi.signOut().then(response => {
+        googleApi.signOut().then((response: any) => {
             this._setApiState(GOOGLE_API_STATES.LOADED, response);
         }, this._logGoogleError);
     }
@@ -213,7 +199,7 @@ class GoogleSigninForm extends Component<Props> {
      * @param {?Object} googleResponse - The response from the API.
      * @returns {void}
      */
-    _setApiState(apiState, googleResponse) {
+    _setApiState(apiState: number, googleResponse?: Object) {
         this.props.onUserChanged(googleResponse);
         this.props.dispatch(setGoogleAPIState(apiState, googleResponse));
     }
@@ -230,7 +216,7 @@ class GoogleSigninForm extends Component<Props> {
   *    googleResponse: Object
  * }}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     const { googleAPIState, googleResponse } = state['features/google-api'];
 
     return {

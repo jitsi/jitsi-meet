@@ -1,35 +1,34 @@
-// @flow
-
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import ExpandedLabel, { Props as AbstractProps } from '../../../base/label/components/native/ExpandedLabel';
+import ExpandedLabel, { IProps as AbstractProps } from '../../../base/label/components/native/ExpandedLabel';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { getSessionStatusToShow } from '../../functions';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
 
     /**
      * The status of the highermost priority session.
      */
-    _status: ?string,
+    _status?: string;
 
     /**
      * The recording mode this indicator should display.
      */
-    mode: string,
+    mode: string;
 
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function;
 }
 
 /**
  * A react {@code Component} that implements an expanded label as tooltip-like
  * component to explain the meaning of the {@code RecordingLabel}.
  */
-class RecordingExpandedLabel extends ExpandedLabel<Props> {
+class RecordingExpandedLabel extends ExpandedLabel<IProps> {
 
     /**
      * Returns the label specific text of this {@code ExpandedLabel}.
@@ -70,13 +69,13 @@ class RecordingExpandedLabel extends ExpandedLabel<Props> {
  * {@code RecordingExpandedLabel}'s props.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The component's own props.
+ * @param {IProps} ownProps - The component's own props.
  * @private
  * @returns {{
  *     _status: ?string
  * }}
  */
-function _mapStateToProps(state: Object, ownProps: Props) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {
