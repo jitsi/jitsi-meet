@@ -1,5 +1,6 @@
 /* eslint-disable lines-around-comment, max-len */
 
+import { IParticipant } from '../base/participants/types';
 import { navigate }
 // @ts-ignore
     from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -21,7 +22,7 @@ export * from './actions.any';
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(participant: Object, disablePolls?: boolean) {
+export function openChat(participant: IParticipant | undefined | Object, disablePolls?: boolean) {
     if (disablePolls) {
         navigate(screen.conference.chat);
     }

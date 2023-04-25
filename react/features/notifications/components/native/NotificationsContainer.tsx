@@ -10,8 +10,6 @@ import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import styles from './styles';
 
 

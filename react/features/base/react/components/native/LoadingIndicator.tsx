@@ -15,6 +15,8 @@ interface IProps {
      * prop of the native component.
      */
     size?: 'large' | 'small' | 'medium';
+
+    style?: any;
 }
 
 /**

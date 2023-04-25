@@ -1,7 +1,4 @@
-/* eslint-disable lines-around-comment  */
-
 import { useIsFocused } from '@react-navigation/native';
-// @ts-ignore
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,7 +7,8 @@ import {
     StyleProp,
     Text,
     TextStyle,
-    View
+    View,
+    ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,7 +20,6 @@ import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
-// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -32,24 +29,16 @@ import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
-// @ts-ignore
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
-// @ts-ignore
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-// @ts-ignore
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
-// @ts-ignore
 import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
-// @ts-ignore
 import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 
-// @ts-ignore
 import { preJoinStyles as styles } from './styles';
-
 
 const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
@@ -161,19 +150,16 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     <LargeVideo />
                 </View>
             }
-            <View style = { contentContainerStyles }>
-                <View style = { styles.toolboxContainer }>
+            <View style = { contentContainerStyles as ViewStyle }>
+                <View style = { styles.toolboxContainer as ViewStyle }>
                     <AudioMuteButton
-                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
-                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                 </View>
                 {
                     isDisplayNameVisible
                     && <Input
-                        // @ts-ignore
                         customStyles = {{ input: styles.customInput }}
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
@@ -183,8 +169,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     accessibilityLabel = 'prejoin.joinMeeting'
                     disabled = { joinButtonDisabled }
                     labelKey = 'prejoin.joinMeeting'
-                    // @ts-ignore
-                    onClick = { !isJoining && onJoin }
+                    onClick = { isJoining ? undefined : onJoin }
                     style = { styles.joinButton }
                     type = { PRIMARY } />
                 <Button

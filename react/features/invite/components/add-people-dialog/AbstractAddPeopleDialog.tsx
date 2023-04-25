@@ -68,7 +68,7 @@ export interface IProps {
     /**
      * Whether or not to allow sip invites.
      */
-     _sipInviteEnabled: boolean;
+    _sipInviteEnabled: boolean;
 
     /**
      * The Redux dispatch function.
@@ -92,7 +92,7 @@ export interface IState {
     /**
      * The list of invite items.
      */
-    inviteItems: Array<IInviteSelectItem>;
+    inviteItems: Array<IInvitee | IInviteSelectItem>;
 }
 
 /**

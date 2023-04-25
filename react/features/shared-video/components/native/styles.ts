@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The style of toolbar buttons.
  */

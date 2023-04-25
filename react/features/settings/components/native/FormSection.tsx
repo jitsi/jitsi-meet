@@ -1,4 +1,4 @@
-import React, { ReactChildren } from 'react';
+import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
@@ -16,7 +16,7 @@ interface IProps extends WithTranslation {
     /**
      * The children to be displayed within this Link.
      */
-    children: ReactChildren;
+    children: React.ReactNode;
 
     /**
      * The i18n key of the text label of the section.

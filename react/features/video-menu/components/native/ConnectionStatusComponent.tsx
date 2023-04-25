@@ -1,23 +1,18 @@
-/* eslint-disable lines-around-comment */
-
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { hideSheet } from '../../../base/dialog/actions';
-// @ts-ignore
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
-// @ts-ignore
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
-// @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 import {
     getTrackByMediaTypeAndParticipant
@@ -28,7 +23,6 @@ import {
 } from '../../../connection-indicator/functions';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
-// @ts-ignore
 import styles from './styles';
 
 /**
@@ -155,17 +149,17 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
             <BottomSheet
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }>
-                <View style = { styles.statsWrapper }>
-                    <View style = { styles.statsInfoCell }>
-                        <Text style = { styles.statsTitleText }>
+                <View style = { styles.statsWrapper as ViewStyle }>
+                    <View style = { styles.statsInfoCell as ViewStyle }>
+                        <Text style = { styles.statsTitleText as TextStyle }>
                             { t('connectionindicator.status') }
                         </Text>
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { t(this.state.connectionString) }
                         </Text>
                     </View>
-                    <View style = { styles.statsInfoCell }>
-                        <Text style = { styles.statsTitleText }>
+                    <View style = { styles.statsInfoCell as ViewStyle }>
+                        <Text style = { styles.statsTitleText as TextStyle }>
                             { t('connectionindicator.bitrate') }
                         </Text>
                         <BaseIndicator
@@ -173,7 +167,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
                             iconStyle = {{
                                 color: palette.icon03
                             }} />
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { this.state.downloadString }
                         </Text>
                         <BaseIndicator
@@ -181,12 +175,12 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
                             iconStyle = {{
                                 color: palette.icon03
                             }} />
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { `${this.state.uploadString} Kbps` }
                         </Text>
                     </View>
-                    <View style = { styles.statsInfoCell }>
-                        <Text style = { styles.statsTitleText }>
+                    <View style = { styles.statsInfoCell as ViewStyle }>
+                        <Text style = { styles.statsTitleText as TextStyle }>
                             { t('connectionindicator.packetloss') }
                         </Text>
                         <BaseIndicator
@@ -194,7 +188,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
                             iconStyle = {{
                                 color: palette.icon03
                             }} />
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { this.state.packetLostDownloadString }
                         </Text>
                         <BaseIndicator
@@ -202,23 +196,23 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
                             iconStyle = {{
                                 color: palette.icon03
                             }} />
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { this.state.packetLostUploadString }
                         </Text>
                     </View>
-                    <View style = { styles.statsInfoCell }>
-                        <Text style = { styles.statsTitleText }>
+                    <View style = { styles.statsInfoCell as ViewStyle }>
+                        <Text style = { styles.statsTitleText as TextStyle }>
                             { t('connectionindicator.resolution') }
                         </Text>
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { this.state.resolutionString }
                         </Text>
                     </View>
-                    <View style = { styles.statsInfoCell }>
-                        <Text style = { styles.statsTitleText }>
+                    <View style = { styles.statsInfoCell as ViewStyle }>
+                        <Text style = { styles.statsTitleText as TextStyle }>
                             { t('connectionindicator.codecs') }
                         </Text>
-                        <Text style = { styles.statsInfoText }>
+                        <Text style = { styles.statsInfoText as TextStyle }>
                             { this.state.codecString }
                         </Text>
                     </View>
@@ -445,11 +439,11 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
             <View
                 style = { [
                     bottomSheetStyles.sheet,
-                    styles.participantNameContainer ] }>
+                    styles.participantNameContainer ] as ViewStyle[] }>
                 <Avatar
                     participantId = { participantID }
                     size = { AVATAR_SIZE } />
-                <Text style = { styles.participantNameLabel }>
+                <Text style = { styles.participantNameLabel as TextStyle }>
                     { this.props._participantDisplayName }
                 </Text>
             </View>
