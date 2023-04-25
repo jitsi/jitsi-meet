@@ -1,5 +1,4 @@
 import { batch } from 'react-redux';
-import { AnyAction } from 'redux';
 
 import { ACTION_SHORTCUT_PRESSED, ACTION_SHORTCUT_RELEASED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -8,67 +7,12 @@ import { clickOnVideo } from '../filmstrip/actions.web';
 import { openSettingsDialog } from '../settings/actions.web';
 import { SETTINGS_TABS } from '../settings/constants';
 
-import {
-    DISABLE_KEYBOARD_SHORTCUTS,
-    ENABLE_KEYBOARD_SHORTCUTS,
-    REGISTER_KEYBOARD_SHORTCUT,
-    UNREGISTER_KEYBOARD_SHORTCUT
-} from './actionTypes';
+import { registerShortcut } from './actions.any';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
 import logger from './logger';
-import { IKeyboardShortcut } from './types';
 import { getKeyboardKey, getPriorityFocusedElement } from './utils';
 
-/**
- * Action to register a new shortcut.
- *
- * @param {IKeyboardShortcut} shortcut - The shortcut to register.
- * @returns {AnyAction}
-*/
-export const registerShortcut = (shortcut: IKeyboardShortcut): AnyAction => {
-    return {
-        type: REGISTER_KEYBOARD_SHORTCUT,
-        shortcut
-    };
-};
-
-/**
- * Action to unregister a shortcut.
- *
- * @param {string} character - The character of the shortcut to unregister.
- * @param {boolean} altKey - Whether the shortcut used altKey.
- * @returns {AnyAction}
-*/
-export const unregisterShortcut = (character: string, altKey = false): AnyAction => {
-    return {
-        altKey,
-        type: UNREGISTER_KEYBOARD_SHORTCUT,
-        character
-    };
-};
-
-/**
- * Action to enable keyboard shortcuts.
- *
- * @returns {AnyAction}
- */
-export const enableKeyboardShortcuts = (): AnyAction => {
-    return {
-        type: ENABLE_KEYBOARD_SHORTCUTS
-    };
-};
-
-
-/**
- * Action to enable keyboard shortcuts.
- *
- * @returns {AnyAction}
- */
-export const disableKeyboardShortcuts = (): AnyAction => {
-    return {
-        type: DISABLE_KEYBOARD_SHORTCUTS
-    };
-};
+export * from './actions.any';
 
 /**
  * Initialise global shortcuts.

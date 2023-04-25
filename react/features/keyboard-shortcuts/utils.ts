@@ -1,4 +1,3 @@
-
 /**
  * Prefer keyboard handling of these elements over global shortcuts.
  * If a button is triggered using the Spacebar it should not trigger PTT.
@@ -33,13 +32,16 @@ export const getPriorityFocusedElement = (): HTMLElement | null =>
 * @returns {string} - The keyboard key.
 */
 export const getKeyboardKey = (e: KeyboardEvent): string => {
+    // @ts-ignore
+    const { altKey, code, key, shiftKey, type, which } = e;
+
     // If alt is pressed a different char can be returned so this takes
     // the char from the code. It also prefixes with a colon to differentiate
     // alt combo from simple keypress.
-    if (e.altKey) {
-        const key = e.code.replace('Key', '');
+    if (altKey) {
+        const replacedKey = code.replace('Key', '');
 
-        return `:${key}`;
+        return `:${replacedKey}`;
     }
 
     // If e.key is a string, then it is assumed it already plainly states
@@ -47,26 +49,27 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     // and "?", when the browser cannot properly map a key press event to a
     // keyboard key. To be safe, when a key is "Unidentified" it must be
     // further analyzed by jitsi to a key using e.which.
-    if (typeof e.key === 'string' && e.key !== 'Unidentified') {
-        return e.key;
+    if (typeof key === 'string' && key !== 'Unidentified') {
+        return key;
     }
-    if (e.type === 'keypress'
-            && ((e.which >= 32 && e.which <= 126)
-                || (e.which >= 160 && e.which <= 255))) {
-        return String.fromCharCode(e.which);
+
+    if (type === 'keypress'
+            && ((which >= 32 && which <= 126)
+                || (which >= 160 && which <= 255))) {
+        return String.fromCharCode(which);
     }
 
     // try to fallback (0-9A-Za-z and QWERTY keyboard)
-    switch (e.which) {
+    switch (which) {
     case 27:
         return 'Escape';
     case 191:
-        return e.shiftKey ? '?' : '/';
+        return shiftKey ? '?' : '/';
     }
 
-    if (e.shiftKey || e.type === 'keypress') {
-        return String.fromCharCode(e.which);
+    if (shiftKey || type === 'keypress') {
+        return String.fromCharCode(which);
     }
 
-    return String.fromCharCode(e.which).toLowerCase();
+    return String.fromCharCode(which).toLowerCase();
 };
