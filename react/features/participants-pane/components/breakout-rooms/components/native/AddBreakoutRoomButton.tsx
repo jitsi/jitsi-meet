@@ -5,7 +5,6 @@ import Button from '../../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../../base/ui/constants.native';
 import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
-// @ts-ignore
 import styles from './styles';
 
 /**

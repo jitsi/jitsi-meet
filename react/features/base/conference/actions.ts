@@ -806,7 +806,7 @@ export function setStartReactionsMuted(muted: boolean, updateBackend = false) {
 export function setPassword(
         conference: IJitsiConference | undefined,
         method: Function | undefined,
-        password: string) {
+        password?: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!conference) {
             return;

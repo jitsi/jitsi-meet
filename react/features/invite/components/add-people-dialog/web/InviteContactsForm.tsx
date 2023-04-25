@@ -325,7 +325,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
 
         const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
         const users = response.filter(item => userTypes.includes(item.type));
-        const userDisplayItems = [];
+        const userDisplayItems: any = [];
 
         for (const user of users) {
             const { name, phone } = user;

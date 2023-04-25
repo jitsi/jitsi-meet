@@ -78,7 +78,7 @@ interface IProps extends WithTranslation {
     /**
      * The remote participants.
      */
-    _sortedRemoteParticipants: Map<string, string>;
+    _sortedRemoteParticipants: string[];
 
     /**
      * The current visitors count if any.
@@ -229,7 +229,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
             = isLocalModerator
                 ? containerStyleModerator : styles.notLocalModeratorContainer;
         const finalContainerStyle
-            = _participantsCount > 6 && containerStyle;
+            = _participantsCount > 6 ? containerStyle : undefined;
         const { color, shareDialogVisible } = _inviteOthersControl;
         const _visitorsLabelText = _visitorsCount > 0
             ? t('participantsPane.headings.visitors', { count: _visitorsCount })
@@ -289,7 +289,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState): Object {
+function _mapStateToProps(state: IReduxState) {
     const _participantsCount = getParticipantCountWithFake(state);
     const { remoteParticipants } = state['features/filmstrip'];
     const { shareDialogVisible } = state['features/share-room'];

@@ -1,6 +1,6 @@
 /* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog, openSheet } from '../../../base/dialog/actions';
@@ -32,7 +32,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
     const showMuteAll = useSelector(isMuteAllVisible);
 
     return (
-        <View style = { styles.participantsPaneFooter }>
+        <View style = { styles.participantsPaneFooter as ViewStyle }>
             {
                 showMuteAll && (
                     <Button

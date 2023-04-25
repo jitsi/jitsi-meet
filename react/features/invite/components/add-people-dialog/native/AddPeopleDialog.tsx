@@ -1,7 +1,6 @@
-/* eslint-disable lines-around-comment */
-
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
+import { WithTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     FlatList,
@@ -23,7 +22,6 @@ import {
     IconSearch,
     IconShare
 } from '../../../../base/icons/svg';
-// @ts-ignore
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import AvatarListItem from '../../../../base/react/components/native/AvatarListItem';
 import { Item } from '../../../../base/react/types';
@@ -33,19 +31,16 @@ import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { beginShareRoom } from '../../../../share-room/actions';
 import { INVITE_TYPES } from '../../../constants';
+import { IInviteSelectItem, IInvitee } from '../../../types';
 import AbstractAddPeopleDialog, {
-    // @ts-ignore
-    type Props as AbstractProps,
-    // @ts-ignore
-    type State as AbstractState,
+    type IProps as AbstractProps,
+    type IState as AbstractState,
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractAddPeopleDialog';
 
-// @ts-ignore
 import styles, { AVATAR_SIZE } from './styles';
 
-
-interface IProps extends AbstractProps {
+interface IProps extends AbstractProps, WithTranslation {
 
     /**
      * True if the invite dialog should be open, false otherwise.
@@ -55,12 +50,7 @@ interface IProps extends AbstractProps {
     /**
      * Default prop for navigation between screen components(React Navigation).
      */
-    navigation: Object;
-
-    /**
-     * Function used to translate i18n labels.
-     */
-    t: Function;
+    navigation: any;
 
     /**
      * Theme used for styles.
@@ -95,9 +85,7 @@ interface IState extends AbstractState {
 /**
  * Implements a special dialog to invite people from a directory service.
  */
-class AddPeopleDialog
-    // @ts-ignore
-    extends AbstractAddPeopleDialog<IProps, IState> {
+class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
     /**
      * Default state object to reset the state to when needed.
      */
@@ -119,7 +107,7 @@ class AddPeopleDialog
     searchTimeout: number;
 
     /**
-     * Contrustor of the component.
+     * Constructor of the component.
      *
      * @inheritdoc
      */
@@ -151,7 +139,6 @@ class AddPeopleDialog
     componentDidMount() {
         const { navigation, t } = this.props;
 
-        // @ts-ignore
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
@@ -171,7 +158,6 @@ class AddPeopleDialog
     componentDidUpdate(prevProps: IProps) {
         const { navigation, t } = this.props;
 
-        // @ts-ignore
         navigation.setOptions({
             // eslint-disable-next-line react/no-multi-comp
             headerRight: () => (
@@ -197,12 +183,9 @@ class AddPeopleDialog
      */
     render() {
         const {
-            // @ts-ignore
             _addPeopleEnabled,
-            // @ts-ignore
             _dialOutEnabled
         } = this.props;
-        // @ts-ignore
         const { inviteItems, selectableItems } = this.state;
 
         let placeholderKey = 'searchPlaceholder';
@@ -302,7 +285,6 @@ class AddPeopleDialog
         });
 
         // Clear search results
-        // @ts-ignore
         this._onTypeQuery('');
     }
 
@@ -314,10 +296,9 @@ class AddPeopleDialog
     _onInvite() {
         // @ts-ignore
         this._invite(this.state.inviteItems)
-            .then((invitesLeftToSend: ArrayLike<any>) => {
+            .then((invitesLeftToSend: IInvitee[]) => {
                 if (invitesLeftToSend.length) {
                     this.setState({
-                        // @ts-ignore
                         inviteItems: invitesLeftToSend
                     });
                     this._showFailedInviteAlert();
@@ -333,26 +314,22 @@ class AddPeopleDialog
      */
     _onPressItem(item: Item) {
         return () => {
-            // @ts-ignore
             const { inviteItems } = this.state;
             const finderKey = item.type === INVITE_TYPES.PHONE ? 'number' : 'user_id';
 
             if (inviteItems.find(
-                // @ts-ignore
-                _.matchesProperty(finderKey, item[finderKey]))) {
+                _.matchesProperty(finderKey, item[finderKey as keyof typeof item]))) {
                 // Item is already selected, need to unselect it.
                 this.setState({
-                    // @ts-ignore
                     inviteItems: inviteItems.filter(
-                        // @ts-ignore
-                        (element: any) => item[finderKey] !== element[finderKey])
+                        (element: any) => item[finderKey as keyof typeof item] !== element[finderKey])
                 });
             } else {
                 // Item is not selected yet, need to add to the list.
-                const items: Array<Object> = inviteItems.concat(item);
+                // @ts-ignore
+                const items = inviteItems.concat(item);
 
                 this.setState({
-                    // @ts-ignore
                     inviteItems: _.sortBy(items, [ 'name', 'number' ])
                 });
             }
@@ -365,12 +342,10 @@ class AddPeopleDialog
      * @returns {void}
      */
     _onShareMeeting() {
-        // @ts-ignore
         if (this.state.inviteItems.length > 0) {
             // The use probably intended to invite people.
             this._onInvite();
         } else {
-            // @ts-ignore
             this.props.dispatch(beginShareRoom());
         }
     }
@@ -388,7 +363,6 @@ class AddPeopleDialog
         });
 
         clearTimeout(this.searchTimeout);
-        // @ts-ignore
         this.searchTimeout = setTimeout(() => {
             this.setState({
                 searchInprogress: true
@@ -462,9 +436,8 @@ class AddPeopleDialog
      */
     _renderItem(flatListItem: any, index: number): ReactElement | null {
         const { item } = flatListItem;
-        // @ts-ignore
         const { inviteItems } = this.state;
-        let selected = false;
+        let selected: IInvitee | IInviteSelectItem | undefined | boolean = false;
         const renderableItem = this._getRenderableItem(flatListItem);
 
         if (!renderableItem) {
@@ -570,7 +543,6 @@ class AddPeopleDialog
      * @returns {void}
      */
     _showFailedInviteAlert() {
-        // @ts-ignore
         this.props.dispatch(openDialog(AlertDialog, {
             contentKey: {
                 key: 'inviteDialog.alertText'
@@ -583,14 +555,15 @@ class AddPeopleDialog
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {any} _ownProps - Component's own props.
  * @returns {{
  *     _isVisible: boolean
  * }}
  */
-function _mapStateToProps(state: IReduxState) {
+function _mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         ..._abstractMapStateToProps(state)
     };
 }
-// @ts-ignore
+
 export default translate(connect(_mapStateToProps)(AddPeopleDialog));

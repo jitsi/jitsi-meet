@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -29,25 +29,25 @@ const PollAnswer = (props: AbstractProps) => {
 
     return (
         <>
-            <Text style = { dialogStyles.questionText } >{ poll.question }</Text>
-            <Text style = { dialogStyles.questionOwnerText } >{
+            <Text style = { dialogStyles.questionText as TextStyle } >{ poll.question }</Text>
+            <Text style = { dialogStyles.questionOwnerText as TextStyle } >{
                 t('polls.by', { name: localParticipant?.name })
             }
             </Text>
-            <View style = { chatStyles.answerContent }>
+            <View style = { chatStyles.answerContent as ViewStyle }>
                 {poll.answers.map((answer, index) => (
                     <View
                         key = { index }
-                        style = { chatStyles.switchRow } >
+                        style = { chatStyles.switchRow as ViewStyle } >
                         <Switch
                             checked = { checkBoxStates[index] }
                             /* eslint-disable-next-line react/jsx-no-bind */
                             onChange = { state => setCheckbox(index, state) } />
-                        <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
+                        <Text style = { chatStyles.switchLabel as TextStyle }>{answer.name}</Text>
                     </View>
                 ))}
             </View>
-            <View style = { chatStyles.buttonRow }>
+            <View style = { chatStyles.buttonRow as ViewStyle }>
                 <Button
                     accessibilityLabel = 'polls.answer.skip'
                     labelKey = 'polls.answer.skip'

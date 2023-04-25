@@ -10,7 +10,7 @@ export const lobbyNavigationContainerRef = React.createRef<NavigationContainerRe
  * @param {Object} params - Params to pass to the destination route.
  * @returns {Function}
  */
-export function navigate(name: string, params: Object) {
+export function navigate(name: string, params?: Object) {
     return lobbyNavigationContainerRef.current?.navigate(name, params);
 }
 

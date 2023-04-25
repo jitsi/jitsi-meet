@@ -82,6 +82,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
                                 name = { screen.welcome.main }
                                 options = { welcomeScreenOptions } />
                             <RootStack.Screen
+                                // @ts-ignore
                                 component = { DialInSummary }
                                 name = { screen.dialInSummary }
                                 options = { dialInSummaryScreenOptions } />

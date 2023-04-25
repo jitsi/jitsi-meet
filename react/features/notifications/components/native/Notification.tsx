@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Text, View } from 'react-native';
+import { Animated, Text, TextStyle, View, ViewStyle } from 'react-native';
 
 import Icon from '../../../base/icons/components/Icon';
 import {
@@ -19,7 +19,6 @@ import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
 
-// @ts-ignore
 import styles from './styles';
 
 
@@ -153,7 +152,7 @@ const Notification = ({
         if (descriptionArray?.length) {
             return (
                 <>
-                    <Text style = { styles.contentTextTitle }>
+                    <Text style = { styles.contentTextTitle as TextStyle }>
                         {titleText}
                     </Text>
                     {
@@ -170,7 +169,7 @@ const Notification = ({
         }
 
         return (
-            <Text style = { styles.contentTextTitle }>
+            <Text style = { styles.contentTextTitle as TextStyle }>
                 {titleText}
             </Text>
         );
@@ -186,12 +185,12 @@ const Notification = ({
                 {
                     opacity: notificationOpacityAnimation
                 }
-            ] }>
+            ] as ViewStyle[] }>
             <View
-                style = { icon === NOTIFICATION_ICON.PARTICIPANTS
+                style = { (icon === NOTIFICATION_ICON.PARTICIPANTS
                     ? styles.contentColumn
-                    : styles.interactiveContentColumn }>
-                <View style = { styles.iconContainer }>
+                    : styles.interactiveContentColumn) as ViewStyle }>
+                <View style = { styles.iconContainer as ViewStyle }>
                     <Icon
                         color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
                         size = { 24 }
@@ -202,7 +201,7 @@ const Notification = ({
                     style = { styles.contentContainer }>
                     {_renderContent()}
                 </View>
-                <View style = { styles.btnContainer }>
+                <View style = { styles.btnContainer as ViewStyle }>
                     {mapAppearanceToButtons()}
                 </View>
             </View>

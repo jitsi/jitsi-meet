@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment */
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -85,8 +85,8 @@ class RoomParticipantMenu extends PureComponent<IProps> {
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
-                <View style = { styles.contextMenuItem }>
-                    <Text style = { styles.contextMenuItemText }>
+                <View style = { styles.contextMenuItem as ViewStyle }>
+                    <Text style = { styles.contextMenuItemText as ViewStyle }>
                         {t('breakoutRooms.actions.sendToBreakoutRoom')}
                     </Text>
                 </View>
@@ -120,11 +120,11 @@ class RoomParticipantMenu extends PureComponent<IProps> {
             <View
                 style = { [
                     bottomSheetStyles.sheet,
-                    styles.participantNameContainer ] }>
+                    styles.participantNameContainer ] as ViewStyle[] }>
                 <Avatar
                     displayName = { participantName }
                     size = { AVATAR_SIZE } />
-                <Text style = { styles.participantNameLabel }>
+                <Text style = { styles.participantNameLabel as TextStyle }>
                     { participantName }
                 </Text>
             </View>
