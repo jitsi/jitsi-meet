@@ -70,7 +70,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
         this.props.dispatch(registerShortcut({
             character: 'V',
             helpDescription: 'keyboardShortcuts.videoMute',
-            function: this._onKeyboardShortcut
+            handler: this._onKeyboardShortcut
         }));
     }
 

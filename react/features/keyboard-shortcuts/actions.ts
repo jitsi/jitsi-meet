@@ -1,5 +1,3 @@
-// @ts-ignore
-import Logger from '@jitsi/logger';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
@@ -17,11 +15,9 @@ import {
     UNREGISTER_KEYBOARD_SHORTCUT
 } from './actionTypes';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
+import logger from './logger';
 import { IKeyboardShortcut } from './types';
 import { getKeyboardKey, getPriorityFocusedElement } from './utils';
-
-// @ts-ignore
-const logger = Logger.getLogger(__filename);
 
 /**
  * Action to register a new shortcut.
@@ -88,7 +84,7 @@ const initGlobalKeyboardShortcuts = () =>
             dispatch(registerShortcut({
                 character: '?',
                 helpDescription: 'keyboardShortcuts.toggleShortcuts',
-                function: () => {
+                handler: () => {
                     sendAnalytics(createShortcutEvent('help'));
                     dispatch(openSettingsDialog(SETTINGS_TABS.SHORTCUTS, false));
                 }
@@ -99,7 +95,7 @@ const initGlobalKeyboardShortcuts = () =>
                 character: ' ',
                 helpCharacter: 'SPACE',
                 helpDescription: 'keyboardShortcuts.pushToTalk',
-                function: () => {
+                handler: () => {
                     sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_RELEASED));
                     logger.log('Talk shortcut released');
                     APP.conference.muteAudio(true);
@@ -109,7 +105,7 @@ const initGlobalKeyboardShortcuts = () =>
             dispatch(registerShortcut({
                 character: '0',
                 helpDescription: 'keyboardShortcuts.focusLocal',
-                function: () => {
+                handler: () => {
                     dispatch(clickOnVideo(0));
                 }
             }));
@@ -124,7 +120,7 @@ const initGlobalKeyboardShortcuts = () =>
                     // only show help hint for the first shortcut
                     helpCharacter: num === 1 ? '1-9' : undefined,
                     helpDescription: num === 1 ? 'keyboardShortcuts.focusRemote' : undefined,
-                    function: () => {
+                    handler: () => {
                         dispatch(clickOnVideo(num));
                     }
                 }));
@@ -153,7 +149,7 @@ export const initKeyboardShortcuts = () =>
             const key = getKeyboardKey(e).toUpperCase();
 
             if (shortcuts.has(key)) {
-                shortcuts.get(key)?.function(e);
+                shortcuts.get(key)?.handler(e);
             }
         };
 

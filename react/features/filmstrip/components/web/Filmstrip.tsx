@@ -299,7 +299,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         this.props.dispatch(registerShortcut({
             character: 'F',
             helpDescription: 'keyboardShortcuts.toggleFilmstrip',
-            function: this._onShortcutToggleFilmstrip
+            handler: this._onShortcutToggleFilmstrip
         }));
 
         document.addEventListener('mouseup', this._onDragMouseUp);

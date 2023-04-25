@@ -457,7 +457,7 @@ class Toolbox extends Component<IProps> {
             if (typeof shortcut === 'object') {
                 dispatch(registerShortcut({
                     character: shortcut.character,
-                    function: shortcut.exec,
+                    handler: shortcut.exec,
                     helpDescription: shortcut.helpDescription
                 }));
             }
@@ -484,7 +484,7 @@ class Toolbox extends Component<IProps> {
                 dispatch(registerShortcut({
                     alt: shortcut.altKey,
                     character: shortcut.character,
-                    function: shortcut.exec,
+                    handler: shortcut.exec,
                     helpDescription: shortcut.helpDescription
                 }));
             });
@@ -499,7 +499,7 @@ class Toolbox extends Component<IProps> {
 
                 dispatch(registerShortcut({
                     character: 'G',
-                    function: onGifShortcut,
+                    handler: onGifShortcut,
                     helpDescription: 'keyboardShortcuts.giphyMenu'
                 }));
             }

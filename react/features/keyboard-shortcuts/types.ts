@@ -7,7 +7,7 @@ export interface IKeyboardShortcut {
   character: string;
 
   // the function to be executed when the shortcut is pressed
-  function: Function;
+  handler: Function;
 
   // character to be displayed in the help dialog shortcuts list
   helpCharacter?: string;
