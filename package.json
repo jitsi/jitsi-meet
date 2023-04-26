@@ -65,7 +65,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1620.0.0+7f0012f7/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1623.0.0+c520877a/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
     "moment": "2.29.4",
     "moment-duration-format": "2.2.2",
@@ -180,7 +180,7 @@
   },
   "overrides": {
     "strophe.js@1.6.0": {
-        "@xmldom/xmldom": "0.8.7"
+      "@xmldom/xmldom": "0.8.7"
     }
   },
   "engines": {
