@@ -115,7 +115,11 @@ import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { getJitsiMeetTransport } from '../transport';
 
-import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
+import {
+    API_ID,
+    ASSUMED_BANDWIDTH_BPS,
+    ENDPOINT_TEXT_MESSAGE_NAME
+} from './constants';
 
 const logger = Logger.getLogger(__filename);
 
@@ -309,6 +313,23 @@ function initCommands() {
             const { duration, tones, pause } = options;
 
             APP.store.dispatch(sendTones(tones, duration, pause));
+        },
+        'set-assumed-bandwidth-bps': value => {
+            logger.debug('Set assumed bandwidth bps command received', value);
+
+            if (typeof value !== 'number' || isNaN(value)) {
+                logger.error('Assumed bandwidth bps must be a number.');
+
+                return;
+            }
+
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            if (conference) {
+                conference.setAssumedBandwidthBps(value < ASSUMED_BANDWIDTH_BPS
+                    ? ASSUMED_BANDWIDTH_BPS
+                    : value);
+            }
         },
         'set-follow-me': value => {
             logger.debug('Set follow me command received');

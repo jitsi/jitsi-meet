@@ -59,6 +59,7 @@ const commands = {
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
+    setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
