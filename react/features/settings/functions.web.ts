@@ -1,8 +1,7 @@
-// @ts-expect-error
-import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
 import { IStateful } from '../base/app/types';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { toState } from '../base/redux/functions';
+import { areKeyboardShortcutsEnabled, getKeyboardShortcutsHelpDescriptions } from '../keyboard-shortcuts/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
 export * from './functions.any';
@@ -84,6 +83,7 @@ export function getShortcutsTabProps(stateful: IStateful, isDisplayedOnWelcomePa
 
     return {
         displayShortcuts: !isDisplayedOnWelcomePage && !isPrejoinPageVisible(state),
-        keyboardShortcutsEnabled: keyboardShortcut.getEnabled()
+        keyboardShortcutsEnabled: areKeyboardShortcutsEnabled(state),
+        keyboardShortcutsHelpDescriptions: getKeyboardShortcutsHelpDescriptions(state)
     };
 }

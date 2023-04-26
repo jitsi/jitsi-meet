@@ -5,6 +5,7 @@ import '../base/media/middleware';
 import '../dynamic-branding/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';
+import '../keyboard-shortcuts/middleware';
 import '../no-audio-signal/middleware';
 import '../notifications/middleware';
 import '../noise-detection/middleware';

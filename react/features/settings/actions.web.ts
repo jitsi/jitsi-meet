@@ -1,7 +1,5 @@
 import { batch } from 'react-redux';
 
-// @ts-expect-error
-import keyboardShortcut from '../../../modules/keyboardshortcut/keyboardshortcut';
 import { IStore } from '../app/types';
 import {
     setFollowMe,
@@ -11,6 +9,7 @@ import {
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
 import { updateSettings } from '../base/settings/actions';
+import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
@@ -247,7 +246,11 @@ export function submitShortcutsTab(newState: any) {
         const currentState = getShortcutsTabProps(getState());
 
         if (newState.keyboardShortcutsEnabled !== currentState.keyboardShortcutsEnabled) {
-            keyboardShortcut.enable(newState.keyboardShortcutsEnabled);
+            if (newState.keyboardShortcutsEnabled) {
+                dispatch(enableKeyboardShortcuts());
+            } else {
+                dispatch(disableKeyboardShortcuts());
+            }
         }
     };
 }

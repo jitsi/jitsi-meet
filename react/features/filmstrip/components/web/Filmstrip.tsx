@@ -15,6 +15,7 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { getHideSelfView } from '../../../base/settings/functions.any';
+import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS } from '../../../video-layout/constants';
@@ -295,12 +296,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
      * @inheritdoc
      */
     componentDidMount() {
-        APP.keyboardshortcut.registerShortcut(
-            'F',
-            'filmstripPopover',
-            this._onShortcutToggleFilmstrip,
-            'keyboardShortcuts.toggleFilmstrip'
-        );
+        this.props.dispatch(registerShortcut({
+            character: 'F',
+            helpDescription: 'keyboardShortcuts.toggleFilmstrip',
+            handler: this._onShortcutToggleFilmstrip
+        }));
+
         document.addEventListener('mouseup', this._onDragMouseUp);
 
         // @ts-ignore
@@ -313,7 +314,8 @@ class Filmstrip extends PureComponent <IProps, IState> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        APP.keyboardshortcut.unregisterShortcut('F');
+        this.props.dispatch(unregisterShortcut('F'));
+
         document.removeEventListener('mouseup', this._onDragMouseUp);
 
         // @ts-ignore
