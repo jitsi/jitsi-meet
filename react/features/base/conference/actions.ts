@@ -3,6 +3,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
 import { IReduxState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
+import { iAmVisitor } from '../../visitors/functions';
 import { getReplaceParticipant } from '../config/functions';
 import { disconnect } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
@@ -450,11 +451,12 @@ export function conferenceUniqueIdSet(conference: IJitsiConference) {
  */
 export function _conferenceWillJoin(conference: IJitsiConference) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
         const localTracks
-            = getLocalTracks(getState()['features/base/tracks'])
+            = getLocalTracks(state['features/base/tracks'])
                 .map(t => t.jitsiTrack);
 
-        if (localTracks.length) {
+        if (localTracks.length && !iAmVisitor(state)) {
             _addLocalTracksToConference(conference, localTracks);
         }
 
