@@ -140,6 +140,7 @@ import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
+import { initKeyboardShortcuts } from './react/features/keyboard-shortcuts/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import { hideNotification, showNotification, showWarningNotification } from './react/features/notifications/actions';
@@ -2308,10 +2309,7 @@ export default {
 
         APP.UI.initConference();
 
-        if (!config.disableShortcuts) {
-            APP.keyboardshortcut.init();
-        }
-
+        dispatch(initKeyboardShortcuts());
         dispatch(conferenceJoined(room));
 
         const jwt = APP.store.getState()['features/base/jwt'];

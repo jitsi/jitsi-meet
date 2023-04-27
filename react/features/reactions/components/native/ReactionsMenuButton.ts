@@ -1,8 +1,6 @@
-// @flow
-
 import { connect } from 'react-redux';
-import { type Dispatch } from 'redux';
 
+import { IReduxState } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
 import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
@@ -19,28 +17,23 @@ import ReactionMenuDialog from './ReactionMenuDialog';
 /**
  * The type of the React {@code Component} props of {@link ReactionsMenuButton}.
  */
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
 
     /**
      * Whether the participant raised their hand or not.
      */
-    _raisedHand: boolean,
+    _raisedHand: boolean;
 
     /**
      * Whether or not the reactions menu is open.
      */
-    _reactionsOpen: boolean,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>
-};
+    _reactionsOpen: boolean;
+}
 
 /**
  * An implementation of a button to raise or lower hand.
  */
-class ReactionsMenuButton extends AbstractButton<Props, *> {
+class ReactionsMenuButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.reactionsMenu';
     icon = IconRaiseHand;
     label = 'toolbar.openReactionsMenu';
@@ -75,9 +68,9 @@ class ReactionsMenuButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state, ownProps): Object {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _localParticipant = getLocalParticipant(state);
     const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
     const { visible = enabled } = ownProps;

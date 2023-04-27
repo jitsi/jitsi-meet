@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -30,8 +28,6 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
                 onSubmit = { this._onSubmit } />
         );
     }
-
-    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));

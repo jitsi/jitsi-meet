@@ -10,12 +10,6 @@ declare global {
         API: any;
         conference: any;
         debugLogs: any;
-        keyboardshortcut: {
-            registerShortcut: Function;
-            unregisterShortcut: Function;
-            openDialog: Function;
-            enable: Function;
-        }
     };
     const interfaceConfig: any;
 

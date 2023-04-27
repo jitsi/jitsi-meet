@@ -10,6 +10,7 @@ import { MEDIA_TYPE } from '../../base/media/constants';
 import AbstractAudioMuteButton from '../../base/toolbox/components/AbstractAudioMuteButton';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { isLocalTrackMuted } from '../../base/tracks/functions';
+import { registerShortcut, unregisterShortcut } from '../../keyboard-shortcuts/actions';
 import { muteLocal } from '../../video-menu/actions';
 import { isAudioMuteButtonDisabled } from '../functions';
 
@@ -61,12 +62,15 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
      * @returns {void}
      */
     componentDidMount() {
-        typeof APP === 'undefined'
-            || APP.keyboardshortcut.registerShortcut(
-                'M',
-                null,
-                this._onKeyboardShortcut,
-                'keyboardShortcuts.mute');
+        if (typeof APP === 'undefined') {
+            return;
+        }
+
+        this.props.dispatch(registerShortcut({
+            character: 'M',
+            helpDescription: 'keyboardShortcuts.mute',
+            handler: this._onKeyboardShortcut
+        }));
     }
 
     /**
@@ -76,8 +80,11 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
      * @returns {void}
      */
     componentWillUnmount() {
-        typeof APP === 'undefined'
-            || APP.keyboardshortcut.unregisterShortcut('M');
+        if (typeof APP === 'undefined') {
+            return;
+        }
+
+        this.props.dispatch(unregisterShortcut('M'));
     }
 
     /**

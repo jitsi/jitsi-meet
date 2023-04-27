@@ -90,6 +90,8 @@ class ChatInput extends Component<IProps, IState> {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
+        } else {
+            this._focus();
         }
     }
 

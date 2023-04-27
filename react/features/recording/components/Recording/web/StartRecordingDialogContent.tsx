@@ -23,6 +23,9 @@ import {
     LOCAL_RECORDING
 } from '../styles.web';
 
+const EMPTY_FUNCTION = () => {
+    // empty
+};
 
 /**
  * The start recording dialog content for the mobile application.
@@ -359,10 +362,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                                         {t('recording.onlyRecordSelf')}
                                     </Text>
                                     <Switch
-                                        checked = { localRecordingOnlySelf }
+                                        checked = { Boolean(localRecordingOnlySelf) }
                                         className = 'recording-switch'
                                         disabled = { isValidating }
-                                        onChange = { onLocalRecordingSelfChange } />
+                                        onChange = { onLocalRecordingSelfChange ?? EMPTY_FUNCTION } />
                                 </Container>
                             </Container>
                         )}

@@ -1,22 +1,20 @@
-// @flow
-
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { schemeColor } from '../../../base/color-scheme/functions';
 import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
+/* eslint-disable @typescript-eslint/no-var-requires */
 export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
 export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const ICON_INFO = require('../../../../../images/icon-info.png');
 export const ICON_USERS = require('../../../../../images/icon-users.png');
 export const LOCAL_RECORDING = require('../../../../../images/downloadLocalRecording.png');
 export const TRACK_COLOR = BaseTheme.palette.ui07;
-
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature below.
 const _PADDING = BoxModel.padding * 1.5;
-
 
 const header = {
     alignItems: 'center',

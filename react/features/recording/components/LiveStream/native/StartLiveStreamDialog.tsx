@@ -1,18 +1,18 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+import { StyleType } from '../../../../base/styles/functions.any';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import googleApi from '../../../../google-api/googleApi.native';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLiveStreamKey } from '../../../actions';
-import AbstractStartLiveStreamDialog,
-{ type Props, _mapStateToProps } from '../AbstractStartLiveStreamDialog';
+import AbstractStartLiveStreamDialog, { IProps, _mapStateToProps } from '../AbstractStartLiveStreamDialog';
 
 import GoogleSigninForm from './GoogleSigninForm';
 import StreamKeyForm from './StreamKeyForm';
@@ -23,13 +23,13 @@ import styles from './styles';
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  */
-class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
+class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
     /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -60,8 +60,6 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         });
     }
 
-    _onStartPress: () => void;
-
     /**
      * Starts live stream session and goes back to the previous screen.
      *
@@ -78,7 +76,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      */
     render() {
         return (
-            <JitsiScreen style = { styles.startLiveStreamContainer }>
+            <JitsiScreen style = { styles.startLiveStreamContainer as StyleType }>
                 <GoogleSigninForm
                     onUserChanged = { this._onUserChanged } />
                 <StreamKeyPicker
@@ -87,19 +85,11 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
                 <StreamKeyForm
                     onChange = { this._onStreamKeyChangeNative }
                     value = {
-                        this.state.streamKey || this.props._streamKey
+                        this.state.streamKey || this.props._streamKey || ''
                     } />
             </JitsiScreen>
         );
     }
-
-    _onCancel: () => boolean;
-
-    _onSubmit: () => boolean;
-
-    _onStreamKeyChange: string => void;
-
-    _onStreamKeyChangeNative: string => void;
 
     /**
      * Callback to handle stream key changes.
@@ -113,12 +103,10 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * @param {string} streamKey - The new key value.
      * @returns {void}
      */
-    _onStreamKeyChangeNative(streamKey) {
+    _onStreamKeyChangeNative(streamKey: string) {
         this.props.dispatch(setLiveStreamKey(streamKey));
         this._onStreamKeyChange(streamKey);
     }
-
-    _onStreamKeyPick: string => void;
 
     /**
      * Callback to be invoked when the user selects a stream from the picker.
@@ -127,13 +115,11 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * @param {string} streamKey - The key of the selected stream.
      * @returns {void}
      */
-    _onStreamKeyPick(streamKey) {
+    _onStreamKeyPick(streamKey: string) {
         this.setState({
             streamKey
         });
     }
-
-    _onUserChanged: Object => void;
 
     /**
      * A callback to be invoked when an authenticated user changes, so
@@ -145,12 +131,12 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * @param {Object} response - The retrieved signin response.
      * @returns {void}
      */
-    _onUserChanged(response) {
+    _onUserChanged(response: Object) {
         if (response) {
             googleApi.getTokens()
-                .then(tokens => {
+                .then((tokens: any) => {
                     googleApi.getYouTubeLiveStreams(tokens.accessToken)
-                        .then(broadcasts => {
+                        .then((broadcasts: any) => {
                             this.setState({
                                 broadcasts
                             });

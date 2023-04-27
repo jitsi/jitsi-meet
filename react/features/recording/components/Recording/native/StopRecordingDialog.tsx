@@ -1,12 +1,10 @@
-// @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../../base/i18n/functions';
 import AbstractStopRecordingDialog, {
-    type Props,
+    IProps,
     _mapStateToProps
 } from '../AbstractStopRecordingDialog';
 
@@ -16,7 +14,7 @@ import AbstractStopRecordingDialog, {
  *
  * @augments Component
  */
-class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
+class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
 
     /**
      * Implements {@code Component#render}.
@@ -30,8 +28,6 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
                 onSubmit = { this._onSubmit } />
         );
     }
-
-    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

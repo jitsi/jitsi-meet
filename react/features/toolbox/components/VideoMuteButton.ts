@@ -10,6 +10,7 @@ import { MEDIA_TYPE } from '../../base/media/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import AbstractVideoMuteButton from '../../base/toolbox/components/AbstractVideoMuteButton';
 import { isLocalTrackMuted } from '../../base/tracks/functions';
+import { registerShortcut, unregisterShortcut } from '../../keyboard-shortcuts/actions';
 import { handleToggleVideoMuted } from '../actions.any';
 import { isVideoMuteButtonDisabled } from '../functions';
 
@@ -62,12 +63,15 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     componentDidMount() {
-        typeof APP === 'undefined'
-            || APP.keyboardshortcut.registerShortcut(
-                'V',
-                null,
-                this._onKeyboardShortcut,
-                'keyboardShortcuts.videoMute');
+        if (typeof APP === 'undefined') {
+            return;
+        }
+
+        this.props.dispatch(registerShortcut({
+            character: 'V',
+            helpDescription: 'keyboardShortcuts.videoMute',
+            handler: this._onKeyboardShortcut
+        }));
     }
 
     /**
@@ -77,8 +81,11 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     componentWillUnmount() {
-        typeof APP === 'undefined'
-            || APP.keyboardshortcut.unregisterShortcut('V');
+        if (typeof APP === 'undefined') {
+            return;
+        }
+
+        this.props.dispatch(unregisterShortcut('V'));
     }
 
     /**

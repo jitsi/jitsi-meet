@@ -3,8 +3,6 @@ import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
 
-// @ts-expect-error
-import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -42,7 +40,9 @@ import { setGifMenuVisibility } from '../../../gifs/actions';
 import { isGifEnabled } from '../../../gifs/functions.web';
 import InviteButton from '../../../invite/components/add-people-dialog/web/InviteButton';
 import { isVpaasMeeting } from '../../../jaas/functions';
+import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import KeyboardShortcutsButton from '../../../keyboard-shortcuts/components/web/KeyboardShortcutsButton';
+import { areKeyboardShortcutsEnabled } from '../../../keyboard-shortcuts/functions';
 import NoiseSuppressionButton from '../../../noise-suppression/components/NoiseSuppressionButton';
 import {
     close as closeParticipantsPane,
@@ -289,6 +289,11 @@ interface IProps extends WithTranslation {
     _sharingVideo?: boolean;
 
     /**
+     * Whether or not the shortcut buttons are enabled.
+     */
+    _shortcutsEnabled: boolean;
+
+    /**
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean;
@@ -450,11 +455,11 @@ class Toolbox extends Component<IProps> {
 
         KEYBOARD_SHORTCUTS.forEach(shortcut => {
             if (typeof shortcut === 'object') {
-                APP.keyboardshortcut.registerShortcut(
-                    shortcut.character,
-                    null,
-                    shortcut.exec,
-                    shortcut.helpDescription);
+                dispatch(registerShortcut({
+                    character: shortcut.character,
+                    handler: shortcut.exec,
+                    helpDescription: shortcut.helpDescription
+                }));
             }
         });
 
@@ -476,12 +481,12 @@ class Toolbox extends Component<IProps> {
             });
 
             REACTION_SHORTCUTS.forEach(shortcut => {
-                APP.keyboardshortcut.registerShortcut(
-                    shortcut.character,
-                    null,
-                    shortcut.exec,
-                    shortcut.helpDescription,
-                    shortcut.altKey);
+                dispatch(registerShortcut({
+                    alt: shortcut.altKey,
+                    character: shortcut.character,
+                    handler: shortcut.exec,
+                    helpDescription: shortcut.helpDescription
+                }));
             });
 
             if (_gifsEnabled) {
@@ -492,12 +497,11 @@ class Toolbox extends Component<IProps> {
                     });
                 };
 
-                APP.keyboardshortcut.registerShortcut(
-                    'G',
-                    null,
-                    onGifShortcut,
-                    t('keyboardShortcuts.giphyMenu')
-                );
+                dispatch(registerShortcut({
+                    character: 'G',
+                    handler: onGifShortcut,
+                    helpDescription: 'keyboardShortcuts.giphyMenu'
+                }));
             }
         }
     }
@@ -538,13 +542,15 @@ class Toolbox extends Component<IProps> {
      * @returns {void}
      */
     componentWillUnmount() {
+        const { dispatch } = this.props;
+
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
-            APP.keyboardshortcut.unregisterShortcut(letter));
+            dispatch(unregisterShortcut(letter)));
 
         if (this.props._reactionsEnabled) {
             Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                 .forEach(letter =>
-                    APP.keyboardshortcut.unregisterShortcut(letter, true));
+                    dispatch(unregisterShortcut(letter, true)));
         }
     }
 
@@ -713,6 +719,7 @@ class Toolbox extends Component<IProps> {
             _multiStreamModeEnabled,
             _reactionsEnabled,
             _screenSharing,
+            _shortcutsEnabled,
             _whiteboardEnabled
         } = this.props;
 
@@ -874,7 +881,7 @@ class Toolbox extends Component<IProps> {
             group: 4
         };
 
-        const shortcuts = !_isMobile && keyboardShortcut.getEnabled() && {
+        const shortcuts = !_isMobile && _shortcutsEnabled && {
             key: 'shortcuts',
             Content: KeyboardShortcutsButton,
             group: 4
@@ -1585,6 +1592,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _raisedHand: hasRaisedHand(localParticipant),
         _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
+        _shortcutsEnabled: areKeyboardShortcutsEnabled(state),
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,

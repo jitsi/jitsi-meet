@@ -1406,6 +1406,7 @@ var config = {
      disableAGC
      disableAP
      disableHPF
+     disableLocalStats
      disableNS
      enableTalkWhileMuted
      forceJVB121Ratio

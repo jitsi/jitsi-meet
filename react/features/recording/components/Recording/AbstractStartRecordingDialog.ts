@@ -83,6 +83,8 @@ export interface IProps extends WithTranslation {
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
+
+    navigation: any;
 }
 
 interface IState {
@@ -386,6 +388,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
  * {@code StartRecordingDialog} component.
  *
  * @param {Object} state - The Redux state.
+ * @param {any} _ownProps - Component's own props.
  * @private
  * @returns {{
  *     _appKey: string,
@@ -399,7 +402,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
  *     _token: string
  * }}
  */
-export function mapStateToProps(state: IReduxState) {
+export function mapStateToProps(state: IReduxState, _ownProps: any) {
     const {
         transcription,
         recordingService,
