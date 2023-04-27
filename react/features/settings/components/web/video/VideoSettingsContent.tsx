@@ -13,6 +13,7 @@ import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../../base/ui/components/web/ContextMenuItemGroup';
+import { checkBlurSupport } from '../../../../virtual-background/functions';
 import { openSettingsDialog } from '../../../actions';
 import { SETTINGS_TABS } from '../../../constants';
 import { createLocalVideoTracks } from '../../../functions.web';
@@ -286,6 +287,8 @@ const VideoSettingsContent = ({
         }
     }, [ videoDeviceIds ]);
 
+    const virtualBackgroundSupported = checkBlurSupport();
+
     return (
         <ContextMenu
             aria-labelledby = 'video-settings-button'
@@ -298,11 +301,11 @@ const VideoSettingsContent = ({
                 {trackData.map((data, i) => _renderPreviewEntry(data, i))}
             </ContextMenuItemGroup>
             <ContextMenuItemGroup>
-                <ContextMenuItem
+                { virtualBackgroundSupported && <ContextMenuItem
                     accessibilityLabel = 'virtualBackground.title'
                     icon = { IconImage }
                     onClick = { selectBackground }
-                    text = { t('virtualBackground.title') } />
+                    text = { t('virtualBackground.title') } /> }
                 <div
                     className = { classes.checkboxContainer }
                     onClick = { stopPropagation }>
