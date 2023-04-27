@@ -23,7 +23,7 @@ interface IProps extends AbstractProps {
 const styles = (theme: Theme) => {
     return {
         chatMessageWrapper: {
-            maxWidth: '100%'
+            maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
         },
 
         chatMessage: {
@@ -62,7 +62,8 @@ const styles = (theme: Theme) => {
         replyWrapper: {
             display: 'flex',
             flexDirection: 'row' as const,
-            alignItems: 'center'
+            alignItems: 'center',
+            maxWidth: '100%'
         },
 
         messageContent: {
