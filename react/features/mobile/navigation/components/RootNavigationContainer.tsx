@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
@@ -7,19 +5,13 @@ import { StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
-// @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
-// @ts-ignore
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
-// @ts-ignore
 import { rootNavigationRef } from '../rootNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../routes';
-// @ts-ignore
 import {
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
@@ -27,7 +19,6 @@ import {
     navigationContainerTheme,
     preJoinScreenOptions,
     welcomeScreenOptions
-    // @ts-ignore
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
@@ -82,6 +73,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
                                 name = { screen.welcome.main }
                                 options = { welcomeScreenOptions } />
                             <RootStack.Screen
+
                                 // @ts-ignore
                                 component = { DialInSummary }
                                 name = { screen.dialInSummary }

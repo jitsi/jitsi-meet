@@ -3,8 +3,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../../base/icons/components/Icon';
 import { IconCheck, IconExclamationSolid } from '../../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet/_';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 import { TEXT_OVERFLOW_TYPES } from '../../../../base/ui/constants.any';

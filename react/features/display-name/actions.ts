@@ -1,6 +1,5 @@
 import { openDialog } from '../base/dialog/actions';
 
-// @ts-ignore
 import { DisplayNamePrompt } from './components';
 
 /**

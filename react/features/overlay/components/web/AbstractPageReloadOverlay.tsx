@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -100,8 +100,6 @@ export default class AbstractPageReloadOverlay<P extends IProps>
         const { error: connectionError } = state['features/base/connection'];
 
         const jitsiConnectionError
-
-            // @ts-ignore
             = connectionError && isFatalJitsiConnectionError(connectionError);
         const jitsiConferenceError
             = conferenceError && isFatalJitsiConferenceError(conferenceError);

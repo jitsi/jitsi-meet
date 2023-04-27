@@ -1,10 +1,7 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, Text, View, ViewStyle } from 'react-native';
 
-// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 

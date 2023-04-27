@@ -1,7 +1,5 @@
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import AlertDialog from '../base/dialog/components/native/AlertDialog';
 import { getParticipantDisplayName } from '../base/participants/functions';
 

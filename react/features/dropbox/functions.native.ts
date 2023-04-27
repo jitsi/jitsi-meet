@@ -1,8 +1,6 @@
 import { NativeModules } from 'react-native';
 
 import { IReduxState } from '../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setPictureInPictureEnabled } from '../mobile/picture-in-picture/functions';
 
 const { Dropbox } = NativeModules;
@@ -70,8 +68,7 @@ export function getSpaceUsage(token: string, _appKey?: any) {
  * @returns {boolean}
  */
 export function isEnabled(state: IReduxState) {
-    const { dropbox = {} } = state['features/base/config'];
+    const { dropbox = { appKey: undefined } } = state['features/base/config'];
 
-    // @ts-ignore
     return Boolean(Dropbox?.ENABLED && typeof dropbox.appKey === 'string');
 }

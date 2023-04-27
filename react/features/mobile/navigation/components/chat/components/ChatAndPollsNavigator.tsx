@@ -1,7 +1,6 @@
 /* eslint-disable lines-around-comment */
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-// @ts-ignore
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,18 +8,13 @@ import { IReduxState } from '../../../../../app/types';
 import {
     getClientHeight,
     getClientWidth
-    // @ts-ignore
 } from '../../../../../base/modal/components/functions';
-// @ts-ignore
 import { setIsPollsTabFocused } from '../../../../../chat/actions.native';
 // @ts-ignore
 import Chat from '../../../../../chat/components/native/Chat';
 import { resetNbUnreadPollsMessages } from '../../../../../polls/actions';
-// @ts-ignore
 import PollsPane from '../../../../../polls/components/native/PollsPane';
-// @ts-ignore
 import { screen } from '../../../routes';
-// @ts-ignore
 import { chatTabBarOptions } from '../../../screenOptions';
 
 const ChatTab = createMaterialTopTabNavigator();

@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconScreenshare, IconStopScreenshare } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isScreenVideoShared } from '../../../screen-share/functions';

@@ -62,5 +62,4 @@ class Captions extends AbstractCaptions<IProps> {
     }
 }
 
-// @ts-ignore
 export default connect(_abstractMapStateToProps)(Captions);

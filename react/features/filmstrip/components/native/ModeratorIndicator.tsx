@@ -1,8 +1,6 @@
 import React from 'react';
 
 import { IconModerator } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 
 /**

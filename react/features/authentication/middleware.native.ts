@@ -24,7 +24,7 @@ import {
     openLoginDialog,
     openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner } from './actions.native'; // @ts-ignore
+    waitForOwner } from './actions.native';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**

@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { FlatList, Text } from 'react-native';
@@ -30,11 +28,8 @@ import {
     shouldRenderInviteButton
 } from '../../functions';
 
-// @ts-ignore
 import CollapsibleList from './CollapsibleList';
-// @ts-ignore
 import MeetingParticipantItem from './MeetingParticipantItem';
-// @ts-ignore
 import styles from './styles';
 
 
@@ -261,7 +256,6 @@ class MeetingParticipantList extends PureComponent<IProps> {
                     }
                     <Input
                         clearable = { true }
-                        // @ts-ignore
                         customStyles = {{
                             container: styles.inputContainer,
                             input: styles.centerInput }}

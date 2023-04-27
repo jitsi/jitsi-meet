@@ -84,5 +84,4 @@ function mapStateToProps(state: IReduxState) {
     };
 }
 
-// @ts-ignore
 export default connect(mapStateToProps)(Captions);

@@ -1,9 +1,6 @@
-// @ts-ignore
 import conferenceStyles from '../conference/components/native/styles';
 
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import styles from './components/native/styles';
 import { SQUARE_TILE_ASPECT_RATIO, TILE_MARGIN } from './constants';
 import { getColumnCount, getTileViewParticipantCount } from './functions.native';
@@ -24,7 +21,7 @@ export function setTileViewDimensions() {
         const { clientHeight: height, clientWidth: width, safeAreaInsets = {} } = state['features/base/responsive-ui'];
         const { left = 0, right = 0, top = 0, bottom = 0 } = safeAreaInsets;
         const columns = getColumnCount(state);
-        const rows = Math.ceil(participantCount / columns);
+        const rows = Math.ceil(participantCount / columns); // @ts-ignore
         const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
         const heightToUse = height - top - bottom - (2 * conferenceBorder);
         const widthToUse = width - (TILE_MARGIN * 2) - left - right - (2 * conferenceBorder);

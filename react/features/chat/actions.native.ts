@@ -1,10 +1,6 @@
-/* eslint-disable lines-around-comment, max-len */
-
 import { IParticipant } from '../base/participants/types';
 import { navigate }
-// @ts-ignore
     from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../mobile/navigation/routes';
 
 import { OPEN_CHAT } from './actionTypes';

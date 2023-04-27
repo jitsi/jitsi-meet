@@ -87,7 +87,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
     constructor(props: IProps) {
         super(props);
 
-        // @ts-ignore
         this.state = {
             autoHideTimeout: undefined,
             showIndicator: false,

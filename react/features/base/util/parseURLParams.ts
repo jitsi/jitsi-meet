@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import Bourne from '@hapi/bourne';
 
 import { reportError } from './helpers';

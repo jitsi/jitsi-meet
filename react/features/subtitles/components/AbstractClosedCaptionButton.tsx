@@ -1,12 +1,9 @@
-/* eslint-disable lines-around-comment  */
-
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import { isLocalParticipantModerator } from '../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
-// @ts-ignore
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 
 export interface IAbstractProps extends AbstractButtonProps {
