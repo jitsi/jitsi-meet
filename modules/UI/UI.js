@@ -11,11 +11,11 @@ import { setColorAlpha } from '../../react/features/base/util/helpers';
 import { setDocumentUrl } from '../../react/features/etherpad/actions';
 import { setFilmstripVisible } from '../../react/features/filmstrip/actions.any';
 import {
-    joinLeaveNotificationsDisabled,
     setNotificationsEnabled,
     showNotification
 } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../react/features/notifications/constants';
+import { joinLeaveNotificationsDisabled } from '../../react/features/notifications/functions';
 import {
     dockToolbox,
     setToolboxEnabled,
