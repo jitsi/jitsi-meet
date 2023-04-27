@@ -18,6 +18,8 @@ import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import { translateToHTML } from '../base/i18n/functions';
+import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
 import { pinParticipant } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -31,7 +33,7 @@ import { isCalendarEnabled } from '../calendar-sync/functions';
 import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
 import { isVpaasMeeting } from '../jaas/functions';
-import { hideNotification, showNotification } from '../notifications/actions';
+import { hideNotification, showNotification, showWarningNotification } from '../notifications/actions';
 import {
     CALENDAR_NOTIFICATION_ID,
     NOTIFICATION_ICON,
@@ -190,9 +192,14 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
     if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
         && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
-        dispatch(showNotification({
-            descriptionKey: 'notify.disabledIframe',
-            descriptionArguments: { timeout: IFRAME_DISABLED_TIMEOUT_MINUTES }
+        dispatch(showWarningNotification({
+            description: translateToHTML(
+                i18next.t.bind(i18next),
+                'notify.disabledIframe',
+                {
+                    timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                }
+            )
         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
         setTimeout(() => {
