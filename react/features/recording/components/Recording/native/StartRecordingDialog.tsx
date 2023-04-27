@@ -9,7 +9,7 @@ import { goBack } from
     '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
-    type Props,
+    IProps,
     mapStateToProps
 } from '../AbstractStartRecordingDialog';
 import styles from '../styles.native';
@@ -23,14 +23,14 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
  *
  * @augments Component
  */
-class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
+class StartRecordingDialog extends AbstractStartRecordingDialog {
 
     /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onStartPress = this._onStartPress.bind(this);
@@ -66,7 +66,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: IProps) {
         super.componentDidUpdate(prevProps);
 
         const { navigation, t } = this.props;
@@ -83,8 +83,6 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
         });
     }
 
-    _onStartPress: () => void;
-
     /**
      * Starts recording session and goes back to the previous screen.
      *
@@ -93,8 +91,6 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
     _onStartPress() {
         this._onSubmit() && goBack();
     }
-
-    isStartRecordingDisabled: () => boolean;
 
     /**
      * Disables start recording button.
@@ -154,11 +150,6 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
             </JitsiScreen>
         );
     }
-
-    _areIntegrationsEnabled: () => boolean;
-    _onSubmit: () => boolean;
-    _onSelectedRecordingServiceChanged: (string) => void;
-    _onSharingSettingChanged: () => void;
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialog));

@@ -29,7 +29,7 @@ interface IState {
  * A react {@code Component} that implements an expanded label as tooltip-like
  * component to explain the meaning of the {@code Label}.
  */
-export default class ExpandedLabel<P extends IProps> extends Component<P, IState> {
+export default abstract class ExpandedLabel<P extends IProps> extends Component<P, IState> {
     /**
      * Instantiates a new {@code ExpandedLabel} instance.
      *
@@ -85,7 +85,7 @@ export default class ExpandedLabel<P extends IProps> extends Component<P, IState
      *
      * @returns {string}
      */
-    _getLabel: () => string;
+    abstract _getLabel(): string;
 
     /**
      * Defines the color of the expanded label. This function returns a default

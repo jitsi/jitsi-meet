@@ -1,7 +1,6 @@
-// @flow
-
 import React, { useCallback } from 'react';
-import { Text, TouchableHighlight } from 'react-native';
+import { WithTranslation } from 'react-i18next';
+import { ColorValue, GestureResponderEvent, Text, TouchableHighlight, ViewStyle } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { createReactionMenuEvent } from '../../../analytics/AnalyticsEvents';
@@ -11,71 +10,65 @@ import { StyleType } from '../../../base/styles/functions.native';
 import { addReactionToBuffer } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 
-
-export type ReactionStyles = {
-
-    /**
-     * Style for the gif button.
-     */
-    gifButton: StyleType,
-
-    /**
-     * Style for the button.
-     */
-    style: StyleType,
-
-    /**
-     * Underlay color for the button.
-     */
-    underlayColor: StyleType,
-
-    /**
-     * Style for the emoji text on the button.
-     */
-    emoji: StyleType,
-
-    /**
-     * Style for the label text on the button.
-     */
-    text?: StyleType,
+interface IReactionStyles {
 
     /**
      * Style for text container. Used on raise hand button.
      */
-    container?: StyleType
+    container?: StyleType;
+
+    /**
+     * Style for the emoji text on the button.
+     */
+    emoji: StyleType;
+
+    /**
+     * Style for the gif button.
+     */
+    gifButton: StyleType;
+
+    /**
+     * Style for the button.
+     */
+    style: StyleType;
+
+    /**
+     * Style for the label text on the button.
+     */
+    text?: StyleType;
+
+    /**
+     * Underlay color for the button.
+     */
+    underlayColor: ColorValue;
 
 }
 
 /**
  * The type of the React {@code Component} props of {@link ReactionButton}.
  */
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Component children.
      */
-    children?: ReactNode,
+    children?: React.ReactNode;
 
     /**
      * External click handler.
      */
-    onClick?: Function,
-
-    /**
-     * Collection of styles for the button.
-     */
-    styles: ReactionStyles,
+    onClick?: (e?: GestureResponderEvent) => void;
 
     /**
      * The reaction to be sent.
      */
-    reaction: string,
+    reaction?: string;
 
     /**
-     * Invoked to obtain translated strings.
+     * Collection of styles for the button.
      */
-    t: Function
-};
+    styles: IReactionStyles;
+}
 
 /**
  * An implementation of a button to send a reaction.
@@ -88,11 +81,13 @@ function ReactionButton({
     styles,
     reaction,
     t
-}: Props) {
+}: IProps) {
     const dispatch = useDispatch();
     const _onClick = useCallback(() => {
-        dispatch(addReactionToBuffer(reaction));
-        sendAnalytics(createReactionMenuEvent(reaction));
+        if (reaction) {
+            dispatch(addReactionToBuffer(reaction));
+            sendAnalytics(createReactionMenuEvent(reaction));
+        }
     }, [ reaction ]);
 
     return (
@@ -100,9 +95,9 @@ function ReactionButton({
             accessibilityLabel = { t(`toolbar.accessibilityLabel.${reaction}`) }
             accessibilityRole = 'button'
             onPress = { onClick || _onClick }
-            style = { [ styles.style, children && styles?.gifButton ] }
+            style = { [ styles.style, children && styles?.gifButton ] as ViewStyle[] }
             underlayColor = { styles.underlayColor }>
-            {children ?? <Text style = { styles.emoji }>{REACTIONS[reaction].emoji}</Text>}
+            {children ?? <Text style = { styles.emoji }>{REACTIONS[reaction ?? ''].emoji}</Text>}
         </TouchableHighlight>
     );
 }

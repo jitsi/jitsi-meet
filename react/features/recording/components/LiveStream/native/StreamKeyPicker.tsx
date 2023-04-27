@@ -1,52 +1,46 @@
-// @flow
-
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import {
     Linking,
     Text,
     TouchableHighlight,
     TouchableOpacity,
-    View
+    View,
+    ViewStyle
 } from 'react-native';
 import { connect } from 'react-redux';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
 import { translate } from '../../../../base/i18n/functions';
-import { StyleType } from '../../../../base/styles/functions.native';
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
 import styles, { ACTIVE_OPACITY, TOUCHABLE_UNDERLAY } from './styles';
 
-type Props = {
+interface IProps extends WithTranslation {
 
     /**
      * Style of the dialogs feature.
      */
-    _dialogStyles: StyleType,
+    _dialogStyles: any;
 
     /**
      * The list of broadcasts the user can pick from.
      */
-    broadcasts: ?Array<Object>,
+    broadcasts?: Array<{ key: string; title: string; }>;
 
     /**
      * Callback to be invoked when the user picked a broadcast. To be invoked
      * with a single key (string).
      */
-    onChange: Function,
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function
+    onChange: Function;
 }
 
-type State = {
+interface IState {
 
-     /**
-      * The key of the currently selected stream.
-      */
-     streamKey: ?string
+    /**
+    * The key of the currently selected stream.
+    */
+    streamKey?: string | null;
 }
 
 /**
@@ -57,14 +51,14 @@ type State = {
  * a later point to unify mobile and web logic for this functionality. But it's
  * out of the scope for now of the mobile live streaming functionality.
  */
-class StreamKeyPicker extends Component<Props, State> {
+class StreamKeyPicker extends Component<IProps, IState> {
 
     /**
      * Instantiates a new instance of StreamKeyPicker.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -89,7 +83,7 @@ class StreamKeyPicker extends Component<Props, State> {
 
         if (!broadcasts.length) {
             return (
-                <View style = { styles.formWrapper }>
+                <View style = { styles.formWrapper as ViewStyle }>
                     <TouchableOpacity
                         onPress = { this._onOpenYoutubeDashboard }>
                         <Text
@@ -106,8 +100,8 @@ class StreamKeyPicker extends Component<Props, State> {
         }
 
         return (
-            <View style = { styles.formWrapper }>
-                <View style = { styles.streamKeyPickerCta }>
+            <View style = { styles.formWrapper as ViewStyle }>
+                <View style = { styles.streamKeyPickerCta as ViewStyle }>
                     <Text
                         style = { [
                             _dialogStyles.text,
@@ -116,7 +110,7 @@ class StreamKeyPicker extends Component<Props, State> {
                         { this.props.t('liveStreaming.choose') }
                     </Text>
                 </View>
-                <View style = { styles.streamKeyPickerWrapper } >
+                <View style = { styles.streamKeyPickerWrapper as ViewStyle } >
                     { broadcasts.map((broadcast, index) =>
                         (<TouchableHighlight
                             activeOpacity = { ACTIVE_OPACITY }
@@ -126,7 +120,7 @@ class StreamKeyPicker extends Component<Props, State> {
                                 styles.streamKeyPickerItem,
                                 this.state.streamKey === broadcast.key
                                     ? styles.streamKeyPickerItemHighlight : null
-                            ] }
+                            ] as ViewStyle[] }
                             underlayColor = { TOUCHABLE_UNDERLAY }>
                             <Text
                                 style = { [
@@ -142,8 +136,6 @@ class StreamKeyPicker extends Component<Props, State> {
         );
     }
 
-    _onOpenYoutubeDashboard: () => void;
-
     /**
      * Opens the link which should display the YouTube broadcast live stream
      * key.
@@ -155,8 +147,6 @@ class StreamKeyPicker extends Component<Props, State> {
         Linking.openURL(YOUTUBE_LIVE_DASHBOARD_URL);
     }
 
-    _onStreamPick: string => Function;
-
     /**
      * Callback to be invoked when the user picks a stream from the list.
      *
@@ -164,7 +154,7 @@ class StreamKeyPicker extends Component<Props, State> {
      * @param {string} streamKey - The key of the stream selected.
      * @returns {Function}
      */
-    _onStreamPick(streamKey) {
+    _onStreamPick(streamKey: string) {
         return () => {
             this.setState({
                 streamKey

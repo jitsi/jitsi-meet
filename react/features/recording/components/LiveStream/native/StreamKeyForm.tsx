@@ -1,42 +1,41 @@
 import React from 'react';
-import { Linking, Text, View } from 'react-native';
+import { Linking, Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
 import { translate } from '../../../../base/i18n/functions';
-import { StyleType } from '../../../../base/styles/functions.native';
 import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import AbstractStreamKeyForm, {
-    type Props as AbstractProps
+    IProps as AbstractProps
 } from '../AbstractStreamKeyForm';
 import { getLiveStreaming } from '../functions';
 
-
 import styles from './styles';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
 
     /**
      * Style of the dialogs feature.
      */
-    _dialogStyles: StyleType
-};
+    _dialogStyles: any;
+}
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
  *
  * @augments Component
  */
-class StreamKeyForm extends AbstractStreamKeyForm<Props> {
+class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
     /**
      * Initializes a new {@code StreamKeyForm} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code StreamKeyForm} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -57,7 +56,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
 
         return (
             <>
-                <View style = { styles.formWrapper }>
+                <View style = { styles.formWrapper as ViewStyle }>
                     <Input
                         customStyles = {{
                             input: styles.streamKeyInput,
@@ -65,7 +64,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         onChange = { this._onInputChange }
                         placeholder = { t('liveStreaming.enterStreamKey') }
                         value = { this.props.value } />
-                    <View style = { styles.formValidationItem }>
+                    <View style = { styles.formValidationItem as ViewStyle }>
                         {
                             this.state.showValidationError && <Text
                                 style = { [
@@ -77,7 +76,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         }
                     </View>
                 </View>
-                <View style = { styles.formButtonsWrapper }>
+                <View style = { styles.formButtonsWrapper as ViewStyle }>
                     <Button
                         accessibilityLabel = 'liveStreaming.streamIdHelp'
                         labelKey = 'liveStreaming.streamIdHelp'
@@ -101,10 +100,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         );
     }
 
-    _onInputChange: Object => void;
-
-    _onOpenGooglePrivacyPolicy: () => void;
-
     /**
      * Opens the Google Privacy Policy web page.
      *
@@ -114,8 +109,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     _onOpenGooglePrivacyPolicy() {
         Linking.openURL(this.props._liveStreaming.dataPrivacyURL);
     }
-
-    _onOpenHelp: () => void;
 
     /**
      * Opens the information link on how to manually locate a YouTube broadcast
@@ -131,8 +124,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
             Linking.openURL(helpURL);
         }
     }
-
-    _onOpenYoutubeTerms: () => void;
 
     /**
      * Opens the YouTube terms and conditions web page.
@@ -155,7 +146,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
  *    _liveStreaming: LiveStreamingProps
  * }}
  */
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state),
         _liveStreaming: getLiveStreaming(state)

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 import { batch, useDispatch } from 'react-redux';
 
 import { hideSheet } from '../../../../base/dialog/actions';
@@ -28,7 +28,7 @@ const HighlightDialog = () => {
                 <Text style = { styles.highlightDialogText }>
                     { t('recording.highlightMomentSucessDescription') }
                 </Text>
-                <View style = { styles.highlightDialogButtonsContainer } >
+                <View style = { styles.highlightDialogButtonsContainer as ViewStyle } >
                     <Button
                         accessibilityLabel = 'dialog.Cancel'
                         labelKey = 'dialog.Cancel'

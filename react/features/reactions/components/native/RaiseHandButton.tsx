@@ -1,12 +1,10 @@
-// @flow
-
 import React, { Component } from 'react';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { type Dispatch } from 'redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
 import { RAISE_HAND_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
@@ -15,6 +13,7 @@ import {
     getLocalParticipant,
     hasRaisedHand
 } from '../../../base/participants/functions';
+import { ILocalParticipant } from '../../../base/participants/types';
 import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
@@ -24,43 +23,33 @@ import styles from './styles';
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
  */
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
 
     /**
      * Whether this button is enabled or not.
      */
-    _enabled: boolean,
+    _enabled: boolean;
 
     /**
      * The local participant.
      */
-    _localParticipant: Object,
+    _localParticipant?: ILocalParticipant;
 
     /**
      * Whether the participant raused their hand or not.
      */
-    _raisedHand: boolean,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>,
-
-    /**
-     * Used for translation.
-     */
-    t: Function,
+    _raisedHand: boolean;
 
     /**
      * Used to close the overflow menu after raise hand is clicked.
      */
-    onCancel: Function
-};
+    onCancel: Function;
+}
 
 /**
  * An implementation of a button to raise or lower hand.
  */
-class RaiseHandButton extends Component<Props, *> {
+class RaiseHandButton extends Component<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
     label = 'toolbar.raiseYourHand';
     toggledLabel = 'toolbar.lowerYourHand';
@@ -68,10 +57,10 @@ class RaiseHandButton extends Component<Props, *> {
     /**
      * Initializes a new {@code RaiseHandButton} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code RaiseHandButton} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -79,12 +68,6 @@ class RaiseHandButton extends Component<Props, *> {
         this._toggleRaisedHand = this._toggleRaisedHand.bind(this);
         this._getLabel = this._getLabel.bind(this);
     }
-
-    _onClick: () => void;
-
-    _toggleRaisedHand: () => void;
-
-    _getLabel: () => string;
 
     /**
      * Handles clicking / pressing the button.
@@ -163,9 +146,9 @@ class RaiseHandButton extends Component<Props, *> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state: IReduxState) {
     const _localParticipant = getLocalParticipant(state);
     const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
 

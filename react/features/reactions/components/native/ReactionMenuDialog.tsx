@@ -1,9 +1,8 @@
-// @flow
-
-import React, { PureComponent } from 'react';
+import React, { ComponentType, PureComponent } from 'react';
 import { SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
@@ -15,38 +14,38 @@ import ReactionMenu from './ReactionMenu';
 /**
  * The type of the React {@code Component} props of {@link ReactionMenuDialog}.
  */
-type Props = {
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _styles: StyleType,
-
-    /**
-     * True if the dialog is currently visible, false otherwise.
-     */
-    _isOpen: boolean,
-
-    /**
-     * The width of the screen.
-     */
-    _width: number,
+interface IProps {
 
     /**
     * The height of the screen.
     */
-    _height: number,
+    _height: number;
+
+    /**
+     * True if the dialog is currently visible, false otherwise.
+     */
+    _isOpen: boolean;
 
     /**
      * Number of conference participants.
      */
-    _participantCount: number,
+    _participantCount: number;
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType;
+
+    /**
+     * The width of the screen.
+     */
+    _width: number;
 
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
-};
+    dispatch: IStore['dispatch'];
+}
 
 /**
  * The exported React {@code Component}. We need it to execute
@@ -55,19 +54,19 @@ type Props = {
  * XXX It does not break our coding style rule to not utilize globals for state,
  * because it is merely another name for {@code export}'s {@code default}.
  */
-let ReactionMenu_; // eslint-disable-line prefer-const
+let ReactionMenu_: ComponentType<any>; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} with some extra actions in addition to
  * those in the toolbar.
  */
-class ReactionMenuDialog extends PureComponent<Props> {
+class ReactionMenuDialog extends PureComponent<IProps> {
     /**
      * Initializes a new {@code ReactionMenuDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -103,8 +102,6 @@ class ReactionMenuDialog extends PureComponent<Props> {
         );
     }
 
-    _onCancel: () => boolean;
-
     /**
      * Hides this {@code ReactionMenuDialog}.
      *
@@ -127,11 +124,11 @@ class ReactionMenuDialog extends PureComponent<Props> {
  *
  * @param {Object} state - Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: IReduxState) {
     return {
-        _isOpen: isDialogOpen(state, ReactionMenu_),
+        _isOpen: isDialogOpen(state, ReactionMenu_), // @ts-ignore
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog,
         _width: state['features/base/responsive-ui'].clientWidth,
         _height: state['features/base/responsive-ui'].clientHeight,
