@@ -163,7 +163,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
         const autoFocus = this.props.shouldFocus || false;
         const disabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';
-        const noMatchesFound = this.props.noMatchesFound || '';
+        const noMatchesFound = this.state.loading ? this.props.loadingMessage : this.props.noMatchesFound || '';
         const errorDialog = this._renderError();
 
         return (
@@ -200,7 +200,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
             error: this.state.error && Boolean(filterValue),
             filterValue,
             isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
-            items: filterValue ? this.state.items : [],
+            items: [],
             loading: Boolean(filterValue)
         });
         if (filterValue) {

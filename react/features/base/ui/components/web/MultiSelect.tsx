@@ -24,6 +24,8 @@ interface IProps {
     selectedItems?: MultiSelectItem[];
 }
 
+const MULTI_SELECT_HEIGHT = 200;
+
 const useStyles = makeStyles()(theme => {
     return {
         container: {
@@ -41,7 +43,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             zIndex: 2,
-            maxHeight: '400px',
+            maxHeight: `${MULTI_SELECT_HEIGHT}px`,
             overflowY: 'auto',
             padding: '0'
         },
@@ -128,7 +130,7 @@ const MultiSelect = ({
                             </div>
                         </div>
                     ))
-                    : <div>{noMatchesText}</div>
+                    : <div className = { classes.listItem }>{noMatchesText}</div>
             }
         </div>
     ), [ items ]);
