@@ -9,7 +9,7 @@ import { translate } from '../../../../base/i18n/functions';
 import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';
-import { IProps } from '../../LiveStream/AbstractStartLiveStreamDialog';
+import { IProps, _mapStateToProps as abstractMapStateToProps } from '../../LiveStream/AbstractStartLiveStreamDialog';
 import AbstractRecordButton, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -58,6 +58,7 @@ export function mapStateToProps(state: IReduxState) {
 
     return {
         ...abstractProps,
+        ...abstractMapStateToProps(state),
         visible: enabled && iosEnabled && abstractProps.visible
     };
 }

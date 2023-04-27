@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -8,9 +7,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconCar } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
-// @ts-ignore
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
 /* eslint-enable lines-around-comment */
 
@@ -50,5 +47,4 @@ function _mapStateToProps(state: IReduxState, ownProps: AbstractButtonProps): Ob
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(OpenCarmodeButton));

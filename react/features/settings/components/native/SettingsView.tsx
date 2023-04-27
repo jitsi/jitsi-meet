@@ -29,7 +29,6 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { AVATAR_SIZE } from '../../../welcome/components/styles';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
-// @ts-ignore
 import FormRow from './FormRow';
 import FormSection from './FormSection';
 import styles from './styles';
