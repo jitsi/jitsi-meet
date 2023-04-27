@@ -128,7 +128,7 @@ const MultiSelect = ({
                             </div>
                         </div>
                     ))
-                    : <div>{noMatchesText}</div>
+                    : <div className = { classes.listItem }>{noMatchesText}</div>
             }
         </div>
     ), [ items ]);
