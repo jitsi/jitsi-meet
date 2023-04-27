@@ -22,7 +22,7 @@ export const isWhiteboardEnabled = (state: IReduxState): boolean =>
     state['features/base/config'].whiteboard?.enabled
     && state['features/base/config'].whiteboard?.collabServerBaseUrl
     && getCurrentConference(state)?.getMetadataHandler()
-?.isSupported();
+        ?.isSupported();
 
 /**
  * Indicates whether the whiteboard is open.
@@ -40,6 +40,15 @@ export const isWhiteboardOpen = (state: IReduxState): boolean => getWhiteboardSt
  */
 export const isWhiteboardButtonVisible = (state: IReduxState): boolean =>
     isWhiteboardEnabled(state) && (isLocalParticipantModerator(state) || isWhiteboardOpen(state));
+
+/**
+* Indicates whether the whiteboard is accessible to a participant that has a moderator role
+*
+* @param {IReduxState} state - The state from the Redux store.
+* @returns {boolean}
+*/
+export const isWhiteboardAccessible = (state: IReduxState): boolean =>
+    isWhiteboardEnabled(state) && (isLocalParticipantModerator(state));
 
 /**
  * Indicates whether the whiteboard is present as a meeting participant.

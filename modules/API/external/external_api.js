@@ -89,7 +89,8 @@ const commands = {
     toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
-    toggleVideo: 'toggle-video'
+    toggleVideo: 'toggle-video',
+    toggleWhiteboard: 'toggle-whiteboard',
 };
 
 /**
@@ -151,6 +152,7 @@ const events = {
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
     'dominant-speaker-changed': 'dominantSpeakerChanged',
     'subject-change': 'subjectChange',
+    'whiteboard-status-changed': 'whiteboardStatusChanged',
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked'

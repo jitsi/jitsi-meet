@@ -89,6 +89,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import {  toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
@@ -164,6 +165,9 @@ function initCommands() {
         },
         'answer-knocking-participant': (id, approved) => {
             APP.store.dispatch(answerKnockingParticipant(id, approved));
+        },
+        'toggle-whiteboard': () => {
+            APP.store.dispatch(toggleWhiteboard(APP.store.getState()));
         },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
@@ -833,138 +837,138 @@ function initCommands() {
         const { name } = request;
 
         switch (name) {
-        case 'capture-largevideo-screenshot' :
-            APP.store.dispatch(captureLargeVideoScreenshot())
-                .then(dataURL => {
-                    let error;
+            case 'capture-largevideo-screenshot' :
+                APP.store.dispatch(captureLargeVideoScreenshot())
+                    .then(dataURL => {
+                        let error;
 
-                    if (!dataURL) {
-                        error = new Error('No large video found!');
-                    }
+                        if (!dataURL) {
+                            error = new Error('No large video found!');
+                        }
 
-                    callback({
-                        error,
-                        dataURL
+                        callback({
+                            error,
+                            dataURL
+                        });
                     });
-                });
-            break;
-        case 'deployment-info':
-            callback(APP.store.getState()['features/base/config'].deploymentInfo);
-            break;
-        case 'invite': {
-            const { invitees } = request;
+                break;
+            case 'deployment-info':
+                callback(APP.store.getState()['features/base/config'].deploymentInfo);
+                break;
+            case 'invite': {
+                const { invitees } = request;
 
-            if (!Array.isArray(invitees) || invitees.length === 0) {
-                callback({
-                    error: new Error('Unexpected format of invitees')
-                });
+                if (!Array.isArray(invitees) || invitees.length === 0) {
+                    callback({
+                        error: new Error('Unexpected format of invitees')
+                    });
 
+                    break;
+                }
+
+                // The store should be already available because API.init is called
+                // on appWillMount action.
+                APP.store.dispatch(
+                    invite(invitees, true))
+                    .then(failedInvitees => {
+                        let error;
+                        let result;
+
+                        if (failedInvitees.length) {
+                            error = new Error('One or more invites failed!');
+                        } else {
+                            result = true;
+                        }
+
+                        callback({
+                            error,
+                            result
+                        });
+                    });
                 break;
             }
+            case 'is-audio-muted':
+                callback(APP.conference.isLocalAudioMuted());
+                break;
+            case 'is-audio-disabled':
+                callback(isAudioMuteButtonDisabled(APP.store.getState()));
+                break;
+            case 'is-moderation-on': {
+                const { mediaType } = request;
+                const type = mediaType || MEDIA_TYPE.AUDIO;
 
-            // The store should be already available because API.init is called
-            // on appWillMount action.
-            APP.store.dispatch(
-                invite(invitees, true))
-                .then(failedInvitees => {
-                    let error;
-                    let result;
-
-                    if (failedInvitees.length) {
-                        error = new Error('One or more invites failed!');
-                    } else {
-                        result = true;
-                    }
-
-                    callback({
-                        error,
-                        result
-                    });
-                });
-            break;
-        }
-        case 'is-audio-muted':
-            callback(APP.conference.isLocalAudioMuted());
-            break;
-        case 'is-audio-disabled':
-            callback(isAudioMuteButtonDisabled(APP.store.getState()));
-            break;
-        case 'is-moderation-on': {
-            const { mediaType } = request;
-            const type = mediaType || MEDIA_TYPE.AUDIO;
-
-            callback(isEnabledFromState(type, APP.store.getState()));
-            break;
-        }
-        case 'is-participant-force-muted': {
-            const state = APP.store.getState();
-            const { participantId, mediaType } = request;
-            const type = mediaType || MEDIA_TYPE.AUDIO;
-            const participant = getParticipantById(state, participantId);
-
-            callback(isForceMuted(participant, type, state));
-            break;
-        }
-        case 'is-participants-pane-open': {
-            callback(getParticipantsPaneOpen(APP.store.getState()));
-            break;
-        }
-        case 'is-video-muted':
-            callback(APP.conference.isLocalVideoMuted());
-            break;
-        case 'is-audio-available':
-            callback(audioAvailable);
-            break;
-        case 'is-video-available':
-            callback(videoAvailable);
-            break;
-        case 'is-sharing-screen':
-            callback(Boolean(APP.conference.isSharingScreen));
-            break;
-        case 'is-start-silent':
-            callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
-            break;
-        case 'get-content-sharing-participants': {
-            const sharingParticipantIds = getScreenshareParticipantIds(APP.store.getState());
-
-            callback({
-                sharingParticipantIds
-            });
-            break;
-        }
-        case 'get-livestream-url': {
-            const state = APP.store.getState();
-            const conference = getCurrentConference(state);
-            let livestreamUrl;
-
-            if (conference) {
-                const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
-
-                livestreamUrl = activeSession?.liveStreamViewURL;
-            } else {
-                logger.error('Conference is not defined');
+                callback(isEnabledFromState(type, APP.store.getState()));
+                break;
             }
-            callback({
-                livestreamUrl
-            });
-            break;
-        }
-        case 'get-custom-avatar-backgrounds' : {
-            callback({
-                avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
-            });
-            break;
-        }
-        case 'list-breakout-rooms': {
-            callback(getBreakoutRooms(APP.store.getState()));
-            break;
-        }
-        case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
-            break;
-        }
-        default:
-            return false;
+            case 'is-participant-force-muted': {
+                const state = APP.store.getState();
+                const { participantId, mediaType } = request;
+                const type = mediaType || MEDIA_TYPE.AUDIO;
+                const participant = getParticipantById(state, participantId);
+
+                callback(isForceMuted(participant, type, state));
+                break;
+            }
+            case 'is-participants-pane-open': {
+                callback(getParticipantsPaneOpen(APP.store.getState()));
+                break;
+            }
+            case 'is-video-muted':
+                callback(APP.conference.isLocalVideoMuted());
+                break;
+            case 'is-audio-available':
+                callback(audioAvailable);
+                break;
+            case 'is-video-available':
+                callback(videoAvailable);
+                break;
+            case 'is-sharing-screen':
+                callback(Boolean(APP.conference.isSharingScreen));
+                break;
+            case 'is-start-silent':
+                callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
+                break;
+            case 'get-content-sharing-participants': {
+                const sharingParticipantIds = getScreenshareParticipantIds(APP.store.getState());
+
+                callback({
+                    sharingParticipantIds
+                });
+                break;
+            }
+            case 'get-livestream-url': {
+                const state = APP.store.getState();
+                const conference = getCurrentConference(state);
+                let livestreamUrl;
+
+                if (conference) {
+                    const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+
+                    livestreamUrl = activeSession?.liveStreamViewURL;
+                } else {
+                    logger.error('Conference is not defined');
+                }
+                callback({
+                    livestreamUrl
+                });
+                break;
+            }
+            case 'get-custom-avatar-backgrounds' : {
+                callback({
+                    avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
+                });
+                break;
+            }
+            case 'list-breakout-rooms': {
+                callback(getBreakoutRooms(APP.store.getState()));
+                break;
+            }
+            case 'rooms-info': {
+                callback(getRoomsInfo(APP.store.getState()));
+                break;
+            }
+            default:
+                return false;
         }
 
         return true;
@@ -980,12 +984,12 @@ function shouldBeEnabled() {
     return (
         typeof API_ID === 'number'
 
-            // XXX Enable the API when a JSON Web Token (JWT) is specified in
-            // the location/URL because then it is very likely that the Jitsi
-            // Meet (Web) app is being used by an external/wrapping (Web) app
-            // and, consequently, the latter will need to communicate with the
-            // former. (The described logic is merely a heuristic though.)
-            || parseJWTFromURLParams());
+        // XXX Enable the API when a JSON Web Token (JWT) is specified in
+        // the location/URL because then it is very likely that the Jitsi
+        // Meet (Web) app is being used by an external/wrapping (Web) app
+        // and, consequently, the latter will need to communicate with the
+        // former. (The described logic is merely a heuristic though.)
+        || parseJWTFromURLParams());
 }
 
 /**
@@ -1266,9 +1270,9 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, privateMessage, ts }: {
-                body: *, id: string, nick: string, privateMessage: boolean, ts: *
-            } = {}) {
+        { body, id, nick, privateMessage, ts }: {
+            body: *, id: string, nick: string, privateMessage: boolean, ts: *
+        } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
         }
@@ -1412,8 +1416,8 @@ class API {
      * @returns {void}
      */
     notifyDisplayNameChanged(
-            id: string,
-            { displayName, formattedDisplayName }: Object) {
+        id: string,
+        { displayName, formattedDisplayName }: Object) {
         this._sendEvent({
             name: 'display-name-change',
             displayname: displayName,
@@ -1431,8 +1435,8 @@ class API {
      * @returns {void}
      */
     notifyEmailChanged(
-            id: string,
-            { email }: Object) {
+        id: string,
+        { email }: Object) {
         this._sendEvent({
             name: 'email-change',
             email,
@@ -1869,6 +1873,21 @@ class API {
         this._sendEvent({
             name: 'knocking-participant',
             participant
+        });
+    }
+
+
+    /**
+     * Notify external application (if API is enabled) if whiteboard state is 
+     * changed.
+     *
+     * @param {boolean} muted - The new whiteboard status
+     * @returns {void}
+     */
+    notifyWhiteboardStatusChanged(status: string) {
+        this._sendEvent({
+            name: 'whiteboard-status-changed',
+            status
         });
     }
 
