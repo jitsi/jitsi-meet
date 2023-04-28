@@ -3,30 +3,29 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ReactionButton from '../../../reactions/components/web/ReactionButton';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { setGifDrawerVisibility, setGifMenuVisibility } from '../../actions';
+import { IReactionsMenuParent } from '../../../reactions/types';
+import { setGifMenuVisibility } from '../../actions';
 import { isGifsMenuOpen } from '../../functions.web';
 
-const GifsMenuButton = () => {
+interface IProps {
+    parent: IReactionsMenuParent;
+}
+
+const GifsMenuButton = ({ parent }: IProps) => {
     const menuOpen = useSelector(isGifsMenuOpen);
-    const overflowDrawer = useSelector(showOverflowDrawer);
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const icon = (
         <img
             alt = 'GIPHY Logo'
-            height = { 24 }
+            height = { parent === IReactionsMenuParent.OverflowMenu ? 16 : 24 }
             src = 'images/GIPHY_icon.png' />
     );
 
-    const handleClick = useCallback(() =>
-        dispatch(
-            overflowDrawer
-                ? setGifDrawerVisibility(!menuOpen)
-                : setGifMenuVisibility(!menuOpen)
-        )
-    , [ menuOpen, overflowDrawer ]);
+    const handleClick = useCallback(() => {
+        dispatch(setGifMenuVisibility(!menuOpen));
+    }, [ menuOpen, parent ]);
 
     return (
         <ReactionButton

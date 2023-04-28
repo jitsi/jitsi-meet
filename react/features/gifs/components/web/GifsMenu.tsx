@@ -12,11 +12,10 @@ import Input from '../../../base/ui/components/web/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
-import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
+import { IReactionsMenuParent } from '../../../reactions/types';
 import Drawer from '../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { setGifDrawerVisibility } from '../../actions';
+import { setGifMenuVisibility } from '../../actions';
 import {
     formatGifUrlMessage,
     getGifAPIKey,
@@ -60,10 +59,17 @@ const useStyles = makeStyles()(theme => {
             marginTop: theme.spacing(1)
         },
 
-        overflowMenu: {
+        overflowDrawerMenu: {
             padding: theme.spacing(3),
             width: '100%',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            height: '100%'
+        },
+
+        overflowMenu: {
+            height: '200px',
+            width: '201px',
+            marginBottom: '0px'
         },
 
         gifContainerOverflow: {
@@ -77,19 +83,25 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
+interface IProps {
+    columns?: number;
+    parent: IReactionsMenuParent;
+}
+
 /**
  * Gifs menu.
  *
  * @returns {ReactElement}
  */
-function GifsMenu() {
+function GifsMenu({ columns = 2, parent }: IProps) {
     const API_KEY = useSelector(getGifAPIKey);
     const giphyFetch = new GiphyFetch(API_KEY);
     const [ searchKey, setSearchKey ] = useState<string>();
     const { classes: styles, cx } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const overflowDrawer: boolean = useSelector(showOverflowDrawer);
+    const isInOverflowMenu
+        = parent === IReactionsMenuParent.OverflowDrawer || parent === IReactionsMenuParent.OverflowMenu;
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const rating = useSelector(getGifRating);
     const proxyUrl = useSelector(getGiphyProxyUrl);
@@ -109,8 +121,7 @@ function GifsMenu() {
     }, [ searchKey ]);
 
     const onDrawerClose = useCallback(() => {
-        dispatch(setGifDrawerVisibility(false));
-        dispatch(setOverflowMenuVisible(false));
+        dispatch(setGifMenuVisibility(false));
     }, []);
 
     const handleGifClick = useCallback((gif, e) => {
@@ -121,9 +132,9 @@ function GifsMenu() {
         batch(() => {
             dispatch(sendMessage(formatGifUrlMessage(url), true));
             dispatch(toggleReactionsMenuVisibility());
-            overflowDrawer && onDrawerClose();
+            isInOverflowMenu && onDrawerClose();
         });
-    }, [ dispatch, overflowDrawer ]);
+    }, [ dispatch, isInOverflowMenu ]);
 
     const handleGifKeyPress = useCallback((gif, e) => {
         if (e.nativeEvent.keyCode === 13) {
@@ -191,7 +202,8 @@ function GifsMenu() {
     const gifMenu = (
         <div
             className = { cx(styles.gifsMenu,
-                overflowDrawer && styles.overflowMenu
+                parent === IReactionsMenuParent.OverflowDrawer && styles.overflowDrawerMenu,
+                parent === IReactionsMenuParent.OverflowMenu && styles.overflowMenu
             ) }>
             <Input
                 autoFocus = { true }
@@ -208,9 +220,9 @@ function GifsMenu() {
                 value = { searchKey ?? '' } />
             <div
                 className = { cx(styles.gifContainer,
-                overflowDrawer && styles.gifContainerOverflow) }>
+                parent === IReactionsMenuParent.OverflowDrawer && styles.gifContainerOverflow) }>
                 <Grid
-                    columns = { 2 }
+                    columns = { columns }
                     fetchGifs = { fetchGifs }
                     gutter = { 6 }
                     hideAttribution = { true }
@@ -219,9 +231,9 @@ function GifsMenu() {
                     noResultsMessage = { t('giphy.noResults') }
                     onGifClick = { handleGifClick }
                     onGifKeyPress = { handleGifKeyPress }
-                    width = { overflowDrawer
+                    width = { parent === IReactionsMenuParent.OverflowDrawer
                         ? clientWidth - (2 * OVERFLOW_DRAWER_PADDING) - SCROLL_SIZE
-                        : 320
+                        : parent === IReactionsMenuParent.OverflowMenu ? 201 : 320
                     } />
             </div>
             <div className = { styles.logoContainer }>
@@ -233,7 +245,7 @@ function GifsMenu() {
         </div>
     );
 
-    return overflowDrawer ? (
+    return parent === IReactionsMenuParent.OverflowDrawer ? (
         <JitsiPortal>
             <Drawer
                 className = { styles.drawer }

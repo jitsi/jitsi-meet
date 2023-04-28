@@ -125,6 +125,16 @@ export function showOverflowDrawer(state: IReduxState) {
 }
 
 /**
+ * Returns true if the overflow menu button is displayed and false otherwise.
+ *
+ * @param {IReduxState} state - The state from the Redux store.
+ * @returns {boolean} - True if the overflow menu button is displayed and false otherwise.
+ */
+export function showOverflowMenu(state: IReduxState) {
+    return state['features/toolbox'].overflowMenuVisible;
+}
+
+/**
  * Indicates whether the toolbox is enabled or not.
  *
  * @param {IReduxState} state - The state from the Redux store.
