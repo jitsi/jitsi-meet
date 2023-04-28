@@ -26,9 +26,9 @@ local main_domain = string.gsub(module.host, muc_domain_prefix..'.', '');
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
 -- we send stats for the total number of rooms, total number of participants and total number of visitors
-local measure_rooms = module:measure("vnode-rooms", "amount");
-local measure_participants = module:measure("vnode-participants", "amount");
-local measure_visitors = module:measure("vnode-visitors", "amount");
+local measure_rooms = module:measure('vnode-rooms', 'amount');
+local measure_participants = module:measure('vnode-participants', 'amount');
+local measure_visitors = module:measure('vnode-visitors', 'amount');
 
 -- This is the domain of the main prosody that is federating with us;
 local fmuc_main_domain;
@@ -222,7 +222,7 @@ local function stanza_handler(event)
     end
 
     if stanza.attr.from ~= 'visitors.'..fmuc_main_domain then
-        module:log('warn', 'not from visitors component, ignore! %s %s', stanza.attr.from, stanza);
+        module:log('warn', 'not from visitors component, ignore! %s', stanza);
         return true;
     end
 
@@ -241,7 +241,7 @@ local function stanza_handler(event)
 
     -- respond with successful receiving the iq
     origin.send(st.iq({
-        type = "result";
+        type = 'result';
         from = stanza.attr.to;
         to = stanza.attr.from;
         id = stanza.attr.id
@@ -281,7 +281,7 @@ process_host_module(main_domain, function(host_module, host)
 end);
 
 -- only live chat is supported for visitors
-module:hook("muc-occupant-groupchat", function(event)
+module:hook('muc-occupant-groupchat', function(event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;
     local from = stanza.attr.from;
     local occupant_host = jid.host(occupant.bare_jid);
@@ -328,13 +328,13 @@ end, 55); -- prosody check for visitor's chat is prio 50, we want to override it
 
 module:hook('muc-private-message', function(event)
     -- private messaging is forbidden
-    event.origin.send(st.error_reply(event.stanza, "auth", "forbidden",
-            "Private messaging is disabled on visitor nodes"));
+    event.origin.send(st.error_reply(event.stanza, 'auth', 'forbidden',
+            'Private messaging is disabled on visitor nodes'));
     return true;
 end, 10);
 
 -- we calculate the stats on the configured interval (60 seconds by default)
-module:hook_global("stats-update", function ()
+module:hook_global('stats-update', function ()
     local participants_count, rooms_count, visitors_count = 0, 0, 0;
 
     -- iterate over all rooms
@@ -356,4 +356,80 @@ module:hook_global("stats-update", function ()
     measure_participants(participants_count);
 end);
 
+-- we skip it till the main participants are added from the main prosody
+module:hook('jicofo-unlock-room', function(e)
+    -- we do not block events we fired
+    if e.fmuc_fired then
+        return;
+    end
 
+    return true;
+end);
+
+-- handles incoming iq connect stanzas
+local function iq_from_main_handler(event)
+    local origin, stanza = event.origin, event.stanza;
+
+    if stanza.name ~= 'iq' then
+        return;
+    end
+
+    if stanza.attr.type == 'result' and sent_iq_cache:get(stanza.attr.id) then
+        sent_iq_cache:set(stanza.attr.id, nil);
+        return true;
+    end
+
+    if stanza.attr.type ~= 'set' then
+        return;
+    end
+
+    local visitors_iq = event.stanza:get_child('visitors', 'jitsi:visitors');
+    if not visitors_iq then
+        return;
+    end
+
+    if stanza.attr.from ~= fmuc_main_domain then
+        module:log('warn', 'not from main prosody, ignore! %s', stanza);
+        return true;
+    end
+
+    local room_jid = visitors_iq.attr.room;
+    local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
+
+    if not room then
+        module:log('warn', 'No room found %s', room_jid);
+        return;
+    end
+
+    local node = visitors_iq:get_child('connect');
+    local fire_jicofo_unlock = true;
+
+    if not node then
+        node = visitors_iq:get_child('update');
+        fire_jicofo_unlock = false;
+    end
+
+    if not node then
+        return;
+    end
+
+    -- respond with successful receiving the iq
+    origin.send(st.iq({
+        type = 'result';
+        from = stanza.attr.to;
+        to = stanza.attr.from;
+        id = stanza.attr.id
+    }));
+
+    -- if there is password supplied use it
+    -- if this is update it will either set or remove the password
+    room:set_password(node.attr.password);
+
+    if fire_jicofo_unlock then
+        -- everything is connected allow participants to join
+        module:fire_event('jicofo-unlock-room', { room = room; fmuc_fired = true; });
+    end
+
+    return true;
+end
+module:hook('iq/host', iq_from_main_handler, 10);
