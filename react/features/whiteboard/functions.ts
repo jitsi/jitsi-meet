@@ -91,10 +91,10 @@ export const isWhiteboardVisible = (state: IReduxState): boolean =>
     || state['features/large-video'].participantId === WHITEBOARD_ID;
 
 /**
-* Indicates whether the whiteboard is accessible to a participant that has a moderator role
+* Indicates whether the whiteboard is accessible to a participant that has a moderator role.
 *
 * @param {IReduxState} state - The state from the Redux store.
 * @returns {boolean}
 */
 export const isWhiteboardAllowed = (state: IReduxState): boolean =>
-isWhiteboardEnabled(state) && (isLocalParticipantModerator(state));
+    isWhiteboardEnabled(state) && isLocalParticipantModerator(state);

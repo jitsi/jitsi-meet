@@ -113,8 +113,8 @@ import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/function
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
 import { getJitsiMeetTransport } from '../transport';
-import {  toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
 
 import {
     API_ID,
@@ -837,7 +837,7 @@ function initCommands() {
         },
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard(APP.store.getState()));
-        },
+        }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
@@ -2019,18 +2019,18 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) if whiteboard state is 
+     * Notify external application (if API is enabled) if whiteboard state is
      * changed.
      *
-     * @param {boolean} muted - The new whiteboard status
+     * @param {string} status - The new whiteboard status.
      * @returns {void}
      */
-        notifyWhiteboardStatusChanged(status: string) {
-            this._sendEvent({
-                name: 'whiteboard-status-changed',
-                status
-            });
-        }
+    notifyWhiteboardStatusChanged(status: string) {
+        this._sendEvent({
+            name: 'whiteboard-status-changed',
+            status
+        });
+    }
 
     /**
      * Disposes the allocated resources.

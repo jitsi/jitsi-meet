@@ -1,10 +1,11 @@
-import { IStore, IReduxState } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
+
 import { setWhiteboardOpen } from './actions';
-import { isWhiteboardOpen, isWhiteboardVisible, isWhiteboardAllowed } from './functions';
+import { isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
 
 
 /**
- * API to toggle the whiteboard
+ * API to toggle the whiteboard.
  *
  * @param {Object} state - The redux state.
  * @returns {Function}
@@ -22,6 +23,6 @@ export function toggleWhiteboard(state: IReduxState) {
             } else if (!isOpen) {
                 dispatch(setWhiteboardOpen(true));
             }
-        } 
+        }
     };
 }
