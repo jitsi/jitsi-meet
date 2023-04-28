@@ -29,9 +29,9 @@ const styles = (theme: Theme) => {
         chatMessage: {
             display: 'inline-flex',
             padding: '12px',
+            marginRight: '12px',
             backgroundColor: theme.palette.ui02,
             borderRadius: '4px 12px 12px 12px',
-            boxSizing: 'border-box' as const,
             maxWidth: '100%',
             marginTop: '4px',
 
