@@ -50,51 +50,87 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
     const conference = getCurrentConference(state);
 
     switch (action.type) {
-    case SET_WHITEBOARD_OPEN: {
-        const existingCollabDetails = getCollabDetails(state);
+        case SET_WHITEBOARD_OPEN: {
+            const existingCollabDetails = getCollabDetails(state);
 
-        if (!existingCollabDetails) {
-            const collabLinkData = await generateCollaborationLinkData();
-            const collabServerUrl = getCollabServerUrl(state);
-            const roomId = getCurrentRoomId(state);
-            const collabDetails = {
-                roomId,
-                roomKey: collabLinkData.roomKey
-            };
+            if (!existingCollabDetails) {
+                const collabLinkData = await generateCollaborationLinkData();
+                const collabServerUrl = getCollabServerUrl(state);
+                const roomId = getCurrentRoomId(state);
+                const collabDetails = {
+                    roomId,
+                    roomKey: collabLinkData.roomKey
+                };
 
-            focusWhiteboard(store);
-            dispatch(setupWhiteboard({ collabDetails }));
-            conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
-                collabServerUrl,
-                collabDetails
-            });
-            APP.API.notifyWhiteboardStatusChanged('Instantiated');
+                focusWhiteboard(store);
+                dispatch(setupWhiteboard({ collabDetails }));
+                conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
+                    collabServerUrl,
+                    collabDetails
+                });
+                raiseWhiteboardNotification('Instantiated');
 
-            return;
+                return;
+            }
+
+            if (action.isOpen) {
+                focusWhiteboard(store);
+                raiseWhiteboardNotification('Shown');
+
+                return;
+            }
+
+            dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+            raiseWhiteboardNotification('Hidden');
+
+            break;
         }
+        case RESET_WHITEBOARD: {
+            dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+            raiseWhiteboardNotification('Reset');
 
-        if (action.isOpen) {
-            focusWhiteboard(store);
-            APP.API.notifyWhiteboardStatusChanged('Shown');
-
-            return;
+            break;
         }
-
-        dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
-        APP.API.notifyWhiteboardStatusChanged('Hidden');
-
-        break;
-    }
-    case RESET_WHITEBOARD: {
-        dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
-        APP.API.notifyWhiteboardStatusChanged('Reset');
-
-        break;
-    }
     }
 
     return next(action);
 });
+
+/**
+ * Raises the whiteboard status notifications changes (if API is enabled).
+ */
+function raiseWhiteboardNotification(event: string) {
+    switch (event) {
+        case 'Instantiated': {
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyWhiteboardStatusChanged('Instantiated');
+            }
+
+            break;
+        }
+        case 'Shown': {
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyWhiteboardStatusChanged('Shown');
+            }
+
+            break;
+        }
+        case 'Hidden': {
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyWhiteboardStatusChanged('Hidden');
+            }
+
+            break;
+        }
+        case 'Reset': {
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyWhiteboardStatusChanged('Reset');
+            }
+
+            break;
+        }
+    }
+}
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
