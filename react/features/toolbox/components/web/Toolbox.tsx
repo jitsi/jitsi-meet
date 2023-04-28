@@ -1015,9 +1015,8 @@ class Toolbox extends Component<IProps> {
 
         this._setButtonsNotifyClickMode(buttons);
         const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
-        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
+        let { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
-        let sliceIndex = order.length + 2;
 
         const keys = Object.keys(buttons);
 
@@ -1028,6 +1027,11 @@ class Toolbox extends Component<IProps> {
             !_jwtDisabledButons.includes(key)
             && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
         );
+        const filteredKeys = filtered.map(button => button.key);
+
+        order = order.filter(key => filteredKeys.includes(buttons[key as keyof typeof buttons].key));
+
+        let sliceIndex = order.length + 2;
 
         if (isHangupVisible) {
             sliceIndex -= 1;
