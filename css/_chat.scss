@@ -74,6 +74,10 @@
     a:active {
         color: black;
     }
+
+    &::-webkit-scrollbar-corner {
+        background: #3a3a3a;
+    }
 }
 
 
