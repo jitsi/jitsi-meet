@@ -1,16 +1,18 @@
-import React, { useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg';
-import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
+import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
+import AbstractButton, { type IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import ToolboxButtonWithPopup from '../../../base/toolbox/components/web/ToolboxButtonWithPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { IReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
-import { getReactionsMenuVisibility } from '../../functions.web';
+import { getReactionsMenuVisibility, isReactionsButtonEnabled } from '../../functions.web';
+import { IReactionsMenuParent } from '../../types';
 
 import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
@@ -19,9 +21,14 @@ import ReactionsMenu from './ReactionsMenu';
 interface IProps extends WithTranslation {
 
     /**
-     * Whether or not reactions are enabled.
+     * Whether a mobile browser is used or not.
      */
-    _reactionsEnabled: Boolean;
+    _isMobile: boolean;
+
+    /**
+     * Whether the reactions should be displayed on separate button or not.
+     */
+    _reactionsButtonEnabled: boolean;
 
     /**
      * The button's key.
@@ -60,13 +67,28 @@ interface IProps extends WithTranslation {
     reactionsQueue: Array<IReactionEmojiProps>;
 }
 
+
+/**
+ * Implementation of a button for reactions.
+ */
+class ReactionsButtonImpl extends AbstractButton<AbstractButtonProps> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.reactions';
+    icon = IconFaceSmile;
+    label = 'toolbar.reactions';
+    toggledLabel = 'toolbar.reactions';
+    tooltip = 'toolbar.reactions';
+}
+
+const ReactionsButton = translate(connect()(ReactionsButtonImpl));
+
 /**
  * Button used for the reactions menu.
  *
  * @returns {ReactElement}
  */
 function ReactionsMenuButton({
-    _reactionsEnabled,
+    _reactionsButtonEnabled,
+    _isMobile,
     buttonKey,
     dispatch,
     handleClick,
@@ -85,43 +107,69 @@ function ReactionsMenuButton({
         !visible && toggleReactionsMenu();
     }, [ visible, toggleReactionsMenu ]);
 
+    const closeReactionsMenu = useCallback(() => {
+        visible && toggleReactionsMenu();
+    }, [ visible, toggleReactionsMenu ]);
+
     const reactionsMenu = (<div className = 'reactions-menu-container'>
-        <ReactionsMenu />
+        <ReactionsMenu parent = { IReactionsMenuParent.Button } />
     </div>);
 
-    return (
-        <div className = 'reactions-menu-popup-container'>
-            {!_reactionsEnabled || isNarrow ? (
+    let content: ReactElement | null = null;
+
+    if (_reactionsButtonEnabled) {
+        content = (
+            <ToolboxButtonWithPopup
+                ariaControls = 'reactions-menu-dialog'
+                ariaExpanded = { isOpen }
+                ariaHasPopup = { true }
+                ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                onPopoverClose = { _isMobile ? closeReactionsMenu : toggleReactionsMenu }
+                onPopoverOpen = { openReactionsMenu }
+                popoverContent = { reactionsMenu }
+                trigger = { _isMobile ? 'click' : undefined }
+                visible = { visible }>
+                <ReactionsButton
+                    buttonKey = { buttonKey }
+                    notifyMode = { notifyMode } />
+            </ToolboxButtonWithPopup>);
+    } else {
+        content = isNarrow
+            ? (
                 <RaiseHandButton
                     buttonKey = { buttonKey }
                     handleClick = { handleClick }
                     notifyMode = { notifyMode } />)
-                : (
-                    <ToolboxButtonWithIconPopup
-                        ariaControls = 'reactions-menu-dialog'
-                        ariaExpanded = { isOpen }
-                        ariaHasPopup = { true }
-                        ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                        icon = { IconArrowUp }
-                        iconDisabled = { false }
-                        iconId = 'reactions-menu-button'
-                        onPopoverClose = { toggleReactionsMenu }
-                        onPopoverOpen = { openReactionsMenu }
-                        popoverContent = { reactionsMenu }
-                        visible = { visible }>
-                        <RaiseHandButton
-                            buttonKey = { buttonKey }
-                            handleClick = { handleClick }
-                            notifyMode = { notifyMode } />
-                    </ToolboxButtonWithIconPopup>
-                )}
+            : (
+                <ToolboxButtonWithPopup
+                    ariaControls = 'reactions-menu-dialog'
+                    ariaExpanded = { isOpen }
+                    ariaHasPopup = { true }
+                    ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                    icon = { IconArrowUp }
+                    iconDisabled = { false }
+                    iconId = 'reactions-menu-button'
+                    onPopoverClose = { toggleReactionsMenu }
+                    onPopoverOpen = { openReactionsMenu }
+                    popoverContent = { reactionsMenu }
+                    visible = { visible }>
+                    <RaiseHandButton
+                        buttonKey = { buttonKey }
+                        handleClick = { handleClick }
+                        notifyMode = { notifyMode } />
+                </ToolboxButtonWithPopup>);
+    }
+
+    return (
+        <div className = 'reactions-menu-popup-container'>
+            { content }
             {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                 index = { index }
                 key = { uid }
                 reaction = { reaction }
                 uid = { uid } />))}
-        </div>
-    );
+        </div>);
+
 }
 
 /**
@@ -134,9 +182,11 @@ function mapStateToProps(state: IReduxState) {
     const { isNarrowLayout } = state['features/base/responsive-ui'];
 
     return {
+        _reactionsButtonEnabled: isReactionsButtonEnabled(state),
         _reactionsEnabled: isReactionsEnabled(state),
+        _isMobile: isMobileBrowser(),
         isOpen: getReactionsMenuVisibility(state),
-        isNarrow: isMobileBrowser() || isNarrowLayout,
+        isNarrow: isNarrowLayout,
         reactionsQueue: getReactionsQueue(state)
     };
 }

@@ -18,6 +18,7 @@ type ToolbarButtons = 'camera' |
     'participants-pane' |
     'profile' |
     'raisehand' |
+    'reactions' |
     'recording' |
     'security' |
     'select-background' |

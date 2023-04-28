@@ -101,9 +101,12 @@ class ReactionButton extends AbstractToolbarButton<IProps, IState> {
     /**
      * Handles reaction button click.
      *
+     * @param {Event} event - The click event.
      * @returns {void}
      */
-    _onClickHandler() {
+    _onClickHandler(event: any) {
+        event.preventDefault();
+        event.stopPropagation();
         this.props.onClick();
         clearTimeout(this.state.increaseTimeout ?? 0);
         const timeout = window.setTimeout(() => {

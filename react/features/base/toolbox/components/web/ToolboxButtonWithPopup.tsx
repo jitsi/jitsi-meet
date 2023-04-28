@@ -33,17 +33,17 @@ interface IProps {
     /**
      * Icon of the button.
      */
-    icon: Function;
+    icon?: Function;
 
     /**
      * Flag used for disabling the small icon.
      */
-    iconDisabled: boolean;
+    iconDisabled?: boolean;
 
     /**
      * The ID of the icon button.
      */
-    iconId: string;
+    iconId?: string;
 
     /**
      * Popover close callback.
@@ -66,6 +66,11 @@ interface IProps {
     styles?: Object;
 
     /**
+     * Whether the trigger for open/ close should be click or hover.
+     */
+    trigger?: 'hover' | 'click';
+
+    /**
      * Whether or not the popover is visible.
      */
     visible: boolean;
@@ -77,7 +82,7 @@ interface IProps {
  * @param {Object} props - Component's props.
  * @returns {ReactElement}
  */
-export default function ToolboxButtonWithIconPopup(props: IProps) {
+export default function ToolboxButtonWithPopup(props: IProps) {
     const {
         ariaControls,
         ariaExpanded,
@@ -91,8 +96,28 @@ export default function ToolboxButtonWithIconPopup(props: IProps) {
         onPopoverOpen,
         popoverContent,
         styles,
+        trigger,
         visible
     } = props;
+
+    if (!icon) {
+        return (
+            <div
+                className = 'settings-button-container'
+                style = { styles }>
+                <Popover
+                    content = { popoverContent }
+                    headingLabel = { ariaLabel }
+                    onPopoverClose = { onPopoverClose }
+                    onPopoverOpen = { onPopoverOpen }
+                    position = 'top'
+                    trigger = { trigger }
+                    visible = { visible }>
+                    {children}
+                </Popover>
+            </div>
+        );
+    }
 
     const iconProps: any = {};
 
