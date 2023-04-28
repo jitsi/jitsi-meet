@@ -68,21 +68,23 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
                 collabServerUrl,
                 collabDetails
             });
-
+            APP.API.notifyWhiteboardStatusChanged('Instantiated');
             return;
         }
 
         if (action.isOpen) {
             focusWhiteboard(store);
-
+            APP.API.notifyWhiteboardStatusChanged('Shown');
             return;
         }
 
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+        APP.API.notifyWhiteboardStatusChanged('Hidden');
         break;
     }
     case RESET_WHITEBOARD: {
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+        APP.API.notifyWhiteboardStatusChanged('Reset');
         break;
     }
     }
