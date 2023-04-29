@@ -10,6 +10,8 @@ local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require "core.usermanager".is_admin;
 
+local MUC_NS = "http://jabber.org/protocol/muc";
+
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
 if not muc_domain_base then
@@ -183,6 +185,13 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     -- check list of allowed jids for the room
     host_module:hook('muc-occupant-pre-join', function (event)
         local room, stanza, origin = event.room, event.stanza, event.origin;
+
+        -- visitors were already in the room one way or another they have access
+        -- skip password challenge
+        local join = stanza:get_child("x", MUC_NS);
+        if join and room:get_password() then
+            join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
+        end
 
         -- we skip any checks when auto-allow is enabled
         if auto_allow_promotion then
