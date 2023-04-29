@@ -8,9 +8,9 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local new_id = require 'util.id'.medium;
-local um_is_admin = require "core.usermanager".is_admin;
+local um_is_admin = require 'core.usermanager'.is_admin;
 
-local MUC_NS = "http://jabber.org/protocol/muc";
+local MUC_NS = 'http://jabber.org/protocol/muc';
 
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
@@ -19,7 +19,7 @@ if not muc_domain_base then
     return;
 end
 
-local auto_allow_promotion = module:get_option_boolean("auto_allow_visitor_promotion", false);
+local auto_allow_promotion = module:get_option_boolean('auto_allow_visitor_promotion', false);
 
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
@@ -35,7 +35,7 @@ local sent_iq_cache = require 'util.cache'.new(200);
 local function respond_iq_result(origin, stanza)
     -- respond with successful receiving the iq
     origin.send(st.iq({
-        type = "result";
+        type = 'result';
         from = stanza.attr.to;
         to = stanza.attr.from;
         id = stanza.attr.id
@@ -160,7 +160,7 @@ local function stanza_handler(event)
     return processed;
 end
 
-module:hook("iq/host", stanza_handler, 10);
+module:hook('iq/host', stanza_handler, 10);
 
  --process a host module directly if loaded or hooks to wait for its load
 function process_host_module(name, callback)
@@ -188,9 +188,9 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
 
         -- visitors were already in the room one way or another they have access
         -- skip password challenge
-        local join = stanza:get_child("x", MUC_NS);
+        local join = stanza:get_child('x', MUC_NS);
         if join and room:get_password() then
-            join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
+            join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
         end
 
         -- we skip any checks when auto-allow is enabled
@@ -217,7 +217,7 @@ end);
 
 -- enable only in case of auto-allow is enabled
 if auto_allow_promotion then
-    prosody.events.add_handler("pre-jitsi-authentication", function(session)
+    prosody.events.add_handler('pre-jitsi-authentication', function(session)
         if not session.customusername or not session.jitsi_web_query_room then
             return nil;
         end
