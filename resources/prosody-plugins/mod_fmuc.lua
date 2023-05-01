@@ -20,8 +20,14 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
+-- this is the main virtual host of this vnode
+local local_domain = module:get_option_string('muc_mapper_domain_base');
+if not local_domain then
+    module:log('warn', "No 'muc_mapper_domain_base' option set, disabling fmuc plugin");
+    return;
+end
+
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
-local main_domain = string.gsub(module.host, muc_domain_prefix..'.', '');
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
@@ -45,7 +51,7 @@ module:hook('muc-occupant-pre-join', function (event)
     local occupant, session = event.occupant, event.origin;
     local node, host = jid.split(occupant.bare_jid);
 
-    if host == main_domain then
+    if host == local_domain then
         occupant.role = 'visitor';
     elseif not fmuc_main_domain then
         if node ~= 'focus' then
@@ -103,7 +109,7 @@ module:hook('muc-occupant-left', function (event)
     local room, occupant = event.room, event.occupant;
     local occupant_domain = jid.host(occupant.bare_jid);
 
-    if occupant_domain == main_domain then
+    if occupant_domain == local_domain then
         local focus_occupant = get_focus_occupant(room);
         if not focus_occupant then
             module:log('warn', 'No focus found for %s', room.jid);
@@ -182,7 +188,7 @@ module:hook('muc-broadcast-presence', function (event)
         local promotion_request = st.iq({
             type = 'set',
             to = 'visitors.'..fmuc_main_domain,
-            from = main_domain,
+            from = local_domain,
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
@@ -276,7 +282,7 @@ function process_host_module(name, callback)
         process_host(name);
     end
 end
-process_host_module(main_domain, function(host_module, host)
+process_host_module(local_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);
 end);
 
@@ -310,7 +316,7 @@ module:hook('muc-occupant-groupchat', function(event)
     -- let's send it to main chat and rest of visitors here
     for _, o in room:each_occupant() do
         -- filter remote occupants
-        if jid.host(o.bare_jid) == main_domain then
+        if jid.host(o.bare_jid) == local_domain then
             room:route_to_occupant(o, stanza)
         end
     end
@@ -341,7 +347,7 @@ module:hook_global('stats-update', function ()
     for room in prosody.hosts[module.host].modules.muc.each_room() do
         rooms_count = rooms_count + 1;
         for _, o in room:each_occupant() do
-            if jid.host(o.bare_jid) == main_domain then
+            if jid.host(o.bare_jid) == local_domain then
                 visitors_count = visitors_count + 1;
             else
                 participants_count = participants_count + 1;
