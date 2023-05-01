@@ -768,43 +768,51 @@ export default {
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
-            startWithAudioMuted: getStartWithAudioMuted(state)
-                || isUserInteractionRequiredForUnmute(state),
-            startWithVideoMuted: getStartWithVideoMuted(state)
-                || isUserInteractionRequiredForUnmute(state)
+            startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
+            startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
         };
 
         this.roomName = roomName;
 
         try {
-            // Initialize the device list first. This way, when creating tracks
-            // based on preferred devices, loose label matching can be done in
-            // cases where the exact ID match is no longer available, such as
-            // when the camera device has switched USB ports.
-            // when in startSilent mode we want to start with audio muted
+            // Initialize the device list first. This way, when creating tracks based on preferred devices, loose label
+            // matching can be done in cases where the exact ID match is no longer available, such as -
+            // 1. When the camera device has switched USB ports.
+            // 2. When in startSilent mode we want to start with audio muted
             await this._initDeviceList();
         } catch (error) {
             logger.warn('initial device list initialization failed', error);
         }
 
-        const handleStartAudioMuted = (options, tracks) => {
-            if (options.startWithAudioMuted) {
+        // Filter out the local tracks based on various config options, i.e., when user joins muted or is muted by
+        // focus. However, audio track will always be created even though it is not added to the conference since we
+        // want audio related features (noisy mic, talk while muted, etc.) to work even if the mic is muted.
+        const handleInitialTracks = (options, tracks) => {
+            let localTracks = tracks;
+
+            // No local tracks are added when user joins as a visitor.
+            if (iAmVisitor(state)) {
+                return [];
+            }
+            if (options.startWithAudioMuted || room?.isStartAudioMuted()) {
                 // Always add the track on Safari because of a known issue where audio playout doesn't happen
                 // if the user joins audio and video muted, i.e., if there is no local media capture.
                 if (browser.isWebKitBased()) {
                     this.muteAudio(true, true);
                 } else {
-                    return tracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
                 }
             }
+            if (room?.isStartVideoMuted()) {
+                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
+            }
 
-            return tracks;
+            return localTracks;
         };
 
         if (isPrejoinPageVisible(state)) {
             _connectionPromise = connect(roomName).then(c => {
-                // we want to initialize it early, in case of errors to be able
-                // to gather logs
+                // We want to initialize it early, in case of errors to be able to gather logs.
                 APP.connection = c;
 
                 return c;
@@ -818,38 +826,19 @@ export default {
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;
+            const localTracks = handleInitialTracks(initialOptions, tracks);
 
-            // Initialize device list a second time to ensure device labels
-            // get populated in case of an initial gUM acceptance; otherwise
-            // they may remain as empty strings.
+            // Initialize device list a second time to ensure device labels get populated in case of an initial gUM
+            // acceptance; otherwise they may remain as empty strings.
             this._initDeviceList(true);
 
             if (isPrejoinPageVisible(state)) {
-                return APP.store.dispatch(initPrejoin(tracks, errors));
+                return APP.store.dispatch(initPrejoin(localTracks, errors));
             }
 
             logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
 
             this._displayErrorsForCreateInitialLocalTracks(errors);
-
-            let localTracks = handleStartAudioMuted(initialOptions, tracks);
-
-            // In case where gUM is slow and resolves after the startAudio/VideoMuted coming from jicofo, we can be
-            // join unmuted even though jicofo had instruct us to mute, so let's respect that before passing the tracks
-            if (!browser.isWebKitBased()) {
-                if (room?.isStartAudioMuted()) {
-                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
-                }
-            }
-
-            if (room?.isStartVideoMuted()) {
-                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
-            }
-
-            // Do not add the tracks if the user has joined the call as a visitor.
-            if (iAmVisitor(state)) {
-                return Promise.resolve();
-            }
 
             return this._setLocalAudioVideoStreams(localTracks);
         }
@@ -858,7 +847,7 @@ export default {
 
         this._initDeviceList(true);
 
-        return this.startConference(con, handleStartAudioMuted(initialOptions, tracks));
+        return this.startConference(con, handleInitialTracks(initialOptions, tracks));
     },
 
     /**
