@@ -55,6 +55,7 @@ external_services = {
 };
 
 muc_mapper_domain_base = 'vX.meet.jitsi';
+main_domain = 'jitmeet.example.com';
 
 -- https://prosody.im/doc/modules/mod_smacks
 smacks_max_unacked_stanzas = 5;
