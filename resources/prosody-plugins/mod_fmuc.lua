@@ -27,6 +27,13 @@ if not local_domain then
     return;
 end
 
+-- this is the main virtual host of the main prosody that this vnode serves
+local main_domain = module:get_option_string('main_domain');
+if not local_domain then
+    module:log('warn', "No 'main_domain' option set, disabling fmuc plugin");
+    return;
+end
+
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
@@ -35,9 +42,6 @@ local NICK_NS = 'http://jabber.org/protocol/nick';
 local measure_rooms = module:measure('vnode-rooms', 'amount');
 local measure_participants = module:measure('vnode-participants', 'amount');
 local measure_visitors = module:measure('vnode-visitors', 'amount');
-
--- This is the domain of the main prosody that is federating with us;
-local fmuc_main_domain;
 
 local sent_iq_cache = require 'util.cache'.new(200);
 
@@ -53,10 +57,6 @@ module:hook('muc-occupant-pre-join', function (event)
 
     if host == local_domain then
         occupant.role = 'visitor';
-    elseif not fmuc_main_domain then
-        if node ~= 'focus' then
-            fmuc_main_domain = host;
-        end
     end
 end, 3);
 
@@ -187,11 +187,11 @@ module:hook('muc-broadcast-presence', function (event)
         sent_iq_cache:set(iq_id, socket.gettime());
         local promotion_request = st.iq({
             type = 'set',
-            to = 'visitors.'..fmuc_main_domain,
+            to = 'visitors.'..main_domain,
             from = local_domain,
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
-                             room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain) })
+                             room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
           :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
 
         local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
@@ -227,7 +227,7 @@ local function stanza_handler(event)
         return;
     end
 
-    if stanza.attr.from ~= 'visitors.'..fmuc_main_domain then
+    if stanza.attr.from ~= 'visitors.'..main_domain then
         module:log('warn', 'not from visitors component, ignore! %s', stanza);
         return true;
     end
@@ -295,7 +295,7 @@ module:hook('muc-occupant-groupchat', function(event)
     -- if there is no occupant this is a message from main, probably coming from other vnode
     if occupant then
         -- we manage nick only for visitors
-        if occupant_host ~= fmuc_main_domain then
+        if occupant_host ~= main_domain then
             -- add to message stanza display name for the visitor
             -- remove existing nick to avoid forgery
             stanza:remove_children('nick', NICK_NS);
@@ -322,9 +322,9 @@ module:hook('muc-occupant-groupchat', function(event)
     end
 
     -- send to main participants only messages from local occupants (skip from remote vnodes)
-    if occupant and occupant_host ~= fmuc_main_domain then
+    if occupant and occupant_host ~= main_domain then
         local main_message = st.clone(stanza);
-        main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..fmuc_main_domain);
+        main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain);
         module:send(main_message);
     end
     stanza.attr.from = from; -- something prosody does internally
@@ -394,7 +394,7 @@ local function iq_from_main_handler(event)
         return;
     end
 
-    if stanza.attr.from ~= fmuc_main_domain then
+    if stanza.attr.from ~= main_domain then
         module:log('warn', 'not from main prosody, ignore! %s', stanza);
         return true;
     end
