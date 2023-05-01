@@ -29,7 +29,7 @@ end
 
 -- this is the main virtual host of the main prosody that this vnode serves
 local main_domain = module:get_option_string('main_domain');
-if not local_domain then
+if not main_domain then
     module:log('warn', "No 'main_domain' option set, disabling fmuc plugin");
     return;
 end
