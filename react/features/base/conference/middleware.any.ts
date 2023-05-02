@@ -289,6 +289,12 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(conferenceWillLeave(conference));
     };
 
+    if (!iAmVisitor(getState())) {
+        // if a visitor is promoted back to main room and want to join an empty breakout room
+        // we need to send iq to jicofo, so it can join/create the breakout room
+        dispatch(overwriteConfig({ disableFocus: false }));
+    }
+
     // @ts-ignore
     window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
 
