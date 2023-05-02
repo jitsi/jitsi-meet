@@ -138,12 +138,6 @@ module:hook('muc-occupant-left', function (event)
     -- if there are no visitors give them 15 secs to reconnect, if not destroy it
     local main_count, visitors_count = get_occupant_counts(room);
 
-    if main_count == 0 then
-        module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
-        room:destroy(nil, 'No main participants.');
-        return;
-    end
-
     if visitors_count == 0 then
         schedule_destroy_timer(room);
     end
@@ -409,10 +403,16 @@ local function iq_from_main_handler(event)
 
     local node = visitors_iq:get_child('connect');
     local fire_jicofo_unlock = true;
+    local process_disconnect = false;
 
     if not node then
         node = visitors_iq:get_child('update');
         fire_jicofo_unlock = false;
+    end
+
+    if not node then
+        node = visitors_iq:get_child('disconnect');
+        process_disconnect = true;
     end
 
     if not node then
@@ -426,6 +426,13 @@ local function iq_from_main_handler(event)
         to = stanza.attr.from;
         id = stanza.attr.id
     }));
+
+    if process_disconnect then
+        local main_count, visitors_count = get_occupant_counts(room);
+        module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
+        room:destroy(nil, 'Conference ended.');
+        return true;
+    end
 
     -- if there is password supplied use it
     -- if this is update it will either set or remove the password
