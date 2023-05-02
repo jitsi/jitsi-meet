@@ -300,7 +300,8 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
 
     if (!vnode) {
         // this is redirecting back to main, lets restore config
-        // no point of updating disableFocus, we can skip the initial iq to jicofo
+        // not updating disableFocus, as if the room capacity is full the promotion to the main room will fail
+        // and the visitor will be redirected back to a vnode from jicofo
         if (config.oldConfig && username) {
             return {
                 hosts: {
