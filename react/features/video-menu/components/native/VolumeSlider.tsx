@@ -162,5 +162,5 @@ function mapStateToProps(state: IReduxState, ownProps: IProps) {
     };
 }
 
-{/* @ts-ignore */}
+// @ts-ignore
 export default connect(mapStateToProps)(VolumeSlider);
