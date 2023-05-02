@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import React, { PureComponent } from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
@@ -29,9 +31,9 @@ import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
 import SendToBreakoutRoom from './SendToBreakoutRoom';
+import VolumeSlider from './VolumeSlider';
 import styles from './styles';
 
-// import VolumeSlider from './VolumeSlider';
 
 /**
  * Size of the rendered avatar in the menu.
@@ -158,6 +160,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton
                     { ...buttonProps }
+                    /* @ts-ignore */
                     afterClick = { undefined } />
                 {_moderator && _rooms.length > 1 && <>
                     {/* @ts-ignore */}
@@ -169,10 +172,12 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                     </View>
                     {_rooms.map(room => _currentRoomId !== room.id && (<SendToBreakoutRoom
                         key = { room.id }
+                        /* @ts-ignore */
                         room = { room }
                         { ...buttonProps } />))}
                 </>}
-                {/* <VolumeSlider participantID = { participantId } />*/}
+                {/* @ts-ignore */}
+                <VolumeSlider participantID = { participantId as string } />
             </BottomSheet>
         );
     }
@@ -219,7 +224,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState, ownProps: any) {
+function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
