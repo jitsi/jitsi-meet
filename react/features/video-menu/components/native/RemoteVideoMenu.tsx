@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React, { PureComponent } from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
@@ -172,12 +170,10 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                     </View>
                     {_rooms.map(room => _currentRoomId !== room.id && (<SendToBreakoutRoom
                         key = { room.id }
-                        /* @ts-ignore */
                         room = { room }
                         { ...buttonProps } />))}
                 </>}
-                {/* @ts-ignore */}
-                <VolumeSlider participantID = { participantId as string } />
+                 <VolumeSlider participantID = { participantId } />
             </BottomSheet>
         );
     }
@@ -224,7 +220,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState, ownProps: IProps) {
+function _mapStateToProps(state: IReduxState, ownProps: any) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
