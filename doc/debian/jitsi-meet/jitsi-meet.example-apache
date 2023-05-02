@@ -15,6 +15,8 @@
     SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
     SSLCertificateKeyFile /etc/jitsi/meet/jitsi-meet.example.com.key
 
+    Header always unset Content-Security-Policy
+    Header always set Content-Security-Policy "default-src 'self'; font-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; object-src 'none';"
     Header always set Strict-Transport-Security "max-age=63072000"
 
     DocumentRoot "/usr/share/jitsi-meet"
