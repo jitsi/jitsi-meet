@@ -179,7 +179,7 @@
     "webpack-dev-server": "4.7.3"
   },
   "overrides": {
-    "strophe.js@1.6.0": {
+    "strophe.js@1.5.0": {
       "@xmldom/xmldom": "0.8.7"
     }
   },
