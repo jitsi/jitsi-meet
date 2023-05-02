@@ -70,7 +70,7 @@ const useStyles = makeStyles()(theme => {
             '& input[type="checkbox"]': {
                 appearance: 'none',
                 backgroundColor: 'transparent',
-                margin: 0,
+                margin: '3px',
                 font: 'inherit',
                 color: theme.palette.icon03,
                 width: '18px',
