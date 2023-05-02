@@ -64,7 +64,7 @@ export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-bac
 /**
  * The toolbar buttons to show when in visitors mode.
  */
-export const VISITORS_MODE_BUTTONS = [ 'chat', 'hangup', 'raisehand', 'tileview' ];
+export const VISITORS_MODE_BUTTONS = [ 'chat', 'hangup', 'raisehand', 'settings', 'tileview' ];
 
 /**
  * The set of feature flags.

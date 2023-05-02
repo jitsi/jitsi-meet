@@ -70,6 +70,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     hideSelfView: boolean;
 
     /**
+     * Whether we are in visitors mode.
+     */
+    iAmVisitor: boolean;
+
+    /**
      * The id of the local participant.
      */
     id: string;
@@ -243,6 +248,7 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
             email,
             hideEmailInSettings,
             hideSelfView,
+            iAmVisitor,
             id,
             readOnlyName,
             showLanguageSettings,
@@ -277,7 +283,7 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
                         type = 'text'
                         value = { email } />
                 </div>}
-                {!disableHideSelfView && (
+                {!disableHideSelfView && !iAmVisitor && (
                     <Checkbox
                         checked = { hideSelfView }
                         className = { classes.bottomMargin }
