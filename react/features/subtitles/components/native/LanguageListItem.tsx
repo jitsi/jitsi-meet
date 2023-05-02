@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment  */
-
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { StyleProp, TouchableHighlight, View, ViewStyle } from 'react-native';
@@ -9,7 +7,6 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck } from '../../../base/icons/svg';
 
-// @ts-ignore
 import styles from './styles';
 
 

@@ -36,7 +36,7 @@ type Props = {
     /**
      * Function to render a bottom sheet footer element, if necessary.
      */
-    renderFooter?: Function;
+    renderFooter?: () => React.ReactNode;
 
     /**
      * Function to render a bottom sheet header element, if necessary.

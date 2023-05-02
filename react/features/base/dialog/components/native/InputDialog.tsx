@@ -18,7 +18,7 @@ interface IProps extends AbstractProps, WithTranslation {
     /**
      * The dialog descriptionKey.
      */
-    descriptionKey: string;
+    descriptionKey?: string;
 
     /**
      * An optional initial value to initiate the field with.

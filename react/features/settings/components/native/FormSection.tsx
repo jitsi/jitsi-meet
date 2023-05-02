@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 
 import { translate } from '../../../base/i18n/functions';
 
-// @ts-ignore
 import styles from './styles';
 
 
