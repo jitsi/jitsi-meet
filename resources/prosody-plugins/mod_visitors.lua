@@ -63,7 +63,9 @@ local function send_visitors_iq(conference_service, room, type)
         id = iq_id })
       :tag('visitors', { xmlns = 'jitsi:visitors',
                          room = jid.join(jid.node(room.jid), conference_service) })
-      :tag(type, { xmlns = 'jitsi:visitors', password = room:get_password() or '' }):up();
+      :tag(type, { xmlns = 'jitsi:visitors',
+        password = type ~= 'disconnect' and room:get_password() or ''
+      }):up();
 
       module:send(connect_done);
 end
@@ -140,6 +142,8 @@ local function disconnect_vnode(event)
     -- we are counting vnode main participants and we should be clearing it there
     -- let's do it here just in case
     visitors_nodes[room.jid].nodes[conference_service] = nil;
+
+    send_visitors_iq(conference_service, room, 'disconnect');
 end
 module:hook('jitsi-disconnect-vnode', disconnect_vnode);
 
@@ -159,9 +163,7 @@ module:hook('presence/full', function(event)
         if visitors_nodes[room_jid] and visitors_nodes[room_jid].nodes
                 and visitors_nodes[room_jid].nodes[from_host] then
             visitors_nodes[room_jid].nodes[from_host] = visitors_nodes[room_jid].nodes[from_host] - 1;
-            if visitors_nodes[room_jid].nodes[from_host] == 0 then
-                visitors_nodes[room_jid].nodes[from_host] = nil;
-            end
+            -- we clean only on disconnect coming from jicofo
         end
     end
 end, 900);
