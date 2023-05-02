@@ -191,10 +191,14 @@
 
     .google-panel {
         align-items: center;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid #5e6d7a;
         display: flex;
         flex-direction: column;
-        padding-bottom: 10px;
+        padding-bottom: 20px;
+    }
+
+    .stream-key-form {
+        padding-top: 20px;
     }
 
     .warning-text {

@@ -38,7 +38,6 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
-
     /**
      * Initializes a new {@code StreamKeyForm} instance.
      *
@@ -60,18 +59,27 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { classes, t, value } = this.props;
+        const { classes, t, streamKeyValue, streamBaseURLValue} = this.props;
 
         return (
             <div className = 'stream-key-form'>
                 <Input
                     autoFocus = { true }
+                    label = { t('dialog.streamBaseURL') }
+                    name = 'streamIdBase'
+                    onChange = { this._onStreamBaseURLChange }
+                    placeholder = { t('liveStreaming.enterStreamBaseURL') }
+                    type = 'text'
+                    value = { streamBaseURLValue } />
+                <br />
+                <Input
+                    autoFocus = { true }
                     label = { t('dialog.streamKey') }
-                    name = 'streamId'
-                    onChange = { this._onInputChange }
+                    name = 'streamIdKey'
+                    onChange = { this._onStreamKeyChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
                     type = 'text'
-                    value = { value } />
+                    value = { streamKeyValue } />
                 <div className = 'form-footer'>
                     <div className = 'help-container'>
                         {

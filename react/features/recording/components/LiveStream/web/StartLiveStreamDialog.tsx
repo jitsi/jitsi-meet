@@ -92,10 +92,11 @@ class StartLiveStreamDialog
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }
                     <StreamKeyForm
-                        onChange = { this._onStreamKeyChange }
-                        value = {
-                            this.state.streamKey || this.props._streamKey || ''
-                        } />
+                        onStreamKeyChange = { this._onStreamKeyChange }
+                        onStreamBaseURLChange = { this._onStreamBaseURLChange}
+                        streamKeyValue = {this.state.streamKey || this.props._streamKey || ''} 
+                        streamBaseURLValue = {this.state.streamBaseURL || this.props._streamBaseURL || ''}
+                        />
                 </div>
             </Dialog>
         );

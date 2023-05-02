@@ -24,3 +24,8 @@ export const JITSI_LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
  */
 export const FOUR_GROUPS_DASH_SEPARATED = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
 
+/**
+ * The default live streaming URL to display.
+ */
+export const YOUTUBE_RTMP_URL= 'rtmp://a.rtmp.youtube.com/live2';
+

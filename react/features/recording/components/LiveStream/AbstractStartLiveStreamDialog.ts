@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { YOUTUBE_RTMP_URL } from './constants';
 
 /**
  * The type of the React {@code Component} props of
@@ -34,6 +35,11 @@ export interface IProps extends WithTranslation {
      * The live stream key that was used before.
      */
     _streamKey?: string;
+
+    /**
+     * The live stream base URL that was used before.
+     */
+    _streamBaseURL?: string;
 
     /**
      * The Redux dispatch function.
@@ -71,6 +77,11 @@ export interface IState {
      * The selected or entered stream key to use for YouTube live streaming.
      */
     streamKey?: string;
+
+    /**
+     * The entered stream base URL to use for YouTube live streaming.
+     */
+    streamBaseURL?: string;
 }
 
 /**
@@ -96,7 +107,8 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
             broadcasts: undefined,
             errorType: undefined,
             selectedBoundStreamID: undefined,
-            streamKey: ''
+            streamKey: '',
+            streamBaseURL: YOUTUBE_RTMP_URL
         };
 
         /**
@@ -111,6 +123,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
 
         this._onCancel = this._onCancel.bind(this);
         this._onStreamKeyChange = this._onStreamKeyChange.bind(this);
+        this._onStreamBaseURLChange = this._onStreamBaseURLChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
 
@@ -171,7 +184,22 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      */
     _onStreamKeyChange(streamKey: string) {
         this._setStateIfMounted({
-            streamKey,
+            streamKey: streamKey,
+            selectedBoundStreamID: undefined
+        });
+    }
+
+    /**
+     * Callback invoked to update the {@code StartLiveStreamDialog} component's
+     * display of the entered YouTube stream base URL.
+     *
+     * @param {string} streamBaseURL - The stream base URL entered in the field.
+     * @private
+     * @returns {void}
+     */
+    _onStreamBaseURLChange(streamBaseURL: string) {
+        this._setStateIfMounted({
+            streamBaseURL: streamBaseURL,
             selectedBoundStreamID: undefined
         });
     }
@@ -188,13 +216,19 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
         const { broadcasts, selectedBoundStreamID } = this.state;
         const key
             = (this.state.streamKey || this.props._streamKey || '').trim();
+        const base = (this.state.streamBaseURL || this.props._streamBaseURL || '').trim();
 
-        if (!key) {
+        if (!base) {
             return false;
         }
-
+        if (!key){
+            return false;
+        }
+        
+        const rtmpURL = base.endsWith("/") ? base + key : base + "/" + key;
         let selectedBroadcastID = null;
 
+        // to modify this too maybe?
         if (selectedBoundStreamID) {
             const selectedBroadcast = broadcasts?.find(
                 broadcast => broadcast.boundStreamID === selectedBoundStreamID);
@@ -204,11 +238,11 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
 
         sendAnalytics(
             createLiveStreamingDialogEvent('start', 'confirm.button'));
-
+        
         this.props._conference?.startRecording({
             broadcastId: selectedBroadcastID,
             mode: JitsiRecordingConstants.mode.STREAM,
-            streamId: key
+            streamId: rtmpURL
         });
 
         return true;
@@ -238,7 +272,8 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
  *     _conference: Object,
  *     _googleAPIState: number,
  *     _googleProfileEmail: string,
- *     _streamKey: string
+ *     _streamKey: string,
+ *     _streamBaseUrl: string
  * }}
  */
 export function _mapStateToProps(state: IReduxState) {
@@ -246,6 +281,7 @@ export function _mapStateToProps(state: IReduxState) {
         _conference: state['features/base/conference'].conference,
         _googleAPIState: state['features/google-api'].googleAPIState,
         _googleProfileEmail: state['features/google-api'].profileEmail,
-        _streamKey: state['features/recording'].streamKey
+        _streamKey: state['features/recording'].streamKey,
+        _streamBaseURL: state['features/recording'].streamBaseURL
     };
 }
