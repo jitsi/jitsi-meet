@@ -44,7 +44,7 @@ export interface IProps extends WithTranslation {
      * Callback invoked when the entered stream base url has changed.
      */
     onStreamBaseURLChange: Function;
-    
+
     /**
      * Callback invoked when the entered stream key has changed.
      */
@@ -127,7 +127,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
     componentWillUnmount() {
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
-    
+
     /**
      * Callback invoked when the value of the input stream baser url field has updated through
      * user input. This forwards the value (string only, even if it was a dom
@@ -138,7 +138,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      * @private
      * @returns {void}
      */
-    _onStreamBaseURLChange(change: any)  {
+    _onStreamBaseURLChange(change: any) {
         const value = typeof change === 'object' ? change.target.value : change;
 
         this.props.onStreamBaseURLChange(value);

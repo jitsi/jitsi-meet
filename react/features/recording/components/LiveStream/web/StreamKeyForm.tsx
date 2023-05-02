@@ -59,7 +59,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { classes, t, streamKeyValue, streamBaseURLValue} = this.props;
+        const { classes, t, streamKeyValue, streamBaseURLValue } = this.props;
 
         return (
             <div className = 'stream-key-form'>

@@ -12,7 +12,7 @@ export const YOUTUBE_LIVE_DASHBOARD_URL = 'https://www.youtube.com/live_dashboar
 /**
  * The default live streaming URL to display.
  */
-export const YOUTUBE_RTMP_URL= 'rtmp://a.rtmp.youtube.com/live2';
+export const YOUTUBE_RTMP_URL = 'rtmp://a.rtmp.youtube.com/live2';
 
 /**
  * The URL for YouTube terms and conditions.

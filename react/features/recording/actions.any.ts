@@ -92,10 +92,10 @@ export function hidePendingRecordingNotification(streamType: string) {
 * }}
 */
 export function setLiveStreamBaseURL(streamBaseURL: string) {
-   return {
-       type: SET_STREAM_BASE_URL,
-       streamBaseURL
-   };
+    return {
+        type: SET_STREAM_BASE_URL,
+        streamBaseURL
+    };
 }
 
 /**

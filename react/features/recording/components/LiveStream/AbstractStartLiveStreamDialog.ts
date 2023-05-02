@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+
 import { YOUTUBE_RTMP_URL } from './constants';
 
 /**
@@ -184,7 +185,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      */
     _onStreamKeyChange(streamKey: string) {
         this._setStateIfMounted({
-            streamKey: streamKey,
+            streamKey,
             selectedBoundStreamID: undefined
         });
     }
@@ -199,7 +200,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      */
     _onStreamBaseURLChange(streamBaseURL: string) {
         this._setStateIfMounted({
-            streamBaseURL: streamBaseURL,
+            streamBaseURL,
             selectedBoundStreamID: undefined
         });
     }
@@ -221,11 +222,11 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
         if (!base) {
             return false;
         }
-        if (!key){
+        if (!key) {
             return false;
         }
-        
-        const rtmpURL = base.endsWith("/") ? base + key : base + "/" + key;
+
+        const rtmpURL = base.endsWith('/') ? base + key : `${base}/${key}`;
         let selectedBroadcastID = null;
 
         // to modify this too maybe?
@@ -238,7 +239,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
 
         sendAnalytics(
             createLiveStreamingDialogEvent('start', 'confirm.button'));
-        
+
         this.props._conference?.startRecording({
             broadcastId: selectedBroadcastID,
             mode: JitsiRecordingConstants.mode.STREAM,
