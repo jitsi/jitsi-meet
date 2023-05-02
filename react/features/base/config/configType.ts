@@ -170,6 +170,7 @@ export interface IConfig {
     }>;
     callDisplayName?: string;
     callFlowsEnabled?: boolean;
+    callHandle?: string;
     callStatsConfigParams?: {
         additionalIDs?: {
             customerID?: string;
@@ -191,6 +192,7 @@ export interface IConfig {
     };
     callStatsID?: string;
     callStatsSecret?: string;
+    callUUID?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
         chromeExtensionsInfo?: Array<{ id: string; path: string; }>;

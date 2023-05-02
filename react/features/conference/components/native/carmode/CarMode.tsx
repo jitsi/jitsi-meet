@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useEffect } from 'react';
 import { View, ViewStyle } from 'react-native';
 import Orientation from 'react-native-orientation-locker';

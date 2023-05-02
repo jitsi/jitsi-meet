@@ -10,8 +10,6 @@ import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import VideoQualityLabel from '../../../../video-quality/components/VideoQualityLabel.native';
 
 import styles from './styles';

@@ -7,7 +7,6 @@ import { IStore } from '../../app/types';
 import AbstractPage from '../../base/react/components/AbstractPage';
 import { Container, Text } from '../../base/react/components/index';
 
-// @ts-ignore
 import styles from './styles';
 
 /**

@@ -1,3 +1,5 @@
+import { AppStateStatus } from 'react-native';
+
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
 import {
@@ -7,7 +9,7 @@ import {
 
 export interface IBackgroundState {
     appState: string;
-    appStateListener?: Function;
+    appStateListener?: (state: AppStateStatus) => void;
 }
 
 /**

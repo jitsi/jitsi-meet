@@ -46,6 +46,7 @@ export interface IJitsiConference {
     authenticateAndUpgradeRole: Function;
     avModerationApprove: Function;
     avModerationReject: Function;
+    callUUID?: string;
     createVideoSIPGWSession: Function;
     dial: Function;
     disableAVModeration: Function;

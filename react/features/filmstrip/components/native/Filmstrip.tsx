@@ -69,7 +69,7 @@ interface IProps {
     /**
      * Object containing the safe area insets.
      */
-    insets: Object;
+    insets?: Object;
 }
 
 /**
