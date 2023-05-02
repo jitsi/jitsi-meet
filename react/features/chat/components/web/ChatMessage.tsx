@@ -23,11 +23,7 @@ interface IProps extends AbstractProps {
 const styles = (theme: Theme) => {
     return {
         chatMessageWrapper: {
-            maxWidth: '100%',
-
-            '&.remote': {
-                maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
-            }
+            maxWidth: '100%'
         },
 
         chatMessage: {
