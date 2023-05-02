@@ -16,6 +16,7 @@ import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { iAmVisitor } from '../visitors/functions';
 
 /**
  * Used for web. Indicates if the setting section is enabled.
@@ -205,6 +206,7 @@ export function getProfileTabProps(stateful: IStateful) {
         email: localParticipant?.email,
         hideEmailInSettings,
         hideSelfView: getHideSelfView(state),
+        iAmVisitor: iAmVisitor(state),
         id: localParticipant?.id,
         languages: LANGUAGES,
         readOnlyName: isNameReadOnly(state),
