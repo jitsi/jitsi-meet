@@ -83,10 +83,10 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
                     broadcasts = { this.state.broadcasts }
                     onChange = { this._onStreamKeyPick } />
                 <StreamKeyForm
-                    onChange = { this._onStreamKeyChangeNative }
-                    value = {
-                        this.state.streamKey || this.props._streamKey || ''
-                    } />
+                    onStreamBaseURLChange = { this._onStreamBaseURLChange }
+                    onStreamKeyChange = { this._onStreamKeyChangeNative }
+                    streamBaseURLValue = { this.state.streamBaseURL || this.props._streamBaseURL || '' }
+                    streamKeyValue = { this.state.streamKey || this.props._streamKey || '' } />
             </JitsiScreen>
         );
     }
