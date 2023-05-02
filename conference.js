@@ -1073,7 +1073,7 @@ export default {
      */
     muteVideo(mute, showUI = true) {
         if (this.videoSwitchInProgress) {
-            console.warn('muteVideo - unable to perform operations while video switch is in progress');
+            logger.warn('muteVideo - unable to perform operations while video switch is in progress');
 
             return;
         }
