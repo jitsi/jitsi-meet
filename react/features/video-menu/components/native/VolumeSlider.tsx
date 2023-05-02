@@ -147,7 +147,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
  *
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
- * @returns {Props}
+ * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { participantID } = ownProps;
