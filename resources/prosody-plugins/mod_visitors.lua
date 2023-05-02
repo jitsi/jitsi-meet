@@ -310,10 +310,13 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-config-submitted/muc#roomconfig_roomsecret', function(event)
         if event.status_codes['104'] then
             local room = event.room;
-            -- we need to update all vnodes
-            local vnodes = visitors_nodes[room.jid].nodes;
-            for conference_service in pairs(vnodes) do
-                send_visitors_iq(conference_service, room, 'update');
+
+            if visitors_nodes[room.jid] then
+                -- we need to update all vnodes
+                local vnodes = visitors_nodes[room.jid].nodes;
+                for conference_service in pairs(vnodes) do
+                    send_visitors_iq(conference_service, room, 'update');
+                end
             end
         end
 end, -100); -- we want to run last in order to check is the status code 104

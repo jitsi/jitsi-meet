@@ -189,7 +189,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         -- visitors were already in the room one way or another they have access
         -- skip password challenge
         local join = stanza:get_child('x', MUC_NS);
-        if join and room:get_password() then
+        if join and room:get_password() and
+            visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] then
             join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
         end
 
@@ -200,7 +201,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
 
         if visitors_promotion_map[room.jid] then
             -- now let's check for jid
-            if visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] then
+            if visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] then
                 -- allow join
                 return;
             end
