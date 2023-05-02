@@ -32,14 +32,14 @@ export interface IProps extends WithTranslation {
     _googleProfileEmail: string;
 
     /**
-     * The live stream key that was used before.
-     */
-    _streamKey?: string;
-
-    /**
      * The live stream base URL that was used before.
      */
     _streamBaseURL?: string;
+
+    /**
+     * The live stream key that was used before.
+     */
+    _streamKey?: string;
 
     /**
      * The Redux dispatch function.
@@ -74,14 +74,14 @@ export interface IState {
     selectedBoundStreamID?: string;
 
     /**
-     * The selected or entered stream key to use for YouTube live streaming.
-     */
-    streamKey?: string;
-
-    /**
      * The entered stream base URL to use for YouTube live streaming.
      */
     streamBaseURL?: string;
+
+    /**
+     * The selected or entered stream key to use for YouTube live streaming.
+     */
+    streamKey?: string;
 }
 
 /**

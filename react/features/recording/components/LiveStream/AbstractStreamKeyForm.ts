@@ -41,24 +41,24 @@ export interface IProps extends WithTranslation {
     classes?: any;
 
     /**
+     * Callback invoked when the entered stream base url has changed.
+     */
+    onStreamBaseURLChange: Function;
+    
+    /**
      * Callback invoked when the entered stream key has changed.
      */
     onStreamKeyChange: Function;
 
     /**
-     * Callback invoked when the entered stream base url has changed.
+     * The stream base URL value to display as having been entered so far.
      */
-    onStreamBaseURLChange: Function;
+    streamBaseURLValue: string;
 
     /**
      * The stream key value to display as having been entered so far.
      */
     streamKeyValue: string;
-
-    /**
-     * The stream base URL value to display as having been entered so far.
-     */
-    streamBaseURLValue: string;
 }
 
 /**
@@ -127,6 +127,22 @@ export default class AbstractStreamKeyForm<P extends IProps>
     componentWillUnmount() {
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
+    
+    /**
+     * Callback invoked when the value of the input stream baser url field has updated through
+     * user input. This forwards the value (string only, even if it was a dom
+     * event) to the onStreamBaseURLChange prop provided to the component.
+     *
+     * @param {Object | string} change - DOM Event for value change or the
+     * changed text.
+     * @private
+     * @returns {void}
+     */
+    _onStreamBaseURLChange(change: any)  {
+        const value = typeof change === 'object' ? change.target.value : change;
+
+        this.props.onStreamBaseURLChange(value);
+    }
 
     /**
      * Callback invoked when the value of the input stream key field has updated through
@@ -142,22 +158,6 @@ export default class AbstractStreamKeyForm<P extends IProps>
         const value = typeof change === 'object' ? change.target.value : change;
 
         this.props.onStreamKeyChange(value);
-    }
-
-    /**
-     * Callback invoked when the value of the input stream baser url field has updated through
-     * user input. This forwards the value (string only, even if it was a dom
-     * event) to the onStreamBaseURLChange prop provided to the component.
-     *
-     * @param {Object | string} change - DOM Event for value change or the
-     * changed text.
-     * @private
-     * @returns {void}
-     */
-    _onStreamBaseURLChange(change: any)  {
-        const value = typeof change === 'object' ? change.target.value : change;
-
-        this.props.onStreamBaseURLChange(value);
     }
 
     /**

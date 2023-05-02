@@ -46,16 +46,6 @@ export const SET_PENDING_RECORDING_NOTIFICATION_UID
 export const SET_SELECTED_RECORDING_SERVICE = 'SET_SELECTED_RECORDING_SERVICE';
 
 /**
- * Sets the stream key last used by the user for later reuse.
- *
- * {
- *     type: SET_STREAM_KEY,
- *     streamKey: string
- * }
- */
-export const SET_STREAM_KEY = 'SET_STREAM_KEY';
-
-/**
  * Sets the stream base url last used by the user for later reuse.
  *
  * {
@@ -64,6 +54,16 @@ export const SET_STREAM_KEY = 'SET_STREAM_KEY';
  * }
  */
 export const SET_STREAM_BASE_URL = 'SET_STREAM_BASE_URL';
+
+/**
+ * Sets the stream key last used by the user for later reuse.
+ *
+ * {
+ *     type: SET_STREAM_KEY,
+ *     streamKey: string
+ * }
+ */
+export const SET_STREAM_KEY = 'SET_STREAM_KEY';
 
 /**
  * Sets the enable state of the meeting highlight button.

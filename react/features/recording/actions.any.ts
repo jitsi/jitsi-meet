@@ -20,6 +20,7 @@ import {
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY,
+    SET_STREAM_BASE_URL,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
@@ -79,6 +80,22 @@ export function hidePendingRecordingNotification(streamType: string) {
                     undefined, streamType));
         }
     };
+}
+
+/**
+ * Sets the stream base url last used by the user for later reuse.
+ *
+ * @param {string} streamBaseURL - The stream base url to set.
+ * @returns {{
+*     type: SET_STREAM_BASE_URL,
+*     streamBaseURL: string
+* }}
+*/
+export function setLiveStreamBaseURL(streamBaseURL: string) {
+   return {
+       type: SET_STREAM_BASE_URL,
+       streamBaseURL
+   };
 }
 
 /**

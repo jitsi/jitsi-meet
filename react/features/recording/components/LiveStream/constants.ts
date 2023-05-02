@@ -10,6 +10,11 @@ export const GOOGLE_PRIVACY_POLICY = 'https://policies.google.com/privacy';
 export const YOUTUBE_LIVE_DASHBOARD_URL = 'https://www.youtube.com/live_dashboard';
 
 /**
+ * The default live streaming URL to display.
+ */
+export const YOUTUBE_RTMP_URL= 'rtmp://a.rtmp.youtube.com/live2';
+
+/**
  * The URL for YouTube terms and conditions.
  */
 export const YOUTUBE_TERMS_URL = 'https://www.youtube.com/t/terms';
@@ -24,8 +29,4 @@ export const JITSI_LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
  */
 export const FOUR_GROUPS_DASH_SEPARATED = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
 
-/**
- * The default live streaming URL to display.
- */
-export const YOUTUBE_RTMP_URL= 'rtmp://a.rtmp.youtube.com/live2';
 

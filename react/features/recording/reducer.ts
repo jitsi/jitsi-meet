@@ -84,16 +84,16 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             };
         }
 
-        case SET_STREAM_KEY:
-            return {
-                ...state,
-                streamKey: action.streamKey
-            };
-
         case SET_STREAM_BASE_URL:
             return {
                 ...state,
                 streamBaseURL: action.streamBaseURL
+            };
+
+        case SET_STREAM_KEY:
+            return {
+                ...state,
+                streamKey: action.streamKey
             };
 
         case SET_MEETING_HIGHLIGHT_BUTTON_STATE:
