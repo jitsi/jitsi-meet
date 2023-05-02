@@ -2,7 +2,7 @@ import Slider from '@react-native-community/slider';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { View, ViewStyle } from 'react-native';
-import MediaStream from 'react-native-webrtc/src/MediaStream';
+import { MediaStream } from 'react-native-webrtc';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -127,7 +127,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onVolumeChange(volumeLevel) {
+    _onVolumeChange(volumeLevel: any) {
         const { _track, dispatch, participantID } = this.props;
         const remoteTrackArray = [];
 
@@ -162,4 +162,5 @@ function mapStateToProps(state: IReduxState, ownProps: IProps) {
     };
 }
 
+{/* @ts-ignore */}
 export default connect(mapStateToProps)(VolumeSlider);
