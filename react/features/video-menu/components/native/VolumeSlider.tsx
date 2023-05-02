@@ -1,8 +1,9 @@
+/* eslint-disable lines-around-comment*/
+
 import Slider from '@react-native-community/slider';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { View, ViewStyle } from 'react-native';
-import { MediaStream } from 'react-native-webrtc';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -79,7 +80,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume || 0
+            volumeLevel: props._volume || VOLUME_SLIDER_SCALE / 2
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -129,13 +130,9 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      */
     _onVolumeChange(volumeLevel: any) {
         const { _track, dispatch, participantID } = this.props;
-        const remoteTrackArray = [];
+        const audioTrack = _track.jitsiTrack.track;
 
-        _track.jitsiTrack.track && remoteTrackArray.push(_track.jitsiTrack.track);
-
-        const audioTrack = new MediaStream(remoteTrackArray).getAudioTracks()[0];
-
-        audioTrack._setVolume(volumeLevel);
+        audioTrack?._setVolume(volumeLevel);
 
         dispatch(setVolume(participantID, volumeLevel));
     }
