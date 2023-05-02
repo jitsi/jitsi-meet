@@ -12,7 +12,7 @@ import AbstractDialogTab, {
 import { translate } from '../../base/i18n/functions';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
-import { iAmVisitor } from '../../visitors/functions';
+import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
 import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview';
@@ -96,7 +96,7 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * Whether we are in visitors mode.
      */
-    _iAmVisitor: boolean;
+    iAmVisitor: boolean;
 
     /**
      * Wether noise suppression is on or not.
@@ -240,7 +240,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
             hideAudioOutputPreview,
             hideDeviceHIDContainer,
             hideNoiseSuppression,
-            _iAmVisitor,
+            iAmVisitor,
             noiseSuppressionEnabled,
             selectedAudioOutputId,
             t
@@ -249,12 +249,12 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 
         return (
             <div className = { classes.container }>
-                {!_iAmVisitor && <div
+                {!iAmVisitor && <div
                     aria-live = 'polite'
                     className = { classes.inputContainer }>
                     {this._renderSelector(audioInput)}
                 </div>}
-                {!hideAudioInputPreview && hasAudioPermission && !_iAmVisitor
+                {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor
                         && <AudioInputPreview
                             track = { this.state.previewAudioTrack } />}
                 <div
@@ -266,7 +266,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                             className = { classes.outputButton }
                             deviceId = { selectedAudioOutputId } />}
                 </div>
-                {!hideNoiseSuppression && !_iAmVisitor && (
+                {!hideNoiseSuppression && !iAmVisitor && (
                     <div className = { classes.noiseSuppressionContainer }>
                         <Checkbox
                             checked = { noiseSuppressionEnabled }
@@ -277,7 +277,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                             }) } />
                     </div>
                 )}
-                {!hideDeviceHIDContainer && !_iAmVisitor
+                {!hideDeviceHIDContainer && !iAmVisitor
                     && <DeviceHidContainer />}
             </div>
         );
@@ -388,7 +388,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 const mapStateToProps = (state: IReduxState) => {
     return {
         availableDevices: state['features/base/devices'].availableDevices ?? {},
-        _iAmVisitor: iAmVisitor(state)
+        iAmVisitor: iAmVisitorCheck(state)
     };
 };
 
