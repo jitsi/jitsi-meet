@@ -84,6 +84,7 @@ export interface IConfigState extends IConfig {
             domain: string;
             muc: string;
         };
+        p2p?: object;
         websocket?: string;
     };
 }

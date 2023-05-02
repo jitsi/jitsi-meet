@@ -310,6 +310,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
                 focusUserJid: focusJid,
                 disableLocalStats: false,
                 bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
+                p2p: config.oldConfig.p2p,
                 websocket: config.oldConfig.websocket
                     && appendURLParam(config.oldConfig.websocket, 'customusername', username),
                 oldConfig: undefined // clears it up
@@ -326,6 +327,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
         },
         focusUserJid: config.focusUserJid,
         bosh: config.bosh,
+        p2p: config.p2p,
         websocket: config.websocket
     };
 
@@ -341,6 +343,10 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
         disableFocus: true, // This flag disables sending the initial conference request
         disableLocalStats: true,
         bosh: config.bosh && appendURLParam(config.bosh, 'vnode', vnode),
+        p2p: {
+            ...config.p2p,
+            enabled: false
+        },
         websocket: config.websocket && appendURLParam(config.websocket, 'vnode', vnode)
     };
 }
