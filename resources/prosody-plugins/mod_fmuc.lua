@@ -437,6 +437,7 @@ local function iq_from_main_handler(event)
     -- if there is password supplied use it
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
+    room._data.meetingId = node.attr.meetingId;
 
     if fire_jicofo_unlock then
         -- everything is connected allow participants to join

@@ -64,7 +64,8 @@ local function send_visitors_iq(conference_service, room, type)
       :tag('visitors', { xmlns = 'jitsi:visitors',
                          room = jid.join(jid.node(room.jid), conference_service) })
       :tag(type, { xmlns = 'jitsi:visitors',
-        password = type ~= 'disconnect' and room:get_password() or ''
+        password = type ~= 'disconnect' and room:get_password() or '',
+        meetingId = room._data.meetingId
       }):up();
 
       module:send(connect_done);
