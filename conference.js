@@ -534,7 +534,7 @@ export default {
      * @returns {Promise<JitsiLocalTrack[]>, Object}
      */
     createInitialLocalTracks(options = {}) {
-        let errors = {};
+        const errors = {};
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
@@ -607,7 +607,7 @@ export default {
                 firePermissionPromptIsShownEvent: true
             })
             .catch(async error => {
-                if (error.name === JitsiTrackErrors.TIMEOUT) {
+                if (error.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
                     errors.audioAndVideoError = error;
 
                     return [];
@@ -649,9 +649,7 @@ export default {
                 });
 
                 if (errors.audioOnlyError && errors.videoOnlyError) {
-                    errors = {
-                        audioAndVideoError: errorMsg
-                    };
+                    errors.audioAndVideoError = errorMsg;
                 }
 
                 return tracks;

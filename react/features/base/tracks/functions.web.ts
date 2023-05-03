@@ -1,7 +1,7 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
-import JitsiMeetJS, { JitsiTrackErrors } from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
 import { MEDIA_TYPE } from '../media/constants';
 import { getStartWithAudioMuted } from '../media/functions';
@@ -104,12 +104,17 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
  * @todo Refactor to not use APP.
  */
 export function createPrejoinTracks() {
-    let errors: any = {};
+    const errors: any = {};
     const initialDevices = [ 'audio' ];
     const requestedAudio = true;
     let requestedVideo = false;
     const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
     const startWithAudioMuted = getStartWithAudioMuted(APP.store.getState());
+
+    // On Electron there is no permission prompt for granting permissions. That's why we don't need to
+    // spend much time displaying the overlay screen. If GUM is not resolved within 15 seconds it will
+    // probably never resolve.
+    const timeout = browser.isElectron() ? 15000 : 60000;
 
     // Always get a handle on the audio input device so that we have statistics even if the user joins the
     // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
@@ -129,10 +134,13 @@ export function createPrejoinTracks() {
     if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
             devices: initialDevices,
-            firePermissionPromptIsShownEvent: true
+            firePermissionPromptIsShownEvent: true,
+            timeout
         }, APP.store)
         .catch(async (err: Error) => {
-            if (err.name === JitsiTrackErrors.TIMEOUT) {
+            if (err.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
+                errors.audioAndVideoError = err;
+
                 return [];
             }
 
@@ -143,14 +151,16 @@ export function createPrejoinTracks() {
             if (requestedAudio) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.AUDIO ],
-                    firePermissionPromptIsShownEvent: true
+                    firePermissionPromptIsShownEvent: true,
+                    timeout
                 }));
             }
 
             if (requestedVideo) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.VIDEO ],
-                    firePermissionPromptIsShownEvent: true
+                    firePermissionPromptIsShownEvent: true,
+                    timeout
                 }));
             }
 
@@ -174,9 +184,7 @@ export function createPrejoinTracks() {
             });
 
             if (errors.audioOnlyError && errors.videoOnlyError) {
-                errors = {
-                    audioAndVideoError: errorMsg
-                };
+                errors.audioAndVideoError = errorMsg;
             }
 
             return tracks;
