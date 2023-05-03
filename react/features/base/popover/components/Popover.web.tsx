@@ -6,6 +6,7 @@ import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
+import { isElementInTheViewport } from '../../ui/functions.web';
 import { getContextMenuStyle } from '../functions.web';
 
 /**
@@ -258,7 +259,16 @@ class Popover extends Component<IProps, IState> {
                                 'aria-labelledby': headingId,
                                 'aria-label': !headingId && headingLabel ? headingLabel : undefined
                             }}
-                            returnFocus = { true }>
+                            returnFocus = {
+
+                                // If we return the focus to an element outside the viewport the page will scroll to
+                                // this element which in our case is undesirable and the element is outside of the
+                                // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+                                // when it is hidden the whole page will move up in order to show the toolbox. This is
+                                // usually followed up with displaying the toolbox (because now it is on focus) but
+                                // because of the animation the whole scenario looks like jumping large video.
+                                isElementInTheViewport
+                            }>
                             {this._renderContent()}
                         </ReactFocusLock>
                     </DialogPortal>

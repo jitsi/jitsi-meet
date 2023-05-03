@@ -57,3 +57,28 @@ export const findAncestorByClass = (target: HTMLElement | null, cssClass: string
 
     return findAncestorByClass(target.parentElement, cssClass);
 };
+
+/**
+ * Checks if the passed element is visible in the viewport.
+ *
+ * @param {Element} element - The element.
+ * @returns {boolean}
+ */
+export function isElementInTheViewport(element?: Element): boolean {
+    if (!element) {
+        return false;
+    }
+
+    if (!document.body.contains(element)) {
+        return false;
+    }
+
+    const { innerHeight, innerWidth } = window;
+    const { bottom, left, right, top } = element.getBoundingClientRect();
+
+    if (bottom <= innerHeight && top >= 0 && left >= 0 && right <= innerWidth) {
+        return true;
+    }
+
+    return false;
+}
