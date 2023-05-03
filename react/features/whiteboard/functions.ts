@@ -89,3 +89,12 @@ export const getCollabServerUrl = (state: IReduxState): string | undefined => {
 export const isWhiteboardVisible = (state: IReduxState): boolean =>
     getPinnedParticipant(state)?.id === WHITEBOARD_ID
     || state['features/large-video'].participantId === WHITEBOARD_ID;
+
+/**
+* Indicates whether the whiteboard is accessible to a participant that has a moderator role.
+*
+* @param {IReduxState} state - The state from the Redux store.
+* @returns {boolean}
+*/
+export const isWhiteboardAllowed = (state: IReduxState): boolean =>
+    isWhiteboardEnabled(state) && isLocalParticipantModerator(state);

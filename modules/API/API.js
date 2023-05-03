@@ -113,6 +113,8 @@ import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/function
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
+import { WhiteboardStatus } from '../../react/features/whiteboard/types';
 import { getJitsiMeetTransport } from '../transport';
 
 import {
@@ -833,6 +835,9 @@ function initCommands() {
             } else {
                 logger.error(' End Conference not supported');
             }
+        },
+        'toggle-whiteboard': () => {
+            APP.store.dispatch(toggleWhiteboard());
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2011,6 +2016,20 @@ class API {
             name: 'participant-menu-button-clicked',
             key,
             participantId
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) if whiteboard state is
+     * changed.
+     *
+     * @param {WhiteboardStatus} status - The new whiteboard status.
+     * @returns {void}
+     */
+    notifyWhiteboardStatusChanged(status: WhiteboardStatus) {
+        this._sendEvent({
+            name: 'whiteboard-status-changed',
+            status
         });
     }
 

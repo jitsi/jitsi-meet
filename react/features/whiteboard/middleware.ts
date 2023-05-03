@@ -9,12 +9,13 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
 
 import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
 import { resetWhiteboard, setWhiteboardOpen, setupWhiteboard } from './actions';
 import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
 import { getCollabDetails, getCollabServerUrl, isWhiteboardPresent } from './functions';
+import { WhiteboardStatus } from './types';
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;
@@ -68,27 +69,45 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
                 collabServerUrl,
                 collabDetails
             });
+            raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 
             return;
         }
 
         if (action.isOpen) {
             focusWhiteboard(store);
+            raiseWhiteboardNotification(WhiteboardStatus.SHOWN);
 
             return;
         }
 
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+        raiseWhiteboardNotification(WhiteboardStatus.HIDDEN);
+
         break;
     }
     case RESET_WHITEBOARD: {
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
+        raiseWhiteboardNotification(WhiteboardStatus.RESET);
+
         break;
     }
     }
 
     return next(action);
 });
+
+/**
+ * Raises the whiteboard status notifications changes (if API is enabled).
+ *
+ * @param {WhiteboardStatus} status - The whiteboard changed status.
+ * @returns {Function}
+ */
+function raiseWhiteboardNotification(status: WhiteboardStatus) {
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyWhiteboardStatusChanged(status);
+    }
+}
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
