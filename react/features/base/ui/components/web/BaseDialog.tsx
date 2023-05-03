@@ -5,6 +5,7 @@ import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
 
@@ -184,7 +185,16 @@ const BaseDialog = ({
                 onClick = { onBackdropClick } />
             <FocusLock
                 className = { classes.focusLock }
-                returnFocus = { true }>
+                returnFocus = {
+
+                    // If we return the focus to an element outside the viewport the page will scroll to
+                    // this element which in our case is undesirable and the element is outside of the
+                    // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+                    // when it is hidden the whole page will move up in order to show the toolbox. This is
+                    // usually followed up with displaying the toolbox (because now it is on focus) but
+                    // because of the animation the whole scenario looks like jumping large video.
+                    isElementInTheViewport
+                }>
                 <div
                     aria-describedby = { description }
                     aria-labelledby = { title ?? t(titleKey ?? '') }

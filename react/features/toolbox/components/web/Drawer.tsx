@@ -2,6 +2,7 @@ import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
 import ReactFocusLock from 'react-focus-lock';
 import { makeStyles } from 'tss-react/mui';
 
+import { isElementInTheViewport } from '../../../base/ui/functions.web';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
 
 
@@ -107,7 +108,16 @@ function Drawer({
                             'aria-modal': true,
                             'aria-labelledby': `#${headingId}`
                         }}
-                        returnFocus = { true }>
+                        returnFocus = {
+
+                            // If we return the focus to an element outside the viewport the page will scroll to
+                            // this element which in our case is undesirable and the element is outside of the
+                            // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+                            // when it is hidden the whole page will move up in order to show the toolbox. This is
+                            // usually followed up with displaying the toolbox (because now it is on focus) but
+                            // because of the animation the whole scenario looks like jumping large video.
+                            isElementInTheViewport
+                        }>
                         {children}
                     </ReactFocusLock>
                 </div>
