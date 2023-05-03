@@ -534,7 +534,7 @@ export default {
      * @returns {Promise<JitsiLocalTrack[]>, Object}
      */
     createInitialLocalTracks(options = {}) {
-        const errors = {};
+        let errors = {};
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
@@ -606,22 +606,55 @@ export default {
                 timeout,
                 firePermissionPromptIsShownEvent: true
             })
-            .catch(err => {
-                if (requestedAudio && requestedVideo) {
-                    errors.audioAndVideoError = err;
-                } else if (requestedAudio) {
-                    errors.audioOnlyError = err;
-                } else {
-                    errors.videoOnlyError = err;
+            .catch(async error => {
+                if (error.name === JitsiTrackErrors.TIMEOUT) {
+                    errors.audioAndVideoError = error;
+
+                    return [];
                 }
 
-                // If gUM is taking longer than the configured timeout of 60 secs, either we are waiting for the user
-                // to grant permission to use devices and we expect the permission prompt to be still visible or the
-                // browser is taking too long to create the media tracks. In either of these cases, there is no point
-                // in executing gUM again.
-                logger.error(`Media track creation failed with error ${err}`);
+                // Retry with separate gUM calls.
+                const gUMPromises = [];
+                const tracks = [];
 
-                return [];
+                if (requestedAudio) {
+                    gUMPromises.push(createLocalTracksF(audioOptions));
+                }
+
+                if (requestedVideo) {
+                    gUMPromises.push(createLocalTracksF({
+                        devices: [ MEDIA_TYPE.VIDEO ],
+                        timeout,
+                        firePermissionPromptIsShownEvent: true
+                    }));
+                }
+
+                const results = await Promise.allSettled(gUMPromises);
+                let errorMsg;
+
+                results.forEach((result, idx) => {
+                    if (result.status === 'fulfilled') {
+                        tracks.push(result.value[0]);
+                    } else {
+                        errorMsg = result.reason;
+                        const isAudio = idx === 0;
+
+                        logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
+                        if (isAudio) {
+                            errors.audioOnlyError = errorMsg;
+                        } else {
+                            errors.videoOnlyError = errorMsg;
+                        }
+                    }
+                });
+
+                if (errors.audioOnlyError && errors.videoOnlyError) {
+                    errors = {
+                        audioAndVideoError: errorMsg
+                    };
+                }
+
+                return tracks;
             });
         }
 
@@ -825,8 +858,7 @@ export default {
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
-            const tracks = await tryCreateLocalTracks;
-            const localTracks = handleInitialTracks(initialOptions, tracks);
+            const localTracks = await tryCreateLocalTracks;
 
             // Initialize device list a second time to ensure device labels get populated in case of an initial gUM
             // acceptance; otherwise they may remain as empty strings.
@@ -840,7 +872,7 @@ export default {
 
             this._displayErrorsForCreateInitialLocalTracks(errors);
 
-            return this._setLocalAudioVideoStreams(localTracks);
+            return this._setLocalAudioVideoStreams(handleInitialTracks(initialOptions, localTracks));
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);

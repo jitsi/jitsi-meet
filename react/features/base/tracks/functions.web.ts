@@ -1,8 +1,9 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
-import JitsiMeetJS from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { setAudioMuted } from '../media/actions';
+import { MEDIA_TYPE } from '../media/constants';
 import { getStartWithAudioMuted } from '../media/functions';
 import { toState } from '../redux/functions';
 import {
@@ -95,15 +96,15 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
 }
 
 /**
- * Returns an object containing a promise which resolves with the created tracks &
- * the errors resulting from that process.
+ * Returns an object containing a promise which resolves with the created tracks and the errors resulting from that
+ * process.
  *
- * @returns {Promise<JitsiLocalTrack>}
+ * @returns {Promise<JitsiLocalTrack[]>}
  *
  * @todo Refactor to not use APP.
  */
 export function createPrejoinTracks() {
-    const errors: any = {};
+    let errors: any = {};
     const initialDevices = [ 'audio' ];
     const requestedAudio = true;
     let requestedVideo = false;
@@ -123,25 +124,62 @@ export function createPrejoinTracks() {
         requestedVideo = true;
     }
 
-    let tryCreateLocalTracks = Promise.resolve([]);
+    let tryCreateLocalTracks: any = Promise.resolve([]);
 
     if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
             devices: initialDevices,
             firePermissionPromptIsShownEvent: true
         }, APP.store)
-        .catch((err: Error) => {
-            if (requestedAudio && requestedVideo) {
-                errors.audioAndVideoError = err;
-            } else if (requestedAudio) {
-                errors.audioOnlyError = err;
-            } else {
-                errors.videoOnlyError = err;
+        .catch(async (err: Error) => {
+            if (err.name === JitsiTrackErrors.TIMEOUT) {
+                return [];
             }
 
-            logger.error(`Media track creation failed with error ${err}`);
+            // Retry with separate gUM calls.
+            const gUMPromises: any = [];
+            const tracks: any = [];
 
-            return [];
+            if (requestedAudio) {
+                gUMPromises.push(createLocalTracksF({
+                    devices: [ MEDIA_TYPE.AUDIO ],
+                    firePermissionPromptIsShownEvent: true
+                }));
+            }
+
+            if (requestedVideo) {
+                gUMPromises.push(createLocalTracksF({
+                    devices: [ MEDIA_TYPE.VIDEO ],
+                    firePermissionPromptIsShownEvent: true
+                }));
+            }
+
+            const results = await Promise.allSettled(gUMPromises);
+            let errorMsg;
+
+            results.forEach((result, idx) => {
+                if (result.status === 'fulfilled') {
+                    tracks.push(result.value[0]);
+                } else {
+                    errorMsg = result.reason;
+                    const isAudio = idx === 0;
+
+                    logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
+                    if (isAudio) {
+                        errors.audioOnlyError = errorMsg;
+                    } else {
+                        errors.videoOnlyError = errorMsg;
+                    }
+                }
+            });
+
+            if (errors.audioOnlyError && errors.videoOnlyError) {
+                errors = {
+                    audioAndVideoError: errorMsg
+                };
+            }
+
+            return tracks;
         });
     }
 
