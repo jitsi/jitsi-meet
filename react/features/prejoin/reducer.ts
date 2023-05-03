@@ -165,31 +165,31 @@ ReducerRegistry.register<IPrejoinState>(
 function getStatusFromErrors(errors: {
     audioAndVideoError?: { message: string; };
     audioOnlyError?: { message: string; };
-    videoOnlyError?: Object; }
+    videoOnlyError?: { message: string; }; }
 ) {
     const { audioOnlyError, videoOnlyError, audioAndVideoError } = errors;
 
     if (audioAndVideoError) {
-        if (audioOnlyError) {
-            if (videoOnlyError) {
-                return {
-                    deviceStatusType: 'warning',
-                    deviceStatusText: 'prejoin.audioAndVideoError',
-                    rawError: audioAndVideoError.message
-                };
-            }
+        return {
+            deviceStatusType: 'warning',
+            deviceStatusText: 'prejoin.audioAndVideoError',
+            rawError: audioAndVideoError.message
+        };
+    }
 
-            return {
-                deviceStatusType: 'warning',
-                deviceStatusText: 'prejoin.audioOnlyError',
-                rawError: audioOnlyError.message
-            };
-        }
+    if (audioOnlyError) {
+        return {
+            deviceStatusType: 'warning',
+            deviceStatusText: 'prejoin.audioOnlyError',
+            rawError: audioOnlyError.message
+        };
+    }
 
+    if (videoOnlyError) {
         return {
             deviceStatusType: 'warning',
             deviceStatusText: 'prejoin.videoOnlyError',
-            rawError: audioAndVideoError.message
+            rawError: videoOnlyError.message
         };
     }
 
