@@ -114,6 +114,7 @@ import { setTileView, toggleTileView } from '../../react/features/video-layout/a
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
+import { WhiteboardStatus } from '../../react/features/whiteboard/types';
 import { getJitsiMeetTransport } from '../transport';
 
 import {
@@ -836,7 +837,7 @@ function initCommands() {
             }
         },
         'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard(APP.store.getState()));
+            APP.store.dispatch(toggleWhiteboard());
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2022,10 +2023,10 @@ class API {
      * Notify external application (if API is enabled) if whiteboard state is
      * changed.
      *
-     * @param {string} status - The new whiteboard status.
+     * @param {WhiteboardStatus} status - The new whiteboard status.
      * @returns {void}
      */
-    notifyWhiteboardStatusChanged(status: string) {
+    notifyWhiteboardStatusChanged(status: WhiteboardStatus) {
         this._sendEvent({
             name: 'whiteboard-status-changed',
             status
