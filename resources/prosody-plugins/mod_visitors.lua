@@ -138,6 +138,12 @@ module:hook('iq/host', stanza_handler, 10);
 -- an event received from visitors component, which receives iqs from jicofo
 local function disconnect_vnode(event)
     local room, vnode = event.room, event.vnode;
+
+    if visitors_nodes[event.room.jid] == nil then
+        -- maybe the room was already destroyed and vnodes cleared
+        return;
+    end
+
     local conference_service = muc_domain_prefix..'.'..vnode..'.meet.jitsi';
 
     -- we are counting vnode main participants and we should be clearing it there
@@ -236,7 +242,17 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- cleanup cache
     host_module:hook('muc-room-destroyed',function(event)
-        visitors_nodes[event.room.jid] = nil;
+        local room = event.room;
+
+        -- room is destroyed let's disconnect all vnodes
+        if visitors_nodes[room.jid] then
+            local vnodes = visitors_nodes[room.jid].nodes;
+            for conference_service in pairs(vnodes) do
+                send_visitors_iq(conference_service, room, 'disconnect');
+            end
+
+            visitors_nodes[room.jid] = nil;
+        end
     end);
 
     -- detects new participants joining main room and sending them to the visitor nodes

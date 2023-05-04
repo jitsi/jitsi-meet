@@ -128,6 +128,7 @@ local function stanza_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
+        -- this maybe as we receive the iq from jicofo after the room is already destroyed
         module:log('debug', 'No room found %s', room_jid);
         return;
     end
