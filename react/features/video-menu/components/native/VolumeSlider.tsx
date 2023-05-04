@@ -108,6 +108,9 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     src = { IconVolumeUp } />
                 <Slider
                     maximumTrackTintColor = { BaseTheme.palette.ui10 }
+                    // With react native webrtc in place,
+                    // the volume of individual remote tracks,
+                    // takes in a number between 0 to 10.
                     maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { BaseTheme.palette.action01 }
                     minimumValue = { 0 }
