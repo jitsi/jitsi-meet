@@ -16,7 +16,7 @@ import {
 } from '../../../base/tracks/functions.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { setVolume } from '../../../participants-pane/actions.native';
-import { VOLUME_SLIDER_SCALE } from '../../constants';
+import { NATIVE_VOLUME_SLIDER_SCALE } from '../../constants';
 
 import styles from './styles';
 
@@ -80,7 +80,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume || VOLUME_SLIDER_SCALE / 2
+            volumeLevel: props._volume || NATIVE_VOLUME_SLIDER_SCALE / 2
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -108,7 +108,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     src = { IconVolumeUp } />
                 <Slider
                     maximumTrackTintColor = { BaseTheme.palette.ui10 }
-                    maximumValue = { VOLUME_SLIDER_SCALE }
+                    maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { BaseTheme.palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { onVolumeChange }
