@@ -164,28 +164,18 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...connectionStatusButtonProps } />
-                {
-                    _moderator && _rooms.length > 1
-                    && <>
-                        <Divider style = { styles.divider as StyleProp<ViewStyle> } />
-                        <View style = { styles.contextMenuItem as ViewStyle }>
-                            <Text style = { styles.contextMenuItemText as TextStyle }>
-                                {t('breakoutRooms.actions.sendToBreakoutRoom')}
-                            </Text>
-                        </View>
-                        {
-                            _rooms.map(room => _currentRoomId !== room.id
-                                && (
-                                    <SendToBreakoutRoom
-                                        key = { room.id }
-                                        /* @ts-ignore */
-                                        room = { room }
-                                        { ...buttonProps } />
-                                )
-                            )
-                        }
-                    </>
-                }
+                {_moderator && _rooms.length > 1 && <>
+                    <Divider style = { styles.divider as ViewStyle } />
+                    <View style = { styles.contextMenuItem as ViewStyle }>
+                        <Text style = { styles.contextMenuItemText as TextStyle }>
+                            {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                        </Text>
+                    </View>
+                    {_rooms.map(room => _currentRoomId !== room.id && (<SendToBreakoutRoom
+                        key = { room.id }
+                        room = { room }
+                        { ...buttonProps } />))}
+                </>}
                 <VolumeSlider participantID = { participantId } />
             </BottomSheet>
         );
