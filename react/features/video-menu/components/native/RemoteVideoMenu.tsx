@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment*/
 
 import React, { PureComponent } from 'react';
-import { Text, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
@@ -144,6 +144,11 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             styles: bottomSheetStyles.buttons
         };
 
+        const connectionStatusButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
+        };
+
         return (
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
@@ -158,15 +163,11 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
-                <ConnectionStatusButton
-                    { ...buttonProps }
-                    /* @ts-ignore */
-                    afterClick = { undefined } />
+                <ConnectionStatusButton { ...connectionStatusButtonProps } />
                 {
                     _moderator && _rooms.length > 1
                     && <>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.divider as ViewStyle } />
+                        <Divider style = { styles.divider as StyleProp<ViewStyle> } />
                         <View style = { styles.contextMenuItem as ViewStyle }>
                             <Text style = { styles.contextMenuItemText as TextStyle }>
                                 {t('breakoutRooms.actions.sendToBreakoutRoom')}
@@ -185,7 +186,6 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                         }
                     </>
                 }
-                {/* @ts-ignore */}
                 <VolumeSlider participantID = { participantId } />
             </BottomSheet>
         );

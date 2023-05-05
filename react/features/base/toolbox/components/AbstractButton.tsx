@@ -14,7 +14,7 @@ export interface IProps extends WithTranslation {
     /**
      * Function to be called after the click handler has been processed.
      */
-    afterClick?: Function;
+    afterClick?: Function | undefined;
 
     /**
      * The button's key.

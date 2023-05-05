@@ -29,24 +29,27 @@ interface IProps {
     /**
      * Whether the participant enters the conference silent.
      */
-    _startSilent: boolean;
+    _startSilent?: boolean;
 
-    _track: any;
+    /**
+     * Remote audio track.
+     */
+    _track?: any;
 
     /**
      * The volume level for the participant.
      */
-    _volume: number;
+    _volume?: number;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function;
+    dispatch?: Function;
 
     /**
      * The ID of the participant.
      */
-    participantID: string;
+    participantID?: string;
 }
 
 /**
@@ -80,7 +83,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume || NATIVE_VOLUME_SLIDER_SCALE / 2
+            volumeLevel: props._volume ?? 1
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -156,9 +159,9 @@ function mapStateToProps(state: IReduxState, ownProps: IProps) {
     const tracks = getTrackState(state);
 
     return {
-        _track: getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID),
         _startSilent: Boolean(startSilent),
-        _volume: participantID && participantsVolume[participantID]
+        _track: getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID),
+        _volume: participantID ? participantsVolume[participantID] : undefined
     };
 }
 
