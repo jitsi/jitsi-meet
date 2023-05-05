@@ -140,6 +140,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
 
         audioTrack?._setVolume(volumeLevel);
 
+        // @ts-ignore
         dispatch(setVolume(participantID, volumeLevel));
     }
 }

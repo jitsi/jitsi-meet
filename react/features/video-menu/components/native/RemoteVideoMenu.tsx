@@ -165,6 +165,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...connectionStatusButtonProps } />
                 {_moderator && _rooms.length > 1 && <>
+                    {/* @ts-ignore */}
                     <Divider style = { styles.divider as ViewStyle } />
                     <View style = { styles.contextMenuItem as ViewStyle }>
                         <Text style = { styles.contextMenuItemText as TextStyle }>
