@@ -257,6 +257,7 @@ class Popover extends Component<IProps, IState> {
                     onMouseLeave: this._onHideDialog
                 } : {}) }
                 { ...(trigger === 'hover' && focusable && {
+                    role: 'button',
                     tabIndex: 0
                 }) }
                 ref = { this._containerRef }>
@@ -397,7 +398,9 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
+        // first check that the element we pressed is the actual popover toggle or any of its descendant,
+        // otherwise pressing space or enter in any child element of the popover _dialog_ will trigger this.
+        if (e.currentTarget.contains(e.target as Node) && (e.key === ' ' || e.key === 'Enter')) {
             e.preventDefault();
             if (this.props.visible) {
                 this._onHideDialog();
