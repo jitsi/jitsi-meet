@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment*/
 
 import React, { PureComponent } from 'react';
-import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
