@@ -1,7 +1,7 @@
 /**
  * Used to set maximumValue for native volume slider.
  */
-export const NATIVE_VOLUME_SLIDER_SCALE = 10;
+export const NATIVE_VOLUME_SLIDER_SCALE = 20;
 
 /**
  * Used to modify initialValue, which is expected to be a decimal value between

@@ -83,7 +83,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume ?? 1
+            volumeLevel: props._volume ?? NATIVE_VOLUME_SLIDER_SCALE / 2
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -136,12 +136,20 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      */
     _onVolumeChange(volumeLevel: any) {
         const { _track, dispatch, participantID } = this.props;
-        const audioTrack = _track.jitsiTrack.track;
+        const audioTrack = _track?.jitsiTrack.track;
 
-        audioTrack?._setVolume(volumeLevel);
+        let newVolumeLevel;
+
+        if (volumeLevel <= 10) {
+            newVolumeLevel = volumeLevel / 10;
+        } else {
+            newVolumeLevel = volumeLevel;
+        }
+
+        audioTrack?._setVolume(newVolumeLevel);
 
         // @ts-ignore
-        dispatch(setVolume(participantID, volumeLevel));
+        dispatch(setVolume(participantID, newVolumeLevel));
     }
 }
 
