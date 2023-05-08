@@ -143,12 +143,10 @@ class VolumeSlider extends PureComponent<IProps, IState> {
             newVolumeLevel = volumeLevel - 9;
         }
 
-        const volumeLevelRoundUp = Math.ceil(newVolumeLevel);
-
-        audioTrack?._setVolume(volumeLevelRoundUp);
+        audioTrack?._setVolume(newVolumeLevel);
 
         // @ts-ignore
-        dispatch(setVolume(participantID, volumeLevelRoundUp));
+        dispatch(setVolume(participantID, newVolumeLevel));
     }
 }
 
