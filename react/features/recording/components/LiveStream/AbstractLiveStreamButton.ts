@@ -131,8 +131,11 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
-        visible = isModerator && liveStreaming.enabled;
-        visible = isJwtFeatureEnabled(state, 'livestreaming', visible);
+        if (isModerator) {
+            visible = liveStreaming.enabled ? isJwtFeatureEnabled(state, 'livestreaming', true) : false;
+        } else {
+            visible = false;
+        }
     }
 
     // disable the button if the recording is running.
