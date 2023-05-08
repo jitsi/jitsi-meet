@@ -463,12 +463,14 @@ export function isDialOutEnabled(state: IReduxState): boolean {
  * Determines if inviting sip endpoints is enabled or not.
  *
  * @param {IReduxState} state - Current state.
- * @returns {boolean} Indication of whether dial out is currently enabled.
+ * @returns {boolean} Indication of whether sip invite is currently enabled.
  */
 export function isSipInviteEnabled(state: IReduxState): boolean {
     const { sipInviteUrl } = state['features/base/config'];
 
-    return isJwtFeatureEnabled(state, 'sip-outbound-call') && Boolean(sipInviteUrl);
+    return isLocalParticipantModerator(state)
+        && isJwtFeatureEnabled(state, 'sip-outbound-call')
+        && Boolean(sipInviteUrl);
 }
 
 /**
