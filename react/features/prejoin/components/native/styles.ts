@@ -1,4 +1,5 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import { spacing } from '../../../base/ui/Tokens';
 
 export const preJoinStyles = {
 
@@ -23,7 +24,8 @@ export const preJoinStyles = {
     },
 
     contentWrapper: {
-        flex: 1
+        flex: 1,
+        flexDirection: 'row'
     },
 
     contentWrapperWide: {
@@ -97,7 +99,54 @@ export const preJoinStyles = {
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1],
         position: 'absolute',
-        width: 243,
+        maxWidth: 243,
         zIndex: 1
+    },
+    unsafeRoomWarningContainer: {
+        height: '100%',
+        width: '100%',
+        backgroundColor: BaseTheme.palette.ui01,
+        display: 'flex',
+
+        // flexDirection: 'row',
+
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white'
+    },
+    unsafeRoomContentContainer: {
+        justifySelf: 'center',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: BaseTheme.spacing[4]
+    },
+
+    unsafeRoomContentContainerWide: {
+        alignItems: 'center',
+        justifySelf: 'center',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        paddingHorizontal: BaseTheme.spacing[5]
+    },
+
+    warningText: {
+        ...BaseTheme.typography.bodyLongRegularLarge,
+        color: BaseTheme.palette.text01,
+        textAlign: 'center',
+        marginBottom: BaseTheme.spacing[4]
+    },
+    warningIconWrapper: {
+        backgroundColor: BaseTheme.palette.warning01,
+        borderRadius: BaseTheme.shape.circleRadius,
+        padding: BaseTheme.spacing[4],
+        marginBottom: BaseTheme.spacing[4]
+
+    },
+    warningIcon: {
+        color: BaseTheme.palette.ui01,
+        fontSize: 40
     }
 };
