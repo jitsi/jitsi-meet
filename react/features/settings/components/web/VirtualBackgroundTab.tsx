@@ -7,16 +7,12 @@ import AbstractDialogTab, {
 } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
 import VirtualBackgrounds from '../../../virtual-background/components/VirtualBackgrounds';
+import { IVirtualBackground } from '../../../virtual-background/reducer';
 
 /**
  * The type of the React {@code Component} props of {@link VirtualBackgroundTab}.
  */
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
-
-    /**
-     * Returns the jitsi track that will have background effect applied.
-     */
-    _jitsiTrack: Object;
 
     /**
      * CSS classes object.
@@ -26,12 +22,12 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * Virtual background options.
      */
-    options: any;
+    options: IVirtualBackground;
 
     /**
-     * The selected thumbnail identifier.
+     * The id of the selected video device.
      */
-    selectedThumbnail: string;
+    selectedVideoInputId: string;
 }
 
 const styles = () => {
@@ -85,8 +81,7 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
         const {
             classes,
             options,
-            selectedThumbnail,
-            _jitsiTrack
+            selectedVideoInputId
         } = this.props;
 
         return (
@@ -95,10 +90,10 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
                 id = 'virtual-background-dialog'
                 key = 'virtual-background'>
                 <VirtualBackgrounds
-                    _jitsiTrack = { _jitsiTrack }
                     onOptionsChange = { this._onOptionsChanged }
                     options = { options }
-                    selectedThumbnail = { selectedThumbnail } />
+                    selectedThumbnail = { options.selectedThumbnail ?? '' }
+                    selectedVideoInputId = { selectedVideoInputId } />
             </div>
         );
     }
