@@ -1,5 +1,4 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { spacing } from '../../../base/ui/Tokens';
 
 export const preJoinStyles = {
 
