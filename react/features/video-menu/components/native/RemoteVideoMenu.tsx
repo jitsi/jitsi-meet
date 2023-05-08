@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment*/
+
 import React, { PureComponent } from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
@@ -29,9 +31,9 @@ import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
 import SendToBreakoutRoom from './SendToBreakoutRoom';
+import VolumeSlider from './VolumeSlider';
 import styles from './styles';
 
-// import VolumeSlider from './VolumeSlider';
 
 /**
  * Size of the rendered avatar in the menu.
@@ -142,6 +144,11 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             styles: bottomSheetStyles.buttons
         };
 
+        const connectionStatusButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
+        };
+
         return (
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
@@ -156,9 +163,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
-                <ConnectionStatusButton
-                    { ...buttonProps }
-                    afterClick = { undefined } />
+                <ConnectionStatusButton { ...connectionStatusButtonProps } />
                 {_moderator && _rooms.length > 1 && <>
                     {/* @ts-ignore */}
                     <Divider style = { styles.divider as ViewStyle } />
@@ -172,7 +177,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                         room = { room }
                         { ...buttonProps } />))}
                 </>}
-                {/* <VolumeSlider participantID = { participantId } />*/}
+                <VolumeSlider participantID = { participantId } />
             </BottomSheet>
         );
     }

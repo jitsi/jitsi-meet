@@ -1,17 +1,25 @@
+/* eslint-disable lines-around-comment*/
+
 import Slider from '@react-native-community/slider';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { View, ViewStyle } from 'react-native';
-import { withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconVolumeUp } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getTrackState
+} from '../../../base/tracks/functions.native';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { setVolume } from '../../../participants-pane/actions.native';
-import { VOLUME_SLIDER_SCALE } from '../../constants';
+import { NATIVE_VOLUME_SLIDER_SCALE } from '../../constants';
 
 import styles from './styles';
+
 
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
@@ -21,27 +29,27 @@ interface IProps {
     /**
      * Whether the participant enters the conference silent.
      */
-    _startSilent: boolean;
+    _startSilent?: boolean;
+
+    /**
+     * Remote audio track.
+     */
+    _track?: any;
 
     /**
      * The volume level for the participant.
      */
-    _volume: number;
+    _volume?: number;
 
     /**
      * The redux dispatch function.
      */
-    dispatch: Function;
+    dispatch?: Function;
 
     /**
      * The ID of the participant.
      */
-    participantID: string;
-
-    /**
-     * Theme used for styles.
-     */
-    theme: any;
+    participantID?: string;
 }
 
 /**
@@ -62,6 +70,7 @@ interface IState {
  * @returns {React$Element<any>}
  */
 class VolumeSlider extends PureComponent<IProps, IState> {
+
     _originalVolumeChange: Function;
 
     /**
@@ -74,7 +83,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume || 0
+            volumeLevel: props._volume || Math.ceil(NATIVE_VOLUME_SLIDER_SCALE / 2)
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -91,9 +100,8 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { _startSilent, theme } = this.props;
+        const { _startSilent } = this.props;
         const { volumeLevel } = this.state;
-        const { palette } = theme;
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;
 
         return (
@@ -102,13 +110,13 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     size = { 24 }
                     src = { IconVolumeUp } />
                 <Slider
-                    maximumTrackTintColor = { palette.ui10 }
-                    maximumValue = { VOLUME_SLIDER_SCALE }
-                    minimumTrackTintColor = { palette.action01 }
+                    maximumTrackTintColor = { BaseTheme.palette.ui10 }
+                    maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
+                    minimumTrackTintColor = { BaseTheme.palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { onVolumeChange }
                     style = { styles.sliderContainer as ViewStyle }
-                    thumbTintColor = { palette.ui10 }
+                    thumbTintColor = { BaseTheme.palette.ui10 }
                     value = { volumeLevel } />
             </View>
 
@@ -123,10 +131,22 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onVolumeChange(volumeLevel: number) {
-        const { dispatch, participantID } = this.props;
+    _onVolumeChange(volumeLevel: any) {
+        const { _track, dispatch, participantID } = this.props;
+        const audioTrack = _track?.jitsiTrack.track;
 
-        dispatch(setVolume(participantID, volumeLevel));
+        let newVolumeLevel;
+
+        if (volumeLevel <= 10) {
+            newVolumeLevel = volumeLevel / 10;
+        } else {
+            newVolumeLevel = volumeLevel - 9;
+        }
+
+        audioTrack?._setVolume(newVolumeLevel);
+
+        // @ts-ignore
+        dispatch(setVolume(participantID, newVolumeLevel));
     }
 }
 
@@ -138,16 +158,18 @@ class VolumeSlider extends PureComponent<IProps, IState> {
  * @param {Object} ownProps - The own props of the component.
  * @returns {IProps}
  */
-function mapStateToProps(state: IReduxState, ownProps: any) {
+function mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { participantID } = ownProps;
-    const { participantsVolume } = state['features/participants-pane'];
+    const { participantsVolume } = state['features/filmstrip'];
     const { startSilent } = state['features/base/config'];
+    const tracks = getTrackState(state);
 
     return {
         _startSilent: Boolean(startSilent),
+        _track: getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID),
         _volume: participantID && participantsVolume[participantID]
     };
 }
 
-export default connect(mapStateToProps)(withTheme(VolumeSlider));
-
+// @ts-ignore
+export default connect(mapStateToProps)(VolumeSlider);
