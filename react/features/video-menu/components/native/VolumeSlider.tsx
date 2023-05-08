@@ -83,7 +83,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
-            volumeLevel: props._volume ?? NATIVE_VOLUME_SLIDER_SCALE / 2
+            volumeLevel: props._volume || 10
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -111,9 +111,6 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     src = { IconVolumeUp } />
                 <Slider
                     maximumTrackTintColor = { BaseTheme.palette.ui10 }
-                    // With react native webrtc in place,
-                    // the volume of individual remote tracks,
-                    // takes in a number between 0 to 10.
                     maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { BaseTheme.palette.action01 }
                     minimumValue = { 0 }
@@ -143,13 +140,15 @@ class VolumeSlider extends PureComponent<IProps, IState> {
         if (volumeLevel <= 10) {
             newVolumeLevel = volumeLevel / 10;
         } else {
-            newVolumeLevel = volumeLevel;
+            newVolumeLevel = volumeLevel - 9;
         }
 
-        audioTrack?._setVolume(newVolumeLevel);
+        const volumeLevelRoundUp = Math.ceil(newVolumeLevel);
+
+        audioTrack?._setVolume(volumeLevelRoundUp);
 
         // @ts-ignore
-        dispatch(setVolume(participantID, newVolumeLevel));
+        dispatch(setVolume(participantID, volumeLevelRoundUp));
     }
 }
 
@@ -170,7 +169,7 @@ function mapStateToProps(state: IReduxState, ownProps: IProps) {
     return {
         _startSilent: Boolean(startSilent),
         _track: getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID),
-        _volume: participantID ? participantsVolume[participantID] : undefined
+        _volume: participantID && participantsVolume[participantID]
     };
 }
 
