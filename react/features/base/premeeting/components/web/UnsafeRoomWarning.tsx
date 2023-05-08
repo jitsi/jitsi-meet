@@ -20,8 +20,8 @@ const useStyles = makeStyles()(theme => {
         },
         consent: {
             padding: `0 ${theme.spacing(3)}`,
-            '& .checkmark': {
-                left: 0
+            '@media (max-width: 720px)': {
+                marginBottom: theme.spacing(3)
             }
         }
     };
