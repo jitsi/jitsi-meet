@@ -197,7 +197,7 @@ export default {
     },
 
     insecureRoomNameWarningText: {
-        color: BaseTheme.palette.warning02,
+        color: BaseTheme.palette.text01,
         flex: 1
     },
 

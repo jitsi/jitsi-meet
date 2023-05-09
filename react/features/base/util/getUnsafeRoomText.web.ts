@@ -1,4 +1,5 @@
 import { translateToHTML } from '../i18n/functions';
+
 import { SECURITY_URL } from './contants';
 
 /**

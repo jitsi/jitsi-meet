@@ -125,7 +125,8 @@ export const preJoinStyles = {
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        paddingHorizontal: BaseTheme.spacing[5]
+        marginLeft: BaseTheme.spacing[7],
+        paddingHorizontal: BaseTheme.spacing[6]
     },
 
     warningText: {
@@ -138,7 +139,8 @@ export const preJoinStyles = {
         backgroundColor: BaseTheme.palette.warning01,
         borderRadius: BaseTheme.shape.circleRadius,
         padding: BaseTheme.spacing[4],
-        marginBottom: BaseTheme.spacing[4]
+        marginBottom: BaseTheme.spacing[4],
+        zIndex: 0
 
     },
     warningIcon: {
