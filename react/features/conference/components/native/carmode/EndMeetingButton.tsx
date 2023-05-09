@@ -8,8 +8,6 @@ import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 
 import EndMeetingIcon from './EndMeetingIcon';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import styles from './styles';
 
 /**

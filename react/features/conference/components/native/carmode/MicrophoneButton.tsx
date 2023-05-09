@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -18,7 +18,6 @@ import { isLocalTrackMuted } from '../../../../base/tracks/functions';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
 import { muteLocal } from '../../../../video-menu/actions';
 
-// @ts-ignore
 import styles from './styles';
 
 const LONG_PRESS = 'long.press';
@@ -77,9 +76,9 @@ const MicrophoneButton = (): JSX.Element | null => {
                 style = { [
                     styles.microphoneStyles.container,
                     !audioMuted && styles.microphoneStyles.unmuted
-                ] }>
+                ] as ViewStyle[] }>
                 <View
-                    style = { styles.microphoneStyles.iconContainer }>
+                    style = { styles.microphoneStyles.iconContainer as ViewStyle }>
                     <Icon
                         src = { audioMuted ? IconMicSlash : IconMic }
                         style = { styles.microphoneStyles.icon } />

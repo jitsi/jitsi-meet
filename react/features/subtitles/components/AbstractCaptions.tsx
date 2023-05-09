@@ -18,7 +18,7 @@ export interface IAbstractCaptionsProps {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: Map<string, string>;
+    _transcripts?: Map<string, string>;
 }
 
 /**

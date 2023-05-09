@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { connect, useSelector } from 'react-redux';
@@ -10,14 +8,12 @@ import { MEETING_NAME_ENABLED } from '../../../../base/flags/constants';
 import { getFeatureFlag } from '../../../../base/flags/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';
-// @ts-ignore
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
-// @ts-ignore
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import VideoQualityLabel from '../../../../video-quality/components/VideoQualityLabel.native';
 
-// @ts-ignore
 import styles from './styles';
 
 
@@ -56,9 +52,7 @@ const TitleBar = (props: IProps): JSX.Element => {
                     <VideoQualityLabel />
                 </View>
                 <ConnectionIndicator
-                    // @ts-ignore
                     iconStyle = { styles.connectionIndicatorIcon }
-                    // @ts-ignore
                     participantId = { localParticipantId } />
                 <View style = { styles.headerLabels as StyleProp<ViewStyle> }>
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />

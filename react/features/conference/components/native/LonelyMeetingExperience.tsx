@@ -20,7 +20,6 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
 
-// @ts-ignore
 import styles from './styles';
 
 

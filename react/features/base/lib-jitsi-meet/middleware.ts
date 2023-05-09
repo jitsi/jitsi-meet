@@ -6,7 +6,6 @@ import { SET_NETWORK_INFO } from '../net-info/actionTypes';
 import { PARTICIPANT_LEFT } from '../participants/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
-// @ts-ignore
 import JitsiMeetJS from './_';
 import { LIB_WILL_INIT } from './actionTypes';
 import { disposeLib, initLib } from './actions';

@@ -1,7 +1,7 @@
-// @ts-ignore
+// @ts-expect-error
 import Bourne from '@hapi/bourne';
 // eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 

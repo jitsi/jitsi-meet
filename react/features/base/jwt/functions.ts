@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import jwtDecode from 'jwt-decode';
 
 import { IReduxState } from '../../app/types';

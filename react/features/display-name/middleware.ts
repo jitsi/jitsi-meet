@@ -3,7 +3,6 @@ import { isDialogOpen } from '../base/dialog/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
 
-// @ts-ignore
 import { DisplayNamePrompt } from './components';
 
 /**

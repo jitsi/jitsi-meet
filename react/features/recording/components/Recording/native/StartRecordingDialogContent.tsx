@@ -1,11 +1,9 @@
-/* eslint-disable lines-around-comment  */
 import React from 'react';
 import { Image, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
 import LoadingIndicator from '../../../../base/react/components/native/LoadingIndicator';
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
@@ -21,7 +19,6 @@ import {
     ICON_CLOUD,
     ICON_INFO,
     ICON_USERS
-    // @ts-ignore
 } from '../styles.native';
 
 

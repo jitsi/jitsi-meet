@@ -11,12 +11,9 @@ import Platform from '../base/react/Platform.native';
 import { toState } from '../base/redux/functions';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
 import { getHideSelfView } from '../base/settings/functions.any';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import conferenceStyles from '../conference/components/native/styles';
 import { shouldDisplayTileView } from '../video-layout/functions.native';
 
-// @ts-ignore
 import styles from './components/native/styles';
 
 export * from './functions.any';
@@ -230,7 +227,7 @@ export function getFilmstripDimensions({
     };
     localParticipantVisible?: boolean;
 }) {
-    const { height, width, margin } = styles.thumbnail;
+    const { height, width, margin } = styles.thumbnail; // @ts-ignore
     const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
     const { left = 0, right = 0, top = 0, bottom = 0 } = insets;
 

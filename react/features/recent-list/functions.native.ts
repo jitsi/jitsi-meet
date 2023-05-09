@@ -2,8 +2,6 @@ import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
 } from '../base/i18n/dateUtil';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import NavigateSectionList from '../base/react/components/native/NavigateSectionList';
 import { parseURIString, safeDecodeURIComponent } from '../base/util/uri';
 

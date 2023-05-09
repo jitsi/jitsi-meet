@@ -1306,9 +1306,17 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions ?? { thumbnailSize: undefined };
         const {
             stageFilmstripDimensions = {
-                thumbnailSize: {}
+                thumbnailSize: {
+                    height: undefined,
+                    width: undefined
+                }
             },
-            screenshareFilmstripDimensions
+            screenshareFilmstripDimensions = {
+                thumbnailSize: {
+                    height: undefined,
+                    width: undefined
+                }
+            }
         } = state['features/filmstrip'];
 
         size = {
@@ -1317,16 +1325,19 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         };
 
         if (filmstripType === FILMSTRIP_TYPE.STAGE) {
-            // @ts-ignore
-            const { width: _width, height: _height } = stageFilmstripDimensions.thumbnailSize;
+            const { width: _width, height: _height } = stageFilmstripDimensions.thumbnailSize ?? {
+                width: undefined,
+                height: undefined };
 
             size = {
                 _width,
                 _height
             };
         } else if (filmstripType === FILMSTRIP_TYPE.SCREENSHARE) {
-            // @ts-ignore
-            const { width: _width, height: _height } = screenshareFilmstripDimensions.thumbnailSize;
+            const { width: _width, height: _height } = screenshareFilmstripDimensions.thumbnailSize ?? {
+                width: undefined,
+                height: undefined
+            };
 
             size = {
                 _width,

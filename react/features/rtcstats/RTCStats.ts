@@ -1,17 +1,15 @@
-// @ts-ignore
-import { PC_CON_STATE_CHANGE,
+/* eslint-disable lines-around-comment */
+import {
+    PC_CON_STATE_CHANGE,
     PC_STATE_CONNECTED,
     PC_STATE_FAILED
-
-    // @ts-ignore
+    // @ts-expect-error
 } from '@jitsi/rtcstats/events';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import traceInit from '@jitsi/rtcstats/trace-ws';
-
+/* eslint-enable lines-around-comment */
 
 import { createRTCStatsTraceCloseEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';

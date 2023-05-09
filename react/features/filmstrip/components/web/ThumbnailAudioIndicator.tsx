@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import AudioLevelIndicator from '../../../audio-level-indicator/components/AudioLevelIndicator';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { ITrack } from '../../../base/tracks/types';
 

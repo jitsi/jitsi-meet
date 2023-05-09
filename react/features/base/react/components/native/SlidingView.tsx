@@ -42,7 +42,7 @@ interface IProps {
     /**
      * Style of the animated view.
      */
-    style: StyleType;
+    style?: StyleType;
 }
 
 /**

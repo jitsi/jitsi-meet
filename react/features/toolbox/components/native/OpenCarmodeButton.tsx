@@ -9,7 +9,6 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-/* eslint-enable lines-around-comment */
 
 /**
  * Implements an {@link AbstractButton} to open the carmode.

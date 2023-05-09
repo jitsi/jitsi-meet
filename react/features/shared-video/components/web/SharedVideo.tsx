@@ -8,10 +8,7 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 
-// @ts-ignore
 import VideoManager from './VideoManager';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import YoutubeVideoManager from './YoutubeVideoManager';
 
 interface IProps {

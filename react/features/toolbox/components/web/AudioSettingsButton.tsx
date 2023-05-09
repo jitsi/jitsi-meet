@@ -6,8 +6,6 @@ import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import ToolboxButtonWithIcon from '../../../base/toolbox/components/web/ToolboxButtonWithIcon';
 import { toggleAudioSettings } from '../../../settings/actions';

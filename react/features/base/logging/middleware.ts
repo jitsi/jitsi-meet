@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import Logger from '@jitsi/logger';
 
 import { IStore } from '../../app/types';

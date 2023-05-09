@@ -1,10 +1,9 @@
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IStore } from '../../app/types';
 import { isOnline } from '../net-info/selectors';
 
-// @ts-ignore
 import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,

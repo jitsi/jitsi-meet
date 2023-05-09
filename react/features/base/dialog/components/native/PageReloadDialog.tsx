@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -11,7 +11,6 @@ import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.n
 import { hideDialog } from '../../actions';
 import logger from '../../logger';
 
-// @ts-ignore
 import ConfirmDialog from './ConfirmDialog';
 
 
@@ -39,9 +38,7 @@ interface IPageReloadDialogState {
  * Shows a warning message and counts down towards the re-load.
  */
 class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDialogState> {
-
-    // @ts-ignore
-    _interval: IntervalID;
+    _interval?: number;
     _timeoutSeconds: number;
 
     /**
@@ -105,7 +102,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     _onCancel() {
         const { dispatch } = this.props;
 
-        clearInterval(this._interval);
+        clearInterval(this._interval ?? 0);
         dispatch(appNavigate(undefined));
 
         return true;
@@ -145,7 +142,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     _onReloadNow() {
         const { dispatch } = this.props;
 
-        clearInterval(this._interval);
+        clearInterval(this._interval ?? 0);
         dispatch(reloadNow());
 
         return true;
@@ -200,8 +197,6 @@ function mapStateToProps(state: IReduxState) {
     const { fatalError } = state['features/overlay'];
 
     const fatalConnectionError
-
-        // @ts-ignore
         = connectionError && isFatalJitsiConnectionError(connectionError);
     const fatalConfigError = fatalError === configError;
 

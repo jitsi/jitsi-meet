@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { setRoom } from '../base/conference/actions';
 import {
     configWillLoad,
@@ -20,14 +19,11 @@ import {
     parseURIString,
     toURLString
 } from '../base/util/uri';
-// @ts-ignore
 import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
     navigateRoot
-    // @ts-ignore
 } from '../mobile/navigation/rootNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
 
@@ -143,7 +139,6 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             dispatch(createDesiredLocalTracks());
             dispatch(clearNotifications());
 
-            // @ts-ignore
             const { hidePrejoin } = options;
 
             if (!hidePrejoin && isPrejoinPageEnabled(getState())) {

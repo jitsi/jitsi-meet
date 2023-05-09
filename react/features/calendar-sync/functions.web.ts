@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { IStore } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
@@ -17,11 +16,8 @@ import {
 } from './constants';
 import { _updateCalendarEntries } from './functions.web';
 import logger from './logger';
-// @ts-ignore
 import { googleCalendarApi } from './web/googleCalendar';
-// @ts-ignore
 import { microsoftCalendarApi } from './web/microsoftCalendar';
-/* eslint-enable lines-around-comment */
 
 /**
  * Determines whether the calendar feature is enabled by the web.

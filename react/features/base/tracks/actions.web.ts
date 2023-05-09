@@ -10,8 +10,6 @@ import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { getCurrentConference } from '../conference/functions';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';

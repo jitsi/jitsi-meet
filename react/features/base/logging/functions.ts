@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import Logger, { getLogger as _getLogger } from '@jitsi/logger';
 import _ from 'lodash';
 

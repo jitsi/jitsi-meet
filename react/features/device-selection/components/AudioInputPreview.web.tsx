@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
 import JitsiMeetJS from '../../base/lib-jitsi-meet/_.web';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;

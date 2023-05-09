@@ -146,7 +146,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                             { roomName }
                         </Text>
                     </View>
-                    {/* @ts-ignore */}
                     <LargeVideo />
                 </View>
             }

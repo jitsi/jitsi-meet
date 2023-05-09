@@ -12,8 +12,6 @@ import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/funct
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Preview from './Preview';
 
 interface IProps {

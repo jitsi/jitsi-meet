@@ -2,8 +2,6 @@ import React from 'react';
 import { TouchableRipple } from 'react-native-paper';
 
 import Icon from '../../../icons/components/Icon';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import styles from '../../../react/components/native/styles';
 import { IIconButtonProps } from '../../../react/types';
 import { BUTTON_TYPES } from '../../constants.native';

@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import $ from 'jquery';
 import React from 'react';
 

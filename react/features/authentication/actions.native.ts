@@ -27,13 +27,13 @@ export function cancelLogin() {
         // a reaction to CONNECTION_FAILED). Since the
         // app/user is going to navigate to WelcomePage, the SDK
         // clients/consumers need an event.
-        const { error, passwordRequired }
+        const { error = { recoverable: undefined }, passwordRequired }
             = getState()['features/base/connection'];
 
         passwordRequired
             && dispatch(
                 connectionFailed(
-                    passwordRequired, // @ts-ignore
+                    passwordRequired,
                     set(error, 'recoverable', false) as any));
     };
 }

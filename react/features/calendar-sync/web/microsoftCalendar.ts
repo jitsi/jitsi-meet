@@ -1,6 +1,6 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 // eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import base64js from 'base64-js';
 import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
