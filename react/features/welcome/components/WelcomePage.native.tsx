@@ -408,7 +408,7 @@ function _mapStateToProps(state: IReduxState) {
         ..._abstractMapStateToProps(state),
 
         // _reducedUI: state['features/base/responsive-ui'].reducedUI
-        getUnsafeRoomTextFn: t => getUnsafeRoomText(state, t, 'welcome')
+        getUnsafeRoomTextFn: (t: Function) => getUnsafeRoomText(state, t, 'welcome')
     };
 }
 
