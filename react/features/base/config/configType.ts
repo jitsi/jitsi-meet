@@ -550,6 +550,7 @@ export interface IConfig {
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
+        assumeBandwidth?: boolean;
         disabledCodec?: string;
         enforcePreferredCodec?: boolean;
         maxBitratesVideo?: {

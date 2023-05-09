@@ -51,6 +51,7 @@ import {
     NON_PARTICIPANT_MESSAGE_RECEIVED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
+    SET_ASSUMED_BANDWIDTH_BPS,
     SET_FOLLOW_ME,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
@@ -954,5 +955,22 @@ export function setLocalSubject(localSubject: string) {
     return {
         type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
         localSubject
+    };
+}
+
+
+/**
+ * Sets the assumed bandwidth bps.
+ *
+ * @param {number} assumedBandwidthBps - The new assumed bandwidth.
+ * @returns {{
+*     type: SET_ASSUMED_BANDWIDTH_BPS,
+*     assumedBandwidthBps: number
+* }}
+*/
+export function setAssumedBandwidthBps(assumedBandwidthBps: number) {
+    return {
+        type: SET_ASSUMED_BANDWIDTH_BPS,
+        assumedBandwidthBps
     };
 }

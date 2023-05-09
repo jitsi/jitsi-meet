@@ -16,8 +16,10 @@ interface IProps extends IInputProps {
     className?: string;
     iconClick?: () => void;
     id?: string;
+    max?: number;
     maxLength?: number;
     maxRows?: number;
+    min?: number;
     minRows?: number;
     name?: string;
     onBlur?: (e: any) => void;
@@ -146,8 +148,10 @@ const Input = React.forwardRef<any, IProps>(({
     iconClick,
     id,
     label,
+    max,
     maxLength,
     maxRows,
+    min,
     minRows,
     name,
     onBlur,
@@ -177,7 +181,7 @@ const Input = React.forwardRef<any, IProps>(({
                 {icon && <Icon
                     { ...(iconClick ? { tabIndex: 0 } : {}) }
                     className = { cx(styles.icon, iconClick && styles.iconClickable) }
-                    onClick = { iconClick }
+                    { ...(iconClick ? { onClick: iconClick } : {}) }
                     size = { 20 }
                     src = { icon } />}
                 {textarea ? (
@@ -210,7 +214,9 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
+                        { ...(type === 'number' ? { max } : {}) }
                         maxLength = { maxLength }
+                        { ...(type === 'number' ? { min } : {}) }
                         name = { name }
                         onBlur = { onBlur }
                         onChange = { handleChange }

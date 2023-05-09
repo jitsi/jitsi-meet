@@ -895,6 +895,7 @@
     },
     "profile": {
         "avatar": "avatar",
+        "setAssumedBandwidthBps": "Assumed bandwidth (bps)",
         "setDisplayNameLabel": "Name",
         "setEmailInput": "Enter email",
         "setEmailLabel": "Gravatar email",
@@ -986,6 +987,8 @@
         }
     },
     "settings": {
+        "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
+        "assumedBandwidthBpsWarning": "Higher values might cause network issues.",
         "audio": "Audio",
         "buttonLabel": "Settings",
         "calendar": {
@@ -995,6 +998,8 @@
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
+        "customValue": "custom value",
+        "customValueEffect": "to set the actual bps value",
         "desktopShareFramerate": "Desktop sharing frame rate",
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
@@ -1003,6 +1008,8 @@
         "framesPerSecond": "frames-per-second",
         "incomingMessage": "Incoming message",
         "language": "Language",
+        "leaveEmpty": "leave empty",
+        "leaveEmptyEffect": "to allow estimations to take place",
         "loggedIn": "Logged in as {{name}}",
         "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage (EXPERIMENTAL)",
         "microphones": "Microphones",
@@ -1016,6 +1023,7 @@
         "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
+        "possibleValues": "Possible values",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
@@ -1029,7 +1037,8 @@
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings",
-        "video": "Video"
+        "video": "Video",
+        "zeroEffect": "to disable video"
     },
     "settingsView": {
         "advanced": "Advanced",
