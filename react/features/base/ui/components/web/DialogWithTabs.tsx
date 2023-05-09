@@ -153,7 +153,7 @@ export interface IDialogTab<P> {
     labelKey: string;
     name: string;
     props?: IObject;
-    propsUpdateFunction?: (tabState: IObject, newProps: P) => P;
+    propsUpdateFunction?: (tabState: IObject, newProps: P, tabStates?: (IObject | undefined)[]) => P;
     submit?: Function;
 }
 
@@ -257,7 +257,8 @@ const DialogWithTabs = ({
         if (tabConfiguration.propsUpdateFunction) {
             return tabConfiguration.propsUpdateFunction(
                 currentTabState ?? {},
-                tabConfiguration.props ?? {});
+                tabConfiguration.props ?? {},
+                tabStates);
         }
 
         return { ...currentTabState };

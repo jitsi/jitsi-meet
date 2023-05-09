@@ -1,6 +1,7 @@
 import { IStateful } from '../base/app/types';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { toState } from '../base/redux/functions';
+import { getUserSelectedCameraDeviceId } from '../base/settings/functions.web';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcutsHelpDescriptions } from '../keyboard-shortcuts/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
@@ -85,5 +86,32 @@ export function getShortcutsTabProps(stateful: IStateful, isDisplayedOnWelcomePa
         displayShortcuts: !isDisplayedOnWelcomePage && !isPrejoinPageVisible(state),
         keyboardShortcutsEnabled: areKeyboardShortcutsEnabled(state),
         keyboardShortcutsHelpDescriptions: getKeyboardShortcutsHelpDescriptions(state)
+    };
+}
+
+/**
+ * Returns the properties for the "Virtual Background" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
+ * @returns {Object} - The properties for the "Shortcuts" tab from settings
+ * dialog.
+ */
+export function getVirtualBackgroundTabProps(stateful: IStateful, isDisplayedOnWelcomePage?: boolean) {
+    const state = toState(stateful);
+    const settings = state['features/base/settings'];
+    const userSelectedCamera = getUserSelectedCameraDeviceId(state);
+    let selectedVideoInputId = settings.cameraDeviceId;
+
+    if (isDisplayedOnWelcomePage) {
+        selectedVideoInputId = userSelectedCamera;
+    }
+
+    return {
+        options: state['features/virtual-background'],
+        selectedVideoInputId
     };
 }

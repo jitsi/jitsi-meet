@@ -10,7 +10,6 @@ import {
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions';
-import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
@@ -271,23 +270,4 @@ export function getAudioSettingsVisibility(state: IReduxState) {
  */
 export function getVideoSettingsVisibility(state: IReduxState) {
     return state['features/settings'].videoSettingsVisible;
-}
-
-/**
- * Returns the properties for the "Virtual Background" tab from settings dialog from Redux
- * state.
- *
- * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @returns {Object} - The properties for the "Shortcuts" tab from settings
- * dialog.
- */
-export function getVirtualBackgroundTabProps(stateful: IStateful) {
-    const state = toState(stateful);
-
-    return {
-        _virtualBackground: state['features/virtual-background'],
-        selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
-    };
 }

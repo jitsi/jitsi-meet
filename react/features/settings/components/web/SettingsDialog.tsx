@@ -196,18 +196,28 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             name: SETTINGS_TABS.VIRTUAL_BACKGROUND,
             component: VirtualBackgroundTab,
             labelKey: 'virtualBackground.title',
-            props: getVirtualBackgroundTabProps(state),
+            props: getVirtualBackgroundTabProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getVirtualBackgroundTabProps>,
+                    tabStates: any) => {
+                const videoTabState = tabStates[tabs.findIndex(tab => tab.name === SETTINGS_TABS.VIDEO)];
+
+                return {
+                    ...newProps,
+                    selectedVideoInputId: videoTabState.selectedVideoInputId || newProps.selectedVideoInputId,
+                    options: tabState.options
+                };
+            },
             submit: (newState: any) => submitVirtualBackgroundTab(newState),
             cancel: () => {
-                const { _virtualBackground } = getVirtualBackgroundTabProps(state);
+                const { options } = getVirtualBackgroundTabProps(state, isDisplayedOnWelcomePage);
 
                 return submitVirtualBackgroundTab({
                     options: {
-                        backgroundType: _virtualBackground.backgroundType,
-                        enabled: _virtualBackground.backgroundEffectEnabled,
-                        url: _virtualBackground.virtualSource,
-                        selectedThumbnail: _virtualBackground.selectedThumbnail,
-                        blurValue: _virtualBackground.blurValue
+                        backgroundType: options.backgroundType,
+                        enabled: options.backgroundEffectEnabled,
+                        url: options.virtualSource,
+                        selectedThumbnail: options.selectedThumbnail,
+                        blurValue: options.blurValue
                     }
                 }, true);
             },
