@@ -281,15 +281,15 @@ StateListenerRegistry.register(
  * @param {Participant} participant - The participant object from the redux store.
  * @returns {Object} - The participant info object.
  */
-function _participantToParticipantInfo(participant?: IParticipant) {
+function _participantToParticipantInfo(participant: IParticipant) {
     return {
-        isLocal: participant?.local,
-        email: participant?.email,
-        name: participant?.name,
-        participantId: participant?.id,
-        displayName: participant?.displayName,
-        avatarUrl: participant?.avatarURL,
-        role: participant?.role
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
     };
 }
 
@@ -338,7 +338,7 @@ function _registerForNativeEvents(store: IStore) {
         const remoteParticipants = getRemoteParticipants(store);
         const localParticipant = getLocalParticipant(store);
 
-        participantsInfo.push(_participantToParticipantInfo(localParticipant));
+        localParticipant && participantsInfo.push(_participantToParticipantInfo(localParticipant));
         remoteParticipants.forEach(participant => {
             if (!participant.fakeParticipant) {
                 participantsInfo.push(_participantToParticipantInfo(participant));

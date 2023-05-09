@@ -17,11 +17,9 @@ const ExpandedLabelPopup = ({ visibleExpandedLabel }: IProps) => {
         const expandedLabel = EXPANDED_LABELS[visibleExpandedLabel as keyof typeof EXPANDED_LABELS];
 
         if (expandedLabel) {
-            // @ts-ignore
-            const LabelComponent = expandedLabel.component || expandedLabel;
+            const LabelComponent = expandedLabel.component;
 
-            // @ts-ignore
-            const { props, alwaysOn } = expandedLabel || {};
+            const { props, alwaysOn } = expandedLabel;
             const style = {
                 top: alwaysOn ? BaseTheme.spacing[6] : BaseTheme.spacing[1]
             };
