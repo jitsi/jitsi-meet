@@ -38,7 +38,7 @@ interface IPageReloadDialogState {
  * Shows a warning message and counts down towards the re-load.
  */
 class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDialogState> {
-    _interval: number | undefined;
+    _interval?: number;
     _timeoutSeconds: number;
 
     /**

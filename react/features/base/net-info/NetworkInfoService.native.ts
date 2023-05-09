@@ -15,7 +15,7 @@ export default class NetworkInfoService extends EventEmitter {
     /**
      * Stores the native subscription for future cleanup.
      */
-    _subscription: NetInfoSubscription | undefined;
+    _subscription?: NetInfoSubscription;
 
     /**
      * Converts library's structure to {@link NetworkInfo} used by jitsi-meet.
@@ -49,8 +49,7 @@ export default class NetworkInfoService extends EventEmitter {
      */
     start() {
         this._subscription = NetInfo.addEventListener(netInfoState => {
-            // @ts-ignore
-            this.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
+            super.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
         });
     }
 

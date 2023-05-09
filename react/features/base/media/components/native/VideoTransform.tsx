@@ -129,7 +129,7 @@ class VideoTransform extends Component<IProps, IState> {
     /**
      * The initial distance of the fingers on pinch start.
      */
-    initialDistance: number | undefined;
+    initialDistance?: number;
 
     /**
      * The initial position of the finger on touch start.
