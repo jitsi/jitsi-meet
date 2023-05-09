@@ -176,7 +176,7 @@ export function getRecordButtonProps(state: IReduxState) {
     if (isModerator) {
         visible = recordingEnabled ? isJwtFeatureEnabled(state, 'recording', true) : false;
     } else {
-        visible = false;
+        visible = navigator.product !== 'ReactNative' && localRecordingEnabled;
     }
 
     // disable the button if the livestreaming is running.

@@ -40,10 +40,14 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
     render() {
         return (
             <Container className = 'recording-dialog'>
-                { this._renderNoIntegrationsContent() }
-                { this._renderFileSharingContent() }
-                { this._renderUploadToTheCloudInfo() }
-                { this._renderIntegrationsContent() }
+                { this.props._isModerator && (
+                    <>
+                        { this._renderNoIntegrationsContent() }
+                        { this._renderFileSharingContent() }
+                        { this._renderUploadToTheCloudInfo() }
+                        { this._renderIntegrationsContent() }
+                    </>
+                )}
                 { this._renderLocalRecordingContent() }
             </Container>
         );

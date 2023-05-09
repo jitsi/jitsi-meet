@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
@@ -26,6 +27,11 @@ export interface IProps extends WithTranslation {
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
+
+    /**
+     * Whether local participant is moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * Whether local recording is available or not.
@@ -334,6 +340,7 @@ export function mapStateToProps(state: IReduxState) {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
+        _isModerator: isLocalParticipantModerator(state),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
