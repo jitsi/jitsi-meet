@@ -40,7 +40,7 @@ function _isDisplayableCalendarEntry(entry: { allDay: boolean; attendees: Object
  * @returns {void}
  */
 export function _updateCalendarEntries(events: Array<Object>) {
-    if (!events || !events.length) {
+    if (!events?.length) {
         return;
     }
 

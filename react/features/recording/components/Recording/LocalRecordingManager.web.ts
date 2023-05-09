@@ -242,10 +242,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
             // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
-                // @ts-ignore
                 video: { displaySurface: 'browser',
                     frameRate: 30 },
-                audio: false,
+                audio: false, // @ts-ignore
                 preferCurrentTab: true
             });
             document.title = currentTitle;

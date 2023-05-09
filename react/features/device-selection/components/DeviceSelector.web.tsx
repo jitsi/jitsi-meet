@@ -128,7 +128,7 @@ const DeviceSelector = ({
         return _renderNoPermission();
     }
 
-    if (!devices || !devices.length) {
+    if (!devices?.length) {
         return _renderNoDevices();
     }
 

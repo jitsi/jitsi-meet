@@ -138,7 +138,7 @@ function _handleNoDataFromSourceErrors(store: IStore, action: any) {
 
     const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
 
-    if (!track || !track.local) {
+    if (!track?.local) {
         return;
     }
 

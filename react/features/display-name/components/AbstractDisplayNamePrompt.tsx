@@ -49,7 +49,7 @@ export default class AbstractDisplayNamePrompt<S>
      * @returns {boolean}
      */
     _onSetDisplayName(displayName: string) {
-        if (!displayName || !displayName.trim()) {
+        if (!displayName?.trim()) {
             return false;
         }
 

@@ -185,7 +185,7 @@ export function filterBySearchCriteria(state: IReduxState, stats?: ISpeakerStats
             if (filteredStats[id].hasOwnProperty('_isLocalStats')) {
                 const name = filteredStats[id].getDisplayName();
 
-                filteredStats[id].hidden = !name || !name.match(searchRegex);
+                filteredStats[id].hidden = !name?.match(searchRegex);
             }
         }
     }

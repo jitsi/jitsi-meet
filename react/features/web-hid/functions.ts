@@ -117,5 +117,5 @@ export function removeHidEventListeners(
  * @returns {boolean}
  */
 export function shouldRequestHIDDevice(deviceInfo: IDeviceInfo): boolean {
-    return !deviceInfo || !deviceInfo.device || Object.keys(deviceInfo).length === 0;
+    return !deviceInfo?.device || Object.keys(deviceInfo).length === 0;
 }
