@@ -16,7 +16,7 @@ const ANIMATION_DURATION = 0.2;
 interface IProps {
     children: ReactElement;
     containerClassName?: string;
-    content: string;
+    content: string | ReactElement;
     position?: TOOLTIP_POSITION;
 }
 

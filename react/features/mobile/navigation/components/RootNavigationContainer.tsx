@@ -7,6 +7,9 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
+import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
+// eslint-disable-next-line
+// @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
@@ -18,6 +21,7 @@ import {
     dialInSummaryScreenOptions,
     navigationContainerTheme,
     preJoinScreenOptions,
+    unsafeMeetingScreenOptions,
     welcomeScreenOptions
 } from '../screenOptions';
 
@@ -88,6 +92,10 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
                     component = { Prejoin }
                     name = { screen.preJoin }
                     options = { preJoinScreenOptions } />
+                <RootStack.Screen
+                    component = { UnsafeRoomWarning }
+                    name = { screen.unsafeRoomWarning }
+                    options = { unsafeMeetingScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }

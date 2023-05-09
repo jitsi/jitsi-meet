@@ -21,6 +21,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import Input from '../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
+import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.native';
 import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
@@ -32,6 +33,11 @@ import {
 import styles from './styles.native';
 
 interface IProps extends AbstractProps {
+
+    /**
+     * Function for getting the unsafe room text.
+     */
+    getUnsafeRoomTextFn: Function;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -151,7 +157,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     src = { IconWarning }
                     style = { styles.insecureRoomNameWarningIcon } />
                 <Text style = { styles.insecureRoomNameWarningText }>
-                    { this.props.t('security.insecureRoomNameWarning') }
+                    { this.props.getUnsafeRoomTextFn(this.props.t) }
                 </Text>
             </View>
         );
@@ -399,9 +405,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        ..._abstractMapStateToProps(state)
+        ..._abstractMapStateToProps(state),
 
         // _reducedUI: state['features/base/responsive-ui'].reducedUI
+        getUnsafeRoomTextFn: (t: Function) => getUnsafeRoomText(state, t, 'welcome')
     };
 }
 

@@ -12,6 +12,7 @@ import {
 import { connect, disconnect, setLocationURL } from '../base/connection/actions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks/actions';
+import isInsecureRoomName from '../base/util/isInsecureRoomName';
 import { parseURLParams } from '../base/util/parseURLParams';
 import {
     appendURLParam,
@@ -136,6 +137,11 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setRoom(room));
 
         if (room) {
+            if (isInsecureRoomName(room)) {
+                navigateRoot(screen.unsafeRoomWarning);
+
+                return;
+            }
             dispatch(createDesiredLocalTracks());
             dispatch(clearNotifications());
 

@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 import { HIDE_TOOLTIP, SHOW_TOOLTIP } from './actionTypes';
 
 /**
@@ -7,7 +9,7 @@ import { HIDE_TOOLTIP, SHOW_TOOLTIP } from './actionTypes';
  * Used as unique identifier for tooltip.
  * @returns {Object}
  */
-export function showTooltip(content: string) {
+export function showTooltip(content: string | ReactElement) {
     return {
         type: SHOW_TOOLTIP,
         content
@@ -21,7 +23,7 @@ export function showTooltip(content: string) {
  * Used as unique identifier for tooltip.
  * @returns {Object}
  */
-export function hideTooltip(content: string) {
+export function hideTooltip(content: string | ReactElement) {
     return {
         type: HIDE_TOOLTIP,
         content

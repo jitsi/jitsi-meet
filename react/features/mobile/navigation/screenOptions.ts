@@ -197,6 +197,11 @@ export const preJoinScreenOptions = {
 };
 
 /**
+ * Screen options for pre-join screen.
+ */
+export const unsafeMeetingScreenOptions = preJoinScreenOptions;
+
+/**
  * Screen options for conference navigation container screen.
  */
 export const conferenceNavigationContainerScreenOptions = {

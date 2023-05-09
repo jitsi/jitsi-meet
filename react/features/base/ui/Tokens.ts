@@ -167,6 +167,7 @@ export const font = {
 
 export const shape = {
     borderRadius: 6,
+    circleRadius: 50,
     boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
