@@ -87,6 +87,7 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
 
         const availableDevices = await hidManager.requestHidDevices();
 
+        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (!availableDevices || !availableDevices.length) {
             logger.info('HID device not available');
             break;

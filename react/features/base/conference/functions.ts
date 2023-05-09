@@ -292,7 +292,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
 
     const config = toState(stateful)['features/base/config'];
 
-    if (!config || !config.hosts) {
+    if (!config?.hosts) {
         logger.warn('Wrong configuration, missing hosts.');
 
         return;

@@ -200,7 +200,7 @@ export function getVirtualScreenshareParticipantByOwnerId(stateful: IStateful, i
  * @returns {string}
  */
 export function getNormalizedDisplayName(name: string) {
-    if (!name || !name.trim()) {
+    if (!name?.trim()) {
         return undefined;
     }
 

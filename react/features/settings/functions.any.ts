@@ -60,8 +60,7 @@ export function normalizeUserInputURL(url: string) {
         const urlRegExp = new RegExp('^(\\w+://)?(.+)$');
         const urlComponents = urlRegExp.exec(url);
 
-        if (urlComponents && (!urlComponents[1]
-                || !urlComponents[1].startsWith('http'))) {
+        if (urlComponents && !urlComponents[1]?.startsWith('http')) {
             url = `https://${urlComponents[2]}`;
         }
 

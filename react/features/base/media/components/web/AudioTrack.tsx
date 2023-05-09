@@ -185,7 +185,7 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     _attachTrack(track?: ITrack) {
-        if (!track || !track.jitsiTrack) {
+        if (!track?.jitsiTrack) {
             return;
         }
 

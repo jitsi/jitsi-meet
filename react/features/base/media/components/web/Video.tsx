@@ -321,7 +321,7 @@ class Video extends Component<IProps> {
      * @returns {void}
      */
     _attachTrack(videoTrack?: Partial<ITrack>) {
-        if (!videoTrack || !videoTrack.jitsiTrack) {
+        if (!videoTrack?.jitsiTrack) {
             return;
         }
 

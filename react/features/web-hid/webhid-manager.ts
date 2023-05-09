@@ -95,7 +95,7 @@ export default class WebHidManager extends EventTarget {
      */
     isSupported(): boolean {
         // @ts-ignore
-        return !(!window.navigator.hid || !window.navigator.hid.requestDevice);
+        return Boolean(window.navigator.hid?.requestDevice);
     }
 
     /**
@@ -117,7 +117,7 @@ export default class WebHidManager extends EventTarget {
         // @ts-ignore
         const devices = await navigator.hid.requestDevice(requestTelephonyHID);
 
-        if (!devices || !devices.length) {
+        if (!devices?.length) {
             logger.warn('No HID devices selected.');
 
             return false;
@@ -136,7 +136,7 @@ export default class WebHidManager extends EventTarget {
     async listenToConnectedHid() {
         const devices = await this.loadPairedDevices();
 
-        if (!devices || !devices.length) {
+        if (!devices?.length) {
             logger.warn('No hid device found.');
 
             return;
@@ -166,7 +166,7 @@ export default class WebHidManager extends EventTarget {
      * @returns {HIDDevice} -.
      */
     private getTelephonyDevice(availableDevices: HIDDevice[]) {
-        if (!availableDevices || !availableDevices.length) {
+        if (!availableDevices?.length) {
             logger.warn('No HID device to request');
 
             return undefined;
@@ -198,7 +198,7 @@ export default class WebHidManager extends EventTarget {
         try {
             this.deviceInfo = { device: telephonyDevice } as IDeviceInfo;
 
-            if (!this.deviceInfo || !this.deviceInfo.device) {
+            if (!this.deviceInfo?.device) {
                 logger.warn('no HID device found');
 
                 return;
@@ -289,7 +289,7 @@ export default class WebHidManager extends EventTarget {
         try {
             this.outputEventGenerators = {};
 
-            if (!device || !device.collections) {
+            if (!device?.collections) {
                 logger.error('Undefined device collection');
 
                 return false;
@@ -506,7 +506,7 @@ export default class WebHidManager extends EventTarget {
      * @returns {void} -.
      */
     resetDeviceState() {
-        if (!this.deviceInfo || !this.deviceInfo.device || !this.deviceInfo.device.opened) {
+        if (!this.deviceInfo?.device || !this.deviceInfo?.device?.opened) {
             return;
         }
 
@@ -527,7 +527,7 @@ export default class WebHidManager extends EventTarget {
      */
     private parseInputReports(inputReports: HIDReportInfo[]) {
         inputReports.forEach(report => {
-            if (!report || !report.items?.length || report.reportId === undefined) {
+            if (!report?.items?.length || report.reportId === undefined) {
                 return;
             }
 
@@ -591,7 +591,7 @@ export default class WebHidManager extends EventTarget {
      */
     private parseOutputReports(outputReports: HIDReportInfo[]) {
         outputReports.forEach((report: HIDReportInfo) => {
-            if (!report || !report.items?.length || report.reportId === undefined) {
+            if (!report?.items?.length || report.reportId === undefined) {
                 return;
             }
 
@@ -695,7 +695,7 @@ export default class WebHidManager extends EventTarget {
      * @returns {void} -.
      */
     async sendDeviceReport(data: { command: string; }) {
-        if (!data || !data.command || !this.deviceInfo
+        if (!data?.command || !this.deviceInfo
             || !this.deviceInfo.device || !this.deviceInfo.device.opened || !this.isParseDescriptorsSuccess) {
             logger.warn('There are currently non-compliant conditions');
 
@@ -939,7 +939,7 @@ export default class WebHidManager extends EventTarget {
         const reportId = this.retriveInputReportId(inputReportId);
 
 
-        if (!this.deviceInfo || !this.deviceInfo.device || !this.deviceInfo.device.opened) {
+        if (!this.deviceInfo?.device || !this.deviceInfo?.device?.opened) {
             logger.warn('[sendReplyReport] device is not opened or does not exist');
 
             return;

@@ -90,7 +90,7 @@ export default class JitsiMeetLogStorage {
     storeLogsCallstats(logEntries: Array<string | any>) {
         const conference = getCurrentConference(this.getState());
 
-        if (!conference || !conference.isCallstatsEnabled()) {
+        if (!conference?.isCallstatsEnabled()) {
             // Discard the logs if CallStats is not enabled.
             return;
         }
