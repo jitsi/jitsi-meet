@@ -27,6 +27,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
     const aspectRatio = useSelector(
         (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
     );
+    const unsafeRoomText = useSelector((state: IReduxState) => getUnsafeRoomText(state, t, 'prejoin'));
 
     const goBack = useCallback(() => {
         dispatch(appNavigate(undefined));
@@ -94,7 +95,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
                 <Text
                     dataDetectorType = 'link'
                     style = { styles.warningText as StyleProp<TextStyle> }>
-                    { getUnsafeRoomText(t, 'prejoin') }
+                    { unsafeRoomText }
                 </Text>
                 <Button
                     accessibilityLabel = 'prejoin.proceedAnyway'

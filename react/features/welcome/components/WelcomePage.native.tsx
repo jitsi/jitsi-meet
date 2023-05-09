@@ -35,6 +35,11 @@ import styles from './styles.native';
 interface IProps extends AbstractProps {
 
     /**
+     * Function for getting the unsafe room text.
+     */
+    getUnsafeRoomTextFn: Function;
+
+    /**
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: any;
@@ -152,7 +157,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     src = { IconWarning }
                     style = { styles.insecureRoomNameWarningIcon } />
                 <Text style = { styles.insecureRoomNameWarningText }>
-                    { getUnsafeRoomText(this.props.t, 'welcome') }
+                    { this.props.getUnsafeRoomTextFn(this.props.t) }
                 </Text>
             </View>
         );
@@ -400,9 +405,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        ..._abstractMapStateToProps(state)
+        ..._abstractMapStateToProps(state),
 
         // _reducedUI: state['features/base/responsive-ui'].reducedUI
+        getUnsafeRoomTextFn: t => getUnsafeRoomText(state, t, 'welcome')
     };
 }
 

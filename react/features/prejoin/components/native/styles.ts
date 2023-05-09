@@ -106,9 +106,6 @@ export const preJoinStyles = {
         width: '100%',
         backgroundColor: BaseTheme.palette.ui01,
         display: 'flex',
-
-        // flexDirection: 'row',
-
         alignItems: 'center',
         justifyContent: 'center',
         color: 'white'
