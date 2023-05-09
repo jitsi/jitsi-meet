@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 import AudioMuteButton from './AudioMuteButton';
@@ -9,30 +7,30 @@ import VideoMuteButton from './VideoMuteButton';
 /**
  * The type of the React {@code Component} props of {@link Toolbar}.
  */
-type Props = {
+interface IProps {
 
     /**
      * Additional CSS class names to add to the root of the toolbar.
      */
-    className: string,
+    className: string;
 
     /**
      * Callback invoked when no longer moused over the toolbar.
      */
-    onMouseOut: Function,
+    onMouseOut: (e?: React.MouseEvent) => void;
 
     /**
      * Callback invoked when the mouse has moved over the toolbar.
      */
-    onMouseOver: Function
-};
+    onMouseOver: (e?: React.MouseEvent) => void;
+}
 
 /**
  * Represents the toolbar in the Always On Top window.
  *
  * @augments Component
  */
-export default class Toolbar extends Component<Props> {
+export default class Toolbar extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

@@ -2,38 +2,38 @@ import React, { useCallback } from 'react';
 
 import Icon from '../base/icons/components/Icon';
 
-type Props = {
+interface IProps {
 
     /**
      * Accessibility label for button.
      */
-    accessibilityLabel: string,
+    accessibilityLabel: string;
 
     /**
      * An extra class name to be added at the end of the element's class name
      * in order to enable custom styling.
      */
-    customClass?: string,
+    customClass?: string;
 
     /**
      * Whether or not the button is disabled.
      */
-    disabled?: boolean,
-
-    /**
-     * Click handler.
-     */
-    onClick: Function,
+    disabled?: boolean;
 
     /**
      * Button icon.
      */
-    icon: Object,
+    icon: Function;
+
+    /**
+     * Click handler.
+     */
+    onClick: (e?: React.MouseEvent) => void;
 
     /**
      * Whether or not the button is toggled.
      */
-    toggled?: boolean
+    toggled?: boolean;
 }
 
 const ToolbarButton = ({
@@ -43,7 +43,7 @@ const ToolbarButton = ({
     onClick,
     icon,
     toggled = false
-}: Props) => {
+}: IProps) => {
     const onKeyPress = useCallback(event => {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();

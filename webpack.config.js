@@ -299,7 +299,7 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'alwaysontop': './react/features/always-on-top/index.js'
+                'alwaysontop': './react/features/always-on-top/index.tsx'
             },
             plugins: [
                 ...config.plugins,

@@ -1,11 +1,9 @@
-// @flow
-
 import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 import { IconMic, IconMicSlash } from '../base/icons/svg';
-import type { Props } from '../base/toolbox/components/AbstractButton';
+import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
@@ -14,23 +12,25 @@ const { api } = window.alwaysOnTop;
 /**
  * The type of the React {@code Component} state of {@link AudioMuteButton}.
  */
-type State = {
+interface IState {
 
     /**
      * Whether audio is available is not.
      */
-    audioAvailable: boolean,
+    audioAvailable: boolean;
 
     /**
      * Whether audio is muted or not.
      */
-    audioMuted: boolean
-};
+    audioMuted: boolean;
+}
+
+type Props = Partial<IProps>;
 
 /**
  * Stateless "mute/unmute audio" button for the Always-on-Top windows.
  */
-export default class AudioMuteButton extends Component<Props, State> {
+export default class AudioMuteButton extends Component<Props, IState> {
     icon = IconMic;
     toggledIcon = IconMicSlash;
     accessibilityLabel = 'Audio mute';
@@ -38,7 +38,7 @@ export default class AudioMuteButton extends Component<Props, State> {
     /**
      * Initializes a new {@code AudioMuteButton} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code AudioMuteButton} instance with.
      */
     constructor(props: Props) {
@@ -94,19 +94,15 @@ export default class AudioMuteButton extends Component<Props, State> {
             this._audioMutedListener);
     }
 
-    _audioAvailabilityListener: ({ available: boolean }) => void;
-
     /**
      * Handles audio available api events.
      *
      * @param {{ available: boolean }} status - The new available status.
      * @returns {void}
      */
-    _audioAvailabilityListener({ available }) {
+    _audioAvailabilityListener({ available }: { available: boolean; }) {
         this.setState({ audioAvailable: available });
     }
-
-    _audioMutedListener: ({ muted: boolean }) => void;
 
     /**
      * Handles audio muted api events.
@@ -114,7 +110,7 @@ export default class AudioMuteButton extends Component<Props, State> {
      * @param {{ muted: boolean }} status - The new muted status.
      * @returns {void}
      */
-    _audioMutedListener({ muted }) {
+    _audioMutedListener({ muted }: { muted: boolean; }) {
         this.setState({ audioMuted: muted });
     }
 
@@ -144,15 +140,13 @@ export default class AudioMuteButton extends Component<Props, State> {
      * Changes the muted state.
      *
      * @override
-     * @param {boolean} audioMuted - Whether audio should be muted or not.
+     * @param {boolean} _audioMuted - Whether audio should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
+    _setAudioMuted(_audioMuted: boolean) {
         this.state.audioAvailable && api.executeCommand('toggleAudio');
     }
-
-    _onClick: () => {};
 
     /**
      * Handles clicking / pressing the button, and toggles the audio mute state
