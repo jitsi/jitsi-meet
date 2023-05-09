@@ -4,8 +4,6 @@ import { useDispatch } from 'react-redux';
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 
 import AudioIcon from './AudioIcon';

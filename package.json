@@ -140,6 +140,7 @@
     "@types/react-dom": "17.0.14",
     "@types/react-linkify": "1.0.1",
     "@types/react-native": "0.68.9",
+    "@types/react-native-keep-awake": "2.0.3",
     "@types/react-native-video": "5.0.14",
     "@types/react-redux": "7.1.24",
     "@types/react-window": "1.8.5",

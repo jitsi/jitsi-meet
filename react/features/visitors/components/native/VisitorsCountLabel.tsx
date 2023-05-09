@@ -28,14 +28,14 @@ const VisitorsCountLabel = () => {
     const visitorsCount = useSelector((state: IReduxState) =>
         state['features/visitors'].count || 0);
 
-    return !visitorsMode && visitorsCount > 0 && (
+    return !visitorsMode && visitorsCount > 0 ? (
         <Label
             icon = { IconUsers }
             iconColor = { BaseTheme.palette.uiBackground }
             style = { styles.raisedHandsCountLabel }
             text = { `${getVisitorsShortText(visitorsCount)}` }
             textStyle = { styles.raisedHandsCountLabelText } />
-    );
+    ) : null;
 };
 
 export default VisitorsCountLabel;

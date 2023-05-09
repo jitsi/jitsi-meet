@@ -1,19 +1,15 @@
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 
-interface IProps {
+interface IProps extends WithTranslation {
 
     /**
      * True of the label should be visible.
      */
     _visible: boolean;
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
-    t: Function;
 }
 
 /**

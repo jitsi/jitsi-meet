@@ -219,7 +219,7 @@ export function getFilmstripDimensions({
     aspectRatio: Symbol;
     clientHeight: number;
     clientWidth: number;
-    insets: {
+    insets?: {
         bottom?: number;
         left?: number;
         right?: number;
