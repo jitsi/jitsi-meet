@@ -12,6 +12,7 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -90,8 +91,10 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
                         style = { styles.warningIcon } />
                 </View>
 
-                <Text style = { styles.warningText as StyleProp<TextStyle> }>
-                    {t('security.insecureRoomNameWarning')}
+                <Text
+                    dataDetectorType = 'link'
+                    style = { styles.warningText as StyleProp<TextStyle> }>
+                    { getUnsafeRoomText(t, 'prejoin') }
                 </Text>
                 <Button
                     accessibilityLabel = 'prejoin.proceedAnyway'

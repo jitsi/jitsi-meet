@@ -2,6 +2,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../base/i18n/functions';
 import ExpandedLabel, { IProps as AbstractProps } from '../../../base/label/components/native/ExpandedLabel';
+import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
 
 import { INSECURE_ROOM_NAME_LABEL_COLOR } from './styles';
 
@@ -27,7 +28,7 @@ class InsecureRoomNameExpandedLabel extends ExpandedLabel<Props> {
      * @returns {string}
      */
     _getLabel() {
-        return this.props.t('security.insecureRoomNameWarning');
+        return getUnsafeRoomText(this.props.t, 'meeting');
     }
 }
 

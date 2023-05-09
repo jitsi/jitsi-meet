@@ -408,6 +408,7 @@ export interface IConfig {
     legalUrls?: {
         helpCentre: string;
         privacy: string;
+        security: string;
         terms: string;
     };
     liveStreaming?: {

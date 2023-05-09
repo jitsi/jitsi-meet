@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import Checkbox from '../../../ui/components/web/Checkbox';
+import getUnsafeRoomText from '../../../util/getUnsafeRoomText.web';
 import { setUnsafeRoomConsent } from '../../actions.web';
 
 const useStyles = makeStyles()(theme => {
@@ -39,7 +40,7 @@ const UnsafeRoomWarning = () => {
     return (
         <>
             <div className = { classes.warning }>
-                {t('security.insecureRoomNameWarning')}
+                {getUnsafeRoomText(t, 'prejoin')}
             </div>
             <Checkbox
                 checked = { unsafeRoomConsent }

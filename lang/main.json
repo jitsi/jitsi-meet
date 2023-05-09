@@ -870,6 +870,7 @@
         "lookGood": "Your microphone is working properly",
         "or": "or",
         "premeeting": "Pre meeting",
+        "proceedAnyway": "Proceed anyway",
         "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
@@ -975,7 +976,13 @@
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your conference. {{recommendAction}} Learn more about securing you meeting <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningNative": "The room name is unsafe. Unwanted participants may join your conference. {{recommendAction}} Learn more about securing you meeting {{securityUrl}}",
+        "unsafeRoomActions": {
+            "meeting": "Consider securing your meeting using the security button.",
+            "prejoin": "Consider using a more unique meeting name.",
+            "welcome": "Consider using a more unique meeting name, or pick one of the suggestions."
+        },
         "title": "Security Options"
     },
     "settings": {

@@ -6,6 +6,7 @@ import { translate, translateToHTML } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
 import Watermarks from '../../base/react/components/web/Watermarks';
+import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
 import CalendarList from '../../calendar-sync/components/CalendarList.web';
 import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
@@ -294,7 +295,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             <div className = 'insecure-room-name-warning'>
                 <Icon src = { IconWarning } />
                 <span>
-                    { this.props.t('security.insecureRoomNameWarning') }
+                    { getUnsafeRoomText(this.props.t, 'welcome') }
                 </span>
             </div>
         );

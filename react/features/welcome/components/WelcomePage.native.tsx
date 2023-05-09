@@ -21,6 +21,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import Button from '../../base/ui/components/native/Button';
 import Input from '../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../base/ui/constants.native';
+import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.native';
 import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
@@ -151,7 +152,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     src = { IconWarning }
                     style = { styles.insecureRoomNameWarningIcon } />
                 <Text style = { styles.insecureRoomNameWarningText }>
-                    { this.props.t('security.insecureRoomNameWarning') }
+                    { getUnsafeRoomText(this.props.t, 'welcome') }
                 </Text>
             </View>
         );
