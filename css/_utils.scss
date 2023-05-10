@@ -41,3 +41,17 @@
     display: -webkit-flex !important;
     display: flex !important;
 }
+
+/**
+ * resets default button styles,
+ * mostly intended to be used on interactive elements that
+ * differ from their default styles (e.g. <a>) or have custom styles
+ */
+.invisible-button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+}

@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Meeting link: {{url}}"
+        },
         "add": "Invite",
         "addContacts": "Invite your contacts",
         "contacts": "contacts",

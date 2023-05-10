@@ -44,7 +44,6 @@ class DialInNumber extends Component<IProps> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onCopyText = this._onCopyText.bind(this);
-        this._onCopyTextKeyPress = this._onCopyTextKeyPress.bind(this);
     }
 
     /**
@@ -63,20 +62,6 @@ class DialInNumber extends Component<IProps> {
     }
 
     /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onCopyTextKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onCopyText();
-        }
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -87,7 +72,7 @@ class DialInNumber extends Component<IProps> {
 
         return (
             <div className = 'dial-in-number'>
-                <div>
+                <p>
                     <span className = 'phone-number'>
                         <span className = 'info-label'>
                             { t('info.dialInNumber') }
@@ -107,16 +92,13 @@ class DialInNumber extends Component<IProps> {
                             { `${_formatConferenceIDPin(conferenceID)}#` }
                         </span>
                     </span>
-                </div>
-                <a
+                </p>
+                <button
                     aria-label = { t('info.copyNumber') }
-                    className = 'dial-in-copy'
-                    onClick = { this._onCopyText }
-                    onKeyPress = { this._onCopyTextKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
+                    className = 'dial-in-copy invisible-button'
+                    onClick = { this._onCopyText }>
                     <Icon src = { IconCopy } />
-                </a>
+                </button>
             </div>
         );
     }
