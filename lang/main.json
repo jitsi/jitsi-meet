@@ -1385,6 +1385,10 @@
         "videomute": "Participant has stopped the camera"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Current background: {{background}}",
+            "selectBackground": "Select a background"
+        },
         "addBackground": "Add background",
         "apply": "Apply",
         "backgroundEffectError": "Failed to apply background effect.",
