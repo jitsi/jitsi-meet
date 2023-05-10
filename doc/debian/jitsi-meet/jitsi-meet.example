@@ -58,6 +58,7 @@ server {
 
     add_header Strict-Transport-Security "max-age=63072000" always;
     set $prefix "";
+    set $custom_index "";
 
     ssl_certificate /etc/jitsi/meet/jitsi-meet.example.com.crt;
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
@@ -91,6 +92,13 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
     }
+
+    location = /_api/public {
+        autoindex off;
+        root /etc/jitsi/meet/public;
+    }
+
+    include /etc/jitsi/meet/jaas/*.conf;
 
     # ensure all static content can always be found first
     location ~ ^/(libs|css|static|images|fonts|lang|sounds|.well-known)/(.*)$
@@ -146,7 +154,7 @@ server {
     }
 
     location @root_path {
-        rewrite ^/(.*)$ / break;
+        rewrite ^/(.*)$ /$custom_index break;
     }
 
     location ~ ^/([^/?&:'"]+)/config.js$
