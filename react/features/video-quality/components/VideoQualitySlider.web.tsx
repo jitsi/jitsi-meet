@@ -187,9 +187,15 @@ class VideoQualitySlider extends Component<IProps> {
 
         return (
             <div className = { clsx('video-quality-dialog', classes.dialog) }>
-                <div className = { classes.dialogDetails }>{t('videoStatus.adjustFor')}</div>
+                <div
+                    aria-hidden = { true }
+                    className = { classes.dialogDetails }>
+                    {t('videoStatus.adjustFor')}
+                </div>
                 <div className = { classes.dialogContents }>
-                    <div className = { classes.sliderDescription }>
+                    <div
+                        aria-hidden = { true }
+                        className = { classes.sliderDescription }>
                         <span>{t('videoStatus.bestPerformance')}</span>
                         <span>{t('videoStatus.highestQuality')}</span>
                     </div>
