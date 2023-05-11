@@ -214,8 +214,10 @@ function CopyButton({
     return (
         <>
             <div
-                aria-describedby = { `copy-button-sr-text-${id}` }
-                aria-label = { textOnHover }
+                aria-describedby = { displayedText === textOnHover
+                    ? undefined
+                    : `${id}-sr-text` }
+                aria-label = { displayedText === textOnHover ? accessibilityText : textOnHover }
                 className = { cx(className, classes.copyButton, isClicked ? ' clicked' : '') }
                 id = { id }
                 onBlur = { onHoverOut }
@@ -229,11 +231,13 @@ function CopyButton({
                 { renderContent() }
             </div>
 
-            <span
-                className = 'sr-only'
-                id = { `copy-button-sr-text-${id}` }>
-                { accessibilityText || displayedText }
-            </span>
+            { displayedText !== textOnHover && (
+                <span
+                    className = 'sr-only'
+                    id = { `${id}-sr-text` }>
+                    { accessibilityText }
+                </span>
+            )}
         </>
     );
 }

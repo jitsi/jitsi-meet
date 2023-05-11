@@ -39,6 +39,7 @@ function CopyMeetingLinkSection({ url }: IProps) {
                 accessibilityText = { t('addPeople.accessibilityLabel.meetingLink', { url: getDecodedURI(url) }) }
                 className = 'invite-more-dialog-conference-url'
                 displayedText = { getDecodedURI(url) }
+                id = 'add-people-copy-link-button'
                 textOnCopySuccess = { t('addPeople.linkCopied') }
                 textOnHover = { t('addPeople.copyLink') }
                 textToCopy = { url } />
