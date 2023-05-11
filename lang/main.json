@@ -464,6 +464,9 @@
         "title": "Embed this meeting"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Your choice: {{rating}}"
+        },
         "average": "Average",
         "bad": "Bad",
         "detailsLabel": "Tell us more about it.",
