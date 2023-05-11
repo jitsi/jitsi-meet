@@ -903,6 +903,7 @@ class Thumbnail extends Component<IProps, IState> {
                 tabIndex = { 0 }>
                 {avatarURL ? (
                     <img
+                        alt = ''
                         className = 'sharedVideoAvatar'
                         src = { avatarURL } />
                 )

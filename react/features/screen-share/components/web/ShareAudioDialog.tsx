@@ -83,6 +83,7 @@ class ShareAudioDialog extends Component<IProps> {
                 titleKey = { t('dialog.shareAudioTitle') }>
                 <div className = 'share-audio-dialog'>
                     <img
+                        alt = ''
                         className = 'share-audio-animation'
                         src = 'images/share-audio.gif' />
                     <Checkbox
