@@ -23,9 +23,24 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     classes: any;
 
     /**
+     * Whether to show hide self view setting.
+     */
+    disableHideSelfView: boolean;
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean;
+
+    /**
+     * Whether or not to hide self-view screen.
+     */
+    hideSelfView: boolean;
+
+    /**
+     * Whether we are in visitors mode.
+     */
+    iAmVisitor: boolean;
 
     /**
      * The number of max participants to display on stage.
@@ -66,6 +81,10 @@ const styles = (theme: Theme) => {
             height: '1px',
             border: 0,
             backgroundColor: theme.palette.ui03
+        },
+
+        checkbox: {
+            margin: `${theme.spacing(3)} 0`
         }
     };
 };
@@ -89,6 +108,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
+        this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
     }
 
     /**
@@ -98,7 +118,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      * @returns {ReactElement}
      */
     render() {
-        const { showPrejoinSettings, classes } = this.props;
+        const { showPrejoinSettings, classes, disableHideSelfView, iAmVisitor, hideSelfView, t } = this.props;
 
         return (
             <div
@@ -109,6 +129,14 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                     <hr className = { classes.divider } />
                 </>}
                 {this._renderMaxStageParticipantsSelect()}
+                {!disableHideSelfView && !iAmVisitor && (
+                    <Checkbox
+                        checked = { hideSelfView }
+                        className = { classes.checkbox }
+                        label = { t('videothumbnail.hideSelfView') }
+                        name = 'hide-self-view'
+                        onChange = { this._onHideSelfViewChanged } />
+                )}
             </div>
         );
     }
@@ -136,6 +164,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         const maxParticipants = Number(e.target.value);
 
         super._onChange({ maxStageParticipants: maxParticipants });
+    }
+
+    /**
+     * Callback invoked to select if hide self view should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ hideSelfView: checked });
     }
 
     /**

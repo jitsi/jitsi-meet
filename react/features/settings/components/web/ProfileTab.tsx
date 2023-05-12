@@ -13,7 +13,6 @@ import AbstractDialogTab, {
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
-import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Input from '../../../base/ui/components/web/Input';
 import Select from '../../../base/ui/components/web/Select';
 import { openLogoutDialog } from '../../actions';
@@ -45,11 +44,6 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     currentLanguage: string;
 
     /**
-     * Whether to show hide self view setting.
-     */
-    disableHideSelfView: boolean;
-
-    /**
      * The display name to display for the local participant.
      */
     displayName: string;
@@ -63,16 +57,6 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Whether to hide the email input in the profile settings.
      */
     hideEmailInSettings?: boolean;
-
-    /**
-     * Whether or not to hide self-view screen.
-     */
-    hideSelfView: boolean;
-
-    /**
-     * Whether we are in visitors mode.
-     */
-    iAmVisitor: boolean;
 
     /**
      * The id of the local participant.
@@ -151,7 +135,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onEmailChange = this._onEmailChange.bind(this);
-        this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -175,17 +158,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
      */
     _onEmailChange(value: string) {
         super._onChange({ email: value });
-    }
-
-    /**
-     * Callback invoked to select if hide self view should be enabled.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ hideSelfView: checked });
     }
 
     /**
@@ -243,12 +215,9 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
         const {
             authEnabled,
             classes,
-            disableHideSelfView,
             displayName,
             email,
             hideEmailInSettings,
-            hideSelfView,
-            iAmVisitor,
             id,
             readOnlyName,
             showLanguageSettings,
@@ -283,14 +252,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
                         type = 'text'
                         value = { email } />
                 </div>}
-                {!disableHideSelfView && !iAmVisitor && (
-                    <Checkbox
-                        checked = { hideSelfView }
-                        className = { classes.bottomMargin }
-                        label = { t('videothumbnail.hideSelfView') }
-                        name = 'hide-self-view'
-                        onChange = { this._onHideSelfViewChanged } />
-                )}
                 {showLanguageSettings && this._renderLanguageSelect()}
                 { authEnabled && this._renderAuth() }
             </div>
