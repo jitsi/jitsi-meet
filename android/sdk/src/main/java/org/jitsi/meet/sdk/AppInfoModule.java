@@ -33,6 +33,8 @@ class AppInfoModule
     extends ReactContextBaseJavaModule {
 
     public static final String NAME = "AppInfo";
+    public static final boolean GOOGLE_SERVICES_ENABLED = false;
+    public static final boolean LIBRE_BUILD = false;
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -75,8 +77,8 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
-        constants.put("LIBRE_BUILD", BuildConfig.LIBRE_BUILD);
-        constants.put("GOOGLE_SERVICES_ENABLED", BuildConfig.GOOGLE_SERVICES_ENABLED);
+        constants.put("LIBRE_BUILD", LIBRE_BUILD);
+        constants.put("GOOGLE_SERVICES_ENABLED", GOOGLE_SERVICES_ENABLED);
 
         return constants;
     }

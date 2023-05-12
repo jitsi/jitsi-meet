@@ -15,9 +15,13 @@ import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
 import androidx.annotation.RequiresApi;
 
+import com.facebook.react.ReactInstanceManager;
+
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -39,6 +43,7 @@ import java.util.Objects;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ConnectionService extends android.telecom.ConnectionService {
 
+    static private ReactInstanceManager reactInstanceManager;
     /**
      * Tag used for logging.
      */
@@ -357,9 +362,15 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onDisconnect " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            ReactInstanceManagerHolder.emitEvent(
-                    "org.jitsi.meet:features/connection_service#disconnect",
-                    data);
+            ReactContext reactContext = reactInstanceManager != null
+                ? reactInstanceManager.getCurrentReactContext() : null;
+            if (reactContext != null) {
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(
+                        "org.jitsi.meet:features/connection_service#disconnect",
+                        data);
+            }
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
@@ -377,9 +388,15 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onAbort " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            ReactInstanceManagerHolder.emitEvent(
-                    "org.jitsi.meet:features/connection_service#abort",
-                    data);
+            ReactContext reactContext = reactInstanceManager != null
+                ? reactInstanceManager.getCurrentReactContext() : null;
+            if (reactContext != null) {
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(
+                        "org.jitsi.meet:features/connection_service#abort",
+                        data);
+            }
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
@@ -406,7 +423,10 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public void onCallAudioStateChanged(CallAudioState state) {
             JitsiMeetLogger.d(TAG + " onCallAudioStateChanged: " + state);
-            RNConnectionService module = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
+            ReactContext reactContext = reactInstanceManager != null
+                ? reactInstanceManager.getCurrentReactContext() : null;
+            RNConnectionService module = reactContext != null
+                ? reactContext.getNativeModule(RNConnectionService.class) : null;;
             if (module != null) {
                 module.onCallAudioStateChange(state);
             }
