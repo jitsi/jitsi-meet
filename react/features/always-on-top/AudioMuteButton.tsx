@@ -167,11 +167,13 @@ export default class AudioMuteButton extends Component<Props, IState> {
     render() {
         const toggled = this._isAudioMuted();
 
-        return (<ToolbarButton
-            accessibilityLabel = { this.accessibilityLabel }
-            disabled = { this._isDisabled() }
-            icon = { toggled ? this.toggledIcon : this.icon }
-            onClick = { this._onClick }
-            toggled = { toggled } />);
+        return (
+            <ToolbarButton
+                accessibilityLabel = { this.accessibilityLabel }
+                disabled = { this._isDisabled() }
+                icon = { toggled ? this.toggledIcon : this.icon }
+                onClick = { this._onClick }
+                toggled = { toggled } />
+        );
     }
 }

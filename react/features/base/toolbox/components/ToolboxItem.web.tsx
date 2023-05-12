@@ -87,14 +87,16 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         const useTooltip = this.tooltip && this.tooltip.length > 0;
 
         if (contextMenu) {
-            return (<ContextMenuItem
-                accessibilityLabel = { this.accessibilityLabel }
-                disabled = { disabled }
-                icon = { icon }
-                onClick = { onClick }
-                onKeyDown = { onKeyDown }
-                onKeyPress = { this._onKeyPress }
-                text = { this.label } />);
+            return (
+                <ContextMenuItem
+                    accessibilityLabel = { this.accessibilityLabel }
+                    disabled = { disabled }
+                    icon = { icon }
+                    onClick = { onClick }
+                    onKeyDown = { onKeyDown }
+                    onKeyPress = { this._onKeyPress }
+                    text = { this.label } />
+            );
         }
         let children = (
             <Fragment>

@@ -12,10 +12,12 @@ import { commonStyles } from '../constants';
 function GlobalStyles() {
     const { theme } = useStyles();
 
-    return (<MUIGlobalStyles
-        styles = {{
-            ...commonStyles(theme)
-        }} />);
+    return (
+        <MUIGlobalStyles
+            styles = {
+                commonStyles(theme)
+            } />
+    );
 }
 
 export default GlobalStyles;

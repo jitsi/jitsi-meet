@@ -175,9 +175,11 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @returns {React$Element}
      */
     _renderReactionMenu() {
-        return (<ReactionMenu
-            onCancel = { this._onCancel }
-            overflowMenu = { true } />);
+        return (
+            <ReactionMenu
+                onCancel = { this._onCancel }
+                overflowMenu = { true } />
+        );
     }
 }
 

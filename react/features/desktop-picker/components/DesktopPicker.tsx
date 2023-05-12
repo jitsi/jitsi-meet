@@ -370,7 +370,8 @@ class DesktopPicker extends PureComponent<IProps, IState> {
                 className = 'desktop-picker-tabs-container'
                 onChange = { this._onTabSelected }
                 selected = { `${this.state.selectedTab}` }
-                tabs = { tabs } />);
+                tabs = { tabs } />
+        );
     }
 
     /**

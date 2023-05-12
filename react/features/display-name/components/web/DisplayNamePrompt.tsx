@@ -63,7 +63,8 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
                     onChange = { this._onDisplayNameChange }
                     type = 'text'
                     value = { this.state.displayName } />
-            </Dialog>);
+            </Dialog>
+        );
     }
 
     /**

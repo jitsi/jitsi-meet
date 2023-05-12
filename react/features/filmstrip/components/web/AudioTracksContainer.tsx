@@ -40,10 +40,12 @@ function AudioTracksContainer(props: IProps) {
                             audioTrack = { t }
                             id = { id }
                             key = { id }
-                            participantId = { participantId } />);
+                            participantId = { participantId } />
+                    );
                 })
             }
-        </div>);
+        </div>
+    );
 }
 
 /**

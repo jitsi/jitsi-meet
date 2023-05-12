@@ -49,10 +49,12 @@ export default class HangupButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        return (<ToolbarButton
-            accessibilityLabel = { this.accessibilityLabel }
-            customClass = 'hangup-button'
-            icon = { this.icon }
-            onClick = { this._onClick } />);
+        return (
+            <ToolbarButton
+                accessibilityLabel = { this.accessibilityLabel }
+                customClass = 'hangup-button'
+                icon = { this.icon }
+                onClick = { this._onClick } />
+        );
     }
 }

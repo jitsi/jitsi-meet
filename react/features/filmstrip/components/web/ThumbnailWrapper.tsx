@@ -136,7 +136,8 @@ class ThumbnailWrapper extends Component<IProps> {
                 key = { `remote_${_participantID}` }
                 participantID = { _participantID }
                 style = { style }
-                width = { _thumbnailWidth } />);
+                width = { _thumbnailWidth } />
+        );
     }
 }
 

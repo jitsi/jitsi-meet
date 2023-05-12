@@ -220,8 +220,10 @@ class YoutubeVideoManager extends AbstractVideoManager {
      * @inheritdoc
      */
     render() {
-        return (<YouTube
-            { ...this.getPlayerOptions() } />);
+        return (
+            <YouTube
+                { ...this.getPlayerOptions() } />
+        );
     }
 }
 
