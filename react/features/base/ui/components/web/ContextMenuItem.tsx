@@ -76,6 +76,9 @@ export interface IProps {
 
     /**
      * You can use this item as a tab. Defaults to button if not set.
+     *
+     * If no onClick handler is provided, we assume the context menu item is
+     * not interactive and no role will be set.
      */
     role?: 'tab' | 'button';
 
@@ -191,6 +194,16 @@ const ContextMenuItem = ({
         }
     }, [ onClick, onKeyPress, onKeyDown ]);
 
+    let tabIndex: undefined | 0 | -1;
+
+    if (role === 'tab') {
+        tabIndex = selected ? 0 : -1;
+    }
+
+    if (role === 'button' && !disabled) {
+        tabIndex = 0;
+    }
+
     return (
         <div
             aria-controls = { controls }
@@ -209,11 +222,8 @@ const ContextMenuItem = ({
             onClick = { disabled ? undefined : onClick }
             onKeyDown = { disabled ? undefined : onKeyDown }
             onKeyPress = { disabled ? undefined : onKeyPressHandler }
-            role = { role }
-            tabIndex = { role === 'tab'
-                ? selected ? 0 : -1
-                : disabled ? undefined : 0
-            }>
+            role = { onClick ? role : undefined }
+            tabIndex = { onClick ? tabIndex : undefined }>
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { styles.contextMenuItemIcon }

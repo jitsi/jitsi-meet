@@ -39,8 +39,6 @@ interface IProps {
      */
     length: number;
 
-    listHeaderId: string;
-
     /**
      * Click handler for the component.
      */
@@ -111,7 +109,7 @@ const SpeakerEntry = (props: IProps) => {
      * @returns {void}
      */
     function _onKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ') {
+        if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             props.onClick(props.deviceId);
         }
@@ -135,15 +133,12 @@ const SpeakerEntry = (props: IProps) => {
         }
     }
 
-    const { children, isSelected, index, deviceId, length, listHeaderId } = props;
-    const deviceTextId = `choose_speaker${deviceId}`;
-    const labelledby = `${listHeaderId} ${deviceTextId} `;
+    const { children, isSelected, index, length } = props;
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <li
             aria-checked = { isSelected }
-            aria-labelledby = { labelledby }
             aria-posinset = { index }
             aria-setsize = { length }
             className = { classes.container }
@@ -152,7 +147,7 @@ const SpeakerEntry = (props: IProps) => {
             role = 'radio'
             tabIndex = { 0 }>
             <ContextMenuItem
-                accessibilityLabel = ''
+                accessibilityLabel = { children }
                 icon = { isSelected ? IconCheck : undefined }
                 overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
