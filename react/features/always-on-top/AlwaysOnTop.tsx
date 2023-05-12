@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
@@ -19,15 +17,15 @@ const TOOLBAR_TIMEOUT = 4000;
 /**
  * The type of the React {@code Component} state of {@link AlwaysOnTop}.
  */
-type State = {
-    avatarURL: string,
-    customAvatarBackgrounds: Array<string>,
-    displayName: string,
-    formattedDisplayName: string,
-    isVideoDisplayed: boolean,
-    userID: string,
-    visible: boolean
-};
+interface IState {
+    avatarURL: string;
+    customAvatarBackgrounds: Array<string>;
+    displayName: string;
+    formattedDisplayName: string;
+    isVideoDisplayed: boolean;
+    userID: string;
+    visible: boolean;
+}
 
 /**
  * Represents the always on top page.
@@ -35,7 +33,7 @@ type State = {
  * @class AlwaysOnTop
  * @augments Component
  */
-export default class AlwaysOnTop extends Component<*, State> {
+export default class AlwaysOnTop extends Component<any, IState> {
     _hovered: boolean;
 
     /**
@@ -44,7 +42,7 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.
      */
-    constructor(props: *) {
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -68,28 +66,25 @@ export default class AlwaysOnTop extends Component<*, State> {
         this._onMouseOver = this._onMouseOver.bind(this);
     }
 
-    _avatarChangedListener: () => void;
-
     /**
      * Handles avatar changed api events.
      *
      * @returns {void}
      */
-    _avatarChangedListener({ avatarURL, id }) {
+    _avatarChangedListener({ avatarURL, id }: { avatarURL: string; id: string; }) {
         if (api._getOnStageParticipant() === id
                 && avatarURL !== this.state.avatarURL) {
             this.setState({ avatarURL });
         }
     }
 
-    _displayNameChangedListener: () => void;
-
     /**
      * Handles display name changed api events.
      *
      * @returns {void}
      */
-    _displayNameChangedListener({ displayname, formattedDisplayName, id }) {
+    _displayNameChangedListener({ displayname, formattedDisplayName, id }: { displayname: string;
+        formattedDisplayName: string; id: string; }) {
         if (api._getOnStageParticipant() === id
                 && (formattedDisplayName !== this.state.formattedDisplayName
                     || displayname !== this.state.displayName)) {
@@ -118,8 +113,6 @@ export default class AlwaysOnTop extends Component<*, State> {
             TOOLBAR_TIMEOUT);
     }
 
-    _videoChangedListener: () => void;
-
     /**
      * Handles large video changed api events.
      *
@@ -141,8 +134,6 @@ export default class AlwaysOnTop extends Component<*, State> {
         });
     }
 
-    _mouseMove: () => void;
-
     /**
      * Handles mouse move events.
      *
@@ -152,8 +143,6 @@ export default class AlwaysOnTop extends Component<*, State> {
         this.state.visible || this.setState({ visible: true });
     }
 
-    _onMouseOut: () => void;
-
     /**
      * Toolbar mouse out handler.
      *
@@ -162,8 +151,6 @@ export default class AlwaysOnTop extends Component<*, State> {
     _onMouseOut() {
         this._hovered = false;
     }
-
-    _onMouseOver: () => void;
 
     /**
      * Toolbar mouse over handler.
@@ -229,7 +216,7 @@ export default class AlwaysOnTop extends Component<*, State> {
 
         this._hideToolbarAfterTimeout();
         api.getCustomAvatarBackgrounds()
-            .then(res =>
+            .then((res: { avatarBackgrounds?: string[]; }) =>
                 this.setState({
                     customAvatarBackgrounds: res.avatarBackgrounds || []
                 }))
@@ -242,7 +229,7 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: *, prevState: State) {
+    componentDidUpdate(_prevProps: any, prevState: IState) {
         if (!prevState.visible && this.state.visible) {
             this._hideToolbarAfterTimeout();
         }

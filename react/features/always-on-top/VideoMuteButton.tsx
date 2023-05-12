@@ -1,14 +1,15 @@
-// @flow
 import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 import { IconVideo, IconVideoOff } from '../base/icons/svg';
-import type { Props } from '../base/toolbox/components/AbstractButton';
+import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
 const { api } = window.alwaysOnTop;
+
+type Props = Partial<IProps>;
 
 /**
  * The type of the React {@code Component} state of {@link VideoMuteButton}.
@@ -18,12 +19,12 @@ type State = {
     /**
      * Whether video is available is not.
      */
-    videoAvailable: boolean,
+    videoAvailable: boolean;
 
     /**
      * Whether video is muted or not.
      */
-    videoMuted: boolean
+    videoMuted: boolean;
 };
 
 /**
@@ -119,15 +120,13 @@ export default class VideoMuteButton extends Component<Props, State> {
      * Changes the muted state.
      *
      * @override
-     * @param {boolean} videoMuted - Whether video should be muted or not.
+     * @param {boolean} _videoMuted - Whether video should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars
+    _setVideoMuted(_videoMuted: boolean) {
         this.state.videoAvailable && api.executeCommand('toggleVideo', false, true);
     }
-
-    _videoAvailabilityListener: ({ available: boolean }) => void;
 
     /**
      * Handles video available api events.
@@ -135,11 +134,9 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @param {{ available: boolean }} status - The new available status.
      * @returns {void}
      */
-    _videoAvailabilityListener({ available }) {
+    _videoAvailabilityListener({ available }: { available: boolean; }) {
         this.setState({ videoAvailable: available });
     }
-
-    _videoMutedListener: ({ muted: boolean }) => void;
 
     /**
      * Handles video muted api events.
@@ -147,11 +144,9 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @param {{ muted: boolean }} status - The new muted status.
      * @returns {void}
      */
-    _videoMutedListener({ muted }) {
+    _videoMutedListener({ muted }: { muted: boolean; }) {
         this.setState({ videoMuted: muted });
     }
-
-    _onClick: () => {};
 
     /**
      * Handles clicking / pressing the button, and toggles the video mute state

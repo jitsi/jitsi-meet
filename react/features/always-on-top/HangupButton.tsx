@@ -1,19 +1,20 @@
-// @flow
 import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 import { IconHangup } from '../base/icons/svg';
-import type { Props } from '../base/toolbox/components/AbstractButton';
+import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
 const { api } = window.alwaysOnTop;
 
+type Props = Partial<IProps>;
+
 /**
  * Stateless hangup button for the Always-on-Top windows.
  */
-export default class HangupButton extends Component<Props, *> {
+export default class HangupButton extends Component<Props> {
 
     accessibilityLabel = 'Hangup';
     icon = IconHangup;
@@ -21,7 +22,7 @@ export default class HangupButton extends Component<Props, *> {
     /**
      * Initializes a new {@code HangupButton} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code HangupButton} instance with.
      */
     constructor(props: Props) {
@@ -30,8 +31,6 @@ export default class HangupButton extends Component<Props, *> {
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
     }
-
-    _onClick: () => {};
 
     /**
      * Handles clicking / pressing the button, and disconnects the conference.
