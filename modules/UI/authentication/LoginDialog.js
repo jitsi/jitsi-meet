@@ -1,4 +1,4 @@
-let APP;
+/* global APP */
 
 export default {
 

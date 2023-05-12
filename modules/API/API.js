@@ -1,3 +1,4 @@
+/* global APP */
 import Logger from '@jitsi/logger';
 
 import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
@@ -121,8 +122,6 @@ import {
 } from './constants';
 
 const logger = Logger.getLogger(__filename);
-
-let APP;
 
 /**
  * List of the available commands.

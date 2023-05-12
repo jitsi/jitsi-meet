@@ -1,3 +1,4 @@
+/* global APP */
 import Logger from '@jitsi/logger';
 
 import { openConnection } from '../../../connection';
@@ -21,7 +22,6 @@ import ExternalLoginDialog from './LoginDialog';
 
 
 let externalAuthWindow;
-let APP;
 
 const logger = Logger.getLogger(__filename);
 
