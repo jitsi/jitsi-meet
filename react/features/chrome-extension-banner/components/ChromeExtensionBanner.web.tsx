@@ -261,7 +261,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
         return (
             <div className = { mainClassNames }>
                 <div
-                    aria-aria-describedby = 'chrome-extension-banner__text-container'
+                    aria-describedby = 'chrome-extension-banner__text-container'
                     className = 'chrome-extension-banner__container'
                     role = 'banner'>
                     <div className = 'chrome-extension-banner__icon-container' />

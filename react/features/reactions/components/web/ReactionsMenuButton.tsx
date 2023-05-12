@@ -168,7 +168,8 @@ function ReactionsMenuButton({
                 key = { uid }
                 reaction = { reaction }
                 uid = { uid } />))}
-        </div>);
+        </div>
+    );
 
 }
 

@@ -286,11 +286,13 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
         const { jitsiTrack } = this.state;
         const { classes } = this.props;
 
-        return (<div className = { classes.virtualBackgroundPreview }>
-            {jitsiTrack
-                ? this._renderPreviewEntry(jitsiTrack)
-                : this._loadVideoPreview()
-            }</div>);
+        return (
+            <div className = { classes.virtualBackgroundPreview }>
+                {jitsiTrack
+                    ? this._renderPreviewEntry(jitsiTrack)
+                    : this._loadVideoPreview()
+                }</div>
+        );
     }
 }
 

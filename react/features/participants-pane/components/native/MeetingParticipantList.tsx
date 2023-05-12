@@ -272,7 +272,8 @@ class MeetingParticipantList extends PureComponent<IProps> {
                         showsHorizontalScrollIndicator = { false }
                         windowSize = { 2 } />
                 </CollapsibleList>
-            </>);
+            </>
+        );
     }
 }
 
