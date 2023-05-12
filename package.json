@@ -22,7 +22,7 @@
     "@giphy/react-components": "6.8.1",
     "@giphy/react-native-sdk": "1.7.0",
     "@hapi/bourne": "2.0.0",
-    "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.12/jitsi-excalidraw-0.0.12.tgz",
+    "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.13/jitsi-excalidraw-0.0.13.tgz",
     "@jitsi/js-utils": "2.0.5",
     "@jitsi/logger": "2.0.0",
     "@jitsi/rnnoise-wasm": "0.1.0",
