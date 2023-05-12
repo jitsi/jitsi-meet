@@ -115,7 +115,13 @@ export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
+
     return {
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        hideSelfView: getHideSelfView(state),
+        iAmVisitor: iAmVisitor(state),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
@@ -192,19 +198,13 @@ export function getProfileTabProps(stateful: IStateful) {
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
 
-    // when self view is controlled by the config we hide the settings
-    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
-
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
-        disableHideSelfView: disableSelfViewSettings || disableSelfView,
         currentLanguage: language,
         displayName: localParticipant?.name,
         email: localParticipant?.email,
         hideEmailInSettings,
-        hideSelfView: getHideSelfView(state),
-        iAmVisitor: iAmVisitor(state),
         id: localParticipant?.id,
         languages: LANGUAGES,
         readOnlyName: isNameReadOnly(state),
