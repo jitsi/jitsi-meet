@@ -151,6 +151,7 @@ server {
     #}
 
     location ~ ^/([^/?&:'"]+)$ {
+        set $roomname "$1";
         try_files $uri @root_path;
     }
 

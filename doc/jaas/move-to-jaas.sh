@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 PRIVATE_KEY=$1
 JAAS_KEY_ID=$2
 
@@ -11,6 +13,16 @@ fi
 if [[ ! "${JAAS_KEY_ID}" =~ ^vpaas-magic-cookie-[0-9a-z]+/[0-9a-z]+$ ]]; then
     echo "Invalid key id passed as a second argument."
     exit 2;
+fi
+
+NODE_VER=$(node -v);
+NODE_MAJOR_VER=$(echo ${NODE_VER:1} |  cut -d. -f1);
+
+echo "$NODE_MAJOR_VER"
+
+if [ "$NODE_MAJOR_VER" -lt "16" ]; then
+    echo "Please install latest LTS version of node (16+)";
+    exit 3;
 fi
 
 # we need this util for debconf-set-selections
