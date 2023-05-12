@@ -14,9 +14,9 @@ function GlobalStyles() {
 
     return (
         <MUIGlobalStyles
-            styles = {{
-                ...commonStyles(theme)
-            }} />
+            styles = {
+                commonStyles(theme)
+            } />
     );
 }
 
