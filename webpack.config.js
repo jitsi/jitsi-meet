@@ -136,7 +136,6 @@ function getConfig(options = {}) {
 
                             }
                         ],
-                        require.resolve('@babel/preset-flow'),
                         require.resolve('@babel/preset-react')
                     ]
                 },

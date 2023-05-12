@@ -1,6 +1,4 @@
-// @flow
-
-declare var APP: Object;
+/* global APP */
 
 export default {
 
@@ -10,7 +8,7 @@ export default {
      * @param {function} callback - callback to invoke when auth popup is closed.
      * @returns auth dialog
      */
-    showExternalAuthDialog(url: string, callback: ?Function) {
+    showExternalAuthDialog(url, callback) {
         const dialog = APP.UI.messageHandler.openCenteredPopup(
             url, 910, 660,
 

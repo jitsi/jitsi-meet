@@ -1,5 +1,4 @@
-// @flow
-
+/* global APP */
 import Logger from '@jitsi/logger';
 
 import { openConnection } from '../../../connection';
@@ -23,7 +22,6 @@ import ExternalLoginDialog from './LoginDialog';
 
 
 let externalAuthWindow;
-declare var APP: Object;
 
 const logger = Logger.getLogger(__filename);
 
@@ -77,7 +75,7 @@ function doExternalAuth(room, lockPassword) {
  * back with "?jwt={the JWT token}" query parameter added.
  * @param {string} [roomName] the name of the conference room.
  */
-export function redirectToTokenAuthService(roomName: string) {
+export function redirectToTokenAuthService(roomName) {
     const config = APP.store.getState()['features/base/config'];
 
     // FIXME: This method will not preserve the other URL params that were
@@ -174,7 +172,7 @@ function initJWTTokenListener(room) {
  * @param {JitsiConference} room
  * @param {string} [lockPassword] password to use if the conference is locked
  */
-function authenticate(room: Object, lockPassword: string) {
+function authenticate(room, lockPassword) {
     const config = APP.store.getState()['features/base/config'];
 
     if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
@@ -189,7 +187,7 @@ function authenticate(room: Object, lockPassword: string) {
  * @param {JitsiConference} room
  * @param {string} [lockPassword] password to use if the conference is locked
  */
-function requireAuth(room: Object, lockPassword: string) {
+function requireAuth(room, lockPassword) {
     if (isDialogOpen(APP.store, WaitForOwnerDialog) || isDialogOpen(APP.store, LoginDialog)) {
         return;
     }
@@ -207,7 +205,7 @@ function requireAuth(room: Object, lockPassword: string) {
  * @param {string} [lockPassword] password to use if the conference is locked
  * @returns {Promise}
  */
-function logout(room: Object) {
+function logout(room) {
     return new Promise(resolve => {
         room.room.moderator.logout(resolve);
     }).then(url => {
