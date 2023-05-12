@@ -103,6 +103,10 @@ export function submitMoreTab(newState: any) {
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
             dispatch(updateSettings({ maxStageParticipants: Number(newState.maxStageParticipants) }));
         }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
     };
 }
 
@@ -152,10 +156,6 @@ export function submitProfileTab(newState: any) {
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
-        }
-
-        if (newState.hideSelfView !== currentState.hideSelfView) {
-            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
         }
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
