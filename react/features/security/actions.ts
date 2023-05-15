@@ -1,7 +1,6 @@
 import { IStore } from '../app/types';
 import { toggleDialog } from '../base/dialog/actions';
 
-// @ts-ignore
 import { SecurityDialog } from './components/security-dialog';
 
 /**

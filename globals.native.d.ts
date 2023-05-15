@@ -30,6 +30,7 @@ interface IWindow {
     setImmediate: typeof setImmediate;
     clearImmediate: typeof clearImmediate;
     addEventListener: Function;
+    removeEventListener: Function;
 }
 
 interface INavigator {

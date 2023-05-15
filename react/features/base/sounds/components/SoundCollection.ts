@@ -57,7 +57,7 @@ class SoundCollection extends Component<IProps> {
             sounds.push(
                 React.createElement(
                     Audio, {
-                        key, // @ts-ignore
+                        key,
                         setRef: this._setRef.bind(this, soundId),
                         src,
                         loop: options?.loop
