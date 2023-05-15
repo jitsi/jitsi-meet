@@ -1,5 +1,4 @@
 import React, { ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
-import { MoveFocusInside } from 'react-focus-lock';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -325,13 +324,11 @@ const DialogWithTabs = ({
                     className = { classes.sidebar }
                     role = { isMobile ? undefined : 'tablist' }>
                     <div className = { classes.titleContainer }>
-                        <MoveFocusInside>
-                            <h1
-                                className = { classes.title }
-                                tabIndex = { -1 }>
-                                {t(titleKey ?? '')}
-                            </h1>
-                        </MoveFocusInside>
+                        <h1
+                            className = { classes.title }
+                            tabIndex = { -1 }>
+                            {t(titleKey ?? '')}
+                        </h1>
                         {isMobile && closeIcon}
                     </div>
                     {tabs.map((tab, index) => {

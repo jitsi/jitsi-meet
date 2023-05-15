@@ -76,7 +76,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-emoji-render": "1.2.4",
-    "react-focus-lock": "2.9.4",
+    "react-focus-on": "3.8.1",
     "react-i18next": "10.11.4",
     "react-linkify": "1.0.0-alpha",
     "react-native": "0.69.10",

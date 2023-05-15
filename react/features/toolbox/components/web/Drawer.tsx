@@ -1,5 +1,5 @@
 import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
-import ReactFocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { makeStyles } from 'tss-react/mui';
 
 import { isElementInTheViewport } from '../../../base/ui/functions.web';
@@ -102,12 +102,7 @@ function Drawer({
                 <div
                     className = { `drawer-menu ${styles.drawer} ${className}` }
                     onClick = { handleInsideClick }>
-                    <ReactFocusLock
-                        lockProps = {{
-                            role: 'dialog',
-                            'aria-modal': true,
-                            'aria-labelledby': `#${headingId}`
-                        }}
+                    <FocusOn
                         returnFocus = {
 
                             // If we return the focus to an element outside the viewport the page will scroll to
@@ -118,8 +113,15 @@ function Drawer({
                             // because of the animation the whole scenario looks like jumping large video.
                             isElementInTheViewport
                         }>
-                        {children}
-                    </ReactFocusLock>
+                        <div
+                            aria-labelledby = { headingId ? `#${headingId}` : undefined }
+                            aria-modal = { true }
+                            data-autofocus = { true }
+                            role = 'dialog'
+                            tabIndex = { -1 }>
+                            {children}
+                        </div>
+                    </FocusOn>
                 </div>
             </div>
         ) : null

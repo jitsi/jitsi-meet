@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useContext, useEffect } from 'react';
-import FocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
@@ -183,7 +183,7 @@ const BaseDialog = ({
             <div
                 className = { classes.backdrop }
                 onClick = { onBackdropClick } />
-            <FocusLock
+            <FocusOn
                 className = { classes.focusLock }
                 returnFocus = {
 
@@ -200,10 +200,12 @@ const BaseDialog = ({
                     aria-label = { title ?? t(titleKey ?? '') }
                     aria-modal = { true }
                     className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
-                    role = 'dialog'>
+                    data-autofocus = { true }
+                    role = 'dialog'
+                    tabIndex = { -1 }>
                     {children}
                 </div>
-            </FocusLock>
+            </FocusOn>
         </div>
     );
 };
