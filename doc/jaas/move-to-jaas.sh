@@ -20,8 +20,8 @@ NODE_MAJOR_VER=$(echo ${NODE_VER:1} |  cut -d. -f1);
 
 echo "$NODE_MAJOR_VER"
 
-if [ "$NODE_MAJOR_VER" -lt "16" ]; then
-    echo "Please install latest LTS version of node (16+)";
+if [ "$NODE_MAJOR_VER" -lt "18" ]; then
+    echo "Please install latest LTS version of node (18+)";
     exit 3;
 fi
 
