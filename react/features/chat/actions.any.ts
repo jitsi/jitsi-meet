@@ -17,6 +17,7 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
+
 /**
  * Adds a chat message to the collection of messages.
  *
@@ -48,6 +49,7 @@ export function addMessage(messageDetails: Object) {
         ...messageDetails
     };
 }
+
 
 /**
  * Edits an existing chat message.

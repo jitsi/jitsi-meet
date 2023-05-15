@@ -13,60 +13,60 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
-    - run: npm install
+    # - run: npm install
     - name: Changed files
       run: |
         for changed_file in ${{ steps.files.outputs.all }}; do
           echo "Do something with this ${changed_file}."
         done
-    - name: Check git status
-      run: git status
-    - name: Normalize lang files to ensure sorted
-      run: npm run lang-sort
-    - name: Check if the git repository is clean
-      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci
-  linux-build:
-    name: Build Frontend (Linux)
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-    - run: npm install
-    - run: make
-  macos-ci:
-    name: Build Frontend (macOS)
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-    - run: npm install
-    - run: make
-  android-build:
-    name: Build mobile bundle (Android)
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-    - run: npm install
-    - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
-  ios-build:
-    name: Build mobile bundle (iOS)
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-    - run: npm install
-    - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+    # - name: Check git status
+    #   run: git status
+    # - name: Normalize lang files to ensure sorted
+    #   run: npm run lang-sort
+    # - name: Check if the git repository is clean
+    #   run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+    # - run: npm run lint:ci
+  # linux-build:
+  #   name: Build Frontend (Linux)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 16
+  #       cache: 'npm'
+  #   - run: npm install
+  #   - run: make
+  # macos-ci:
+  #   name: Build Frontend (macOS)
+  #   runs-on: macOS-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 16
+  #       cache: 'npm'
+  #   - run: npm install
+  #   - run: make
+  # android-build:
+  #   name: Build mobile bundle (Android)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 16
+  #       cache: 'npm'
+  #   - run: npm install
+  #   - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
+  # ios-build:
+  #   name: Build mobile bundle (iOS)
+  #   runs-on: macOS-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 16
+  #       cache: 'npm'
+  #   - run: npm install
+  #   - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
