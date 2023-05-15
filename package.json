@@ -201,9 +201,5 @@
     "tsc-test:web": "tsc --project tsconfig.web.json --listFilesOnly | grep -v node_modules | grep native",
     "tsc-test:native": "tsc --project tsconfig.native.json --listFilesOnly | grep -v node_modules | grep web",
     "start": "make dev"
-  },
-  "resolutions": {
-    "@types/react": "17.0.14",
-    "@types/react-dom": "17.0.14"
   }
 }

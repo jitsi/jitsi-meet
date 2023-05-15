@@ -9,6 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
+    - uses: jitterbit/get-changed-files@v1
       with:
         node-version: 16
         cache: 'npm'
@@ -19,6 +20,11 @@ jobs:
       run: npm run lang-sort
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+    - name: Changed files
+      run: |
+        for changed_file in ${{ steps.files.outputs.all }}; do
+          echo "Do something with this ${changed_file}."
+        done
     - run: npm run lint:ci
   linux-build:
     name: Build Frontend (Linux)
