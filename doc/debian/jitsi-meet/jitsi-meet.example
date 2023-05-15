@@ -96,9 +96,9 @@ server {
         proxy_set_header Host $http_host;
     }
 
-    location = /_api/public {
+    location ~ ^/_api/public/(.*)$ {
         autoindex off;
-        root /etc/jitsi/meet/public;
+        alias /etc/jitsi/meet/public/$1;
     }
 
     # ensure all static content can always be found first
