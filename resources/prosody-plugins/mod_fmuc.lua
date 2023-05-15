@@ -52,11 +52,16 @@ end
 
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
-    local occupant, session = event.occupant, event.origin;
+    local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
     local node, host = jid.split(occupant.bare_jid);
 
     if host == local_domain then
-        occupant.role = 'visitor';
+        if room._main_room_lobby_enabled then
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!'));
+            return true;
+        else
+            occupant.role = 'visitor';
+        end
     end
 end, 3);
 
@@ -438,6 +443,12 @@ local function iq_from_main_handler(event)
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
+
+    if node.attr.lobby == 'true' then
+        room._main_room_lobby_enabled = true;
+    elseif node.attr.lobby == 'false' then
+        room._main_room_lobby_enabled = false;
+    end
 
     if fire_jicofo_unlock then
         -- everything is connected allow participants to join

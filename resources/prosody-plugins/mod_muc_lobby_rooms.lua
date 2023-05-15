@@ -334,11 +334,13 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if members_only then
             local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
+                module:fire_event('jitsi-lobby-enabled', { room = room; });
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
             destroy_lobby_room(room, room.jid);
+            module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
         end
     end);
