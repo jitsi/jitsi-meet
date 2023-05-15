@@ -65,6 +65,7 @@ local function send_visitors_iq(conference_service, room, type)
                          room = jid.join(jid.node(room.jid), conference_service) })
       :tag(type, { xmlns = 'jitsi:visitors',
         password = type ~= 'disconnect' and room:get_password() or '',
+        lobby = room._data.lobbyroom and 'true' or 'false',
         meetingId = room._data.meetingId
       }):up();
 
@@ -146,8 +147,6 @@ local function disconnect_vnode(event)
 
     local conference_service = muc_domain_prefix..'.'..vnode..'.meet.jitsi';
 
-    -- we are counting vnode main participants and we should be clearing it there
-    -- let's do it here just in case
     visitors_nodes[room.jid].nodes[conference_service] = nil;
 
     send_visitors_iq(conference_service, room, 'disconnect');
@@ -338,5 +337,26 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 end
             end
         end
-end, -100); -- we want to run last in order to check is the status code 104
+    end, -100); -- we want to run last in order to check is the status code 104
+end);
+
+module:hook('jitsi-lobby-enabled', function(event)
+    local room = event.room;
+    if visitors_nodes[room.jid] then
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            send_visitors_iq(conference_service, room, 'update');
+        end
+    end
+end);
+module:hook('jitsi-lobby-disabled', function(event)
+local room = event.room;
+    if visitors_nodes[room.jid] then
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            send_visitors_iq(conference_service, room, 'update');
+        end
+    end
 end);
