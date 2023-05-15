@@ -222,14 +222,15 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
         if (!base) {
             return false;
         }
-        if (!key) {
-            return false;
+
+        let rtmpURL = base;
+
+        if (key) {
+            rtmpURL = base.endsWith('/') ? base + key : `${base}/${key}`;
         }
 
-        const rtmpURL = base.endsWith('/') ? base + key : `${base}/${key}`;
         let selectedBroadcastID = null;
 
-        // to modify this too maybe?
         if (selectedBoundStreamID) {
             const selectedBroadcast = broadcasts?.find(
                 broadcast => broadcast.boundStreamID === selectedBoundStreamID);
@@ -239,7 +240,6 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
 
         sendAnalytics(
             createLiveStreamingDialogEvent('start', 'confirm.button'));
-
         this.props._conference?.startRecording({
             broadcastId: selectedBroadcastID,
             mode: JitsiRecordingConstants.mode.STREAM,
