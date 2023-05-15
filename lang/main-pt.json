@@ -156,6 +156,7 @@
         "localport_plural": "Portas locais:",
         "maxEnabledResolution": "enviar máx",
         "more": "Mostrar mais",
+        "no": "não",
         "packetloss": "Perda de pacote:",
         "participant_id": "Participante id:",
         "quality": {
@@ -174,7 +175,8 @@
         "status": "Ligação:",
         "transport": "Transporte:",
         "transport_plural": "Transportes:",
-        "video_ssrc": "Vídeo SSRC:"
+        "video_ssrc": "Vídeo SSRC:",
+        "yes": "sim"
     },
     "dateUtils": {
         "earlier": "Mais cedo",
@@ -319,13 +321,13 @@
         "micPermissionDeniedError": "Não concedeu autorização para utilizar o seu microfone. Ainda pode participar na conferência, mas outros não o ouvirão. Use o botão da câmara na barra de endereço para corrigir isto.",
         "micTimeoutError": "Não foi possível iniciar a fonte de áudio. Tempo limite expirado!",
         "micUnknownError": "Não pode usar microfone por uma razão desconhecida.",
-        "moderationAudioLabel": "Permitir aos participantes reativar o som",
-        "moderationVideoLabel": "Permitir aos participantes reativar o vídeo",
-        "muteEveryoneDialog": "Os participantes podem reativar o som a qualquer momento.",
+        "moderationAudioLabel": "Permitir aos participantes ligar o som",
+        "moderationVideoLabel": "Permitir aos participantes ligar a câmara",
+        "muteEveryoneDialog": "Os participantes podem ligar o som a qualquer momento.",
         "muteEveryoneDialogModerationOn": "Os participantes podem enviar um pedido para falar a qualquer momento.",
-        "muteEveryoneElseDialog": "Uma vez silenciados, não poderá reativá-los, mas eles podem reativar-se a qualquer momento.",
+        "muteEveryoneElseDialog": "Uma vez silenciados, não poderá reativá-los, mas eles podem ligar o microfone a qualquer momento.",
         "muteEveryoneElseTitle": "Silenciar todos excepto {{whom}}?",
-        "muteEveryoneElsesVideoDialog": "Quando a câmara for desativada, não poderá voltar a ligá-la, mas eles podem voltar a ligá-la em qualquer momento.",
+        "muteEveryoneElsesVideoDialog": "Quando a câmara for desligada, não poderá voltar a ligá-la, mas eles podem voltar a ligá-la em qualquer momento.",
         "muteEveryoneElsesVideoTitle": "Parar o vídeo de todos excepto {{whom}}?",
         "muteEveryoneSelf": "você mesmo",
         "muteEveryoneStartMuted": "A partir de agora, toda a gente começa a ficar calada",
@@ -673,8 +675,10 @@
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
         "dataChannelClosed": "Deficiência na qualidade do vídeo",
         "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
+        "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
+        "dontRemindMe": "Não me lembre",
         "focus": "Foco da conferência",
         "focusFail": "{{component}} não disponĩvel - tente em {{ms}} seg.",
         "gifsMenu": "GIPHY",
@@ -754,8 +758,8 @@
         "actions": {
             "allow": "Permitir aos participantes:",
             "allowVideo": "Permitir vídeo",
-            "askUnmute": "Pedir para ligar o microfone",
-            "audioModeration": "Ativar o microfone deles",
+            "askUnmute": "Pedir para ligar o som",
+            "audioModeration": "Ligar o microfone deles",
             "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
             "invite": "Convidar alguém",
             "moreModerationActions": "Mais opções de moderação",
@@ -866,9 +870,11 @@
         "lookGood": "O seu microfone funciona corretamente",
         "or": "ou",
         "premeeting": "Pré-reunião",
+        "proceedAnyway": "Continuar na mesma",
         "screenSharingError": "Erro de partilha de ecrã:",
         "showScreen": "Ativar o ecrã de pré-reunião",
         "startWithPhone": "Iniciar com o áudio do telefone",
+        "unsafeRoomConsent": "Compreendo os riscos, quero participar na reunião",
         "videoOnlyError": "Erro de vídeo:",
         "videoTrackError": "Não foi possível criar a pista de vídeo.",
         "viewAllNumbers": "ver todos os números"
@@ -944,7 +950,7 @@
         "noStreams": "Não foi detetado nenhum sinal áudio ou vídeo.",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
-        "on": "Gravando",
+        "on": "Começou a gravação",
         "onBy": "{{name}} iniciou a gravação",
         "onlyRecordSelf": "Gravar apenas as minhas transmissões áudio e vídeo",
         "pending": "Preparando para gravar a reunião...",
@@ -970,8 +976,14 @@
     "security": {
         "about": "Pode adicionar uma $t(lockRoomPassword) à sua reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
         "aboutReadOnly": "Os participantes moderadores podem acrescentar uma $t(lockRoomPassword) à reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
-        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança.",
-        "title": "Opções de segurança"
+        "insecureRoomNameWarningNative": "O nome da sala não é seguro. Participantes indesejados podem juntar-se à sua reunião. {{recommendAction}} Saiba mais sobre como proteger a sua reunião ",
+        "insecureRoomNameWarningWeb": "O nome da sala não é seguro. Participantes indesejados podem juntar-se à sua reunião. {{recommendAction}} Saiba mais sobre como proteger a sua reunião <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "title": "Opções de Segurança",
+        "unsafeRoomActions": {
+            "meeting": "Considere a possibilidade de proteger a sua reunião utilizando o botão de segurança.",
+            "prejoin": "Considere a utilização de um nome de reunião mais personalizado.",
+            "welcome": "Considere utilizar um nome de reunião mais personalizado ou selecione uma das sugestões."
+        }
     },
     "settings": {
         "audio": "Áudio",
@@ -1146,6 +1158,7 @@
             "privateMessage": "Enviar mensagem privada",
             "profile": "Editar o seu perfil",
             "raiseHand": "Levantar a mão",
+            "reactions": "Reações",
             "reactionsMenu": "Menu de reações",
             "recording": "Mudar gravação",
             "remoteMute": "Participante sem som",
@@ -1243,6 +1256,7 @@
         "reactionLike": "Enviar reação de aprovado",
         "reactionSilence": "Enviar reação de silêncio",
         "reactionSurprised": "Enviar reação de surpreendido",
+        "reactions": "Reações",
         "security": "Opções de segurança",
         "selectBackground": "Selecionar plano de fundo",
         "shareRoom": "Convidar alguém",
@@ -1376,7 +1390,14 @@
         "webAssemblyWarning": "WebAssembly não suportado",
         "webAssemblyWarningDescription": "WebAssembly desactivado ou não suportado por este navegador"
     },
-    "visitorsLabel": "Número de visitantes: {{count}}",
+    "visitors": {
+        "chatIndicator": "(visitante)",
+        "labelTooltip": "Número de visitantes: {{count}}",
+        "notification": {
+            "description": "Para participar levante a sua mão",
+            "title": "É um visitante na reunião"
+        }
+    },
     "volumeSlider": "Controlo de volume",
     "welcomepage": {
         "accessibilityLabel": {
