@@ -42,6 +42,12 @@ VPASS_COOKIE=$(echo -n ${JAAS_KEY_ID}| cut -d/ -f1)
 cp /usr/share/jitsi-meet-web-config/nginx-jaas.conf /etc/jitsi/meet/jaas
 sed -i "s/jaas_magic_cookie/${VPASS_COOKIE}/g" /etc/jitsi/meet/jaas/nginx-jaas.conf
 
+cp /usr/share/jitsi-meet-web-config/8x8.vs-config.js /etc/jitsi/meet/jaas/
+echo "set \$config_js_location /etc/jitsi/meet/jaas/8x8.vs-config.js;" >> /etc/jitsi/meet/jaas/jaas-vars
+echo "set \$custom_index index-jaas.html;" >> /etc/jitsi/meet/jaas/jaas-vars
+
+ln -s /usr/share/jitsi-meet-web-config/index-jaas.html /usr/share/jitsi-meet/index-jaas.html
+
 # let's create the daily key now
 /usr/share/jitsi-meet/scripts/update-asap-daily.sh
 
@@ -51,9 +57,3 @@ if [ -d /etc/cron.daily ]; then
 else
   echo "No /etc/cron.daily. Please add to your cron jobs to execute as root daily the script: /usr/share/jitsi-meet/scripts/update-asap-daily.sh"
 fi
-
-cp /usr/share/jitsi-meet-web-config/8x8.vs-config.js /etc/jitsi/meet/jaas/
-echo "set \$config_js_location /etc/jitsi/meet/jaas/8x8.vs-config.js;" >> /etc/jitsi/meet/jaas/jaas-vars
-echo "set \$custom_index index-jaas.html;" >> /etc/jitsi/meet/jaas/jaas-vars
-
-ln -s /usr/share/jitsi-meet-web-config/index-jaas.html /usr/share/jitsi-meet/index-jaas.html
