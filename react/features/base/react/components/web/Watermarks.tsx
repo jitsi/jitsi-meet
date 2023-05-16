@@ -168,10 +168,10 @@ class Watermarks extends Component<IProps, State> {
                 maxWidth: 140,
                 maxHeight: 70,
                 position: _logoLink ? 'static' : 'absolute'
-            };
+            } as const;
 
             reactElement = (<div
-                className = { className } // @ts-ignore
+                className = { className }
                 style = { style } />);
 
             if (_logoLink) {

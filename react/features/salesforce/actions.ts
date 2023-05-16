@@ -7,7 +7,6 @@ import {
     SALESFORCE_LINK_NOTIFICATION_ID
 } from '../notifications/constants';
 
-// @ts-ignore
 import { SalesforceLinkDialog } from './components';
 import { isSalesforceEnabled } from './functions';
 

@@ -2,7 +2,6 @@ import { IStateful } from '../app/types';
 import { ConnectionFailedError } from '../connection/actions.any';
 import { toState } from '../redux/functions';
 
-// @ts-ignore
 import JitsiMeetJS from './_';
 
 
