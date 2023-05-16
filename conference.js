@@ -2620,18 +2620,22 @@ export default {
     async leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
+        const maybeDisconnect = () => {
+            if (doDisconnect) {
+                return disconnect();
+            }
+        };
+
         if (room && room.isJoined()) {
-            return room.leave(reason).then(() => {
-                if (doDisconnect) {
-                    return disconnect();
-                }
-            })
-            .catch(e => logger.error(e));
+            return room.leave(reason).then(() => maybeDisconnect())
+            .catch(e => {
+                logger.error(e);
+
+                return maybeDisconnect();
+            });
         }
 
-        if (doDisconnect) {
-            return disconnect();
-        }
+        return maybeDisconnect();
     },
 
     /**
