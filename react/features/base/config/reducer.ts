@@ -64,7 +64,7 @@ const INITIAL_RN_STATE: IConfig = {
  * Mapping between old configs controlling the conference info headers visibility and the
  * new configs. Needed in order to keep backwards compatibility.
  */
-const CONFERENCE_HEADER_MAPPING: any = {
+const CONFERENCE_HEADER_MAPPING = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
@@ -388,9 +388,10 @@ function _translateLegacyConfig(oldValue: IConfig) {
             } else {
                 newValue.conferenceInfo.alwaysVisible
                     = (newValue.conferenceInfo.alwaysVisible ?? [])
-                    .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    .filter(c => !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = (newValue.conferenceInfo.autoHide ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.autoHide ?? []).filter(c =>
+                        !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
             }
         });
     }

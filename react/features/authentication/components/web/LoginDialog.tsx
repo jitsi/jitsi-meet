@@ -203,7 +203,7 @@ class LoginDialog extends Component<IProps, IState> {
             t
         } = this.props;
         const { username, password } = this.state;
-        const messageOptions: any = {};
+        const messageOptions: { msg?: string; } = {};
         let messageKey;
 
         if (progress && progress < 1) {

@@ -1,4 +1,5 @@
 import './middleware.any';
+import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
@@ -18,7 +19,7 @@ import './subscriber';
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch } = store;
 
     switch (action.type) {
