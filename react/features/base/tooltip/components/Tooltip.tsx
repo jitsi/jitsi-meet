@@ -91,6 +91,10 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
     };
 
     const onPopoverOpen = useCallback(() => {
+        if (isUnmounting) {
+            return;
+        }
+
         clearTimeout(timeoutID.current.close);
         timeoutID.current.close = 0;
         if (!visible) {
@@ -102,7 +106,7 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
                 }, TOOLTIP_DELAY);
             }
         }
-    }, [ visible, isVisible ]);
+    }, [ visible, isVisible, isUnmounting ]);
 
     const onPopoverClose = useCallback(() => {
         clearTimeout(timeoutID.current.open);
