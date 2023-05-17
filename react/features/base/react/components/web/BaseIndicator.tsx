@@ -88,7 +88,7 @@ const BaseIndicator = ({
     tooltipPosition = 'top'
 }: IProps) => {
     const { classes: styles } = useStyles();
-    const style: any = {};
+    const style: { fontSize?: string | number; } = {};
 
     if (iconSize) {
         style.fontSize = iconSize;

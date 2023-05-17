@@ -142,7 +142,7 @@ export function getAvailableDevices() {
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices((devices: any) => {
+            mediaDevices.enumerateDevices((devices: MediaDeviceInfo[]) => {
                 dispatch(updateDeviceList(devices));
 
                 resolve(devices);

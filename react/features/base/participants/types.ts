@@ -1,3 +1,5 @@
+import { IJitsiConference } from '../conference/reducer';
+
 export enum FakeParticipant {
     LocalScreenShare = 'LocalScreenShare',
     RemoteScreenShare = 'RemoteScreenShare',
@@ -8,7 +10,7 @@ export enum FakeParticipant {
 export interface IParticipant {
     avatarURL?: string;
     botType?: string;
-    conference?: Object;
+    conference?: IJitsiConference;
     displayName?: string;
     dominantSpeaker?: boolean;
     e2eeEnabled?: boolean;

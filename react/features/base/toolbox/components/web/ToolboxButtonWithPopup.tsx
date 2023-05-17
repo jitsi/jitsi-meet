@@ -119,7 +119,14 @@ export default function ToolboxButtonWithPopup(props: IProps) {
         );
     }
 
-    const iconProps: any = {};
+    const iconProps: {
+        ariaControls?: string;
+        ariaExpanded?: boolean;
+        className?: string;
+        containerId?: string;
+        role?: string;
+        tabIndex?: number;
+    } = {};
 
     if (iconDisabled) {
         iconProps.className

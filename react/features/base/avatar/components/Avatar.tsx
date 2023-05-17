@@ -239,7 +239,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      * @param {boolean} params.dontRetry - If false we will retry to load the Avatar with different CORS mode.
      * @returns {void}
      */
-    _onAvatarLoadError(params: any = {}) {
+    _onAvatarLoadError(params: { dontRetry?: boolean; } = {}) {
         const { dontRetry = false } = params;
 
         if (Boolean(this.props.useCORS) === this.state.isUsingCORS && !dontRetry) {

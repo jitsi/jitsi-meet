@@ -1,3 +1,4 @@
+import { Amplitude } from '@amplitude/react-native';
 import DefaultPreference from 'react-native-default-preference';
 import DeviceInfo from 'react-native-device-info';
 
@@ -7,7 +8,7 @@ import DeviceInfo from 'react-native-device-info';
  * @param {AmplitudeClient} amplitude - The amplitude instance.
  * @returns {void}
  */
-export async function fixDeviceID(amplitude: any) {
+export async function fixDeviceID(amplitude: Amplitude) {
     await DefaultPreference.setName('jitsi-preferences');
 
     const current = await DefaultPreference.get('amplitudeDeviceId');
