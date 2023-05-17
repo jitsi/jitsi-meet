@@ -1282,7 +1282,7 @@
         "videounmute": "Stoppa kameran"
     },
     "transcribing": {
-        "ccButtonTooltip": "Atkivera / avaktivera undertexter",
+        "ccButtonTooltip": "Aktivera / avaktivera undertexter",
         "error": "Transkriberingen misslyckades. Försök igen.",
         "expandedLabel": "Transkribering är aktiverad",
         "failedToStart": "Det gick inte att starta transkribering",
