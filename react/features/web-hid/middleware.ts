@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { getWebHIDFeatureConfig } from '../base/config/functions.web';
 import { SET_AUDIO_MUTED } from '../base/media/actionTypes';
 import { isAudioMuted } from '../base/media/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -33,7 +34,11 @@ let updateDeviceListener: (e: any) => void;
  * @returns {Function}
  */
 MiddlewareRegistry.register((store: IStore) => next => async action => {
-    const { dispatch } = store;
+    const { dispatch, getState } = store;
+
+    if (!getWebHIDFeatureConfig(getState())) {
+        return next(action);
+    }
 
     switch (action.type) {
     case APP_WILL_MOUNT: {
