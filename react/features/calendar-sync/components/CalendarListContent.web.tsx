@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createCalendarClickedEvent, createCalendarSelectedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.web';
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import MeetingsList from '../../base/react/components/web/MeetingsList';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton.web';
@@ -29,7 +29,7 @@ interface IProps {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      *

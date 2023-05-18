@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { NativeModules, Text, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
@@ -94,7 +94,7 @@ interface IProps {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Invoked to obtain translated strings.

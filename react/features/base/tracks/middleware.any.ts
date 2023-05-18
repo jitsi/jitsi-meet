@@ -164,7 +164,7 @@ StateListenerRegistry.register(
  * {@code mediaType} in the specified {@code store}.
  */
 function _getLocalTrack(
-        { getState }: { getState: Function; },
+        { getState }: { getState: IStore['getState']; },
         mediaType: MediaType,
         includePending = false) {
     return (

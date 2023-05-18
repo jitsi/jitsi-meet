@@ -1,3 +1,5 @@
+import { IStore } from '../app/types';
+
 import {
     ADD_REACTION_BUFFER,
     ADD_REACTION_MESSAGE,
@@ -31,7 +33,7 @@ export function setReactionQueue(queue: Array<IReactionEmojiProps>): IReactionsA
  * @returns {Function}
  */
 export function removeReaction(uid: string): any {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const queue = getState()['features/reactions'].queue;
 
         dispatch(setReactionQueue(queue.filter((reaction: IReactionEmojiProps) => reaction.uid !== uid)));

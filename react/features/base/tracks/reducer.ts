@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -30,7 +32,7 @@ import { ITrack } from './types';
  * @param {Participant} action.participant - Information about participant.
  * @returns {Track|undefined}
  */
-function track(state: ITrack, action: any) {
+function track(state: ITrack, action: AnyAction) {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
         if (state.participantId === action.oldValue) {

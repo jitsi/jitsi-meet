@@ -1,4 +1,5 @@
 import { batch } from 'react-redux';
+import { AnyAction } from 'redux';
 
 import { createReactionSoundsDisabledEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -59,7 +60,7 @@ import { RAISE_HAND_SOUND_FILE } from './sounds';
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
