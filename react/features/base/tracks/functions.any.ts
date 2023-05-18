@@ -1,10 +1,12 @@
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import {
     getMultipleVideoSendingSupportFeatureFlag
 } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
+import { gumPending } from '../media/actions';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { IMediaState } from '../media/reducer';
+import { IGUMPendingState } from '../media/types';
 import {
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
@@ -352,15 +354,37 @@ export function isUserInteractionRequiredForUnmute(state: IReduxState) {
 }
 
 /**
+ * Sets the GUM pending state for the passed track operation (mute/unmute) and media type.
+ * NOTE: We need this only for web.
+ *
+ * @param {IGUMPendingState} status - The new GUM pending status.
+ * @param {MediaType} mediaType - The media type related to the operation (audio or video).
+ * @param {boolean} muted - True if the operation is mute and false for unmute.
+ * @param {Function} dispatch - The dispatch method.
+ * @returns {void}
+ */
+export function _setGUMPendingState(
+        status: IGUMPendingState,
+        mediaType: MediaType,
+        muted: boolean,
+        dispatch?: IStore['dispatch']) {
+    if (!muted && dispatch && typeof APP !== 'undefined') {
+        dispatch(gumPending([ mediaType ], status));
+    }
+}
+
+/**
  * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of the specified {@code track} is already in
  * accord with the specified {@code muted} value, then does nothing.
  *
  * @param {JitsiLocalTrack} track - The {@code JitsiLocalTrack} to mute or unmute.
  * @param {boolean} muted - If the specified {@code track} is to be muted, then {@code true}; otherwise, {@code false}.
  * @param {Object} state - The redux state.
+ * @param {Function} dispatch - The dispatch method.
  * @returns {Promise}
  */
-export function setTrackMuted(track: any, muted: boolean, state: IReduxState | IMediaState) {
+export function setTrackMuted(track: any, muted: boolean, state: IReduxState | IMediaState,
+        dispatch?: IStore['dispatch']) {
     muted = Boolean(muted); // eslint-disable-line no-param-reassign
 
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
@@ -372,8 +396,18 @@ export function setTrackMuted(track: any, muted: boolean, state: IReduxState | I
     }
 
     const f = muted ? 'mute' : 'unmute';
+    const mediaType = track.getType();
 
-    return track[f]().catch((error: Error) => {
+    _setGUMPendingState(IGUMPendingState.PENDING_UNMUTE, mediaType, muted, dispatch);
+
+    return track[f]().then((result: any) => {
+        _setGUMPendingState(IGUMPendingState.NONE, mediaType, muted, dispatch);
+
+        return result;
+    })
+    .catch((error: Error) => {
+        _setGUMPendingState(IGUMPendingState.NONE, mediaType, muted, dispatch);
+
         // Track might be already disposed so ignore such an error.
         if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
             logger.error(`set track ${f} failed`, error);

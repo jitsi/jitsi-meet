@@ -3,6 +3,7 @@ import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
 interface IProps {
+    color?: string;
     size?: 'small' | 'medium' | 'large';
 }
 
@@ -12,7 +13,9 @@ const SIZE = {
     large: 48
 };
 
-const useStyles = makeStyles()(() => {
+const DEFAULT_COLOR = '#E6EDFA';
+
+const useStyles = makeStyles<{ color?: string; }>()((_, { color }) => {
     return {
         container: {
             verticalAlign: 'middle',
@@ -33,7 +36,7 @@ const useStyles = makeStyles()(() => {
 
         circle: {
             fill: 'none',
-            stroke: '#E6EDFA',
+            stroke: color,
             strokeWidth: 1.5,
             strokeLinecap: 'round',
             strokeDasharray: 60,
@@ -53,8 +56,8 @@ const useStyles = makeStyles()(() => {
     };
 });
 
-const Spinner = ({ size = 'medium' }: IProps) => {
-    const { classes } = useStyles();
+const Spinner = ({ color = DEFAULT_COLOR, size = 'medium' }: IProps) => {
+    const { classes } = useStyles({ color });
 
     return (
         <svg

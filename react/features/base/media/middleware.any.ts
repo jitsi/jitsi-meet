@@ -297,7 +297,7 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
  * @private
  * @returns {void}
  */
-function _syncTrackMutedState({ getState }: IStore, track: ITrack) {
+function _syncTrackMutedState({ getState, dispatch }: IStore, track: ITrack) {
     const state = getState()['features/base/media'];
     const mediaType = track.mediaType;
     const muted = Boolean(state[mediaType].muted);
@@ -312,6 +312,6 @@ function _syncTrackMutedState({ getState }: IStore, track: ITrack) {
         logger.log(`Sync ${mediaType} track muted state to ${muted ? 'muted' : 'unmuted'}`);
 
         track.muted = muted;
-        setTrackMuted(track.jitsiTrack, muted, state);
+        setTrackMuted(track.jitsiTrack, muted, state, dispatch);
     }
 }

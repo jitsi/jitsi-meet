@@ -2,9 +2,10 @@ import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
-import { setAudioMuted } from '../media/actions';
+import { gumPending, setAudioMuted } from '../media/actions';
 import { MEDIA_TYPE } from '../media/constants';
 import { getStartWithAudioMuted } from '../media/functions';
+import { IGUMPendingState } from '../media/types';
 import { toState } from '../redux/functions';
 import {
     getUserSelectedCameraDeviceId,
@@ -105,7 +106,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
  */
 export function createPrejoinTracks() {
     const errors: any = {};
-    const initialDevices = [ 'audio' ];
+    const initialDevices = [ MEDIA_TYPE.AUDIO ];
     const requestedAudio = true;
     let requestedVideo = false;
     const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
@@ -125,11 +126,14 @@ export function createPrejoinTracks() {
     }
 
     if (!startWithVideoMuted && !startAudioOnly) {
-        initialDevices.push('video');
+        initialDevices.push(MEDIA_TYPE.VIDEO);
         requestedVideo = true;
     }
 
     let tryCreateLocalTracks: any = Promise.resolve([]);
+    const { dispatch } = APP.store;
+
+    dispatch(gumPending(initialDevices, IGUMPendingState.PENDING_UNMUTE));
 
     if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
@@ -188,6 +192,9 @@ export function createPrejoinTracks() {
             }
 
             return tracks;
+        })
+        .finally(() => {
+            dispatch(gumPending(initialDevices, IGUMPendingState.NONE));
         });
     }
 

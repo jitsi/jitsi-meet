@@ -4,6 +4,7 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
 import {
+    GUM_PENDING,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
@@ -17,9 +18,11 @@ import {
 } from './actionTypes';
 import {
     MEDIA_TYPE,
+    MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
+import { IGUMPendingState } from './types';
 
 /**
  * Action to adjust the availability of the local audio.
@@ -235,5 +238,24 @@ export function storeVideoTransform(streamId: string, transform: Object) {
 export function toggleCameraFacingMode() {
     return {
         type: TOGGLE_CAMERA_FACING_MODE
+    };
+}
+
+/**
+ * Sets the GUM pending status from unmute and initial track creation operation.
+ *
+ * @param {Array<MediaType>} mediaTypes - An array with the media types that GUM is called with.
+ * @param {IGUMPendingState} status - The GUM status.
+ * @returns {{
+ *     type: TOGGLE_CAMERA_FACING_MODE,
+ *     mediaTypes: Array<MediaType>,
+ *     status: IGUMPendingState
+ * }}
+ */
+export function gumPending(mediaTypes: Array<MediaType>, status: IGUMPendingState) {
+    return {
+        type: GUM_PENDING,
+        mediaTypes,
+        status
     };
 }

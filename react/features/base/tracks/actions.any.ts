@@ -139,6 +139,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
             dispatch,
             getState
         };
+        const promises = [];
 
         // The following executes on React Native only at the time of this
         // writing. The effort to port Web's createInitialLocalTracksAndConnect
@@ -196,6 +197,8 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                                     reason,
                                     device)));
 
+            promises.push(gumProcess.catch(() => undefined));
+
             /**
              * Cancels the {@code getUserMedia} process represented by this
              * {@code Promise}.
@@ -217,6 +220,8 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 }
             });
         }
+
+        return Promise.all(promises);
     };
 }
 

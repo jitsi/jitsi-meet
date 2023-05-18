@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ReactElement, ReactNode } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { GestureResponderEvent } from 'react-native';
 
@@ -217,7 +217,7 @@ export default class AbstractButton<P extends IProps, S=any> extends Component<P
      * @protected
      * @returns {ReactElement|null}
      */
-    _getElementAfter() {
+    _getElementAfter(): ReactElement | null {
         return null;
     }
 

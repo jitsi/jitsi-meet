@@ -1151,6 +1151,7 @@
             "muteEveryoneElse": "Mute everyone else",
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
+            "muteGUMPending": "Connecting your microphone",
             "noiseSuppression": "Noise suppression",
             "openChat": "Open chat",
             "participants": "Open participants pane",
@@ -1184,6 +1185,7 @@
             "unmute": "Unmute",
             "videoblur": "Toggle video blur",
             "videomute": "Stop camera",
+            "videomuteGUMPending": "Connecting your camera",
             "videounmute": "Start camera"
         },
         "addPeople": "Add people to your call",
@@ -1234,6 +1236,7 @@
         "mute": "Mute",
         "muteEveryone": "Mute everyone",
         "muteEveryonesVideo": "Disable everyone's camera",
+        "muteGUMPending": "Connecting your microphone",
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
         "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider switching to the suggested device.",
         "noAudioSignalDialInDesc": "You can also dial-in using:",
@@ -1279,6 +1282,7 @@
         "unmute": "Unmute",
         "videoSettings": "Video settings",
         "videomute": "Stop camera",
+        "videomuteGUMPending": "Connecting your camera",
         "videounmute": "Start camera"
     },
     "transcribing": {
