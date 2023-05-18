@@ -18,9 +18,6 @@ jobs:
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-    - name: Get changed files for eslint
-      id: eslint-files
-      run: echo "files=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE '\S*(\.js|\.ts|\.tsx)(\s|$)' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
     - run: npm install
     - name: Check git status
       run: git status
@@ -32,7 +29,7 @@ jobs:
       run: npm run lint:lang
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci --files=${{ steps.eslint-files.outputs.files }} && npm run tsc:ci
+    - run: npm run lint:ci && npm run tsc:ci
   linux-build:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
