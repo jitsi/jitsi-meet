@@ -84,13 +84,13 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const focusSelector = '.filmstrip:hover,.remotevideomenu:hover';
+        const hoverSelector = '.filmstrip:hover,.remotevideomenu:hover';
 
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
                     || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
-                    || document.querySelector(focusSelector))) {
+                    || document.querySelector(hoverSelector))) {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
