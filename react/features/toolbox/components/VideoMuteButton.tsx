@@ -1,3 +1,5 @@
+import { ClassNameMap, withStyles } from '@mui/styles';
+import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
 import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../analytics/AnalyticsEvents';
@@ -7,18 +9,35 @@ import { VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import { translate } from '../../base/i18n/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
+import { IGUMPendingState } from '../../base/media/types';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import AbstractVideoMuteButton from '../../base/toolbox/components/AbstractVideoMuteButton';
 import { isLocalTrackMuted } from '../../base/tracks/functions';
+import Spinner from '../../base/ui/components/web/Spinner';
 import { registerShortcut, unregisterShortcut } from '../../keyboard-shortcuts/actions';
 import { handleToggleVideoMuted } from '../actions.any';
+import { SPINNER_COLOR } from '../constants';
 import { isVideoMuteButtonDisabled } from '../functions';
+
+const styles = () => {
+    return {
+        pendingContainer: {
+            position: 'absolute' as const,
+            bottom: '3px',
+            right: '3px'
+        }
+    };
+};
 
 /**
  * The type of the React {@code Component} props of {@link VideoMuteButton}.
  */
 interface IProps extends AbstractButtonProps {
 
+    /**
+     * The gumPending state from redux.
+     */
+    _gumPending: IGUMPendingState;
 
     /**
      * Whether video button is disabled or not.
@@ -29,6 +48,11 @@ interface IProps extends AbstractButtonProps {
      * Whether video is currently muted or not.
      */
     _videoMuted: boolean;
+
+    /**
+     * The @mui/styles classes.
+     */
+    classes: ClassNameMap<string>;
 }
 
 /**
@@ -54,6 +78,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
+        this._getTooltip = this._getLabel;
     }
 
     /**
@@ -89,6 +114,43 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
     }
 
     /**
+     * Gets the current accessibility label, taking the toggled and GUM pending state into account. If no toggled label
+     * is provided, the regular accessibility label will also be used in the toggled state.
+     *
+     * The accessibility label is not visible in the UI, it is meant to be used by assistive technologies, mainly screen
+     * readers.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        const { _gumPending } = this.props;
+
+        if (_gumPending === IGUMPendingState.NONE) {
+            return super._getAccessibilityLabel();
+        }
+
+        return 'toolbar.accessibilityLabel.videomuteGUMPending';
+    }
+
+    /**
+     * Gets the current label, taking the toggled and GUM pending state into account. If no
+     * toggled label is provided, the regular label will also be used in the toggled state.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getLabel() {
+        const { _gumPending } = this.props;
+
+        if (_gumPending === IGUMPendingState.NONE) {
+            return super._getLabel();
+        }
+
+        return 'toolbar.videomuteGUMPending';
+    }
+
+    /**
      * Indicates if video is currently disabled or not.
      *
      * @override
@@ -96,7 +158,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props._videoDisabled;
+        return this.props._videoDisabled || this.props._gumPending !== IGUMPendingState.NONE;
     }
 
     /**
@@ -107,7 +169,31 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {boolean}
      */
     _isVideoMuted() {
-        return this.props._videoMuted;
+        const { _gumPending, _videoMuted } = this.props;
+
+        if (_gumPending === IGUMPendingState.PENDING_UNMUTE) {
+            return false;
+        }
+
+        return _videoMuted;
+    }
+
+    /**
+     * Returns a spinner if there is pending GUM.
+     *
+     * @returns {ReactElement | null}
+     */
+    _getElementAfter(): ReactElement | null {
+        const { _gumPending, classes } = this.props;
+
+        return _gumPending === IGUMPendingState.NONE ? null
+            : (
+                <div className = { classes.pendingContainer }>
+                    <Spinner
+                        color = { SPINNER_COLOR }
+                        size = 'small' />
+                </div>
+            );
     }
 
     /**
@@ -158,12 +244,14 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
 function _mapStateToProps(state: IReduxState) {
     const tracks = state['features/base/tracks'];
     const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
+    const { gumPending } = state['features/base/media'].video;
 
     return {
         _videoDisabled: isVideoMuteButtonDisabled(state),
         _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
+        _gumPending: gumPending,
         visible: enabledFlag
     };
 }
 
-export default translate(connect(_mapStateToProps)(VideoMuteButton));
+export default withStyles(styles)(translate(connect(_mapStateToProps)(VideoMuteButton)));

@@ -12,7 +12,7 @@ import {
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from '../media/actionTypes';
-import { toggleCameraFacingMode } from '../media/actions';
+import { gumPending, toggleCameraFacingMode } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -20,6 +20,7 @@ import {
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
 } from '../media/constants';
+import { IGUMPendingState } from '../media/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
@@ -210,11 +211,16 @@ async function _setMuted(store: IStore, { ensureTrack, authority, muted }: {
         if (jitsiTrack && (
             jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSendingSupportFeatureFlag(state))
         ) {
-            setTrackMuted(jitsiTrack, muted, state).catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
+            setTrackMuted(jitsiTrack, muted, state, dispatch)
+                .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
+        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+
         // FIXME: This only runs on mobile now because web has its own way of
         // creating local tracks. Adjust the check once they are unified.
-        dispatch(createLocalTracksA({ devices: [ mediaType ] }));
+        dispatch(createLocalTracksA({ devices: [ mediaType ] })).then(() => {
+            typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
+        });
     }
 }
