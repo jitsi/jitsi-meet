@@ -84,7 +84,7 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const focusSelector = '.toolbox-content-items:focus-within,.filmstrip:focus-within,.remotevideomenu:hover';
+        const focusSelector = '.filmstrip:hover,.remotevideomenu:hover';
 
         if (!force
                 && (hovered
