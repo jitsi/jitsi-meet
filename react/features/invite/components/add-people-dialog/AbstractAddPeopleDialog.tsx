@@ -158,7 +158,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
 
         const { _callFlowsEnabled, dispatch } = this.props;
 
-        return dispatch(invite(invitees)) // @ts-ignore
+        return dispatch(invite(invitees))
             .then((invitesLeftToSend: IInvitee[]) => {
                 this.setState({
                     addToCallInProgress: false
