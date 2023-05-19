@@ -342,15 +342,16 @@ function initCommands() {
         },
         'set-large-video-participant': (participantId, videoType) => {
             logger.debug('Set large video participant command received');
+            const { getState, dispatch } = APP.store;
 
             if (!participantId) {
                 sendAnalytics(createApiEvent('largevideo.participant.set'));
-                APP.store.dispatch(selectParticipantInLargeVideo());
+                dispatch(selectParticipantInLargeVideo());
 
                 return;
             }
 
-            const state = APP.store.getState();
+            const state = getState();
             const participant = videoType === VIDEO_TYPE.DESKTOP
                 ? getVirtualScreenshareParticipantByOwnerId(state, participantId)
                 : getParticipantById(state, participantId);
@@ -361,8 +362,9 @@ function initCommands() {
                 return;
             }
 
+            dispatch(setTileView(false));
             sendAnalytics(createApiEvent('largevideo.participant.set'));
-            APP.store.dispatch(selectParticipantInLargeVideo(participant.id));
+            dispatch(selectParticipantInLargeVideo(participant.id));
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
