@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.module.annotations.ReactModule;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +33,10 @@ import java.util.Map;
 class AppInfoModule
     extends ReactContextBaseJavaModule {
 
+    private static final String BUILD_CONFIG = "org.jitsi.meet.sdk.BuildConfig";
     public static final String NAME = "AppInfo";
-    public static final boolean GOOGLE_SERVICES_ENABLED = false;
-    public static final boolean LIBRE_BUILD = false;
+    public static final boolean GOOGLE_SERVICES_ENABLED = getGoogleServicesEnabled();
+    public static final boolean LIBRE_BUILD = getLibreBuild();
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -54,14 +56,14 @@ class AppInfoModule
         PackageInfo packageInfo;
 
         try {
-             String packageName = context.getPackageName();
+            String packageName = context.getPackageName();
 
-             applicationInfo
-                 = packageManager.getApplicationInfo(packageName, 0);
-             packageInfo = packageManager.getPackageInfo(packageName, 0);
+            applicationInfo
+                = packageManager.getApplicationInfo(packageName, 0);
+            packageInfo = packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
-             applicationInfo = null;
-             packageInfo = null;
+            applicationInfo = null;
+            packageInfo = null;
         }
 
         Map<String, Object> constants = new HashMap<>();
@@ -86,5 +88,37 @@ class AppInfoModule
     @Override
     public String getName() {
         return NAME;
+    }
+
+    private static boolean getGoogleServicesEnabled() {
+        Object googleServicesEnabled = getBuildConfigValue("GOOGLE_SERVICES_ENABLED");
+
+        if (googleServicesEnabled !=null) {
+            return (Boolean) googleServicesEnabled;
+        }
+
+        return false;
+    }
+
+    private static boolean getLibreBuild() {
+        Object libreBuild = getBuildConfigValue("LIBRE_BUILD");
+
+        if (libreBuild !=null) {
+            return (Boolean) libreBuild;
+        }
+
+        return false;
+    }
+
+    private static Object getBuildConfigValue(String fieldName) {
+        try {
+            Class<?> c = Class.forName(BUILD_CONFIG);
+            Field f  = c.getDeclaredField(fieldName);
+            f.setAccessible(true);
+            return f.get(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
