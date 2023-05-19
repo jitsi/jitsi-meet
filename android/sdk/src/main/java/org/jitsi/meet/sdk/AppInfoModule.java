@@ -90,6 +90,9 @@ class AppInfoModule
         return NAME;
     }
 
+    /**
+     * Checks if libre google services object is null based on build configuration.
+     */
     private static boolean getGoogleServicesEnabled() {
         Object googleServicesEnabled = getBuildConfigValue("GOOGLE_SERVICES_ENABLED");
 
@@ -100,6 +103,9 @@ class AppInfoModule
         return false;
     }
 
+    /**
+     * Checks if libre build field is null based on build configuration.
+     */
     private static boolean getLibreBuild() {
         Object libreBuild = getBuildConfigValue("LIBRE_BUILD");
 
@@ -110,6 +116,11 @@ class AppInfoModule
         return false;
     }
 
+    /**
+     * Gets build config value of a certain field.
+     *
+     * @param fieldName Field from build config.
+     */
     private static Object getBuildConfigValue(String fieldName) {
         try {
             Class<?> c = Class.forName(BUILD_CONFIG);
