@@ -56,14 +56,14 @@ class AppInfoModule
         PackageInfo packageInfo;
 
         try {
-            String packageName = context.getPackageName();
+             String packageName = context.getPackageName();
 
-            applicationInfo
-                = packageManager.getApplicationInfo(packageName, 0);
-            packageInfo = packageManager.getPackageInfo(packageName, 0);
+             applicationInfo
+                 = packageManager.getApplicationInfo(packageName, 0);
+             packageInfo = packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
-            applicationInfo = null;
-            packageInfo = null;
+             applicationInfo = null;
+             packageInfo = null;
         }
 
         Map<String, Object> constants = new HashMap<>();

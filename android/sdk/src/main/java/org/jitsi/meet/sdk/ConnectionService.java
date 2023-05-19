@@ -63,16 +63,29 @@ public class ConnectionService extends android.telecom.ConnectionService {
      * Connections mapped by call UUID.
      */
     static private final Map<String, ConnectionImpl> connections
-        = new HashMap<>();
+            = new HashMap<>();
 
     /**
      * The start call Promises mapped by call UUID.
      */
     static private final HashMap<String, Promise> startCallPromises
-        = new HashMap<>();
+            = new HashMap<>();
 
+    /**
+     * Get react instance manager from this object.
+     */
     static ReactInstanceManager getReactInstanceManager() {
         return reactInstanceManager;
+    }
+
+    /**
+     * Aborts all ongoing connections. This is a last resort mechanism which forces all resources to
+     * be freed on the system in case of fatal error.
+     */
+    static void abortConnections() {
+        for (ConnectionImpl connection: getConnections()) {
+            connection.onAbort();
+        }
     }
 
     /**
@@ -195,13 +208,13 @@ public class ConnectionService extends android.telecom.ConnectionService {
         if (connection != null) {
             if (callState.hasKey(ConnectionImpl.KEY_HAS_VIDEO)) {
                 boolean hasVideo
-                    = callState.getBoolean(ConnectionImpl.KEY_HAS_VIDEO);
+                        = callState.getBoolean(ConnectionImpl.KEY_HAS_VIDEO);
 
                 JitsiMeetLogger.i(" %s updateCall: %s hasVideo: %s", TAG, callUUID, hasVideo);
                 connection.setVideoState(
-                    hasVideo
-                        ? VideoProfile.STATE_BIDIRECTIONAL
-                        : VideoProfile.STATE_AUDIO_ONLY);
+                        hasVideo
+                                ? VideoProfile.STATE_BIDIRECTIONAL
+                                : VideoProfile.STATE_AUDIO_ONLY);
             }
         } else {
             JitsiMeetLogger.e(TAG + " updateCall no connection for UUID: " + callUUID);
@@ -210,7 +223,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
     @Override
     public Connection onCreateOutgoingConnection(
-        PhoneAccountHandle accountHandle, ConnectionRequest request) {
+            PhoneAccountHandle accountHandle, ConnectionRequest request) {
         ConnectionImpl connection = new ConnectionImpl();
 
         connection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
@@ -252,19 +265,19 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
     @Override
     public Connection onCreateIncomingConnection(
-        PhoneAccountHandle accountHandle, ConnectionRequest request) {
+            PhoneAccountHandle accountHandle, ConnectionRequest request) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
     public void onCreateIncomingConnectionFailed(
-        PhoneAccountHandle accountHandle, ConnectionRequest request) {
+            PhoneAccountHandle accountHandle, ConnectionRequest request) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
     public void onCreateOutgoingConnectionFailed(
-        PhoneAccountHandle accountHandle, ConnectionRequest request) {
+            PhoneAccountHandle accountHandle, ConnectionRequest request) {
         PhoneAccountHandle theAccountHandle = request.getAccountHandle();
         String callUUID = theAccountHandle.getId();
 
@@ -275,8 +288,8 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
             if (startCallPromise != null) {
                 startCallPromise.reject(
-                    "CREATE_OUTGOING_CALL_FAILED",
-                    "The request has been denied by the system");
+                        "CREATE_OUTGOING_CALL_FAILED",
+                        "The request has been denied by the system");
             } else {
                 JitsiMeetLogger.e(TAG + " startCallFailed - no start call Promise for UUID: " + callUUID);
             }
@@ -311,19 +324,19 @@ public class ConnectionService extends android.telecom.ConnectionService {
      * @return {@link PhoneAccountHandle} described by the given arguments.
      */
     static PhoneAccountHandle registerPhoneAccount(
-        Context context, Uri address, String callUUID) {
+            Context context, Uri address, String callUUID) {
         PhoneAccountHandle phoneAccountHandle
             = new PhoneAccountHandle(
-            new ComponentName(context, ConnectionService.class),
-            callUUID);
+                    new ComponentName(context, ConnectionService.class),
+                    callUUID);
 
         PhoneAccount.Builder builder
             = PhoneAccount.builder(phoneAccountHandle, address.toString())
-            .setAddress(address)
-            .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED |
-                PhoneAccount.CAPABILITY_VIDEO_CALLING |
-                PhoneAccount.CAPABILITY_SUPPORTS_VIDEO_CALLING)
-            .addSupportedUriScheme(PhoneAccount.SCHEME_SIP);
+                .setAddress(address)
+                .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED |
+                        PhoneAccount.CAPABILITY_VIDEO_CALLING |
+                        PhoneAccount.CAPABILITY_SUPPORTS_VIDEO_CALLING)
+                .addSupportedUriScheme(PhoneAccount.SCHEME_SIP);
 
         PhoneAccount account = builder.build();
 
@@ -373,8 +386,8 @@ public class ConnectionService extends android.telecom.ConnectionService {
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
-                getCallUUID(),
-                new DisconnectCause(DisconnectCause.LOCAL));
+                    getCallUUID(),
+                    new DisconnectCause(DisconnectCause.LOCAL));
         }
 
         /**
@@ -402,8 +415,8 @@ public class ConnectionService extends android.telecom.ConnectionService {
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
-                getCallUUID(),
-                new DisconnectCause(DisconnectCause.CANCELED));
+                    getCallUUID(),
+                    new DisconnectCause(DisconnectCause.CANCELED));
         }
 
         @Override
@@ -463,14 +476,14 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
         private PhoneAccountHandle getPhoneAccountHandle() {
             return getExtras().getParcelable(
-                ConnectionService.EXTRA_PHONE_ACCOUNT_HANDLE);
+                    ConnectionService.EXTRA_PHONE_ACCOUNT_HANDLE);
         }
 
         @Override
         public String toString() {
             return String.format(
-                "ConnectionImpl[address=%s, uuid=%s]@%d",
-                getAddress(), getCallUUID(), hashCode());
+                    "ConnectionImpl[address=%s, uuid=%s]@%d",
+                    getAddress(), getCallUUID(), hashCode());
         }
     }
 }
