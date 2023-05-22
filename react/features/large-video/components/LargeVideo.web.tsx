@@ -30,6 +30,15 @@ import StaticImageWrapper from "./StaticImageWrapper.web";
 import RenderSpeakerNodes from "./RenderSpeakerNodes.web";
 import { getCurrentLayout } from "../../video-layout/functions.web";
 import { LAYOUTS } from "../../video-layout/constants";
+import {
+    isScreenShareParticipantById,
+    getParticipantByIdOrUndefined,
+} from "../../../features/base/participants/functions";
+import {
+    isLocalTrackMuted,
+    isRemoteTrackMuted,
+} from "../../../features/base/tracks/functions.web";
+import { MEDIA_TYPE } from "../../base/media/constants";
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = "Meeting Room";
@@ -234,7 +243,7 @@ class LargeVideo extends Component<IProps> {
                 {_whiteboardEnabled && <Whiteboard />}
                 <div id="etherpad" />
 
-                <Watermarks />
+                {/* <Watermarks /> */}
 
                 <div id="dominantSpeaker" onTouchEnd={this._onDoubleTap}>
                     <div className="dynamic-shadow" />
@@ -411,13 +420,50 @@ function _mapStateToProps(state: IReduxState) {
         videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
 
+    const tracks = state["features/base/tracks"];
+
+    const getMuteScreenShareStatus = (participantID: string) => {
+        let isAudioMuted = true;
+        let isScreenSharing = false;
+        const participant = getParticipantByIdOrUndefined(state, participantID);
+        if (participant?.local) {
+            isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+        } else if (
+            !participant?.fakeParticipant ||
+            isScreenShareParticipantById(state, participantID)
+        ) {
+            // remote participants excluding shared video
+            const track = getVideoTrackByParticipant(state, participant);
+
+            isScreenSharing = track?.videoType === "desktop";
+            isAudioMuted = isRemoteTrackMuted(
+                tracks,
+                MEDIA_TYPE.AUDIO,
+                participantID
+            );
+        }
+        return { isAudioMuted, isScreenSharing };
+    };
+
     const getAllParticipants = (state: any) => {
         let participants = state["features/base/participants"];
         let listRemote: Array<any> = [];
         for (let [key, value] of participants?.remote) {
+            let { isAudioMuted, isScreenSharing } = getMuteScreenShareStatus(
+                value.id
+            );
+            value.isAudioMuted = isAudioMuted;
+            value.isScreenSharing = isScreenSharing;
             listRemote.push(value);
         }
-        listRemote.push(participants.local);
+        let localParticipant = participants.local;
+        let { isAudioMuted, isScreenSharing } = getMuteScreenShareStatus(
+            localParticipant.id
+        );
+        localParticipant.isAudioMuted = isAudioMuted;
+        localParticipant.isScreenSharing = isScreenSharing;
+        listRemote.push(localParticipant);
+
         return listRemote;
     };
     const participantsList: Array<IParticipant> = getAllParticipants(state);

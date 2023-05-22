@@ -1,6 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import { styled } from "@mui/material";
+import { IconMic, IconMicSlash } from "../../base/icons/svg";
 import { IParticipant } from "../../base/participants/types";
+import Icon from "../../base/icons/components/Icon";
 
 interface Props {
     list: Array<IParticipant>;
@@ -23,7 +25,7 @@ const elementPositionList = [
     { x: 892, y: 132 },
 ];
 
-const getRenderedChild = ({ x, y, name, url }) => {
+const getRenderedChild = ({ x, y, name, url, isAudioMuted }) => {
     return (
         <UserNode
             style={{
@@ -31,25 +33,43 @@ const getRenderedChild = ({ x, y, name, url }) => {
                 top: y,
             }}
         >
-            {url ? (
-                <img src={url} />
-            ) : (
-                String(name).toUpperCase().substring(0, 2)
-            )}
+            <RelativeContainer>
+                {url ? (
+                    <img src={url} />
+                ) : (
+                    String(name).toUpperCase().substring(0, 2)
+                )}
+
+                <CircleShapeContainer>
+                    <Icon src={isAudioMuted ? IconMicSlash : IconMic} />
+                </CircleShapeContainer>
+            </RelativeContainer>
         </UserNode>
     );
 };
 
-const RenderSpeakerNodes = (props: Props) => {
-    const { list } = props;
+class RenderSpeakerNodes extends Component<Props> {
+    render() {
+        const { list } = this.props;
+        return list.map((item: IParticipant, index) => {
+            const { x, y } = elementPositionList[index];
+            let name = item.displayName ?? item.name;
+            let url = item.avatarURL;
+            // @ts-ignore
+            const { isAudioMuted } = item;
+            return getRenderedChild({ x, y, name, url, isAudioMuted });
+        });
+    }
+}
 
-    return list.map((item: IParticipant, index) => {
-        const { x, y } = elementPositionList[index];
-        let name = item.displayName ?? item.name;
-        let url = item.avatarURL;
-        return getRenderedChild({ x, y, name, url });
-    });
-};
+const RelativeContainer = styled("div")({
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+});
 
 const UserNode = styled("div")({
     width: 78,
@@ -57,7 +77,6 @@ const UserNode = styled("div")({
     fontSize: 28,
     display: "flex",
     fontWeight: "bold",
-    overflow: "hidden",
     borderRadius: "50%",
     position: "absolute",
     alignItems: "center",
@@ -71,6 +90,20 @@ const UserNode = styled("div")({
         height: "100%",
         objectFit: "cover",
     },
+});
+
+const CircleShapeContainer = styled("div")({
+    right: 0,
+    bottom: 0,
+    width: 20,
+    height: 20,
+    padding: 8,
+    display: "flex",
+    position: "absolute",
+    borderRadius: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(0, 0, 0, 0.7)",
 });
 
 export default RenderSpeakerNodes;
