@@ -25,7 +25,15 @@ const elementPositionList = [
     { x: 892, y: 132 },
 ];
 
-const getRenderedChild = ({ x, y, name, url, isAudioMuted }) => {
+const getRenderedChild = ({
+    x,
+    y,
+    name,
+    url,
+    isAudioMuted,
+    video,
+    isVideoPlayable,
+}) => {
     return (
         <UserNode
             style={{
@@ -34,12 +42,13 @@ const getRenderedChild = ({ x, y, name, url, isAudioMuted }) => {
             }}
         >
             <RelativeContainer>
-                {url ? (
+                {isVideoPlayable ? (
+                    <VideoContainer>{video}</VideoContainer>
+                ) : url ? (
                     <img src={url} />
                 ) : (
                     String(name).toUpperCase().substring(0, 2)
                 )}
-
                 <CircleShapeContainer>
                     <Icon src={isAudioMuted ? IconMicSlash : IconMic} />
                 </CircleShapeContainer>
@@ -51,16 +60,35 @@ const getRenderedChild = ({ x, y, name, url, isAudioMuted }) => {
 class RenderSpeakerNodes extends Component<Props> {
     render() {
         const { list } = this.props;
-        return list.map((item: IParticipant, index) => {
+        return list.map((item: any, index) => {
+            const {
+                isAudioMuted,
+                video,
+                isVideoPlayable,
+                displayName,
+                avatarURL,
+            } = item;
             const { x, y } = elementPositionList[index];
-            let name = item.displayName ?? item.name;
-            let url = item.avatarURL;
-            // @ts-ignore
-            const { isAudioMuted } = item;
-            return getRenderedChild({ x, y, name, url, isAudioMuted });
+
+            return getRenderedChild({
+                x,
+                y,
+                name: displayName ?? item.name,
+                url: avatarURL,
+                isAudioMuted,
+                video,
+                isVideoPlayable,
+            });
         });
     }
 }
+
+const VideoContainer = styled("div")({
+    width: "100%",
+    height: "100%",
+    borderRadius: "50%",
+    overflow: "hidden",
+});
 
 const RelativeContainer = styled("div")({
     width: "100%",

@@ -28,6 +28,7 @@ import ScreenSharePlaceholder from "./ScreenSharePlaceholder.web";
 import { IParticipant } from "../../base/participants/types";
 import StaticImageWrapper from "./StaticImageWrapper.web";
 import RenderSpeakerNodes from "./RenderSpeakerNodes.web";
+import VideoTrack from "../../base/media/components/web/VideoTrack";
 import { getCurrentLayout } from "../../video-layout/functions.web";
 import { LAYOUTS } from "../../video-layout/constants";
 import {
@@ -37,8 +38,9 @@ import {
 import {
     isLocalTrackMuted,
     isRemoteTrackMuted,
-} from "../../../features/base/tracks/functions.web";
+} from "../../base/tracks/functions.web";
 import { MEDIA_TYPE } from "../../base/media/constants";
+import { isVideoPlayable } from "../../filmstrip/functions.web";
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = "Meeting Room";
@@ -422,6 +424,22 @@ function _mapStateToProps(state: IReduxState) {
 
     const tracks = state["features/base/tracks"];
 
+    const getVideoTrackForEachParticipants = (item: IParticipant) => {
+        const local = item.local;
+        const videoTrack = getVideoTrackByParticipant(state, item);
+        return videoTrack ? (
+            <VideoTrack
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                }}
+                muted={local ? undefined : true}
+                videoTrack={videoTrack}
+            />
+        ) : null;
+    };
+
     const getMuteScreenShareStatus = (participantID: string) => {
         let isAudioMuted = true;
         let isScreenSharing = false;
@@ -449,20 +467,25 @@ function _mapStateToProps(state: IReduxState) {
         let participants = state["features/base/participants"];
         let listRemote: Array<any> = [];
         for (let [key, value] of participants?.remote) {
-            let { isAudioMuted, isScreenSharing } = getMuteScreenShareStatus(
-                value.id
-            );
-            value.isAudioMuted = isAudioMuted;
-            value.isScreenSharing = isScreenSharing;
             listRemote.push(value);
         }
-        let localParticipant = participants.local;
-        let { isAudioMuted, isScreenSharing } = getMuteScreenShareStatus(
-            localParticipant.id
-        );
-        localParticipant.isAudioMuted = isAudioMuted;
-        localParticipant.isScreenSharing = isScreenSharing;
-        listRemote.push(localParticipant);
+        listRemote.push(participants.local);
+
+        listRemote.map((item: IParticipant) => {
+            let { isAudioMuted, isScreenSharing } = getMuteScreenShareStatus(
+                item.id
+            );
+
+            // @ts-ignore
+            item.isVideoPlayable = isVideoPlayable(state, item.id);
+            // @ts-ignore
+            item.isAudioMuted = isAudioMuted;
+            // @ts-ignore
+            item.isScreenSharing = isScreenSharing;
+            // @ts-ignore
+            item.video = getVideoTrackForEachParticipants(item);
+            return item;
+        });
 
         return listRemote;
     };
