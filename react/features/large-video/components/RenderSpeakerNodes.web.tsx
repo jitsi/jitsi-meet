@@ -8,6 +8,16 @@ interface Props {
     list: Array<IParticipant>;
 }
 
+interface INode {
+    x: number;
+    y: number;
+    video: any;
+    url: string;
+    name: string;
+    isAudioMuted: boolean;
+    isVideoPlayable: boolean;
+}
+
 const elementPositionList = [
     { x: 538, y: 440 },
     { x: 658, y: 440 },
@@ -33,7 +43,7 @@ const getRenderedChild = ({
     isAudioMuted,
     video,
     isVideoPlayable,
-}) => {
+}: INode) => {
     return (
         <UserNode
             style={{
