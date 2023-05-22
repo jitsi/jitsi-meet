@@ -13,6 +13,7 @@
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
+local filters = require 'util.filters';
 
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -458,3 +459,22 @@ local function iq_from_main_handler(event)
     return true;
 end
 module:hook('iq/host', iq_from_main_handler, 10);
+
+-- Filters presences (if detected) that are with destination the main prosody
+function filter_stanza(stanza)
+    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' then
+        return stanza;
+    end
+
+    if jid.host(stanza.attr.to) == main_domain then
+        return nil; -- returning nil filters the stanza
+    end
+
+    return stanza; -- no filter
+end
+function filter_session(session)
+    -- domain mapper is filtering on default priority 0, and we need it after that
+    filters.add_filter(session, 'stanzas/out', filter_stanza, -2);
+end
+
+filters.add_filter_hook(filter_session);
