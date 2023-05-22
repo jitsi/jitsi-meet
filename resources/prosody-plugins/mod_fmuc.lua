@@ -117,7 +117,7 @@ module:hook('muc-occupant-left', function (event)
     if occupant_domain == local_domain then
         local focus_occupant = get_focus_occupant(room);
         if not focus_occupant then
-            module:log('warn', 'No focus found for %s', room.jid);
+            module:log('info', 'No focus found for %s', room.jid);
             return;
         end
         -- Let's forward unavailable presence to the special jicofo
