@@ -20,8 +20,11 @@ import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
 import { getLargeVideoParticipant } from '../functions';
-
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
+
+import { IParticipant } from "../../base/participants/types";
+import StaticImageWrapper from './StaticImageWrapper.web'
+import RenderSpeakerNodes from './RenderSpeakerNodes.web'
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = 'Meeting Room';
@@ -118,6 +121,8 @@ interface IProps {
      * The Redux dispatch function.
      */
     dispatch: Function;
+
+    _participantsList: Array<any>
 }
 
 /** .
@@ -193,55 +198,67 @@ class LargeVideo extends Component<IProps> {
             _isChatOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
-            _whiteboardEnabled
+            _whiteboardEnabled,
+            _participantsList
         } = this.props;
         const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
 
         return (
             <div
-                className = { className }
-                id = 'largeVideoContainer'
-                ref = { this._containerRef }
-                style = { style }>
+                className={className}
+                id="largeVideoContainer"
+                ref={this._containerRef}
+                style={style}
+            >
+                <StaticImageWrapper />
+                <RenderSpeakerNodes list={_participantsList} />
+                               
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
-                <div id = 'etherpad' />
+                <div id="etherpad" />
 
                 <Watermarks />
 
-                <div
-                    id = 'dominantSpeaker'
-                    onTouchEnd = { this._onDoubleTap }>
-                    <div className = 'dynamic-shadow' />
-                    <div id = 'dominantSpeakerAvatarContainer' />
+                <div id="dominantSpeaker" onTouchEnd={this._onDoubleTap}>
+                    <div className="dynamic-shadow" />
+                    <div id="dominantSpeakerAvatarContainer" />
                 </div>
-                <div id = 'remotePresenceMessage' />
-                <span id = 'remoteConnectionMessage' />
-                <div id = 'largeVideoElementsContainer'>
-                    <div id = 'largeVideoBackgroundContainer' />
+                <div id="remotePresenceMessage" />
+                <span id="remoteConnectionMessage" />
+                <div id="largeVideoElementsContainer">
+                    <div id="largeVideoBackgroundContainer" />
                     {/*
-                      * FIXME: the architecture of elements related to the large
-                      * video and the naming. The background is not part of
-                      * largeVideoWrapper because we are controlling the size of
-                      * the video through largeVideoWrapper. That's why we need
-                      * another container for the background and the
-                      * largeVideoWrapper in order to hide/show them.
-                      */}
+                     * FIXME: the architecture of elements related to the large
+                     * video and the naming. The background is not part of
+                     * largeVideoWrapper because we are controlling the size of
+                     * the video through largeVideoWrapper. That's why we need
+                     * another container for the background and the
+                     * largeVideoWrapper in order to hide/show them.
+                     */}
                     <div
-                        id = 'largeVideoWrapper'
-                        onTouchEnd = { this._onDoubleTap }
-                        ref = { this._wrapperRef }
-                        role = 'figure' >
-                        { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <video
-                            autoPlay = { !_noAutoPlayVideo }
-                            id = 'largeVideo'
-                            muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ /> }
+                        id="largeVideoWrapper"
+                        onTouchEnd={this._onDoubleTap}
+                        ref={this._wrapperRef}
+                        role="figure"
+                    >
+                        {_displayScreenSharingPlaceholder ? (
+                            <ScreenSharePlaceholder />
+                        ) : (
+                            <video
+                                autoPlay={!_noAutoPlayVideo}
+                                id="largeVideo"
+                                muted={true}
+                                playsInline={
+                                    true
+                                } /* for Safari on iOS to work */
+                            />
+                        )}
                     </div>
                 </div>
-                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
-                    || <Captions /> }
+                {interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES || (
+                    <Captions />
+                )}
                 {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
             </div>
         );
@@ -298,7 +315,11 @@ class LargeVideo extends Component<IProps> {
             _visibleFilmstrip
         } = this.props;
 
-        styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
+        // styles.backgroundImage = "url('images/custom-background/bg1.png')";
+        // styles.backgroundSize = 'contain'
+        // styles.backgroundRepeat = 'no-repeat'
+        // styles.backgroundPosition = 'center'
+        // styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
 
         if (this.props._backgroundAlpha !== undefined) {
             const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);
@@ -359,8 +380,20 @@ function _mapStateToProps(state: IReduxState) {
     const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId ?? '')
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
+    
+    const getAllParticipants = (state: any) => {
+        let participants = state["features/base/participants"];        
+        let listRemote: Array<any> = [];
+        for (let [key, value] of participants?.remote) {
+            listRemote.push(value);
+        }
+        listRemote.push(participants.local);
+        return listRemote;
+    };
+    const participantsList: Array<IParticipant> = getAllParticipants(state);
 
     return {
+        _participantsList: participantsList,
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
