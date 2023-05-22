@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import {
     IconBell,
     IconCalendar,
@@ -72,7 +72,7 @@ interface IProps {
     /**
      * Invoked to save changed settings.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Indicates whether the device selection dialog is displayed on the

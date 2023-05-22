@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
@@ -37,7 +37,7 @@ interface IProps {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
     * Is welcome page available?

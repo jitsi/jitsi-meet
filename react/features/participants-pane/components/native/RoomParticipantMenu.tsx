@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
@@ -30,7 +30,7 @@ interface IProps extends WithTranslation {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The jid of the selected participant.

@@ -1,3 +1,5 @@
+import { IStore } from '../app/types';
+
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 import { _authorizeDropbox } from './functions';
 import logger from './logger';
@@ -8,10 +10,11 @@ import logger from './logger';
  * @returns {Function}
  */
 export function authorizeDropbox() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { locationURL } = state['features/base/connection'];
-        const { dropbox = {} } = state['features/base/config'];
+        const { dropbox = { appKey: '',
+            redirectURI: undefined } } = state['features/base/config'];
 
         // By default we use the static page on the main domain for redirection.
         // So we need to setup only one redirect URI in dropbox app
@@ -19,7 +22,7 @@ export function authorizeDropbox() {
         // In case deployment is running in subfolder dropbox.redirectURI
         // can be configured.
         const redirectURI
-            = dropbox.redirectURI || `${locationURL.origin}/static/oauth.html`;
+            = dropbox.redirectURI || `${locationURL?.origin}/static/oauth.html`;
 
         _authorizeDropbox(dropbox.appKey, redirectURI)
             .then(

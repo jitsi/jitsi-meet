@@ -134,7 +134,7 @@ export function showPendingRecordingNotification(streamType: string) {
  * @returns {Function}
  */
 export function highlightMeetingMoment() {
-    return async (dispatch: Function, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch(setHighlightMomentButtonState(true));
 
         const success = await sendMeetingHighlight(getState());
@@ -209,7 +209,7 @@ export function showStartedRecordingNotification(
         mode: string,
         initiator: { getId: Function; } | string,
         sessionId: string) {
-    return async (dispatch: Function, getState: Function) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const initiatorId = getResourceId(initiator);
         const participantName = getParticipantDisplayName(state, initiatorId);

@@ -2,6 +2,7 @@ import React, { PureComponent, ReactNode } from 'react';
 import { SafeAreaView, ScrollView, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IStore } from '../../../../app/types';
 import SlidingView from '../../../react/components/native/SlidingView';
 import { hideSheet } from '../../actions';
 
@@ -25,7 +26,7 @@ type Props = {
     /**
      * Redux Dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Handler for the cancel event, which happens when the user dismisses

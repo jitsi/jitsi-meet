@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { getSecurityUiConfig } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
@@ -25,7 +25,7 @@ interface IProps extends WithTranslation {
     /**
      * The Redux Dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 }
 
 interface IState {

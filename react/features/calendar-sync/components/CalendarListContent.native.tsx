@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { createCalendarClickedEvent, createCalendarSelectedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.native';
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getLocalizedDateFormatter } from '../../base/i18n/dateUtil';
 import { translate } from '../../base/i18n/functions';
 import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
@@ -31,7 +31,7 @@ interface IProps extends WithTranslation {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      *

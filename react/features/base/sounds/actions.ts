@@ -1,3 +1,4 @@
+import { IStore } from '../../app/types';
 import { Sounds } from '../config/configType';
 import { AudioElement } from '../media/components/AbstractAudio';
 
@@ -66,7 +67,7 @@ export function _removeAudioElement(soundId: string) {
  * @returns {Function}
  */
 export function playSound(soundId: string) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const disabledSounds = getDisabledSounds(getState());
 
         if (!disabledSounds.includes(soundId as Sounds) && !disabledSounds.find(id => soundId.startsWith(id))) {

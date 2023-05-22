@@ -310,7 +310,7 @@ export function joinConferenceWithoutAudio() {
  * @returns {Function}
  */
 export function makePrecallTest(conferenceOptions: Object) {
-    return async function(dispatch: Function) {
+    return async function(dispatch: IStore['dispatch']) {
         try {
             await JitsiMeetJS.precallTest.init(conferenceOptions);
             const results = await JitsiMeetJS.precallTest.execute();

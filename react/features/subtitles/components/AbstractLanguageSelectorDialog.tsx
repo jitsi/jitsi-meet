@@ -2,7 +2,7 @@ import React, { ComponentType, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import {
     TRANSLATION_LANGUAGES,
     TRANSLATION_LANGUAGES_HEAD
@@ -11,7 +11,7 @@ import { setRequestingSubtitles, updateTranslationLanguage } from '../actions.an
 
 
 export interface IAbstractLanguageSelectorDialogProps {
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
     language: string;
     listItems: Array<any>;
     onLanguageSelected: (e: string) => void;

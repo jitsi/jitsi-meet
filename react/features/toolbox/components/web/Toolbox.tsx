@@ -6,7 +6,7 @@ import { batch, connect } from 'react-redux';
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
@@ -331,7 +331,7 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to active other features of the app.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Explicitly passed array with the buttons which this Toolbox should display.

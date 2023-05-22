@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { conferenceWillJoin } from '../../base/conference/actions';
 import { getConferenceName } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
@@ -85,7 +85,7 @@ export interface IProps {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Indicates whether the copy url button should be shown.

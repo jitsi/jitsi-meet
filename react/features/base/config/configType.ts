@@ -142,6 +142,7 @@ export interface IConfig {
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
         rtcstatsSendSdp?: boolean;
+        rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
         whiteListedEvents?: string[];

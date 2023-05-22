@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';
@@ -24,7 +24,7 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to update the redux store in order to remove notifications.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not the layout should change to support tile view mode.

@@ -48,7 +48,7 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-async function _startScreenSharing(dispatch: Function, state: IReduxState) {
+async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxState) {
     setPictureInPictureEnabled(false);
 
     try {

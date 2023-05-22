@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import { getParticipantById } from '../../base/participants/functions';
 import { getLocalVideoTrack } from '../../base/tracks/functions.any';
@@ -26,7 +26,7 @@ interface IProps {
     /**
      * Used to show/hide the dialog on cancel.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The ID of the participant who is requesting authorization for remote

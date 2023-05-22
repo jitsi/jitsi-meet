@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
@@ -38,7 +38,7 @@ interface IProps extends WithTranslation {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Click handler for raise hand functionality.
