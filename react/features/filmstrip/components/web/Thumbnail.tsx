@@ -278,16 +278,16 @@ const defaultStyles = (theme: Theme) => {
         },
 
         indicatorsTopContainer: {
-            top: 0,
+            bottom: 0,
             justifyContent: 'space-between'
         },
 
         indicatorsBottomContainer: {
-            bottom: 0
+            top: 0,
         },
 
         indicatorsBackground: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backgroundColor: '#5F5F5F',
             borderRadius: '4px',
             display: 'flex',
             alignItems: 'center',

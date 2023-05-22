@@ -74,6 +74,12 @@
     display: inline-block;
     position: relative;
 
+    &.button-with-text {
+        display: inline-flex;
+        align-items: center;
+        padding-right: 16px;
+    }
+
     .badge-round {
         bottom: -5px;
         font-size: 12px;
@@ -121,7 +127,7 @@
 }
 
 div.hangup-button {
-    background-color: #CB2233;
+    background-color: #FD4954;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {

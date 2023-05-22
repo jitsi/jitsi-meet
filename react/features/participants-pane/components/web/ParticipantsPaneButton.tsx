@@ -51,8 +51,9 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
     render() {
         return (
             <div
-                className = 'toolbar-button-with-badge'>
+                className = 'toolbar-button-with-badge button-with-text'>
                 {super.render()}
+                <div>Members</div>
                 <ParticipantsCounter />
             </div>
         );

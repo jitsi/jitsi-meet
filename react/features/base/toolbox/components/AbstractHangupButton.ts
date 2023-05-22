@@ -1,4 +1,4 @@
-import { IconHangup } from '../../icons/svg';
+import { IconHangup2 } from '../../icons/svg';
 
 import AbstractButton, { IProps } from './AbstractButton';
 
@@ -8,7 +8,7 @@ import AbstractButton, { IProps } from './AbstractButton';
 export default class AbstractHangupButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconHangup;
+    icon = IconHangup2;
 
     /**
      * Handles clicking / pressing the button, and disconnects the conference.

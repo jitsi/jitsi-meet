@@ -1,36 +1,40 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
 // @ts-expect-error
-import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
-import { IReduxState } from '../../app/types';
-import { VIDEO_TYPE } from '../../base/media/constants';
-import { getLocalParticipant } from '../../base/participants/functions';
-import Watermarks from '../../base/react/components/web/Watermarks';
-import { getHideSelfView } from '../../base/settings/functions.any';
-import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
-import { setColorAlpha } from '../../base/util/helpers';
-import StageParticipantNameLabel from '../../display-name/components/web/StageParticipantNameLabel';
-import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
-import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
-import SharedVideo from '../../shared-video/components/web/SharedVideo';
-import Captions from '../../subtitles/components/web/Captions';
-import { setTileView } from '../../video-layout/actions.web';
-import Whiteboard from '../../whiteboard/components/web/Whiteboard';
-import { isWhiteboardEnabled } from '../../whiteboard/functions';
-import { setSeeWhatIsBeingShared } from '../actions.web';
-import { getLargeVideoParticipant } from '../functions';
-import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
+import VideoLayout from "../../../../modules/UI/videolayout/VideoLayout";
+import { IReduxState } from "../../app/types";
+import { VIDEO_TYPE } from "../../base/media/constants";
+import { getLocalParticipant } from "../../base/participants/functions";
+import Watermarks from "../../base/react/components/web/Watermarks";
+import { getHideSelfView } from "../../base/settings/functions.any";
+import { getVideoTrackByParticipant } from "../../base/tracks/functions.web";
+import { setColorAlpha } from "../../base/util/helpers";
+import StageParticipantNameLabel from "../../display-name/components/web/StageParticipantNameLabel";
+import { FILMSTRIP_BREAKPOINT } from "../../filmstrip/constants";
+import {
+    getVerticalViewMaxWidth,
+    isFilmstripResizable,
+} from "../../filmstrip/functions.web";
+import SharedVideo from "../../shared-video/components/web/SharedVideo";
+import Captions from "../../subtitles/components/web/Captions";
+import { setTileView } from "../../video-layout/actions.web";
+import Whiteboard from "../../whiteboard/components/web/Whiteboard";
+import { isWhiteboardEnabled } from "../../whiteboard/functions";
+import { setSeeWhatIsBeingShared } from "../actions.web";
+import { getLargeVideoParticipant } from "../functions";
+import ScreenSharePlaceholder from "./ScreenSharePlaceholder.web";
 
 import { IParticipant } from "../../base/participants/types";
-import StaticImageWrapper from './StaticImageWrapper.web'
-import RenderSpeakerNodes from './RenderSpeakerNodes.web'
+import StaticImageWrapper from "./StaticImageWrapper.web";
+import RenderSpeakerNodes from "./RenderSpeakerNodes.web";
+import { getCurrentLayout } from "../../video-layout/functions.web";
+import { LAYOUTS } from "../../video-layout/constants";
 
 // Hack to detect Spot.
-const SPOT_DISPLAY_NAME = 'Meeting Room';
+const SPOT_DISPLAY_NAME = "Meeting Room";
 
 interface IProps {
-
     /**
      * The alpha(opacity) of the background.
      */
@@ -122,7 +126,8 @@ interface IProps {
      */
     dispatch: Function;
 
-    _participantsList: Array<any>
+    _participantsList: Array<any>;
+    _isTileLayout: boolean;
 }
 
 /** .
@@ -166,13 +171,17 @@ class LargeVideo extends Component<IProps> {
             _seeWhatIsBeingShared,
             _largeVideoParticipantId,
             _hideSelfView,
-            _localParticipantId } = this.props;
+            _localParticipantId,
+        } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
         }
 
-        if (prevProps._isScreenSharing !== _isScreenSharing && !_isScreenSharing) {
+        if (
+            prevProps._isScreenSharing !== _isScreenSharing &&
+            !_isScreenSharing
+        ) {
             this.props.dispatch(setSeeWhatIsBeingShared(false));
         }
 
@@ -180,8 +189,10 @@ class LargeVideo extends Component<IProps> {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
         }
 
-        if (_largeVideoParticipantId === _localParticipantId
-            && prevProps._hideSelfView !== _hideSelfView) {
+        if (
+            _largeVideoParticipantId === _localParticipantId &&
+            prevProps._hideSelfView !== _hideSelfView
+        ) {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
     }
@@ -199,10 +210,11 @@ class LargeVideo extends Component<IProps> {
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled,
-            _participantsList
+            _participantsList,
+            _isTileLayout,
         } = this.props;
         const style = this._getCustomStyles();
-        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${_isChatOpen ? " shift-right" : ""}`;
 
         return (
             <div
@@ -211,9 +223,13 @@ class LargeVideo extends Component<IProps> {
                 ref={this._containerRef}
                 style={style}
             >
-                <StaticImageWrapper />
-                <RenderSpeakerNodes list={_participantsList} />
-                               
+                {!_isTileLayout && (
+                    <>
+                        <StaticImageWrapper />
+                        <RenderSpeakerNodes list={_participantsList} />
+                    </>
+                )}
+
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
                 <div id="etherpad" />
@@ -274,14 +290,19 @@ class LargeVideo extends Component<IProps> {
     _updateLayout() {
         const { _verticalFilmstripWidth, _resizableFilmstrip } = this.props;
 
-        if (_resizableFilmstrip && Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT) {
-            this._containerRef.current?.classList.add('transition');
-            this._wrapperRef.current?.classList.add('transition');
+        if (
+            _resizableFilmstrip &&
+            Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT
+        ) {
+            this._containerRef.current?.classList.add("transition");
+            this._wrapperRef.current?.classList.add("transition");
             VideoLayout.refreshLayout();
 
             setTimeout(() => {
-                this._containerRef?.current && this._containerRef.current.classList.remove('transition');
-                this._wrapperRef?.current && this._wrapperRef.current.classList.remove('transition');
+                this._containerRef?.current &&
+                    this._containerRef.current.classList.remove("transition");
+                this._wrapperRef?.current &&
+                    this._wrapperRef.current.classList.remove("transition");
             }, 1000);
         } else {
             VideoLayout.refreshLayout();
@@ -312,7 +333,7 @@ class LargeVideo extends Component<IProps> {
             _customBackgroundImageUrl,
             _verticalFilmstripWidth,
             _verticalViewMaxWidth,
-            _visibleFilmstrip
+            _visibleFilmstrip,
         } = this.props;
 
         // styles.backgroundImage = "url('images/custom-background/bg1.png')";
@@ -322,17 +343,23 @@ class LargeVideo extends Component<IProps> {
         // styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
 
         if (this.props._backgroundAlpha !== undefined) {
-            const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);
+            const alphaColor = setColorAlpha(
+                styles.backgroundColor,
+                this.props._backgroundAlpha
+            );
 
             styles.backgroundColor = alphaColor;
         }
 
         if (_customBackgroundImageUrl) {
             styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
-            styles.backgroundSize = 'cover';
+            styles.backgroundSize = "cover";
         }
 
-        if (_visibleFilmstrip && Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT) {
+        if (
+            _visibleFilmstrip &&
+            Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT
+        ) {
             styles.width = `calc(100% - ${_verticalViewMaxWidth || 0}px)`;
         }
 
@@ -359,7 +386,6 @@ class LargeVideo extends Component<IProps> {
     }
 }
 
-
 /**
  * Maps (parts of) the Redux state to the associated LargeVideo props.
  *
@@ -368,21 +394,25 @@ class LargeVideo extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const testingConfig = state['features/base/config'].testing;
-    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
-    const { isOpen: isChatOpen } = state['features/chat'];
-    const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
-    const { defaultLocalDisplayName, hideDominantSpeakerBadge } = state['features/base/config'];
-    const { seeWhatIsBeingShared } = state['features/large-video'];
+    const testingConfig = state["features/base/config"].testing;
+    const { backgroundColor, backgroundImageUrl } =
+        state["features/dynamic-branding"];
+    const { isOpen: isChatOpen } = state["features/chat"];
+    const { width: verticalFilmstripWidth, visible } =
+        state["features/filmstrip"];
+    const { defaultLocalDisplayName, hideDominantSpeakerBadge } =
+        state["features/base/config"];
+    const { seeWhatIsBeingShared } = state["features/large-video"];
     const localParticipantId = getLocalParticipant(state)?.id;
     const largeVideoParticipant = getLargeVideoParticipant(state);
     const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
-    const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId ?? '')
-        && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
+    const isLocalScreenshareOnLargeVideo =
+        largeVideoParticipant?.id?.includes(localParticipantId ?? "") &&
+        videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
-    
+
     const getAllParticipants = (state: any) => {
-        let participants = state["features/base/participants"];        
+        let participants = state["features/base/participants"];
         let listRemote: Array<any> = [];
         for (let [key, value] of participants?.remote) {
             listRemote.push(value);
@@ -391,18 +421,22 @@ function _mapStateToProps(state: IReduxState) {
         return listRemote;
     };
     const participantsList: Array<IParticipant> = getAllParticipants(state);
+    const isTileView = getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
 
     return {
+        _isTileLayout: isTileView,
         _participantsList: participantsList,
-        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
+        _backgroundAlpha: state["features/base/config"].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
-        _displayScreenSharingPlaceholder: Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot),
+        _displayScreenSharingPlaceholder: Boolean(
+            isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot
+        ),
         _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isScreenSharing: Boolean(isLocalScreenshareOnLargeVideo),
-        _largeVideoParticipantId: largeVideoParticipant?.id ?? '',
-        _localParticipantId: localParticipantId ?? '',
+        _largeVideoParticipantId: largeVideoParticipant?.id ?? "",
+        _localParticipantId: localParticipantId ?? "",
         _noAutoPlayVideo: Boolean(testingConfig?.noAutoPlayVideo),
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
@@ -410,7 +444,7 @@ function _mapStateToProps(state: IReduxState) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
-        _whiteboardEnabled: isWhiteboardEnabled(state)
+        _whiteboardEnabled: isWhiteboardEnabled(state),
     };
 }
 

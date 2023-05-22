@@ -254,15 +254,16 @@ export const commonStyles = (theme: Theme) => {
         },
 
         '.toolbox-content-items': {
-            background: theme.palette.ui01,
-            borderRadius: 6,
             margin: '0 auto',
             padding: 6,
             textAlign: 'center' as const,
-            pointerEvents: 'all' as const,
-            boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
+            pointerEvents: 'all' as const,            
 
             '& > div': {
+                background: theme.palette.ui01,
+                borderRadius: 6,
+                boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
+              
                 marginRight: theme.spacing(2),
 
                 '&:last-of-type': {
