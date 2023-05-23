@@ -177,19 +177,21 @@ class Chat extends AbstractChat<IProps> {
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
                 onChange = { this._onChangeTab }
                 selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
-                tabs = { [ {
+                tabs = { [ 
+                {
                     accessibilityLabel: t('chat.tabs.chat'),
                     countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
                     id: CHAT_TABS.CHAT,
                     controlsId: `${CHAT_TABS.CHAT}-panel`,
                     label: t('chat.tabs.chat')
-                }, {
-                    accessibilityLabel: t('chat.tabs.polls'),
-                    countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
-                    id: CHAT_TABS.POLLS,
-                    controlsId: `${CHAT_TABS.POLLS}-panel`,
-                    label: t('chat.tabs.polls')
-                }
+                }, 
+                // {
+                //     accessibilityLabel: t('chat.tabs.polls'),
+                //     countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                //     id: CHAT_TABS.POLLS,
+                //     controlsId: `${CHAT_TABS.POLLS}-panel`,
+                //     label: t('chat.tabs.polls')
+                // }
                 ] } />
         );
     }
