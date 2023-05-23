@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { styled } from "@mui/material";
 import { IconMic, IconMicSlash } from "../../base/icons/svg";
 import { IParticipant } from "../../base/participants/types";
+import { getAvatarColor } from "../../base/avatar/functions";
 import Icon from "../../base/icons/components/Icon";
 
 interface Props {
@@ -44,11 +45,24 @@ const getRenderedChild = ({
     video,
     isVideoPlayable,
 }: INode) => {
+    let color = getAvatarColor(name, []);
+    let index = String(name).indexOf(" ");
+    let displayName = name[0];
+    
+    if (index !== -1) {
+        let firstName = String(name).substring(0, index)[0];
+        let lastName = String(name).substring(index + 1, name.length)[0];
+        displayName = firstName + lastName;
+    }
+    
+    displayName = String(displayName).toUpperCase();
+
     return (
         <UserNode
             style={{
                 left: x,
                 top: y,
+                backgroundColor: color,
             }}
         >
             <RelativeContainer>
@@ -57,7 +71,7 @@ const getRenderedChild = ({
                 ) : url ? (
                     <img src={url} />
                 ) : (
-                    String(name).toUpperCase().substring(0, 2)
+                    displayName
                 )}
                 <CircleShapeContainer>
                     <Icon src={isAudioMuted ? IconMicSlash : IconMic} />
@@ -118,10 +132,9 @@ const UserNode = styled("div")({
     borderRadius: "50%",
     position: "absolute",
     alignItems: "center",
-    color: "darkslategray",
+    color: "#fff",
     justifyContent: "center",
     border: "2px solid white",
-    backgroundColor: "peachpuff",
     transform: "translate(-50%, -50%)",
     "& > img": {
         width: "100%",
