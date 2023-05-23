@@ -6,7 +6,7 @@ import VideoLayout from "../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../app/types";
 import { VIDEO_TYPE } from "../../base/media/constants";
 import { getLocalParticipant } from "../../base/participants/functions";
-import Watermarks from "../../base/react/components/web/Watermarks";
+// import Watermarks from "../../base/react/components/web/Watermarks";
 import { getHideSelfView } from "../../base/settings/functions.any";
 import { getVideoTrackByParticipant } from "../../base/tracks/functions.web";
 import { setColorAlpha } from "../../base/util/helpers";
@@ -41,6 +41,7 @@ import {
 } from "../../base/tracks/functions.web";
 import { MEDIA_TYPE } from "../../base/media/constants";
 import { isVideoPlayable } from "../../filmstrip/functions.web";
+import { addStageParticipant } from "../../filmstrip/actions.web";
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = "Meeting Room";
@@ -139,6 +140,7 @@ interface IProps {
 
     _participantsList: Array<any>;
     _isTileLayout: boolean;
+    _userTileViewEnable: boolean;
 }
 
 /** .
@@ -177,13 +179,23 @@ class LargeVideo extends Component<IProps> {
      */
     componentDidUpdate(prevProps: IProps) {
         const {
+            _isTileLayout,
+            _userTileViewEnable,
+            dispatch,
             _visibleFilmstrip,
             _isScreenSharing,
             _seeWhatIsBeingShared,
             _largeVideoParticipantId,
             _hideSelfView,
             _localParticipantId,
+            _participantsList,
         } = this.props;
+
+        if (_participantsList.length > 0) {            
+            if (!_userTileViewEnable && _isTileLayout) {
+                dispatch(setTileView(false));
+            }            
+        }
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
@@ -422,6 +434,8 @@ function _mapStateToProps(state: IReduxState) {
         videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
 
+    const _userTileViewEnable =
+        state["features/video-layout"].tileViewOwnEnabled;
     const tracks = state["features/base/tracks"];
 
     const getVideoTrackForEachParticipants = (item: IParticipant) => {
@@ -493,6 +507,7 @@ function _mapStateToProps(state: IReduxState) {
     const isTileView = getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
 
     return {
+        _userTileViewEnable,
         _isTileLayout: isTileView,
         _participantsList: participantsList,
         _backgroundAlpha: state["features/base/config"].backgroundAlpha,

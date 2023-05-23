@@ -3,6 +3,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     SET_CAR_MODE,
     SET_TILE_VIEW,
+    SET_TILE_VIEW_OWN,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from './actionTypes';
 
@@ -27,13 +28,15 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    tileViewEnabled: undefined
+    tileViewEnabled: undefined,
+    tileViewOwnEnabled: false
 };
 
 export interface IVideoLayoutState {
     carMode: boolean;
     remoteScreenShares: string[];
     tileViewEnabled?: boolean;
+    tileViewOwnEnabled: boolean;
 }
 
 const STORE_NAME = 'features/video-layout';
@@ -56,6 +59,12 @@ ReducerRegistry.register<IVideoLayoutState>(STORE_NAME, (state = DEFAULT_STATE, 
         return {
             ...state,
             tileViewEnabled: action.enabled
+        };
+    
+    case SET_TILE_VIEW_OWN:                
+        return {
+            ...state,
+            tileViewOwnEnabled: action.enabled,
         };
     }
 

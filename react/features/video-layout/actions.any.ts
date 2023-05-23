@@ -1,10 +1,11 @@
-import { IStore } from '../app/types';
+import { IStore } from "../app/types";
 
 import {
     SET_TILE_VIEW,
-    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
-} from './actionTypes';
-import { shouldDisplayTileView } from './functions';
+    SET_TILE_VIEW_OWN,
+    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
+} from "./actionTypes";
+import { shouldDisplayTileView } from "./functions";
 
 /**
  * Creates a (redux) action which signals that the list of known remote virtual screen share participant ids has
@@ -16,10 +17,12 @@ import { shouldDisplayTileView } from './functions';
  *     participantIds: Array<string>
  * }}
  */
-export function virtualScreenshareParticipantsUpdated(participantIds: Array<string>) {
+export function virtualScreenshareParticipantsUpdated(
+    participantIds: Array<string>
+) {
     return {
         type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
-        participantIds
+        participantIds,
     };
 }
 
@@ -36,7 +39,7 @@ export function virtualScreenshareParticipantsUpdated(participantIds: Array<stri
 export function setTileView(enabled?: boolean) {
     return {
         type: SET_TILE_VIEW,
-        enabled
+        enabled,
     };
 }
 
@@ -47,9 +50,16 @@ export function setTileView(enabled?: boolean) {
  * @returns {Function}
  */
 export function toggleTileView() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const tileViewActive = shouldDisplayTileView(getState());
 
         dispatch(setTileView(!tileViewActive));
+    };
+}
+
+export function toggleTileViewOwn() {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+        const isActive = !getState()["features/video-layout"].tileViewOwnEnabled;        
+        dispatch({ type: SET_TILE_VIEW_OWN, enabled: isActive });
     };
 }

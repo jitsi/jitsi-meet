@@ -9,7 +9,7 @@ import { translate } from '../../base/i18n/functions';
 import { IconTileView } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../toolbox/actions';
-import { setTileView } from '../actions';
+import { setTileView, toggleTileViewOwn } from '../actions.any';
 import { shouldDisplayTileView } from '../functions';
 import logger from '../logger';
 
@@ -22,6 +22,7 @@ interface IProps extends AbstractButtonProps {
      * Whether or not tile view layout has been enabled as the user preference.
      */
     _tileViewEnabled: boolean;
+    _tileViewOwnEnabled: boolean;
 }
 
 /**
@@ -58,6 +59,7 @@ class TileViewButton<P extends IProps> extends AbstractButton<P> {
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
         batch(() => {
             dispatch(setTileView(value));
+            dispatch(toggleTileViewOwn());
             navigator.product !== 'ReactNative' && dispatch(setOverflowMenuVisible(false));
         });
 
