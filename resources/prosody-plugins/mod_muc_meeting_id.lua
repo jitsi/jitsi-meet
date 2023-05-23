@@ -4,6 +4,7 @@ local main_util = module:require "util";
 local ends_with = main_util.ends_with;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
+local presence_check_status = main_util.presence_check_status;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -66,6 +67,13 @@ module:hook("muc-config-submitted/muc#roominfo_meetingId", function(event)
 
     return true;
 end, 99);
+module:hook('muc-broadcast-presence', function (event)
+    local actor, occupant, room, x = event.actor, event.occupant, event.room, event.x;
+    if presence_check_status(x, '307') then
+        -- make sure we update and affiliation for kicked users
+        room:set_affiliation(actor, occupant.bare_jid, 'none');
+    end
+end);
 
 --- Avoids any participant joining the room in the interval between creating the room
 --- and jicofo entering the room
