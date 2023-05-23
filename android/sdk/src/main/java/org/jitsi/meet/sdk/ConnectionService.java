@@ -13,11 +13,18 @@ import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
+
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -26,11 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-
 
 /**
  * Jitsi Meet implementation of {@link ConnectionService}. At the time of this
@@ -43,8 +45,6 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ConnectionService extends android.telecom.ConnectionService {
-
-    static public ReactInstanceManager reactInstanceManager;
 
     /**
      * Tag used for logging.
@@ -70,13 +70,6 @@ public class ConnectionService extends android.telecom.ConnectionService {
      */
     static private final HashMap<String, Promise> startCallPromises
             = new HashMap<>();
-
-    /**
-     * Get react instance manager from this object.
-     */
-    static ReactInstanceManager getReactInstanceManager() {
-        return reactInstanceManager;
-    }
 
     /**
      * Aborts all ongoing connections. This is a last resort mechanism which forces all resources to
@@ -371,18 +364,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onDisconnect " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            ReactInstanceManager reactInstanceManager
-                = ConnectionService.getReactInstanceManager();
-
-            ReactContext reactContext = reactInstanceManager != null
-                ? reactInstanceManager.getCurrentReactContext() : null;
-            if (reactContext != null) {
-                reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(
-                        "org.jitsi.meet:features/connection_service#disconnect",
-                        data);
-            }
+            emitEvent(
+                    "org.jitsi.meet:features/connection_service#disconnect",
+                    data);
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
@@ -400,18 +384,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onAbort " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            ReactInstanceManager reactInstanceManager
-                = ConnectionService.getReactInstanceManager();
-
-            ReactContext reactContext = reactInstanceManager != null
-                ? reactInstanceManager.getCurrentReactContext() : null;
-            if (reactContext != null) {
-                reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(
-                        "org.jitsi.meet:features/connection_service#abort",
-                        data);
-            }
+            emitEvent(
+                    "org.jitsi.meet:features/connection_service#abort",
+                    data);
             // The JavaScript side will not go back to the native with
             // 'endCall', so the Connection must be removed immediately.
             setConnectionDisconnected(
@@ -438,12 +413,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public void onCallAudioStateChanged(CallAudioState state) {
             JitsiMeetLogger.d(TAG + " onCallAudioStateChanged: " + state);
-            ReactInstanceManager reactInstanceManager
-                = ConnectionService.getReactInstanceManager();
-            ReactContext reactContext = reactInstanceManager != null
-                ? reactInstanceManager.getCurrentReactContext() : null;
-            RNConnectionService module = reactContext != null
-                ? reactContext.getNativeModule(RNConnectionService.class) : null;
+            RNConnectionService module = getNativeModule(RNConnectionService.class);
             if (module != null) {
                 module.onCallAudioStateChange(state);
             }
@@ -484,6 +454,48 @@ public class ConnectionService extends android.telecom.ConnectionService {
             return String.format(
                     "ConnectionImpl[address=%s, uuid=%s]@%d",
                     getAddress(), getCallUUID(), hashCode());
+        }
+
+        /**
+         * Helper function to send an event to JavaScript.
+         *
+         * @param eventName {@code String} containing the event name.
+         * @param data {@code Object} optional ancillary data for the event.
+         */
+        public void emitEvent(
+            String eventName,
+            @Nullable Object data) {
+            ReactApplication rnApp = (ReactApplication) getApplication().getApplicationContext();
+            ReactInstanceManager rnReactInstanceManager = rnApp.getReactNativeHost().getReactInstanceManager();
+            ReactContext reactContext = rnReactInstanceManager.getCurrentReactContext();
+
+            if (reactContext != null) {
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, data);
+            }
+        }
+
+        /**
+         * Finds a native React module for given class.
+         *
+         * @param nativeModuleClass the native module's class for which an instance
+         * is to be retrieved from the {@link #(ReactApplication)}.
+         * @return {@link NativeModule} instance for given interface type or
+         * {@code null} if no instance for this interface is available, or if
+         * {@link #(ReactApplication)} has not been initialized yet.
+         */
+        public RNConnectionService getNativeModule(
+            Class nativeModuleClass) {
+            ReactApplication rnApp = (ReactApplication) getApplication().getApplicationContext();
+            ReactInstanceManager rnReactInstanceManager = rnApp.getReactNativeHost().getReactInstanceManager();
+            ReactContext reactContext = rnReactInstanceManager.getCurrentReactContext();
+
+            if (reactContext != null) {
+                reactContext.getNativeModule(nativeModuleClass);
+            }
+
+            return null;
         }
     }
 }
