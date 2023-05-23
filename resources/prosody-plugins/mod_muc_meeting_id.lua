@@ -3,6 +3,7 @@ local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
 local ends_with = main_util.ends_with;
 local is_healthcheck_room = main_util.is_healthcheck_room;
+local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -106,6 +107,8 @@ function handle_jicofo_unlock(event)
 
     -- and now let's handle all pre_join_queue events
     for _, ev in room.pre_join_queue:items() do
+        -- we see wrong from on some stanzas when using tenants with visitor nodes
+        ev.stanza.attr.from = internal_room_jid_match_rewrite(ev.stanza.attr.from, ev.stanza)
         module:log('info', 'Occupant processed from queue %s', ev.occupant.nick);
         room:handle_normal_presence(ev.origin, ev.stanza);
     end

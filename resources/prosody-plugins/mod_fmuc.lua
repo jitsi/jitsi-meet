@@ -473,8 +473,8 @@ function filter_stanza(stanza)
     return stanza; -- no filter
 end
 function filter_session(session)
-    -- domain mapper is filtering on default priority 0, and we need it after that
-    filters.add_filter(session, 'stanzas/out', filter_stanza, -2);
+    -- domain mapper is filtering on default priority 0, and we need it before that
+    filters.add_filter(session, 'stanzas/out', filter_stanza, 2);
 end
 
 filters.add_filter_hook(filter_session);
