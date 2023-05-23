@@ -22,7 +22,8 @@
     display: flex;
     flex-direction: column;
     // extract header + tabs height
-    height: calc(100% - 119px);
+    // height: calc(100% - 119px);
+    height: 100%
 }
 
 .chat-panel-no-tabs {
@@ -98,7 +99,8 @@
 }
 
 .chat-input-container {
-    padding: 0 16px 24px;
+    padding: 16px 24px;
+    border-top: 1px solid #707070;
 }
 
 #chat-input {
@@ -252,6 +254,11 @@
 }
 
 .chatmessage {
+    border: 1px solid #707070;
+    &.remote{
+        background-color: #4B4B4B;        
+    }
+
     &.localuser {
         background-color: $chatLocalMessageBackgroundColor;
         border-radius: 6px 0px 6px 6px;

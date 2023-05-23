@@ -64,10 +64,10 @@ class Chat extends AbstractChat<IProps> {
                 className = 'sideToolbarContainer'
                 id = 'sideToolbarContainer'
                 onKeyDown = { this._onEscClick } >
-                <ChatHeader
+                {/* <ChatHeader
                     className = 'chat-header'
                     isPollsEnabled = { _isPollsEnabled }
-                    onCancel = { this._onToggleChat } />
+                    onCancel = { this._onToggleChat } /> */}
                 { _showNamePrompt
                     ? <DisplayNameForm isPollsEnabled = { _isPollsEnabled } />
                     : this._renderChat() }
@@ -173,26 +173,27 @@ class Chat extends AbstractChat<IProps> {
         const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, t } = this.props;
 
         return (
-            <Tabs
-                accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
-                onChange = { this._onChangeTab }
-                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
-                tabs = { [ 
-                {
-                    accessibilityLabel: t('chat.tabs.chat'),
-                    countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
-                    id: CHAT_TABS.CHAT,
-                    controlsId: `${CHAT_TABS.CHAT}-panel`,
-                    label: t('chat.tabs.chat')
-                }, 
-                // {
-                //     accessibilityLabel: t('chat.tabs.polls'),
-                //     countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
-                //     id: CHAT_TABS.POLLS,
-                //     controlsId: `${CHAT_TABS.POLLS}-panel`,
-                //     label: t('chat.tabs.polls')
-                // }
-                ] } />
+            <></>
+            // <Tabs
+            //     accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+            //     onChange = { this._onChangeTab }
+            //     selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
+            //     tabs = { [ 
+            //     {
+            //         accessibilityLabel: t('chat.tabs.chat'),
+            //         countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+            //         id: CHAT_TABS.CHAT,
+            //         controlsId: `${CHAT_TABS.CHAT}-panel`,
+            //         label: t('chat.tabs.chat')
+            //     }, 
+            //     {
+            //         accessibilityLabel: t('chat.tabs.polls'),
+            //         countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+            //         id: CHAT_TABS.POLLS,
+            //         controlsId: `${CHAT_TABS.POLLS}-panel`,
+            //         label: t('chat.tabs.polls')
+            //     }
+            //     ] } />
         );
     }
 
