@@ -77,10 +77,10 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
   - fmt (6.2.1)
-  - Giphy (2.1.20):
+  - Giphy (2.2.4):
     - libwebp
-  - giphy-react-native-sdk (1.7.0):
-    - Giphy (= 2.1.20)
+  - giphy-react-native-sdk (2.3.0):
+    - Giphy (= 2.2.4)
     - React-Core
   - glog (0.3.5)
   - GoogleAppMeasurement (8.15.0):
@@ -716,8 +716,8 @@ SPEC CHECKSUMS:
   FirebaseDynamicLinks: 1dc816ef789c5adac6fede0b46d11478175c70e4
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  Giphy: b6d5087521d251bb8c99cdc0eb07bbdf86d142d5
-  giphy-react-native-sdk: 7abccf2b52123a0f30ce99da895ab6288023680c
+  Giphy: 6b5f6986c8df4f71e01a8ef86595f426b3439fb5
+  giphy-react-native-sdk: fcda9639f8ca2cc47e0517b6ef11c19359db5f5a
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 8378d1fa8ac49753ea6ce70d65a7cb70ce5f66e6
@@ -782,6 +782,6 @@ SPEC CHECKSUMS:
   RNWatch: dae6c858a2051dbdcfb00b9a86cf4d90400263b4
   Yoga: d24d6184b6b85f742536bd93bd07d69d7b9bb4c1
 
-PODFILE CHECKSUM: e3579df5272b8b697c9fdc0e55aa0845b189c4dd
+PODFILE CHECKSUM: d50d830fb5f54769da0761781dce71dc8f7193a3
 
 COCOAPODS: 1.11.3
