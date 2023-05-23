@@ -75,9 +75,13 @@
     position: relative;
 
     &.button-with-text {
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         padding-right: 16px;
+        &:hover{
+            background-color: #525252;
+        }
     }
 
     .badge-round {

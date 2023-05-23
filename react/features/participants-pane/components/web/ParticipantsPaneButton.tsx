@@ -51,6 +51,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
     render() {
         return (
             <div
+                onClick = {this._onClick}
                 className = 'toolbar-button-with-badge button-with-text'>
                 {super.render()}
                 <div>Members</div>
