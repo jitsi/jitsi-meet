@@ -94,3 +94,5 @@ twa/*.aab
 twa/assetlinks.json
 
 tsconfig.json
+DEPLOY_FOLDER
+DEPLOY_FOLDER.zip
