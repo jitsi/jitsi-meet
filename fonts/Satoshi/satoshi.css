@@ -1,0 +1,79 @@
+@font-face {
+    font-family: Satoshi;
+    font-weight: 300;
+    font-display: swap;
+    font-style: normal;
+    src: url("./Satoshi-Light.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 300;
+    font-display: swap;
+    font-style: italic;
+    src: url("./Satoshi-LightItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+    src: url("./Satoshi-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 400;
+    font-display: swap;
+    font-style: italic;
+    src: url("./Satoshi-Italic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 500;
+    font-display: swap;
+    font-style: normal;
+    src: url("./Satoshi-Medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 500;
+    font-display: swap;
+    font-style: italic;
+    src: url("./Satoshi-MediumItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 700;
+    font-display: swap;
+    font-style: normal;
+    src: url("./Satoshi-Bold.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 700;
+    font-display: swap;
+    font-style: italic;
+    src: url("./Satoshi-BoldItalic.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 900;
+    font-display: swap;
+    font-style: normal;
+    src: url("./Satoshi-Black.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Satoshi;
+    font-weight: 900;
+    font-display: swap;
+    font-style: italic;
+    src: url("./Satoshi-BlackItalic.otf") format("opentype");
+}
