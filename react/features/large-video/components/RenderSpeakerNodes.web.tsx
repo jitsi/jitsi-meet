@@ -39,7 +39,7 @@ const elementPositionList = [
 const getRenderedChild = ({
     x,
     y,
-    name,
+    name = 'user',
     url,
     isAudioMuted,
     video,
@@ -47,14 +47,18 @@ const getRenderedChild = ({
 }: INode) => {
     let color = getAvatarColor(name, []);
     let index = String(name).indexOf(" ");
-    let displayName = name[0];
-    
-    if (index !== -1) {
-        let firstName = String(name).substring(0, index)[0];
-        let lastName = String(name).substring(index + 1, name.length)[0];
-        displayName = firstName + lastName;
+    let displayName = name[0] ?? "";
+
+    try {
+        if (index !== -1) {
+            let firstName = String(name).substring(0, index)[0];
+            let lastName = String(name).substring(index + 1, name.length)[0];
+            displayName = firstName + lastName;
+        }
+    } catch (e) {
+        displayName = "U";
     }
-    
+
     displayName = String(displayName).toUpperCase();
 
     return (
