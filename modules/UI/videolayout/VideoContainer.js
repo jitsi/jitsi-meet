@@ -541,7 +541,7 @@ export class VideoContainer extends LargeContainer {
      */
     show() {
         return new Promise(resolve => {
-            this.wrapperParent.style.visibility = 'visible';
+            // this.wrapperParent.style.visibility = 'visible';
             this.wrapperParent.classList.remove('animatedFadeOut');
             this.wrapperParent.classList.add('animatedFadeIn');
             setTimeout(() => {
@@ -564,7 +564,7 @@ export class VideoContainer extends LargeContainer {
             this.wrapperParent.classList.remove('animatedFadeIn');
             this.wrapperParent.classList.add('animatedFadeOut');
             setTimeout(() => {
-                this.wrapperParent.style.visibility = 'hidden';
+                // this.wrapperParent.style.visibility = 'hidden';
                 this._isHidden = true;
                 this._updateBackground();
                 resolve();
