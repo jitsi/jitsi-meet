@@ -74,6 +74,10 @@
     display: inline-block;
     position: relative;
 
+    &.button-with-text.active {
+        background-color: #3D3D3D;
+    }
+
     &.button-with-text {
         cursor: pointer;
         display: inline-flex;

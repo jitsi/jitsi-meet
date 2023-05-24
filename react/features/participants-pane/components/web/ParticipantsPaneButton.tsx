@@ -49,10 +49,11 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @returns {React$Node}
      */
     render() {
+        let isActive = this._isToggled()
         return (
             <div
                 onClick = {this._onClick}
-                className = 'toolbar-button-with-badge button-with-text'>
+                className = {'toolbar-button-with-badge button-with-text ' + (isActive ? 'active': '') }>
                 {super.render()}
                 <div>Members</div>
                 <ParticipantsCounter />
