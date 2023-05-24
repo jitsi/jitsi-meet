@@ -210,7 +210,7 @@ export const commonStyles = (theme: Theme) => {
 
         '.toolbox-icon': {
             display: 'flex',
-            borderRadius: 3,
+            borderRadius: 9,
             flexDirection: 'column' as const,
             fontSize: 24,
             height: 48,
@@ -260,8 +260,9 @@ export const commonStyles = (theme: Theme) => {
             pointerEvents: 'all' as const,            
 
             '& > div': {
+                border: '1px solid #9C9C9C',
                 background: theme.palette.ui01,
-                borderRadius: 6,
+                borderRadius: 10,
                 boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
               
                 marginRight: theme.spacing(2),

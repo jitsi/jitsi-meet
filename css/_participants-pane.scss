@@ -1,19 +1,23 @@
-.participants_pane {
-    top: 16px;
-    left: 50%;
-    bottom: 120px;
-    position: absolute;
-    transform: translateX(-50%);
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    height: calc(100% - 120px - 10px);
+.participants_pane {    
     background-color: $participantsPaneBgColor;
     flex-shrink: 0;
     overflow: hidden;
-    
+    position: relative;
     transition: width .16s ease-in-out;
     width: 315px;
     z-index: $zindex0;
+
+    @media only screen and (min-width: 768px){
+        left: 50%;
+        bottom: 0px;
+        position: absolute;
+        transform: translateX(-50%);
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        max-height: calc(100% - 100px);
+        height: 630px;
+        margin-bottom: 100px;
+    }        
 }
 
 
