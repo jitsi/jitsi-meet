@@ -39,7 +39,7 @@ const elementPositionList = [
 const getRenderedChild = ({
     x,
     y,
-    name = 'user',
+    name = "user",
     url,
     isAudioMuted,
     video,
@@ -116,6 +116,9 @@ const VideoContainer = styled("div")({
     height: "100%",
     borderRadius: "50%",
     overflow: "hidden",
+    "& > video": {
+        borderRadius: "50%",
+    },
 });
 
 const RelativeContainer = styled("div")({

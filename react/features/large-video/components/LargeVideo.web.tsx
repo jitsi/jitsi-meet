@@ -141,6 +141,7 @@ interface IProps {
     _participantsList: Array<any>;
     _isTileLayout: boolean;
     _userTileViewEnable: boolean;
+    _isAnyoneSharingScreenInRemote: boolean;
 }
 
 /** .
@@ -228,6 +229,7 @@ class LargeVideo extends Component<IProps> {
      */
     render() {
         const {
+            _isAnyoneSharingScreenInRemote,            
             _displayScreenSharingPlaceholder,
             _isChatOpen,
             _noAutoPlayVideo,
@@ -265,7 +267,7 @@ class LargeVideo extends Component<IProps> {
                 </div>
                 <div id="remotePresenceMessage" />
                 <span id="remoteConnectionMessage" />
-                <div id="largeVideoElementsContainer">
+                <div id="largeVideoElementsContainer" style={{ visibility: _isAnyoneSharingScreenInRemote ? 'visible' : 'hidden' }} >
                     <div id="largeVideoBackgroundContainer" />
                     {/*
                      * FIXME: the architecture of elements related to the large
@@ -505,10 +507,12 @@ function _mapStateToProps(state: IReduxState) {
     };
     const participantsList: Array<IParticipant> = getAllParticipants(state);
     const isTileView = getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
+    const _isAnyoneSharingScreenInRemote = participantsList.filter((item: any) => item.isScreenSharing === true).length > 0;
 
     return {
         _userTileViewEnable,
         _isTileLayout: isTileView,
+        _isAnyoneSharingScreenInRemote,
         _participantsList: participantsList,
         _backgroundAlpha: state["features/base/config"].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
