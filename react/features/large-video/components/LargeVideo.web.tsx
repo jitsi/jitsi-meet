@@ -192,10 +192,10 @@ class LargeVideo extends Component<IProps> {
             _participantsList,
         } = this.props;
 
-        if (_participantsList.length > 0) {            
+        if (_participantsList.length > 0) {
             if (!_userTileViewEnable && _isTileLayout) {
                 dispatch(setTileView(false));
-            }            
+            }
         }
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
@@ -229,7 +229,7 @@ class LargeVideo extends Component<IProps> {
      */
     render() {
         const {
-            _isAnyoneSharingScreenInRemote,            
+            _isAnyoneSharingScreenInRemote,
             _displayScreenSharingPlaceholder,
             _isChatOpen,
             _noAutoPlayVideo,
@@ -267,7 +267,7 @@ class LargeVideo extends Component<IProps> {
                 </div>
                 <div id="remotePresenceMessage" />
                 <span id="remoteConnectionMessage" />
-                <div id="largeVideoElementsContainer" style={{ visibility: _isAnyoneSharingScreenInRemote ? 'visible' : 'hidden' }} >
+                <div id="largeVideoElementsContainer" style={{ visibility: _isAnyoneSharingScreenInRemote ? 'visible' : 'hidden' }}>
                     <div id="largeVideoBackgroundContainer" />
                     {/*
                      * FIXME: the architecture of elements related to the large
@@ -505,9 +505,11 @@ function _mapStateToProps(state: IReduxState) {
 
         return listRemote;
     };
+    
     const participantsList: Array<IParticipant> = getAllParticipants(state);
     const isTileView = getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
-    const _isAnyoneSharingScreenInRemote = participantsList.filter((item: any) => item.isScreenSharing === true).length > 0;
+    const _isAnyoneSharingScreenInRemote = participantsList.filter((item: IParticipant) => item.id !== localParticipantId
+    ).filter((item: any) => item.isScreenSharing === true).length > 0;
 
     return {
         _userTileViewEnable,
