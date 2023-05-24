@@ -30,7 +30,7 @@ modules_enabled = {
       'bosh';
       's2s_bidi';
       's2s_whitelist';
-      's2soutinjection';
+      's2sout_override';
       'certs_s2soutinjection';
 };
 
@@ -40,10 +40,10 @@ s2s_whitelist = {
     'jitmeet.example.com'; -- unavailable presences back to main room
 };
 
-s2s_connect_overrides = {
-    ["conference.jitmeet.example.com"] = { "127.0.0.1", 5269 }; -- needed for visitors to send messages to main room
-    ["jitmeet.example.com"] = { "127.0.0.1", 5269 }; -- needed for the main room when connecting in to send main participants
-    ["visitors.jitmeet.example.com"] = { "127.0.0.1", 5269 }; -- needed for sending promotion request to visitors.jitmeet.example.com component
+s2sout_override = {
+    ["conference.jitmeet.example.com"] = "tcp://127.0.0.1"5269"; -- needed for visitors to send messages to main room
+    ["jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for the main room when connecting in to send main participants
+    ["visitors.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for sending promotion request to visitors.jitmeet.example.com component
 }
 
 external_service_secret = '__turnSecret__';

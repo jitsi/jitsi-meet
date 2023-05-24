@@ -1,0 +1,12 @@
+diff -r 423f240d1173 core/stanza_router.lua
+--- a/core/stanza_router.lua	Tue Feb 21 10:06:54 2023 +0000
++++ b/core/stanza_router.lua	Wed May 24 11:56:02 2023 -0500
+@@ -207,7 +207,7 @@
+ 	else
+ 		local host_session = hosts[from_host];
+ 		if not host_session then
+-			log("error", "No hosts[from_host] (please report): %s", stanza);
++			--log("error", "No hosts[from_host] (please report): %s", stanza);
+ 		else
+ 			local xmlns = stanza.attr.xmlns;
+ 			stanza.attr.xmlns = nil;
