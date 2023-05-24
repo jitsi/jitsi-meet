@@ -92,9 +92,11 @@ interface IProps {
 
 const MainFilmstrip = (props: IProps) => (
     <span>
-        <Filmstrip
-            { ...props }
-            filmstripType = { FILMSTRIP_TYPE.MAIN } />
+        <div style={{ display: 'none' }}>
+            <Filmstrip
+                {...props}
+                filmstripType={FILMSTRIP_TYPE.MAIN} />
+        </div>
     </span>
 );
 
