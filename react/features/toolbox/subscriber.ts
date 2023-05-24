@@ -64,12 +64,11 @@ const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
             continue;
         }
 
-        if (!(
-            indicatorsRect.top > toolboxRect.bottom
-            || indicatorsRect.right < toolboxRect.left
-            || indicatorsRect.bottom < toolboxRect.top
-            || indicatorsRect.left > toolboxRect.right
-        )) {
+        if (indicatorsRect.top <= toolboxRect.bottom
+            && indicatorsRect.right >= toolboxRect.left
+            && indicatorsRect.bottom >= toolboxRect.top
+            && indicatorsRect.left <= toolboxRect.right
+        ) {
             isIntersecting = true;
             break;
         }
