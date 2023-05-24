@@ -45,7 +45,6 @@ export { default as IconFeedback } from './feedback.svg';
 export { default as IconGear } from './gear.svg';
 export { default as IconGoogle } from './google.svg';
 export { default as IconHangup } from './hangup.svg';
-export { default as IconHangup2 } from './hangup2.svg';
 export { default as IconHelp } from './help.svg';
 export { default as IconHighlight } from './highlight.svg';
 export { default as IconImage } from './image.svg';
@@ -107,3 +106,17 @@ export { default as IconWifi1Bar } from './wifi-1.svg';
 export { default as IconWifi2Bars } from './wifi-2.svg';
 export { default as IconWifi3Bars } from './wifi-3.svg';
 export { default as IconYahoo } from './yahoo.svg';
+
+// Manually Added Icons
+export { default as IconToolbarTile } from './custom-icons/tile.svg';
+export { default as IconToolbarChat } from './custom-icons/chat.svg';
+export { default as IconToolbarHangup } from './custom-icons/hangup.svg';
+export { default as IconToolbarInvite } from './custom-icons/invite.svg';
+export { default as IconToolbarMembers } from './custom-icons/member.svg';
+export { default as IconToolbarSettings } from './custom-icons/settings.svg';
+export { default as IconToolbarMuteMic } from './custom-icons/mute-mic.svg';
+export { default as IconToolbarOnCamera } from './custom-icons/on-camera.svg';
+export { default as IconToolbarDownArrow } from './custom-icons/down-arrow.svg';
+export { default as IconToolbarOffCamera } from './custom-icons/off-camera.svg';
+export { default as IconToolbarUnmuteMic } from './custom-icons/unmute-mic.svg';
+export { default as IconToolbarScreenShare } from './custom-icons/screen-share.svg';
