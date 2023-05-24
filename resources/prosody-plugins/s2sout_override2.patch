@@ -1,14 +1,3 @@
-diff -r 214a679823e8 core/features.lua
---- a/core/features.lua	Mon May 01 15:10:32 2023 +0200
-+++ b/core/features.lua	Wed May 24 11:53:34 2023 -0500
-@@ -4,5 +4,7 @@
- 	available = set.new{
- 		-- mod_bookmarks bundled
- 		"mod_bookmarks";
-+
-+		"s2sout-pre-connect-event";
- 	};
- };
 diff -r 214a679823e8 plugins/mod_s2s.lua
 --- a/plugins/mod_s2s.lua	Mon May 01 15:10:32 2023 +0200
 +++ b/plugins/mod_s2s.lua	Wed May 24 11:53:34 2023 -0500

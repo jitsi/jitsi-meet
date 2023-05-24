@@ -29,7 +29,7 @@ prosodies will be enough for one 10k participants meeting.
 <img src="imgs/visitors-prosody.svg" alt="diagram of a central prosody connected to several visitor prosodies" width="500"/>
 
 # Configuration
-If using older than Prosody 0.12.4 you need to apply the patch - s2sout_override.patch.
+If using older than Prosody 0.12.4 you need to apply the patch - s2sout_override1.patch and s2sout_override2.patch.
 Use the `pre-configure.sh` script to configure your system, passing it the
 number of visitor prosodies to set up.
 `./pre-configure.sh 8`
