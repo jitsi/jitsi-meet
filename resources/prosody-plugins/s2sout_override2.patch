@@ -1,6 +1,6 @@
 diff -r 214a679823e8 plugins/mod_s2s.lua
---- a/plugins/mod_s2s.lua	Mon May 01 15:10:32 2023 +0200
-+++ b/plugins/mod_s2s.lua	Wed May 24 11:53:34 2023 -0500
+--- a/mod_s2s.lua	Mon May 01 15:10:32 2023 +0200
++++ b/mod_s2s.lua	Wed May 24 11:53:34 2023 -0500
 @@ -230,6 +230,10 @@
  			resolver;
  		});
