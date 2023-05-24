@@ -119,9 +119,6 @@ function ReactionsMenuButton({
     if (_reactionsButtonEnabled) {
         content = (
             <ToolboxButtonWithPopup
-                ariaControls = 'reactions-menu-dialog'
-                ariaExpanded = { isOpen }
-                ariaHasPopup = { true }
                 ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
                 onPopoverClose = { closeReactionsMenu }
                 onPopoverOpen = { openReactionsMenu }
@@ -141,13 +138,9 @@ function ReactionsMenuButton({
                     notifyMode = { notifyMode } />)
             : (
                 <ToolboxButtonWithPopup
-                    ariaControls = 'reactions-menu-dialog'
-                    ariaExpanded = { isOpen }
-                    ariaHasPopup = { true }
                     ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
                     icon = { IconArrowUp }
                     iconDisabled = { false }
-                    iconId = 'reactions-menu-button'
                     onPopoverClose = { toggleReactionsMenu }
                     onPopoverOpen = { openReactionsMenu }
                     popoverContent = { reactionsMenu }
