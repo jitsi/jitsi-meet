@@ -35,6 +35,8 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     private static final String TAG = ConnectionService.TAG;
 
+    public static ReactApplicationContext reactContext;
+
     /**
      * Handler for dealing with call state changes. We are acting as a proxy between ConnectionService
      * and other modules such as {@link AudioModeModule}.
@@ -57,6 +59,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     RNConnectionService(ReactApplicationContext reactContext) {
         super(reactContext);
+        this.reactContext = reactContext;
     }
 
     @ReactMethod

@@ -17,8 +17,6 @@ import android.telecom.VideoProfile;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactContext;
@@ -465,9 +463,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         public void emitEvent(
             String eventName,
             @Nullable Object data) {
-            ReactApplication rnApp = (ReactApplication) getApplication().getApplicationContext();
-            ReactInstanceManager rnReactInstanceManager = rnApp.getReactNativeHost().getReactInstanceManager();
-            ReactContext reactContext = rnReactInstanceManager.getCurrentReactContext();
+            ReactContext reactContext = RNConnectionService.reactContext;
 
             if (reactContext != null) {
                 reactContext
@@ -480,16 +476,14 @@ public class ConnectionService extends android.telecom.ConnectionService {
          * Finds a native React module for given class.
          *
          * @param nativeModuleClass the native module's class for which an instance
-         * is to be retrieved from the {@link #(ReactApplication)}.
+         * is to be retrieved from the {@link #(RNConnectionService)}.
          * @return {@link NativeModule} instance for given interface type or
          * {@code null} if no instance for this interface is available, or if
-         * {@link #(ReactApplication)} has not been initialized yet.
+         * {@link #(RNConnectionService)} has not been initialized yet.
          */
         public RNConnectionService getNativeModule(
             Class nativeModuleClass) {
-            ReactApplication rnApp = (ReactApplication) getApplication().getApplicationContext();
-            ReactInstanceManager rnReactInstanceManager = rnApp.getReactNativeHost().getReactInstanceManager();
-            ReactContext reactContext = rnReactInstanceManager.getCurrentReactContext();
+            ReactContext reactContext = RNConnectionService.reactContext;
 
             if (reactContext != null) {
                 reactContext.getNativeModule(nativeModuleClass);
