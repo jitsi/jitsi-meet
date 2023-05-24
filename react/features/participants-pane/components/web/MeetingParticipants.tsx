@@ -113,23 +113,23 @@ function MeetingParticipants({
                 role = 'heading'>
                 { t('participantsPane.title') }
             </span>
-            {visitorsCount > 0 && (
+            {/* {visitorsCount > 0 && (
                 <div className = { cx(styles.heading, styles.headingW) }>
                     {t('participantsPane.headings.visitors', { count: visitorsCount })}
                 </div>
-            )}
-            <div className = { styles.heading }>
+            )} */}
+            {/* <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
-            </div>
-            {showInviteButton && <InviteButton />}
-            <Input
+            </div> */}
+            {/* {showInviteButton && <InviteButton />} */}
+            {/* <Input
                 className = { styles.search }
                 clearable = { true }
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
-                value = { searchString } />
+                value = { searchString } /> */}
             <div>
                 <MeetingParticipantItems
                     isInBreakoutRoom = { isBreakoutRoom }

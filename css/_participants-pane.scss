@@ -1,12 +1,21 @@
 .participants_pane {
+    top: 16px;
+    left: 50%;
+    bottom: 120px;
+    position: absolute;
+    transform: translateX(-50%);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    height: calc(100% - 120px - 10px);
     background-color: $participantsPaneBgColor;
     flex-shrink: 0;
     overflow: hidden;
-    position: relative;
+    
     transition: width .16s ease-in-out;
     width: 315px;
     z-index: $zindex0;
 }
+
 
 .participants_pane-content {
     display: flex;
@@ -14,6 +23,15 @@
     font-weight: 600;
     height: 100%;
     width: 315px;
+
+    .flex-grow {
+        flex-grow: 1;
+    }
+
+    .heading-title {    
+        font-size: 14px;
+        text-transform: capitalize;
+    }
 
     & > *:first-child,
     & > *:last-child {

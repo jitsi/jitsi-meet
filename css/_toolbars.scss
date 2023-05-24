@@ -76,6 +76,10 @@
 
     &.button-with-text.active {
         background-color: #3D3D3D;
+
+        &:hover {
+            background-color: #3D3D3D !important;
+        }
     }
 
     &.button-with-text {
@@ -83,7 +87,8 @@
         display: inline-flex;
         align-items: center;
         padding-right: 16px;
-        &:hover{
+
+        &:hover {
             background-color: #525252;
         }
     }

@@ -139,6 +139,8 @@ const ParticipantsPane = () => {
         <div className = 'participants_pane'>
             <div className = 'participants_pane-content'>
                 <div className = { classes.header }>
+                    <div className='heading-title'>{t('participantsPane.headings.participantsList2')}</div>
+                    <div className='flex-grow' />
                     <ClickableIcon
                         accessibilityLabel = { t('participantsPane.close', 'Close') }
                         icon = { IconCloseLarge }

@@ -778,7 +778,8 @@
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
             "visitors": "Visitors ({{count}})",
-            "waitingLobby": "Waiting in lobby ({{count}})"
+            "waitingLobby": "Waiting in lobby ({{count}})",
+            "participantsList2": "Meeting participants"
         },
         "search": "Search participants",
         "title": "Participants"
