@@ -5,11 +5,9 @@ configured threshold will be just viewers (visitors) and there is no promotion
 mechanism to become a main participant yet.
 
 TODO:
-* Merge messaging between visitor nodes and main conference
 * Polls
-* Raise hand to be promoted to enter the main conference
-* Make sure it works with tenants.
-
+* Speaker stats
+* call duration
 
 # Low-latency conference streaming to very large audiences
 
@@ -31,6 +29,7 @@ prosodies will be enough for one 10k participants meeting.
 <img src="imgs/visitors-prosody.svg" alt="diagram of a central prosody connected to several visitor prosodies" width="500"/>
 
 # Configuration
+If using older than Prosody 0.12.4 you need to apply the patch - s2sout_override1.patch and s2sout_override2.patch.
 Use the `pre-configure.sh` script to configure your system, passing it the
 number of visitor prosodies to set up.
 `./pre-configure.sh 8`
@@ -46,30 +45,30 @@ Setting up configuration for the main prosody is a manual process:
 ```
       "s2s_bidi";
       "certs_s2soutinjection";
-      "s2soutinjection";
+      "s2sout_override";
       "s2s_whitelist";
 ```
 
 - Add the following config also in the general part (matching the number of prosodies you generated config for):
 ```
 -- targets must be IPs, not hostnames
-s2s_connect_overrides = {
-    ["conference.v1.meet.jitsi"] = { "127.0.0.1", 52691 };
-    ["v1.meet.jitsi"] = { "127.0.0.1", 52691 }; -- needed for v1.meet.jitsi->visitors.jitmeet.example.com
-    ["conference.v2.meet.jitsi"] = { "127.0.0.1", 52692 };
-    ["v2.meet.jitsi"] = { "127.0.0.1", 52692 };
-    ["conference.v3.meet.jitsi"] = { "127.0.0.1", 52693 };
-    ["v3.meet.jitsi"] = { "127.0.0.1", 52693 };
-    ["conference.v4.meet.jitsi"] = { "127.0.0.1", 52694 };
-    ["v4.meet.jitsi"] = { "127.0.0.1", 52694 };
-    ["conference.v5.meet.jitsi"] = { "127.0.0.1", 52695 };
-    ["v5.meet.jitsi"] = { "127.0.0.1", 52695 };
-    ["conference.v6.meet.jitsi"] = { "127.0.0.1", 52696 };
-    ["v6.meet.jitsi"] = { "127.0.0.1", 52696 };
-    ["conference.v7.meet.jitsi"] = { "127.0.0.1", 52697 };
-    ["v7.meet.jitsi"] = { "127.0.0.1", 52697 };
-    ["conference.v8.meet.jitsi"] = { "127.0.0.1", 52698 };
-    ["v8.meet.jitsi"] = { "127.0.0.1", 52698 };
+s2sout_override = {
+    ["conference.v1.meet.jitsi"] = "tcp://127.0.0.1:52691";
+    ["v1.meet.jitsi"] = "tcp://127.0.0.1:52691"; -- needed for v1.meet.jitsi->visitors.jitmeet.example.com
+    ["conference.v2.meet.jitsi"] = "tcp://127.0.0.1:52692";
+    ["v2.meet.jitsi"] = "tcp://127.0.0.1:52692";
+    ["conference.v3.meet.jitsi"] = "tcp://127.0.0.1:52693";
+    ["v3.meet.jitsi"] = "tcp://127.0.0.1:52693";
+    ["conference.v4.meet.jitsi"] = "tcp://127.0.0.1:52694";
+    ["v4.meet.jitsi"] = "tcp://127.0.0.1:52694";
+    ["conference.v5.meet.jitsi"] = "tcp://127.0.0.1:52695";
+    ["v5.meet.jitsi"] = "tcp://127.0.0.1:52695";
+    ["conference.v6.meet.jitsi"] = "tcp://127.0.0.1:52696";
+    ["v6.meet.jitsi"] = "tcp://127.0.0.1:52696";
+    ["conference.v7.meet.jitsi"] = "tcp://127.0.0.1:52697";
+    ["v7.meet.jitsi"] = "tcp://127.0.0.1:52697";
+    ["conference.v8.meet.jitsi"] = "tcp://127.0.0.1:52698";
+    ["v8.meet.jitsi"] = "tcp://127.0.0.1:52698";
 }
 -- allowed list of server-2-server connections
 s2s_whitelist = {
