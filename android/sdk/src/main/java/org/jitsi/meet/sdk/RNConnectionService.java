@@ -10,14 +10,20 @@ import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
+
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -35,8 +41,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     private static final String TAG = ConnectionService.TAG;
 
-    public static ReactApplicationContext reactContext;
-
+    private static RNConnectionService sRNConnectionServiceInstance;
     /**
      * Handler for dealing with call state changes. We are acting as a proxy between ConnectionService
      * and other modules such as {@link AudioModeModule}.
@@ -59,7 +64,11 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     RNConnectionService(ReactApplicationContext reactContext) {
         super(reactContext);
-        this.reactContext = reactContext;
+        sRNConnectionServiceInstance = this;
+    }
+
+    public static RNConnectionService getInstance() {
+        return sRNConnectionServiceInstance;
     }
 
     @ReactMethod
@@ -228,5 +237,43 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     interface CallAudioStateListener {
         void onCallAudioStateChange(android.telecom.CallAudioState callAudioState);
+    }
+
+    /**
+     * Helper function to send an event to JavaScript.
+     *
+     * @param eventName {@code String} containing the event name.
+     * @param data {@code Object} optional ancillary data for the event.
+     */
+    public void emitEvent(
+        String eventName,
+        @Nullable Object data) {
+        ReactContext reactContext = getReactApplicationContext();
+
+        if (reactContext != null) {
+            reactContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, data);
+        }
+    }
+
+    /**
+     * Finds a native React module for given class.
+     *
+     * @param nativeModuleClass the native module's class for which an instance
+     * is to be retrieved from the {@link #(RNConnectionService)}.
+     * @return {@link NativeModule} instance for given interface type or
+     * {@code null} if no instance for this interface is available, or if
+     * {@link #(RNConnectionService)} has not been initialized yet.
+     */
+    public RNConnectionService getNativeModule(
+        Class nativeModuleClass) {
+        ReactContext reactContext = getReactApplicationContext();
+
+        if (reactContext != null) {
+            reactContext.getNativeModule(nativeModuleClass);
+        }
+
+        return null;
     }
 }

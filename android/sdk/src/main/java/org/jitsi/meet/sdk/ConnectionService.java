@@ -362,7 +362,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onDisconnect " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            emitEvent(
+            RNConnectionService.getInstance().emitEvent(
                     "org.jitsi.meet:features/connection_service#disconnect",
                     data);
             // The JavaScript side will not go back to the native with
@@ -382,7 +382,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             JitsiMeetLogger.i(TAG + " onAbort " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
-            emitEvent(
+            RNConnectionService.getInstance().emitEvent(
                     "org.jitsi.meet:features/connection_service#abort",
                     data);
             // The JavaScript side will not go back to the native with
@@ -411,7 +411,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public void onCallAudioStateChanged(CallAudioState state) {
             JitsiMeetLogger.d(TAG + " onCallAudioStateChanged: " + state);
-            RNConnectionService module = getNativeModule(RNConnectionService.class);
+            RNConnectionService module = RNConnectionService.getInstance().getNativeModule(RNConnectionService.class);
             if (module != null) {
                 module.onCallAudioStateChange(state);
             }
@@ -452,44 +452,6 @@ public class ConnectionService extends android.telecom.ConnectionService {
             return String.format(
                     "ConnectionImpl[address=%s, uuid=%s]@%d",
                     getAddress(), getCallUUID(), hashCode());
-        }
-
-        /**
-         * Helper function to send an event to JavaScript.
-         *
-         * @param eventName {@code String} containing the event name.
-         * @param data {@code Object} optional ancillary data for the event.
-         */
-        public void emitEvent(
-            String eventName,
-            @Nullable Object data) {
-            ReactContext reactContext = RNConnectionService.reactContext;
-
-            if (reactContext != null) {
-                reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, data);
-            }
-        }
-
-        /**
-         * Finds a native React module for given class.
-         *
-         * @param nativeModuleClass the native module's class for which an instance
-         * is to be retrieved from the {@link #(RNConnectionService)}.
-         * @return {@link NativeModule} instance for given interface type or
-         * {@code null} if no instance for this interface is available, or if
-         * {@link #(RNConnectionService)} has not been initialized yet.
-         */
-        public RNConnectionService getNativeModule(
-            Class nativeModuleClass) {
-            ReactContext reactContext = RNConnectionService.reactContext;
-
-            if (reactContext != null) {
-                reactContext.getNativeModule(nativeModuleClass);
-            }
-
-            return null;
         }
     }
 }
