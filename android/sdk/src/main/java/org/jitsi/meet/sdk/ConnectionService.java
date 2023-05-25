@@ -14,15 +14,11 @@ import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 

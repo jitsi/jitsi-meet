@@ -23,7 +23,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
