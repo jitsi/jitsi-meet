@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
+import { IconArrowUp, IconFaceSmile, IconToolbarThreeDots } from '../../../base/icons/svg';
 import AbstractButton, { type IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import ToolboxButtonWithPopup from '../../../base/toolbox/components/web/ToolboxButtonWithPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -145,7 +145,7 @@ function ReactionsMenuButton({
                     ariaExpanded = { isOpen }
                     ariaHasPopup = { true }
                     ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                    icon = { IconArrowUp }
+                    icon = { IconToolbarThreeDots }
                     iconDisabled = { false }
                     iconId = 'reactions-menu-button'
                     onPopoverClose = { toggleReactionsMenu }

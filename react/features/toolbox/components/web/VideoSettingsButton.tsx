@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg';
+import { IconArrowUp, IconToolbarThreeDots } from '../../../base/icons/svg';
 import ToolboxButtonWithIcon from '../../../base/toolbox/components/web/ToolboxButtonWithIcon';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import { toggleVideoSettings } from '../../../settings/actions';
@@ -141,7 +141,7 @@ class VideoSettingsButton extends Component<IProps> {
                     ariaHasPopup = { true }
                     ariaLabel = { this.props.t('toolbar.videoSettings') }
                     buttonKey = { buttonKey }
-                    icon = { IconArrowUp }
+                    icon = { IconToolbarThreeDots }
                     iconDisabled = { this._isIconDisabled() }
                     iconId = 'video-settings-button'
                     iconTooltip = { t('toolbar.videoSettings') }

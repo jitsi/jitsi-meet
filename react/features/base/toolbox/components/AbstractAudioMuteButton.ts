@@ -1,4 +1,4 @@
-import { IconMic, IconMicSlash } from '../../icons/svg';
+import { IconMic, IconMicSlash, IconToolbarMuteMic, IconToolbarUnmuteMic } from '../../icons/svg';
 
 import AbstractButton, { IProps } from './AbstractButton';
 
@@ -8,8 +8,8 @@ import AbstractButton, { IProps } from './AbstractButton';
 export default class AbstractAudioMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconMic;
-    toggledIcon = IconMicSlash;
+    icon = IconToolbarUnmuteMic;
+    toggledIcon = IconToolbarMuteMic;
 
     /**
      * Handles clicking / pressing the button, and toggles the audio mute state

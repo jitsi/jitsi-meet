@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconScreenshare, IconStopScreenshare } from '../../../base/icons/svg';
+import { IconScreenshare, IconStopScreenshare, IconToolbarScreenShare } from '../../../base/icons/svg';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isScreenVideoShared } from '../../../screen-share/functions';
@@ -28,7 +28,7 @@ class ShareDesktopButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
     label = 'toolbar.startScreenSharing';
-    icon = IconScreenshare;
+    icon = IconToolbarScreenShare;
     toggledIcon = IconStopScreenshare;
     toggledLabel = 'toolbar.stopScreenSharing';
 

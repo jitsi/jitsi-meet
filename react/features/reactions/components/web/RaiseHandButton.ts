@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconRaiseHand } from '../../../base/icons/svg';
+import { IconRaiseHand, IconToolbarRaiseHand } from '../../../base/icons/svg';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
@@ -24,7 +24,7 @@ interface IProps extends AbstractButtonProps {
 class RaiseHandButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
-    icon = IconRaiseHand;
+    icon = IconToolbarRaiseHand;
     label = 'toolbar.raiseHand';
     toggledLabel = 'toolbar.lowerYourHand';
     tooltip = 'toolbar.raiseHand';

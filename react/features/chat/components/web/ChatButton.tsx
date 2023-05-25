@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconMessage } from '../../../base/icons/svg';
+import { IconMessage, IconToolbarChat } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import ChatCounter from './ChatCounter';
@@ -25,7 +25,7 @@ interface IProps extends AbstractButtonProps {
 class ChatButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.openChat';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeChat';
-    icon = IconMessage;
+    icon = IconToolbarChat;
     label = 'toolbar.openChat';
     toggledLabel = 'toolbar.closeChat';
     tooltip = 'toolbar.openChat';

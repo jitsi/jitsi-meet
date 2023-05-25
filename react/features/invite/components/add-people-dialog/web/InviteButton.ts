@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createToolbarEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { translate } from '../../../../base/i18n/functions';
-import { IconAddUser } from '../../../../base/icons/svg';
+import { IconAddUser, IconToolbarInvite } from '../../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../../base/toolbox/components/AbstractButton';
 import { beginAddPeople } from '../../../actions.any';
 
@@ -12,7 +12,7 @@ import { beginAddPeople } from '../../../actions.any';
  */
 class InviteButton extends AbstractButton<AbstractButtonProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.invite';
-    icon = IconAddUser;
+    icon = IconToolbarInvite;
     label = 'toolbar.invite';
     tooltip = 'toolbar.invite';
 

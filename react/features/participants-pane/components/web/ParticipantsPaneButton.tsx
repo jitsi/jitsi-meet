@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconUsers } from '../../../base/icons/svg';
+import { IconUsers, IconToolbarMembers } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import ParticipantsCounter from './ParticipantsCounter';
@@ -25,7 +25,7 @@ interface IProps extends AbstractButtonProps {
 class ParticipantsPaneButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.participants';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
-    icon = IconUsers;
+    icon = IconToolbarMembers;
     label = 'toolbar.participants';
     tooltip = 'toolbar.participants';
     toggledTooltip = 'toolbar.closeParticipantsPane';

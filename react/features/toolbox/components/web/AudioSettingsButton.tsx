@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { IconArrowUp } from '../../../base/icons/svg';
+import { IconArrowUp, IconToolbarThreeDots } from '../../../base/icons/svg';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import ToolboxButtonWithIcon from '../../../base/toolbox/components/web/ToolboxButtonWithIcon';
 import { toggleAudioSettings } from '../../../settings/actions';
@@ -125,7 +125,7 @@ class AudioSettingsButton extends Component<IProps> {
                     ariaHasPopup = { true }
                     ariaLabel = { t('toolbar.audioSettings') }
                     buttonKey = { buttonKey }
-                    icon = { IconArrowUp }
+                    icon = { IconToolbarThreeDots }
                     iconDisabled = { settingsDisabled }
                     iconId = 'audio-settings-button'
                     iconTooltip = { t('toolbar.audioSettings') }

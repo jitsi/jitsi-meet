@@ -1,4 +1,4 @@
-import { IconVideo, IconVideoOff } from '../../icons/svg';
+import { IconVideo, IconVideoOff, IconToolbarOnCamera, IconToolbarOffCamera } from '../../icons/svg';
 
 import AbstractButton, { IProps } from './AbstractButton';
 
@@ -8,8 +8,8 @@ import AbstractButton, { IProps } from './AbstractButton';
 export default class AbstractVideoMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconVideo;
-    toggledIcon = IconVideoOff;
+    icon = IconToolbarOnCamera;
+    toggledIcon = IconToolbarOffCamera;
 
     /**
      * Handles clicking / pressing the button, and toggles the video mute state
