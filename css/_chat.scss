@@ -21,9 +21,12 @@
 .chat-panel {
     display: flex;
     flex-direction: column;
-    // extract header + tabs height
-    // height: calc(100% - 119px);
-    height: 100%
+    // extract header + tabs height    
+    height: 100%;
+
+    @media only screen and (max-width: 768px) {
+        height: calc(100% - 70px);
+    }
 }
 
 .chat-panel-no-tabs {
@@ -92,6 +95,10 @@
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
+
+    @media only screen and (min-width: 768px){
+        display: none;
+    }
 
     .jitsi-icon {
         cursor: pointer;

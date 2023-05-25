@@ -64,10 +64,10 @@ class Chat extends AbstractChat<IProps> {
                 className = 'sideToolbarContainer'
                 id = 'sideToolbarContainer'
                 onKeyDown = { this._onEscClick } >
-                {/* <ChatHeader
+                <ChatHeader
                     className = 'chat-header'
                     isPollsEnabled = { _isPollsEnabled }
-                    onCancel = { this._onToggleChat } /> */}
+                    onCancel = { this._onToggleChat } />
                 { _showNamePrompt
                     ? <DisplayNameForm isPollsEnabled = { _isPollsEnabled } />
                     : this._renderChat() }
