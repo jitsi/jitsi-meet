@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import { IconCloseLarge, IconHangup } from '../../../base/icons/svg';
+import { IconCloseLarge, IconHangup, IconToolbarHangup } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 /**
@@ -25,7 +25,7 @@ interface IProps extends AbstractButtonProps {
  */
 class HangupToggleButton extends AbstractButton<IProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
-    icon = IconHangup;
+    icon = IconToolbarHangup;
     label = 'toolbar.hangup';
     toggledIcon = IconCloseLarge;
     toggledLabel = 'toolbar.hangup';
