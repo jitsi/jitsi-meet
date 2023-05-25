@@ -19,22 +19,86 @@ interface INode {
     isVideoPlayable: boolean;
 }
 
-const elementPositionList = [
-    { x: 538, y: 440 },
-    { x: 658, y: 440 },
-    { x: 777, y: 440 },
-    { x: 397, y: 457 },
-    { x: 950, y: 457 },
-    { x: 128, y: 588 },
-    { x: 128, y: 588 },
-    { x: 200, y: 237 },
-    { x: 1282, y: 621 },
-    { x: 1162, y: 178 },
-    { x: 1350, y: 132 },
-    { x: 656, y: 130 },
-    { x: 768, y: 130 },
-    { x: 892, y: 132 },
-];
+const NodeSizes = {
+    width: 78,
+    height: 78,
+}
+
+const elementsInRow = [
+    7, 15, 23, 28, 40, 70, 100, 200, 350, 450
+]
+let rowPositions: Array<any> = []
+
+const getTheta = (totalElementsInARow: number) => {
+    const frags = 360 / totalElementsInARow;
+    let theta: any = [];
+    for (let i = 0; i <= totalElementsInARow; i++) {
+        theta.push((frags / 180) * i * Math.PI);
+    }
+    return theta
+}
+
+const getEachRowCords = (totalElementsInARow: number, rx: number, ry: number) => {
+    const theta = getTheta(totalElementsInARow)
+    const array: Array<any> = []
+    let main: any = document.getElementById('react')
+    let mainHeight = parseInt(window.getComputedStyle(main).height.slice(0, -2));
+    let mainWidth = parseInt(window.getComputedStyle(main).width.slice(0, -2));
+    for (let i = 0; i < totalElementsInARow; i++) {
+        let x = Math.round(rx * (Math.cos(theta[i])))
+        let y = Math.round(ry * (Math.sin(theta[i])))
+        let top = (mainHeight / 2) - y
+        let left = (mainWidth / 2) + x
+        array.push({ x, y, top, left })
+    }
+    return array
+};
+
+const getTotalRows = (totalElements: number) => {
+    let sum = 0
+    for (let i = 1; i <= elementsInRow.length; i++) {
+        sum += elementsInRow[i - 1]
+        if (sum >= totalElements)
+            return i
+    }
+    return 1
+}
+
+const generateRows = (list: Array<any>) => {
+    const totalRows: number = getTotalRows(list.length)
+    let rows: Array<any> = []
+
+    let elementIndex: number = 0
+    for (let i = 0; i < totalRows; i++) {
+        let eachRow: Array<any> = []
+        for (let j = 0; j < elementsInRow[i]; j++) {
+            if (elementIndex == list.length) break
+            let item = list[elementIndex]
+            eachRow.push(item)
+            elementIndex++
+        }
+        rows.push(eachRow)
+    }
+
+    // Generate round positions
+    let radiusRow: Array<any> = []
+    let rx = 180, ry = 90
+    let increaseX = NodeSizes.width + 20
+    let increaseY = NodeSizes.height + 20
+
+    for (let i = 0; i < rows.length; i++) {
+        radiusRow.push({ x: rx, y: ry })
+        rx += increaseX
+        ry += increaseY
+    }
+
+    rowPositions = []
+    rows.forEach((eachRow: Array<any>, index: number) => {
+        rowPositions.push(getEachRowCords(eachRow.length, radiusRow[index].x, radiusRow[index].y))
+    })
+
+    return rows
+}
 
 const getRenderedChild = ({
     x,
@@ -88,26 +152,35 @@ const getRenderedChild = ({
 class RenderSpeakerNodes extends Component<Props> {
     render() {
         const { list } = this.props;
-        return list.map((item: any, index) => {
-            const {
-                isAudioMuted,
-                video,
-                isVideoPlayable,
-                displayName,
-                avatarURL,
-            } = item;
-            const { x, y } = elementPositionList[index];
+        const rows = generateRows(list)
 
-            return getRenderedChild({
-                x,
-                y,
-                name: displayName ?? item.name,
-                url: avatarURL,
-                isAudioMuted,
-                video,
-                isVideoPlayable,
-            });
-        });
+        return rows.map((eachRow: Array<any>, rowIndex: number) => {
+            return <span id={'rendered-row-' + (rowIndex + 1)}>
+                {eachRow.map((item: any, itemIndex: number) => {
+                    const {
+                        isVideoPlayable,
+                        isAudioMuted,
+                        displayName,
+                        avatarURL,
+                        video,
+                    } = item;
+
+                    const top = rowPositions[rowIndex][itemIndex].top
+                    const left = rowPositions[rowIndex][itemIndex].left
+                    return getRenderedChild({
+                        video,
+                        y: top,
+                        x: left,
+                        isAudioMuted,
+                        url: avatarURL,
+                        isVideoPlayable,
+                        name: displayName ?? item.name,
+                    });
+                })}
+            </span>
+        })
+
+
     }
 }
 
@@ -131,8 +204,8 @@ const RelativeContainer = styled("div")({
 });
 
 const UserNode = styled("div")({
-    width: 78,
-    height: 78,
+    width: NodeSizes.width,
+    height: NodeSizes.height,
     fontSize: 28,
     display: "flex",
     fontWeight: "bold",
