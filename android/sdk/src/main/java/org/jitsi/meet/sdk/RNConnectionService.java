@@ -66,7 +66,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
         sRNConnectionServiceInstance = this;
     }
 
-    public static RNConnectionService getInstance() {
+    static RNConnectionService getInstance() {
         return sRNConnectionServiceInstance;
     }
 
@@ -244,7 +244,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
      * @param eventName {@code String} containing the event name.
      * @param data {@code Object} optional ancillary data for the event.
      */
-    public void emitEvent(
+    void emitEvent(
         String eventName,
         @Nullable Object data) {
         ReactContext reactContext = getReactApplicationContext();
