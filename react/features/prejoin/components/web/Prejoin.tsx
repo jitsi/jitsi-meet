@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -127,6 +127,8 @@ interface IProps {
      * The JitsiLocalTrack to display.
      */
     videoTrack?: Object;
+
+    totalRemoteParticipants: number;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -209,12 +211,34 @@ const Prejoin = ({
     showUnsafeRoomWarning,
     unsafeRoomConsent,
     updateSettings: dispatchUpdateSettings,
-    videoTrack
+    videoTrack,
+    totalRemoteParticipants
 }: IProps) => {
+    const [loadingParticipants, setLoadingParticipants] = useState(true);
+    const [allowedUsers, setAllowedUsers] = useState(10);
     const showDisplayNameField = useRef(canEditDisplayName || showErrorOnJoin);
     const [ showJoinByPhoneButtons, setShowJoinByPhoneButtons ] = useState(false);
     const { classes } = useStyles();
     const { t } = useTranslation();
+
+    // console.debug('>> participants: ', totalRemoteParticipants)
+
+    // Write api for allowed user detection..
+    // useEffect(() => {
+    //     let token = ''
+    //     let url = '--'
+    //     fetch(url, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': token
+    //         },
+    //     })
+    //         .then((response: any) => response.json())
+    //         .then((response: any) => {
+    //             setAllowedUsers(response.data)
+    //             setLoadingParticipants(false)
+    //         });
+    // }, [])
 
     /**
      * Handler for the join button.
@@ -222,10 +246,20 @@ const Prejoin = ({
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    const onJoinButtonClick = () => {
+    const onJoinButtonClick = () => {        
+          
         if (showErrorOnJoin) {
             return;
-        }
+        }        
+
+        // if (loadingParticipants)
+        //     return false
+
+        // if (totalRemoteParticipants >= allowedUsers) {
+        //     window.alert('Participants limit is reached!')
+        //     return
+        // }
+
         joinConference();
     };
 
@@ -456,8 +490,11 @@ function mapStateToProps(state: IReduxState) {
     const { room } = state['features/base/conference'];
     const { enableInsecureRoomNameWarning = false } = state['features/base/config'];
     const { unsafeRoomConsent } = state['features/base/premeeting'];
+    const { remote } = state['features/base/participants']
+    const totalRemoteParticipants: number = Array.from(remote).length 
 
     return {
+        totalRemoteParticipants,
         canEditDisplayName: isPrejoinDisplayNameVisible(state),
         deviceStatusVisible: isDeviceStatusVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
