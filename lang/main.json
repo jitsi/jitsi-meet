@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
-        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "confirmAddLink": "Do you want to add a link to this event?",
         "error": {
             "appConfiguration": "Calendar integration is not properly configured.",
             "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
@@ -469,7 +469,7 @@
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from Meta Weine",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -724,7 +724,7 @@
         "noiseSuppressionFailedTitle": "Failed to start noise suppression",
         "noiseSuppressionNoTrackDescription": "Please unmute your microphone first.",
         "noiseSuppressionStereoDescription": "Stereo audio noise suppression is not currently supported.",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Meta Weine client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "participantWantsToJoin": "Wants to join the meeting",
@@ -1421,13 +1421,13 @@
         "headerSubtitle": "Secure and high quality meetings",
         "headerTitle": "Meta Weine",
         "info": "Dial-in info",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "Meta Wiene on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",
         "logo": {
             "calendar": "Calendar logo",
             "desktopPreviewThumbnail": "Desktop preview thumbnail",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "Meta Weine logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
