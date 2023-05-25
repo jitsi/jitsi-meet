@@ -255,24 +255,4 @@ class RNConnectionService extends ReactContextBaseJavaModule {
                 .emit(eventName, data);
         }
     }
-
-    /**
-     * Finds a native React module for given class.
-     *
-     * @param nativeModuleClass the native module's class for which an instance
-     * is to be retrieved from the {@link #(RNConnectionService)}.
-     * @return {@link NativeModule} instance for given interface type or
-     * {@code null} if no instance for this interface is available, or if
-     * {@link #(RNConnectionService)} has not been initialized yet.
-     */
-    public RNConnectionService getNativeModule(
-        Class nativeModuleClass) {
-        ReactContext reactContext = getReactApplicationContext();
-
-        if (reactContext != null) {
-            reactContext.getNativeModule(nativeModuleClass);
-        }
-
-        return null;
-    }
 }

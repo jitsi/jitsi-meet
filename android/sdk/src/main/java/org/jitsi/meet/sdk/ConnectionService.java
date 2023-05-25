@@ -407,7 +407,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public void onCallAudioStateChanged(CallAudioState state) {
             JitsiMeetLogger.d(TAG + " onCallAudioStateChanged: " + state);
-            RNConnectionService module = RNConnectionService.getInstance().getNativeModule(RNConnectionService.class);
+            RNConnectionService module = RNConnectionService.getInstance();
             if (module != null) {
                 module.onCallAudioStateChange(state);
             }
