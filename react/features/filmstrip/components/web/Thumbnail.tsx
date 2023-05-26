@@ -748,7 +748,7 @@ class Thumbnail extends Component<IProps, IState> {
     _onClick() {
         const { _participant, dispatch, _stageFilmstripLayout } = this.props;
         const { id, pinned } = _participant;
-
+        return;
         if (_stageFilmstripLayout) {
             dispatch(togglePinStageParticipant(id));
         } else {
