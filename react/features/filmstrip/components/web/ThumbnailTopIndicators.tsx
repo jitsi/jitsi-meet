@@ -142,7 +142,7 @@ const ThumbnailTopIndicators = ({
                 </div>
             )}
         </div>
-        <div className = { styles.container }>
+        <div style={{ display: 'none' }} className={styles.container}>
             <VideoMenuTriggerButton
                 hidePopover = { hidePopover }
                 local = { local }
