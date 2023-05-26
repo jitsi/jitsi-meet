@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import { styled } from '@mui/material'
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
@@ -126,9 +127,7 @@ interface IProps {
     /**
      * The JitsiLocalTrack to display.
      */
-    videoTrack?: Object;
-
-    totalRemoteParticipants: number;
+    videoTrack?: Object;    
 }
 
 const useStyles = makeStyles()(theme => {
@@ -211,17 +210,13 @@ const Prejoin = ({
     showUnsafeRoomWarning,
     unsafeRoomConsent,
     updateSettings: dispatchUpdateSettings,
-    videoTrack,
-    totalRemoteParticipants
+    videoTrack    
 }: IProps) => {
-    const [loadingParticipants, setLoadingParticipants] = useState(true);
-    const [allowedUsers, setAllowedUsers] = useState(10);
+    const [participantError, setParticipantError] = useState('')
     const showDisplayNameField = useRef(canEditDisplayName || showErrorOnJoin);
     const [ showJoinByPhoneButtons, setShowJoinByPhoneButtons ] = useState(false);
     const { classes } = useStyles();
     const { t } = useTranslation();
-
-    // console.debug('>> participants: ', totalRemoteParticipants)
 
     // Write api for allowed user detection..
     // useEffect(() => {
@@ -235,8 +230,7 @@ const Prejoin = ({
     //     })
     //         .then((response: any) => response.json())
     //         .then((response: any) => {
-    //             setAllowedUsers(response.data)
-    //             setLoadingParticipants(false)
+    //             setParticipantError(response.message)    
     //         });
     // }, [])
 
@@ -247,18 +241,10 @@ const Prejoin = ({
      * @returns {void}
      */
     const onJoinButtonClick = () => {        
-          
-        if (showErrorOnJoin) {
+        
+        if (showErrorOnJoin || participantError) {
             return;
-        }        
-
-        // if (loadingParticipants)
-        //     return false
-
-        // if (totalRemoteParticipants >= allowedUsers) {
-        //     window.alert('Participants limit is reached!')
-        //     return
-        // }
+        }
 
         joinConference();
     };
@@ -404,6 +390,9 @@ const Prejoin = ({
             title = { t('prejoin.joinMeeting') }
             videoMuted = { !showCameraPreview }
             videoTrack = { videoTrack }>
+            {participantError &&
+                <ErrorLabel>{participantError}</ErrorLabel>
+            }
             <div
                 className = { classes.inputContainer }
                 data-testid = 'prejoin.screen'>
@@ -489,12 +478,9 @@ function mapStateToProps(state: IReduxState) {
     const { joiningInProgress } = state['features/prejoin'];
     const { room } = state['features/base/conference'];
     const { enableInsecureRoomNameWarning = false } = state['features/base/config'];
-    const { unsafeRoomConsent } = state['features/base/premeeting'];
-    const { remote } = state['features/base/participants']
-    const totalRemoteParticipants: number = Array.from(remote).length 
+    const { unsafeRoomConsent } = state['features/base/premeeting'];    
 
-    return {
-        totalRemoteParticipants,
+    return {        
         canEditDisplayName: isPrejoinDisplayNameVisible(state),
         deviceStatusVisible: isDeviceStatusVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
@@ -518,5 +504,11 @@ const mapDispatchToProps = {
     setJoinByPhoneDialogVisiblity: setJoinByPhoneDialogVisiblityAction,
     updateSettings
 };
+
+const ErrorLabel = styled('div')({
+    fontSize: 14,
+    color: 'white',    
+    paddingBottom: 8
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(Prejoin);
