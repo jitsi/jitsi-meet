@@ -207,14 +207,15 @@ const UserNode = styled("div")({
     width: NodeSizes.width,
     height: NodeSizes.height,
     fontSize: 28,
+    color: "#fff",
     display: "flex",
     fontWeight: "bold",
     borderRadius: "50%",
-    position: "absolute",
     alignItems: "center",
-    color: "#fff",
+    position: "absolute",
     justifyContent: "center",
     border: "2px solid white",
+    boxShadow: '0px 0px 8px gray',
     transform: "translate(-50%, -50%)",
     "& > img": {
         width: "100%",
@@ -225,16 +226,19 @@ const UserNode = styled("div")({
 
 const CircleShapeContainer = styled("div")({
     right: 0,
+    width: 8,
     bottom: 0,
-    width: 20,
-    height: 20,
+    height: 8,
     padding: 8,
     display: "flex",
-    position: "absolute",
     borderRadius: "50%",
+    position: "absolute",
     alignItems: "center",
     justifyContent: "center",
     background: "rgba(0, 0, 0, 0.7)",
+    "& svg": {
+        height: 18
+    }
 });
 
 export default RenderSpeakerNodes;
