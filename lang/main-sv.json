@@ -543,6 +543,7 @@
         "toggleScreensharing": "Växla mellan kamera och skärmdelning",
         "toggleShortcuts": "Visa eller dölj kortkommandon",
         "videoMute": "Aktivera / inaktivera din kamera"
+        "whiteboard": "Visa / dölj whiteboardtavlan"
     },
     "largeVideo": {
         "screenIsShared": "Du delar din skärm",
