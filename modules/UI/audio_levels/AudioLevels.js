@@ -1,6 +1,16 @@
+/* global interfaceConfig */
+const interfaceConfig = {
+    AUDIO_LEVEL_PRIMARY_COLOR: '#FF0000',
+    AUDIO_LEVEL_SECONDARY_COLOR: '#00FF00',
+    // Other configuration properties...
+};
+
 // Importing the UIUtil module from '../util/UIUtil'
 import UIUtil from '../util/UIUtil';
 
+/**
+ * Responsible for drawing audio levels.
+ */
 // Defining the AudioLevels object
 const AudioLevels = {
     // Function to update the audio level for a large video element
@@ -34,14 +44,14 @@ const AudioLevels = {
         // Defining the internal shadow properties
         const int = {
             level: level > 0.15 ? 20 : 0, // Setting the level based on the audio level threshold
-            color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR, // Using the primary audio level color from interfaceConfig
+            color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR, // Using the primary audio level color
             blur: 0 // Initializing the blur value
         };
 
         // Defining the external shadow properties
         const ext = {
             level: parseFloat(((int.level * scale * level) + int.level).toFixed(0)), // Calculating the external shadow level
-            color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR, // Using the secondary audio level color from interfaceConfig
+            color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR, // Using the secondary audio level color
             blur: 0 // Initializing the blur value
         };
 
@@ -59,5 +69,4 @@ const AudioLevels = {
     }
 };
 
-// Exporting the AudioLevels object as the default export
 export default AudioLevels;
