@@ -7,8 +7,6 @@ import { conferenceLeft, setPassword } from '../base/conference/actions';
 import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
 import { IJitsiConference } from '../base/conference/reducer';
 import { hideDialog, openDialog } from '../base/dialog/actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { SecurityDialog } from '../security/components/security-dialog';
 
 import PasswordRequiredPrompt from './components/PasswordRequiredPrompt';

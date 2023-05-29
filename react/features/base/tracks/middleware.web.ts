@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { IStore } from '../../app/types';
 import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
@@ -133,7 +135,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _handleNoDataFromSourceErrors(store: IStore, action: any) {
+function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
     const { getState, dispatch } = store;
 
     const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);

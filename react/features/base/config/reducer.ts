@@ -43,20 +43,17 @@ const INITIAL_NON_RN_STATE: IConfig = {
  * @type {Object}
  */
 const INITIAL_RN_STATE: IConfig = {
-    analytics: {},
-
     // FIXME: Mobile codecs should probably be configurable separately, rather
     // FIXME: than requiring this override here...
 
-    // TODO: Remove comments later, after next release, so that the fix is applied
     p2p: {
-        // disabledCodec: 'vp9',
-        // preferredCodec: 'vp8'
+        disabledCodec: 'vp9',
+        preferredCodec: 'h264'
     },
 
     videoQuality: {
-        // disabledCodec: 'vp9',
-        // preferredCodec: 'vp8'
+        disabledCodec: 'vp9',
+        preferredCodec: 'vp8'
     }
 };
 
@@ -64,7 +61,7 @@ const INITIAL_RN_STATE: IConfig = {
  * Mapping between old configs controlling the conference info headers visibility and the
  * new configs. Needed in order to keep backwards compatibility.
  */
-const CONFERENCE_HEADER_MAPPING: any = {
+const CONFERENCE_HEADER_MAPPING = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
@@ -388,9 +385,10 @@ function _translateLegacyConfig(oldValue: IConfig) {
             } else {
                 newValue.conferenceInfo.alwaysVisible
                     = (newValue.conferenceInfo.alwaysVisible ?? [])
-                    .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    .filter(c => !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = (newValue.conferenceInfo.autoHide ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.autoHide ?? []).filter(c =>
+                        !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
             }
         });
     }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='external_api.js' async></script>
+        <style>html, body, #jaas-container { height: 100%; }</style>
+        <script type="text/javascript">
+            function getRoomName(pathname) {
+                const contextRootEndIndex = pathname.lastIndexOf('/');
+
+                return pathname.substring(contextRootEndIndex + 1);
+            }
+            window.onload = () => {
+                const jaasJwt = <!--#include virtual="/jaas-jwt" -->;
+                const api = new JitsiMeetExternalAPI(
+                    window.location.host, {
+                        roomName: `${jaasJwt.tenant}/${jaasJwt.confId}`,
+                        parentNode: document.querySelector('#jaas-container'),
+                        jwt: jaasJwt.token,
+                        e2eeKey: jaasJwt.e2eeKey
+                    });
+                api.addListener('videoConferenceJoined', () => {
+                    if (jaasJwt.e2eeKey) {
+                        console.info('Toggling e2ee on!')
+                        api.executeCommand('toggleE2EE', true);
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div id="jaas-container" />
+    </body>
+</html>

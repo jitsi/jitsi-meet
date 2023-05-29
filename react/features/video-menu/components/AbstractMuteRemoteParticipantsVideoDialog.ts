@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
@@ -16,7 +16,7 @@ export interface IProps extends WithTranslation {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not video moderation is on.

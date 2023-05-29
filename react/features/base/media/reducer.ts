@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { AnyAction, combineReducers } from 'redux';
 
 import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -49,7 +49,7 @@ export const _AUDIO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {AudioMediaState}
  */
-function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: any) {
+function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
     case SET_AUDIO_AVAILABLE:
         return {
@@ -103,7 +103,7 @@ export const _SCREENSHARE_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {ScreenshareMediaState}
  */
-function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: any) {
+function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
     case SET_SCREENSHARE_MUTED:
         return {

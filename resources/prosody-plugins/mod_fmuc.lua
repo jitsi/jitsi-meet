@@ -13,6 +13,7 @@
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
+local filters = require 'util.filters';
 
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -52,11 +53,16 @@ end
 
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
-    local occupant, session = event.occupant, event.origin;
+    local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
     local node, host = jid.split(occupant.bare_jid);
 
     if host == local_domain then
-        occupant.role = 'visitor';
+        if room._main_room_lobby_enabled then
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!'));
+            return true;
+        else
+            occupant.role = 'visitor';
+        end
     end
 end, 3);
 
@@ -112,7 +118,7 @@ module:hook('muc-occupant-left', function (event)
     if occupant_domain == local_domain then
         local focus_occupant = get_focus_occupant(room);
         if not focus_occupant then
-            module:log('warn', 'No focus found for %s', room.jid);
+            module:log('info', 'No focus found for %s', room.jid);
             return;
         end
         -- Let's forward unavailable presence to the special jicofo
@@ -439,6 +445,12 @@ local function iq_from_main_handler(event)
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
 
+    if node.attr.lobby == 'true' then
+        room._main_room_lobby_enabled = true;
+    elseif node.attr.lobby == 'false' then
+        room._main_room_lobby_enabled = false;
+    end
+
     if fire_jicofo_unlock then
         -- everything is connected allow participants to join
         module:fire_event('jicofo-unlock-room', { room = room; fmuc_fired = true; });
@@ -447,3 +459,22 @@ local function iq_from_main_handler(event)
     return true;
 end
 module:hook('iq/host', iq_from_main_handler, 10);
+
+-- Filters presences (if detected) that are with destination the main prosody
+function filter_stanza(stanza)
+    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' then
+        return stanza;
+    end
+
+    if jid.host(stanza.attr.to) == main_domain then
+        return nil; -- returning nil filters the stanza
+    end
+
+    return stanza; -- no filter
+end
+function filter_session(session)
+    -- domain mapper is filtering on default priority 0, and we need it before that
+    filters.add_filter(session, 'stanzas/out', filter_stanza, 2);
+end
+
+filters.add_filter_hook(filter_session);

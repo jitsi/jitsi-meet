@@ -36,7 +36,6 @@ const commands = {
     cancelPrivateChat: 'cancel-private-chat',
     closeBreakoutRoom: 'close-breakout-room',
     displayName: 'display-name',
-    e2eeKey: 'e2ee-key',
     endConference: 'end-conference',
     email: 'email',
     grantModerator: 'grant-moderator',
@@ -561,7 +560,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             switch (name) {
             case 'video-conference-joined': {
                 if (typeof this._tmpE2EEKey !== 'undefined') {
-                    this.executeCommand(commands.e2eeKey, this._tmpE2EEKey);
+
+                    const hexToBytes = hex => {
+                        const bytes = [];
+
+                        for (let c = 0; c < hex.length; c += 2) {
+                            bytes.push(parseInt(hex.substring(c, c + 2), 16));
+                        }
+
+                        return bytes;
+                    };
+
+                    this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                        exportedKey: hexToBytes(this._tmpE2EEKey),
+                        index: 0
+                    }));
+
                     this._tmpE2EEKey = undefined;
                 }
 

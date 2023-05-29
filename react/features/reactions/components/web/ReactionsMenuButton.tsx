@@ -1,8 +1,8 @@
 import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
@@ -38,7 +38,7 @@ interface IProps extends WithTranslation {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Click handler for raise hand functionality.
@@ -98,18 +98,17 @@ function ReactionsMenuButton({
     reactionsQueue,
     t
 }: IProps) {
-    const visible = useSelector(getReactionsMenuVisibility);
     const toggleReactionsMenu = useCallback(() => {
         dispatch(toggleReactionsMenuVisibility());
     }, [ dispatch ]);
 
     const openReactionsMenu = useCallback(() => {
-        !visible && toggleReactionsMenu();
-    }, [ visible, toggleReactionsMenu ]);
+        !isOpen && toggleReactionsMenu();
+    }, [ isOpen, toggleReactionsMenu ]);
 
     const closeReactionsMenu = useCallback(() => {
-        visible && toggleReactionsMenu();
-    }, [ visible, toggleReactionsMenu ]);
+        isOpen && toggleReactionsMenu();
+    }, [ isOpen, toggleReactionsMenu ]);
 
     const reactionsMenu = (<div className = 'reactions-menu-container'>
         <ReactionsMenu parent = { IReactionsMenuParent.Button } />
@@ -124,11 +123,11 @@ function ReactionsMenuButton({
                 ariaExpanded = { isOpen }
                 ariaHasPopup = { true }
                 ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                onPopoverClose = { _isMobile ? closeReactionsMenu : toggleReactionsMenu }
+                onPopoverClose = { closeReactionsMenu }
                 onPopoverOpen = { openReactionsMenu }
                 popoverContent = { reactionsMenu }
                 trigger = { _isMobile ? 'click' : undefined }
-                visible = { visible }>
+                visible = { isOpen }>
                 <ReactionsButton
                     buttonKey = { buttonKey }
                     notifyMode = { notifyMode } />
@@ -152,7 +151,7 @@ function ReactionsMenuButton({
                     onPopoverClose = { toggleReactionsMenu }
                     onPopoverOpen = { openReactionsMenu }
                     popoverContent = { reactionsMenu }
-                    visible = { visible }>
+                    visible = { isOpen }>
                     <RaiseHandButton
                         buttonKey = { buttonKey }
                         handleClick = { handleClick }

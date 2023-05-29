@@ -1,10 +1,12 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.0'
+platform :ios, '12.4'
 workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
+
+production = ENV["PRODUCTION"] == "1"
 
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
@@ -21,8 +23,10 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
+  flags = get_default_flags()
   use_react_native!(
-    :path => config["reactNativePath"],
+    :path => config[:reactNativePath],
+    :production => production,
     :hermes_enabled => false,
     :fabric_enabled => false,
     # An absolute path to your application root.
@@ -81,7 +85,7 @@ post_install do |installer|
     end
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
     end
   end
 end

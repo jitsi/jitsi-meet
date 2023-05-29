@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { MEDIA_TYPE } from '../media/constants';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -512,7 +514,7 @@ function _getDisplayName(state: Object, name?: string): string {
  * @returns {IParticipant}
  */
 function _participant(state: IParticipant | ILocalParticipant = { id: '' },
-        action: any): IParticipant | ILocalParticipant {
+        action: AnyAction): IParticipant | ILocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {

@@ -226,9 +226,15 @@ function _undoOverwriteLocalParticipant(
  * }}
  */
 function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }:
-    { avatar: any; avatarUrl: string; email: string; 'hidden-from-recorder': string | boolean;
+    { avatar?: string; avatarUrl?: string; email: string; 'hidden-from-recorder': string | boolean;
     id: string; name: string; }) {
-    const participant: any = {};
+    const participant: {
+        avatarURL?: string;
+        email?: string;
+        hiddenFromRecorder?: boolean;
+        id?: string;
+        name?: string;
+    } = {};
 
     if (typeof avatarUrl === 'string') {
         participant.avatarURL = avatarUrl.trim();

@@ -33,7 +33,7 @@ if [[ $MVN_HTTP == 1 ]]; then
         deploy:deploy-file \
         -Durl=${MVN_REPO} \
         -DrepositoryId=${MVN_REPO_ID} \
-        -Dfile=react-native-${RN_VERSION}.aar \
+        -Dfile=react-native-${RN_VERSION}-release.aar \
         -Dpackaging=aar \
         -DgeneratePom=false \
         -DpomFile=react-native-${RN_VERSION}.pom || true
@@ -58,7 +58,7 @@ else
         mvn \
             deploy:deploy-file \
             -Durl=${MVN_REPO} \
-            -Dfile=react-native-${RN_VERSION}.aar \
+            -Dfile=react-native-${RN_VERSION}-release.aar \
             -Dpackaging=aar \
             -DgeneratePom=false \
             -DpomFile=react-native-${RN_VERSION}.pom

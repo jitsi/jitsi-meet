@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { IconConnection } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
@@ -61,7 +61,7 @@ type IProps = AbstractProps & {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Icon style override.

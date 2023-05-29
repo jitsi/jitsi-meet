@@ -1,4 +1,5 @@
 import { generateCollaborationLinkData } from '@jitsi/excalidraw';
+import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
@@ -45,7 +46,7 @@ const focusWhiteboard = (store: IStore) => {
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: AnyAction) => {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state);

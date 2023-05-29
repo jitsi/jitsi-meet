@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { VIDEO_TYPE } from '../../base/media/constants';
 import { getLocalParticipant } from '../../base/participants/functions';
 import Watermarks from '../../base/react/components/web/Watermarks';
@@ -117,7 +117,7 @@ interface IProps {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 }
 
 /** .

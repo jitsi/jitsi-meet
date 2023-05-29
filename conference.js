@@ -361,11 +361,11 @@ class ConferenceConnector {
             const [ vnode ] = params;
 
             APP.store.dispatch(overwriteConfig(newConfig))
-                .then(this._conference.leaveRoom())
-                .then(APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
+                .then(() => this._conference.leaveRoom())
+                .then(() => APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
 
                 // we do not clear local tracks on error, so we need to manually clear them
-                .then(APP.store.dispatch(destroyLocalTracks()))
+                .then(() => APP.store.dispatch(destroyLocalTracks()))
                 .then(() => {
                     // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
                     VideoLayout.initLargeVideo();
@@ -418,7 +418,7 @@ class ConferenceConnector {
 
             if (newConfig) {
                 APP.store.dispatch(overwriteConfig(newConfig))
-                    .then(this._conference.leaveRoom())
+                    .then(() => this._conference.leaveRoom())
                     .then(() => {
                         _connectionPromise = connect(this._conference.roomName);
 
@@ -2620,17 +2620,22 @@ export default {
     async leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
+        const maybeDisconnect = () => {
+            if (doDisconnect) {
+                return disconnect();
+            }
+        };
+
         if (room && room.isJoined()) {
-            return room.leave(reason).finally(() => {
-                if (doDisconnect) {
-                    return disconnect();
-                }
+            return room.leave(reason).then(() => maybeDisconnect())
+            .catch(e => {
+                logger.error(e);
+
+                return maybeDisconnect();
             });
         }
 
-        if (doDisconnect) {
-            return disconnect();
-        }
+        return maybeDisconnect();
     },
 
     /**

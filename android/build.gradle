@@ -10,13 +10,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.1.1'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
     }
 }
 
 ext {
+    kotlinVersion = "1.7.0"
     buildToolsVersion = "31.0.0"
     compileSdkVersion = 32
     minSdkVersion    = 24

@@ -1,4 +1,5 @@
 import { withStyles } from '@mui/styles';
+import clsx from 'clsx';
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { batch, connect } from 'react-redux';
@@ -6,7 +7,7 @@ import { batch, connect } from 'react-redux';
 import { isSpeakerStatsDisabled } from '../../../../features/speaker-stats/functions';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
@@ -294,6 +295,11 @@ interface IProps extends WithTranslation {
     _sharingVideo?: boolean;
 
     /**
+     * Whether the toolbox should be shifted up or not.
+     */
+    _shiftUp: boolean;
+
+    /**
      * Whether or not the shortcut buttons are enabled.
      */
     _shortcutsEnabled: boolean;
@@ -331,7 +337,7 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to active other features of the app.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Explicitly passed array with the buttons which this Toolbox should display.
@@ -576,7 +582,7 @@ class Toolbox extends Component<IProps> {
 
         return (
             <div
-                className = { rootClassNames }
+                className = { clsx(rootClassNames, this.props._shiftUp && 'shift-up') }
                 id = 'new-toolbox'>
                 { this._renderToolboxContent() }
             </div>
@@ -1614,6 +1620,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _reactionsButtonEnabled: isReactionsButtonEnabled(state),
         _reactionsEnabled,
         _screenSharing: isScreenVideoShared(state),
+        _shiftUp: state['features/toolbox'].shiftUp,
         _shortcutsEnabled: areKeyboardShortcutsEnabled(state),
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,

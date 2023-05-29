@@ -1,4 +1,4 @@
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
 import { ISettingsState } from '../settings/reducer';
@@ -251,7 +251,7 @@ export function getVideoDeviceIds(state: IReduxState) {
  */
 export function setAudioOutputDeviceId(
         newId = 'default',
-        dispatch: Function,
+        dispatch: IStore['dispatch'],
         userSelection = false,
         newLabel?: string): Promise<any> {
 

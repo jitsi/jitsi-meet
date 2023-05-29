@@ -84,13 +84,13 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const focusSelector = '.toolbox-content-items:focus-within,.filmstrip:focus-within,.remotevideomenu:hover';
+        const hoverSelector = '.filmstrip:hover,.remotevideomenu:hover';
 
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
                     || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
-                    || document.querySelector(focusSelector))) {
+                    || document.querySelector(hoverSelector))) {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
@@ -196,7 +196,7 @@ export function clearToolboxTimeout() {
  *     visible: boolean
  * }}
  */
-export function setHangupMenuVisible(visible: boolean): Object {
+export function setHangupMenuVisible(visible: boolean) {
     return {
         type: SET_HANGUP_MENU_VISIBLE,
         visible
@@ -228,7 +228,7 @@ export function setOverflowMenuVisible(visible: boolean) {
  *     hovered: boolean
  * }}
  */
-export function setToolbarHovered(hovered: boolean): Object {
+export function setToolbarHovered(hovered: boolean) {
     return {
         type: SET_TOOLBAR_HOVERED,
         hovered

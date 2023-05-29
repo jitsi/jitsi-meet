@@ -13,7 +13,7 @@ import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
@@ -158,7 +158,7 @@ interface IProps extends AbstractProps {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
     * Object containing the safe area insets.

@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { IStore } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { Video } from '../../base/media/components/index';
@@ -28,7 +29,7 @@ export interface IProps extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Dialog callback that indicates if the background preview was loaded.

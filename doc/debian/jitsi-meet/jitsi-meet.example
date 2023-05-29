@@ -58,6 +58,8 @@ server {
 
     add_header Strict-Transport-Security "max-age=63072000" always;
     set $prefix "";
+    set $custom_index "";
+    set $config_js_location /etc/jitsi/meet/jitsi-meet.example.com-config.js;
 
     ssl_certificate /etc/jitsi/meet/jitsi-meet.example.com.crt;
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
@@ -77,8 +79,10 @@ server {
     gzip_proxied no-cache no-store private expired auth;
     gzip_min_length 512;
 
+    include /etc/jitsi/meet/jaas/*.conf;
+
     location = /config.js {
-        alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+        alias $config_js_location;
     }
 
     location = /external_api.js {
@@ -90,6 +94,11 @@ server {
         proxy_http_version 1.1;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
+    }
+
+    location ~ ^/_api/public/(.*)$ {
+        autoindex off;
+        alias /etc/jitsi/meet/public/$1;
     }
 
     # ensure all static content can always be found first
@@ -142,11 +151,12 @@ server {
     #}
 
     location ~ ^/([^/?&:'"]+)$ {
+        set $roomname "$1";
         try_files $uri @root_path;
     }
 
     location @root_path {
-        rewrite ^/(.*)$ / break;
+        rewrite ^/(.*)$ /$custom_index break;
     }
 
     location ~ ^/([^/?&:'"]+)/config.js$
@@ -154,7 +164,7 @@ server {
         set $subdomain "$1.";
         set $subdir "$1/";
 
-        alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+        alias $config_js_location;
     }
 
     # Matches /(TENANT)/pwa-worker.js or /(TENANT)/manifest.json to rewrite to / and look for file

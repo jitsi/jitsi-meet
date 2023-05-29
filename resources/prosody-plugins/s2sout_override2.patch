@@ -1,0 +1,14 @@
+diff -r 214a679823e8 plugins/mod_s2s.lua
+--- a/mod_s2s.lua	Mon May 01 15:10:32 2023 +0200
++++ b/mod_s2s.lua	Wed May 24 11:53:34 2023 -0500
+@@ -230,6 +230,10 @@
+ 			resolver;
+ 		});
+ 	end
++
++	local pre_event = { session = host_session; resolver = resolver };
++	module:context(from_host):fire_event("s2sout-pre-connect", pre_event);
++	resolver = pre_event.resolver;
+ 	connect(resolver, listener, nil, { session = host_session });
+ 	m_initiated_connections:with_labels(from_host):add(1)
+ 	return true;

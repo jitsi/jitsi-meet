@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
@@ -88,7 +88,7 @@ interface IProps extends WithTranslation {
     /**
      * The redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Is the local participant moderator?

@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { batch } from 'react-redux';
+import { AnyAction } from 'redux';
 
 // @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -543,7 +544,7 @@ function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConferen
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: any) {
+function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     const settings = getState()['features/base/settings'];
@@ -569,7 +570,7 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantLeft({ dispatch }: IStore, next: Function, action: any) {
+function _localParticipantLeft({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     dispatch(localParticipantLeft());
@@ -586,7 +587,7 @@ function _localParticipantLeft({ dispatch }: IStore, next: Function, action: any
  * @private
  * @returns {void}
  */
-function _maybePlaySounds({ getState, dispatch }: IStore, action: any) {
+function _maybePlaySounds({ getState, dispatch }: IStore, action: AnyAction) {
     const state = getState();
     const { startAudioMuted } = state['features/base/config'];
     const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
@@ -631,7 +632,7 @@ function _maybePlaySounds({ getState, dispatch }: IStore, action: any) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _participantJoinedOrUpdated(store: IStore, next: Function, action: any) {
+function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyAction) {
     const { dispatch, getState } = store;
     const { overwrittenNameList } = store.getState()['features/base/participants'];
     const { participant: {

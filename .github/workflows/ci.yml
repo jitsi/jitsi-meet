@@ -12,14 +12,24 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v35
+    - name: Get changed lang files
+      id: lang-files
+      run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
     - run: npm install
     - name: Check git status
       run: git status
     - name: Normalize lang files to ensure sorted
+      if: steps.lang-files.outputs.all
       run: npm run lang-sort
+    - name: Check lang files are formatted correctly
+      if: steps.lang-files.outputs.all
+      run: npm run lint:lang
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci
+    - run: npm run lint:ci && npm run tsc:ci
   linux-build:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest

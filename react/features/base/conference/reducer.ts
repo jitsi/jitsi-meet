@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { ISpeakerStats } from '../../speaker-stats/reducer';
@@ -148,6 +150,7 @@ export interface IConferenceState {
 }
 
 export interface IJitsiConferenceRoom {
+    locked: boolean;
     myroomjid: string;
     roomjid: string;
 }
@@ -266,7 +269,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
         return state;
     }
 
-    let authRequired: any;
+    let authRequired;
     let membersOnly;
     let passwordRequired;
 
@@ -323,7 +326,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _conferenceJoined(state: IConferenceState, { conference }: { conference: any; }) {
+function _conferenceJoined(state: IConferenceState, { conference }: { conference: IJitsiConference; }) {
     // FIXME The indicator which determines whether a JitsiConference is locked
     // i.e. password-protected is private to lib-jitsi-meet. However, the
     // library does not fire LOCK_STATE_CHANGED upon joining a JitsiConference
@@ -462,7 +465,7 @@ function _lockStateChanged(state: IConferenceState, { conference, locked }: { co
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _p2pStatusChanged(state: IConferenceState, action: any) {
+function _p2pStatusChanged(state: IConferenceState, action: AnyAction) {
     return set(state, 'p2p', action.p2p);
 }
 
@@ -476,7 +479,7 @@ function _p2pStatusChanged(state: IConferenceState, action: any) {
  * reduction of the specified action.
  */
 function _setPassword(state: IConferenceState, { conference, method, password }: {
-    conference: any; method: Object; password: string; }) {
+    conference: IJitsiConference; method: Object; password: string; }) {
     switch (method) {
     case conference.join:
         return assign(state, {
@@ -523,7 +526,7 @@ function _setPassword(state: IConferenceState, { conference, method, password }:
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _setRoom(state: IConferenceState, action: any) {
+function _setRoom(state: IConferenceState, action: AnyAction) {
     let { room } = action;
 
     if (!isRoomValid(room)) {

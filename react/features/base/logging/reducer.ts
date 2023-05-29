@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { AnyAction } from 'redux';
 
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals, set } from '../redux/functions';
@@ -94,7 +95,7 @@ ReducerRegistry.register<ILoggingState>(
  * @returns {Object} The new state of the feature base/logging after the
  * reduction of the specified action.
  */
-function _setLoggingConfig(state: ILoggingState, action: any) {
+function _setLoggingConfig(state: ILoggingState, action: AnyAction) {
     const newConfig = _.merge({}, DEFAULT_STATE.config, action.config);
 
     if (equals(state.config, newConfig)) {
@@ -117,6 +118,6 @@ function _setLoggingConfig(state: ILoggingState, action: any) {
  * @returns {Object} The new state of the feature base/logging after the
  * reduction of the specified action.
  */
-function _setLogCollector(state: ILoggingState, action: any) {
+function _setLogCollector(state: ILoggingState, action: AnyAction) {
     return set(state, 'logCollector', action.logCollector);
 }
