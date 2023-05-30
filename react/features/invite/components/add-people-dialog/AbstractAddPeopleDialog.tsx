@@ -2,7 +2,7 @@ import { Component } from 'react';
 
 import { createInviteDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { showErrorNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { INotificationProps } from '../../../notifications/types';
@@ -50,17 +50,17 @@ export interface IProps {
      */
     _dialOutRegionUrl: string;
 
-     /**
+    /**
      * The JWT token.
      */
     _jwt: string;
 
-     /**
+    /**
      * The query types used when searching people.
      */
     _peopleSearchQueryTypes: Array<string>;
 
-     /**
+    /**
      * The URL pointing to the service allowing for people search.
      */
     _peopleSearchUrl: string;
@@ -73,7 +73,7 @@ export interface IProps {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 }
 
 export interface IState {

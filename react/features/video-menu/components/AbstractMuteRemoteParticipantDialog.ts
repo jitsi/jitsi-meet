@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
+import { IStore } from '../../app/types';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { muteRemote } from '../actions';
 
@@ -13,7 +14,7 @@ export interface IProps extends WithTranslation {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The ID of the remote participant to be muted.

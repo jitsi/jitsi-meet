@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { IStore } from '../app/types';
 import { SET_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -5,7 +7,7 @@ import { CAPTURE_EVENTS } from '../remote-control/actionTypes';
 
 import { disableKeyboardShortcuts, enableKeyboardShortcuts } from './actions';
 
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch } = store;
 
     switch (action.type) {

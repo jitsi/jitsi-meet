@@ -196,7 +196,7 @@ export function clearToolboxTimeout() {
  *     visible: boolean
  * }}
  */
-export function setHangupMenuVisible(visible: boolean): Object {
+export function setHangupMenuVisible(visible: boolean) {
     return {
         type: SET_HANGUP_MENU_VISIBLE,
         visible
@@ -228,7 +228,7 @@ export function setOverflowMenuVisible(visible: boolean) {
  *     hovered: boolean
  * }}
  */
-export function setToolbarHovered(hovered: boolean): Object {
+export function setToolbarHovered(hovered: boolean) {
     return {
         type: SET_TOOLBAR_HOVERED,
         hovered

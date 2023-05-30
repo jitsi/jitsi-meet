@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
@@ -54,7 +54,7 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to change the configured calendar integration.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 }
 
 /**

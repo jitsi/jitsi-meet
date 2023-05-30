@@ -1,3 +1,4 @@
+import { IStore } from '../app/types';
 import conferenceStyles from '../conference/components/native/styles';
 
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
@@ -15,10 +16,15 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function setTileViewDimensions() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const participantCount = getTileViewParticipantCount(state);
-        const { clientHeight: height, clientWidth: width, safeAreaInsets = {} } = state['features/base/responsive-ui'];
+        const { clientHeight: height, clientWidth: width, safeAreaInsets = {
+            left: undefined,
+            right: undefined,
+            top: undefined,
+            bottom: undefined
+        } } = state['features/base/responsive-ui'];
         const { left = 0, right = 0, top = 0, bottom = 0 } = safeAreaInsets;
         const columns = getColumnCount(state);
         const rows = Math.ceil(participantCount / columns); // @ts-ignore

@@ -8,7 +8,7 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
@@ -54,7 +54,7 @@ interface IProps extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The initial options copied in the state for the {@code VirtualBackground} component.

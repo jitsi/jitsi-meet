@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
@@ -37,7 +37,7 @@ export interface IProps extends WithTranslation {
     /**
      * The redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The user trying to stop the video while local recording is running.

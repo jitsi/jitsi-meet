@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../../app/types';
+import { IReduxState, IStore } from '../../../../app/types';
 import { _abstractMapStateToProps } from '../../../../base/dialog/functions';
 import { translate } from '../../../../base/i18n/functions';
 import { setGoogleAPIState } from '../../../../google-api/actions';
@@ -32,7 +32,7 @@ interface IProps extends WithTranslation {
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * The current state of the Google api as defined in {@code constants.js}.
