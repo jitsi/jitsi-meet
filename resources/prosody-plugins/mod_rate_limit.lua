@@ -171,6 +171,11 @@ local function on_login(session, ip)
 end
 
 local function filter_hook(session)
+    -- ignore outgoing sessions (s2s)
+    if session.outgoing then
+        return;
+    end
+
 	local request = get_request_from_conn(session.conn);
 	local ip = request and request.ip or session.ip;
 	module:log("debug", "New session from %s", ip);
