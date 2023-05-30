@@ -383,7 +383,7 @@
         "searchResultsDetailsError": "هنگام بازیابی اطلاعات مالک مشکلی پیش آمد.",
         "searchResultsError": "هنگام بازیابی داده‌ها مشکلی پیش آمد.",
         "searchResultsNotFound": "هیچ نتیجه‌ای برای این جستجو یافت نشد.",
-        "searchResultsTryAgain": "سعی کنید از کلمات کلیدی جایگزین استفاده کنید.", #HERE
+        "searchResultsTryAgain": "سعی کنید از کلمات کلیدی جایگزین استفاده کنید.",
         "sendPrivateMessage": "شما یک پیام خصوصی دریافت کرده‌اید، می‌خواهید پاسخ آن را به صورت خصوصی برای فرستنده ارسال کنید یا در گروه به أن پاسخ دهید؟",
         "sendPrivateMessageCancel": "ارسال به گروه",
         "sendPrivateMessageOk": "ارسال به صورت خصوصی",
