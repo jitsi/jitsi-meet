@@ -115,8 +115,6 @@ function handle_jicofo_unlock(event)
 
     -- and now let's handle all pre_join_queue events
     for _, ev in room.pre_join_queue:items() do
-        -- we see wrong from on some stanzas when using tenants with visitor nodes
-        ev.stanza.attr.from = internal_room_jid_match_rewrite(ev.stanza.attr.from, ev.stanza)
         module:log('info', 'Occupant processed from queue %s', ev.occupant.nick);
         room:handle_normal_presence(ev.origin, ev.stanza);
     end

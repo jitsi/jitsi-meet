@@ -129,7 +129,8 @@ local function stanza_handler(event)
         return;
     end
 
-    if stanza.attr.type == 'result' and sent_iq_cache:get(stanza.attr.id) then
+    -- we receive error from vnode for our disconnect message as the room was already destroyed (all visitors left)
+    if (stanza.attr.type == 'result' or stanza.attr.type == 'error') and sent_iq_cache:get(stanza.attr.id) then
         sent_iq_cache:set(stanza.attr.id, nil);
         return true;
     end
