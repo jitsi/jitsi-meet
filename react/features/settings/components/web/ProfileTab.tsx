@@ -14,7 +14,6 @@ import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import Select from '../../../base/ui/components/web/Select';
 import { openLogoutDialog } from '../../actions';
 
 /**
@@ -38,12 +37,6 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     classes: any;
 
     /**
-     * The currently selected language to display in the language select
-     * dropdown.
-     */
-    currentLanguage: string;
-
-    /**
      * The display name to display for the local participant.
      */
     displayName: string;
@@ -64,19 +57,9 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     id: string;
 
     /**
-     * All available languages to display in the language select dropdown.
-     */
-    languages: Array<string>;
-
-    /**
      * If the display name is read only.
      */
     readOnlyName: boolean;
-
-    /**
-     * Whether or not to display the language select dropdown.
-     */
-    showLanguageSettings: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -135,7 +118,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onEmailChange = this._onEmailChange.bind(this);
-        this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
     /**
@@ -161,51 +143,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
-     * Callback invoked to select a language from select dropdown.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onLanguageItemSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-        const language = e.target.value;
-
-        super._onChange({ currentLanguage: language });
-    }
-
-    /**
-     * Returns the menu item for changing displayed language.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderLanguageSelect() {
-        const {
-            classes,
-            currentLanguage,
-            languages,
-            t
-        } = this.props;
-
-        const languageItems
-            = languages.map((language: string) => {
-                return {
-                    value: language,
-                    label: t(`languages:${language}`)
-                };
-            });
-
-        return (
-            <Select
-                className = { classes.bottomMargin }
-                label = { t('settings.language') }
-                onChange = { this._onLanguageItemSelect }
-                options = { languageItems }
-                value = { currentLanguage } />
-        );
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -220,7 +157,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
             hideEmailInSettings,
             id,
             readOnlyName,
-            showLanguageSettings,
             t
         } = this.props;
 
@@ -252,7 +188,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
                         type = 'text'
                         value = { email } />
                 </div>}
-                {showLanguageSettings && this._renderLanguageSelect()}
                 { authEnabled && this._renderAuth() }
             </div>
         );

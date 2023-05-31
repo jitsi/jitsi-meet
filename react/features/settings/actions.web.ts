@@ -106,6 +106,10 @@ export function submitMoreTab(newState: any) {
         if (newState.hideSelfView !== currentState.hideSelfView) {
             dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
         }
+
+        if (newState.currentLanguage !== currentState.currentLanguage) {
+            i18next.changeLanguage(newState.currentLanguage);
+        }
     };
 }
 
@@ -155,10 +159,6 @@ export function submitProfileTab(newState: any) {
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
-        }
-
-        if (newState.currentLanguage !== currentState.currentLanguage) {
-            i18next.changeLanguage(newState.currentLanguage);
         }
     };
 }
