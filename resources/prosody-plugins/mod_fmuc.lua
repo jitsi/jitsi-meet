@@ -20,6 +20,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local presence_check_status = util.presence_check_status;
 
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
@@ -325,6 +326,8 @@ module:hook('muc-occupant-groupchat', function(event)
     if occupant and occupant_host ~= main_domain then
         local main_message = st.clone(stanza);
         main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain);
+        -- make sure we fix the from to be the real jid
+        main_message.attr.from = room_jid_match_rewrite(stanza.attr.from);
         module:send(main_message);
     end
     stanza.attr.from = from; -- something prosody does internally
@@ -461,15 +464,24 @@ end
 module:hook('iq/host', iq_from_main_handler, 10);
 
 -- Filters presences (if detected) that are with destination the main prosody
-function filter_stanza(stanza)
-    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' then
-        return stanza;
-    end
+function filter_stanza(stanza, session)
+    if (stanza.name == 'presence' or stanza.name == 'message') and session.type ~= 'c2s' then
+        -- we clone it so we do not affect broadcast using same stanza, sending it to clients
+        local f_st = st.clone(stanza);
+        f_st.skipMapping = true;
+        return f_st;
+    elseif stanza.name == 'presence' and session.type == 'c2s' and jid.node(stanza.attr.to) == 'focus' then
+        local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
+        if presence_check_status(x, '110') then
+            return stanza; -- no filter
+        end
 
-    if jid.host(stanza.attr.to) == main_domain then
+        -- we want to filter presences to jicofo for the main participants
+        -- no point of having them, but if it is the one of the first to be sent
+        -- when first visitor is joining can produce the 'No hosts[from_host]' error as we
+        -- rewrite the from, but we need to not do it to be able to filter it later for the s2s
         return nil; -- returning nil filters the stanza
     end
-
     return stanza; -- no filter
 end
 function filter_session(session)
@@ -478,3 +490,34 @@ function filter_session(session)
 end
 
 filters.add_filter_hook(filter_session);
+
+
+function route_s2s_stanza(event)
+    local from_host, to_host, stanza = event.from_host, event.to_host, event.stanza;
+
+    if to_host ~= main_domain then
+        return; -- continue with hook listeners
+    end
+
+     if stanza.name == 'message' then
+        if jid.resource(stanza.to) then
+            -- there is no point of delivering messages to main participants individually
+            return true; -- drop it
+        end
+        return;
+     end
+
+     if stanza.name == 'presence' then
+        -- we want to leave only unavailable presences to go to main node
+        -- all other presences from jicofo or the main participants there is no point to go to the main node
+        -- they are anyway not handled
+        if stanza.attr.type ~= 'unavailable' then
+            return true; -- drop it
+        end
+        return;
+     end
+end
+
+-- routing to sessions in mod_s2s is -1 and -10, we want to hook before that to make sure to is correct
+-- or if we want to filter that stanza
+module:hook("route/remote", route_s2s_stanza, 10);

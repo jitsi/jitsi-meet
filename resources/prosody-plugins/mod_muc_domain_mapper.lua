@@ -17,6 +17,10 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 -- We must filter stanzas in order to hook in to all incoming and outgoing messaging which skips the stanza routers
 function filter_stanza(stanza)
+    if stanza.skipMapping then
+        return stanza;
+    end
+
     if stanza.name == "message" or stanza.name == "iq" or stanza.name == "presence" then
         -- module:log("debug", "Filtering stanza type %s  to %s from %s",stanza.name,stanza.attr.to,stanza.attr.from);
         if stanza.name == "iq" then
