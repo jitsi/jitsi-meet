@@ -37,6 +37,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
+    P2P_STATUS_CHANGED,
     SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
@@ -111,6 +112,9 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED:
     case TRACK_REMOVED:
         return _trackAddedOrRemoved(store, next, action);
+
+    case P2P_STATUS_CHANGED:
+        return _p2pStatusChanged(next, action);
     }
 
     return next(action);
@@ -661,6 +665,27 @@ function _updateLocalParticipantInConference({ dispatch, getState }: IStore, nex
                 dispatch(setSubject(pendingSubjectChange));
             }
         }
+    }
+
+    return result;
+}
+
+/**
+ * Notifies the external API that the action {@code P2P_STATUS_CHANGED}
+ * is being dispatched within a specific redux store.
+ *
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code P2P_STATUS_CHANGED}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _p2pStatusChanged(next: Function, action: AnyAction) {
+    const result = next(action);
+
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyP2pStatusChanged(action.p2p);
     }
 
     return result;
