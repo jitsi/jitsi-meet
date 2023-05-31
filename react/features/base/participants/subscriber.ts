@@ -78,6 +78,10 @@ function _updateScreenshareParticipants(store: IStore): void {
         if (track.videoType === VIDEO_TYPE.DESKTOP && !track.jitsiTrack.isMuted()) {
             const sourceName: string = track.jitsiTrack.getSourceName();
 
+            // Ignore orphan tracks in ssrc-rewriting mode.
+            if (!sourceName && getSsrcRewritingFeatureFlag(state)) {
+                return acc;
+            }
             if (track.local) {
                 newLocalSceenshareSourceName = sourceName;
             } else if (getParticipantById(state, getVirtualScreenshareParticipantOwnerId(sourceName))) {
