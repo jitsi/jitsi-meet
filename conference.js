@@ -2200,6 +2200,11 @@ export default {
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
                 const videoWasMuted = this.isLocalVideoMuted();
+                const localVideoTrack = getLocalJitsiVideoTrack(APP.store.getState());
+
+                if (localVideoTrack?.getDeviceId() === cameraDeviceId) {
+                    return;
+                }
 
                 sendAnalytics(createDeviceChangedEvent('video', 'input'));
 
@@ -2444,7 +2449,9 @@ export default {
             const { dispatch } = APP.store;
             const setAudioOutputPromise
                 = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
-                    .catch(); // Just ignore any errors in catch block.
+                    .catch(err => {
+                        logger.error(`Failed to set the audio output device to ${newDevices.audiooutput} - ${err}`);
+                    });
 
             promises.push(setAudioOutputPromise);
         }
@@ -2482,7 +2489,7 @@ export default {
         }
 
         // check for video
-        if (!requestedInput.video) {
+        if (requestedInput.video) {
             APP.store.dispatch(checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
         }
 
@@ -2526,14 +2533,15 @@ export default {
         // Create the tracks and replace them only if the user is unmuted.
         if (requestedInput.audio || requestedInput.video) {
             let tracks = [];
+            const realAudioDeviceId = hasDefaultMicChanged
+                ? getDefaultDeviceId(APP.store.getState(), 'audioInput') : newDevices.audioinput;
 
             try {
                 tracks = await mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
                     createLocalTracksF,
-                    newDevices.videoinput,
-                    hasDefaultMicChanged
-                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                        : newDevices.audioinput);
+                    requestedInput.video ? newDevices.videoinput : null,
+                    requestedInput.audio ? realAudioDeviceId : null
+                );
             } catch (error) {
                 logger.error(`Track creation failed on device change, ${error}`);
 
