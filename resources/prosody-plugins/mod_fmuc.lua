@@ -37,6 +37,7 @@ if not main_domain then
 end
 
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
+local local_muc_domain = muc_domain_prefix..'.'..local_domain;
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
@@ -476,11 +477,13 @@ function filter_stanza(stanza, session)
             return stanza; -- no filter
         end
 
-        -- we want to filter presences to jicofo for the main participants
+        -- we want to filter presences to jicofo for the main participants, skipping visitors
         -- no point of having them, but if it is the one of the first to be sent
         -- when first visitor is joining can produce the 'No hosts[from_host]' error as we
         -- rewrite the from, but we need to not do it to be able to filter it later for the s2s
-        return nil; -- returning nil filters the stanza
+        if jid.host(room_jid_match_rewrite(stanza.attr.from)) ~= local_muc_domain then
+            return nil; -- returning nil filters the stanza
+        end
     end
     return stanza; -- no filter
 end
@@ -490,7 +493,6 @@ function filter_session(session)
 end
 
 filters.add_filter_hook(filter_session);
-
 
 function route_s2s_stanza(event)
     local from_host, to_host, stanza = event.from_host, event.to_host, event.stanza;
