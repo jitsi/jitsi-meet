@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { overwriteConfig } from '../base/config/actions';
 import { isMobileBrowser } from '../base/environment/utils';
+import { isLayoutTileView } from '../video-layout/functions.any';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -84,13 +85,16 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const hoverSelector = '.filmstrip:hover,.remotevideomenu:hover';
+        const hoverSelector = isLayoutTileView(state)
+            ? '.remotevideomenu:hover'
+            : '.filmstrip:hover,.remotevideomenu:hover';
+        const hoveredElem = document.querySelector(hoverSelector);
 
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
                     || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
-                    || document.querySelector(hoverSelector))) {
+                    || hoveredElem)) {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
