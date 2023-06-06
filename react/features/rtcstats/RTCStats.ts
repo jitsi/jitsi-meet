@@ -13,6 +13,7 @@ import traceInit from '@jitsi/rtcstats/trace-ws';
 
 import { createRTCStatsTraceCloseEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import logger from './logger';
 import {
@@ -61,7 +62,8 @@ class RTCStats {
             || oldOptions.meetingFqn !== newOptions.meetingFqn
             || oldOptions.pollInterval !== newOptions.pollInterval
             || oldOptions.sendSdp !== newOptions.sendSdp
-            || oldOptions.useLegacy !== newOptions.useLegacy);
+            || oldOptions.useLegacy !== newOptions.useLegacy
+            || oldOptions.useLibRtcStats !== newOptions.useLibRtcStats);
 
         if (changed) {
             this.reset();
@@ -69,7 +71,7 @@ class RTCStats {
             if (newOptions.meetingFqn && newOptions.endpoint) {
                 this.init(newOptions);
             } else {
-                logger.warn('RTCStats is enabled but it has not been configured.');
+                logger.warn('RTCStats is enabled but is waiting for meetingFqn and endpoint.');
             }
         }
     }
@@ -103,29 +105,50 @@ class RTCStats {
      */
     init(options: InitOptions) {
 
-        const { endpoint, meetingFqn, useLegacy, pollInterval, sendSdp } = options;
+        const { useLibRtcStats, meetingFqn } = options;
 
-        const traceOptions = {
-            endpoint,
-            meetingFqn,
-            onCloseCallback: this.handleTraceWSClose.bind(this),
-            useLegacy
-        };
+        if (useLibRtcStats) {
+            logger.info('setting up libRtcStats');
 
-        this.trace = traceInit(traceOptions);
-        if (!this.isPeerConnectionWrapped) {
-            const rtcstatsOptions = {
-                connectionFilter,
-                pollInterval,
-                useLegacy,
-                sendSdp,
-                eventCallback: this.handleRtcstatsEvent.bind(this)
+            const rtcOptions = {
+                meetingName: meetingFqn,
+                eventCallback: this.handleRtcstatsEvent.bind(this),
+                onCloseCallback: this.handleTraceWSClose.bind(this)
             };
 
-            const statsEntryCallback = { statsEntry: this.statsEntry.bind(this) };
+            JitsiMeetJS.setRtcStatsMeetingFqn(rtcOptions);
 
-            rtcstatsInit(statsEntryCallback, rtcstatsOptions);
-            this.isPeerConnectionWrapped = true;
+            JitsiMeetJS.getRtcStatsTrace().then((traceF: any) => {
+                this.setTrace(traceF);
+            });
+
+        } else {
+            logger.info('setting up buildin rtcstats');
+
+            const { endpoint, useLegacy, pollInterval, sendSdp } = options;
+
+            const traceOptions = {
+                endpoint,
+                meetingFqn,
+                onCloseCallback: this.handleTraceWSClose.bind(this),
+                useLegacy
+            };
+
+            this.trace = traceInit(traceOptions);
+            if (!this.isPeerConnectionWrapped) {
+                const rtcstatsOptions = {
+                    connectionFilter,
+                    pollInterval,
+                    useLegacy,
+                    sendSdp,
+                    eventCallback: this.handleRtcstatsEvent.bind(this)
+                };
+
+                const statsEntryCallback = { statsEntry: this.statsEntry.bind(this) };
+
+                rtcstatsInit(statsEntryCallback, rtcstatsOptions);
+                this.isPeerConnectionWrapped = true;
+            }
         }
         this.options = options;
     }
@@ -137,6 +160,18 @@ class RTCStats {
      */
     isInitialized() {
         return this.options !== undefined;
+    }
+
+    /**
+     * Sets the internal trace function to the given function.
+     *
+     * @param {Object} traceF - The trace function to be used.
+     * @returns {void}
+     */
+    setTrace(traceF: any) {
+        logger.error(`Setting RTCStats trace function to ${traceF}`);
+
+        this.trace = traceF;
     }
 
     /**
@@ -267,7 +302,7 @@ class RTCStats {
             // We only report PC related connection issues. If the rtcstats websocket is not connected at this point
             // it usually means that none of our services can be reached i.e. there's problem with the internet
             // connection and not necessarily with reaching the JVB (due to a firewall or other reasons).
-            if (state === PC_STATE_FAILED && this.trace.isConnected()) {
+            if (state === PC_STATE_FAILED && this.trace?.isConnected()) {
                 const connectionType = isP2P ? 'P2P' : 'JVB';
                 const wasConnected = this.connStateEvents.some((connectionEvent: { isP2P: any; state: string; }) =>
                     (connectionEvent.isP2P === isP2P) && (connectionEvent.state === PC_STATE_CONNECTED));

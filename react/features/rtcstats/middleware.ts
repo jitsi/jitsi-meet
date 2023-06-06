@@ -51,6 +51,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 const pollInterval = analytics?.rtcstatsPollInterval || 10000;
                 const useLegacy = analytics?.rtcstatsUseLegacy || false;
                 const sendSdp = analytics?.rtcstatsSendSdp || false;
+                const useLibRtcStats = analytics?.rtcstatsUseLibJitsi || false;
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
@@ -60,7 +61,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                     meetingFqn: extractFqnFromPath(state),
                     useLegacy,
                     pollInterval,
-                    sendSdp
+                    sendSdp,
+                    useLibRtcStats
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
