@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 
 // @ts-ignore
-import { ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
+import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -716,8 +716,8 @@ function _setAssumedBandwidthBps({ getState }: IStore, next: Function, action: A
     const conference = getCurrentConference(state);
     const payload = Number(action.assumedBandwidthBps);
 
-    const assumedBandwidthBps = isNaN(payload) || payload < ASSUMED_BANDWIDTH_BPS
-        ? ASSUMED_BANDWIDTH_BPS
+    const assumedBandwidthBps = isNaN(payload) || payload < MIN_ASSUMED_BANDWIDTH_BPS
+        ? MIN_ASSUMED_BANDWIDTH_BPS
         : payload;
 
     if (conference) {

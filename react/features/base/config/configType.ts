@@ -518,6 +518,7 @@ export interface IConfig {
     stereo?: boolean;
     subject?: string;
     testing?: {
+        assumeBandwidth?: boolean;
         callStatsThreshold?: number;
         disableE2EE?: boolean;
         mobileXmppWsThreshold?: number;
@@ -550,7 +551,6 @@ export interface IConfig {
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
-        assumeBandwidth?: boolean;
         disabledCodec?: string;
         enforcePreferredCodec?: boolean;
         maxBitratesVideo?: {

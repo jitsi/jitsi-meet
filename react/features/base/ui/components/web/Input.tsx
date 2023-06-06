@@ -16,11 +16,11 @@ interface IProps extends IInputProps {
     className?: string;
     iconClick?: () => void;
     id?: string;
-    max?: number;
     maxLength?: number;
     maxRows?: number;
-    min?: number;
+    maxValue?: number;
     minRows?: number;
+    minValue?: number;
     name?: string;
     onBlur?: (e: any) => void;
     onFocus?: (event: React.FocusEvent) => void;
@@ -94,6 +94,15 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
+        'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
+            '-webkit-appearance': 'none',
+            margin: 0
+        },
+
+        'input[type=number]': {
+            '-moz-appearance': 'textfield'
+        },
+
         icon: {
             position: 'absolute',
             top: '50%',
@@ -148,10 +157,10 @@ const Input = React.forwardRef<any, IProps>(({
     iconClick,
     id,
     label,
-    max,
+    maxValue,
     maxLength,
     maxRows,
-    min,
+    minValue,
     minRows,
     name,
     onBlur,
@@ -181,7 +190,7 @@ const Input = React.forwardRef<any, IProps>(({
                 {icon && <Icon
                     { ...(iconClick ? { tabIndex: 0 } : {}) }
                     className = { cx(styles.icon, iconClick && styles.iconClickable) }
-                    { ...(iconClick ? { onClick: iconClick } : {}) }
+                    onClick = { iconClick }
                     size = { 20 }
                     src = { icon } />}
                 {textarea ? (
@@ -214,9 +223,9 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
-                        { ...(type === 'number' ? { max } : {}) }
+                        { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
-                        { ...(type === 'number' ? { min } : {}) }
+                        { ...(type === 'number' ? { min: minValue } : {}) }
                         name = { name }
                         onBlur = { onBlur }
                         onChange = { handleChange }

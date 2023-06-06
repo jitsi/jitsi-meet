@@ -2,7 +2,6 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
 import {
-    setAssumedBandwidthBps,
     setFollowMe,
     setStartMutedPolicy,
     setStartReactionsMuted
@@ -93,21 +92,15 @@ export function submitMoreTab(newState: any) {
         const currentState = getMoreTabProps(getState());
 
         const showPrejoinPage = newState.showPrejoinPage;
-        const maxStageParticipants = newState.maxStageParticipants;
-        const assumedBandwidthBps = newState.assumedBandwidthBps;
 
         if (showPrejoinPage !== currentState.showPrejoinPage) {
-            dispatch(updateSettings({ userSelectedSkipPrejoin: !showPrejoinPage }));
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: !showPrejoinPage
+            }));
         }
 
-        if (maxStageParticipants !== currentState.maxStageParticipants) {
-            dispatch(updateSettings({ maxStageParticipants: Number(maxStageParticipants) }));
-        }
-
-        if (assumedBandwidthBps !== currentState.assumedBandwidthBps) {
-            const value = assumedBandwidthBps === '' ? -1 : assumedBandwidthBps;
-
-            dispatch(setAssumedBandwidthBps(Number(value)));
+        if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
+            dispatch(updateSettings({ maxStageParticipants: Number(newState.maxStageParticipants) }));
         }
 
         if (newState.hideSelfView !== currentState.hideSelfView) {

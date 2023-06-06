@@ -121,14 +121,12 @@ export function getMoreTabProps(stateful: IStateful) {
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
-        assumedBandwidthBps: state['features/base/conference'].assumedBandwidthBps,
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
         iAmVisitor: iAmVisitor(state),
         languages: LANGUAGES,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
-        showBandwidthSettings: state['features/base/config'].videoQuality?.assumeBandwidth,
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
