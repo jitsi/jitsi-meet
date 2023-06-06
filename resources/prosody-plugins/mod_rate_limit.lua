@@ -217,3 +217,9 @@ function module.unload()
 end
 
 module:hook_global("config-reloaded", load_config);
+
+-- we calculate the stats on the configured interval (60 seconds by default)
+local measure_limited_ips = module:measure('limited-ips', 'amount'); -- we send stats for the total number limited ips
+module:hook_global('stats-update', function ()
+    measure_limited_ips(limited_ips:count());
+end);
