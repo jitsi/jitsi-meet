@@ -4,6 +4,7 @@ export type InitOptions = {
     pollInterval: number;
     sendSdp: boolean;
     useLegacy: boolean;
+    useLibRtcStats: boolean;
 };
 
 export type VideoTypeData = {

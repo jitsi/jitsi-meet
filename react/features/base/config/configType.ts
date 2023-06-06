@@ -144,6 +144,7 @@ export interface IConfig {
         rtcstatsSendSdp?: boolean;
         rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
+        rtcstatsUseLibJitsi?: boolean;
         scriptURLs?: Array<string>;
         whiteListedEvents?: string[];
     };

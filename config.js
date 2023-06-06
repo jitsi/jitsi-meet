@@ -992,6 +992,10 @@ var config = {
         // all SDPs with an empty string instead.
         // rtcstatsSendSdp: false,
 
+        // This determines if rtcstats from lib-jitsi-meet will be used instead of the one
+        // here in jitsi-meet directly
+        // rtcstatsUseLibJitsi: false,
+
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics
