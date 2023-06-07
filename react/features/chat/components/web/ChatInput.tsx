@@ -23,6 +23,11 @@ interface IProps extends WithTranslation {
     _areSmileysDisabled: boolean;
 
     /**
+     * The id of the message recipient, if any.
+     */
+    _privateMessageRecipientId?: string;
+
+    /**
      * Invoked to send chat messages.
      */
     dispatch: IStore['dispatch'];
@@ -92,6 +97,17 @@ class ChatInput extends Component<IProps, IState> {
             this._textArea?.current && this._textArea.current.blur();
         } else {
             this._focus();
+        }
+    }
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps: Readonly<IProps>) {
+        if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
+            this._textArea?.current?.focus();
         }
     }
 
@@ -255,8 +271,11 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
+    const { privateMessageRecipient } = state['features/chat'];
+
     return {
-        _areSmileysDisabled: areSmileysDisabled(state)
+        _areSmileysDisabled: areSmileysDisabled(state),
+        _privateMessageRecipientId: privateMessageRecipient?.id
     };
 };
 
