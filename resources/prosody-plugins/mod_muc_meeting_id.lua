@@ -98,7 +98,7 @@ module:hook('muc-occupant-pre-join', function (event)
             module:log('error', 'Error enqueuing occupant event for: %s', occupant.nick);
             return true;
         end
-        module:log('info', 'Occupant pushed to prejoin queue %s', occupant.nick);
+        module:log('debug', 'Occupant pushed to prejoin queue %s', occupant.nick);
 
         -- stop processing
         return true;
@@ -115,7 +115,7 @@ function handle_jicofo_unlock(event)
 
     -- and now let's handle all pre_join_queue events
     for _, ev in room.pre_join_queue:items() do
-        module:log('info', 'Occupant processed from queue %s', ev.occupant.nick);
+        module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
         room:handle_normal_presence(ev.origin, ev.stanza);
     end
     room.pre_join_queue = nil;
