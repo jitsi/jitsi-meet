@@ -91,7 +91,7 @@ export function commonUserJoinedHandling(
         conference: IJitsiConference,
         user: any) {
     const id = user.getId();
-    const displayName = user.getDisplayName();
+    const email = user.getEmail();
 
     if (user.isHidden()) {
         dispatch(hiddenParticipantJoined(id, displayName));
@@ -102,6 +102,7 @@ export function commonUserJoinedHandling(
             botType: user.getBotType(),
             conference,
             id,
+            email: email,
             name: displayName,
             presence: user.getStatus(),
             role: user.getRole(),
