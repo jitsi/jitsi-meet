@@ -389,6 +389,24 @@ export function getCurrentConference(stateful: IStateful): IJitsiConference | un
 }
 
 /**
+ * Returns whether the current conference is a P2P connection.
+ * Will return `false` if it's a JVB one, and `null` if there is no conference.
+ *
+ * @param {IStateful} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean|null}
+ */
+export function isP2pActive(stateful: IStateful): boolean | null {
+    const conference = getCurrentConference(toState(stateful));
+
+    if (!conference) {
+        return null;
+    }
+
+    return conference.isP2PActive();
+}
+
+/**
  * Returns the stored room name.
  *
  * @param {IReduxState} state - The current state of the app.

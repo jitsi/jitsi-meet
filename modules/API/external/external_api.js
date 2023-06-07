@@ -130,6 +130,7 @@ const events = {
     'mouse-move': 'mouseMove',
     'notification-triggered': 'notificationTriggered',
     'outgoing-message': 'outgoingMessage',
+    'p2p-status-changed': 'p2pStatusChanged',
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
@@ -693,7 +694,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._numberOfParticipants = allParticipants;
     }
 
-
     /**
      * Returns the rooms info in the conference.
      *
@@ -702,6 +702,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     async getRoomsInfo() {
         return this._transport.sendRequest({
             name: 'rooms-info'
+        });
+    }
+
+    /**
+     * Returns whether the conference is P2P.
+     *
+     * @returns {Promise}
+     */
+    isP2pActive() {
+        return this._transport.sendRequest({
+            name: 'get-p2p-status'
         });
     }
 
