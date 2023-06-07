@@ -22,7 +22,7 @@ import {
     setPassword,
     setSubject
 } from '../../react/features/base/conference/actions';
-import { getCurrentConference } from '../../react/features/base/conference/functions';
+import { getCurrentConference, isP2pActive } from '../../react/features/base/conference/functions';
 import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
@@ -985,6 +985,10 @@ function initCommands() {
         }
         case 'rooms-info': {
             callback(getRoomsInfo(APP.store.getState()));
+            break;
+        }
+        case 'get-p2p-status': {
+            callback(isP2pActive(APP.store.getState()));
             break;
         }
         default:
@@ -2026,6 +2030,19 @@ class API {
         this._sendEvent({
             name: 'whiteboard-status-changed',
             status
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) if the connection type changed.
+     *
+     * @param {boolean} isP2p - Whether the new connection is P2P.
+     * @returns {void}
+     */
+    notifyP2pStatusChanged(isP2p) {
+        this._sendEvent({
+            name: 'p2p-status-changed',
+            isP2p
         });
     }
 

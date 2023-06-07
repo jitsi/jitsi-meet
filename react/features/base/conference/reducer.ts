@@ -75,6 +75,7 @@ export interface IJitsiConference {
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
+    isP2PActive: Function;
     isSIPCallingSupported: Function;
     isStartAudioMuted: Function;
     isStartVideoMuted: Function;
