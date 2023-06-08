@@ -6,7 +6,6 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { isModerationNotificationDisplayed } from '../../notifications/functions';
 import { stopReceiver } from '../../remote-control/actions';
 import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share/actions';
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
@@ -46,9 +45,7 @@ export function toggleScreensharing(
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // check for A/V Moderation when trying to start screen sharing
         if ((enabled || enabled === undefined) && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.SCREENSHARE, getState)) {
-                dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
-            }
+            dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
 
             return Promise.reject();
         }
