@@ -512,6 +512,7 @@ export interface IConfig {
     stereo?: boolean;
     subject?: string;
     testing?: {
+        assumeBandwidth?: boolean;
         callStatsThreshold?: number;
         disableE2EE?: boolean;
         mobileXmppWsThreshold?: number;

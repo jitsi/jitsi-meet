@@ -17,6 +17,7 @@ import { isEnabledFromState } from '../../react/features/av-moderation/functions
 import {
     endConference,
     sendTones,
+    setAssumedBandwidthBps,
     setFollowMe,
     setLocalSubject,
     setPassword,
@@ -117,7 +118,6 @@ import { getJitsiMeetTransport } from '../transport';
 
 import {
     API_ID,
-    ASSUMED_BANDWIDTH_BPS,
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
@@ -321,13 +321,7 @@ function initCommands() {
                 return;
             }
 
-            const { conference } = APP.store.getState()['features/base/conference'];
-
-            if (conference) {
-                conference.setAssumedBandwidthBps(value < ASSUMED_BANDWIDTH_BPS
-                    ? ASSUMED_BANDWIDTH_BPS
-                    : value);
-            }
+            APP.store.dispatch(setAssumedBandwidthBps(value));
         },
         'set-follow-me': value => {
             logger.debug('Set follow me command received');

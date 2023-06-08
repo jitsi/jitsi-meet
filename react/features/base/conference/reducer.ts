@@ -20,6 +20,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
+    SET_ASSUMED_BANDWIDTH_BPS,
     SET_FOLLOW_ME,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
@@ -31,6 +32,7 @@ import {
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
+    assumedBandwidthBps: undefined,
     conference: undefined,
     e2eeSupported: undefined,
     joining: undefined,
@@ -124,6 +126,7 @@ export interface IJitsiConference {
 }
 
 export interface IConferenceState {
+    assumedBandwidthBps?: number;
     authEnabled?: boolean;
     authLogin?: string;
     authRequired?: IJitsiConference;
@@ -197,6 +200,13 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
         case P2P_STATUS_CHANGED:
             return _p2pStatusChanged(state, action);
 
+        case SET_ASSUMED_BANDWIDTH_BPS: {
+            const assumedBandwidthBps = action.assumedBandwidthBps >= 0
+                ? Number(action.assumedBandwidthBps)
+                : undefined;
+
+            return set(state, 'assumedBandwidthBps', assumedBandwidthBps);
+        }
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
 

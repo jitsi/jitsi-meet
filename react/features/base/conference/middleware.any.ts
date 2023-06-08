@@ -1,5 +1,7 @@
 import { AnyAction } from 'redux';
 
+// @ts-ignore
+import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -39,6 +41,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     P2P_STATUS_CHANGED,
     SEND_TONES,
+    SET_ASSUMED_BANDWIDTH_BPS,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
@@ -97,6 +100,9 @@ MiddlewareRegistry.register(store => next => action => {
         _conferenceWillLeave(store);
         break;
 
+    case P2P_STATUS_CHANGED:
+        return _p2pStatusChanged(next, action);
+
     case PARTICIPANT_UPDATED:
         return _updateLocalParticipantInConference(store, next, action);
 
@@ -113,8 +119,8 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED:
         return _trackAddedOrRemoved(store, next, action);
 
-    case P2P_STATUS_CHANGED:
-        return _p2pStatusChanged(next, action);
+    case SET_ASSUMED_BANDWIDTH_BPS:
+        return _setAssumedBandwidthBps(store, next, action);
     }
 
     return next(action);
@@ -689,4 +695,34 @@ function _p2pStatusChanged(next: Function, action: AnyAction) {
     }
 
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code SET_ASSUMED_BANDWIDTH_BPS} is being dispatched within a specific
+ *  redux store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SET_ASSUMED_BANDWIDTH_BPS}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setAssumedBandwidthBps({ getState }: IStore, next: Function, action: AnyAction) {
+    const state = getState();
+    const conference = getCurrentConference(state);
+    const payload = Number(action.assumedBandwidthBps);
+
+    const assumedBandwidthBps = isNaN(payload) || payload < MIN_ASSUMED_BANDWIDTH_BPS
+        ? MIN_ASSUMED_BANDWIDTH_BPS
+        : payload;
+
+    if (conference) {
+        conference.setAssumedBandwidthBps(assumedBandwidthBps);
+    }
+
+    return next(action);
 }

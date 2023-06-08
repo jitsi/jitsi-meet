@@ -18,7 +18,9 @@ interface IProps extends IInputProps {
     id?: string;
     maxLength?: number;
     maxRows?: number;
+    maxValue?: number;
     minRows?: number;
+    minValue?: number;
     name?: string;
     onBlur?: (e: any) => void;
     onFocus?: (event: React.FocusEvent) => void;
@@ -92,6 +94,15 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
+        'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
+            '-webkit-appearance': 'none',
+            margin: 0
+        },
+
+        'input[type=number]': {
+            '-moz-appearance': 'textfield'
+        },
+
         icon: {
             position: 'absolute',
             top: '50%',
@@ -146,8 +157,10 @@ const Input = React.forwardRef<any, IProps>(({
     iconClick,
     id,
     label,
+    maxValue,
     maxLength,
     maxRows,
+    minValue,
     minRows,
     name,
     onBlur,
@@ -210,7 +223,9 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
+                        { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
+                        { ...(type === 'number' ? { min: minValue } : {}) }
                         name = { name }
                         onBlur = { onBlur }
                         onChange = { handleChange }

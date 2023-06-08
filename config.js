@@ -74,6 +74,9 @@ var config = {
     //
 
     testing: {
+        // Allows the setting of a custom bandwidth value from the UI.
+        // assumeBandwidth: true,
+
         // Disables the End to End Encryption feature. Useful for debugging
         // issues related to insertable streams.
         // disableE2EE: false,

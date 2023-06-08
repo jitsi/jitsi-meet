@@ -295,3 +295,13 @@ export const SET_ROOM = 'SET_ROOM';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+/**
+ * The type of (redux) action which updates the assumed bandwidth bps.
+ * 
+ * {
+ *      type: SET_ASSUMED_BANDWIDTH_BPS,
+ *      assumedBandwidthBps: number
+ * }
+ */
+export const SET_ASSUMED_BANDWIDTH_BPS = 'SET_ASSUMED_BANDWIDTH_BPS';
