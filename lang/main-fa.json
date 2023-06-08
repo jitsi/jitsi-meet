@@ -68,9 +68,9 @@
         },
         "join": "پیوستن",
         "joinTooltip": "پیوستن به جلسه",
-        "nextMeeting": "جلسه‌ی بعدی",
+        "nextMeeting": "جلسهٔ بعدی",
         "noEvents": "هیچ رویدادی برای آینده برنامه‌ریزی نشده است.",
-        "ongoingMeeting": "جلسه‌ی درحال برگزاری",
+        "ongoingMeeting": "جلسهٔ درحال برگزاری",
         "permissionButton": "بازکردن تنظیمات",
         "permissionMessage": "دسترسی تقویم برای دیدن جلسات شما در برنامه لازم است.",
         "refresh": "بازخوانی تقویم",
@@ -90,7 +90,7 @@
         "enter": "ورود به اتاق",
         "error": "خطا: پیام شما ارسال نشد. دلیل: {{error}}",
         "fieldPlaceHolder": "پیام خود را بنویسید",
-        "lobbyChatMessageTo": "پیام گفتگوی اتاق انتظار به {{recipient}}",
+        "lobbyChatMessageTo": "پیام گپ اتاق انتظار به {{recipient}}",
         "message": "پیام",
         "messageAccessibleTitle": "{{user}} می‌گوید:",
         "messageAccessibleTitleMe": "من می‌گویم:",
@@ -99,24 +99,24 @@
         "newMessages": "پیام‌های جدید",
         "nickname": {
             "popover": "نام نمایشی خود را وارد نمایید",
-            "title": "برای استفاده از گفتگو، نام نمایشی خود را وارد کنید",
-            "titleWithPolls": "برای استفاده از گفتگو و نظرسنجی، نام نماشی خود را وارد کنید"
+            "title": "برای استفاده از گپ، نام نمایشی خود را وارد کنید",
+            "titleWithPolls": "برای استفاده از گپ و نظرسنجی، نام نماشی خود را وارد کنید"
         },
         "noMessagesMessage": "هنوز هیچ پیامی در این جلسه وجود ندارد. شما یک گفتگو را آغاز کنید!",
         "privateNotice": "پیام خصوصی به {{recipient}}",
         "sendButton": "ارسال",
         "smileysPanel": "تابلوی شکلک",
         "tabs": {
-            "chat": "گفتگو",
+            "chat": "گپ",
             "polls": "نظرسنجی‌ها"
         },
-        "title": "گفتگو",
-        "titleWithPolls": "گفتگو و نظرسنجی‌ها",
+        "title": "گپ",
+        "titleWithPolls": "گپ و نظرسنجی‌ها",
         "you": "شما"
     },
     "chromeExtensionBanner": {
-        "buttonText": "نصب افزونه مرورگر Chrome",
-        "buttonTextEdge": "نصب افزونه مرورگر Edge",
+        "buttonText": "نصب افزونهٔ مرورگر Chrome",
+        "buttonTextEdge": "نصب افزونهٔ مرورگر Edge",
         "close": "بستن",
         "dontShowAgain": "دیگر این را به من نمایش نده",
         "installExtensionText": "برای اتصال به تقویم گوگل و برنامه آفیس 365 افزونه را نصب کنید"
@@ -126,7 +126,7 @@
     },
     "connection": {
         "ATTACHED": "پیوست‌شده",
-        "AUTHENTICATING": "احراز هویت",
+        "AUTHENTICATING": "درحال احراز هویت",
         "AUTHFAIL": "خطا در احراز هویت",
         "CONNECTED": "وصل‌شده",
         "CONNECTING": "درحال اتصال",
