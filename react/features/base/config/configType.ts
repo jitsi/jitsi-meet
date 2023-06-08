@@ -293,12 +293,6 @@ export interface IConfig {
     };
     dynamicBrandingUrl?: string;
     e2ee?: {
-        e2eeLabels?: {
-            description?: string;
-            label?: string;
-            tooltip?: string;
-            warning?: string;
-        };
         externallyManagedKey?: boolean;
         labels?: {
             description?: string;
@@ -518,6 +512,7 @@ export interface IConfig {
     stereo?: boolean;
     subject?: string;
     testing?: {
+        assumeBandwidth?: boolean;
         callStatsThreshold?: number;
         disableE2EE?: boolean;
         mobileXmppWsThreshold?: number;

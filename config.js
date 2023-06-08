@@ -74,6 +74,9 @@ var config = {
     //
 
     testing: {
+        // Allows the setting of a custom bandwidth value from the UI.
+        // assumeBandwidth: true,
+
         // Disables the End to End Encryption feature. Useful for debugging
         // issues related to insertable streams.
         // disableE2EE: false,
@@ -1065,7 +1068,12 @@ var config = {
     // },
 
     // e2ee: {
-    //   labels,
+    //   labels: {
+    //     description: '',
+    //     label: '',
+    //     tooltip: '',
+    //     warning: '',
+    //   },
     //   externallyManagedKey: false,
     // },
 
@@ -1375,7 +1383,6 @@ var config = {
      dialOutRegionUrl
      disableRemoteControl
      displayJids
-     e2eeLabels
      firefox_fake_device
      googleApiApplicationClientID
      iAmRecorder

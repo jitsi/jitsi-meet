@@ -7,7 +7,7 @@ module:hook("route/remote", function (event)
 	if not whitelist:contains(event.to_host) then
 	    -- make sure we do not send error replies for errors
         if event.stanza.attr.type == 'error' then
-            module:log('info', 'Not whitelisted destination domain for an error: %s', event.stanza);
+            module:log('debug', 'Not whitelisted destination domain for an error: %s', event.stanza);
             return true;
         end
 
