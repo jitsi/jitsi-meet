@@ -14,7 +14,7 @@ const E2EELabel = ({ _e2eeLabels, _showLabel, t }: IProps) => {
     if (!_showLabel) {
         return null;
     }
-    const content = _e2eeLabels?.labelToolTip || t('e2ee.labelToolTip');
+    const content = _e2eeLabels?.tooltip || t('e2ee.labelToolTip');
 
     return (
         <Tooltip

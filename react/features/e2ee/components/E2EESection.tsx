@@ -155,12 +155,12 @@ class E2EESection extends Component<IProps, IState> {
  */
 function mapStateToProps(state: IReduxState) {
     const { enabled: e2eeEnabled, maxMode } = state['features/e2ee'];
-    const { e2eeLabels } = state['features/base/config'];
+    const { e2ee = {} } = state['features/base/config'];
 
     let descriptionResource: string | undefined = '';
 
-    if (e2eeLabels) {
-        // When e2eeLabels are present, the descriptionResouse is ignored.
+    if (e2ee.labels) {
+        // When e2eeLabels are present, the description resource is ignored.
         descriptionResource = undefined;
     } else if (maxMode === MAX_MODE.THRESHOLD_EXCEEDED) {
         descriptionResource = 'dialog.e2eeDisabledDueToMaxModeDescription';
@@ -173,7 +173,7 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         _descriptionResource: descriptionResource,
-        _e2eeLabels: e2eeLabels,
+        _e2eeLabels: e2ee.labels,
         _enabled: maxMode === MAX_MODE.DISABLED || e2eeEnabled,
         _toggled: e2eeEnabled,
         _everyoneSupportE2EE: Boolean(doesEveryoneSupportE2EE(state))

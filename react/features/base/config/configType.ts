@@ -293,12 +293,6 @@ export interface IConfig {
     };
     dynamicBrandingUrl?: string;
     e2ee?: {
-        e2eeLabels?: {
-            description?: string;
-            label?: string;
-            tooltip?: string;
-            warning?: string;
-        };
         externallyManagedKey?: boolean;
         labels?: {
             description?: string;
