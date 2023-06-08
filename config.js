@@ -1065,7 +1065,12 @@ var config = {
     // },
 
     // e2ee: {
-    //   labels,
+    //   labels: {
+    //     description: '',
+    //     label: '',
+    //     tooltip: '',
+    //     warning: '',
+    //   },
     //   externallyManagedKey: false,
     // },
 
@@ -1375,7 +1380,6 @@ var config = {
      dialOutRegionUrl
      disableRemoteControl
      displayJids
-     e2eeLabels
      firefox_fake_device
      googleApiApplicationClientID
      iAmRecorder
