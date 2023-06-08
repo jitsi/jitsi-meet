@@ -48,6 +48,7 @@ import {
     ASKED_TO_UNMUTE_NOTIFICATION_ID,
     ASKED_TO_UNMUTE_SOUND_ID,
     AUDIO_MODERATION_NOTIFICATION_ID,
+    CS_MODERATION_NOTIFICATION_ID,
     VIDEO_MODERATION_NOTIFICATION_ID
 } from './constants';
 import {
@@ -86,6 +87,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         case MEDIA_TYPE.VIDEO: {
             titleKey = 'notify.moderationInEffectVideoTitle';
             uid = VIDEO_MODERATION_NOTIFICATION_ID;
+            break;
+        }
+        case MEDIA_TYPE.SCREENSHARE: {
+            titleKey = 'notify.moderationInEffectCSTitle';
+            uid = CS_MODERATION_NOTIFICATION_ID;
             break;
         }
         }
