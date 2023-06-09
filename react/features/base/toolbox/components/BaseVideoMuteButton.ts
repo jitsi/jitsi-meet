@@ -5,7 +5,7 @@ import AbstractButton, { IProps } from './AbstractButton';
 /**
  * An abstract implementation of a button for toggling video mute.
  */
-export default class AbstractVideoMuteButton<P extends IProps, S=any>
+export default class BaseVideoMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
     icon = IconVideo;

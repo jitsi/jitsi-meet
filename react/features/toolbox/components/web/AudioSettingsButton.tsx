@@ -13,7 +13,8 @@ import { toggleAudioSettings } from '../../../settings/actions';
 import AudioSettingsPopup from '../../../settings/components/web/audio/AudioSettingsPopup';
 import { getAudioSettingsVisibility } from '../../../settings/functions';
 import { isAudioSettingsButtonDisabled } from '../../functions';
-import AudioMuteButton from '../AudioMuteButton';
+
+import AudioMuteButton from './AudioMuteButton';
 
 interface IProps extends WithTranslation {
 

@@ -12,14 +12,14 @@ import { isReactionsEnabled } from '../../../reactions/functions.any';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
-import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
-import VideoMuteButton from '../VideoMuteButton';
 
+import AudioMuteButton from './AudioMuteButton';
 import HangupMenuButton from './HangupMenuButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
+import VideoMuteButton from './VideoMuteButton';
 import styles from './styles';
 
 /**
