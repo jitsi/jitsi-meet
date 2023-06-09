@@ -13,7 +13,8 @@ import { toggleVideoSettings } from '../../../settings/actions';
 import VideoSettingsPopup from '../../../settings/components/web/video/VideoSettingsPopup';
 import { getVideoSettingsVisibility } from '../../../settings/functions.web';
 import { isVideoSettingsButtonDisabled } from '../../functions.web';
-import VideoMuteButton from '../VideoMuteButton';
+
+import VideoMuteButton from './VideoMuteButton';
 
 
 interface IProps extends WithTranslation {

@@ -2,22 +2,19 @@ import { ClassNameMap, withStyles } from '@mui/styles';
 import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
 
-import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
-import { IReduxState } from '../../app/types';
-import { VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags/constants';
-import { getFeatureFlag } from '../../base/flags/functions';
-import { translate } from '../../base/i18n/functions';
-import { MEDIA_TYPE } from '../../base/media/constants';
-import { IGUMPendingState } from '../../base/media/types';
-import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
-import AbstractVideoMuteButton from '../../base/toolbox/components/AbstractVideoMuteButton';
-import { isLocalTrackMuted } from '../../base/tracks/functions';
-import Spinner from '../../base/ui/components/web/Spinner';
-import { registerShortcut, unregisterShortcut } from '../../keyboard-shortcuts/actions';
-import { handleToggleVideoMuted } from '../actions.any';
-import { SPINNER_COLOR } from '../constants';
-import { isVideoMuteButtonDisabled } from '../functions';
+import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { IGUMPendingState } from '../../../base/media/types';
+import AbstractButton from '../../../base/toolbox/components/AbstractButton';
+import Spinner from '../../../base/ui/components/web/Spinner';
+import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
+import { SPINNER_COLOR } from '../../constants';
+import AbstractVideoMuteButton, {
+    IProps as AbstractVideoMuteButtonProps,
+    mapStateToProps as abstractMapStateToProps
+} from '../AbstractVideoMuteButton';
 
 const styles = () => {
     return {
@@ -32,22 +29,12 @@ const styles = () => {
 /**
  * The type of the React {@code Component} props of {@link VideoMuteButton}.
  */
-interface IProps extends AbstractButtonProps {
+export interface IProps extends AbstractVideoMuteButtonProps {
 
     /**
      * The gumPending state from redux.
      */
     _gumPending: IGUMPendingState;
-
-    /**
-     * Whether video button is disabled or not.
-     */
-    _videoDisabled: boolean;
-
-    /**
-     * Whether video is currently muted or not.
-     */
-    _videoMuted: boolean;
 
     /**
      * The @mui/styles classes.
@@ -61,11 +48,6 @@ interface IProps extends AbstractButtonProps {
  * @augments AbstractVideoMuteButton
  */
 class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.videounmute';
-    label = 'toolbar.videomute';
-    tooltip = 'toolbar.videomute';
-    toggledTooltip = 'toolbar.videounmute';
 
     /**
      * Initializes a new {@code VideoMuteButton} instance.
@@ -88,10 +70,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     componentDidMount() {
-        if (typeof APP === 'undefined') {
-            return;
-        }
-
         this.props.dispatch(registerShortcut({
             character: 'V',
             helpDescription: 'keyboardShortcuts.videoMute',
@@ -106,10 +84,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     componentWillUnmount() {
-        if (typeof APP === 'undefined') {
-            return;
-        }
-
         this.props.dispatch(unregisterShortcut('V'));
     }
 
@@ -151,17 +125,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
     }
 
     /**
-     * Indicates if video is currently disabled or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return this.props._videoDisabled || this.props._gumPending !== IGUMPendingState.NONE;
-    }
-
-    /**
      * Indicates if video is currently muted or not.
      *
      * @override
@@ -169,13 +132,11 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {boolean}
      */
     _isVideoMuted() {
-        const { _gumPending, _videoMuted } = this.props;
-
-        if (_gumPending === IGUMPendingState.PENDING_UNMUTE) {
+        if (this.props._gumPending === IGUMPendingState.PENDING_UNMUTE) {
             return false;
         }
 
-        return _videoMuted;
+        return super._isVideoMuted();
     }
 
     /**
@@ -217,18 +178,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
 
         AbstractButton.prototype._onClick.call(this);
     }
-
-    /**
-     * Changes the muted state.
-     *
-     * @override
-     * @param {boolean} videoMuted - Whether video should be muted or not.
-     * @protected
-     * @returns {void}
-     */
-    _setVideoMuted(videoMuted: boolean) {
-        this.props.dispatch(handleToggleVideoMuted(videoMuted, true, true));
-    }
 }
 
 /**
@@ -242,15 +191,11 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const tracks = state['features/base/tracks'];
-    const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
     const { gumPending } = state['features/base/media'].video;
 
     return {
-        _videoDisabled: isVideoMuteButtonDisabled(state),
-        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO),
-        _gumPending: gumPending,
-        visible: enabledFlag
+        ...abstractMapStateToProps(state),
+        _gumPending: gumPending
     };
 }
 
