@@ -5,12 +5,13 @@ import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
 import logger from './logger';
 
 /**
- * Implements the entry point of the middleware of the feature base/media.
+ * Implements the entry point of the middleware of the feature base/sounds.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+
     switch (action.type) {
     case PLAY_SOUND:
         _playSound(store, action.soundId);
