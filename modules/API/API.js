@@ -2035,10 +2035,10 @@ class API {
      * @param {Object} json - The json carried by the message.
      * @returns {void}
      */
-    notifyNonParticipantMessageReceived(id,json) {
+    notifyNonParticipantMessageReceived(id, json) {
         this._sendEvent({
             name: 'non-participant-message-received',
-            id: id,
+            id,
             message: json
         });
     }
