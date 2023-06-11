@@ -48,7 +48,7 @@
         "leaveEmptyEffect": "para permitir que se realicen estimaciones",
         "possibleValues": "Valores posibles",
         "setAssumedBandwidthBps": "Ancho de banda asumido (bps)",
-        "title": "Configuración de ancho de banda",
+        "title": "Ajustes de ancho de banda",
         "zeroEffect": "para deshabilitar el video"
     },
     "breakoutRooms": {
@@ -197,8 +197,8 @@
     },
     "deepLinking": {
         "appNotInstalled": "Necesitas la aplicación {{app}} para unirte a esta reunión en el teléfono.",
-        "description": "¿No pasó nada? Hemos intentado iniciar la reunión en la aplicación de escritorio {{app}}. Intenta de nuevo o inicia en la aplicación web {{app}}.",
-        "descriptionNew": "¿No pasó nada? Hemos intentado iniciar la reunión en la aplicación de escritorio {{app}}. <br /><br /> Puedes volver a intentarlo o iniciar en la aplicación web.",
+        "description": "¿No pasó nada? Intentamos iniciar la reunión en la aplicación de escritorio {{app}}. Intenta de nuevo o inicia en la aplicación web {{app}}.",
+        "descriptionNew": "¿No pasó nada? Intentamos iniciar la reunión en la aplicación de escritorio {{app}}. <br /><br /> Puedes volver a intentarlo o iniciar en la aplicación web.",
         "descriptionWithoutWeb": "¿No pasó nada? Intentamos iniciar su reunión en la aplicación de escritorio {{app}}.",
         "downloadApp": "Descargar la app",
         "downloadMobileApp": "",
