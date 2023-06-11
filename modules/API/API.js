@@ -2032,7 +2032,7 @@ class API {
      * is received.
      *
      * @param {string} id - The resource id of the sender.
-     * @param {Object} json - The json carried by the endpoint message.
+     * @param {Object} json - The json carried by the message.
      * @returns {void}
      */
     notifyNonParticipantMessageReceived(id,json) {
