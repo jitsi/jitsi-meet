@@ -19,13 +19,66 @@ let screenLock: WakeLockSentinel | undefined;
 /**
  * Releases the screen lock.
  *
+ * @returns {Promise}
+ */
+async function releaseScreenLock() {
+    if (screenLock) {
+        if (!screenLock.released) {
+            logger.debug('Releasing wake lock.');
+
+            try {
+                await screenLock.release();
+            } catch (e) {
+                logger.error(`Error while releasing the screen wake lock: ${e}.`);
+            }
+        }
+        screenLock.removeEventListener('release', onWakeLockReleased);
+        screenLock = undefined;
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }
+}
+
+/**
+ * Requests a new screen wake lock.
+ *
  * @returns {void}
  */
-function releaseScreenLock() {
-    if (screenLock) {
-        screenLock.release();
-        screenLock = undefined;
+function requestWakeLock() {
+    if (navigator.wakeLock?.request) {
+        navigator.wakeLock.request('screen')
+            .then(lock => {
+                screenLock = lock;
+                screenLock.addEventListener('release', onWakeLockReleased);
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                logger.debug('Wake lock created.');
+            })
+            .catch(e => {
+                logger.error(`Error while requesting wake lock for screen: ${e}`);
+            });
     }
+}
+
+/**
+ * Page visibility change handler that re-requests the wake lock if it has been released by the OS.
+ *
+ * @returns {void}
+ */
+async function handleVisibilityChange() {
+    if (screenLock?.released && document.visibilityState === 'visible') {
+        // The screen lock have been released by the OS because of document visibility change. Lets try to request the
+        // wake lock again.
+        await releaseScreenLock();
+        requestWakeLock();
+    }
+}
+
+/**
+ * Wake lock released handler.
+ *
+ * @returns {void}
+ */
+function onWakeLockReleased() {
+    logger.debug('Wake lock released');
 }
 
 MiddlewareRegistry.register(store => next => action => {
@@ -43,15 +96,7 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(setSkipPrejoinOnReload(false));
         }
 
-        if (navigator.wakeLock?.request) {
-            navigator.wakeLock.request('screen')
-                .then(lock => {
-                    screenLock = lock;
-                })
-                .catch(e => {
-                    logger.error(`Error while requesting wake lock for screen: ${e}`);
-                });
-        }
+        requestWakeLock();
 
         break;
     }
