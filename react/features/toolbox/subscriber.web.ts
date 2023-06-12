@@ -15,10 +15,6 @@ import { isAudioMuteButtonDisabled } from './functions.any';
 StateListenerRegistry.register(
     /* selector */ (state: IReduxState) => isAudioMuteButtonDisabled(state),
     /* listener */ (disabled: boolean, store: IStore, previousDisabled: boolean) => {
-        if (typeof APP !== 'object') {
-            return;
-        }
-
         if (disabled !== previousDisabled) {
             APP.API.notifyAudioAvailabilityChanged(!disabled);
         }
