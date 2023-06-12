@@ -44,7 +44,6 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 type DocumentElement = {
-    mozRequestFullScreen?: Function;
     requestFullscreen?: Function;
     webkitRequestFullscreen?: Function;
 };
@@ -71,9 +70,6 @@ function _setFullScreen(next: Function, action: AnyAction) {
         if (typeof documentElement.requestFullscreen === 'function') {
             documentElement.requestFullscreen();
         } else if (
-            typeof documentElement.mozRequestFullScreen === 'function') {
-            documentElement.mozRequestFullScreen();
-        } else if (
             typeof documentElement.webkitRequestFullscreen === 'function') {
             documentElement.webkitRequestFullscreen();
         }
@@ -83,9 +79,6 @@ function _setFullScreen(next: Function, action: AnyAction) {
 
     if (typeof document.exitFullscreen === 'function') {
         document.exitFullscreen();
-
-    } else if (typeof document.mozCancelFullScreen === 'function') {
-        document.mozCancelFullScreen();
     } else if (typeof document.webkitExitFullscreen === 'function') {
         document.webkitExitFullscreen();
     }
