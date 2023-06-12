@@ -2028,6 +2028,23 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) if non participant message
+     * is received.
+     *
+     * @param {string} id - The resource id of the sender.
+     * @param {Object} json - The json carried by the message.
+     * @returns {void}
+     */
+    notifyNonParticipantMessageReceived(id, json) {
+        this._sendEvent({
+            name: 'non-participant-message-received',
+            id,
+            message: json
+        });
+    }
+
+
+    /**
      * Notify the external application (if API is enabled) if the connection type changed.
      *
      * @param {boolean} isP2p - Whether the new connection is P2P.

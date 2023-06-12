@@ -2029,7 +2029,10 @@ export default {
 
         room.on(
             JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
-            (...args) => APP.store.dispatch(nonParticipantMessageReceived(...args)));
+            (...args) => {
+                APP.store.dispatch(nonParticipantMessageReceived(...args));
+                APP.API.notifyNonParticipantMessageReceived(...args);
+            });
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
