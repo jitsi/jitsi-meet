@@ -61,6 +61,7 @@ export interface ISourceInfo {
 
 export interface IJitsiParticipant {
     getDisplayName: () => string;
+    getEmail: () => string;
     getId: () => string;
     getJid: () => string;
     getRole: () => string;

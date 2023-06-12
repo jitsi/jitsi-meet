@@ -5,6 +5,7 @@ export interface IRoom {
     name: string;
     participants: {
         [jid: string]: {
+            email: string;
             displayName: string;
             jid: string;
             role: string;
@@ -30,6 +31,7 @@ export interface IRoomsInfo {
 export interface IRoomInfoParticipant {
     avatarUrl: string;
     displayName: string;
+    email: string;
     id: string;
     jid: string;
     role: string;

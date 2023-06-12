@@ -84,6 +84,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
                             return {
                                 jid: participantItem.getJid(),
                                 role: participantItem.getRole(),
+                                email: participantItem.getEmail(),
                                 displayName: participantItem.getDisplayName(),
                                 avatarUrl: storeParticipant?.loadableAvatarUrl,
                                 id: participantItem.getId()
@@ -113,6 +114,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
                         return {
                             jid: participantItem?.jid,
                             role: participantItem?.role,
+                            email: participantItem?.email,
                             displayName: participantItem?.displayName,
                             avatarUrl: storeParticipant?.loadableAvatarUrl,
                             id: storeParticipant ? storeParticipant.id
