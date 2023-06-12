@@ -48,7 +48,7 @@ export function openLogoutDialog(onLogout: Function) {
  * welcome page or not.
  * @returns {Function}
  */
-export function openSettingsDialog(defaultTab: string, isDisplayedOnWelcomePage?: boolean) {
+export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
     return openDialog(SettingsDialog, {
         defaultTab,
         isDisplayedOnWelcomePage

@@ -187,7 +187,7 @@ const DialogWithTabs = ({
 
     useEffect(() => {
         if (isMobile) {
-            setSelectedTab(undefined);
+            setSelectedTab(defaultTab);
         } else {
             setSelectedTab(defaultTab ?? tabs[0].name);
         }
