@@ -39,6 +39,21 @@ class Recorder {
                 }
             });
     }
+     /**
+     * The onMeeting function is called whenever a meeting starts or ends.
+     */
+    onMeeting(event) {
+        if (event.type === 'start') {
+            // Start recording.
+            recorder.start();
+        } else if (event.type === 'end') {
+            // Stop recording and save the recording.
+            if (recording) {
+                recorder.stop();
+                recorder.save();
+            }
+        }
+    }
 }
 
 export default Recorder;
