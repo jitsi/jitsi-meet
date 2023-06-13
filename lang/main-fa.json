@@ -771,7 +771,7 @@
             "stopEveryonesVideo": "توقف ویدیوی همه",
             "stopVideo": "توقف ویدیو",
             "unblockEveryoneMicCamera": "رفع مسدودی میکروفون و دوربین همه",
-            "videoModeration": "ویدیوی آن‌ها را شروع کنید"
+            "videoModeration": "ویدیوی خودشان را شروع کنند"
         },
         "close": "بستن",
         "headings": {
@@ -800,8 +800,8 @@
             "create": "یک نظرسنجی ایجاد کنید",
             "pollOption": "گزینهٔ نظرسنجی {{index}}",
             "pollQuestion": "پرسش نظرسنجی",
-            "questionPlaceholder": "سوالی بپرس",
-            "removeOption": "گزینهٔ حذف",
+            "questionPlaceholder": "یک سوال بپرسید",
+            "removeOption": "حذف گزینه",
             "send": "ارسال"
         },
         "notification": {
@@ -821,8 +821,8 @@
         "audioAndVideoError": "خطا در صدا و تصویر:",
         "audioDeviceProblem": "مشکلی در دستگاه صوتی شما وجود دارد",
         "audioOnlyError": "خطا در صدا:",
-        "audioTrackError": "قطعه صوتی ایجاد نشد.",
-        "callMe": "با من تماس بگیر",
+        "audioTrackError": "قطعهٔ صوتی ایجاد نشد.",
+        "callMe": "با من تماس بگیرید",
         "callMeAtNumber": "با این شماره با من تماس بگیرید:",
         "calling": "درحال تماس",
         "configuringDevices": "پیکربندی دستگاه‌ها...",
@@ -876,21 +876,21 @@
         "startWithPhone": "شروع با صدای گوشی",
         "unsafeRoomConsent": "من خطر احتمالی را درک می‌کنم؛ می‌خواهم به جلسه بپیوندم",
         "videoOnlyError": "خطای ویدیو:",
-        "videoTrackError": "قطعه ویدیویی ایجاد نشد.",
+        "videoTrackError": "قطعهٔ ویدیویی ایجاد نشد.",
         "viewAllNumbers": "مشاهدهٔ همهٔ شماره‌ها"
     },
     "presenceStatus": {
         "busy": "مشغول",
         "calling": "درحال تماس‌گرفتن...",
-        "connected": "متصل شده",
+        "connected": "متصل‌شده",
         "connecting": "درحال اتصال...",
         "connecting2": "درحال اتصال*...",
-        "disconnected": "قطع شده",
-        "expired": "منقضی شده",
-        "ignored": "نادیده گرفته",
-        "initializingCall": "آغاز تماس...",
-        "invited": "دعوت شده",
-        "rejected": "رد شده",
+        "disconnected": "قطع‌شده",
+        "expired": "منقضی‌شده",
+        "ignored": "نادیده‌گرفته",
+        "initializingCall": "درحال آغاز تماس...",
+        "invited": "دعوت‌شده",
+        "rejected": "ردشده",
         "ringing": "درحال زنگ‌زدن..."
     },
     "profile": {
@@ -946,14 +946,14 @@
         "localRecordingVideoWarning": "برای ضبط ویدیوی خود، باید هنگام شروع ضبط آن را روشن کنید",
         "localRecordingWarning": "مطمئن شوید که زبانه کنونی را انتخاب کرده‌اید تا از ویدیو و صدای مناسب استفاده کنید. ضبط درحال حاضر محدود به ۱ گیگابایت است که تقریبا ۱۰۰ دقیقه است.",
         "loggedIn": "واردشده به عنوان {{userName}}",
-        "noMicPermission": "قطعه میکروفون نمی‌تواند ایجاد شود. لطفاً اجازه استفاده از میکروفون را بدهید.",
+        "noMicPermission": "قطعهٔ میکروفون نمی‌تواند ایجاد شود. لطفاً اجازه استفاده از میکروفون را بدهید.",
         "noStreams": "هیچ جریان صوتی یا تصویری شناسایی نشد.",
         "off": "ضبط متوقف شد",
         "offBy": "{{name}} ضبط جلسه را متوقف کرد",
         "on": "ضبط جلسه شروع شد",
         "onBy": "{{name}} ضبط جلسه را شروع کرد",
         "onlyRecordSelf": "فقط جریان‌های صدا و تصویر من را ضبط کن",
-        "pending": "آماده‌شدن برای ضبط جلسه...",
+        "pending": "درحال آماده‌شدن برای ضبط جلسه...",
         "rec": "ضبط",
         "saveLocalRecording": "ذخیرهٔ پروندهٔ ضبط به صورت محلی (آزمایشی)",
         "serviceDescription": "ضبط شما توسط خدمتِ ضبط ذخیره خواهد شد",
@@ -976,26 +976,26 @@
     "security": {
         "about": "می‌توانید به جلسه خود یک $t(lockRoomPassword) بیافزایید.شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بپیوندند، $t(lockRoomPassword) را ارائه کنند.",
         "aboutReadOnly": "مدیر جلسه می‌تواند به جلسه یک $t(lockRoomPassword) بیافزاید. شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بپیوندند، $t(lockRoomPassword) را ارائه کنند.",
-        "insecureRoomNameWarningNative": "",
-        "insecureRoomNameWarningWeb": "",
-        "title": "گزینه های امنیت",
+        "insecureRoomNameWarningNative": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بپیوندند. {{recommendAction}} دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید ",
+        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بپیوندند. {{recommendAction}} از <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
+        "title": "گزینه‌های امنیت",
         "unsafeRoomActions": {
-            "meeting": "",
-            "prejoin": "",
-            "welcome": ""
+            "meeting": "با استفاده از دکمهٔ امنیت جلسه خود را ایمن کنید.",
+            "prejoin": "استفاده از نامِ جلسهٔ منحصربه‌فردتری را در نظر بگیرید.",
+            "welcome": "استفاده از نامِ جلسهٔ منحصربه‌فردتری را در نظر بگیرید، یا یکی از پیشنهادات را انتخاب کنید."
         }
     },
     "settings": {
-        "audio": "",
-        "buttonLabel": "",
+        "audio": "صدا",
+        "buttonLabel": "تنظیمات",
         "calendar": {
-            "about": "با اتصال {{appName}} به تقویم می‌توانید رویدادهای پیش رو را ببینید",
-            "disconnect": "قطع ارتباط",
+            "about": "امکان اتصال تقویم {{appName}} برای دسترسی ایمن به تقویمتان استفاده می‌شود تا بتواند رویدادهای آینده را بخواند.",
+            "disconnect": "قطع‌کردن",
             "microsoftSignIn": "ورود با حساب کاربری مایکروسافت",
-            "signedIn": "دسترسی به رویدادهای تقویم رایانامه {{email}} برقرار است",
+            "signedIn": "هم‌اکنون درحال دسترسی به رویدادهای تقویم برای {{email}}. برای توقف دسترسی به رویدادهای تقویم، روی دکمه قطع‌کردن در زیر کلیک کنید.",
             "title": "تقویم"
         },
-        "desktopShareFramerate": "نرخ فریم به اشتراک گذاری دسکتاپ",
+        "desktopShareFramerate": "نرخ بازسازی تصویر هم‌رسانی میزکار",
         "desktopShareHighFpsWarning": "نرخ فریم بالاتر برای اشتراک گذاری دسکتاپ ممکن است بر پهنای باند شما تأثیر بگذارد. برای اعمال تنظیمات جدید، باید اشتراک‌گذاری صفحه را مجدداً راه‌اندازی کنید.",
         "desktopShareWarning": "برای اعمال تنظیمات جدید، باید اشتراک‌گذاری صفحه را مجدداً راه‌اندازی کنید.",
         "devices": "دستگاه‌ها",
