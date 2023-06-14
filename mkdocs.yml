@@ -1,0 +1,5 @@
+docs_dir: docs
+nav:
+  - Main: index.md
+plugins:
+  - techdocs-core
