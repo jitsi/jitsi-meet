@@ -15,7 +15,7 @@ const Filmstrip = {
         // horizontal film strip mode for calculating how tall large video
         // display should be.
         if (isFilmstripVisible(APP.store) && !interfaceConfig.VERTICAL_FILMSTRIP) {
-            return document.querySelector('.filmstrip').offsetHeight;
+            return document.querySelector('.filmstrip')?.offsetHeight ?? 0;
         }
 
         return 0;
