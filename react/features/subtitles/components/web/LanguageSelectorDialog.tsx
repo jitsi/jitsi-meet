@@ -45,7 +45,7 @@ const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => 
     }, [ language ]);
 
     const onSourceLanguageClick = useCallback(() => {
-        dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE, false));
+        dispatch(openSettingsDialog(SETTINGS_TABS.MORE, false));
     }, []);
 
     return (
