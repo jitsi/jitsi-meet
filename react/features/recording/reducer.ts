@@ -6,6 +6,7 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_STREAM_BASE_URL,
     SET_STREAM_KEY
 } from './actionTypes';
 
@@ -34,6 +35,7 @@ export interface IRecordingState {
     };
     selectedRecordingService: string;
     sessionDatas: Array<ISessionData>;
+    streamBaseURL?: string;
     streamKey?: string;
 }
 
@@ -81,6 +83,12 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
                 selectedRecordingService: action.selectedRecordingService
             };
         }
+
+        case SET_STREAM_BASE_URL:
+            return {
+                ...state,
+                streamBaseURL: action.streamBaseURL
+            };
 
         case SET_STREAM_KEY:
             return {

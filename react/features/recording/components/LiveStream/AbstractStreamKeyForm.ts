@@ -41,14 +41,24 @@ export interface IProps extends WithTranslation {
     classes?: any;
 
     /**
+     * Callback invoked when the entered stream base url has changed.
+     */
+    onStreamBaseURLChange: Function;
+
+    /**
      * Callback invoked when the entered stream key has changed.
      */
-    onChange: Function;
+    onStreamKeyChange: Function;
+
+    /**
+     * The stream base URL value to display as having been entered so far.
+     */
+    streamBaseURLValue: string;
 
     /**
      * The stream key value to display as having been entered so far.
      */
-    value: string;
+    streamKeyValue: string;
 }
 
 /**
@@ -83,8 +93,8 @@ export default class AbstractStreamKeyForm<P extends IProps>
         super(props);
 
         this.state = {
-            showValidationError: Boolean(this.props.value)
-                && !this._validateStreamKey(this.props.value)
+            showValidationError: Boolean(this.props.streamKeyValue)
+                && !this._validateStreamKey(this.props.streamKeyValue)
         };
 
         this._debouncedUpdateValidationErrorVisibility = debounce(
@@ -94,7 +104,8 @@ export default class AbstractStreamKeyForm<P extends IProps>
         );
 
         // Bind event handlers so they are only bound once per instance.
-        this._onInputChange = this._onInputChange.bind(this);
+        this._onStreamKeyChange = this._onStreamKeyChange.bind(this);
+        this._onStreamBaseURLChange = this._onStreamBaseURLChange.bind(this);
     }
 
     /**
@@ -103,7 +114,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      * @inheritdoc
      */
     componentDidUpdate(prevProps: P) {
-        if (this.props.value !== prevProps.value) {
+        if (this.props.streamKeyValue !== prevProps.streamKeyValue) {
             this._debouncedUpdateValidationErrorVisibility();
         }
     }
@@ -118,19 +129,35 @@ export default class AbstractStreamKeyForm<P extends IProps>
     }
 
     /**
-     * Callback invoked when the value of the input field has updated through
+     * Callback invoked when the value of the input stream baser url field has updated through
      * user input. This forwards the value (string only, even if it was a dom
-     * event) to the onChange prop provided to the component.
+     * event) to the onStreamBaseURLChange prop provided to the component.
      *
      * @param {Object | string} change - DOM Event for value change or the
      * changed text.
      * @private
      * @returns {void}
      */
-    _onInputChange(change: any) {
+    _onStreamBaseURLChange(change: any) {
         const value = typeof change === 'object' ? change.target.value : change;
 
-        this.props.onChange(value);
+        this.props.onStreamBaseURLChange(value);
+    }
+
+    /**
+     * Callback invoked when the value of the input stream key field has updated through
+     * user input. This forwards the value (string only, even if it was a dom
+     * event) to the onStreamKeyChange prop provided to the component.
+     *
+     * @param {Object | string} change - DOM Event for value change or the
+     * changed text.
+     * @private
+     * @returns {void}
+     */
+    _onStreamKeyChange(change: any) {
+        const value = typeof change === 'object' ? change.target.value : change;
+
+        this.props.onStreamKeyChange(value);
     }
 
     /**
@@ -142,8 +169,8 @@ export default class AbstractStreamKeyForm<P extends IProps>
      * @returns {boolean}
      */
     _updateValidationErrorVisibility() {
-        const newShowValidationError = Boolean(this.props.value)
-            && !this._validateStreamKey(this.props.value);
+        const newShowValidationError = Boolean(this.props.streamKeyValue)
+            && !this._validateStreamKey(this.props.streamKeyValue);
 
         if (newShowValidationError !== this.state.showValidationError) {
             this.setState({

@@ -11,7 +11,7 @@ import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setLiveStreamKey } from '../../../actions';
+import { setLiveStreamBaseURL, setLiveStreamKey } from '../../../actions';
 import AbstractStartLiveStreamDialog, { IProps, _mapStateToProps } from '../AbstractStartLiveStreamDialog';
 
 import GoogleSigninForm from './GoogleSigninForm';
@@ -34,6 +34,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onStartPress = this._onStartPress.bind(this);
+        this._onStreamBaseURLChange = this._onStreamBaseURLChangeNative.bind(this);
         this._onStreamKeyChangeNative
             = this._onStreamKeyChangeNative.bind(this);
         this._onStreamKeyPick = this._onStreamKeyPick.bind(this);
@@ -83,10 +84,10 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
                     broadcasts = { this.state.broadcasts }
                     onChange = { this._onStreamKeyPick } />
                 <StreamKeyForm
-                    onChange = { this._onStreamKeyChangeNative }
-                    value = {
-                        this.state.streamKey || this.props._streamKey || ''
-                    } />
+                    onStreamBaseURLChange = { this._onStreamBaseURLChangeNative }
+                    onStreamKeyChange = { this._onStreamKeyChangeNative }
+                    streamBaseURLValue = { this.state.streamBaseURL || this.props._streamBaseURL || '' }
+                    streamKeyValue = { this.state.streamKey || this.props._streamKey || '' } />
             </JitsiScreen>
         );
     }
@@ -106,6 +107,18 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
     _onStreamKeyChangeNative(streamKey: string) {
         this.props.dispatch(setLiveStreamKey(streamKey));
         this._onStreamKeyChange(streamKey);
+    }
+
+    /**
+     * Callback to handle stream base URL changes.
+     *
+     * @private
+     * @param {string} streamBaseURL - The new key value.
+     * @returns {void}
+     */
+    _onStreamBaseURLChangeNative(streamBaseURL: string) {
+        this.props.dispatch(setLiveStreamBaseURL(streamBaseURL));
+        this._onStreamBaseURLChange(streamBaseURL);
     }
 
     /**
@@ -145,12 +158,14 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
                 .catch(() => {
                     this.setState({
                         broadcasts: undefined,
+                        streamBaseURL: undefined,
                         streamKey: undefined
                     });
                 });
         } else {
             this.setState({
                 broadcasts: undefined,
+                streamBaseURL: undefined,
                 streamKey: undefined
             });
         }
