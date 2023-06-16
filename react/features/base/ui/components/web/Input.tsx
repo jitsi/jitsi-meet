@@ -21,6 +21,7 @@ interface IProps extends IInputProps {
     maxValue?: number;
     minRows?: number;
     minValue?: number;
+    mode?: 'text' | 'none' | 'decimal' | 'numeric' | 'tel' | 'search' | ' email' | 'url';
     name?: string;
     onBlur?: (e: any) => void;
     onFocus?: (event: React.FocusEvent) => void;
@@ -162,6 +163,7 @@ const Input = React.forwardRef<any, IProps>(({
     maxRows,
     minValue,
     minRows,
+    mode,
     name,
     onBlur,
     onChange,
@@ -223,6 +225,7 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
+                        { ...(mode ? { inputmode: mode } : {}) }
                         { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
                         { ...(type === 'number' ? { min: minValue } : {}) }
