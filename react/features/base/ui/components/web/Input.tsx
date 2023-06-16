@@ -19,6 +19,7 @@ interface IProps extends IInputProps {
     maxLength?: number;
     maxRows?: number;
     minRows?: number;
+    mode?: 'text' | 'none' | 'decimal' | 'numeric' | 'tel' | 'search' | ' email' | 'url';
     name?: string;
     onBlur?: (e: any) => void;
     onFocus?: (event: React.FocusEvent) => void;
@@ -149,6 +150,7 @@ const Input = React.forwardRef<any, IProps>(({
     maxLength,
     maxRows,
     minRows,
+    mode,
     name,
     onBlur,
     onChange,
@@ -210,6 +212,7 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         { ...(id ? { id } : {}) }
+                        { ...(mode ? { inputmode: mode } : {}) }
                         maxLength = { maxLength }
                         name = { name }
                         onBlur = { onBlur }
