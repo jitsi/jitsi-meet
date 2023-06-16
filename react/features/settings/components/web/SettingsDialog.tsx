@@ -203,7 +203,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
-                    selectedVideoInputId: videoTabState.selectedVideoInputId || newProps.selectedVideoInputId,
+                    selectedVideoInputId: videoTabState?.selectedVideoInputId || newProps.selectedVideoInputId,
                     options: tabState.options
                 };
             },
