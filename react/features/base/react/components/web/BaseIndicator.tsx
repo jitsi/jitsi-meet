@@ -103,6 +103,7 @@ const BaseIndicator = ({
                     className = { className }
                     id = { id }>
                     <Icon
+                        alt = { t(tooltipKey) }
                         className = { iconClassName }
                         color = { iconColor }
                         id = { iconId }

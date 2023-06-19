@@ -127,6 +127,7 @@ function MeetingParticipants({
             <Input
                 className = { styles.search }
                 clearable = { true }
+                id = 'participants-search-input'
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />

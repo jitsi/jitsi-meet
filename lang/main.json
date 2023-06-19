@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Meeting link: {{url}}"
+        },
         "add": "Invite",
         "addContacts": "Invite your contacts",
         "contacts": "contacts",
@@ -254,6 +257,8 @@
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "accessibilityLabel": {
+            "Cancel": "Cancel (leave dialog)",
+            "Ok": "OK (save and leave dialog)",
             "close": "Close dialog",
             "liveStreaming": "Live Stream",
             "sharingTabs": "Sharing options"
@@ -459,6 +464,9 @@
         "title": "Embed this meeting"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Your choice: {{rating}}"
+        },
         "average": "Average",
         "bad": "Bad",
         "detailsLabel": "Tell us more about it.",
@@ -1341,7 +1349,7 @@
         "audioOnly": "AUD",
         "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "bestPerformance": "Best performance",
-        "callQuality": "Video Quality",
+        "callQuality": "Video Quality (0 for best performance, 3 for highest quality)",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
@@ -1383,6 +1391,10 @@
         "videomute": "Participant has stopped the camera"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Current background: {{background}}",
+            "selectBackground": "Select a background"
+        },
         "addBackground": "Add background",
         "apply": "Apply",
         "backgroundEffectError": "Failed to apply background effect.",

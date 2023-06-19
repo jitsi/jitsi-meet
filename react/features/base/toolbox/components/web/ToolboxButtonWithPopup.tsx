@@ -6,21 +6,6 @@ import Popover from '../../../popover/components/Popover.web';
 interface IProps {
 
     /**
-     * The id of the element this button icon controls.
-     */
-    ariaControls?: string;
-
-    /**
-     * Whether the element popup is expanded.
-     */
-    ariaExpanded?: boolean;
-
-    /**
-     * Whether the element has a popup.
-     */
-    ariaHasPopup?: boolean;
-
-    /**
      * Aria label for the Icon.
      */
     ariaLabel?: string;
@@ -39,11 +24,6 @@ interface IProps {
      * Flag used for disabling the small icon.
      */
     iconDisabled?: boolean;
-
-    /**
-     * The ID of the icon button.
-     */
-    iconId?: string;
 
     /**
      * Popover close callback.
@@ -84,14 +64,10 @@ interface IProps {
  */
 export default function ToolboxButtonWithPopup(props: IProps) {
     const {
-        ariaControls,
-        ariaExpanded,
-        ariaHasPopup,
         ariaLabel,
         children,
         icon,
         iconDisabled,
-        iconId,
         onPopoverClose,
         onPopoverOpen,
         popoverContent,
@@ -119,28 +95,6 @@ export default function ToolboxButtonWithPopup(props: IProps) {
         );
     }
 
-    const iconProps: {
-        ariaControls?: string;
-        ariaExpanded?: boolean;
-        className?: string;
-        containerId?: string;
-        role?: string;
-        tabIndex?: number;
-    } = {};
-
-    if (iconDisabled) {
-        iconProps.className
-            = 'settings-button-small-icon settings-button-small-icon--disabled';
-    } else {
-        iconProps.className = 'settings-button-small-icon';
-        iconProps.role = 'button';
-        iconProps.tabIndex = 0;
-        iconProps.ariaControls = ariaControls;
-        iconProps.ariaExpanded = ariaExpanded;
-        iconProps.containerId = iconId;
-    }
-
-
     return (
         <div
             className = 'settings-button-container'
@@ -155,9 +109,10 @@ export default function ToolboxButtonWithPopup(props: IProps) {
                     position = 'top'
                     visible = { visible }>
                     <Icon
-                        { ...iconProps }
-                        ariaHasPopup = { ariaHasPopup }
-                        ariaLabel = { ariaLabel }
+                        alt = { ariaLabel }
+                        className = { `settings-button-small-icon ${iconDisabled
+                            ? 'settings-button-small-icon--disabled'
+                            : ''}` }
                         size = { 16 }
                         src = { icon } />
                 </Popover>

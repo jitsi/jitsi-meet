@@ -93,6 +93,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
                 <Input
                     autoFocus = { true }
                     className = 'dialog-bottom-margin'
+                    id = 'required-password-input'
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }

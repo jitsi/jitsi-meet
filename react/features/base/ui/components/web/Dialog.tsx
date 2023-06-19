@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { hideDialog } from '../../../dialog/actions';
 import { IconCloseLarge } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { operatesWithEnterKey } from '../../functions.web';
 
 import BaseDialog, { IProps as IBaseDialogProps } from './BaseDialog';
 import Button from './Button';
@@ -108,8 +109,13 @@ const Dialog = ({
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        !disableAutoHideOnSubmit && dispatch(hideDialog());
-        onSubmit?.();
+        if (onSubmit && (
+            (document.activeElement && !operatesWithEnterKey(document.activeElement))
+            || !document.activeElement
+        )) {
+            !disableAutoHideOnSubmit && dispatch(hideDialog());
+            onSubmit();
+        }
     }, [ onSubmit ]);
 
     return (
@@ -124,11 +130,11 @@ const Dialog = ({
             title = { title }
             titleKey = { titleKey }>
             <div className = { classes.header }>
-                <p
+                <h1
                     className = { classes.title }
                     id = 'dialog-title'>
                     {title ?? t(titleKey ?? '')}
-                </p>
+                </h1>
                 {!hideCloseButton && (
                     <ClickableIcon
                         accessibilityLabel = { t('dialog.accessibilityLabel.close') }
@@ -160,6 +166,7 @@ const Dialog = ({
                     accessibilityLabel = { t(ok.translationKey ?? '') }
                     disabled = { ok.disabled }
                     id = 'modal-dialog-ok-button'
+                    isSubmit = { true }
                     labelKey = { ok.translationKey }
                     onClick = { submit } />}
             </div>

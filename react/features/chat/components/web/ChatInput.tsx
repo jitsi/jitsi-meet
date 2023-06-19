@@ -135,6 +135,7 @@ class ChatInput extends Component<IProps, IState> {
                         className = 'chat-input'
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
                         iconClick = { this._toggleSmileysPanel }
+                        id = 'chat-input-messagebox'
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }

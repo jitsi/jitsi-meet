@@ -302,7 +302,7 @@ const VideoSettingsContent = ({
             </ContextMenuItemGroup>
             <ContextMenuItemGroup>
                 { virtualBackgroundSupported && <ContextMenuItem
-                    accessibilityLabel = 'virtualBackground.title'
+                    accessibilityLabel = { t('virtualBackground.title') }
                     icon = { IconImage }
                     onClick = { selectBackground }
                     text = { t('virtualBackground.title') } /> }

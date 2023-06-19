@@ -351,6 +351,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                 bottomLabel = { parseInt(currentFramerate, 10) > SS_DEFAULT_FRAME_RATE
                     ? t('settings.desktopShareHighFpsWarning')
                     : t('settings.desktopShareWarning') }
+                id = 'more-framerate-select'
                 label = { t('settings.desktopShareFramerate') }
                 onChange = { this._onFramerateItemSelect }
                 options = { frameRateItems }

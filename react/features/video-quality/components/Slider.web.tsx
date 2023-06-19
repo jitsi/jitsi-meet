@@ -143,7 +143,9 @@ function Slider({ ariaLabel, max, min, onChange, step, value }: IProps) {
 
     return (
         <div className = { classes.sliderContainer }>
-            <ul className = { cx('empty-list', classes.knobContainer) }>
+            <ul
+                aria-hidden = { true }
+                className = { cx('empty-list', classes.knobContainer) }>
                 {knobs.map((_, i) => (
                     <li
                         className = { classes.knob }

@@ -55,13 +55,15 @@ function EmbedMeeting({ t, url }: IProps) {
             <div className = { classes.container }>
                 <Input
                     accessibilityLabel = { t('dialog.embedMeeting') }
+                    id = 'embed-meeting-input'
                     readOnly = { true }
                     textarea = { true }
                     value = { getEmbedCode() } />
                 <CopyButton
-                    aria-label = { t('addPeople.copyLink') }
+                    accessibilityText = { t('addPeople.copyLink') }
                     className = { classes.button }
                     displayedText = { t('dialog.copy') }
+                    id = 'embed-meeting-copy-button'
                     textOnCopySuccess = { t('dialog.copied') }
                     textOnHover = { t('dialog.copy') }
                     textToCopy = { getEmbedCode() } />

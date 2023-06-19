@@ -122,7 +122,6 @@ function UploadImageButton({
     return (
         <>
             {showLabel && <label
-                aria-label = { t('virtualBackground.uploadImage') }
                 className = { classes.label }
                 htmlFor = 'file-upload'
                 onKeyPress = { uploadImageKeyPress }

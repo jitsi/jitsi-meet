@@ -25,7 +25,7 @@ const styles = (theme: Theme) => {
 
         rating: {
             display: 'flex',
-            flexDirection: 'column' as const,
+            flexDirection: 'column-reverse' as const,
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: theme.spacing(4),
@@ -317,21 +317,26 @@ class FeedbackDialog extends Component<IProps, IState> {
                 <div className = { classes.dialog }>
                     <div className = { classes.rating }>
                         <div
-                            aria-label = { this.props.t('feedback.star') }
-                            className = { classes.ratingLabel } >
-                            <p id = 'starLabel'>
-                                { t(SCORES[scoreToDisplayAsSelected]) }
-                            </p>
-                        </div>
-                        <div
                             className = { classes.stars }
                             onMouseLeave = { this._onScoreContainerMouseLeave }>
                             { scoreIcons }
                         </div>
+                        <div
+                            className = { classes.ratingLabel } >
+                            <p className = 'sr-only'>
+                                { t('feedback.accessibilityLabel.yourChoice', {
+                                    rating: t(SCORES[scoreToDisplayAsSelected])
+                                }) }
+                            </p>
+                            <p
+                                aria-hidden = { true }
+                                id = 'starLabel'>
+                                { t(SCORES[scoreToDisplayAsSelected]) }
+                            </p>
+                        </div>
                     </div>
                     <div className = { classes.details }>
                         <Input
-                            autoFocus = { true }
                             id = 'feedbackTextArea'
                             label = { t('feedback.detailsLabel') }
                             onChange = { this._onMessageChange }
