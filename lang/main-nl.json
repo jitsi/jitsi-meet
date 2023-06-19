@@ -1061,7 +1061,6 @@
         "hideSelfView": "Verberg eigen beeld",
         "kick": "Verwijderen",
         "mirrorVideo": "Mijn camera omdraaien",
-        "verify": "Verifiëer",
         "moderator": "Moderator",
         "mute": "Deelnemer is gedempt",
         "muted": "Gedempt",
@@ -1071,6 +1070,7 @@
         "showSelfView": "Eigen camera laten zien",
         "show": "Op podium weergeven",
         "unpinFromStage": "Losmaken van podium",
+        "verify": "Verifiëer",
         "videoMuted": "Camera uitgeschakeld",
         "videomute": "Deelnemer heeft de camera gestopt"
     },
