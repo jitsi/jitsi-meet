@@ -1071,8 +1071,8 @@
         "show": "Op podium weergeven",
         "unpinFromStage": "Losmaken van podium",
         "verify": "Verifiëer",
-        "videoMuted": "Camera uitgeschakeld",
-        "videomute": "Deelnemer heeft de camera gestopt"
+        "videomute": "Deelnemer heeft de camera gestopt",
+        "videoMuted": "Camera uitgeschakeld"
     },
     
     "virtualBackground": {
