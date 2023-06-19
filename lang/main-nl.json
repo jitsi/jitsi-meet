@@ -1073,8 +1073,7 @@
         "verify": "Verifiëer",
         "videomute": "Deelnemer heeft de camera gestopt",
         "videoMuted": "Camera uitgeschakeld"
-    },
-    
+    }, 
     "virtualBackground": {
         "addBackground": "Achtergrond toevoegen",
         "apply": "Toepassen",
