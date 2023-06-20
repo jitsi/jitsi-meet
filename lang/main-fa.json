@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "پیوند جلسه: {{url}}"
+        },
         "add": "دعوت‌کردن",
         "addContacts": "دعوت از مخاطبین شما",
         "contacts": "مخاطبین",
@@ -38,6 +41,18 @@
     },
     "audioOnly": {
         "audioOnly": "پهنای باند کم"
+    },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "برای مثال ۱۰۰۰۰۰۰۰ برای ۱۰ مگابایت",
+        "assumedBandwidthBpsWarning": "مقدارهای بالاتر ممکن است باعث مشکلات شبکه شوند.",
+        "customValue": "مقدار سفارشی",
+        "customValueEffect": "برای تنظیم مقدار واقعی bps",
+        "leaveEmpty": "خالی بگذارید",
+        "leaveEmptyEffect": "تا امکان انجام تخمین‌ها فراهم شود",
+        "possibleValues": "مقدارهای ممکن",
+        "setAssumedBandwidthBps": "پهنای باند فرض‌شده (bps)",
+        "title": "تنظیمات پهنای باند",
+        "zeroEffect": "برای غیرفعال‌کردن ویدیو"
     },
     "breakoutRooms": {
         "actions": {
@@ -242,6 +257,8 @@
         "WaitingForHostTitle": "در انتظار میزبان ...",
         "Yes": "بله",
         "accessibilityLabel": {
+            "Cancel": "لغو (ترک‌کردن پنجرهٔ گفتگو)",
+            "Ok": "باشه (ذخیره و ترک‌کردن پنجرهٔ گفتگو)",
             "close": "بستن پیام",
             "liveStreaming": "پخش زنده",
             "sharingTabs": "گزینه‌های هم‌رسانی"
@@ -447,6 +464,9 @@
         "title": "جاسازی این جلسه"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "انتخاب شما: {{rating}}"
+        },
         "average": "میانگین",
         "bad": "بد",
         "detailsLabel": "دربارهٔ آن بیش‌تر به ما بگویید.",
@@ -1151,6 +1171,7 @@
             "muteEveryoneElse": "بی‌صداکردن بقیه افراد",
             "muteEveryoneElsesVideoStream": "ویدیوی دیگران را متوقف کنید",
             "muteEveryonesVideoStream": "ویدیوی همه را متوقف کنید",
+            "muteGUMPending": "درحال اتصال میکروفون شما",
             "noiseSuppression": "نوفه‌زدایی",
             "openChat": "بازکردن گپ",
             "participants": "بازکردن تابلوی شرکت‌کنندگان",
@@ -1184,9 +1205,8 @@
             "unmute": "وصل‌کردن صدا",
             "videoblur": "تغییر وضعیت تارکردن ویدیو",
             "videomute": "توقف دوربین",
-            "videounmute": "شروع دوربین",
-            "muteGUMPending": "درحال اتصال میکروفون شما",
-            "videomuteGUMPending": "درحال اتصال دوربین شما"
+            "videomuteGUMPending": "درحال اتصال دوربین شما",
+            "videounmute": "شروع دوربین"
         },
         "addPeople": "افزودن افراد به تماس شما",
         "audioOnlyOff": "غیرفعال‌کردن حالت پهنای باند کم",
@@ -1236,6 +1256,7 @@
         "mute": "بی‌صداکردن",
         "muteEveryone": "بی‌صداکردن همه",
         "muteEveryonesVideo": "غیرفعال‌کردن دوربین همه",
+        "muteGUMPending": "درحال اتصال میکروفون شما",
         "noAudioSignalDesc": "اگر از روی عمد آن را از تنظیمات سامانه یا سخت‌افزار بی‌صدا نکرده‌اید، دستگاه را تغییر دهید.",
         "noAudioSignalDescSuggestion": "اگر از روی عمد آن را از تنظیمات سامانه یا سخت‌افزار بی‌صدا نکرده‌اید، به دستگاهِ پیشنهادی تغییر دهید.",
         "noAudioSignalDialInDesc": "همچنین می‌توانید با این شماره‌ها تماس بگیرید:",
@@ -1281,9 +1302,8 @@
         "unmute": "وصل‌کردن صدا",
         "videoSettings": "تنظیمات ویدیو",
         "videomute": "توقف دوربین",
-        "videounmute": "شروع دوربین",
-        "muteGUMPending": "درحال اتصال میکروفون شما",
-        "videomuteGUMPending": "درحال اتصال دوربین شما"
+        "videomuteGUMPending": "درحال اتصال دوربین شما",
+        "videounmute": "شروع دوربین"
     },
     "transcribing": {
         "ccButtonTooltip": "شروع / توقف زیرنویس‌ها",
@@ -1329,7 +1349,7 @@
         "audioOnly": "فقط صدا",
         "audioOnlyExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و هم‌رسانی صفحهٔ نمایش را دریافت خواهید کرد.",
         "bestPerformance": "بهترین کارایی",
-        "callQuality": "کیفیت ویدیو",
+        "callQuality": "کیفیت ویدیو (۰ برای بهترین کارایی، ۳ برای بالاترین کیفیت)",
         "hd": "کیفیت بالا",
         "hdTooltip": "مشاهدهٔ ویدیوی کیفیت بالا",
         "highDefinition": "کیفیت بالا",
@@ -1371,6 +1391,10 @@
         "videomute": "شرکت‌کننده دوربین را متوقف کرده است"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "پس‌زمینه کنونی: {{background}}",
+            "selectBackground": "یک پس‌زمینه را انتخاب کنید"
+        },
         "addBackground": "افزودن پس زمینه",
         "apply": "اعمال‌کردن",
         "backgroundEffectError": "جلوهٔ پس‌زمینه اعمال نشد.",
@@ -1459,17 +1483,5 @@
         "accessibilityLabel": {
             "heading": "تخته‌سفید"
         }
-    },
-    "bandwidthSettings": {
-        "assumedBandwidthBps": "برای مثال ۱۰۰۰۰۰۰۰ برای ۱۰ مگابایت",
-        "assumedBandwidthBpsWarning": "مقدارهای بالاتر ممکن است باعث مشکلات شبکه شوند.",
-        "customValue": "مقدار سفارشی",
-        "customValueEffect": "برای تنظیم مقدار واقعی bps",
-        "leaveEmpty": "خالی بگذارید",
-        "leaveEmptyEffect": "تا امکان انجام تخمین‌ها فراهم شود",
-        "possibleValues": "مقدارهای ممکن",
-        "setAssumedBandwidthBps": "پهنای باند فرض‌شده (bps)",
-        "title": "تنظیمات پهنای باند",
-        "zeroEffect": "برای غیرفعال‌کردن ویدیو"
     }
 }
