@@ -126,6 +126,37 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IWatchRTCConfiguration {
+    /** Watchrtc api key */
+    rtcApiKey: string;
+    /** Identifier for the session */
+    rtcRoomId?: string;
+    /** Identifier for the current peer */
+    rtcPeerId?: string;
+    /**
+     * ["tag1", "tag2", "tag3"]
+     * @deprecated use 'keys' instead
+     */
+    rtcTags?: string[];
+    /** { "key1": "value1", "key2": "value2"} */
+    keys?: any;
+    /** Enables additional logging */
+    debug?: boolean;
+    rtcToken?: string;
+    /**
+     * @deprecated No longer needed. Use "proxyUrl" instead.
+     */
+    wsUrl?: string;
+    proxyUrl?: string;
+    console?: {
+        level: string;
+        override: boolean;
+    };
+    allowBrowserLogCollection?: boolean;
+    collectionInterval?: number;
+    logGetStats?: boolean;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -146,6 +177,7 @@ export interface IConfig {
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
         whiteListedEvents?: string[];
+        watchRTCEnabled?: boolean;
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
     appId?: string;
@@ -573,4 +605,5 @@ export interface IConfig {
         collabServerBaseUrl?: string;
         enabled?: boolean;
     };
+    watchRTCConfigParams?: IWatchRTCConfiguration;
 }

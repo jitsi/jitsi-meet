@@ -23,6 +23,7 @@ export default [
     'backgroundAlpha',
     'breakoutRooms',
     'buttonsWithNotifyClick',
+    'analytics.watchRTCEnabled',
 
     /**
      * The display name of the CallKit call representing the conference/meeting
@@ -230,5 +231,6 @@ export default [
     'videoQuality',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
-    'whiteboard.enabled'
+    'whiteboard.enabled',
+    'watchRTCConfigParams'
 ].concat(extraConfigWhitelist);
