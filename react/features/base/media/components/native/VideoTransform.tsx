@@ -597,7 +597,8 @@ class VideoTransform extends Component<IProps, IState> {
                 this._onGesture('scale', scale);
             }
         } else if (gestureState.numberActiveTouches === 1
-                && isNaN(this.initialDistance ?? 0)
+                && (this.initialDistance === undefined
+                || isNaN(this.initialDistance))
                 && this._didMove(gestureState)) {
             // this is a move event
             const position = this._getTouchPosition(evt);
