@@ -3,7 +3,10 @@ import debounce from 'lodash/debounce';
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
-import { SET_CAR_MODE } from '../../video-layout/actionTypes';
+import {
+    SET_CAR_MODE,
+    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
+} from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
@@ -81,6 +84,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_AUDIO_ONLY:
     case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
+    case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         _updateLastN(store);
         break;
     }
