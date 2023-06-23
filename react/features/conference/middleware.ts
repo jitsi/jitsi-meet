@@ -176,7 +176,7 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
 function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
     let allowIframe = false;
 
-    if (document.referrer === '') {
+    if (document.referrer === '' && browser.isElectron()) {
         // no iframe
         allowIframe = true;
     } else {
