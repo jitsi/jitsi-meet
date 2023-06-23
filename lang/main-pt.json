@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Link da reunião: {{url}}"
+        },
         "add": "Convidar",
         "addContacts": "Convidar os seus contactos",
         "contacts": "contactos",
@@ -38,6 +41,18 @@
     },
     "audioOnly": {
         "audioOnly": "Largura de banda baixa"
+    },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "p. ex. 10000000 para 10 Mbps",
+        "assumedBandwidthBpsWarning": "Valores mais elevados podem causar problemas na rede.",
+        "customValue": "valor personalizado",
+        "customValueEffect": "para definir o valor actual de bps",
+        "leaveEmpty": "deixar em branco",
+        "leaveEmptyEffect": "para permitir a realização de estimativas",
+        "possibleValues": "Valores possíveis",
+        "setAssumedBandwidthBps": "Largura de banda presumida (bps)",
+        "title": "Definições de largura de banda",
+        "zeroEffect": "para desligar o vídeo"
     },
     "breakoutRooms": {
         "actions": {
@@ -242,6 +257,8 @@
         "WaitingForHostTitle": "À espera do anfitrião ...",
         "Yes": "Sim",
         "accessibilityLabel": {
+            "Cancel": "Cancelar (sair da caixa de diálogo)",
+            "Ok": "OK (guardar e sair da caixa de diálogo)",
             "close": "Fechar caixa de diálogo",
             "liveStreaming": "Transmissão em direto",
             "sharingTabs": "Opções de partilha"
@@ -447,6 +464,9 @@
         "title": "Incorporar esta reunião"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "A sua escolha: {{rating}}"
+        },
         "average": "Média",
         "bad": "Má",
         "detailsLabel": "Conte-nos mais sobre isso.",
@@ -1151,6 +1171,7 @@
             "muteEveryoneElse": "Silenciar todos os outros",
             "muteEveryoneElsesVideo": "Parar o vídeo de todos os outros",
             "muteEveryonesVideo": "Parar o vídeo de todos",
+            "muteGUMPending": "A ligar o seu microfone",
             "noiseSuppression": "Supressão de ruído",
             "openChat": "Abrir chat",
             "participants": "Abrir painel de participantes",
@@ -1184,6 +1205,7 @@
             "unmute": "Ligar microfone",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Parar câmara",
+            "videomuteGUMPending": "A ligar a sua câmara",
             "videounmute": "Iniciar câmara"
         },
         "addPeople": "Adicione pessoas à sua chamada",
@@ -1234,6 +1256,7 @@
         "mute": "Desligar microfone",
         "muteEveryone": "Silenciar todos",
         "muteEveryonesVideo": "Desativar a câmara de todos",
+        "muteGUMPending": "A ligar o seu microfone",
         "noAudioSignalDesc": "Se não o silenciou propositadamente a partir de configurações do sistema ou hardware, considere mudar de dispositivo.",
         "noAudioSignalDescSuggestion": "Se não o silenciou propositadamente a partir das configurações do sistema ou hardware, considere mudar para o dispositivo sugerido.",
         "noAudioSignalDialInDesc": "Também pode marcar usando:",
@@ -1279,6 +1302,7 @@
         "unmute": "Ligar microfone",
         "videoSettings": "Definições de vídeo",
         "videomute": "Parar câmara",
+        "videomuteGUMPending": "A ligar a sua câmara",
         "videounmute": "Iniciar câmara"
     },
     "transcribing": {
@@ -1325,7 +1349,7 @@
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Está em modo de baixa largura de banda. Neste modo, receberá apenas partilha de áudio e ecrã.",
         "bestPerformance": "Melhor desempenho",
-        "callQuality": "Qualidade de vídeo",
+        "callQuality": "Qualidade de vídeo (0 para o melhor desempenho, 3 para a melhor qualidade)",
         "hd": "HD",
         "hdTooltip": "Ver vídeo em alta definição",
         "highDefinition": "Alta definição (HD)",
@@ -1367,6 +1391,10 @@
         "videomute": "Participante parou a câmara"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Atual imagem de fundo: {{background}}",
+            "selectBackground": "Selecionar uma imagem de fundo"
+        },
         "addBackground": "Adicionar imagem de fundo",
         "apply": "Aplicar",
         "backgroundEffectError": "Falha ao aplicar efeito de fundo.",
