@@ -5,6 +5,8 @@ local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
 local um_is_admin = require "core.usermanager".is_admin;
+local jid_split = require 'util.jid'.split;
+local jid_bare = require 'util.jid'.bare;
 
 
 local function is_admin(jid)
@@ -39,8 +41,11 @@ module:log("debug",
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
 local require_token_for_moderation;
+-- option to allow domains to skip token verification
+local allowlist;
 local function load_config()
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
+    allowlist = module:get_option_set('token_verification_allowlist', {});
 end
 load_config();
 
@@ -56,6 +61,17 @@ local function verify_user(session, stanza)
         module:log("debug", "Token not required from admin user: %s", user_jid);
         return true;
     end
+
+    -- token not required for users matching allow list
+    local user_bare_jid = jid_bare(user_jid);
+    local _, user_domain = jid_split(user_jid);
+
+    -- allowlist for participants
+    if allowlist:contains(user_domain) or allowlist:contains(user_bare_jid) then
+        module:log("debug", "Token not required from user in allow list: %s", user_jid);
+        return true;
+    end
+
 
     module:log("debug",
         "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to);
