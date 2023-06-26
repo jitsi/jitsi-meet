@@ -4,16 +4,15 @@ import 'react-native-gesture-handler';
 // Apply all necessary polyfills as early as possible
 // to make sure anything imported henceforth sees them.
 import 'react-native-get-random-values';
-import '../react/features/mobile/polyfills';
+import './react/features/mobile/polyfills';
 
 // @ts-ignore
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { View } from 'react-native';
 
-import { convertPropsToURL } from '../functions';
-import { appNavigate } from '../react/features/app/actions.native';
-import { App } from '../react/features/app/components/App.native';
-import { setAudioMuted, setVideoMuted } from '../react/features/base/media/actions';
+import { appNavigate } from './react/features/app/actions.native';
+import { App } from './react/features/app/components/App.native';
+import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
 // @ts-ignore
 import JitsiThemePaperProvider from '../react/features/base/ui/components/JitsiThemeProvider';
 
@@ -38,9 +37,18 @@ interface IAppProps {
 }
 
 /**
+ * Converts the meetingOptions domain and roomName to a URL that can be passed to the App component.
+ * @param {*} domain domain address from props.
+ * @param {*} roomName room name from props.
+ */
+const convertPropsToURL = (domain, roomName) => {
+    return `${domain}/${roomName}`;
+}
+
+/**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-const JitsiMeet = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
+const Index = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
@@ -96,4 +104,4 @@ const JitsiMeet = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) 
     );
 });
 
-export default JitsiMeet;
+export default Index;

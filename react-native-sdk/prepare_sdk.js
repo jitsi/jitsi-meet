@@ -3,13 +3,12 @@ const path = require('path');
 
 const packageJSON = require('../package.json');
 
-const {
-    androidSourcePath,
-    androidTargetPath,
-    iosDestPath,
-    iosSrcPath
-} = require('./constants.ts');
 const SDKPackageJSON = require('./package.json');
+
+const androidSourcePath = '../android/sdk/src/main/java/org/jitsi/meet/sdk';
+const androidTargetPath = './android/src/main/java/org/jitsi/meet/sdk';
+const iosSrcPath = '../ios/sdk/src';
+const iosDestPath = './ios/src';
 
 
 /**
