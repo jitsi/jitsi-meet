@@ -37,18 +37,9 @@ interface IAppProps {
 }
 
 /**
- * Converts the meetingOptions domain and roomName to a URL that can be passed to the App component.
- * @param {*} domain domain address from props.
- * @param {*} roomName room name from props.
- */
-const convertPropsToURL = (domain, roomName) => {
-    return `${domain}/${roomName}`;
-}
-
-/**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-const Index = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
@@ -73,7 +64,7 @@ const Index = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
 
     useEffect(
         () => {
-            const url = convertPropsToURL(meetingOptions.domain, meetingOptions.roomName);
+            const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
 
             setAppProps({
                 'url': {
@@ -103,5 +94,3 @@ const Index = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
         </View>
     );
 });
-
-export default Index;
