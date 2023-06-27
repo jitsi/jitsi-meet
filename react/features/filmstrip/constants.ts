@@ -130,7 +130,7 @@ export const TILE_VIEW_GRID_HORIZONTAL_MARGIN = 14;
 /**
  * The height of the whole toolbar.
  */
-export const TOOLBAR_HEIGHT = 72;
+export const TOOLBAR_HEIGHT = 60;
 
 /**
  * The height of the whole toolbar.

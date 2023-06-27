@@ -394,6 +394,7 @@ export class VideoContainer extends LargeContainer {
         const currentLayout = getCurrentLayout(state);
 
         const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
+        const containerHeightWithToolbox = containerHeight - (state['features/toolbox'].visible ? 60 : 0);
 
         if (currentLayout === LAYOUTS.TILE_VIEW || currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
@@ -403,7 +404,8 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
+        const [ width, height ] = this._getVideoSize(containerWidth,
+            containerHeightWithToolbox, verticalFilmstripWidth);
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
@@ -414,7 +416,7 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        if ((containerWidth > width) || (containerHeight > height)) {
+        if ((containerWidth > width) || (containerHeightWithToolbox > height)) {
             this._backgroundOrientation = containerWidth > width ? ORIENTATION.LANDSCAPE : ORIENTATION.PORTRAIT;
             this._hideBackground = false;
         } else {
@@ -424,7 +426,7 @@ export class VideoContainer extends LargeContainer {
         this._updateBackground();
 
         const { horizontalIndent, verticalIndent }
-            = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
+            = this.getVideoPosition(width, height, containerWidth, containerHeightWithToolbox, verticalFilmstripWidth);
 
         APP.store.dispatch(setLargeVideoDimensions(height, width));
 

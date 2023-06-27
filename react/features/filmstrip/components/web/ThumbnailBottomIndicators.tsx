@@ -61,7 +61,7 @@ const ThumbnailBottomIndicators = ({
     showStatusIndicators = true,
     thumbnailType
 }: IProps) => {
-    const { classes: styles, cx } = useStyles();
+    const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _showDisplayName = useSelector(isDisplayNameVisible);
@@ -69,7 +69,7 @@ const ThumbnailBottomIndicators = ({
         (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
-    return (<div className = { cx(className, 'bottom-indicators') }>
+    return (<div className = { className }>
         {
             showStatusIndicators && <StatusIndicators
                 audio = { !isVirtualScreenshareParticipant }

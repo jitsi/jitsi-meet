@@ -9,7 +9,6 @@ import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import {
     SET_TOOLBOX_ENABLED,
-    SET_TOOLBOX_SHIFT_UP,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
@@ -105,18 +104,5 @@ export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTr
         typeof APP === 'undefined'
             || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, muted, showUI);
 
-    };
-}
-
-/**
- * Sets whether the toolbox should be shifted up or not.
- *
- * @param {boolean} shiftUp - Whether the toolbox should shift up or not.
- * @returns {Object}
- */
-export function setShiftUp(shiftUp: boolean) {
-    return {
-        type: SET_TOOLBOX_SHIFT_UP,
-        shiftUp
     };
 }

@@ -129,10 +129,10 @@ const VideoLayout = {
     /**
      * Resizes the video area.
      */
-    resizeVideoArea() {
+    resizeVideoArea(animate = false) {
         if (largeVideo) {
             largeVideo.updateContainerSize();
-            largeVideo.resize(false);
+            largeVideo.resize(animate);
         }
     },
 
@@ -306,8 +306,8 @@ const VideoLayout = {
     /**
      * Handles window resizes.
      */
-    onResize() {
-        VideoLayout.resizeVideoArea();
+    onResize(animate = false) {
+        VideoLayout.resizeVideoArea(animate);
     }
 };
 

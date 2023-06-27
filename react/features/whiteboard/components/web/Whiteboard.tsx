@@ -10,7 +10,6 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
-import { getToolboxHeight } from '../../../toolbox/functions.web';
 import { shouldDisplayTileView } from '../../../video-layout/functions.any';
 import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
@@ -78,7 +77,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             } else {
                 width = clientWidth;
             }
-            height = clientHeight - getToolboxHeight();
+            height = clientHeight;
         } else {
             if (filmstripVisible) {
                 height = clientHeight - Filmstrip.getFilmstripHeight();

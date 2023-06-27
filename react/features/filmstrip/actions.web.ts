@@ -213,7 +213,8 @@ export function setVerticalViewDimensions() {
             remoteVideosContainerWidth
                 = thumbnails?.local?.width + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE;
             remoteVideosContainerHeight
-                = clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height) - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
+                = clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height)
+                    - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
 
             // Account for the height of the local screen share thumbnail when calculating the height of the remote
             // videos container.

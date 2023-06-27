@@ -6,7 +6,6 @@ import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
-import { getToolboxHeight } from '../../../toolbox/functions.web';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
@@ -76,7 +75,7 @@ class SharedVideo extends Component<IProps> {
             } else {
                 width = `${clientWidth}px`;
             }
-            height = `${clientHeight - getToolboxHeight()}px`;
+            height = clientHeight;
         } else {
             if (filmstripVisible) {
                 height = `${clientHeight - Filmstrip.getFilmstripHeight()}px`;

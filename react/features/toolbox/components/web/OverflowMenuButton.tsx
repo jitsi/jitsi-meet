@@ -234,7 +234,7 @@ const OverflowMenuButton = ({
                 headingId = 'overflow-context-menu'
                 onPopoverClose = { onCloseDialog }
                 onPopoverOpen = { onOpenDialog }
-                position = 'top'
+                position = 'top-start'
                 trigger = 'click'
                 visible = { isOpen }>
                 <OverflowToggleButton
