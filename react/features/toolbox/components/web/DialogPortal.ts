@@ -79,7 +79,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
             getRef(portalTarget);
             portalTarget.style.zIndex = `${ZINDEX_DIALOG_PORTAL}`;
         }
-    }, [ portalTarget ]);
+    }, [ portalTarget, getRef ]);
 
     useEffect(() => {
         const size = {
