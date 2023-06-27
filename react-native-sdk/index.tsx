@@ -14,7 +14,7 @@ import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
 // @ts-ignore
-import JitsiThemePaperProvider from '../react/features/base/ui/components/JitsiThemeProvider';
+import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
 interface IAppProps {
