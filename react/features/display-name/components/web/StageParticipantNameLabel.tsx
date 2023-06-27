@@ -11,7 +11,6 @@ import {
 } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { isLayoutTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
@@ -23,7 +22,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             display: 'inline-flex',
             justifyContent: 'center',
-            marginBottom: theme.spacing(7),
+            marginBottom: theme.spacing(3),
             transition: 'margin-bottom 0.3s',
             pointerEvents: 'none',
             position: 'absolute',
@@ -31,9 +30,6 @@ const useStyles = makeStyles()(theme => {
             left: 0,
             width: '100%',
             zIndex: 1
-        },
-        containerElevated: {
-            marginBottom: theme.spacing(12)
         }
     };
 });
@@ -53,7 +49,6 @@ const StageParticipantNameLabel = () => {
     const localId = localParticipant?.id;
 
     const isTileView = useSelector(isLayoutTileView);
-    const toolboxVisible: boolean = useSelector(isToolboxVisible);
     const showDisplayName = useSelector(isDisplayNameVisible);
 
     if (showDisplayName
@@ -66,8 +61,7 @@ const StageParticipantNameLabel = () => {
             <div
                 className = { cx(
                     'stage-participant-label',
-                    classes.badgeContainer,
-                    toolboxVisible && classes.containerElevated
+                    classes.badgeContainer
                 ) }>
                 <DisplayNameBadge name = { nameToDisplay } />
             </div>

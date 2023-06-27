@@ -89,6 +89,11 @@
             box-sizing: border-box;
             width: auto;
         }
+
+        .toolbox-content-wrapper {
+            margin: 0 auto;
+            max-width: 100%;
+        }
     }
 
     @media (max-width: 400px) {

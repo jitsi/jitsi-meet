@@ -2,7 +2,9 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
+import { TOOLBAR_HEIGHT } from '../../filmstrip/constants';
 import { getParticipantsPaneOpen } from '../../participants-pane/functions';
+import { isToolboxVisible } from '../../toolbox/functions.web';
 import theme from '../components/themes/participantsPaneTheme.json';
 
 import {
@@ -36,11 +38,17 @@ const REDUCED_UI_THRESHOLD = 300;
 export function clientResized(clientWidth: number, clientHeight: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let availableWidth = clientWidth;
+        let availableHeight = clientHeight;
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
             const { isOpen: isChatOpen } = state['features/chat'];
             const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+            const toolboxVisible = isToolboxVisible(state);
+
+            if (toolboxVisible) {
+                availableHeight -= TOOLBAR_HEIGHT;
+            }
 
             if (isChatOpen) {
                 availableWidth -= CHAT_SIZE;
@@ -54,7 +62,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
         batch(() => {
             dispatch({
                 type: CLIENT_RESIZED,
-                clientHeight,
+                clientHeight: availableHeight,
                 clientWidth: availableWidth
             });
             dispatch(setAspectRatio(clientWidth, clientHeight));

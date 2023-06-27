@@ -21,6 +21,11 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
+
+    &.with-toolbox {
+        height: calc(100% - #{$newToolbarSizeWithPadding});
+        min-height: calc(100% - #{$newToolbarSizeWithPadding});
+    }
 }
 
 #largeVideoBackgroundContainer,

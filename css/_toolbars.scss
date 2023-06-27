@@ -32,14 +32,6 @@
     pointer-events: none;
     z-index: $toolbarZ + 2;
 
-    &.shift-up {
-        bottom: calc(((#{$newToolbarSize} + 30px) * 2) * -1);
-
-        .toolbox-content {
-            margin-bottom: 46px;
-        }
-    }
-
     &.visible {
         bottom: 0;
     }
@@ -53,7 +45,6 @@
     align-items: center;
     box-sizing: border-box;
     display: flex;
-    margin-bottom: 16px;
     position: relative;
     z-index: $toolbarZ;
     pointer-events: none;
@@ -81,8 +72,7 @@
 .toolbox-content-wrapper {
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    max-width: 100%;
+    width: 100%;
     pointer-events: all;
     border-radius: 6px;
 

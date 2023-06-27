@@ -105,12 +105,3 @@ export const SET_TOOLBOX_VISIBLE = 'SET_TOOLBOX_VISIBLE';
  * }
  */
 export const TOGGLE_TOOLBOX_VISIBLE = 'TOGGLE_TOOLBOX_VISIBLE';
-
-/**
- * The type of the redux action which sets whether the toolbox should be shifted up or not.
- *
- * {
- *     type: SET_TOOLBOX_SHIFT_UP
- * }
- */
-export const SET_TOOLBOX_SHIFT_UP = 'SET_TOOLBOX_SHIFT_UP';

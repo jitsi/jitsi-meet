@@ -36,6 +36,7 @@ import {
     MIN_STAGE_VIEW_WIDTH,
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
+    TOOLBAR_HEIGHT,
     TOP_FILMSTRIP_HEIGHT
 } from '../../constants';
 import {
@@ -334,6 +335,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _currentLayout,
             _disableSelfView,
             _localScreenShareId,
+            _isToolboxVisible,
             _mainFilmstripVisible,
             _resizableFilmstrip,
             _topPanelFilmstrip,
@@ -373,6 +375,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         } else if (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
             || (_currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && filmstripType === FILMSTRIP_TYPE.MAIN)) {
             filmstripStyle.maxWidth = _verticalViewMaxWidth;
+            filmstripStyle.maxHeight = `calc(100% - ${_isToolboxVisible ? TOOLBAR_HEIGHT : 0}px)`;
             if (!_mainFilmstripVisible) {
                 filmstripStyle.right = `-${filmstripStyle.maxWidth}px`;
             }
