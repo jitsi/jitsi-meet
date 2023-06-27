@@ -2,13 +2,13 @@
     "name": "@jitsi/react-native-sdk",
     "version": "0.1.0",
     "description": "React Native SDK for Jitsi Meet.",
-    "main": "index.js",
+    "main": "index.tsx",
     "license": "Apache-2.0",
     "author": "",
     "homepage": "https://jitsi.org",
     "repository": {
         "type": "git",
-        "url": "git://github.com/jitsi/jitsi-meet.git"
+        "url": "git+https://github.com/jitsi/jitsi-meet.git"
     },
     "dependencies": {
         "@amplitude/react-native": "2.7.0",
