@@ -282,7 +282,7 @@ class Popover extends Component<IProps, IState> {
                             // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
                             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
                             // our DialogPortal positioning calculations.
-                            enabled = { this.state.enableFocusLock }
+                            enabled = { Boolean(this._contextMenuRef) && this.state.enableFocusLock }
                             returnFocus = {
 
                                 // If we return the focus to an element outside the viewport the page will scroll to
@@ -294,7 +294,7 @@ class Popover extends Component<IProps, IState> {
                                 // large video.
                                 isElementInTheViewport
                             }
-                            shards = { [ this._contextMenuRef ] }>
+                            shards = { this._contextMenuRef && [ this._contextMenuRef ] }>
                             {this._renderContent()}
                         </FocusOn>
                     </DialogPortal>
@@ -325,7 +325,9 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _setContextMenuRef(elem: HTMLElement) {
-        this._contextMenuRef = elem;
+        if (!elem || document.body.contains(elem)) {
+            this._contextMenuRef = elem;
+        }
     }
 
     /**
