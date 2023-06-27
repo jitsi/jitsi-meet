@@ -230,14 +230,6 @@ export function setVerticalViewDimensions() {
             hasScroll
                 = remoteVideosContainerHeight
                     < (thumbnails?.remote.height + TILE_VERTICAL_MARGIN) * numberOfRemoteParticipants;
-
-            console.log('\n\n\n height \n\n\n', {
-                clientHeight,
-                remoteVideosContainerHeight,
-                localCameraThumbnailHeight,
-                localScreenShareThumbnailHeight,
-                VERTICAL_FILMSTRIP_VERTICAL_MARGIN
-            });
         }
 
         dispatch({

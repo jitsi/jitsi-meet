@@ -7,12 +7,10 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 import {
-    ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_BREAKPOINT,
     FILMSTRIP_BREAKPOINT_OFFSET,
     FILMSTRIP_TYPE,
-    TOOLBAR_HEIGHT,
-    TOOLBAR_HEIGHT_MOBILE } from '../../constants';
+    TOOLBAR_HEIGHT } from '../../constants';
 import { isFilmstripResizable, showGridInVerticalView } from '../../functions.web';
 
 import Filmstrip from './Filmstrip';
@@ -124,24 +122,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     let gridDimensions = dimensions;
     let _hasScroll = false;
 
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const availableSpace = clientHeight - Number(filmstripHeight);
-    let filmstripPadding = 0;
-
-    if (availableSpace > 0) {
-        const paddingValue = TOOLBAR_HEIGHT_MOBILE - availableSpace;
-
-        if (paddingValue > 0) {
-            filmstripPadding = paddingValue;
-        }
-    } else {
-        filmstripPadding = TOOLBAR_HEIGHT_MOBILE;
-    }
-
-    const collapseTileView = reduceHeight
-        && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
-
     const shouldReduceHeight = reduceHeight && (
         isMobileBrowser() || (_currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW
             && _currentLayout !== LAYOUTS.STAGE_FILMSTRIP_VIEW));
@@ -152,8 +132,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     case LAYOUTS.TILE_VIEW:
         _hasScroll = Boolean(tileViewHasScroll);
         _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = Number(filmstripHeight) - (
-            collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
+        remoteFilmstripHeight = Number(filmstripHeight);
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
