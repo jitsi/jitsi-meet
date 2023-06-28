@@ -197,7 +197,7 @@ static CXProviderConfiguration *_providerConfiguration = nil;
 
 + (BOOL)hasActiveCallForUUID:(nonnull NSString *)callUUID {
     CXCall *activeCallForUUID = [[self.callController calls] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(CXCall *evaluatedObject, NSDictionary<NSString *,id> *bindings) {
-        return evaluatedObject.UUID.UUIDString == callUUID;
+        return [evaluatedObject.UUID.UUIDString isEqualToString:callUUID];
     }]].firstObject;
     
     if (!activeCallForUUID) {
