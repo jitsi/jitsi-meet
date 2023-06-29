@@ -1,6 +1,13 @@
+import { connect } from 'react-redux';
+
+import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { IconPerformance } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+
+import VideoQualityDialog from './VideoQualityDialog.web';
 
 /**
  * The type of the React {@code Component} props of
@@ -32,6 +39,20 @@ class VideoQualityButton extends AbstractButton<IProps> {
     label = 'videoStatus.performanceSettings';
     tooltip = 'videoStatus.performanceSettings';
     icon = IconPerformance;
+
+    /**
+    * Handles clicking the button, and opens the video quality dialog.
+    *
+    * @private
+    * @returns {void}
+    */
+    _handleClick() {
+        const { dispatch } = this.props;
+
+        sendAnalytics(createToolbarEvent('video.quality'));
+
+        dispatch(openDialog(VideoQualityDialog));
+    }
 }
 
-export default translate(VideoQualityButton);
+export default connect()(translate(VideoQualityButton));

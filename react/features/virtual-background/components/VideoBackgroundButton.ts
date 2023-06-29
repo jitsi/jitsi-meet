@@ -1,9 +1,11 @@
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
 import { translate } from '../../base/i18n/functions';
 import { IconImage } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+import { isScreenVideoShared } from '../../screen-share/functions';
 import { openSettingsDialog } from '../../settings/actions';
 import { SETTINGS_TABS } from '../../settings/constants';
 import { checkBlurSupport } from '../functions';
@@ -67,7 +69,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
-        visible: checkBlurSupport()
+        visible: checkBlurSupport() && getMultipleVideoSendingSupportFeatureFlag(state) && !isScreenVideoShared(state)
     };
 }
 

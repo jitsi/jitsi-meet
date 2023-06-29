@@ -5,6 +5,10 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import {
+    close as closeParticipantsPane,
+    open as openParticipantsPane
+} from '../../../participants-pane/actions.web';
 
 import ParticipantsCounter from './ParticipantsCounter';
 
@@ -39,6 +43,22 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      */
     _isToggled() {
         return this.props._isOpen;
+    }
+
+    /**
+    * Handles clicking the button, and toggles the participants pane.
+    *
+    * @private
+    * @returns {void}
+    */
+    _handleClick() {
+        const { dispatch, _isOpen } = this.props;
+
+        if (_isOpen) {
+            dispatch(closeParticipantsPane());
+        } else {
+            dispatch(openParticipantsPane());
+        }
     }
 
     /**

@@ -1,11 +1,15 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
+import { raiseHand } from '../../../base/participants/actions';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import AbstractButton, { type IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import ToolboxButtonWithPopup from '../../../base/toolbox/components/web/ToolboxButtonWithPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -31,6 +35,11 @@ interface IProps extends WithTranslation {
     _reactionsButtonEnabled: boolean;
 
     /**
+     * Whether or not the reactions are enabled.
+     */
+    _reactionsEnabled: boolean;
+
+    /**
      * The button's key.
      */
     buttonKey?: string;
@@ -39,11 +48,6 @@ interface IProps extends WithTranslation {
      * Redux dispatch function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Click handler for raise hand functionality.
-     */
-    handleClick: Function;
 
     /**
      * Whether or not it's narrow mode or mobile browser.
@@ -65,6 +69,11 @@ interface IProps extends WithTranslation {
      * The array of reactions to be displayed.
      */
     reactionsQueue: Array<IReactionEmojiProps>;
+
+    /**
+     * Whether or not to show the raise hand button.
+     */
+    showRaiseHand?: boolean;
 }
 
 
@@ -88,14 +97,15 @@ const ReactionsButton = translate(connect()(ReactionsButtonImpl));
  */
 function ReactionsMenuButton({
     _reactionsButtonEnabled,
+    _reactionsEnabled,
     _isMobile,
     buttonKey,
     dispatch,
-    handleClick,
     isOpen,
     isNarrow,
     notifyMode,
     reactionsQueue,
+    showRaiseHand,
     t
 }: IProps) {
     const toggleReactionsMenu = useCallback(() => {
@@ -110,26 +120,27 @@ function ReactionsMenuButton({
         isOpen && toggleReactionsMenu();
     }, [ isOpen, toggleReactionsMenu ]);
 
+    const localParticipant = useSelector(getLocalParticipant);
+    const raisedHand = useMemo(() => hasRaisedHand(localParticipant), [ localParticipant ]);
+    const handleClick = useCallback(() => {
+        sendAnalytics(createToolbarEvent(
+            'raise.hand',
+            { enable: !raisedHand }));
+
+        dispatch(raiseHand(!raisedHand));
+    }, [ raisedHand ]);
+
+    if (!showRaiseHand && (!_reactionsButtonEnabled || !_reactionsEnabled)) {
+        return null;
+    }
+
     const reactionsMenu = (<div className = 'reactions-menu-container'>
         <ReactionsMenu parent = { IReactionsMenuParent.Button } />
     </div>);
 
     let content: ReactElement | null = null;
 
-    if (_reactionsButtonEnabled) {
-        content = (
-            <ToolboxButtonWithPopup
-                ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                onPopoverClose = { closeReactionsMenu }
-                onPopoverOpen = { openReactionsMenu }
-                popoverContent = { reactionsMenu }
-                trigger = { _isMobile ? 'click' : undefined }
-                visible = { isOpen }>
-                <ReactionsButton
-                    buttonKey = { buttonKey }
-                    notifyMode = { notifyMode } />
-            </ToolboxButtonWithPopup>);
-    } else {
+    if (showRaiseHand) {
         content = isNarrow
             ? (
                 <RaiseHandButton
@@ -150,6 +161,19 @@ function ReactionsMenuButton({
                         handleClick = { handleClick }
                         notifyMode = { notifyMode } />
                 </ToolboxButtonWithPopup>);
+    } else {
+        content = (
+            <ToolboxButtonWithPopup
+                ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                onPopoverClose = { closeReactionsMenu }
+                onPopoverOpen = { openReactionsMenu }
+                popoverContent = { reactionsMenu }
+                trigger = { _isMobile ? 'click' : undefined }
+                visible = { isOpen }>
+                <ReactionsButton
+                    buttonKey = { buttonKey }
+                    notifyMode = { notifyMode } />
+            </ToolboxButtonWithPopup>);
     }
 
     return (
