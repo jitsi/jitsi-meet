@@ -1,9 +1,9 @@
-import punycode from 'punycode';
 import React, { Component } from 'react';
 import ReactLinkify from 'react-linkify';
 import { Text } from 'react-native';
 
 import { StyleType } from '../../../styles/functions.any';
+import { formatURLText } from '../../functions';
 
 import Link from './Link';
 
@@ -72,7 +72,7 @@ export default class Linkify extends Component<IProps> {
                 key = { key }
                 style = { this.props.linkStyle }
                 url = { decoratedHref }>
-                { punycode.toASCII(decoratedText) }
+                { formatURLText(decoratedText) }
             </Link>
         );
     }
