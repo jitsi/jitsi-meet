@@ -1073,13 +1073,14 @@
         "links": "Links",
         "privacy": "Privacy",
         "profileSection": "Profile",
+        "sdkVersion": "SDK version",
         "serverURL": "Server URL",
         "showAdvanced": "Show advanced settings",
         "startCarModeInLowBandwidthMode": "Start car mode in low bandwidth mode",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
         "terms": "Terms",
-        "version": "Version"
+        "version": "App version"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",

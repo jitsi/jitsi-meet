@@ -385,6 +385,14 @@ class SettingsView extends Component<IProps, IState> {
                                 {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                             </Text>
                         </FormRow>
+                        {/* @ts-ignore */}
+                        <Divider style = { styles.fieldSeparator } />
+                        <FormRow
+                            label = 'settingsView.sdkVersion'>
+                            <Text style = { styles.text }>
+                                {AppInfo.sdkVersion}
+                            </Text>
+                        </FormRow>
                     </FormSection>
                     <FormSection
                         label = 'settingsView.advanced'>
