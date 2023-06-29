@@ -486,7 +486,7 @@ class Toolbox extends Component<IProps> {
                 return {
                     character: REACTIONS[key].shortcutChar,
                     exec: onShortcutSendReaction,
-                    helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                    helpDescription: `toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`,
                     altKey: true
                 };
             });
