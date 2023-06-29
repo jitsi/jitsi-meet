@@ -303,7 +303,7 @@ class Toolbox extends Component<IProps> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled, _isSpeakerStatsDisabled } = this.props;
+        const { _toolbarButtons, dispatch, _reactionsEnabled, _gifsEnabled, _isSpeakerStatsDisabled } = this.props;
 
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
@@ -370,7 +370,7 @@ class Toolbox extends Component<IProps> {
                 return {
                     character: REACTIONS[key].shortcutChar,
                     exec: onShortcutSendReaction,
-                    helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                    helpDescription: `toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`,
                     altKey: true
                 };
             });
