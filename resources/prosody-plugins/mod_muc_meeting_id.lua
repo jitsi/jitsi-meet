@@ -115,8 +115,11 @@ function handle_jicofo_unlock(event)
 
     -- and now let's handle all pre_join_queue events
     for _, ev in room.pre_join_queue:items() do
-        module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
-        room:handle_normal_presence(ev.origin, ev.stanza);
+        -- if the connection was closed while waiting in the queue, ignore
+        if ev.origin.conn then
+            module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
+            room:handle_normal_presence(ev.origin, ev.stanza);
+        end
     end
     room.pre_join_queue = nil;
 end
