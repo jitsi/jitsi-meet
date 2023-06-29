@@ -6,7 +6,7 @@ import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
 import { setWhiteboardOpen } from '../../actions';
-import { isWhiteboardVisible } from '../../functions';
+import { isWhiteboardButtonVisible, isWhiteboardVisible } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -63,7 +63,8 @@ class WhiteboardButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        _toggled: isWhiteboardVisible(state)
+        _toggled: isWhiteboardVisible(state),
+        visible: isWhiteboardButtonVisible(state)
     };
 }
 

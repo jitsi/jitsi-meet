@@ -1,9 +1,13 @@
 import { connect } from 'react-redux';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
+import { isIosMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconEnterFullscreen, IconExitFullscreen } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { closeOverflowMenuIfOpen, setFullScreen } from '../../actions.web';
 
 interface IProps extends AbstractButtonProps {
 
@@ -36,6 +40,25 @@ class FullscreenButton extends AbstractButton<IProps> {
     _isToggled() {
         return this.props._fullScreen;
     }
+
+    /**
+    * Handles clicking the button, and toggles fullscreen.
+    *
+    * @private
+    * @returns {void}
+    */
+    _handleClick() {
+        const { dispatch, _fullScreen } = this.props;
+
+        sendAnalytics(createToolbarEvent(
+            'toggle.fullscreen',
+            {
+                enable: !_fullScreen
+            }));
+        dispatch(closeOverflowMenuIfOpen());
+
+        dispatch(setFullScreen(!_fullScreen));
+    }
 }
 
 /**
@@ -46,7 +69,8 @@ class FullscreenButton extends AbstractButton<IProps> {
  */
 const mapStateToProps = (state: IReduxState) => {
     return {
-        _fullScreen: state['features/toolbox'].fullScreen
+        _fullScreen: state['features/toolbox'].fullScreen,
+        visible: !isIosMobileBrowser()
     };
 };
 

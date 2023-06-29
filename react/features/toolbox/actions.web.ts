@@ -264,3 +264,17 @@ export function setToolboxTimeout(handler: Function, timeoutMS: number) {
         });
     };
 }
+
+/**
+     * Closes the overflow menu if opened.
+     *
+     * @private
+     * @returns {void}
+     */
+export function closeOverflowMenuIfOpen() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { overflowMenuVisible } = getState()['features/toolbox'];
+
+        overflowMenuVisible && dispatch(setOverflowMenuVisible(false));
+    };
+}

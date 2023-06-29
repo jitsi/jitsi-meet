@@ -45,8 +45,11 @@ class FeedbackButton extends AbstractButton<IProps> {
 }
 
 const mapStateToProps = (state: IReduxState) => {
+    const { callStatsID } = state['features/base/config'];
+
     return {
-        _conference: state['features/base/conference'].conference
+        _conference: state['features/base/conference'].conference,
+        visible: Boolean(callStatsID)
     };
 };
 

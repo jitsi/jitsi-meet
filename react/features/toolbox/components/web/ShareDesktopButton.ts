@@ -1,11 +1,15 @@
 import { connect } from 'react-redux';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconScreenshare, IconStopScreenshare } from '../../../base/icons/svg';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { startScreenShareFlow } from '../../../screen-share/actions.web';
 import { isScreenVideoShared } from '../../../screen-share/functions';
+import { closeOverflowMenuIfOpen } from '../../actions.web';
 import { isDesktopShareButtonDisabled } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
@@ -72,6 +76,23 @@ class ShareDesktopButton extends AbstractButton<IProps> {
     _isDisabled() {
         return !this.props._desktopSharingEnabled;
     }
+
+    /**
+     * Handles clicking the button, and toggles the chat.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        const { dispatch, _screensharing } = this.props;
+
+        sendAnalytics(createToolbarEvent(
+            'toggle.screen.sharing',
+            { enable: !_screensharing }));
+
+        dispatch(closeOverflowMenuIfOpen());
+        dispatch(startScreenShareFlow(!_screensharing));
+    }
 }
 
 /**
@@ -88,7 +109,8 @@ const mapStateToProps = (state: IReduxState) => {
 
     return {
         _desktopSharingEnabled: desktopSharingEnabled,
-        _screensharing: isScreenVideoShared(state)
+        _screensharing: isScreenVideoShared(state),
+        visible: JitsiMeetJS.isDesktopSharingEnabled()
     };
 };
 
