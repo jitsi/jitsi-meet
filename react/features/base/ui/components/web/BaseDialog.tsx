@@ -180,11 +180,10 @@ const BaseDialog = ({
 
     return (
         <div className = { cx(classes.container, isUnmounting && 'unmount') }>
-            <div
-                className = { classes.backdrop }
-                onClick = { onBackdropClick } />
+            <div className = { classes.backdrop } />
             <FocusOn
                 className = { classes.focusLock }
+                onClickOutside = { onBackdropClick }
                 returnFocus = {
 
                     // If we return the focus to an element outside the viewport the page will scroll to
