@@ -33,7 +33,7 @@ export const getPriorityFocusedElement = (): HTMLElement | null =>
 */
 export const getKeyboardKey = (e: KeyboardEvent): string => {
     // @ts-ignore
-    const { altKey, code, key, shiftKey, type, which } = e;
+    const { altKey, code, key, shiftKey, type, which, ctrlKey } = e;
 
     // If alt is pressed a different char can be returned so this takes
     // the char from the code. It also prefixes with a colon to differentiate
@@ -50,6 +50,10 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     // keyboard key. To be safe, when a key is "Unidentified" it must be
     // further analyzed by jitsi to a key using e.which.
     if (typeof key === 'string' && key !== 'Unidentified') {
+        if (ctrlKey) {
+            return `-${key}`;
+        }
+
         return key;
     }
 
