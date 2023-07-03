@@ -20,7 +20,9 @@ function updateDependencies() {
         }
     }
 
-    if (!updated) return;
+    if (!updated) {
+        return;
+    }
 
     packageJSON.dependencies = Object.keys(packageJSON.dependencies)
         .sort()
