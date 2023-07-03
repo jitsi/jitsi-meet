@@ -5,7 +5,7 @@
     font-size: 24px;
 
     .thanks-msg {
-        border-bottom: 1px solid $selectBg;
+        border-bottom: 1px solid #FFFFFF;
         padding-left: 30px;
         padding-right: 30px;
         p {
@@ -28,7 +28,7 @@
             width: 120px;
             height: 86px;
             margin: 0 auto;
-            background: $happySoftwareBackground;
+            background: transparent;
         }
     }
 }

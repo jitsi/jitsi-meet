@@ -2,10 +2,10 @@
  * Round badge.
  */
 .badge-round {
-    background-color: $toolbarBadgeBackground;
+    background-color: #165ECC;
     border-radius: 50%;
     box-sizing: border-box;
-    color: $toolbarBadgeColor;
+    color: #FFFFFF;
     // Do not inherit the font-family from the toolbar button, because it's an
     // icon style.
     font-family: $baseFontFamily;
@@ -192,7 +192,7 @@ div.hangup-menu-button {
         background: none;
 
         &:hover {
-            background: $newToolbarButtonHoverColor;
+            background: rgba(255, 255, 255, 0.2);
         }
     }
 

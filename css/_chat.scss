@@ -5,7 +5,7 @@
     position: relative;
     transition: width .16s ease-in-out;
     width: $sidebarWidth;
-    z-index: $sideToolbarContainerZ;
+    z-index: 300;
 
     @media (max-width: 580px) {
         height: 100vh;
@@ -253,7 +253,7 @@
 
 .chatmessage {
     &.localuser {
-        background-color: $chatLocalMessageBackgroundColor;
+        background-color: #484A4F;
         border-radius: 6px 0px 6px 6px;
     }
 
@@ -324,7 +324,7 @@
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
-        border-top: 1px solid $chatInputSeparatorColor;
+        border-top: 1px solid #A4B8D1;
     }
 }
 
@@ -340,7 +340,7 @@
 }
 
 .smileyContainer:hover {
-    background-color: $newToolbarButtonToggleColor;
+    background-color: rgba(255, 255, 255, 0.15);
     border-radius: 5px;
     cursor: pointer;
 }

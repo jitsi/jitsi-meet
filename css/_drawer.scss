@@ -3,17 +3,17 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: $drawerZ;
+    z-index: 351;
     border-radius: 16px 16px 0 0;
 
     &.notification-portal {
-        z-index: $dropdownZ;
+        z-index: 901;
     }
 }
 
 .drawer-portal::after {
     content: '';
-    background-color: $participantsPaneBgColor;
+    background-color: #141414;
     margin-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -54,7 +54,7 @@
             padding: 12px 16px;
 
             align-items: center;
-            color: $overflowMenuItemColor;
+            color: #fff;
             cursor: pointer;
             display: flex;
             font-size: 16px;
