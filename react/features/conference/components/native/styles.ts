@@ -1,4 +1,3 @@
-import { fixAndroidViewClipping } from '../../../base/styles/functions.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
@@ -38,11 +37,11 @@ export default {
     /**
      * {@code Conference} Style.
      */
-    conference: fixAndroidViewClipping({
+    conference: {
         alignSelf: 'stretch',
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1
-    }),
+    },
 
     displayNameContainer: {
         margin: 10
