@@ -43,16 +43,6 @@ const INITIAL_NON_RN_STATE: IConfig = {
  * @type {Object}
  */
 const INITIAL_RN_STATE: IConfig = {
-    // FIXME: Mobile codecs should probably be configurable separately, rather
-    // FIXME: than requiring this override here...
-
-    p2p: {
-        mobileCodecPreferenceOrder: [ 'H264', 'VP8' ]
-    },
-
-    videoQuality: {
-        mobileCodecPreferenceOrder: [ 'VP8', 'VP9' ]
-    }
 };
 
 /**
