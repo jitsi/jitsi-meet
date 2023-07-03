@@ -54,8 +54,7 @@ function _overwriteLocalParticipant(
         { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; }) {
     let localParticipant;
 
-    if ((avatarURL || email || name)
-            && (localParticipant = getLocalParticipant(getState))) {
+    if ((avatarURL || email || name || features) && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: IParticipant = {
             id: localParticipant.id,
             local: true
