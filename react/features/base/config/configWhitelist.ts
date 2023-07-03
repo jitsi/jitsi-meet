@@ -195,7 +195,6 @@ export default [
     'p2p',
     'participantsPane',
     'pcStatsInterval',
-    'preferredCodec',
     'prejoinConfig',
     'prejoinPageEnabled',
     'recordingService',

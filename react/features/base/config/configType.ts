@@ -441,10 +441,10 @@ export interface IConfig {
     opusMaxAverageBitrate?: number;
     p2p?: {
         backToP2PDelay?: number;
-        disabledCodec?: string;
+        codecPreferenceOrder?: Array<string>;
         enabled?: boolean;
         iceTransportPolicy?: string;
-        preferredCodec?: string;
+        mobileCodecPreferenceOrder?: Array<string>;
         stunServers?: Array<{ urls: string; }>;
     };
     participantsPane?: {
@@ -545,8 +545,7 @@ export interface IConfig {
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
-        disabledCodec?: string;
-        enforcePreferredCodec?: boolean;
+        codecPreferenceOrder?: Array<string>;
         maxBitratesVideo?: {
             [key: string]: {
                 high?: number;
@@ -557,8 +556,8 @@ export interface IConfig {
         minHeightForQualityLvl?: {
             [key: number]: string;
         };
+        mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
-        preferredCodec?: string;
     };
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;
