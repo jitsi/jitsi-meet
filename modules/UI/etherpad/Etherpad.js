@@ -4,7 +4,6 @@ import $ from 'jquery';
 
 import { setDocumentEditingState } from '../../../react/features/etherpad/actions';
 import { getSharedDocumentUrl } from '../../../react/features/etherpad/functions';
-import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
 import Filmstrip from '../videolayout/Filmstrip';
 import LargeContainer from '../videolayout/LargeContainer';
 import VideoLayout from '../videolayout/VideoLayout';
@@ -68,7 +67,7 @@ class Etherpad extends LargeContainer {
         let height, width;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            height = containerHeight - getToolboxHeight();
+            height = containerHeight;
             width = containerWidth - Filmstrip.getVerticalFilmstripWidth();
         } else {
             height = containerHeight - Filmstrip.getFilmstripHeight();
