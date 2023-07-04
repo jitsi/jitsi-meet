@@ -91,6 +91,7 @@
         }
     },
     "scripts": {
+        "postinstall": "node sdk_instructions.js",
         "prepare": "node prepare_sdk.js"
     },
     "bugs": {
