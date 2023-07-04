@@ -22,5 +22,6 @@ import '../toolbox/middleware';
 import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../whiteboard/middleware';
+import '../watchrtc/middleware';
 
 import './middlewares.any';

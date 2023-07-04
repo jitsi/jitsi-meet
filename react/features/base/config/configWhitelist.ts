@@ -15,6 +15,7 @@ export default [
     '_peerConnStatusRtcMuteTimeout',
     'analytics.disabled',
     'analytics.rtcstatsEnabled',
+    'analytics.watchRTCEnabled',
     'audioLevelsInterval',
     'audioQuality',
     'autoKnockLobby',
@@ -228,6 +229,7 @@ export default [
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
+    'watchRTCConfigParams',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
     'whiteboard.enabled'

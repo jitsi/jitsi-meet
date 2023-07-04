@@ -44,6 +44,7 @@
     "@svgr/webpack": "6.3.1",
     "@tensorflow/tfjs-backend-wasm": "3.13.0",
     "@tensorflow/tfjs-core": "3.13.0",
+    "@testrtc/watchrtc-sdk": "^1.36.3",
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
     "@xmldom/xmldom": "0.8.7",
