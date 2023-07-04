@@ -31,8 +31,8 @@ body {
     font-size: 12px;
     font-weight: 400;
     overflow: hidden;
-    color: $defaultColor;
-    background: $defaultBackground;
+    color: #F1F1F1;
+    background: #040404; // should match DEFAULT_BACKGROUND from interface_config
 }
 
 /**
@@ -94,7 +94,7 @@ input[type='text'], input[type='password'], textarea {
 
 button {
     color: #FFF;
-    background-color: $buttonBackground;
+    background-color: #44A5FF;
     border-radius: $borderRadius;
 
     &.no-icon {
@@ -145,7 +145,7 @@ form {
     font-size: 11pt;
     color: rgba(255,255,255,.50);
     text-decoration: none;
-    z-index: $poweredByZ;
+    z-index: 100;
 }
 
 .connected {

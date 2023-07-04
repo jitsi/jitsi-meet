@@ -1,5 +1,3 @@
-@import "themes/light";
-
 /**
  * Style variables
  */
@@ -10,83 +8,26 @@ $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica
  */
 
 // Video layout.
-$thumbnailVideoMargin: 2px;
 $thumbnailsBorder: 2px;
-$thumbnailVideoBorder: 2px;
-$filmstripToggleButtonWidth: 17px;
-
-
-/**
- * Color variables.
- */
-$defaultColor: #F1F1F1;
-$defaultSideBarFontColor: #44A5FF;
-$defaultSemiDarkColor: #ACACAC;
-$defaultDarkColor: #2b3d5c;
-$defaultWarningColor: rgb(215, 121, 118);
-$participantsPaneBgColor: #141414;
 
 /**
  * Toolbar
  */
 $newToolbarBackgroundColor: #131519;
-$newToolbarButtonHoverColor: rgba(255, 255, 255, 0.2);
-$newToolbarButtonToggleColor: rgba(255, 255, 255, 0.15);
-$menuBG:#242528;
-$newToolbarFontSize: 24px;
-$newToolbarHangupFontSize: 32px;
 $newToolbarSize: 48px;
 $newToolbarSizeMobile: 60px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
-$toolbarTitleFontSize: 19px;
-$overflowMenuItemColor: #fff;
-
-
-/**
- * Video layout
- */
-$participantNameColor: #fff;
-$audioLevelBg: #44A5FF;
-$audioLevelShadow: rgba(9, 36, 77, 0.9);
-$videoStateIndicatorColor: $defaultColor;
-$videoStateIndicatorBackground: $toolbarBackground;
-$videoStateIndicatorSize: 40px;
-
-/**
- * Feedback Modal
- */
-$feedbackContentBg: #fff;
-$feedbackInputBg: #fff;
-$feedbackTextColor: #000;
-$feedbackInputTextColor: #333;
-$feedbackInputPlaceholderColor: #777;
-
-/**
- * Modals
- */
-$modalButtonFontSize: 14px;
-$modalMockAKInputBackground: #fafbfc;
-$modalMockAKInputBorder: 1px solid #f4f5f7;
-$modalTextColor: #333;
 
 /**
  * Chat
  */
-$chatActionsSeparatorColor: rgb(173, 105, 112);
 $chatBackgroundColor: #131519;
-$chatInputSeparatorColor: #A4B8D1;
-$chatLobbyActionsSeparatorColor: #6A50D3;
-$chatLocalMessageBackgroundColor: #484A4F;
-$chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
-$chatRemoteMessageBackgroundColor:  #242528;
 $sidebarWidth: 315px;
 
 /**
  * Misc.
  */
 $borderRadius: 4px;
-$happySoftwareBackground: transparent;
-$desktopAppDragBarHeight: 25px;
 $scrollHeight: 7px;
 
 /**
@@ -96,37 +37,10 @@ $zindex0: 0;
 $zindex1: 1;
 $zindex2: 2;
 $zindex3: 3;
-$subtitlesZ: 7;
-$popoverZ: 8;
-$reloadZ: 20;
-$poweredByZ: 100;
-$ringingZ: 300;
-$sideToolbarContainerZ: 300;
 $toolbarZ: 250;
-$drawerZ: 351;
-$dropdownZ: 901;
-$overlayZ: 1016;
 // Place filmstrip videos over toolbar in order
 // to make connection info visible.
 $filmstripVideosZ: $toolbarZ + 1;
-
-
-/**
- * Font Colors
- */
-$defaultFontColor: #777;
-$defaultLightFontColor: #F1F1F1;
-$defaultDarkFontColor: #000;
-
-/**
- * Forms
- */
-//inputs
-$inputControlEmColor: #f29424;
-//buttons
-$linkFontColor: #489afe;
-$linkHoverFontColor: #287ade;
-$formPadding: 16px;
 
 /**
  * Unsupported browser

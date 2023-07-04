@@ -189,7 +189,7 @@
         opacity: 0;
         display: inline-block;
         @include circle(5px);
-        background: $audioLevelShadow;
+        background: rgba(9, 36, 77, 0.9);
         margin: 1px 0 1px 0;
         transition: opacity .25s ease-in-out;
         -moz-transition: opacity .25s ease-in-out;
@@ -205,7 +205,7 @@
         border-radius: 50%;
         -webkit-filter: blur(0.5px);
         filter: blur(0.5px);
-        background: $audioLevelBg;
+        background: #44A5FF;
     }
 }
 
@@ -223,7 +223,7 @@
     background-clip: padding-box;
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
-    z-index: $reloadZ; /*The reload button should appear on top of the header!*/
+    z-index: 20; /*The reload button should appear on top of the header!*/
 }
 
 #dominantSpeaker {
@@ -365,7 +365,7 @@
 }
 
 .presence-label {
-    color: $participantNameColor;
+    color: #fff;
     font-size: 12px;
     font-weight: 100;
     left: 0;
