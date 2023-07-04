@@ -1,4 +1,5 @@
 /* eslint-disable guard-for-in */
+/* global __dirname */
 
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +34,7 @@ ${Object.keys(packageJSON.dependencies)}
 Make sure you run npm install
 If you are building for ios run cd ios && pod install to link them.
 =========================
-`)
+`);
 
     packageJSON.dependencies = Object.keys(packageJSON.dependencies)
         .sort()
