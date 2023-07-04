@@ -39,7 +39,7 @@ function updateDependencies() {
 
     const data = JSON.stringify(packageJSON, null, 2);
 
-    fs.writeFileSync('../../package.json', data);
+    fs.writeFileSync('package.json', data);
 
     console.log(
         'All needed dependencies have been updated. \nPlease run npm install.'
