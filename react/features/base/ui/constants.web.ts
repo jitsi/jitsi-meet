@@ -255,9 +255,13 @@ export const commonStyles = (theme: Theme) => {
 
         '.toolbox-content-wrapper': {
             background: theme.palette.ui01,
-            padding: 6,
-            alignItems: 'flex-end',
-            boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)'
+            padding: theme.spacing(2),
+            boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            pointerEvents: 'all'
         },
 
         '.toolbox-content-items': {

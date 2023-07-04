@@ -70,20 +70,9 @@
 }
 
 .toolbox-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: all;
-
     .toolbox-content-items {
         @include ltr;
     }
-}
-
-.toolbox-content-wrapper::after {
-    content: '';
-    background: $newToolbarBackgroundColor;
-    padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .overflow-menu-hr {
