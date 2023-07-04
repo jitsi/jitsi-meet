@@ -15,7 +15,7 @@ function updateDependencies() {
     for (const key in RNSDKpackageJSON.peerDependencies) {
         if (!packageJSON.dependencies.hasOwnProperty(key)) {
             packageJSON.dependencies[key]
-                = '*' || RNSDKpackageJSON.peerDependencies[key];
+                = RNSDKpackageJSON.peerDependencies[key] || '*';
             updated = true;
         }
     }
