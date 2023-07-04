@@ -135,9 +135,9 @@ form {
 }
 
 .poweredby {
-    position: absolute;
-    left: 25;
-    bottom: 7;
+    position: fixed;
+    left: 16px;
+    bottom: 64px;
     font-size: 11pt;
     color: rgba(255,255,255,.50);
     text-decoration: none;

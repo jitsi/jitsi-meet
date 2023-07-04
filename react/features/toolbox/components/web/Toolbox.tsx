@@ -15,6 +15,7 @@ import {
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import Watermarks from '../../../base/react/components/web/Watermarks';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import { isReactionsButtonEnabled, isReactionsEnabled } from '../../../reactions/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
@@ -371,7 +372,7 @@ const Toolbox = ({
                         onMouseOut,
                         onMouseOver
                     }) }>
-
+                    <Watermarks inToolbar = { true } />
                     <div
                         className = 'toolbox-content-items'
                         ref = { _toolboxRef }>

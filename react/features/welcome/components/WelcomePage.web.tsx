@@ -198,7 +198,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             <div className = 'welcome-watermark'>
                                 <Watermarks
                                     defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL }
-                                    noMargins = { true } />
+                                    noMargins = { true }
+                                    welcomePage = { true } />
                             </div>
                         </div>
                         <div className = 'welcome-page-settings'>

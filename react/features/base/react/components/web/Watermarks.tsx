@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import { isVpaasMeeting } from '../../../../jaas/functions';
-import { translate } from '../../../i18n/functions';
 
 /**
  * The CSS style of the element with CSS class {@code rightwatermark}.
@@ -15,10 +15,30 @@ const _RIGHT_WATERMARK_STYLE = {
     backgroundImage: 'url(images/rightwatermark.png)'
 };
 
+const useStyles = makeStyles()(theme => {
+    return {
+        container: {
+            '@media (min-width: 720px)': {
+                display: 'none'
+            }
+        },
+
+        inToolbar: {
+            position: 'relative',
+
+            '.watermark': {
+                position: 'relative',
+                top: theme.spacing(2),
+                left: theme.spacing(3)
+            }
+        }
+    };
+});
+
 /**
  * The type of the React {@code Component} props of {@link Watermarks}.
  */
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * The link used to navigate to on logo click.
@@ -41,109 +61,34 @@ interface IProps extends WithTranslation {
     defaultJitsiLogoURL?: string;
 
     /**
+     * Whether or not the component is in the toolbar.
+     */
+    inToolbar?: boolean;
+
+    /**
      * Whether the watermark should have a `top` and `left` value.
      */
     noMargins: boolean;
+
+    /**
+     * Whether or not the component is on the welcome page.
+     */
+    welcomePage?: boolean;
 }
 
-/**
- * The type of the React {@code Component} state of {@link Watermarks}.
- */
-type State = {
-
-    /**
-     * The url to open when clicking the brand watermark.
-     */
-    brandWatermarkLink: string;
-
-    /**
-     * Whether or not the brand watermark should be displayed.
-     */
-    showBrandWatermark: boolean;
-
-    /**
-     * Whether or not the show the "powered by Jitsi.org" link.
-     */
-    showPoweredBy: boolean;
-};
-
-/**
- * A Web Component which renders watermarks such as Jits, brand, powered by,
- * etc.
- */
-class Watermarks extends Component<IProps, State> {
-    /**
-     * Initializes a new Watermarks instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        const showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
-
-        this.state = {
-            brandWatermarkLink:
-                showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
-            showBrandWatermark,
-            showPoweredBy: interfaceConfig.SHOW_POWERED_BY
-        };
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <div>
-                {
-                    this._renderJitsiWatermark()
-                }
-                {
-                    this._renderBrandWatermark()
-                }
-                {
-                    this._renderPoweredBy()
-                }
-            </div>
-        );
-    }
-
-    /**
-     * Renders a brand watermark if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null} Watermark element or null.
-     */
-    _renderBrandWatermark() {
-        let reactElement = null;
-
-        if (this.state.showBrandWatermark) {
-            reactElement = (
-                <div
-                    className = 'watermark rightwatermark'
-                    style = { _RIGHT_WATERMARK_STYLE } />
-            );
-
-            const { brandWatermarkLink } = this.state;
-
-            if (brandWatermarkLink) {
-                reactElement = (
-                    <a
-                        href = { brandWatermarkLink }
-                        target = '_new'>
-                        { reactElement }
-                    </a>
-                );
-            }
-        }
-
-        return reactElement;
-    }
+const Watermarks = ({
+    _logoLink,
+    _logoUrl,
+    _showJitsiWatermark,
+    inToolbar,
+    noMargins,
+    welcomePage
+}: IProps) => {
+    const showBrandWatermark = useRef(interfaceConfig.SHOW_BRAND_WATERMARK);
+    const brandWatermarkLink = useRef(showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '');
+    const showPoweredBy = useRef(interfaceConfig.SHOW_POWERED_BY);
+    const { t } = useTranslation();
+    const { classes, cx } = useStyles();
 
     /**
      * Renders a Jitsi watermark if it is enabled.
@@ -151,13 +96,7 @@ class Watermarks extends Component<IProps, State> {
      * @private
      * @returns {ReactElement|null}
      */
-    _renderJitsiWatermark() {
-        const {
-            _logoLink,
-            _logoUrl,
-            _showJitsiWatermark
-        } = this.props;
-        const { noMargins, t } = this.props;
+    function _renderJitsiWatermark() {
         const className = `watermark ${noMargins ? 'leftwatermarknomargin' : 'leftwatermark'}`;
 
         let reactElement = null;
@@ -181,7 +120,37 @@ class Watermarks extends Component<IProps, State> {
                         className = { className }
                         href = { _logoLink }
                         target = '_new'>
-                        { reactElement }
+                        {reactElement}
+                    </a>
+                );
+            }
+        }
+
+        return reactElement;
+    }
+
+    /**
+     * Renders a brand watermark if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null} Watermark element or null.
+     */
+    function _renderBrandWatermark() {
+        let reactElement = null;
+
+        if (showBrandWatermark.current) {
+            reactElement = (
+                <div
+                    className = 'watermark rightwatermark'
+                    style = { _RIGHT_WATERMARK_STYLE } />
+            );
+
+            if (brandWatermarkLink.current) {
+                reactElement = (
+                    <a
+                        href = { brandWatermarkLink.current }
+                        target = '_new'>
+                        {reactElement}
                     </a>
                 );
             }
@@ -196,23 +165,37 @@ class Watermarks extends Component<IProps, State> {
      * @private
      * @returns {ReactElement|null}
      */
-    _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
-            const { t } = this.props;
-
+    function _renderPoweredBy() {
+        if (showPoweredBy.current) {
             return (
                 <a
                     className = 'poweredby'
                     href = 'http://jitsi.org'
                     target = '_new'>
-                    <span>{ t('poweredby') } jitsi.org</span>
+                    <span>{t('poweredby')} jitsi.org</span>
                 </a>
             );
         }
 
         return null;
     }
-}
+
+    return (
+        <div
+            className = { cx('watermark-container', !inToolbar && !welcomePage && classes.container,
+                inToolbar && classes.inToolbar) }>
+            {
+                _renderJitsiWatermark()
+            }
+            {
+                _renderBrandWatermark()
+            }
+            {
+                _renderPoweredBy()
+            }
+        </div>
+    );
+};
 
 /**
  * Maps parts of Redux store to component prop types.
@@ -264,4 +247,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(Watermarks));
+export default connect(_mapStateToProps)(Watermarks);
