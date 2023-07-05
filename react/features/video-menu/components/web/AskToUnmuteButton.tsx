@@ -6,10 +6,27 @@ import { approveParticipantAudio, approveParticipantVideo } from '../../../av-mo
 import { IconMic, IconVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE, MediaType } from '../../../base/media/constants';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 
 interface IProps {
 
-    buttonType: MediaType;
+    /**
+     * The button key used to identify the click event.
+     */
+    buttonKey?: string;
+
+    buttonType?: MediaType;
+
+    /**
+     * Callback to execute when the button is clicked.
+     */
+    notifyClick?: Function;
+
+    /**
+     * Notify mode for `participantMenuButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
 
     /**
      * The ID for the participant on which the button will act.
@@ -17,16 +34,30 @@ interface IProps {
     participantID: string;
 }
 
-const AskToUnmuteButton = ({ buttonType, participantID }: IProps) => {
+const AskToUnmuteButton = ({
+    buttonKey, buttonType = MEDIA_TYPE.AUDIO, notifyMode, notifyClick, participantID
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _onClick = useCallback(() => {
-        if (buttonType === MEDIA_TYPE.AUDIO) {
-            dispatch(approveParticipantAudio(participantID));
-        } else if (buttonType === MEDIA_TYPE.VIDEO) {
-            dispatch(approveParticipantVideo(participantID));
+        notifyClick?.(buttonKey);
+        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            if (buttonType === MEDIA_TYPE.AUDIO) {
+                dispatch(approveParticipantAudio(participantID));
+            } else if (buttonType === MEDIA_TYPE.VIDEO) {
+                dispatch(approveParticipantVideo(participantID));
+            }
         }
-    }, [ participantID, buttonType ]);
+    }, [
+        approveParticipantAudio,
+        approveParticipantVideo,
+        buttonKey,
+        buttonType,
+        dispatch,
+        notifyClick,
+        notifyMode,
+        participantID
+    ]);
 
     const text = useMemo(() => {
         if (buttonType === MEDIA_TYPE.AUDIO) {

@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 
 // TODO: Move these enums into the store after further reactification of the
 // non-react RemoteVideo component.
@@ -20,6 +21,22 @@ export const REMOTE_CONTROL_MENU_STATES = {
  * The type of the React {@code Component} props of {@link RemoteControlButton}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * The button key used to identify the click event.
+     */
+    buttonKey: string;
+
+    /**
+     * Callback to execute when the button is clicked.
+     */
+    notifyClick?: Function;
+
+    /**
+     * Notify mode for `participantMenuButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
 
     /**
      * The callback to invoke when the component is clicked.
@@ -66,10 +83,7 @@ class RemoteControlButton extends Component<IProps> {
      * @returns {null|ReactElement}
      */
     render() {
-        const {
-            remoteControlState,
-            t
-        } = this.props;
+        const { remoteControlState, t } = this.props;
 
         let disabled = false, icon;
 
@@ -110,26 +124,28 @@ class RemoteControlButton extends Component<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const { onClick, participantID, remoteControlState } = this.props;
+        const { buttonKey, notifyClick, notifyMode, onClick, participantID, remoteControlState } = this.props;
 
-        // TODO: What do we do in case the state is e.g. "requesting"?
-        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
-            || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
+        notifyClick?.(buttonKey);
 
-            const enable
-                = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
+        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            // TODO: What do we do in case the state is e.g. "requesting"?
+            if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
+                || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
 
-            sendAnalytics(createRemoteVideoMenuButtonEvent(
-                'remote.control.button',
-                {
-                    enable,
-                    'participant_id': participantID
-                }));
+                const enable
+                    = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
+
+                sendAnalytics(createRemoteVideoMenuButtonEvent(
+                    'remote.control.button',
+                    {
+                        enable,
+                        'participant_id': participantID
+                    }));
+            }
+            onClick?.();
         }
 
-        if (onClick) {
-            onClick();
-        }
     }
 }
 

@@ -12,6 +12,7 @@ import { IParticipant } from '../../../base/participants/types';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/actions.web';
 import { IProps as AbstractProps } from '../../../chat/components/web/PrivateMessageButton';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
 interface IProps extends AbstractProps, WithTranslation {
@@ -27,9 +28,25 @@ interface IProps extends AbstractProps, WithTranslation {
     _participant?: IParticipant;
 
     /**
+     * The button key used to identify the click event.
+     */
+    buttonKey: string;
+
+    /**
      * Redux dispatch function.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * Callback to execute when the button is clicked.
+     */
+    notifyClick?: Function;
+
+    /**
+     * Notify mode for `participantMenuButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
 }
 
 /**
@@ -57,7 +74,7 @@ class PrivateMessageMenuButton extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, _hidden } = this.props;
+        const { _hidden, t } = this.props;
 
         if (_hidden) {
             return null;
@@ -75,12 +92,16 @@ class PrivateMessageMenuButton extends Component<IProps> {
     /**
      * Callback to be invoked on pressing the button.
      *
+     * @param {React.MouseEvent|undefined} e - The click event.
      * @returns {void}
      */
     _onClick() {
-        const { dispatch, _participant } = this.props;
+        const { _participant, buttonKey, dispatch, notifyClick, notifyMode } = this.props;
 
-        dispatch(openChat(_participant));
+        notifyClick?.(buttonKey);
+        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            dispatch(openChat(_participant));
+        }
     }
 }
 

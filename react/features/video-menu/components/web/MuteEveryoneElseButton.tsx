@@ -20,7 +20,7 @@ class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
     constructor(props: IProps) {
         super(props);
 
-        this._handleClick = this._handleClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -37,12 +37,12 @@ class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
                 accessibilityLabel = { t('toolbar.accessibilityLabel.muteEveryoneElse') }
                 icon = { IconMicSlash }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick }
+                onClick = { this._onClick }
                 text = { t('videothumbnail.domuteOthers') } />
         );
     }
 
-    _handleClick: () => void;
+    _onClick: () => void;
 }
 
 export default translate(connect()(MuteEveryoneElseButton));

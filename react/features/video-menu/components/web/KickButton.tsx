@@ -25,7 +25,7 @@ class KickButton extends AbstractKickButton {
     constructor(props: IProps) {
         super(props);
 
-        this._handleClick = this._handleClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -44,11 +44,11 @@ class KickButton extends AbstractKickButton {
                 icon = { IconUserDeleted }
                 id = { `ejectlink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick }
+                onClick = { this._onClick }
                 text = { t('videothumbnail.kick') } />
         );
     }
 
-    _handleClick: () => void;
+    _onClick: () => void;
 }
 export default translate(connect()(KickButton));

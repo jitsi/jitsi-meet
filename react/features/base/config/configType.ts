@@ -32,7 +32,7 @@ type ToolbarButtons = 'camera' |
     'videoquality' |
     '__end';
 
-type ButtonsWithNotifyClick = 'camera' |
+export type ButtonsWithNotifyClick = 'camera' |
     'chat' |
     'closedcaptions' |
     'desktop' |
@@ -67,6 +67,21 @@ type ButtonsWithNotifyClick = 'camera' |
     'videoquality' |
     'add-passcode' |
     '__end';
+
+export type ParticipantMenuButtonsWithNotifyClick = 'allow-video' |
+'ask-unmute' |
+'conn-status' |
+'grant-moderator' |
+'kick' |
+'mute' |
+'mute-others' |
+'mute-others-video' |
+'mute-video' |
+'pinToStage' |
+'privateMessage' |
+'remote-control' |
+'send-participant-to-room' |
+'verify';
 
 export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
@@ -447,6 +462,10 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         stunServers?: Array<{ urls: string; }>;
     };
+    participantMenuButtonsWithNotifyClick?: Array<ParticipantMenuButtonsWithNotifyClick | {
+        key: ParticipantMenuButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;

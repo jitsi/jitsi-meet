@@ -6,6 +6,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { IconCheck } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { startVerification } from '../../../e2ee/actions';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 
 /**
  * The type of the React {@code Component} props of
@@ -14,9 +15,25 @@ import { startVerification } from '../../../e2ee/actions';
 interface IProps {
 
     /**
+     * The button key used to identify the click event.
+     */
+    buttonKey: string;
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * Callback to execute when the button is clicked.
+     */
+    notifyClick?: Function;
+
+    /**
+     * Notify mode for `participantMenuButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
 
     /**
       * The ID of the participant that this button is supposed to verified.
@@ -25,14 +42,20 @@ interface IProps {
 }
 
 const VerifyParticipantButton = ({
+    buttonKey,
     dispatch,
+    notifyClick,
+    notifyMode,
     participantID
 }: IProps) => {
     const { t } = useTranslation();
 
     const _handleClick = useCallback(() => {
-        dispatch(startVerification(participantID));
-    }, [ participantID ]);
+        notifyClick?.(buttonKey);
+        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            dispatch(startVerification(participantID));
+        }
+    }, [ dispatch, notifyClick, notifyMode, participantID, startVerification ]);
 
     return (
         <ContextMenuItem

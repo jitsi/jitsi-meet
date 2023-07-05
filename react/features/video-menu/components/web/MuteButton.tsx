@@ -26,7 +26,7 @@ class MuteButton extends AbstractMuteButton {
     constructor(props: IProps) {
         super(props);
 
-        this._handleClick = this._handleClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -48,12 +48,12 @@ class MuteButton extends AbstractMuteButton {
                 className = 'mutelink'
                 icon = { IconMicSlash }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick }
+                onClick = { this._onClick }
                 text = { t('dialog.muteParticipantButton') } />
         );
     }
 
-    _handleClick: () => void;
+    _onClick: () => void;
 }
 
 export default translate(connect(_mapStateToProps)(MuteButton));

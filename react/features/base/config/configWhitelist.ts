@@ -193,6 +193,7 @@ export default [
     'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',
     'p2p',
+    'participantMenuButtonsWithNotifyClick',
     'participantsPane',
     'pcStatsInterval',
     'prejoinConfig',

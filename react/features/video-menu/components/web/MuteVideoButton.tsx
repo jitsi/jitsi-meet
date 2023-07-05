@@ -25,7 +25,7 @@ class MuteVideoButton extends AbstractMuteVideoButton {
     constructor(props: IProps) {
         super(props);
 
-        this._handleClick = this._handleClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -47,12 +47,12 @@ class MuteVideoButton extends AbstractMuteVideoButton {
                 className = 'mutevideolink'
                 icon = { IconVideoOff }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick }
+                onClick = { this._onClick }
                 text = { t('participantsPane.actions.stopVideo') } />
         );
     }
 
-    _handleClick: () => void;
+    _onClick: () => void;
 }
 
 export default translate(connect(_mapStateToProps)(MuteVideoButton));
