@@ -25,12 +25,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
     switch (action.type) {
     case LIB_WILL_INIT: {
-        if (isRtcstatsEnabled(state)) {
-            logger.error('Cannot initialize WatchRTC when RTCStats is enabled.');
-            break;
-        }
-
         if (isWatchRTCEnabled(state)) {
+
+            if (isRtcstatsEnabled(state)) {
+                logger.error('Cannot initialize WatchRTC when RTCStats is enabled.');
+                break;
+            }
             // watchRTC "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
             // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
