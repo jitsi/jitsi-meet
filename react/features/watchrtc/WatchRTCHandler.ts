@@ -11,7 +11,7 @@ import logger from './logger';
  * Class that controls the watchRTC flow, because it overwrites and proxies global function it should only be
  * initialized once.
  */
-class watchRTCHandler {
+class WatchRTCHandler {
 
     /**
      * Initialize watchRTC, it overwrites GUM and PeerConnection global functions and adds a proxy over them used to capture stats.
@@ -27,4 +27,4 @@ class watchRTCHandler {
     }
 }
 
-export default new watchRTCHandler();
+export default new WatchRTCHandler();

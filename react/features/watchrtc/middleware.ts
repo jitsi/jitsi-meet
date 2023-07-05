@@ -10,7 +10,7 @@ import logger from './logger';
 
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
-import watchRTCHandler from './watchRTCHandler';
+import WatchRTCHandler from './WatchRTCHandler';
 
 /**
  * Middleware which intercepts lib-jitsi-meet initialization and conference join in order init the
@@ -39,7 +39,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             // original non proxy versions of these functions.
             try {
                 if (watchRTCConfigParams) {
-                    watchRTCHandler.init(watchRTCConfigParams);
+                    WatchRTCHandler.init(watchRTCConfigParams);
                 } else {
                     logger.error("WatchRTC is enabled but it has not been configured.");
                 }
