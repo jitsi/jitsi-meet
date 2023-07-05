@@ -4,9 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const packageJSON = path.resolve(__dirname, '../../package.json');
+const packageJSON = require(path.resolve(__dirname, '../../package.json'));
 
-const RNSDKpackageJSON = require('./package.json');
+const RNSDKpackageJSON = require(path.resolve(__dirname, './package.json'));
 
 /**
  * Updates dependencies from the app package.json with the peer dependencies of the RNSDK package.json.
