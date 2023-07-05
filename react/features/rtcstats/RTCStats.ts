@@ -110,16 +110,17 @@ class RTCStats {
         if (useLibRtcStats) {
             logger.info('setting up libRtcStats');
 
-            const rtcOptions = {
-                meetingName: meetingFqn,
-                eventCallback: this.handleRtcstatsEvent.bind(this),
-                onCloseCallback: this.handleTraceWSClose.bind(this)
-            };
+            JitsiMeetJS.rtcstats.events.on(
+                'rtcstats_ws_disconnected',
+                (closeEvent: any) => this.handleTraceWSClose(closeEvent));
+            JitsiMeetJS.rtcstats.events.on(
+                'rtstats_pc_event',
+                (pcEvent: any) => this.handleRtcstatsEvent(pcEvent));
 
-            JitsiMeetJS.setRtcStatsMeetingFqn(rtcOptions);
-
-            JitsiMeetJS.getRtcStatsTrace().then((traceF: any) => {
+            JitsiMeetJS.rtcstats.setMeetingFqn(meetingFqn);
+            JitsiMeetJS.rtcstats.getTrace().then((traceF: any) => {
                 this.setTrace(traceF);
+
             });
 
         } else {
@@ -169,8 +170,6 @@ class RTCStats {
      * @returns {void}
      */
     setTrace(traceF: any) {
-        logger.error(`Setting RTCStats trace function to ${traceF}`);
-
         this.trace = traceF;
     }
 
