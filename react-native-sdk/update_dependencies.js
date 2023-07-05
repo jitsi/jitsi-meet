@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const pathToPackageJSON = path.resolve(__dirname, '../../package.json');
+const pathToPackageJSON = path.resolve(__dirname, '../../../package.json');
 
 const packageJSON = require(pathToPackageJSON);
 
