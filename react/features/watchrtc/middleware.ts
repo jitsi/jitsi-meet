@@ -2,15 +2,13 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
-
-import { isRtcstatsEnabled } from '../rtcstats/functions';
-import { isWatchRTCEnabled } from './functions';
-
-import logger from './logger';
-
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { isRtcstatsEnabled } from '../rtcstats/functions';
 
 import WatchRTCHandler from './WatchRTCHandler';
+import { isWatchRTCEnabled } from './functions';
+import logger from './logger';
+
 
 /**
  * Middleware which intercepts lib-jitsi-meet initialization and conference join in order init the
@@ -28,7 +26,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     switch (action.type) {
     case LIB_WILL_INIT: {
         if (isRtcstatsEnabled(state)) {
-            logger.error("Cannot initialize WatchRTC when RTCStats is enabled.");
+            logger.error('Cannot initialize WatchRTC when RTCStats is enabled.');
             break;
         }
 
@@ -41,10 +39,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 if (watchRTCConfigParams) {
                     WatchRTCHandler.init(watchRTCConfigParams);
                 } else {
-                    logger.error("WatchRTC is enabled but it has not been configured.");
+                    logger.error('WatchRTC is enabled but it has not been configured.');
                 }
             } catch (error) {
-                logger.error("Failed to initialize WatchRTC: ", error);
+                logger.error('Failed to initialize WatchRTC: ', error);
             }
         }
         break;

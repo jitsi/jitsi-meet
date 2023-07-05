@@ -127,34 +127,22 @@ export interface INoiseSuppressionConfig {
 }
 
 export interface IWatchRTCConfiguration {
-    /** Watchrtc api key */
-    rtcApiKey: string;
-    /** Identifier for the session */
-    rtcRoomId?: string;
-    /** Identifier for the current peer */
-    rtcPeerId?: string;
-    /**
-     * ["tag1", "tag2", "tag3"]
-     * @deprecated use 'keys' instead
-     */
-    rtcTags?: string[];
-    /** { "key1": "value1", "key2": "value2"} */
-    keys?: any;
-    /** Enables additional logging */
-    debug?: boolean;
-    rtcToken?: string;
-    /**
-     * @deprecated No longer needed. Use "proxyUrl" instead.
-     */
-    wsUrl?: string;
-    proxyUrl?: string;
+    allowBrowserLogCollection?: boolean;
+    collectionInterval?: number;
     console?: {
         level: string;
         override: boolean;
     };
-    allowBrowserLogCollection?: boolean;
-    collectionInterval?: number;
+    debug?: boolean;
+    keys?: any;
     logGetStats?: boolean;
+    proxyUrl?: string;
+    rtcApiKey: string;
+    rtcPeerId?: string;
+    rtcRoomId?: string;
+    rtcTags?: string[];
+    rtcToken?: string;
+    wsUrl?: string;
 }
 
 export interface IConfig {
