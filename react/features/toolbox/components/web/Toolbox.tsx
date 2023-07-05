@@ -154,8 +154,9 @@ const useStyles = makeStyles()(() => {
             right: 'auto',
             margin: 0,
             marginBottom: '8px',
-            maxHeight: 'calc(100vh - 100px)',
-            minWidth: '240px'
+            maxHeight: '50vh',
+            minWidth: '240px',
+            overflow: 'scroll'
         },
 
         hangupMenu: {
