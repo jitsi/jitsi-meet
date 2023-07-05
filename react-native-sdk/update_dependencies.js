@@ -4,7 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const packageJSON = require(path.resolve(__dirname, '../../package.json'));
+const pathToPackageJSON = path.resolve(__dirname, '../../package.json');
+
+const packageJSON = require(pathToPackageJSON);
 
 const RNSDKpackageJSON = require(path.resolve(__dirname, './package.json'));
 
@@ -46,7 +48,7 @@ If you are building for ios run cd ios && pod install to link them.
 
     const data = JSON.stringify(packageJSON, null, 2);
 
-    fs.writeFileSync(path.resolve(__dirname, '../../package.json'), data);
+    fs.writeFileSync(pathToPackageJSON, data);
 
     console.log(
         'All needed dependencies have been updated. \nPlease run npm install.'
