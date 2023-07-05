@@ -19,6 +19,13 @@ const useStyles = makeStyles()(theme => {
             '@media (max-width: 300px)': {
                 display: 'none'
             }
+        },
+
+        inToolbar: {
+            padding: theme.spacing(1),
+            height: 'auto',
+            borderRadius: `${theme.shape.borderRadius / 2}px`,
+            backgroundColor: 'rgba(255, 255, 255, 0.20)'
         }
     };
 });
@@ -28,10 +35,10 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {ReactElement}
  */
-export default function ConferenceTimerDisplay({ timerValue, textStyle: _textStyle }: IDisplayProps) {
-    const { classes } = useStyles();
+export default function ConferenceTimerDisplay({ inToolbar, timerValue, textStyle: _textStyle }: IDisplayProps) {
+    const { classes, cx } = useStyles();
 
     return (
-        <span className = { classes.timer }>{ timerValue }</span>
+        <span className = { cx(classes.timer, inToolbar && classes.inToolbar) }>{ timerValue }</span>
     );
 }

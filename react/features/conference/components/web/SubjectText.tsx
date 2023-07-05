@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -6,6 +5,14 @@ import { makeStyles } from 'tss-react/mui';
 import { getConferenceName } from '../../../base/conference/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
+
+interface IProps {
+
+    /**
+     * Whether or not the component is displayed in the toolbar.
+     */
+    inToolbar?: boolean;
+}
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -28,6 +35,14 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
+        },
+        inToolbar: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            padding: 0,
+            backgroundColor: 'transparent',
+            marginLeft: 0,
+            height: 'auto',
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -37,16 +52,16 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {ReactElement}
  */
-const SubjectText = () => {
+const SubjectText = ({ inToolbar }: IProps) => {
     const subject = useSelector(getConferenceName);
-    const { classes } = useStyles();
+    const { classes, cx } = useStyles();
 
     return (
         <Tooltip
             content = { subject }
             position = 'bottom'>
-            <div className = { classes.container }>
-                <div className = { clsx('subject-text--content', classes.content) }>{subject}</div>
+            <div className = { cx(classes.container, inToolbar && classes.inToolbar) }>
+                <div className = { cx('subject-text--content', classes.content) }>{subject}</div>
             </div>
         </Tooltip>
     );

@@ -17,6 +17,8 @@ import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Watermarks from '../../../base/react/components/web/Watermarks';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ConferenceTimer from '../../../conference/components/ConferenceTimer';
+import SubjectText from '../../../conference/components/web/SubjectText';
 import { isReactionsButtonEnabled, isReactionsEnabled } from '../../../reactions/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
 import {
@@ -137,12 +139,17 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
+     * Whether or not the Toolbar is displayed on the premeeting screen.
+     */
+    premeeting?: boolean;
+
+    /**
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
     toolbarButtons: Array<string>;
 }
 
-const useStyles = makeStyles()(() => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenu: {
             position: 'relative',
@@ -162,6 +169,25 @@ const useStyles = makeStyles()(() => {
             margin: 0,
             padding: '16px',
             marginBottom: '4px'
+        },
+
+        leftContainer: {
+            display: 'flex',
+            flex: 1,
+            alignItems: 'center',
+            position: 'relative'
+        },
+
+        divider: {
+            width: '1px',
+            height: '32px',
+            position: 'relative',
+            margin: `0 ${theme.spacing(3)}`,
+            backgroundColor: 'rgba(255, 255, 255, 0.30)',
+
+            '@media (max-width: 719px)': {
+                display: 'none'
+            }
         }
     };
 });
@@ -185,6 +211,7 @@ const Toolbox = ({
     _toolbarButtons,
     _visible,
     dispatch,
+    premeeting,
     t,
     toolbarButtons
 }: IProps) => {
@@ -372,7 +399,14 @@ const Toolbox = ({
                         onMouseOut,
                         onMouseOver
                     }) }>
-                    <Watermarks inToolbar = { true } />
+                    {!premeeting && (
+                        <div className = { classes.leftContainer }>
+                            <Watermarks inToolbar = { true } />
+                            <div className = { classes.divider } />
+                            <SubjectText inToolbar = { true } />
+                            <ConferenceTimer inToolbar = { true } />
+                        </div>
+                    )}
                     <div
                         className = 'toolbox-content-items'
                         ref = { _toolboxRef }>

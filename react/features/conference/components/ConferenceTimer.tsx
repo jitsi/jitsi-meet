@@ -12,12 +12,22 @@ import { ConferenceTimerDisplay } from './index';
 interface IProps {
 
     /**
+     * Whether or not the component is displayed in the toolbar.
+     */
+    inToolbar?: boolean;
+
+    /**
      * Style to be applied to the rendered text.
      */
     textStyle?: Object;
 }
 
 export interface IDisplayProps {
+
+    /**
+     * Whether or not the component is displayed in the toolbar.
+     */
+    inToolbar?: boolean;
 
     /**
      * Style to be applied to text (native only).
@@ -30,7 +40,7 @@ export interface IDisplayProps {
     timerValue: string;
 }
 
-const ConferenceTimer = ({ textStyle }: IProps) => {
+const ConferenceTimer = ({ inToolbar, textStyle }: IProps) => {
     const startTimestamp = useSelector(getConferenceTimestamp);
     const [ timerValue, setTimerValue ] = useState(getLocalizedDurationFormatter(0));
     const interval = useRef<number>();
@@ -100,6 +110,7 @@ const ConferenceTimer = ({ textStyle }: IProps) => {
     }
 
     return (<ConferenceTimerDisplay
+        inToolbar = { inToolbar }
         textStyle = { textStyle }
         timerValue = { timerValue } />);
 };

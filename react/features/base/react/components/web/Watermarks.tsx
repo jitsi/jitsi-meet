@@ -24,12 +24,17 @@ const useStyles = makeStyles()(theme => {
         },
 
         inToolbar: {
+            '@media (max-width: 719px)': {
+                display: 'none'
+            },
+
             position: 'relative',
+            marginLeft: theme.spacing(3),
 
             '.watermark': {
                 position: 'relative',
-                top: theme.spacing(2),
-                left: theme.spacing(3)
+                top: 0,
+                left: 0
             }
         }
     };
@@ -182,7 +187,7 @@ const Watermarks = ({
 
     return (
         <div
-            className = { cx('watermark-container', !inToolbar && !welcomePage && classes.container,
+            className = { cx(!inToolbar && !welcomePage && classes.container,
                 inToolbar && classes.inToolbar) }>
             {
                 _renderJitsiWatermark()

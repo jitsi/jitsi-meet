@@ -261,7 +261,11 @@ export const commonStyles = (theme: Theme) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             width: '100%',
-            pointerEvents: 'all'
+            pointerEvents: 'all',
+
+            '@media (max-width: 719px)': {
+                justifyContent: 'flex-end'
+            }
         },
 
         '.toolbox-content-items': {
