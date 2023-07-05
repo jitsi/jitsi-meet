@@ -46,7 +46,7 @@ If you are building for ios run cd ios && pod install to link them.
 
     const data = JSON.stringify(packageJSON, null, 2);
 
-    fs.writeFileSync(packageJSON, data);
+    fs.writeFileSync(path.resolve(__dirname, '../../package.json'), data);
 
     console.log(
         'All needed dependencies have been updated. \nPlease run npm install.'
