@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Konferenzlink: {{url}}"
+        },
         "add": "Einladen",
         "addContacts": "Laden Sie Ihre Kontakte ein",
         "contacts": "Kontakte",
@@ -254,6 +257,8 @@
         "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
         "accessibilityLabel": {
+            "Cancel": "Abbrechen (Popup schließen)",
+            "Ok": "OK (Speichern und Popup schließen)",
             "close": "Popup schließen",
             "liveStreaming": "Livestream",
             "sharingTabs": "Optionen zum Teilen"
@@ -459,6 +464,9 @@
         "title": "Diese Konferenz einbetten"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Ihre Auswahl: {{rating}}"
+        },
         "average": "Durchschnittlich",
         "bad": "Schlecht",
         "detailsLabel": "Sagen Sie uns mehr dazu.",
@@ -1065,6 +1073,7 @@
         "links": "Links",
         "privacy": "Datenschutz",
         "profileSection": "Profil",
+        "sdkVersion": "SDK-Version",
         "serverURL": "Server-URL",
         "showAdvanced": "Erweiterte Einstellungen anzeigen",
         "startCarModeInLowBandwidthMode": "Automodus mit Datensparmodus starten",
@@ -1383,6 +1392,10 @@
         "videomute": "Person hat die Kamera angehalten"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Aktueller Hintergrund: {{background}}",
+            "selectBackground": "Hintergrund auswählen"
+        },
         "addBackground": "Hintergrund hinzufügen",
         "apply": "Anwenden",
         "backgroundEffectError": "Hintergrund konnte nicht aktiviert werden.",
