@@ -165,6 +165,11 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-vi')
     },
 
+    // Ukrainian
+    'uk': {
+        main: require('../../../../lang/main-uk')
+    },
+
     // Chinese (Simplified)
     'zhCN': {
         main: require('../../../../lang/main-zhCN')
