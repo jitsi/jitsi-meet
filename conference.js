@@ -409,7 +409,16 @@ export default {
     /**
      * Returns an object containing a promise which resolves with the created tracks &
      * the errors resulting from that process.
-     *
+     * @param {object} options
+     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * only audio track will be created and the audio only mode will be turned
+     * on.
+     * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
+     * should start with screensharing instead of camera video.
+     * @param {boolean} options.startWithAudioMuted - will start the conference
+     * without any audio tracks.
+     * @param {boolean} options.startWithVideoMuted - will start the conference
+     * without any video tracks.
      * @returns {Promise<JitsiLocalTrack[]>, Object}
      */
     createInitialLocalTracks(options = {}) {
@@ -587,34 +596,6 @@ export default {
         }
     },
 
-    /**
-     * Creates local media tracks and connects to a room. Will show error
-     * dialogs in case accessing the local microphone and/or camera failed. Will
-     * show guidance overlay for users on how to give access to camera and/or
-     * microphone.
-     * @param {string} roomName
-     * @param {object} options
-     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
-     * only audio track will be created and the audio only mode will be turned
-     * on.
-     * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
-     * should start with screensharing instead of camera video.
-     * @param {boolean} options.startWithAudioMuted - will start the conference
-     * without any audio tracks.
-     * @param {boolean} options.startWithVideoMuted - will start the conference
-     * without any video tracks.
-     * @returns {JitsiLocalTrack[]}
-     */
-    createInitialLocalTracksAndConnect(roomName, options = {}) {
-        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
-
-        return tryCreateLocalTracks.then(tracks => {
-            this._displayErrorsForCreateInitialLocalTracks(errors);
-
-            return tracks;
-        });
-    },
-
     startConference(tracks) {
         tracks.forEach(track => {
             if ((track.isAudioTrack() && this.isLocalAudioMuted())
@@ -743,7 +724,13 @@ export default {
             return this._setLocalAudioVideoStreams(tracks);
         }
 
-        const tracks = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+
+        const tracks = await tryCreateLocalTracks.then(tr => {
+            this._displayErrorsForCreateInitialLocalTracks(errors);
+
+            return tr;
+        });
 
         this._initDeviceList(true);
 

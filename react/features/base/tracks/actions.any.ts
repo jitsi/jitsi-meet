@@ -142,7 +142,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
         const promises = [];
 
         // The following executes on React Native only at the time of this
-        // writing. The effort to port Web's createInitialLocalTracksAndConnect
+        // writing. The effort to port Web's createInitialLocalTracks
         // is significant and that's where the function createLocalTracksF got
         // born. I started with the idea a porting so that we could inherit the
         // ability to getUserMedia for audio only or video only if getUserMedia
