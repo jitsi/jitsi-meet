@@ -14,6 +14,8 @@ import {
 } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getBackendSafeRoomName } from '../base/util/uri';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
@@ -128,35 +130,14 @@ MiddlewareRegistry.register(store => next => action => {
                 && !jwt) {
             error.recoverable = true;
 
-            const config = state['features/base/config'];
-            const room = getBackendSafeRoomName(state['features/base/conference'].room);
-
-            // this is only for web
-            if (isTokenAuthEnabled(config) && typeof APP !== 'undefined') {
-                // FIXME: This method will not preserve the other URL params that were originally passed.
-                // redirectToTokenAuthService
-                window.location.href = getTokenAuthUrl(config)(room, false);
-            } else {
-                store.dispatch(openLoginDialog());
-            }
+            _handleLogin(store);
         }
 
         break;
     }
 
     case LOGIN: {
-        const state = store.getState();
-        const config = state['features/base/config'];
-        const room = getBackendSafeRoomName(state['features/base/conference'].room);
-
-        // this is only for web
-        if (isTokenAuthEnabled(config) && typeof APP !== 'undefined') {
-            // FIXME: This method will not preserve the other URL params that were originally passed.
-            // redirectToTokenAuthService
-            window.location.href = getTokenAuthUrl(config)(room, false);
-        } else {
-            store.dispatch(openLoginDialog());
-        }
+        _handleLogin(store);
 
         break;
     }
@@ -229,4 +210,37 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
  */
 function _isWaitingForOwner({ getState }: IStore) {
     return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
+}
+
+/**
+ * Handles login challenge. Opens login dialog or redirects to token auth URL.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @returns {void}
+ */
+function _handleLogin({ dispatch, getState }: IStore) {
+    const state = getState();
+    const config = state['features/base/config'];
+    const room = getBackendSafeRoomName(state['features/base/conference'].room);
+
+    // this is only for web
+    if (isTokenAuthEnabled(config)) {
+        if (typeof APP === 'undefined') {
+            dispatch(showErrorNotification({
+                descriptionKey: 'dialog.tokenAuthUnsupported',
+                titleKey: 'dialog.tokenAuthFailedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+            dispatch(redirectToDefaultLocation());
+
+            return;
+        }
+
+        // FIXME: This method will not preserve the other URL params that were originally passed.
+        // redirectToTokenAuthService
+        window.location.href = getTokenAuthUrl(config)(room, false);
+    } else {
+        dispatch(openLoginDialog());
+    }
 }

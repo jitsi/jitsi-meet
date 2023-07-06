@@ -439,6 +439,7 @@
         "token": "token",
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
         "tokenAuthFailedTitle": "Authentication failed",
+        "tokenAuthUnsupported": "Token URL is not supported.",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
         "user": "User",
