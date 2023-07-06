@@ -160,14 +160,14 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-tr')
     },
 
-    // Vietnamese
-    'vi': {
-        main: require('../../../../lang/main-vi')
-    },
-
     // Ukrainian
     'uk': {
         main: require('../../../../lang/main-uk')
+    },
+
+    // Vietnamese
+    'vi': {
+        main: require('../../../../lang/main-vi')
     },
 
     // Chinese (Simplified)
