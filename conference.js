@@ -56,6 +56,7 @@ import {
     sendLocalParticipant
 } from './react/features/base/conference/functions';
 import { getReplaceParticipant } from './react/features/base/config/functions';
+import { connect } from './react/features/base/connection/actions.web';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -738,7 +739,7 @@ export default {
 
         setGUMPendingStateOnFailedTracks(filteredTracks);
 
-        return this.startConference(filteredTracks);
+        return APP.store.dispatch(connect());
     },
 
     /**
