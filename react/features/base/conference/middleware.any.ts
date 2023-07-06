@@ -2,6 +2,9 @@ import { AnyAction } from 'redux';
 
 // @ts-ignore
 import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
+// eslint-disable-next-line lines-around-comment
+// @ts-expect-error
+import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -24,7 +27,8 @@ import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
-import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, browser } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media/constants';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
@@ -34,7 +38,8 @@ import {
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
-import { destroyLocalTracks } from '../tracks/actions.any';
+import { destroyLocalTracks, replaceLocalTrack } from '../tracks/actions.any';
+import { getLocalTracks } from '../tracks/functions.any';
 
 import {
     CONFERENCE_FAILED,
@@ -197,18 +202,22 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         break;
     }
     case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
-        if (typeof APP === 'undefined') {
-            // in case of max users(it can be from a visitor node), let's restore
-            // oldConfig if any as we will be back to the main prosody
-            const newConfig = restoreConferenceOptions(getState);
+        dispatch(showErrorNotification({
+            hideErrorSupportLink: true,
+            descriptionKey: 'dialog.maxUsersLimitReached',
+            titleKey: 'dialog.maxUsersLimitReachedTitle'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-            if (newConfig) {
-                dispatch(overwriteConfig(newConfig)) // @ts-ignore
-                    .then(dispatch(conferenceWillLeave(conference)))
-                    .then(conference.leave())
-                    .then(dispatch(disconnect()))
-                    .then(dispatch(connect()));
-            }
+        // in case of max users(it can be from a visitor node), let's restore
+        // oldConfig if any as we will be back to the main prosody
+        const newConfig = restoreConferenceOptions(getState);
+
+        if (newConfig) {
+            dispatch(overwriteConfig(newConfig)) // @ts-ignore
+                .then(dispatch(conferenceWillLeave(conference)))
+                .then(conference.leave())
+                .then(dispatch(disconnect()))
+                .then(dispatch(connect()));
         }
 
         break;
@@ -216,45 +225,49 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
         sendAnalytics(createOfferAnswerFailedEvent());
         break;
+
     case JitsiConferenceErrors.REDIRECTED: {
-        // once conference.js is gone this can be removed and both
-        // redirect logics to be merged
-        if (typeof APP === 'undefined') {
-            const newConfig = getVisitorOptions(getState, error.params);
+        const newConfig = getVisitorOptions(getState, error.params);
 
-            if (!newConfig) {
-                logger.warn('Not redirected missing params');
-                break;
-            }
-
-            const [ vnode ] = error.params;
-
-            dispatch(overwriteConfig(newConfig)) // @ts-ignore
-                .then(dispatch(conferenceWillLeave(conference)))
-                .then(conference.leave())
-                .then(dispatch(disconnect()))
-                .then(dispatch(setIAmVisitor(Boolean(vnode))))
-
-                // we do not clear local tracks on error, so we need to manually clear them
-                .then(dispatch(destroyLocalTracks()))
-                .then(dispatch(connect()));
+        if (!newConfig) {
+            logger.warn('Not redirected missing params');
+            break;
         }
+
+        const [ vnode ] = error.params;
+
+        dispatch(overwriteConfig(newConfig)) // @ts-ignore
+            .then(dispatch(conferenceWillLeave(conference)))
+            .then(conference.leave())
+            .then(dispatch(disconnect()))
+            .then(dispatch(setIAmVisitor(Boolean(vnode))))
+
+            // we do not clear local tracks on error, so we need to manually clear them
+            .then(dispatch(destroyLocalTracks()))
+            .then(() => {
+                if (typeof APP !== 'undefined') {
+                    // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
+                    VideoLayout.initLargeVideo();
+                    VideoLayout.resizeVideoArea();
+                }
+            })
+            .then(dispatch(connect()));
         break;
     }
     }
 
-    if (typeof APP === 'undefined') {
-        !error.recoverable
-        && conference
-        && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch((reason: Error) => {
-            // Even though we don't care too much about the failure, it may be
-            // good to know that it happen, so log it (on the info level).
-            logger.info('JitsiConference.leave() rejected with:', reason);
-        });
-    } else {
-        // FIXME: Workaround for the web version. Currently, the creation of the
-        // conference is handled by /conference.js and appropriate failure handlers
-        // are set there.
+    !error.recoverable
+    && conference
+    && conference.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).catch((reason: Error) => {
+        // Even though we don't care too much about the failure, it may be
+        // good to know that it happen, so log it (on the info level).
+        logger.info('JitsiConference.leave() rejected with:', reason);
+    });
+
+    // FIXME: Workaround for the web version. Currently, the creation of the
+    // conference is handled by /conference.js and appropriate failure handlers
+    // are set there.
+    if (typeof APP !== 'undefined') {
         _removeUnloadHandler(getState);
     }
 
@@ -339,12 +352,42 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished({ dispatch }: IStore, next: Function, action: AnyAction) {
+async function _connectionEstablished({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.
-    typeof APP === 'undefined' && dispatch(createConference());
+    if (typeof APP === 'undefined') {
+        dispatch(createConference());
+    } else {
+        // TODO keep this here till we move tracks and conference management from
+        // conference.js to react.
+        const state = getState();
+        let localTracks = getLocalTracks(state['features/base/tracks']);
+
+        // Do not signal audio/video tracks if the user joins muted.
+        for (const track of localTracks) {
+            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+            // if the user joins audio and video muted.
+            if (track.muted
+                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                try {
+                    await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+                } catch (error) {
+                    logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                }
+            }
+        }
+
+        // Re-fetch the local tracks after muted tracks have been removed above.
+        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
+        // anymore.
+        localTracks = getLocalTracks(getState()['features/base/tracks']);
+
+        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+
+        APP.conference.startConference(jitsiTracks).catch(logger.error);
+    }
 
     return result;
 }
@@ -354,9 +397,10 @@ function _connectionEstablished({ dispatch }: IStore, next: Function, action: An
  *
  * @param {string} message -The error message from xmpp.
  * @param {Object} state - The redux state.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
  * @returns {void}
  */
-function _logJwtErrors(message: string, state: IReduxState) {
+function _logJwtErrors(message: string, state: IReduxState, dispatch: IStore['dispatch']) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {
@@ -367,6 +411,11 @@ function _logJwtErrors(message: string, state: IReduxState) {
 
     message && logger.error(`JWT error: ${message}`);
     errorKeys.length && logger.error('JWT parsing error:', errorKeys);
+
+    dispatch(showErrorNotification({
+        descriptionKey: 'dialog.tokenAuthFailed',
+        titleKey: 'dialog.tokenAuthFailedTitle'
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 }
 
 /**
@@ -384,47 +433,41 @@ function _logJwtErrors(message: string, state: IReduxState) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    _logJwtErrors(action.error.message, getState());
+    _logJwtErrors(action.error.message, getState(), dispatch);
 
     const result = next(action);
 
     _removeUnloadHandler(getState);
 
-    // FIXME: Workaround for the web version. Currently, the creation of the
-    // conference is handled by /conference.js and appropriate failure handlers
-    // are set there.
-    if (typeof APP === 'undefined') {
-        const { connection } = action;
-        const { error } = action;
+    const { connection } = action;
+    const { error } = action;
 
-        forEachConference(getState, conference => {
-            // It feels that it would make things easier if JitsiConference
-            // in lib-jitsi-meet would monitor it's connection and emit
-            // CONFERENCE_FAILED when it's dropped. It has more knowledge on
-            // whether it can recover or not. But because the reload screen
-            // and the retry logic is implemented in the app maybe it can be
-            // left this way for now.
-            if (conference.getConnection() === connection) {
-                // XXX Note that on mobile the error type passed to
-                // connectionFailed is always an object with .name property.
-                // This fact needs to be checked prior to enabling this logic on
-                // web.
-                const conferenceAction
-                    = conferenceFailed(conference, error.name);
+    forEachConference(getState, conference => {
+        // It feels that it would make things easier if JitsiConference
+        // in lib-jitsi-meet would monitor it's connection and emit
+        // CONFERENCE_FAILED when it's dropped. It has more knowledge on
+        // whether it can recover or not. But because the reload screen
+        // and the retry logic is implemented in the app maybe it can be
+        // left this way for now.
+        if (conference.getConnection() === connection) {
+            // XXX Note that on mobile the error type passed to
+            // connectionFailed is always an object with .name property.
+            // This fact needs to be checked prior to enabling this logic on
+            // web.
+            const conferenceAction = conferenceFailed(conference, error.name);
 
-                // Copy the recoverable flag if set on the CONNECTION_FAILED
-                // action to not emit recoverable action caused by
-                // a non-recoverable one.
-                if (typeof error.recoverable !== 'undefined') {
-                    conferenceAction.error.recoverable = error.recoverable;
-                }
-
-                dispatch(conferenceAction);
+            // Copy the recoverable flag if set on the CONNECTION_FAILED
+            // action to not emit recoverable action caused by
+            // a non-recoverable one.
+            if (typeof error.recoverable !== 'undefined') {
+                conferenceAction.error.recoverable = error.recoverable;
             }
 
-            return true;
-        });
-    }
+            dispatch(conferenceAction);
+        }
+
+        return true;
+    });
 
     return result;
 }

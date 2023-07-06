@@ -1,4 +1,3 @@
-import { appNavigate } from '../app/actions.native';
 import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
@@ -6,6 +5,7 @@ import {
     CONFERENCE_LEFT
 } from '../base/conference/actionTypes';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { hangup } from '../base/connection/actions';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import {
@@ -13,19 +13,26 @@ import {
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { getBackendSafeRoomName } from '../base/util/uri';
+import { openLogoutDialog } from '../settings/actions';
 
 import {
     CANCEL_LOGIN,
+    LOGIN,
+    LOGOUT,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    hideLoginDialog,
     openLoginDialog,
     openWaitForOwnerDialog,
+    redirectToDefaultLocation,
     stopWaitForOwner,
-    waitForOwner } from './actions.native';
+    waitForOwner } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
+import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -40,7 +47,8 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CANCEL_LOGIN: {
         const { dispatch, getState } = store;
-        const { thenableWithCancel } = getState()['features/authentication'];
+        const state = getState();
+        const { thenableWithCancel } = state['features/authentication'];
 
         thenableWithCancel?.cancel();
 
@@ -57,10 +65,8 @@ MiddlewareRegistry.register(store => next => action => {
                 return result;
             }
 
-            // Go back to the app's entry point.
-            _hideLoginDialog(store);
+            dispatch(hideLoginDialog());
 
-            const state = getState();
             const { authRequired, conference } = state['features/base/conference'];
             const { passwordRequired } = state['features/base/connection'];
 
@@ -68,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
             // NOTE: Despite it's confusing name, `passwordRequired` implies an XMPP
             // connection auth error.
             if ((passwordRequired || authRequired) && !conference) {
-                dispatch(appNavigate(undefined));
+                dispatch(redirectToDefaultLocation());
             }
         }
         break;
@@ -100,7 +106,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (_isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
-        _hideLoginDialog(store);
+        store.dispatch(hideLoginDialog());
         break;
 
     case CONFERENCE_LEFT:
@@ -108,18 +114,64 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_ESTABLISHED:
-        _hideLoginDialog(store);
+        store.dispatch(hideLoginDialog());
         break;
 
     case CONNECTION_FAILED: {
         const { error } = action;
+        const state = store.getState();
+        const { jwt } = state['features/base/jwt'];
 
         if (error
                 && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-                && typeof error.recoverable === 'undefined') {
+                && typeof error.recoverable === 'undefined'
+                && !jwt) {
             error.recoverable = true;
+
+            const config = state['features/base/config'];
+            const room = getBackendSafeRoomName(state['features/base/conference'].room);
+
+            // this is only for web
+            if (isTokenAuthEnabled(config) && typeof APP !== 'undefined') {
+                // FIXME: This method will not preserve the other URL params that were originally passed.
+                // redirectToTokenAuthService
+                window.location.href = getTokenAuthUrl(config)(room, false);
+            } else {
+                store.dispatch(openLoginDialog());
+            }
+        }
+
+        break;
+    }
+
+    case LOGIN: {
+        const state = store.getState();
+        const config = state['features/base/config'];
+        const room = getBackendSafeRoomName(state['features/base/conference'].room);
+
+        // this is only for web
+        if (isTokenAuthEnabled(config) && typeof APP !== 'undefined') {
+            // FIXME: This method will not preserve the other URL params that were originally passed.
+            // redirectToTokenAuthService
+            window.location.href = getTokenAuthUrl(config)(room, false);
+        } else {
             store.dispatch(openLoginDialog());
         }
+
+        break;
+    }
+
+    case LOGOUT: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (!conference) {
+            break;
+        }
+
+        store.dispatch(openLogoutDialog(() => {
+            conference.room.moderator.logout(() => store.dispatch(hangup(true)));
+        }));
+
         break;
     }
 
@@ -132,7 +184,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { error, progress } = action;
 
         if (!error && progress === 1) {
-            _hideLoginDialog(store);
+            store.dispatch(hideLoginDialog());
         }
         break;
     }
@@ -144,7 +196,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
-        // The WAIT_FOR_OWNER action is cyclic and we don't want to hide the
+        // The WAIT_FOR_OWNER action is cyclic, and we don't want to hide the
         // login dialog every few seconds.
         isDialogOpen(store, LoginDialog)
             || store.dispatch(openWaitForOwnerDialog());
@@ -162,22 +214,12 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _clearExistingWaitForOwnerTimeout(
-        { getState }: IStore) {
+function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
 }
 
-/**
- * Hides {@link LoginDialog} if it's currently displayed.
- *
- * @param {Object} store - The redux store.
- * @returns {void}
- */
-function _hideLoginDialog({ dispatch }: IStore) {
-    dispatch(hideDialog(LoginDialog));
-}
 
 /**
  * Checks if the cyclic "wait for conference owner" task is currently scheduled.

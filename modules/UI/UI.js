@@ -292,40 +292,6 @@ UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 // Used by torture.
 UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
-/**
- * Notify user that connection failed.
- * @param {string} stropheErrorMsg raw Strophe error message
- */
-UI.notifyConnectionFailed = function(stropheErrorMsg) {
-    let descriptionKey;
-    let descriptionArguments;
-
-    if (stropheErrorMsg) {
-        descriptionKey = 'dialog.connectErrorWithMsg';
-        descriptionArguments = { msg: stropheErrorMsg };
-    } else {
-        descriptionKey = 'dialog.connectError';
-    }
-
-    messageHandler.showError({
-        descriptionArguments,
-        descriptionKey,
-        titleKey: 'connection.CONNFAIL'
-    });
-};
-
-
-/**
- * Notify user that maximum users limit has been reached.
- */
-UI.notifyMaxUsersLimitReached = function() {
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.maxUsersLimitReached',
-        titleKey: 'dialog.maxUsersLimitReachedTitle'
-    });
-};
-
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
@@ -336,13 +302,6 @@ UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
  * @param {number} lvl audio level
  */
 UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
-
-UI.notifyTokenAuthFailed = function() {
-    messageHandler.showError({
-        descriptionKey: 'dialog.tokenAuthFailed',
-        titleKey: 'dialog.tokenAuthFailedTitle'
-    });
-};
 
 /**
  * Update list of available physical devices.

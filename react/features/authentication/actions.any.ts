@@ -1,7 +1,7 @@
 import { IStore } from '../app/types';
 import { checkIfCanJoin } from '../base/conference/actions';
 import { IJitsiConference } from '../base/conference/reducer';
-import { openDialog } from '../base/dialog/actions';
+import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
     STOP_WAIT_FOR_OWNER,
@@ -124,6 +124,16 @@ function _upgradeRoleStarted(thenableWithCancel: Object) {
         type: UPGRADE_ROLE_STARTED,
         thenableWithCancel
     };
+}
+
+/**
+ * Hides an authentication dialog where the local participant
+ * should authenticate.
+ *
+ * @returns {Function}.
+ */
+export function hideLoginDialog() {
+    return hideDialog(LoginDialog);
 }
 
 /**

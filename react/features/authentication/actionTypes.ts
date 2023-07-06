@@ -9,6 +9,24 @@
 export const CANCEL_LOGIN = 'CANCEL_LOGIN';
 
 /**
+ * The type of (redux) action which signals to login.
+ *
+ * {
+ *     type: LOGOUT
+ * }
+ */
+export const LOGIN = 'LOGIN';
+
+/**
+ * The type of (redux) action which signals to logout.
+ *
+ * {
+ *     type: LOGOUT
+ * }
+ */
+export const LOGOUT = 'LOGOUT';
+
+/**
  * The type of (redux) action which signals that the cyclic operation of waiting
  * for conference owner has been aborted.
  *

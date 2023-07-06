@@ -155,6 +155,9 @@ export interface IConferenceState {
 
 export interface IJitsiConferenceRoom {
     locked: boolean;
+    moderator: {
+        logout: Function;
+    };
     myroomjid: string;
     roomjid: string;
 }

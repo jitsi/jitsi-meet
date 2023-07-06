@@ -4,11 +4,8 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
 
-import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
-import AuthHandler from './modules/UI/authentication/AuthHandler';
-import UIUtil from './modules/UI/util/UIUtil';
 import VideoLayout from './modules/UI/videolayout/VideoLayout';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
@@ -37,7 +34,6 @@ import {
     conferenceSubjectChanged,
     conferenceTimestampChanged,
     conferenceUniqueIdSet,
-    conferenceWillJoin,
     conferenceWillLeave,
     dataChannelClosed,
     dataChannelOpened,
@@ -57,11 +53,8 @@ import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
-    getVisitorOptions,
-    restoreConferenceOptions,
     sendLocalParticipant
 } from './react/features/base/conference/functions';
-import { overwriteConfig } from './react/features/base/config/actions';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
@@ -77,15 +70,12 @@ import {
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents,
-    JitsiConnectionErrors,
-    JitsiConnectionEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
     JitsiTrackErrors,
     JitsiTrackEvents,
     browser
 } from './react/features/base/lib-jitsi-meet';
-import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import {
     gumPending,
     setAudioAvailable,
@@ -153,7 +143,7 @@ import {
 import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
 import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin, makePrecallTest, setJoiningInProgress } from './react/features/prejoin/actions';
+import { initPrejoin, makePrecallTest } from './react/features/prejoin/actions';
 import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
@@ -164,7 +154,6 @@ import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise'
 import { endpointMessageReceived } from './react/features/subtitles/actions.any';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
-import { setIAmVisitor } from './react/features/visitors/actions';
 import { iAmVisitor } from './react/features/visitors/functions';
 import UIEvents from './service/UI/UIEvents';
 
@@ -174,24 +163,6 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
-
-/**
- * The promise is used when the prejoin screen is shown.
- * While the user configures the devices the connection can be made.
- *
- * @type {Promise<Object>}
- * @private
- */
-let _connectionPromise;
-
-/**
- * We are storing the resolve function of a Promise that waits for the _connectionPromise to be created. This is needed
- * when the prejoin button was pressed before the conference object was initialized and the _connectionPromise has not
- * been initialized when we tried to execute prejoinStart. In this case in prejoinStart we create a new Promise, assign
- * the resolve function to this variable and wait for the promise to resolve before we continue. The
- * _onConnectionPromiseCreated will be called once the _connectionPromise is created.
- */
-let _onConnectionPromiseCreated;
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -212,26 +183,6 @@ const commands = {
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad'
 };
-
-/**
- * Open Connection. When authentication failed it shows auth dialog.
- * @param roomName the room name to use
- * @returns Promise<JitsiConnection>
- */
-function connect(roomName) {
-    return openConnection({
-        retry: true,
-        roomName
-    })
-    .catch(err => {
-        if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-            APP.UI.notifyTokenAuthFailed();
-        } else {
-            APP.UI.notifyConnectionFailed(err);
-        }
-        throw err;
-    });
-}
 
 /**
  * Share data to other users.
@@ -326,58 +277,10 @@ class ConferenceConnector {
             break;
         }
 
-        // not enough rights to create conference
-        case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
-
-            const replaceParticipant = getReplaceParticipant(APP.store.getState());
-
-            // Schedule reconnect to check if someone else created the room.
-            this.reconnectTimeout = setTimeout(() => {
-                APP.store.dispatch(conferenceWillJoin(room));
-                room.join(null, replaceParticipant);
-            }, 5000);
-
-            const { password }
-                = APP.store.getState()['features/base/conference'];
-
-            AuthHandler.requireAuth(room, password);
-
-            break;
-        }
-
         case JitsiConferenceErrors.RESERVATION_ERROR: {
             const [ code, msg ] = params;
 
             APP.UI.notifyReservationError(code, msg);
-            break;
-        }
-
-        case JitsiConferenceErrors.REDIRECTED: {
-            const newConfig = getVisitorOptions(APP.store.getState(), params);
-
-            if (!newConfig) {
-                logger.warn('Not redirected missing params');
-                break;
-            }
-
-            const [ vnode ] = params;
-
-            APP.store.dispatch(overwriteConfig(newConfig))
-                .then(() => this._conference.leaveRoom())
-                .then(() => APP.store.dispatch(setIAmVisitor(Boolean(vnode))))
-
-                // we do not clear local tracks on error, so we need to manually clear them
-                .then(() => APP.store.dispatch(destroyLocalTracks()))
-                .then(() => {
-                    // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
-                    VideoLayout.initLargeVideo();
-                    VideoLayout.resizeVideoArea();
-
-                    connect(this._conference.roomName).then(con => {
-                        this._conference.startConference(con, []);
-                    });
-                });
-
             break;
         }
 
@@ -411,28 +314,6 @@ class ConferenceConnector {
             room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
             break;
 
-        case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
-            APP.UI.notifyMaxUsersLimitReached();
-
-            // in case of max users(it can be from a visitor node), let's restore
-            // oldConfig if any as we will be back to the main prosody
-            const newConfig = restoreConferenceOptions(APP.store.getState());
-
-            if (newConfig) {
-                APP.store.dispatch(overwriteConfig(newConfig))
-                    .then(() => this._conference.leaveRoom())
-                    .then(() => {
-                        _connectionPromise = connect(this._conference.roomName);
-
-                        return _connectionPromise;
-                    })
-                    .then(con => {
-                        APP.connection = connection = con;
-                    });
-            }
-
-            break;
-        }
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
             APP.store.dispatch(reloadWithStoredParams());
             break;
@@ -508,25 +389,6 @@ function setGUMPendingStateOnFailedTracks(tracks) {
     const nonPendingTracks = [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ].filter(type => !tracksTypes.includes(type));
 
     APP.store.dispatch(gumPending(nonPendingTracks, IGUMPendingState.NONE));
-}
-
-/**
- * Handles CONNECTION_FAILED events from lib-jitsi-meet.
- *
- * @param {JitsiConnectionError} error - The reported error.
- * @returns {void}
- * @private
- */
-function _connectionFailedHandler(error) {
-    if (isFatalJitsiConnectionError(error)) {
-        APP.connection.removeEventListener(
-            JitsiConnectionEvents.CONNECTION_FAILED,
-            _connectionFailedHandler);
-        if (room) {
-            APP.store.dispatch(conferenceWillLeave(room));
-            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR);
-        }
-    }
 }
 
 export default {
@@ -741,21 +603,19 @@ export default {
      * without any audio tracks.
      * @param {boolean} options.startWithVideoMuted - will start the conference
      * without any video tracks.
-     * @returns {Promise.<JitsiLocalTrack[], JitsiConnection>}
+     * @returns {JitsiLocalTrack[]}
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
 
-        return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
-            .then(([ tracks, con ]) => {
+        return tryCreateLocalTracks.then(tracks => {
+            this._displayErrorsForCreateInitialLocalTracks(errors);
 
-                this._displayErrorsForCreateInitialLocalTracks(errors);
-
-                return [ tracks, con ];
-            });
+            return tracks;
+        });
     },
 
-    startConference(con, tracks) {
+    startConference(tracks) {
         tracks.forEach(track => {
             if ((track.isAudioTrack() && this.isLocalAudioMuted())
                 || (track.isVideoTrack() && this.isLocalVideoMuted())) {
@@ -767,9 +627,6 @@ export default {
                 track.mute();
             }
         });
-
-        con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
-        APP.connection = connection = con;
 
         this._createRoom(tracks);
 
@@ -860,17 +717,6 @@ export default {
         };
 
         if (isPrejoinPageVisible(state)) {
-            _connectionPromise = connect(roomName).then(c => {
-                // We want to initialize it early, in case of errors to be able to gather logs.
-                APP.connection = c;
-
-                return c;
-            });
-
-            if (_onConnectionPromiseCreated) {
-                _onConnectionPromiseCreated();
-            }
-
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
@@ -897,7 +743,7 @@ export default {
             return this._setLocalAudioVideoStreams(tracks);
         }
 
-        const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
+        const tracks = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
 
         this._initDeviceList(true);
 
@@ -905,33 +751,7 @@ export default {
 
         setGUMPendingStateOnFailedTracks(filteredTracks);
 
-        return this.startConference(con, filteredTracks);
-    },
-
-    /**
-     * Joins conference after the tracks have been configured in the prejoin screen.
-     *
-     * @param {Object[]} tracks - An array with the configured tracks
-     * @returns {void}
-     */
-    async prejoinStart(tracks) {
-        if (!_connectionPromise) {
-            // The conference object isn't initialized yet. Wait for the promise to initialise.
-            await new Promise(resolve => {
-                _onConnectionPromiseCreated = resolve;
-            });
-            _onConnectionPromiseCreated = undefined;
-        }
-
-        let con;
-
-        try {
-            con = await _connectionPromise;
-            this.startConference(con, tracks);
-        } catch (error) {
-            logger.error(`An error occurred while trying to join a meeting from the prejoin screen: ${error}`);
-            APP.store.dispatch(setJoiningInProgress(false));
-        }
+        return this.startConference(filteredTracks);
     },
 
     /**
@@ -1440,7 +1260,7 @@ export default {
     },
 
     _createRoom(localTracks) {
-        room = connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
+        room = APP.connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
 
         // Filter out the tracks that are muted (except on Safari).
         const tracks = browser.isWebKitBased() ? localTracks : localTracks.filter(track => !track.isMuted());
@@ -2182,21 +2002,6 @@ export default {
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {
             this.hangup(true);
-        });
-
-        // logout
-        APP.UI.addListener(UIEvents.LOGOUT, () => {
-            AuthHandler.logout(room).then(url => {
-                if (url) {
-                    UIUtil.redirect(url);
-                } else {
-                    this.hangup(true);
-                }
-            });
-        });
-
-        APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
-            AuthHandler.authenticate(room);
         });
 
         APP.UI.addListener(

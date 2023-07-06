@@ -1,11 +1,10 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
 import { IReduxState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
 import { iAmVisitor } from '../../visitors/functions';
 import { getReplaceParticipant } from '../config/functions';
-import { disconnect } from '../connection/actions';
+import { hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../media/actions';
@@ -647,17 +646,8 @@ export function kickedOut(conference: IJitsiConference, participant: Object) {
  * @returns {Function}
  */
 export function leaveConference() {
-    return async (dispatch: IStore['dispatch']) => {
-
-        // FIXME: these should be unified.
-        if (navigator.product === 'ReactNative') {
-            dispatch(appNavigate(undefined));
-        } else {
-            dispatch(disconnect(true));
-        }
-    };
+    return async (dispatch: IStore['dispatch']) => dispatch(hangup(true));
 }
-
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.

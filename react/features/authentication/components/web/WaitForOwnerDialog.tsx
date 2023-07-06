@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
-import { cancelWaitForOwner } from '../../actions.web';
+import { cancelWaitForOwner, login } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -16,11 +16,6 @@ interface IProps extends WithTranslation {
      * Redux store dispatch method.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Function to be invoked after click.
-     */
-    onAuthNow?: Function;
 }
 
 /**
@@ -61,9 +56,7 @@ class WaitForOwnerDialog extends PureComponent<IProps> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { onAuthNow } = this.props;
-
-        onAuthNow?.();
+        this.props.dispatch(login());
     }
 
     /**
