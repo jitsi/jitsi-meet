@@ -208,8 +208,8 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             titleKey: 'dialog.maxUsersLimitReachedTitle'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-        // in case of max users(it can be from a visitor node), let's restore
-        // oldConfig if any as we will be back to the main prosody
+        // In case of max users(it can be from a visitor node), let's restore
+        // oldConfig if any as we will be back to the main prosody.
         const newConfig = restoreConferenceOptions(getState);
 
         if (newConfig) {
@@ -359,35 +359,37 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
     // conference is handled by /conference.js.
     if (typeof APP === 'undefined') {
         dispatch(createConference());
-    } else {
-        // TODO keep this here till we move tracks and conference management from
-        // conference.js to react.
-        const state = getState();
-        let localTracks = getLocalTracks(state['features/base/tracks']);
 
-        // Do not signal audio/video tracks if the user joins muted.
-        for (const track of localTracks) {
-            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-            // if the user joins audio and video muted.
-            if (track.muted
-                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-                try {
-                    await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-                } catch (error) {
-                    logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
-                }
+        return;
+    }
+
+    // TODO keep this here till we move tracks and conference management from
+    // conference.js to react.
+    const state = getState();
+    let localTracks = getLocalTracks(state['features/base/tracks']);
+
+    // Do not signal audio/video tracks if the user joins muted.
+    for (const track of localTracks) {
+        // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+        // if the user joins audio and video muted.
+        if (track.muted
+            && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+            try {
+                await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+            } catch (error) {
+                logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
             }
         }
-
-        // Re-fetch the local tracks after muted tracks have been removed above.
-        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
-        // anymore.
-        localTracks = getLocalTracks(getState()['features/base/tracks']);
-
-        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
-
-        APP.conference.startConference(jitsiTracks).catch(logger.error);
     }
+
+    // Re-fetch the local tracks after muted tracks have been removed above.
+    // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
+    // anymore.
+    localTracks = getLocalTracks(getState()['features/base/tracks']);
+
+    const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+
+    APP.conference.startConference(jitsiTracks).catch(logger.error);
 
     return result;
 }
@@ -443,6 +445,7 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
     const { error } = action;
 
     forEachConference(getState, conference => {
+        // TODO: revisit this
         // It feels that it would make things easier if JitsiConference
         // in lib-jitsi-meet would monitor it's connection and emit
         // CONFERENCE_FAILED when it's dropped. It has more knowledge on

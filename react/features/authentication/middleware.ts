@@ -149,9 +149,9 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        store.dispatch(openLogoutDialog(() => {
-            conference.room.moderator.logout(() => store.dispatch(hangup(true)));
-        }));
+        store.dispatch(openLogoutDialog(() =>
+            conference.room.moderator.logout(() => store.dispatch(hangup(true)))
+        ));
 
         break;
     }

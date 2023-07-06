@@ -19,10 +19,10 @@ export function connect(id?: string, password?: string) {
 /**
  * Hangup.
  *
- * @param {boolean} [requestFeedback] - Whether to attempt showing a
+ * @param {boolean} [_requestFeedback] - Whether to attempt showing a
  * request for call feedback.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false) { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function hangup(_requestFeedback = false) {
     return (dispatch: IStore['dispatch']) => dispatch(appNavigate(undefined));
 }

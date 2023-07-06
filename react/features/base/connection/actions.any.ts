@@ -298,7 +298,6 @@ export function _connectInternal(id?: string, password?: string) {
                 JitsiConnectionEvents.CONNECTION_FAILED,
                 _onConnectionFailed);
 
-            logger.error('CONNECTION FAILED:', err);
             dispatch(
                 connectionFailed(
                     connection, {
@@ -351,7 +350,6 @@ function _connectionWillConnect(connection: Object) {
  * @returns {Function}
  */
 export function disconnect() {
-    /* eslint-enable @typescript-eslint/no-unused-vars */
     return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 
