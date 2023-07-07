@@ -497,7 +497,7 @@ export class VideoContainer extends LargeContainer {
 
             const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
-            this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
+            this.video.style.transform = flipX && !this.isScreenSharing() ? 'scaleX(-1)' : 'none';
             this._updateBackground();
         }
     }
