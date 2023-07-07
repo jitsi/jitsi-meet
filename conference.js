@@ -739,7 +739,9 @@ export default {
 
         setGUMPendingStateOnFailedTracks(filteredTracks);
 
-        return APP.store.dispatch(connect());
+        return this._setLocalAudioVideoStreams(filteredTracks).then(
+            () => APP.store.dispatch(connect())
+        );
     },
 
     /**
