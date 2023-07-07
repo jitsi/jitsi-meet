@@ -360,7 +360,7 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
     if (typeof APP === 'undefined') {
         dispatch(createConference());
 
-        return;
+        return result;
     }
 
     // TODO keep this here till we move tracks and conference management from

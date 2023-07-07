@@ -224,7 +224,6 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const config = state['features/base/config'];
     const room = getBackendSafeRoomName(state['features/base/conference'].room);
 
-    // this is only for web
     if (isTokenAuthEnabled(config)) {
         if (typeof APP === 'undefined') {
             dispatch(showErrorNotification({
