@@ -31,7 +31,7 @@ interface IProps {
         domain: string;
         focus?: string;
         muc: string;
-        visitorFocus: string;
+        visitorFocus?: string;
     };
 
     /**

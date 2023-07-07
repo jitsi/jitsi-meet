@@ -390,7 +390,7 @@ export interface IConfig {
         domain: string;
         focus?: string;
         muc: string;
-        visitorFocus: string;
+        visitorFocus?: string;
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
