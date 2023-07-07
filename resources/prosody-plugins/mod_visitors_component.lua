@@ -19,6 +19,9 @@ if not muc_domain_base then
     return;
 end
 
+-- A list of domains which to be ignored for visitors. The config is set under the main virtual host
+local ignore_list = module:context(muc_domain_base):get_option_set('visitors_ignore_list', {});
+
 local auto_allow_promotion = module:get_option_boolean('auto_allow_visitor_promotion', false);
 
 local function is_admin(jid)
@@ -202,7 +205,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
 
         if visitors_promotion_map[room.jid] then
             -- now let's check for jid
-            if visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] then
+            if visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] -- promotion was approved
+                or ignore_list:contains(jid.host(stanza.attr.from)) then -- jibri or other domains to ignore
                 -- allow join
                 return;
             end
