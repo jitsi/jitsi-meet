@@ -497,7 +497,7 @@ export class VideoContainer extends LargeContainer {
 
             const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
-            this.video.style.transform = flipX && !this.isScreenSharing() ? 'scaleX(-1)' : 'none';
+            this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
             this._updateBackground();
         }
     }
@@ -508,7 +508,7 @@ export class VideoContainer extends LargeContainer {
      */
     setLocalFlipX(val) {
         this.localFlipX = val;
-        if (!this.video || !this.stream || !this.stream.isLocal()) {
+        if (!this.video || !this.stream || !this.stream.isLocal() || this.isScreenSharing()) {
             return;
         }
         this.video.style.transform = this.localFlipX ? 'scaleX(-1)' : 'none';
