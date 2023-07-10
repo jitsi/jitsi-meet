@@ -37,7 +37,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     const { getState } = store;
     const state = getState();
     const config = state['features/base/config'];
-    const { analytics } = config;
+    const { analytics, testing } = config;
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -51,7 +51,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 const pollInterval = analytics?.rtcstatsPollInterval || 10000;
                 const useLegacy = analytics?.rtcstatsUseLegacy || false;
                 const sendSdp = analytics?.rtcstatsSendSdp || false;
-                const useLibRtcStats = analytics?.rtcstatsUseLibJitsi || false;
+                const useLibRtcStats = testing?.rtcstatsUseLibJitsi || false;
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
