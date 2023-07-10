@@ -258,10 +258,10 @@ export const commonStyles = (theme: Theme) => {
             padding: theme.spacing(2),
             boxShadow: '0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15)',
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'row' as const,
             justifyContent: 'space-between',
             width: '100%',
-            pointerEvents: 'all',
+            pointerEvents: 'all' as const,
 
             '@media (max-width: 719px)': {
                 justifyContent: 'flex-end'
