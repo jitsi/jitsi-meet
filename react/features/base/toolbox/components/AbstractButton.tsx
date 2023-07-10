@@ -49,11 +49,6 @@ export interface IProps extends WithTranslation {
     handleClick?: Function;
 
     /**
-     * Callback to notify the api.
-     */
-    notifyClick?: Function;
-
-    /**
      * Notify mode for `toolbarButtonClicked` event -
      * whether to only notify or to also prevent button click routine.
      */
@@ -343,16 +338,12 @@ export default class AbstractButton<P extends IProps, S=any> extends Component<P
      * @returns {void}
      */
     _onClick(e?: React.MouseEvent | GestureResponderEvent) {
-        const { afterClick, buttonKey, handleClick, notifyClick, notifyMode } = this.props;
+        const { afterClick, buttonKey, handleClick, notifyMode } = this.props;
 
         if (typeof APP !== 'undefined' && notifyMode) {
-            if (notifyClick) {
-                notifyClick(buttonKey);
-            } else {
-                APP.API.notifyToolbarButtonClicked(
+            APP.API.notifyToolbarButtonClicked(
                     buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-                );
-            }
+            );
         }
 
         if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {

@@ -182,34 +182,34 @@ const LocalVideoMenuTriggerButton = ({
                 <ContextMenuItemGroup>
                     {_showLocalVideoFlipButton
                         && <FlipLocalVideoButton
-                            buttonKey = { BUTTONS.FLIP_LOCAL_VIDEO }
                             className = { _overflowDrawer ? classes.flipText : '' }
-                            notifyClick = { notifyClick }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.FLIP_LOCAL_VIDEO) }
                             notifyMode = { getButtonNotifyMode(BUTTONS.FLIP_LOCAL_VIDEO, buttonsWithNotifyClick) }
                             onClick = { hidePopover } />
                     }
                     {_showHideSelfViewButton
                         && <HideSelfViewVideoButton
-                            buttonKey = { BUTTONS.HIDE_SELF_VIEW }
                             className = { _overflowDrawer ? classes.flipText : '' }
-                            notifyClick = { notifyClick }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.HIDE_SELF_VIEW) }
                             notifyMode = { getButtonNotifyMode(BUTTONS.HIDE_SELF_VIEW, buttonsWithNotifyClick) }
                             onClick = { hidePopover } />
                     }
                     {
                         _showPinToStage && <TogglePinToStageButton
-                            buttonKey = { BUTTONS.PIN_TO_STAGE }
                             className = { _overflowDrawer ? classes.flipText : '' }
                             noIcon = { true }
-                            notifyClick = { notifyClick }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.PIN_TO_STAGE) }
                             notifyMode = { getButtonNotifyMode(BUTTONS.PIN_TO_STAGE, buttonsWithNotifyClick) }
                             onClick = { hidePopover }
                             participantID = { _localParticipantId } />
                     }
                     {
                         isMobileBrowser() && <ConnectionStatusButton
-                            buttonKey = { BUTTONS.CONN_STATUS }
-                            notifyClick = { notifyClick }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.CONN_STATUS) }
                             notifyMode = { getButtonNotifyMode(BUTTONS.CONN_STATUS, buttonsWithNotifyClick) }
                             participantID = { _localParticipantId } />
                     }

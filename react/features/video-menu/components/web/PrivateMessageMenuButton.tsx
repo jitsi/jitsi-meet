@@ -11,11 +11,11 @@ import { getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/actions.web';
-import { IProps as AbstractProps } from '../../../chat/components/web/PrivateMessageButton';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
+import { IButtonProps } from '../../types';
 
-interface IProps extends AbstractProps, WithTranslation {
+interface IProps extends IButtonProps, WithTranslation {
 
     /**
      * True if the private chat functionality is disabled, hence the button is not visible.
@@ -28,25 +28,9 @@ interface IProps extends AbstractProps, WithTranslation {
     _participant?: IParticipant;
 
     /**
-     * The button key used to identify the click event.
-     */
-    buttonKey: string;
-
-    /**
      * Redux dispatch function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Callback to execute when the button is clicked.
-     */
-    notifyClick?: Function;
-
-    /**
-     * Notify mode for `participantMenuButtonClicked` event -
-     * whether to only notify or to also prevent button click routine.
-     */
-    notifyMode?: string;
 }
 
 /**
@@ -96,12 +80,13 @@ class PrivateMessageMenuButton extends Component<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const { _participant, buttonKey, dispatch, notifyClick, notifyMode } = this.props;
+        const { _participant, dispatch, notifyClick, notifyMode } = this.props;
 
-        notifyClick?.(buttonKey);
-        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
-            dispatch(openChat(_participant));
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
         }
+        dispatch(openChat(_participant));
     }
 }
 

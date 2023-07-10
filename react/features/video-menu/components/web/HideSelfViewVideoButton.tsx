@@ -15,11 +15,6 @@ import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 interface IProps extends WithTranslation {
 
     /**
-     * The button key used to identify the click event.
-     */
-    buttonKey?: string;
-
-    /**
      * Button text class name.
      */
     className: string;
@@ -100,15 +95,16 @@ class HideSelfViewVideoButton extends PureComponent<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const { buttonKey, disableSelfView, dispatch, notifyClick, notifyMode, onClick } = this.props;
+        const { disableSelfView, dispatch, notifyClick, notifyMode, onClick } = this.props;
 
-        notifyClick?.(buttonKey);
-        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
-            onClick?.();
-            dispatch(updateSettings({
-                disableSelfView: !disableSelfView
-            }));
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
         }
+        onClick?.();
+        dispatch(updateSettings({
+            disableSelfView: !disableSelfView
+        }));
     }
 }
 

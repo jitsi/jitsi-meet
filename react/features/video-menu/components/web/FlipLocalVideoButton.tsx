@@ -19,11 +19,6 @@ interface IProps extends WithTranslation {
     _localFlipX: boolean;
 
     /**
-     * The button key used to identify the click event.
-     */
-    buttonKey?: string;
-
-    /**
      * Button text class name.
      */
     className: string;
@@ -99,15 +94,16 @@ class FlipLocalVideoButton extends PureComponent<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const { _localFlipX, buttonKey, dispatch, notifyClick, notifyMode, onClick } = this.props;
+        const { _localFlipX, dispatch, notifyClick, notifyMode, onClick } = this.props;
 
-        notifyClick?.(buttonKey);
-        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
-            onClick?.();
-            dispatch(updateSettings({
-                localFlipX: !_localFlipX
-            }));
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
         }
+        onClick?.();
+        dispatch(updateSettings({
+            localFlipX: !_localFlipX
+        }));
     }
 }
 

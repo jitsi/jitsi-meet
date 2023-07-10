@@ -23,11 +23,6 @@ export const REMOTE_CONTROL_MENU_STATES = {
 interface IProps extends WithTranslation {
 
     /**
-     * The button key used to identify the click event.
-     */
-    buttonKey: string;
-
-    /**
      * Callback to execute when the button is clicked.
      */
     notifyClick?: Function;
@@ -124,27 +119,28 @@ class RemoteControlButton extends Component<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const { buttonKey, notifyClick, notifyMode, onClick, participantID, remoteControlState } = this.props;
+        const { notifyClick, notifyMode, onClick, participantID, remoteControlState } = this.props;
 
-        notifyClick?.(buttonKey);
-
-        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
-            // TODO: What do we do in case the state is e.g. "requesting"?
-            if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
-                || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
-
-                const enable
-                    = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
-
-                sendAnalytics(createRemoteVideoMenuButtonEvent(
-                    'remote.control.button',
-                    {
-                        enable,
-                        'participant_id': participantID
-                    }));
-            }
-            onClick?.();
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
         }
+
+        // TODO: What do we do in case the state is e.g. "requesting"?
+        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
+            || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
+
+            const enable
+                = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
+
+            sendAnalytics(createRemoteVideoMenuButtonEvent(
+                'remote.control.button',
+                {
+                    enable,
+                    'participant_id': participantID
+                }));
+        }
+        onClick?.();
 
     }
 }

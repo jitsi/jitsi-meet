@@ -205,10 +205,9 @@ const ParticipantContextMenu = ({
             || notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY;
 
         return {
-            buttonKey: key,
             key,
             notifyMode,
-            notifyClick: shouldNotifyClick ? notifyClick : undefined,
+            notifyClick: shouldNotifyClick ? () => notifyClick(key) : undefined,
             participantID: _getCurrentParticipantId()
         };
     }, [ _getCurrentParticipantId, buttonsWithNotifyClick, getButtonNotifyMode, notifyClick ]);
@@ -217,7 +216,9 @@ const ParticipantContextMenu = ({
         if (isModerationSupported) {
             if (_isAudioMuted
                 && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ASK_TO_UNMUTE)) {
-                buttons.push(<AskToUnmuteButton { ...getButtonProps(BUTTONS.ASK_UNMUTE) } />
+                buttons.push(<AskToUnmuteButton
+                    { ...getButtonProps(BUTTONS.ASK_UNMUTE) }
+                    buttonType = { MEDIA_TYPE.AUDIO } />
                 );
             }
             if (_isVideoForceMuted
@@ -231,17 +232,11 @@ const ParticipantContextMenu = ({
 
         if (!disableRemoteMute) {
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
-                buttons.push(<MuteButton
-                    { ...getButtonProps(BUTTONS.MUTE) }
-                    preventDefaultNotify = { true } />
-                );
+                buttons.push(<MuteButton { ...getButtonProps(BUTTONS.MUTE) } />);
             }
             buttons.push(<MuteEveryoneElseButton { ...getButtonProps(BUTTONS.MUTE_OTHERS) } />);
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.STOP_VIDEO)) {
-                buttons.push(<MuteVideoButton
-                    { ...getButtonProps(BUTTONS.MUTE_VIDEO) }
-                    preventDefaultNotify = { true } />
-                );
+                buttons.push(<MuteVideoButton { ...getButtonProps(BUTTONS.MUTE_VIDEO) } />);
             }
             buttons.push(<MuteEveryoneElsesVideoButton { ...getButtonProps(BUTTONS.MUTE_OTHERS_VIDEO) } />);
         }

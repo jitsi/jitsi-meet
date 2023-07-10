@@ -164,9 +164,9 @@ const FakeParticipantContextMenu = ({
                 actions = { _getActions() }>
                 {isWhiteboardParticipant(participant) && (
                     <TogglePinToStageButton
-                        buttonKey = { BUTTONS.PIN_TO_STAGE }
                         key = 'pinToStage'
-                        notifyClick = { notifyClick }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        notifyClick = { () => notifyClick(BUTTONS.PIN_TO_STAGE, WHITEBOARD_ID) }
                         notifyMode = { getButtonNotifyMode(BUTTONS.PIN_TO_STAGE, buttonsWithNotifyClick) }
                         participantID = { WHITEBOARD_ID } />
                 )}

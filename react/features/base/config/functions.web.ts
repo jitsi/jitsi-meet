@@ -3,12 +3,11 @@ import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { NOTIFY_CLICK_MODE } from '../../toolbox/constants';
 
 import {
-    ButtonsWithNotifyClick,
     IConfig,
     IDeeplinkingConfig,
     IDeeplinkingMobileConfig,
     IDeeplinkingPlatformConfig,
-    ParticipantMenuButtonsWithNotifyClick
+    NotifyClickButton
 } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
@@ -135,25 +134,13 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
  * @returns {Array}
  */
 const buildButtonsArray = (
-        buttonsWithNotifyClick?: (ButtonsWithNotifyClick | {
-            key: ButtonsWithNotifyClick;
-            preventExecution: boolean;
-        })[] | (ParticipantMenuButtonsWithNotifyClick | {
-            key: ParticipantMenuButtonsWithNotifyClick;
-            preventExecution: boolean;
-        })[],
+        buttonsWithNotifyClick?: NotifyClickButton[],
         customButtons?: {
             icon: string;
             id: string;
             text: string;
         }[]
-): (ButtonsWithNotifyClick | {
-    key: ButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] | (ParticipantMenuButtonsWithNotifyClick | {
-    key: ParticipantMenuButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] => {
+): NotifyClickButton[] => {
     const customButtonsWithNotifyClick = customButtons?.map(({ id }) => {
         return {
             key: id,
@@ -162,11 +149,10 @@ const buildButtonsArray = (
     });
 
     const buttons = Array.isArray(buttonsWithNotifyClick)
-        ? buttonsWithNotifyClick
+        ? buttonsWithNotifyClick as NotifyClickButton[]
         : [];
 
     if (customButtonsWithNotifyClick) {
-        // @ts-ignore
         buttons.push(...customButtonsWithNotifyClick);
     }
 
@@ -181,13 +167,7 @@ const buildButtonsArray = (
  */
 export function getButtonsWithNotifyClick(
         state: IReduxState
-): (ButtonsWithNotifyClick | {
-    key: ButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] | (ParticipantMenuButtonsWithNotifyClick | {
-    key: ParticipantMenuButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] {
+): NotifyClickButton[] {
     const { buttonsWithNotifyClick, customToolbarButtons } = state['features/base/config'];
 
     return buildButtonsArray(
@@ -204,13 +184,7 @@ export function getButtonsWithNotifyClick(
  */
 export function getParticipantMenuButtonsWithNotifyClick(
         state: IReduxState
-): (ButtonsWithNotifyClick | {
-    key: ButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] | (ParticipantMenuButtonsWithNotifyClick | {
-    key: ParticipantMenuButtonsWithNotifyClick;
-    preventExecution: boolean;
-})[] {
+): NotifyClickButton[] {
     const { participantMenuButtonsWithNotifyClick, customParticipantMenuButtons } = state['features/base/config'];
 
     return buildButtonsArray(
@@ -228,23 +202,14 @@ export function getParticipantMenuButtonsWithNotifyClick(
  */
 export const getButtonNotifyMode = (
         buttonKey: string,
-        buttonsWithNotifyClick?: (ButtonsWithNotifyClick | {
-            key: ButtonsWithNotifyClick;
-            preventExecution: boolean;
-        })[] | (ParticipantMenuButtonsWithNotifyClick | {
-            key: ParticipantMenuButtonsWithNotifyClick;
-            preventExecution: boolean;
-        })[]
+        buttonsWithNotifyClick?: NotifyClickButton[]
 ): string | undefined => {
-    // @ts-ignore
-    const notify = buttonsWithNotifyClick?.find((btn: ButtonsWithNotifyClick | ParticipantMenuButtonsWithNotifyClick) =>
-
-        // @ts-ignore
-        (typeof btn === 'string' && btn === buttonKey) || (typeof btn === 'object' && btn.key === buttonKey)
+    const notify = buttonsWithNotifyClick?.find(
+        (btn: NotifyClickButton) =>
+            (typeof btn === 'string' && btn === buttonKey) || (typeof btn === 'object' && btn.key === buttonKey)
     );
 
     if (notify) {
-        // @ts-ignore
         return typeof notify === 'string' || notify.preventExecution
             ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             : NOTIFY_CLICK_MODE.ONLY_NOTIFY;

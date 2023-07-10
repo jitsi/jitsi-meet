@@ -98,9 +98,9 @@ export const RoomParticipantContextMenu = ({
     const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: any) => {
         if (room.id !== entity?.room?.id) {
             return (<SendToRoomButton
-                buttonKey = { BUTTONS.SEND_PARTICIPANT_TO_ROOM }
                 key = { room.id }
-                notifyClick = { notifyClick }
+                // eslint-disable-next-line react/jsx-no-bind
+                notifyClick = { () => notifyClick(BUTTONS.SEND_PARTICIPANT_TO_ROOM, entity?.jid) }
                 notifyMode = { getButtonNotifyMode(BUTTONS.SEND_PARTICIPANT_TO_ROOM, buttonsWithNotifyClick) }
                 onClick = { lowerMenu }
                 participantID = { entity?.jid ?? '' }

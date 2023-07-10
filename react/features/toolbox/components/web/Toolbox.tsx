@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { ButtonsWithNotifyClick, ParticipantMenuButtonsWithNotifyClick } from '../../../base/config/configType';
+import { NotifyClickButton } from '../../../base/config/configType';
 import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
     getButtonNotifyMode,
@@ -48,13 +48,7 @@ interface IProps extends WithTranslation {
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick?: (ButtonsWithNotifyClick | {
-        key: ButtonsWithNotifyClick;
-        preventExecution: boolean;
-    })[] | (ParticipantMenuButtonsWithNotifyClick | {
-        key: ParticipantMenuButtonsWithNotifyClick;
-        preventExecution: boolean;
-    })[];
+    _buttonsWithNotifyClick?: NotifyClickButton[];
 
     /**
      * Whether or not the chat feature is currently displayed.
