@@ -1,3 +1,5 @@
+import { CONFERENCE_FAILED } from '../base/conference/actionTypes';
+import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
@@ -72,6 +74,16 @@ PersistenceRegistry.register('features/prejoin', {
 ReducerRegistry.register<IPrejoinState>(
     'features/prejoin', (state = DEFAULT_STATE, action): IPrejoinState => {
         switch (action.type) {
+        case CONFERENCE_FAILED: {
+            if (action.error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED) {
+                return {
+                    ...state,
+                    isDisplayNameRequired: true
+                };
+            }
+
+            return state;
+        }
         case PREJOIN_JOINING_IN_PROGRESS:
             return {
                 ...state,
