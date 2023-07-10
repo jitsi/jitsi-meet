@@ -520,6 +520,7 @@ export interface IConfig {
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
         testMode?: boolean;
+        rtcstatsUseLibJitsi?: boolean;
     };
     tileView?: {
         numberOfVisibleTiles?: number;
