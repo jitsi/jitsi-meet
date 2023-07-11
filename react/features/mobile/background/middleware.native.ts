@@ -76,7 +76,7 @@ function _setAppStateListenerF({ dispatch, getState }: IStore, next: Function, a
     const result = next(action);
     const { appStateListener: newListener } = getState()['features/background'];
 
-    if(oldListener !== newListener) {
+    if (oldListener !== newListener) {
         subscription?.remove();
         newListener && dispatch(eventSubscription(AppState.addEventListener('change', newListener)));
     }
