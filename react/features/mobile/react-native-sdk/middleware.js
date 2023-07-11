@@ -23,13 +23,13 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
     switch (type) {
     case READY_TO_CLOSE:
-        rnSdkHandlers.onReadyToClose && rnSdkHandlers.onReadyToClose();
+        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
         break;
     case CONFERENCE_JOINED:
-        rnSdkHandlers.onConferenceJoined && rnSdkHandlers.onConferenceJoined();
+        rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
         break;
     case CONFERENCE_WILL_JOIN:
-        rnSdkHandlers.onConferenceWillJoin && rnSdkHandlers.onConferenceWillJoin();
+        rnSdkHandlers?.onConferenceWillJoin && rnSdkHandlers?.onConferenceWillJoin();
         break;
     case CONFERENCE_LEFT:
         //  Props are torn down at this point, perhaps need to leave this one out
@@ -38,7 +38,7 @@ const externalAPIEnabled = isExternalAPIAvailable();
         const { participant } = action;
         const participantInfo = participantToParticipantInfo(participant);
 
-        rnSdkHandlers.onParticipantJoined && rnSdkHandlers.onParticipantJoined(participantInfo);
+        rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
         break;
     }
     }
