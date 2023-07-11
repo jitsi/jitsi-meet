@@ -8,7 +8,8 @@ import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { _SET_APP_STATE_LISTENER } from './actionTypes';
 import {
     _setAppStateListener as _setAppStateListenerA,
-    appStateChanged
+    appStateChanged,
+    eventSubscription
 } from './actions';
 
 /**
@@ -68,18 +69,16 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAppStateListenerF({ getState }: IStore, next: Function, action: AnyAction) {
+function _setAppStateListenerF({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // Remove the old AppState listener and add the new one.
     const { appStateListener: oldListener } = getState()['features/background'];
+    const { subscription } = getState()['features/background'];
     const result = next(action);
     const { appStateListener: newListener } = getState()['features/background'];
 
-    // @ts-ignore
-    const appStateOldListener = AppState.addEventListener('change', oldListener);
-
-    if (oldListener !== newListener) {
-        oldListener && appStateOldListener.remove();
-        newListener && AppState.addEventListener('change', newListener);
+    if(oldListener !== newListener) {
+        subscription?.remove();
+        newListener && dispatch(eventSubscription(AppState.addEventListener('change', newListener)));
     }
 
     return result;

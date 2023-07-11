@@ -11,6 +11,18 @@
 export const _SET_APP_STATE_LISTENER = '_SET_APP_STATE_LISTENER';
 
 /**
+ * The type of redux action used for an event subscription.
+ *
+ * {
+ *     type: EVENT_SUBSCRIPTION,
+ *     subscription: NativeEventSubscription
+ * }
+ *
+ * @protected
+ */
+export const EVENT_SUBSCRIPTION = 'EVENT_SUBSCRIPTION';
+
+/**
  * The type of redux action which signals that the app state has changed (in
  * terms of execution mode). The app state can be one of 'active', 'inactive',
  * or 'background'.
