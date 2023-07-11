@@ -405,7 +405,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if not displayName or #displayName == 0 then
             local reply = st.error_reply(stanza, 'modify', 'not-acceptable');
             reply.tags[1].attr.code = '406';
-            reply:tag('displayname-required', { xmlns = 'http://jitsi.org/jitmeet' }):up():up();
+            reply:tag('displayname-required', { xmlns = 'http://jitsi.org/jitmeet', lobby = 'true' }):up():up();
 
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
             return true;
