@@ -144,7 +144,6 @@ export interface IConfig {
         rtcstatsSendSdp?: boolean;
         rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
-        rtcstatsUseLibJitsi?: boolean;
         scriptURLs?: Array<string>;
         whiteListedEvents?: string[];
     };
@@ -519,8 +518,8 @@ export interface IConfig {
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
-        testMode?: boolean;
         rtcstatsUseLibJitsi?: boolean;
+        testMode?: boolean;
     };
     tileView?: {
         numberOfVisibleTiles?: number;
