@@ -2,10 +2,9 @@
 
 
 ## Installation
- Inside your project, run `npm i @jitsi/react-native-sdk`.<br/><br/>Additionally if not already installed, the following dependencies need to be added:
-<br/>`npm i @react-native-async-storage/async-storage react-native-webrtc`<br/><br/>
+Inside your project, run `npm i @jitsi/react-native-sdk`.<br/><br/>Additionally, if not already installed, some dependencies will need to be added.
 
-You will also need to add in your `package.json` scripts object:
+This can be done by running the following script:
 ```
 "update-deps": "node node_modules/@jitsi/react-native-sdk/update_dependencies.js"
 ```
@@ -73,7 +72,7 @@ Run `cd ios && pod install && cd ..`
 
 - In your build.gradle have at least `minSdkVersion = 24`
 - TODO: HOW TO ADD COPY SOUNDS STEP
-- In `android/app/src/debug/AndroidManifest.xml`, under the `</application>`  tag of your AndroidManifest.xml make sure that it includes
+- In `android/app/src/debug/AndroidManifest.xml` and `android/app/src/main/AndroidManifest.xml`, under the `</application>` tag, include
   ```
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
