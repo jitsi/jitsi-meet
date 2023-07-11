@@ -212,6 +212,7 @@ export function startKnocking() {
             // no membersOnly, this means we got lobby screen shown as someone
             // tried to join a conference that has lobby enabled without setting display name
             // join conference should trigger the lobby/member_only path after setting the display name
+            // this is possible only for web, where we can join without a prejoin screen
             dispatch(joinConference());
 
             return;
