@@ -74,8 +74,11 @@ function _setAppStateListenerF({ getState }: IStore, next: Function, action: Any
     const result = next(action);
     const { appStateListener: newListener } = getState()['features/background'];
 
+    // @ts-ignore
+    const appStateOldListener = AppState.addEventListener('change', oldListener);
+
     if (oldListener !== newListener) {
-        oldListener && AppState.removeEventListener('change', oldListener);
+        oldListener && appStateOldListener.remove();
         newListener && AppState.addEventListener('change', newListener);
     }
 
