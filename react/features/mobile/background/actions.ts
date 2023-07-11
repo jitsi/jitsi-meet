@@ -1,4 +1,4 @@
-import {NativeEventSubscription} from 'react-native';
+import { NativeEventSubscription } from 'react-native';
 
 import {
     APP_STATE_CHANGED,
@@ -28,10 +28,10 @@ export function _setAppStateListener(listener?: Function) {
  * Sets subscription for a native event.
  *
  * @param {Function} subscription - Subscription for the native event.
- * @public
+ * @protected
  * @returns {{
  *     type: EVENT_SUBSCRIPTION,
- *     subscription?: NativeEventSubscription
+ *     subscription: NativeEventSubscription
  * }}
  */
 export function eventSubscription(subscription?: NativeEventSubscription) {
