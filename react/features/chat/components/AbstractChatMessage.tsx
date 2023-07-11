@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { getLocalizedDateFormatter } from '../../base/i18n/dateUtil';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../constants';
-import { IMessage } from '../reducer';
+import { IMessage } from '../types';
 
 /**
  * Formatter string to display the message timestamp.

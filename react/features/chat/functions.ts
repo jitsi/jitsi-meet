@@ -7,7 +7,7 @@ import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 import { IReduxState } from '../app/types';
 import { escapeRegexp } from '../base/util/helpers';
 
-import { IMessage } from './reducer';
+import { IMessage } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII

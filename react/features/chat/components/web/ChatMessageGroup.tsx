@@ -3,7 +3,7 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../base/avatar/components/Avatar';
-import { IMessage } from '../../reducer';
+import { IMessage } from '../../types';
 
 import ChatMessage from './ChatMessage';
 
