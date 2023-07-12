@@ -1,14 +1,14 @@
 /**
- * The type of redux action used for an event subscription.
+ * The type of redux action used for app state subscription.
  *
  * {
- *     type: EVENT_SUBSCRIPTION,
+ *     type: _SET_APP_STATE_SUBSCRIPTION,
  *     subscription: NativeEventSubscription
  * }
  *
  * @protected
  */
-export const EVENT_SUBSCRIPTION = 'EVENT_SUBSCRIPTION';
+export const _SET_APP_STATE_SUBSCRIPTION = '_SET_APP_STATE_SUBSCRIPTION';
 
 /**
  * The type of redux action which signals that the app state has changed (in

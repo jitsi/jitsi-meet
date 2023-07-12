@@ -2,7 +2,7 @@ import { NativeEventSubscription } from 'react-native';
 
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
-import { APP_STATE_CHANGED, EVENT_SUBSCRIPTION } from './actionTypes';
+import { _SET_APP_STATE_SUBSCRIPTION, APP_STATE_CHANGED } from './actionTypes';
 
 export interface IBackgroundState {
     appState: string;
@@ -19,7 +19,7 @@ const DEFAULT_STATE = {
 ReducerRegistry.register<IBackgroundState>('features/background', (state = DEFAULT_STATE, action): IBackgroundState => {
     switch (action.type) {
 
-    case EVENT_SUBSCRIPTION:
+    case _SET_APP_STATE_SUBSCRIPTION:
         return {
             ...state,
             subscription: action.subscription

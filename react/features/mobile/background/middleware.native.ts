@@ -5,7 +5,7 @@ import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
-import { appStateChanged, eventSubscription } from './actions';
+import { _setAppStateSubscription, appStateChanged } from './actions';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application
@@ -68,7 +68,7 @@ function _setAppStateListener({ dispatch, getState }: IStore, next: Function, ac
     const result = next(action);
 
     subscription?.remove();
-    listener && dispatch(eventSubscription(AppState.addEventListener('change', listener)));
+    listener && dispatch(_setAppStateSubscription(AppState.addEventListener('change', listener)));
 
     return result;
 }
