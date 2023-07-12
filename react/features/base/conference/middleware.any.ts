@@ -147,12 +147,6 @@ MiddlewareRegistry.register(store => next => action => {
 function _conferenceFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { conference, error } = action;
 
-    if (error.name === JitsiConferenceErrors.REDIRECTED) {
-        if (typeof error.recoverable === 'undefined') {
-            error.recoverable = true;
-        }
-    }
-
     const result = next(action);
     const { enableForcedReload } = getState()['features/base/config'];
 
@@ -236,7 +230,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         dispatch(overwriteConfig(newConfig)) // @ts-ignore
             .then(dispatch(conferenceWillLeave(conference)))
-            .then(conference.leave())
             .then(dispatch(disconnect()))
             .then(dispatch(setIAmVisitor(Boolean(vnode))))
 
