@@ -221,108 +221,99 @@ export function _connectInternal(id?: string, password?: string) {
 
         dispatch(_connectionWillConnect(connection));
 
-        connection.addEventListener(
-            JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-            _onConnectionDisconnected);
-        connection.addEventListener(
-            JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-            _onConnectionEstablished);
-        connection.addEventListener(
-            JitsiConnectionEvents.CONNECTION_FAILED,
-            _onConnectionFailed);
-
-        /**
-         * Marks the display name for the prejoin screen as required.
-         * This can happen if a user tries to join a room with lobby enabled.
-         */
-        connection.addEventListener(
-            JitsiConnectionEvents.DISPLAY_NAME_REQUIRED,
-            () => dispatch(setPrejoinDisplayNameRequired())
-        );
-
-        connection.connect({
-            id,
-            password
-        });
-
-        /**
-         * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
-         * disconnected.
-         *
-         * @private
-         * @returns {void}
-         */
-        function _onConnectionDisconnected() {
-            unsubscribe();
-            dispatch(connectionDisconnected(connection));
-        }
-
-        /**
-         * Resolves external promise when connection is established.
-         *
-         * @private
-         * @returns {void}
-         */
-        function _onConnectionEstablished() {
-            connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                _onConnectionEstablished);
-            connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_FAILED,
-                _onConnectionFailed);
-            dispatch(connectionEstablished(connection, Date.now()));
-        }
-
-        /**
-         * Rejects external promise when connection fails.
-         *
-         * @param {JitsiConnectionErrors} err - Connection error.
-         * @param {string} [msg] - Error message supplied by lib-jitsi-meet.
-         * @param {Object} [credentials] - The invalid credentials that were
-         * used to authenticate and the authentication failed.
-         * @param {string} [credentials.jid] - The XMPP user's ID.
-         * @param {string} [credentials.password] - The XMPP user's password.
-         * @param {Object} details - Additional information about the error.
-         * @private
-         * @returns {void}
-         */
-        function _onConnectionFailed( // eslint-disable-line max-params
-                err: string,
-                msg: string,
-                credentials: any,
-                details: Object) {
-            connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                _onConnectionEstablished);
-            connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_FAILED,
-                _onConnectionFailed);
-
-            dispatch(
-                connectionFailed(
-                    connection, {
-                        credentials,
-                        details,
-                        name: err,
-                        message: msg
-                    }
-                ));
-        }
-
-        /**
-         * Unsubscribe the connection instance from
-         * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
-         *
-         * @returns {void}
-         */
-        function unsubscribe() {
-            connection.removeEventListener(
+        return new Promise((resolve, reject) => {
+            connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_DISCONNECTED,
                 _onConnectionDisconnected);
-            connection.removeEventListener(
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                _onConnectionEstablished);
+            connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_FAILED,
                 _onConnectionFailed);
-        }
+
+            /**
+             * Marks the display name for the prejoin screen as required.
+             * This can happen if a user tries to join a room with lobby enabled.
+             */
+            connection.addEventListener(
+                JitsiConnectionEvents.DISPLAY_NAME_REQUIRED,
+                () => dispatch(setPrejoinDisplayNameRequired())
+            );
+
+            /**
+             * Unsubscribe the connection instance from
+             * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
+             *
+             * @returns {void}
+             */
+            function unsubscribe() {
+                connection.removeEventListener(
+                    JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
+            }
+
+            /**
+             * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
+             * disconnected.
+             *
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionDisconnected() {
+                unsubscribe();
+                dispatch(connectionDisconnected(connection));
+                resolve(connection);
+            }
+
+            /**
+             * Rejects external promise when connection fails.
+             *
+             * @param {JitsiConnectionErrors} err - Connection error.
+             * @param {string} [message] - Error message supplied by lib-jitsi-meet.
+             * @param {Object} [credentials] - The invalid credentials that were
+             * used to authenticate and the authentication failed.
+             * @param {string} [credentials.jid] - The XMPP user's ID.
+             * @param {string} [credentials.password] - The XMPP user's password.
+             * @param {Object} details - Additional information about the error.
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionFailed( // eslint-disable-line max-params
+                    err: string,
+                    message: string,
+                    credentials: any,
+                    details: Object) {
+                unsubscribe();
+
+                dispatch(connectionFailed(connection, {
+                    credentials,
+                    details,
+                    name: err,
+                    message
+                }));
+
+                reject(err);
+            }
+
+            /**
+             * Resolves external promise when connection is established.
+             *
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionEstablished() {
+                unsubscribe();
+                dispatch(connectionEstablished(connection, Date.now()));
+                resolve(connection);
+            }
+
+            connection.connect({
+                id,
+                password
+            });
+        });
     };
 }
 
