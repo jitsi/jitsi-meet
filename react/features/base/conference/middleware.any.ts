@@ -2,9 +2,6 @@ import { AnyAction } from 'redux';
 
 // @ts-ignore
 import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-expect-error
-import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -54,6 +51,7 @@ import {
 } from './actionTypes';
 import {
     conferenceFailed,
+    conferenceWillInit,
     conferenceWillLeave,
     createConference,
     leaveConference,
@@ -245,11 +243,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             // we do not clear local tracks on error, so we need to manually clear them
             .then(dispatch(destroyLocalTracks()))
             .then(() => {
-                if (typeof APP !== 'undefined') {
-                    // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
-                    VideoLayout.initLargeVideo();
-                    VideoLayout.resizeVideoArea();
-                }
+                dispatch(conferenceWillInit());
             })
             .then(dispatch(connect()));
         break;

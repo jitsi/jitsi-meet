@@ -6,7 +6,6 @@ import EventEmitter from 'events';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
-import VideoLayout from './modules/UI/videolayout/VideoLayout';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
 import { createTaskQueue } from './modules/util/helpers';
@@ -34,6 +33,7 @@ import {
     conferenceSubjectChanged,
     conferenceTimestampChanged,
     conferenceUniqueIdSet,
+    conferenceWillInit,
     conferenceWillLeave,
     dataChannelClosed,
     dataChannelOpened,
@@ -1223,9 +1223,7 @@ export default {
      * Used by the Breakout Rooms feature to join a breakout room or go back to the main room.
      */
     async joinRoom(roomName, options) {
-        // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
-        VideoLayout.initLargeVideo();
-        VideoLayout.resizeVideoArea();
+        APP.store.dispatch(conferenceWillInit());
 
         // Restore initial state.
         this._localTracksInitialized = false;

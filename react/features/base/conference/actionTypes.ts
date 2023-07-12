@@ -107,6 +107,15 @@ export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
 export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED'
 
 /**
+ * The type of (redux) action which signals that a conference will be initialized.
+ *
+ * {
+ *     type: CONFERENCE_WILL_INIT
+ * }
+ */
+export const CONFERENCE_WILL_INIT = 'CONFERENCE_WILL_INIT';
+
+/**
  * The type of (redux) action which signals that a specific conference will be
  * joined.
  *

@@ -40,6 +40,7 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
+    CONFERENCE_WILL_INIT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_CLOSED,
@@ -459,6 +460,19 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
         }
 
         dispatch(conferenceWillJoin(conference));
+    };
+}
+
+/**
+ * Signals the intention of the application to have a conference initialized.
+ *
+ * @returns {{
+ *     type: CONFERENCE_WILL_INIT
+ * }}
+ */
+export function conferenceWillInit() {
+    return {
+        type: CONFERENCE_WILL_INIT
     };
 }
 

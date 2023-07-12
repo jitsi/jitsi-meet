@@ -6,6 +6,9 @@ const UI = {};
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
 
+import {
+    conferenceWillInit
+} from '../../react/features/base/conference/actions';
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util/helpers';
 import { setDocumentUrl } from '../../react/features/etherpad/actions';
@@ -91,18 +94,9 @@ UI.initConference = function() {
 
 /**
  * Starts the UI module and initializes all related components.
- *
- * @returns {boolean} true if the UI is ready and the conference should be
- * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function() {
-    VideoLayout.initLargeVideo();
-
-    // Do not animate the video area on UI start (second argument passed into
-    // resizeVideoArea) because the animation is not visible anyway. Plus with
-    // the current dom layout, the quality label is part of the video layout and
-    // will be seen animating in.
-    VideoLayout.resizeVideoArea();
+    APP.store.dispatch(conferenceWillInit());
 
     if (isMobileBrowser()) {
         document.body.classList.add('mobile-browser');
