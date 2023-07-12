@@ -2,7 +2,7 @@ import { NativeEventSubscription } from 'react-native';
 
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
-import { _SET_APP_STATE_SUBSCRIPTION, APP_STATE_CHANGED } from './actionTypes';
+import { APP_STATE_CHANGED, _SET_APP_STATE_SUBSCRIPTION } from './actionTypes';
 
 export interface IBackgroundState {
     appState: string;
