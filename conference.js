@@ -163,7 +163,6 @@ const logger = Logger.getLogger(__filename);
 const eventEmitter = new EventEmitter();
 
 let room;
-let connection;
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -312,7 +311,7 @@ class ConferenceConnector {
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
-            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => connection.disconnect());
+            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => APP.connection.disconnect());
             break;
 
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
@@ -370,11 +369,11 @@ function disconnect() {
         return Promise.resolve();
     };
 
-    if (!connection) {
+    if (!APP.connection) {
         return onDisconnected();
     }
 
-    return connection.disconnect().then(onDisconnected, onDisconnected);
+    return APP.connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
 /**
