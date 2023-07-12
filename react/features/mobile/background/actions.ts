@@ -1,28 +1,6 @@
 import { NativeEventSubscription } from 'react-native';
 
-import {
-    APP_STATE_CHANGED,
-    EVENT_SUBSCRIPTION,
-    _SET_APP_STATE_LISTENER
-} from './actionTypes';
-
-
-/**
- * Sets the listener to be used with React Native's AppState API.
- *
- * @param {Function} listener - Function to be set as the change event listener.
- * @protected
- * @returns {{
- *     type: _SET_APP_STATE_LISTENER,
- *     listener: Function
- * }}
- */
-export function _setAppStateListener(listener?: Function) {
-    return {
-        type: _SET_APP_STATE_LISTENER,
-        listener
-    };
-}
+import { APP_STATE_CHANGED, EVENT_SUBSCRIPTION } from './actionTypes';
 
 /**
  * Sets subscription for a native event.
