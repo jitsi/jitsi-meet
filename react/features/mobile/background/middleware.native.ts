@@ -5,11 +5,7 @@ import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
-import { _SET_APP_STATE_LISTENER } from './actionTypes';
-import {
-    _setAppStateListener as _setAppStateListenerA,
-    appStateChanged
-} from './actions';
+import { _setAppStateSubscription, appStateChanged } from './actions';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application
@@ -23,18 +19,16 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_APP_STATE_LISTENER:
-        return _setAppStateListenerF(store, next, action);
 
     case APP_WILL_MOUNT: {
         const { dispatch } = store;
 
-        dispatch(_setAppStateListenerA(_onAppStateChange.bind(undefined, dispatch)));
+        _setAppStateListener(store, next, action, _onAppStateChange.bind(undefined, dispatch));
         break;
     }
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(_setAppStateListenerA(undefined));
+        _setAppStateListener(store, next, action, undefined);
         break;
     }
 
@@ -65,19 +59,16 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * specified action to the specified store.
  * @param {Action} action - The redux action {@code _SET_IMMERSIVE_LISTENER}
  * which is being dispatched in the specified store.
+ * @param {any} listener - Listener for app state status.
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAppStateListenerF({ getState }: IStore, next: Function, action: AnyAction) {
-    // Remove the old AppState listener and add the new one.
-    const { appStateListener: oldListener } = getState()['features/background'];
+function _setAppStateListener({ dispatch, getState }: IStore, next: Function, action: AnyAction, listener: any) {
+    const { subscription } = getState()['features/background'];
     const result = next(action);
-    const { appStateListener: newListener } = getState()['features/background'];
 
-    if (oldListener !== newListener) {
-        oldListener && AppState.removeEventListener('change', oldListener);
-        newListener && AppState.addEventListener('change', newListener);
-    }
+    subscription?.remove();
+    listener && dispatch(_setAppStateSubscription(AppState.addEventListener('change', listener)));
 
     return result;
 }
