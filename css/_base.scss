@@ -66,10 +66,6 @@ body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
 }
 
-#nowebrtc {
-    display:none;
-}
-
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
@@ -146,21 +142,6 @@ form {
     color: rgba(255,255,255,.50);
     text-decoration: none;
     z-index: 100;
-}
-
-.connected {
-    color: #21B9FC;
-    font-size: 12px;
-}
-
-.lastN, .disconnected {
-    color: #a3a3a3;
-    font-size: 12px;
-}
-
-#inviteLinkRef {
-    -webkit-user-select: text;
-    user-select: text;
 }
 
 /**
