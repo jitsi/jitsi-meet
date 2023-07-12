@@ -126,7 +126,7 @@ const Chat = ({
             event.stopPropagation();
             onToggleChat();
         }
-    }, []);
+    }, [ _isOpen ]);
 
     /**
      * Change selected tab.
@@ -235,8 +235,13 @@ const Chat = ({
  * @param {any} _ownProps - Components' own props.
  * @private
  * @returns {{
+ *     _isModal: boolean,
  *     _isOpen: boolean,
+ *     _isPollsEnabled: boolean,
+ *     _isPollsTabFocused: boolean,
  *     _messages: Array<Object>,
+ *     _nbUnreadMessages: number,
+ *     _nbUnreadPolls: number,
  *     _showNamePrompt: boolean
  * }}
  */

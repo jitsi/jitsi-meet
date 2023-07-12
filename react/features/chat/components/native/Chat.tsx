@@ -91,9 +91,8 @@ class Chat extends Component<IProps> {
  * @param {any} _ownProps - Components' own props.
  * @private
  * @returns {{
- *     _isOpen: boolean,
  *     _messages: Array<Object>,
- *     _showNamePrompt: boolean
+ *     _nbUnreadMessages: number
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
