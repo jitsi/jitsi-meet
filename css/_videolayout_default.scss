@@ -209,23 +209,6 @@
     }
 }
 
-#reloadPresentation {
-    display: none;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    right:0;
-    padding: 10px 10px;
-    font-size: 11pt;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-    background-clip: padding-box;
-    -webkit-border-radius: 5px;
-    -webkit-background-clip: padding-box;
-    z-index: 20; /*The reload button should appear on top of the header!*/
-}
-
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;
@@ -234,10 +217,6 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
-
-#mixedstream {
-    display:none !important;
 }
 
 #dominantSpeakerAvatarContainer,
@@ -307,11 +286,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-}
-
-.videoMessageFilter {
-    -webkit-filter: grayscale(.5) opacity(0.8);
-    filter: grayscale(.5) opacity(0.8);
 }
 
 #remotePresenceMessage,

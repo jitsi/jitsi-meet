@@ -3,7 +3,7 @@
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
 /**
@@ -22,24 +22,6 @@
  */
 .show {
     display: block !important;
-}
-
-/**
- * Shows an inline element.
- */
-.show-inline {
-    display: inline-block !important;
-}
-
-/**
- * Shows a flex element.
- */
-.show-flex {
-    display: -webkit-box !important;
-    display: -moz-box !important;
-    display: -ms-flexbox !important;
-    display: -webkit-flex !important;
-    display: flex !important;
 }
 
 /**

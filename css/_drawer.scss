@@ -28,18 +28,6 @@
     margin-bottom: env(safe-area-inset-bottom, 0);
     width: 100%;
 
-    .drawer-toggle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 44px;
-        cursor: pointer;
-
-        svg {
-            fill: none;
-        }
-    }
-
     &#{&} .overflow-menu {
         margin: auto;
         font-size: 1.2em;
@@ -65,25 +53,10 @@
                 align-items: center;
             }
 
-            &.unclickable {
-                cursor: default;
-            }
-            @media (hover: hover) and (pointer: fine) {
-                &.unclickable:hover {
-                    background: inherit;
-                }
-            }
             &.disabled {
                 cursor: initial;
                 color: #3b475c;
             }
-        }
-
-        .profile-text {
-            max-width: 100%;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
         }
     }
 }

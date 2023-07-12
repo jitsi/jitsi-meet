@@ -58,21 +58,6 @@
     z-index: $toolbarZ;
     pointer-events: none;
 
-    .button-group-center,
-    .button-group-left,
-    .button-group-right {
-        display: flex;
-        width: 33%;
-    }
-
-    .button-group-center {
-        justify-content: center;
-    }
-
-    .button-group-right {
-        justify-content: flex-end;
-    }
-
     .toolbox-button-wth-dialog {
         display: inline-block;
     }
@@ -110,16 +95,6 @@
     content: '';
     background: $newToolbarBackgroundColor;
     padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-.beta-tag {
-    background: #36383C;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 12px;
-    margin-left: 8px;
-    padding: 0 4px;
-    text-transform: uppercase;
 }
 
 .overflow-menu-hr {
