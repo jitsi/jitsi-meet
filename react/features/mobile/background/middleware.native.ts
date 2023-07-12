@@ -59,7 +59,7 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * specified action to the specified store.
  * @param {Action} action - The redux action {@code _SET_IMMERSIVE_LISTENER}
  * which is being dispatched in the specified store.
- * @param {AppStateStatus} listener - State status for app.
+ * @param {AppStateStatus} listener - Listener for app state status.
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
