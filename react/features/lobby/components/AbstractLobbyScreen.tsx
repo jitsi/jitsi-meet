@@ -10,7 +10,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { getFieldValue } from '../../base/react/functions';
 import { updateSettings } from '../../base/settings/actions';
-import { IMessage } from '../../chat/reducer';
+import { IMessage } from '../../chat/types';
 import { isDeviceStatusVisible } from '../../prejoin/functions';
 import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
 
