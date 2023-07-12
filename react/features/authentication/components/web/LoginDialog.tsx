@@ -54,11 +54,6 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
-     * Invoked when username and password are submitted.
-     */
-    onSuccess: Function;
-
-    /**
      * Conference room name.
      */
     roomName: string;
