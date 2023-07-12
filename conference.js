@@ -726,21 +726,22 @@ export default {
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
 
-        const tracks = await tryCreateLocalTracks.then(tr => {
-            this._displayErrorsForCreateInitialLocalTracks(errors);
+        return Promise.all([
+            tryCreateLocalTracks.then(tr => {
+                this._displayErrorsForCreateInitialLocalTracks(errors);
 
-            return tr;
-        });
+                return tr;
+            }).then(tr => {
+                this._initDeviceList(true);
 
-        this._initDeviceList(true);
+                const filteredTracks = handleInitialTracks(initialOptions, tr);
 
-        const filteredTracks = handleInitialTracks(initialOptions, tracks);
+                setGUMPendingStateOnFailedTracks(filteredTracks);
 
-        setGUMPendingStateOnFailedTracks(filteredTracks);
-
-        return this._setLocalAudioVideoStreams(filteredTracks).then(
-            () => APP.store.dispatch(connect())
-        );
+                this._setLocalAudioVideoStreams(filteredTracks);
+            }),
+            APP.store.dispatch(connect())
+        ]);
     },
 
     /**
