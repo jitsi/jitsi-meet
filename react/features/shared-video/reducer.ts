@@ -19,7 +19,7 @@ export interface ISharedVideoState {
  */
 ReducerRegistry.register<ISharedVideoState>('features/shared-video',
 (state = initialState, action): ISharedVideoState => {
-    const { videoUrl, status, time, ownerId, disabled, muted, volume } = action;
+    const { videoUrl, status, time, ownerId, disabled, muted, volume, previousOwnerId } = action;
 
     switch (action.type) {
     case RESET_SHARED_VIDEO_STATUS:
@@ -32,7 +32,8 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             status,
             time,
             videoUrl,
-            volume
+            volume,
+            previousOwnerId
         };
 
     case SET_DISABLE_BUTTON:

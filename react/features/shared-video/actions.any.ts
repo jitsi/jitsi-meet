@@ -3,7 +3,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS,REQUEST_SHARED_VIDEO_STATE } from './actionTypes'
 import { SharedVideoDialog } from './components';
 
 /**
@@ -38,8 +38,8 @@ export function resetSharedVideoStatus() {
  *     videoUrl: string,
  * }}
  */
-export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted }: {
-    muted?: boolean; ownerId?: string; status: string; time: number; videoUrl: string;
+export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted, previousOwnerId }: {
+    muted?: boolean; ownerId?: string; status: string; time: number; videoUrl: string; previousOwnerId?: string;
 }) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
@@ -47,7 +47,8 @@ export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted }:
         status,
         time,
         videoUrl,
-        muted
+        muted,
+        previousOwnerId
     };
 }
 
@@ -98,7 +99,8 @@ export function playSharedVideo(videoUrl: string) {
                 videoUrl,
                 status: 'start',
                 time: 0,
-                ownerId: localParticipant?.id
+                ownerId: localParticipant?.id,
+                previousOwnerId: null
             }));
         }
     };
@@ -120,5 +122,103 @@ export function toggleSharedVideo() {
         } else {
             dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
         }
+    };
+}
+
+/**
+ *
+ * Updates a shared video ownerId.
+ *
+ * @param {string} ownerId - The new Video Owner Id for the current video.
+ *
+ * @returns {Function}
+ */
+export function updateSharedVideoOwner(ownerId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState());
+        const state = getState();
+        const currentVideoState = state['features/shared-video'];
+
+        if (conference) {
+
+            dispatch(setSharedVideoStatus({
+                videoUrl: currentVideoState.videoUrl,
+                status: currentVideoState.status,
+                time: currentVideoState.time,
+                muted: currentVideoState.muted,
+                ownerId: ownerId,
+                previousOwnerId: currentVideoState.ownerId
+            }));
+        }
+    };
+}
+
+/**
+ *
+ * Pauses a shared video
+ *
+ * @returns {Function}
+ */
+export function pauseSharedVideo() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState());
+        const state = getState();
+        const currentVideoState = state['features/shared-video'];
+
+        if (conference) {
+
+            dispatch(setSharedVideoStatus({
+                videoUrl: currentVideoState.videoUrl,
+                status: 'pause',
+                time: currentVideoState.time,
+                muted: currentVideoState.muted,
+                ownerId: currentVideoState.ownerId,
+                previousOwnerId: currentVideoState.previousOwnerId
+            }));
+        }
+    };
+}
+
+
+/**
+ *
+ * Shared video state is updated with the passed object
+ *
+ * @param {string} videoUrl - The video url to be played.
+ *
+ * @returns {Function}
+ */
+export function updateVideoState(updatedState) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const currentVideoState = state['features/shared-video'];
+        const localParticipantId = getLocalParticipant(state)?.id;
+        const conference = getCurrentConference(state);
+
+        if (conference && localParticipantId && localParticipantId===currentVideoState.ownerId){
+            dispatch(setSharedVideoStatus(updatedState ? updatedState : currentVideoState));
+        }
+    };
+}
+
+/**
+ * Requests shared video state from the video owner.
+ *
+ * @returns {{
+*     type: REQUEST_SHARED_VIDEO_STATE,
+*     muted: boolean,
+*     ownerId: string,
+*     status: string,
+*     time: number,
+*     videoUrl: string,
+*     previousOwnerId: string,
+* }}
+*/
+
+export function requestSharedVideoStateFromVideoOwner(currentVideoState) {
+    // const currentVideoState = state['features/shared-video']
+    return {
+        type: REQUEST_SHARED_VIDEO_STATE,
+        ...currentVideoState
     };
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
@@ -474,4 +473,3 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
         }
     };
 }
-

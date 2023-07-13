@@ -44,6 +44,7 @@ import '../polls/reducer';
 import '../reactions/reducer';
 import '../recent-list/reducer';
 import '../recording/reducer';
+import '../room-background/reducer';
 import '../settings/reducer';
 import '../speaker-stats/reducer';
 import '../shared-video/reducer';

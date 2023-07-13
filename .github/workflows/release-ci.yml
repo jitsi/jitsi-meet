@@ -1,0 +1,59 @@
+name: Standard Build CI for master branch
+
+on:
+    push:
+        branches:
+            - 'master'
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - id: changelog_reader
+        name: Get Changelog Entry
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          path: ./CHANGELOG.md
+      - name: Generate Debian changelog
+        run: bash ./scripts/generate-debian-changelog.sh "${{ steps.changelog_reader.outputs.version }}" "${{ github.event.head_commit.author.name }}" "${{ github.event.head_commit.author.email }}" "${{ steps.changelog_reader.outputs.changes }}"
+      - name: Display generated Debian changelog
+        run: less debian/changelog
+      - run: npm install
+      - run: make
+      - name: Generate Debian package
+        run: bash ./scripts/generate-package.sh
+      - name: Generate external JS file for client
+        run: bash ./scripts/generate-js-api.sh
+      - name: Create tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/ivicos_${{ steps.changelog_reader.outputs.version }}",
+              sha: context.sha
+            })
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ivicos_${{ steps.changelog_reader.outputs.version }}
+          tag_name: ivicos_${{ steps.changelog_reader.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
+          files: |
+            artifacts/jitsi-meet-*.deb
+            artifacts/jitsi-meet-*.buildinfo
+            artifacts/jitsi-meet-*.changes
+            artifacts/external_api.min.js
+            artifacts/external_api.min.map
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

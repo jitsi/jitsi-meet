@@ -218,6 +218,7 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
+    // CHECK HERE! SPEAKERSTARTS
     // speakerStats: {
     //     // Specifies whether the speaker stats is enable or not.
     //     disabled: false,
@@ -329,6 +330,7 @@ var config = {
     // DEPRECATED. Use recordingService.sharingEnabled instead.
     // fileRecordingsServiceSharingEnabled: false,
 
+    // CHECK HERE! LOCAL RECORDING
     // Local recording configuration.
     // localRecording: {
     //     // Whether to disable local recording or not.
@@ -341,6 +343,7 @@ var config = {
     //     disableSelfRecording: false,
     // },
 
+    // CHECK HERE! LIVE STREAMING
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
     // liveStreaming: {
     //    // Whether to enable live streaming or not.
@@ -370,6 +373,7 @@ var config = {
     // DEPRECATED. Use transcription.autoCaptionOnRecord instead.
     // autoCaptionOnRecord: false,
 
+    // CHECK HERE! TRANSCRIPTION
     // Transcription options.
     // transcription: {
     //     // Whether the feature should be enabled or not.
@@ -735,6 +739,7 @@ var config = {
     //    'recording',
     //    'security',
     //    'select-background',
+    //    'select-room-background',
     //    'settings',
     //    'shareaudio',
     //    'sharedvideo',
@@ -805,6 +810,7 @@ var config = {
     //     'recording',
     //     'security',
     //     'select-background',
+    //     'select-room-background',
     //     'settings',
     //     'shareaudio',
     //     'sharedvideo',
@@ -879,6 +885,7 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
+    // CHECK HERE! FACE LANDMARKS
     // faceLandmarks: {
     //     // Enables sharing your face coordinates. Used for centering faces within a video.
     //     enableFaceCentering: false,
@@ -1208,6 +1215,7 @@ var config = {
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
+    // CHECK HERE! LIP-SYNC
     // Enables support for lip-sync for this client (if the browser supports it).
     // enableLipSync: false,
 
@@ -1267,6 +1275,7 @@ var config = {
     */
     // dynamicBrandingUrl: '',
 
+    // CHECK HERE! PARTICIPANTS PANE
     // Options related to the participants pane.
     // participantsPane: {
     //     // Hides the moderator settings tab.
@@ -1503,6 +1512,7 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
+    // CHECK HERE! FILMSTRIP AND TILE VIEW SETTINGS
     // Prevent the filmstrip from autohiding when screen width is under a certain threshold
     // disableFilmstripAutohiding: false,
 

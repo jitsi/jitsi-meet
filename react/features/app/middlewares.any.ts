@@ -40,6 +40,7 @@ import '../reactions/middleware';
 import '../recent-list/middleware';
 import '../recording/middleware';
 import '../rejoin/middleware';
+import '../room-background/middleware';
 import '../room-lock/middleware';
 import '../rtcstats/middleware';
 import '../speaker-stats/middleware';

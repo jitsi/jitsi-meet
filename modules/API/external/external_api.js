@@ -59,6 +59,7 @@ const commands = {
     sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
     setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
+    setBackgroundImage: 'set-background-image',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
@@ -90,7 +91,9 @@ const commands = {
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
-    toggleWhiteboard: 'toggle-whiteboard'
+    toggleWhiteboard: 'toggle-whiteboard',
+    updateSharedVideoOwner: 'update-shared-video-owner',
+    updateSharedVideoState: 'update-shared-video-state',
 };
 
 /**
@@ -134,6 +137,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-menu-button-clicked': 'participantMenuButtonClick',
     'participant-role-changed': 'participantRoleChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
@@ -143,7 +147,12 @@ const events = {
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
-    'participant-menu-button-clicked': 'participantMenuButtonClick',
+    'room-background-updated': 'roomBackgroundUpdated',
+    'speaker-stats-collect-started': 'speakerStatsCollectStarted',
+    'speaker-stats-collect-stopped': 'speakerStatsCollectStopped',
+    'speaker-stats-updated': 'speakerStatsUpdated',
+    'shared-video-state-updated' : 'sharedVideoStateUpdated',
+    'shared-video-stopped' : 'sharedVideoStopped',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',

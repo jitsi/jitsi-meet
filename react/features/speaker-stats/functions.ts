@@ -1,3 +1,5 @@
+/* global APP */
+
 import _ from 'lodash';
 
 import { IReduxState } from '../app/types';
@@ -271,4 +273,62 @@ export function getFaceLandmarksStart(faceLandmarks: FaceLandmarks, startTimesta
  */
 export function getFaceLandmarksEnd(faceLandmarks: FaceLandmarks, startTimestamp: number) {
     return getFaceLandmarksStart(faceLandmarks, startTimestamp) + faceLandmarks.duration;
+}
+
+/**
+ * Fetch speaker stats and send them back to the client.
+ *
+ * @returns {void}
+ */
+export function fetchDetailedSpeakerStats() {
+
+    const state = APP.store.getState();
+
+    const conference = state['features/base/conference'].conference;
+    const speakerStats = state['features/speaker-stats'].stats;
+
+    const localParticipant = state['features/base/participants'].local;
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue;
+
+    const sharedVideoCurrentState = state['features/shared-video'];
+
+    const getLocalSpeakerStats = () => {
+        const stats = conference.getSpeakerStats();
+
+        for (const userId in stats) {
+            if (stats[userId]) {
+                if (stats[userId].isLocalStats()) {
+                    const meString = 'Me';
+
+                    stats[userId].setDisplayName(
+                        localParticipant.name
+                            ? `${localParticipant.name} (${meString})`
+                            : meString
+                    );
+                }
+
+                if (!stats[userId].getDisplayName()) {
+                    stats[userId].setDisplayName(
+                        conference.getParticipantById(userId)?.name
+                    );
+                }
+            }
+        }
+
+        return stats;
+    };
+
+    const localSpeakerStats
+        = Object.keys(speakerStats).length === 0 && conference ? getLocalSpeakerStats() : speakerStats;
+
+    Object.keys(localSpeakerStats).forEach(key => {
+        const handRaised = raisedHandsQueue.find(item => item.id === key);
+
+        localSpeakerStats[key].raisedHandTimestamp = handRaised ? handRaised.raisedHandTimestamp : 0;
+
+        localSpeakerStats[key].isSharedVideoOwner = sharedVideoCurrentState && sharedVideoCurrentState.ownerId && sharedVideoCurrentState.ownerId===key
+    });
+
+    APP.API.notifySpeakerStatsReceived(localSpeakerStats);
+
 }

@@ -1,0 +1,34 @@
+name: Standard Build CI for PRs
+
+on:
+    push:
+        branches-ignore:
+            - 'master'
+    pull_request:
+        branches-ignore:
+            - 'master'
+
+jobs:
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+    - id: changelog_reader
+      name: Get Changelog Entry
+      uses: mindsers/changelog-reader-action@v2
+      with:
+        path: ./CHANGELOG.md
+    - uses: mukunku/tag-exists-action@v1.0.0
+      id: checkTag
+      with:
+        tag: 'ivicos_${{ steps.changelog_reader.outputs.version }}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Check newest version validity
+      run: bash ./scripts/check-version.sh ${{ steps.changelog_reader.outputs.version }} ${{ steps.checkTag.outputs.exists }}
+    - run: npm install
+    - run: make

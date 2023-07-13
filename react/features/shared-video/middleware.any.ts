@@ -11,13 +11,13 @@ import { getLocalParticipant, getParticipantById } from '../base/participants/fu
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, REQUEST_SHARED_VIDEO_STATE } from './actionTypes';
 import {
     resetSharedVideoStatus,
     setSharedVideoStatus
 } from './actions.any';
-import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
-import { isSharingStatus } from './functions';
+import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME, REQUEST_SHARED_VIDEO_STATE_COMMAND } from './constants';
+import { isSharingStatus, fetchStoppedVideoUrl } from './functions';
 import logger from './logger';
 
 

@@ -121,6 +121,12 @@ import {
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
+import { setBackgroundImage } from '../../react/features/room-background/actions';
+import { playSharedVideo, stopSharedVideo, updateSharedVideoOwner, pauseSharedVideo, updateVideoState, requestSharedVideoStateFromVideoOwner } from '../../react/features/shared-video/actions.any';
+import {
+    fetchDetailedSpeakerStats
+} from '../../react/features/speaker-stats/functions';
+
 const logger = Logger.getLogger(__filename);
 
 /**
@@ -200,6 +206,28 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'get-speaker-stats': (repeatedRequest, intervalRequest) => {
+            logger.debug('Get speaker stats command received');
+            if (repeatedRequest) {
+                speakerStatsTimer = setInterval(fetchDetailedSpeakerStats, intervalRequest);
+            } else {
+                fetchDetailedSpeakerStats();
+            }
+        },
+        'stop-speaker-stats': () => {
+            logger.debug('Stop collecting speaker stats command received');
+            if (speakerStatsTimer) {
+                clearInterval(speakerStatsTimer);
+            }
+        },
+        'set-ui-language': language => {
+            logger.debug('Setting UI Language');
+            const currentLanguage = i18next.language || DEFAULT_LANGUAGE;
+
+            if (language !== currentLanguage) {
+                i18next.changeLanguage(language);
+            }
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -311,6 +339,10 @@ function initCommands() {
             const { duration, tones, pause } = options;
 
             APP.store.dispatch(sendTones(tones, duration, pause));
+        },
+        'set-background-image': (backgroundImageUrl, backgroundColor) => {
+            logger.debug('Set background image command received');
+            APP.store.dispatch(setBackgroundImage(backgroundImageUrl, backgroundColor));
         },
         'set-assumed-bandwidth-bps': value => {
             logger.debug('Set assumed bandwidth bps command received', value);
@@ -562,11 +594,43 @@ function initCommands() {
                 APP.store.dispatch(playSharedVideo(id));
             }
         },
+        'update-shared-video-owner': ownerId => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.start'));
+            APP.store.dispatch(updateSharedVideoOwner(ownerId));
+        },
+
+        'update-shared-video-state': updatedState => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.start'));
+            APP.store.dispatch(updateVideoState(updatedState));
+        },
 
         'stop-share-video': () => {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
+            fetchStoppedVideoUrl()
             APP.store.dispatch(stopSharedVideo());
+        },
+        'pause-share-video': () => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.pause'));
+            APP.store.dispatch(pauseSharedVideo());
+        },
+
+        'request-shared-video-state-update-from-video-owner': () => {
+
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.stateupdaterequest'));
+
+            const videoState = APP.store.getState()['features/shared-video']
+            const conference = getCurrentConference(APP.store.getState());
+
+            if (!conference) {
+                logger.error('Conference is not defined');
+                return;
+            }
+            APP.store.dispatch(requestSharedVideoStateFromVideoOwner(videoState));
         },
 
         /**
@@ -976,6 +1040,30 @@ function initCommands() {
         case 'get-custom-avatar-backgrounds' : {
             callback({
                 avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
+            });
+            break;
+        }
+        case 'get-current-ui-language' : {
+            const currentLanguage = i18next.language || DEFAULT_LANGUAGE;
+
+            callback({
+                currentLanguage
+            });
+            break;
+        }
+        case 'get-local-participant-id' : {
+            const localParticipantId = getLocalParticipant(APP.store.getState())?.id;
+
+            callback({
+                localParticipantId
+            });
+            break;
+        }
+        case 'get-current-shared-video-state' : {
+            const currentSharedVideoState = APP.store.getState()['features/shared-video'] || {};
+
+            callback({
+                currentSharedVideoState
             });
             break;
         }
@@ -1870,6 +1958,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user updated its background information.
+     *
+     * @param {string} localId - Local participant ID.
+     * @param {Object} backgroundData - Background image/color object.
+     * @returns {void}
+     */
+    notifyBackgroundChanged(localId, backgroundData) {
+        this._sendEvent({
+            name: 'room-background-updated',
+            backgroundData,
+            localId
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the current recording link is
      * available.
      *
@@ -1923,6 +2026,69 @@ class API {
             name: 'toolbar-button-clicked',
             key,
             preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that new speaker stats data are available.
+     *
+     * @param {Object} speakerData - List of participants with their corresponding speaking time.
+     * @returns {void}
+     */
+    notifySpeakerStatsReceived(speakerData) {
+        this._sendEvent({
+            name: 'speaker-stats-updated',
+            speakerData
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the speaker stats collection has started.
+     *
+     * @param {number} intervalRequest - Interval between two consecutive request (ms).
+     * @returns {void}
+     */
+    notifySpeakerStatsCollectStarted(intervalRequest) {
+        this._sendEvent({
+            name: 'speaker-stats-collect-started',
+            intervalRequest
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the speaker stats collection has stopped.
+     *
+     * @returns {void}
+     */
+    notifySpeakerStatsCollectStopped() {
+        this._sendEvent({
+            name: 'speaker-stats-collect-stopped'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) the updated state of the shared video.
+     *
+     * @param {Object} sharedVideoState - State of the shared video
+     * @returns {void}
+     */
+    notifySharedVideoStateUpdated(sharedVideoState) {
+        this._sendEvent({
+            name: 'shared-video-state-updated',
+            sharedVideoState
+        });
+    }
+
+     /**
+     * Notify external application (if API is enabled) the updated ownerId of the shared video.
+     *
+     * @param {Object} ownerId - Id of the current shared video owner
+     * @returns {void}
+     */
+    notifySharedVideoStopped(videoUrl) {
+        this._sendEvent({
+            name: 'shared-video-stopped',
+            videoUrl
         });
     }
 

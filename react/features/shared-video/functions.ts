@@ -54,6 +54,19 @@ export function isVideoPlaying(stateful: IStateful): boolean {
 }
 
 /**
+ * Fetch stopped video url
+ * @returns {void}
+ */
+export function fetchStoppedVideoUrl() {
+    
+    const state = APP.store.getState();
+    const sharedVideoCurrentState = state['features/shared-video'];
+
+    APP.API.notifySharedVideoStopped(sharedVideoCurrentState.videoUrl);
+
+}
+
+/**
  * Extracts a Youtube id or URL from the user input.
  *
  * @param {string} input - The user input.

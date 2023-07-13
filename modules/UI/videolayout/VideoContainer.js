@@ -9,6 +9,7 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
 import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
 import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video/components/LargeVideoBackground';
+import { isRoomBackgroundDefined } from '../../../react/features/room-background';
 import { LAYOUTS } from '../../../react/features/video-layout/constants';
 import { getCurrentLayout } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */
@@ -389,6 +390,7 @@ export class VideoContainer extends LargeContainer {
         }
         const state = APP.store.getState();
         const currentLayout = getCurrentLayout(state);
+        const backgroundRoomDefined = isRoomBackgroundDefined(state);
 
         const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
 
@@ -400,7 +402,12 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
+        const [ videoWidth, videoHeight ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
+
+        // If a background is defined for the room, we resize the video so that the background is visible
+        const shouldResizeVideo = backgroundRoomDefined && !this.isScreenSharing();
+        const width = shouldResizeVideo ? videoWidth * BACKGROUND_RESIZING_RATIO : videoWidth;
+        const height = shouldResizeVideo ? videoHeight * BACKGROUND_RESIZING_RATIO : videoHeight;
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop

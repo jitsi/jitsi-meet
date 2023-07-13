@@ -28,3 +28,12 @@ export const RESET_SHARED_VIDEO_STATUS = 'RESET_SHARED_VIDEO_STATUS';
  * }
  */
 export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
+
+/**
+ * The type of the action which signals to send a request of broadcast of current state to the owner of the shared video
+ *
+ * {
+ *     type: REQUEST_SHARED_VIDEO_STATE
+ * }
+ */
+export const REQUEST_SHARED_VIDEO_STATE = 'REQUEST_SHARED_VIDEO_STATE';

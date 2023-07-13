@@ -1,7 +1,10 @@
 # <p align="center">Jitsi Meet</p>
 
-Jitsi Meet is a set of Open Source projects which empower users to use and deploy
-video conferencing platforms with state-of-the-art video quality and features.
+This repository is a fork of the official Jitsi Meet repository (https://github.com/jitsi/jitsi-meet). Most of the features contained in this fork come from the original repository. A few additional custom features have been added for an Ivicos Jitsi Meet version. The deployment/release process has also been adapted.
+The documentation for the features can be found in `doc/ivicos` and the usage is described in `USAGE.md` (repository setup and deployment procedure).
+
+An extract of the README of the original repository has been pasted below.
+The full content is available here : https://github.com/jitsi/jitsi-meet.
 
 <hr />
 
