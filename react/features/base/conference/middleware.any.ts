@@ -16,6 +16,8 @@ import { openDisplayNamePrompt } from '../../display-name/actions';
 import { readyToClose } from '../../mobile/external-api/actions';
 import { showErrorNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { stopLocalVideoRecording } from '../../recording/actions.any';
+import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
@@ -71,7 +73,7 @@ import logger from './logger';
 /**
  * Handler for before unload event.
  */
-let beforeUnloadHandler: (() => void) | undefined;
+let beforeUnloadHandler: ((e?: any) => void) | undefined;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -295,7 +297,14 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     // handles the process of leaving the conference. This is temporary solution
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
-    beforeUnloadHandler = () => {
+    beforeUnloadHandler = (e?: any) => {
+        if (LocalRecordingManager.isRecordingLocally()) {
+            dispatch(stopLocalVideoRecording());
+            if (e) {
+                e.preventDefault();
+                e.returnValue = null;
+            }
+        }
         dispatch(conferenceWillLeave(conference));
     };
 

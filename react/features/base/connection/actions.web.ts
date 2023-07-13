@@ -1,4 +1,8 @@
 import { IStore } from '../../app/types';
+import { showWarningNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { stopLocalVideoRecording } from '../../recording/actions.any';
+import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
 import { configureInitialDevices } from '../devices/actions';
 import { getBackendSafeRoomName } from '../util/uri';
 
@@ -43,5 +47,20 @@ export function connect() {
 export function disconnect(requestFeedback = false) {
     // XXX For web based version we use conference hanging up logic from the old
     // app.
-    return () => APP.conference.hangup(requestFeedback);
+    return async (dispatch: IStore['dispatch']) => {
+        if (LocalRecordingManager.isRecordingLocally()) {
+            dispatch(stopLocalVideoRecording());
+            dispatch(showWarningNotification({
+                titleKey: 'localRecording.stopping',
+                descriptionKey: 'localRecording.wait'
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            // wait 1000ms for the recording to end and start downloading
+            await new Promise(res => {
+                setTimeout(res, 1000);
+            });
+        }
+
+        return APP.conference.hangup(requestFeedback);
+    };
 }

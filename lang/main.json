@@ -674,6 +674,8 @@
         "sessionToken": "Session Token",
         "start": "Start Recording",
         "stop": "Stop Recording",
+        "stopping": "Stopping Recording",
+        "wait": "Please wait while we save your recording",
         "yes": "Yes"
     },
     "lockRoomPassword": "password",
