@@ -386,10 +386,9 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
  *
  * @param {string} message -The error message from xmpp.
  * @param {Object} state - The redux state.
- * @param {Dispatch} dispatch - The Redux dispatch function.
  * @returns {void}
  */
-function _logJwtErrors(message: string, state: IReduxState, dispatch: IStore['dispatch']) {
+function _logJwtErrors(message: string, state: IReduxState) {
     const { jwt } = state['features/base/jwt'];
 
     if (!jwt) {
@@ -400,11 +399,6 @@ function _logJwtErrors(message: string, state: IReduxState, dispatch: IStore['di
 
     message && logger.error(`JWT error: ${message}`);
     errorKeys.length && logger.error('JWT parsing error:', errorKeys);
-
-    dispatch(showErrorNotification({
-        descriptionKey: 'dialog.tokenAuthFailed',
-        titleKey: 'dialog.tokenAuthFailedTitle'
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 }
 
 /**
@@ -422,7 +416,12 @@ function _logJwtErrors(message: string, state: IReduxState, dispatch: IStore['di
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    _logJwtErrors(action.error.message, getState(), dispatch);
+    _logJwtErrors(action.error.message, getState());
+
+    dispatch(showErrorNotification({
+        descriptionKey: 'dialog.tokenAuthFailed',
+        titleKey: 'dialog.tokenAuthFailedTitle'
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
     const result = next(action);
 
