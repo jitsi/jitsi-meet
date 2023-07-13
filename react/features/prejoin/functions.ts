@@ -1,8 +1,10 @@
 import { IReduxState } from '../app/types';
 import { getRoomName } from '../base/conference/functions';
-import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions.any';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media/functions';
 import { getLobbyConfig } from '../lobby/functions';
+import { getFeatureFlag } from '../base/flags/functions';
+import { UNSAFE_ROOM_WARNING } from '../base/flags/constants';
 
 /**
  * Selector for the visibility of the 'join by phone' button.
@@ -168,4 +170,15 @@ export function shouldAutoKnock(state: IReduxState): boolean {
     return Boolean(((isPrejoinEnabled && !userSelectedSkipPrejoin)
             || autoKnock || (iAmRecorder && iAmSipGateway))
         && !state['features/lobby'].knocking);
+}
+
+/**
+ * Returns true if the unsafe room warning flag is enabled.
+ *
+ * @param {IReduxState} stateful - The state of the app.
+ * @returns {boolean}
+ */
+export function isUnsafeRoomWarningEnabled(stateful: IReduxState): boolean {
+    return Boolean(navigator.product === 'ReactNative' &&
+    getFeatureFlag(stateful, UNSAFE_ROOM_WARNING, true));
 }
