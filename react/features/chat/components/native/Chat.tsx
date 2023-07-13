@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { closeChat, sendMessage } from '../../actions.native';
-import { IProps as AbstractProps } from '../../types';
+import { IChatProps as AbstractProps } from '../../types';
 
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';

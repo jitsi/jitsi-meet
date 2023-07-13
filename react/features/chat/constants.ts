@@ -38,3 +38,8 @@ export const CHAT_TABS = {
     POLLS: 'polls-tab',
     CHAT: 'chat-tab'
 };
+
+/**
+ * Formatter string to display the message timestamp.
+ */
+export const TIMESTAMP_FORMAT = 'H:mm';

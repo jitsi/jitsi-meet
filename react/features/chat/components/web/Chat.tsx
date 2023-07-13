@@ -9,7 +9,7 @@ import Tabs from '../../../base/ui/components/web/Tabs';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { sendMessage, setIsPollsTabFocused, toggleChat } from '../../actions.web';
 import { CHAT_TABS, SMALL_WIDTH_THRESHOLD } from '../../constants';
-import { IProps as AbstractProps } from '../../types';
+import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
