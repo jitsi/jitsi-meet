@@ -251,7 +251,6 @@ export function _connectInternal(id?: string, password?: string) {
                 connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
-                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
             }
 
             /**
@@ -304,7 +303,7 @@ export function _connectInternal(id?: string, password?: string) {
              * @returns {void}
              */
             function _onConnectionEstablished() {
-                unsubscribe();
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
                 dispatch(connectionEstablished(connection, Date.now()));
                 resolve(connection);
             }
