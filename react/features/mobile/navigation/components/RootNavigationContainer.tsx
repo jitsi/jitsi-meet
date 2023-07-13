@@ -8,6 +8,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
+import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 // eslint-disable-next-line
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
@@ -28,7 +29,6 @@ import {
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import {isUnsafeRoomWarningEnabled} from "../../../prejoin/functions";
 
 const RootStack = createStackNavigator();
 
