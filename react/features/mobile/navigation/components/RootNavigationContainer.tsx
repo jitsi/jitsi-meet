@@ -99,8 +99,8 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                     name = { screen.preJoin }
                     options = { preJoinScreenOptions } />
                 {
-                    isUnsafeRoomWarningAvailable &&
-                    <RootStack.Screen
+                    isUnsafeRoomWarningAvailable
+                    && <RootStack.Screen
                         component = { UnsafeRoomWarning }
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
