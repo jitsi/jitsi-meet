@@ -739,9 +739,13 @@ export default {
                 setGUMPendingStateOnFailedTracks(filteredTracks);
 
                 this._setLocalAudioVideoStreams(filteredTracks);
+
+                return tr;
             }),
             APP.store.dispatch(connect())
-        ]);
+        ]).then(([ tracks, _ ]) => {
+            this.startConference(tracks).catch(logger.error);
+        });
     },
 
     /**

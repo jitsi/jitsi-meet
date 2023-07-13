@@ -24,8 +24,7 @@ import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
-import { JitsiConferenceErrors, browser } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media/constants';
+import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
@@ -35,8 +34,7 @@ import {
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
-import { destroyLocalTracks, replaceLocalTrack } from '../tracks/actions.any';
-import { getLocalTracks } from '../tracks/functions.any';
+import { destroyLocalTracks } from '../tracks/actions.any';
 
 import {
     CONFERENCE_FAILED,
@@ -339,7 +337,7 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-async function _connectionEstablished({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+async function _connectionEstablished({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -349,34 +347,6 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
 
         return result;
     }
-
-    // TODO keep this here till we move tracks and conference management from
-    // conference.js to react.
-    const state = getState();
-    let localTracks = getLocalTracks(state['features/base/tracks']);
-
-    // Do not signal audio/video tracks if the user joins muted.
-    for (const track of localTracks) {
-        // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-        // if the user joins audio and video muted.
-        if (track.muted
-            && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-            try {
-                await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-            } catch (error) {
-                logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
-            }
-        }
-    }
-
-    // Re-fetch the local tracks after muted tracks have been removed above.
-    // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
-    // anymore.
-    localTracks = getLocalTracks(getState()['features/base/tracks']);
-
-    const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
-
-    APP.conference.startConference(jitsiTracks).catch(logger.error);
 
     return result;
 }
