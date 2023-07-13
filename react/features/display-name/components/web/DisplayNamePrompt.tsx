@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import AbstractDisplayNamePrompt, { IProps } from '../AbstractDisplayNamePrompt';
+import { onSetDisplayName } from '../../functions';
+import { IProps } from '../../types';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
@@ -23,7 +24,9 @@ interface IState {
  *
  * @augments Component
  */
-class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
+class DisplayNamePrompt extends Component<IProps, IState> {
+    _onSetDisplayName: (displayName: string) => boolean;
+
     /**
      * Initializes a new {@code DisplayNamePrompt} instance.
      *
@@ -40,6 +43,7 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<IState> {
         // Bind event handlers so they are only bound once for every instance.
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._onSetDisplayName = onSetDisplayName(props.dispatch, props.onPostSubmit);
     }
 
     /**

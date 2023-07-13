@@ -1,13 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
-import { translate } from '../../base/i18n/functions';
+import { IReduxState } from '../../app/types';
 import Label from '../../base/label/components/web/Label';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 
-import { IProps, _mapStateToProps } from './AbstractTranscribingLabel';
+const TranscribingLabel = () => {
+    const _showLabel = useSelector((state: IReduxState) => state['features/transcribing'].isTranscribing);
+    const { t } = useTranslation();
 
-const TranscribingLabel = ({ _showLabel, t }: IProps) => {
     if (!_showLabel) {
         return null;
     }
@@ -23,4 +25,4 @@ const TranscribingLabel = ({ _showLabel, t }: IProps) => {
     );
 };
 
-export default translate(connect(_mapStateToProps)(TranscribingLabel));
+export default TranscribingLabel;

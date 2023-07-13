@@ -1,20 +1,48 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
-import AbstractToolbarButton, {
-    IProps as AbstractToolbarButtonProps
-} from '../../../toolbox/components/AbstractToolbarButton';
 
 /**
  * The type of the React {@code Component} props of {@link ReactionButton}.
  */
-interface IProps extends AbstractToolbarButtonProps {
+interface IProps {
+
+    /**
+     * A succinct description of what the button does. Used by accessibility
+     * tools and torture tests.
+     */
+    accessibilityLabel: string;
+
+    /**
+     * The Icon of this {@code AbstractToolbarButton}.
+     */
+    icon: Object;
+
+    /**
+     * The style of the Icon of this {@code AbstractToolbarButton}.
+     */
+    iconStyle?: Object;
 
     /**
      * Optional label for the button.
      */
     label?: string;
+
+    /**
+     * On click handler.
+     */
+    onClick: Function;
+
+    /**
+     * {@code AbstractToolbarButton} Styles.
+     */
+    style?: Array<string> | Object;
+
+    /**
+     * An optional modifier to render the button toggled.
+     */
+    toggled?: boolean;
 
     /**
      * Optional text to display in the tooltip.
@@ -26,6 +54,11 @@ interface IProps extends AbstractToolbarButtonProps {
      * button.
      */
     tooltipPosition: TOOLTIP_POSITION;
+
+    /**
+     * The color underlying the button.
+     */
+    underlayColor?: any;
 }
 
 /**
@@ -49,7 +82,7 @@ interface IState {
  *
  * @augments AbstractToolbarButton
  */
-class ReactionButton extends AbstractToolbarButton<IProps, IState> {
+class ReactionButton extends Component<IProps, IState> {
     /**
      * Default values for {@code ReactionButton} component's properties.
      *
@@ -69,11 +102,26 @@ class ReactionButton extends AbstractToolbarButton<IProps, IState> {
 
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onClickHandler = this._onClickHandler.bind(this);
+        this._onClick = this._onClick.bind(this);
 
         this.state = {
             increaseLevel: 0,
             increaseTimeout: null
         };
+    }
+
+    /**
+     * Handles clicking/pressing this {@code AbstractToolbarButton} by
+     * forwarding the event to the {@code onClick} prop of this instance if any.
+     *
+     * @protected
+     * @returns {*} The result returned by the invocation of the {@code onClick}
+     * prop of this instance if any.
+     */
+    _onClick(...args: any) {
+        const { onClick } = this.props;
+
+        return onClick?.(...args);
     }
 
     /**
@@ -167,6 +215,16 @@ class ReactionButton extends AbstractToolbarButton<IProps, IState> {
                 {label && <span className = 'text'>{label}</span>}
             </div>
         );
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        return this._renderButton(this._renderIcon());
     }
 }
 
