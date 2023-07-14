@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
-import { translate } from '../../base/i18n/functions';
 import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
 import { doesEveryoneSupportE2EE } from '../functions';
 
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * The resource for the description, computed based on the maxMode and whether the switch is toggled or not.
@@ -44,89 +44,53 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 }
 
-interface IState {
+const useStyles = makeStyles()(() => {
+    return {
+        e2eeSection: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
 
-    /**
-     * True if the switch is toggled on.
-     */
-    toggled: boolean;
-}
+        description: {
+            fontSize: '13px',
+            margin: '15px 0'
+        },
+
+        controlRow: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '15px',
+
+            '& label': {
+                fontSize: '14px',
+                fontWeight: 'bold'
+            }
+        }
+    };
+});
 
 /**
  * Implements a React {@code Component} for displaying a security dialog section with a field
  * for setting the E2EE key.
  *
- * @augments Component
+ * @param {IProps} props - Component's props.
+ * @returns  {JSX}
  */
-class E2EESection extends Component<IProps, IState> {
-    /**
-     * Implements React's {@link Component#getDerivedStateFromProps()}.
-     *
-     * @inheritdoc
-     */
-    static getDerivedStateFromProps(props: IProps, state: IState) {
-        if (props._toggled !== state.toggled) {
+const E2EESection = ({
+    _descriptionResource,
+    _enabled,
+    _e2eeLabels,
+    _everyoneSupportE2EE,
+    _toggled,
+    dispatch
+}: IProps) => {
+    const { classes } = useStyles();
+    const { t } = useTranslation();
+    const [ toggled, setToggled ] = useState(_toggled ?? false);
 
-            return {
-                toggled: props._toggled
-            };
-        }
-
-        return null;
-    }
-
-    /**
-     * Instantiates a new component.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this.state = {
-            toggled: false
-        };
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onToggle = this._onToggle.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { _descriptionResource, _enabled, _e2eeLabels, _everyoneSupportE2EE, t } = this.props;
-        const { toggled } = this.state;
-        const description = _e2eeLabels?.description || t(_descriptionResource ?? '');
-        const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
-        const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
-
-        return (
-            <div id = 'e2ee-section'>
-                <p
-                    aria-live = 'polite'
-                    className = 'description'
-                    id = 'e2ee-section-description'>
-                    { description }
-                    { !_everyoneSupportE2EE && <br /> }
-                    { !_everyoneSupportE2EE && warning }
-                </p>
-                <div className = 'control-row'>
-                    <label htmlFor = 'e2ee-section-switch'>
-                        { label }
-                    </label>
-                    <Switch
-                        checked = { toggled }
-                        disabled = { !_enabled }
-                        id = 'e2ee-section-switch'
-                        onChange = { this._onToggle } />
-                </div>
-            </div>
-        );
-    }
+    useEffect(() => {
+        setToggled(_toggled);
+    }, [ _toggled ]);
 
     /**
      * Callback to be invoked when the user toggles E2EE on or off.
@@ -134,17 +98,44 @@ class E2EESection extends Component<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onToggle() {
-        const newValue = !this.state.toggled;
+    const _onToggle = useCallback(() => {
+        const newValue = !toggled;
 
-        this.setState({
-            toggled: newValue
-        });
+        setToggled(newValue);
 
         sendAnalytics(createE2EEEvent(`enabled.${String(newValue)}`));
-        this.props.dispatch(toggleE2EE(newValue));
-    }
-}
+        dispatch(toggleE2EE(newValue));
+    }, [ toggled ]);
+
+    const description = _e2eeLabels?.description || t(_descriptionResource ?? '');
+    const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
+    const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
+
+    return (
+        <div
+            className = { classes.e2eeSection }
+            id = 'e2ee-section'>
+            <p
+                aria-live = 'polite'
+                className = { classes.description }
+                id = 'e2ee-section-description'>
+                {description}
+                {!_everyoneSupportE2EE && <br />}
+                {!_everyoneSupportE2EE && warning}
+            </p>
+            <div className = { classes.controlRow }>
+                <label htmlFor = 'e2ee-section-switch'>
+                    {label}
+                </label>
+                <Switch
+                    checked = { toggled }
+                    disabled = { !_enabled }
+                    id = 'e2ee-section-switch'
+                    onChange = { _onToggle } />
+            </div>
+        </div>
+    );
+};
 
 /**
  * Maps (parts of) the Redux state to the associated props for this component.
@@ -180,4 +171,4 @@ function mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(mapStateToProps)(E2EESection));
+export default connect(mapStateToProps)(E2EESection);
