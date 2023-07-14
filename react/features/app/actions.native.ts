@@ -8,10 +8,10 @@ import {
 import {
     createFakeConfig,
     restoreConfig
-} from '../base/config/functions';
-import { connect, disconnect, setLocationURL } from '../base/connection/actions';
+} from '../base/config/functions.native';
+import { connect, disconnect, setLocationURL } from '../base/connection/actions.native';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
-import { createDesiredLocalTracks } from '../base/tracks/actions';
+import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
 import { parseURLParams } from '../base/util/parseURLParams';
 import {
@@ -27,6 +27,7 @@ import {
 } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
+import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
 
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
@@ -137,7 +138,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setRoom(room));
 
         if (room) {
-            if (isInsecureRoomName(room)) {
+            if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
                 navigateRoot(screen.unsafeRoomWarning);
 
                 return;
