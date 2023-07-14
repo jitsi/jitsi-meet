@@ -27,13 +27,10 @@ import {
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
-import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
 
 const logger = Logger.getLogger(__filename);
-
-UI.messageHandler = messageHandler;
 
 const eventEmitter = new EventEmitter();
 
@@ -59,30 +56,6 @@ const UIListeners = new Map([
  */
 UI.isFullScreen = function() {
     return UIUtil.isFullScreen();
-};
-
-/**
- * Notify user that server has shut down.
- */
-UI.notifyGracefulShutdown = function() {
-    messageHandler.showError({
-        descriptionKey: 'dialog.gracefulShutdown',
-        titleKey: 'dialog.serviceUnavailable'
-    });
-};
-
-/**
- * Notify user that reservation error happened.
- */
-UI.notifyReservationError = function(code, msg) {
-    messageHandler.showError({
-        descriptionArguments: {
-            code,
-            msg
-        },
-        descriptionKey: 'dialog.reservationErrorMsg',
-        titleKey: 'dialog.reservationError'
-    });
 };
 
 /**

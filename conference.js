@@ -136,7 +136,12 @@ import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedba
 import { initKeyboardShortcuts } from './react/features/keyboard-shortcuts/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
-import { hideNotification, showNotification, showWarningNotification } from './react/features/notifications/actions';
+import {
+    hideNotification,
+    showErrorNotification,
+    showNotification,
+    showWarningNotification
+} from './react/features/notifications/actions';
 import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE
@@ -280,12 +285,22 @@ class ConferenceConnector {
         case JitsiConferenceErrors.RESERVATION_ERROR: {
             const [ code, msg ] = params;
 
-            APP.UI.notifyReservationError(code, msg);
+            APP.store.dispatch(showErrorNotification({
+                descriptionArguments: {
+                    code,
+                    msg
+                },
+                descriptionKey: 'dialog.reservationErrorMsg',
+                titleKey: 'dialog.reservationError'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             break;
         }
 
         case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
-            APP.UI.notifyGracefulShutdown();
+            APP.store.dispatch(showErrorNotification({
+                descriptionKey: 'dialog.gracefulShutdown',
+                titleKey: 'dialog.serviceUnavailable'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             break;
 
         // FIXME FOCUS_DISCONNECTED is a confusing event name.
@@ -1597,10 +1612,10 @@ export default {
             titleKey = 'notify.screenShareNoAudioTitle';
         }
 
-        APP.UI.messageHandler.showError({
+        APP.store.dispatch(showErrorNotification({
             descriptionKey,
             titleKey
-        });
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     },
 
     /**

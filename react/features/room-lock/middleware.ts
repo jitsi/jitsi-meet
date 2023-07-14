@@ -12,7 +12,7 @@ import {
 import { hideDialog } from '../base/dialog/actions';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { showNotification } from '../notifications/actions';
+import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _openPasswordRequiredPrompt } from './actions';
@@ -147,10 +147,10 @@ function _setPasswordFailed(store: IStore, next: Function, action: AnyAction) {
             descriptionKey = 'dialog.lockMessage';
             titleKey = 'dialog.lockTitle';
         }
-        APP.UI.messageHandler.showError({
+        APP.store.dispatch(showErrorNotification({
             descriptionKey,
             titleKey
-        });
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 
     return next(action);
