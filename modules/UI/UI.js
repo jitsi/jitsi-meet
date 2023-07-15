@@ -6,6 +6,9 @@ const UI = {};
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
 
+import {
+    conferenceWillInit
+} from '../../react/features/base/conference/actions';
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util/helpers';
 import { setDocumentUrl } from '../../react/features/etherpad/actions';
@@ -24,13 +27,10 @@ import {
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
-import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
 
 const logger = Logger.getLogger(__filename);
-
-UI.messageHandler = messageHandler;
 
 const eventEmitter = new EventEmitter();
 
@@ -59,30 +59,6 @@ UI.isFullScreen = function() {
 };
 
 /**
- * Notify user that server has shut down.
- */
-UI.notifyGracefulShutdown = function() {
-    messageHandler.showError({
-        descriptionKey: 'dialog.gracefulShutdown',
-        titleKey: 'dialog.serviceUnavailable'
-    });
-};
-
-/**
- * Notify user that reservation error happened.
- */
-UI.notifyReservationError = function(code, msg) {
-    messageHandler.showError({
-        descriptionArguments: {
-            code,
-            msg
-        },
-        descriptionKey: 'dialog.reservationErrorMsg',
-        titleKey: 'dialog.reservationError'
-    });
-};
-
-/**
  * Initialize conference UI.
  */
 UI.initConference = function() {
@@ -91,18 +67,9 @@ UI.initConference = function() {
 
 /**
  * Starts the UI module and initializes all related components.
- *
- * @returns {boolean} true if the UI is ready and the conference should be
- * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function() {
-    VideoLayout.initLargeVideo();
-
-    // Do not animate the video area on UI start (second argument passed into
-    // resizeVideoArea) because the animation is not visible anyway. Plus with
-    // the current dom layout, the quality label is part of the video layout and
-    // will be seen animating in.
-    VideoLayout.resizeVideoArea();
+    APP.store.dispatch(conferenceWillInit());
 
     if (isMobileBrowser()) {
         document.body.classList.add('mobile-browser');
@@ -292,40 +259,6 @@ UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
 // Used by torture.
 UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
 
-/**
- * Notify user that connection failed.
- * @param {string} stropheErrorMsg raw Strophe error message
- */
-UI.notifyConnectionFailed = function(stropheErrorMsg) {
-    let descriptionKey;
-    let descriptionArguments;
-
-    if (stropheErrorMsg) {
-        descriptionKey = 'dialog.connectErrorWithMsg';
-        descriptionArguments = { msg: stropheErrorMsg };
-    } else {
-        descriptionKey = 'dialog.connectError';
-    }
-
-    messageHandler.showError({
-        descriptionArguments,
-        descriptionKey,
-        titleKey: 'connection.CONNFAIL'
-    });
-};
-
-
-/**
- * Notify user that maximum users limit has been reached.
- */
-UI.notifyMaxUsersLimitReached = function() {
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.maxUsersLimitReached',
-        titleKey: 'dialog.maxUsersLimitReachedTitle'
-    });
-};
-
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
@@ -336,13 +269,6 @@ UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
  * @param {number} lvl audio level
  */
 UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
-
-UI.notifyTokenAuthFailed = function() {
-    messageHandler.showError({
-        descriptionKey: 'dialog.tokenAuthFailed',
-        titleKey: 'dialog.tokenAuthFailedTitle'
-    });
-};
 
 /**
  * Update list of available physical devices.

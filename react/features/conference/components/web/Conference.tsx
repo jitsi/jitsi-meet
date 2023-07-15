@@ -7,7 +7,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../../app/types';
 import { getConferenceNameForTitle } from '../../../base/conference/functions';
-import { connect, disconnect } from '../../../base/connection/actions.web';
+import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { setColorAlpha } from '../../../base/util/helpers';
@@ -29,6 +29,7 @@ import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import Toolbox from '../../../toolbox/components/web/Toolbox';
 import { LAYOUT_CLASSNAMES } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.any';
+import { init } from '../../actions.web';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions.web';
 import {
     AbstractConference,
@@ -187,7 +188,7 @@ class Conference extends AbstractConference<IProps, any> {
         FULL_SCREEN_EVENTS.forEach(name =>
             document.removeEventListener(name, this._onFullScreenChange));
 
-        APP.conference.isJoined() && this.props.dispatch(disconnect());
+        APP.conference.isJoined() && this.props.dispatch(hangup());
     }
 
     /**
@@ -374,7 +375,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         const { dispatch, t } = this.props;
 
-        dispatch(connect());
+        dispatch(init());
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }

@@ -1,12 +1,11 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
-import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
-    CANCEL_LOGIN
+    CANCEL_LOGIN,
+    LOGIN,
+    LOGOUT
 } from './actionTypes';
-import LoginDialog from './components/web/LoginDialog';
-import WaitForOwnerDialog from './components/web/WaitForOwnerDialog';
 
 export * from './actions.any';
 
@@ -35,31 +34,37 @@ export function cancelWaitForOwner() {
     };
 }
 
-/**
- * Hides a authentication dialog where the local participant
- * should authenticate.
+/** .
+ * Redirect to the default location (e.g. Welcome page).
  *
- * @returns {Function}.
+ * @returns {Function}
  */
-export function hideLoginDialog() {
-    return hideDialog(LoginDialog);
+export function redirectToDefaultLocation() {
+    return (dispatch: IStore['dispatch']) => dispatch(maybeRedirectToWelcomePage());
 }
 
 /**
- * Shows a notification dialog that authentication is required to create the.
- * Conference.
- * This is used for external auth.
+ * Login.
  *
- * @param {string} room - The room name.
- * @param {Function} onAuthNow - The function to be invoked when external authentication.
- *
- * @returns {Function}.
+ * @returns {{
+ *     type: LOGIN
+ * }}
  */
-export function openAuthDialog(room: String, onAuthNow?: Function) {
-    return openDialog(WaitForOwnerDialog, {
-        room,
-        onAuthNow
-    });
+export function login() {
+    return {
+        type: LOGIN
+    };
 }
 
-
+/**
+ * Logout.
+ *
+ * @returns {{
+ *     type: LOGOUT
+ * }}
+ */
+export function logout() {
+    return {
+        type: LOGOUT
+    };
+}

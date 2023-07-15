@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect as reduxConnect } from 'react-redux';
 
-// @ts-expect-error
-import { connect } from '../../../../../connection';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
+import { connect } from '../../../base/connection/actions.web';
 import { toJid } from '../../../base/connection/functions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
@@ -55,11 +54,6 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
-     * Invoked when username and password are submitted.
-     */
-    onSuccess: Function;
-
-    /**
      * Conference room name.
      */
     roomName: string;
@@ -69,11 +63,6 @@ interface IProps extends WithTranslation {
  * The type of the React {@code Component} state of {@link LoginDialog}.
  */
 interface IState {
-
-    /**
-     * Authentication process starts before joining the conference room.
-     */
-    loginStarted: boolean;
 
     /**
      * The user entered password for the conference.
@@ -102,8 +91,7 @@ class LoginDialog extends Component<IProps, IState> {
 
         this.state = {
             username: '',
-            password: '',
-            loginStarted: false
+            password: ''
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -135,8 +123,6 @@ class LoginDialog extends Component<IProps, IState> {
         const {
             _conference: conference,
             _configHosts: configHosts,
-            roomName,
-            onSuccess,
             dispatch
         } = this.props;
         const { password, username } = this.state;
@@ -148,19 +134,7 @@ class LoginDialog extends Component<IProps, IState> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            this.setState({
-                loginStarted: true
-            });
-
-            connect(jid, password, roomName)
-                .then((connection: any) => {
-                    onSuccess?.(connection);
-                })
-                .catch(() => {
-                    this.setState({
-                        loginStarted: false
-                    });
-                });
+            dispatch(connect(jid, password));
         }
     }
 
@@ -249,7 +223,7 @@ class LoginDialog extends Component<IProps, IState> {
             _connecting: connecting,
             t
         } = this.props;
-        const { password, loginStarted, username } = this.state;
+        const { password, username } = this.state;
 
         return (
             <Dialog
@@ -258,7 +232,6 @@ class LoginDialog extends Component<IProps, IState> {
                 hideCloseButton = { true }
                 ok = {{
                     disabled: connecting
-                        || loginStarted
                         || !password
                         || !username,
                     translationKey: 'dialog.login'
@@ -315,7 +288,7 @@ function mapStateToProps(state: IReduxState) {
     return {
         _conference: authRequired || conference,
         _configHosts: configHosts,
-        _connecting: connecting || thenableWithCancel,
+        _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
         _progress: progress
     };

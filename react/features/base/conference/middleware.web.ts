@@ -9,7 +9,8 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
-    CONFERENCE_LEFT, KICKED_OUT
+    CONFERENCE_LEFT,
+    KICKED_OUT
 } from './actionTypes';
 import logger from './logger';
 import './middleware.any';

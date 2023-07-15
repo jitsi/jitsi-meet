@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { IStore } from '../app/types';
 import { updateConfig } from '../base/config/actions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { connect } from '../base/connection/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../base/media/constants';
@@ -31,7 +32,6 @@ import {
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
@@ -65,6 +65,8 @@ const STATUS_REQ_FREQUENCY = 2000;
  * The maximum number of retries while polling for dial out status.
  */
 const STATUS_REQ_CAP = 45;
+
+export * from './actions.any';
 
 /**
  * Polls for status change after dial out.
@@ -226,33 +228,37 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
             dispatch(setJoiningInProgress(true));
         }
 
-        const state = getState();
-        let localTracks = getLocalTracks(state['features/base/tracks']);
-
         options && dispatch(updateConfig(options));
 
-        // Do not signal audio/video tracks if the user joins muted.
-        for (const track of localTracks) {
-            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-            // if the user joins audio and video muted.
-            if (track.muted
-                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-                try {
-                    await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-                } catch (error) {
-                    logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+        dispatch(connect()).then(async () => {
+            // TODO keep this here till we move tracks and conference management from
+            // conference.js to react.
+            const state = getState();
+            let localTracks = getLocalTracks(state['features/base/tracks']);
+
+            // Do not signal audio/video tracks if the user joins muted.
+            for (const track of localTracks) {
+                // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted.
+                if (track.muted && !(browser.isWebKitBased() && track.jitsiTrack
+                        && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                    try {
+                        await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+                    } catch (error) {
+                        logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                    }
                 }
             }
-        }
 
-        // Re-fetch the local tracks after muted tracks have been removed above.
-        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
-        // anymore.
-        localTracks = getLocalTracks(getState()['features/base/tracks']);
+            // Re-fetch the local tracks after muted tracks have been removed above.
+            // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be
+            // used anymore.
+            localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+            const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
 
-        APP.conference.prejoinStart(jitsiTracks);
+            APP.conference.startConference(jitsiTracks).catch(logger.error);
+        });
     };
 }
 
@@ -462,17 +468,6 @@ export function setDialOutCountry(value: Object) {
     return {
         type: SET_DIALOUT_COUNTRY,
         value
-    };
-}
-
-/**
- * Action used to set the stance of the display name.
- *
- * @returns {Object}
- */
-export function setPrejoinDisplayNameRequired() {
-    return {
-        type: SET_PREJOIN_DISPLAY_NAME_REQUIRED
     };
 }
 
