@@ -227,16 +227,20 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         const [ vnode ] = error.params;
 
         dispatch(overwriteConfig(newConfig)) // @ts-ignore
-            .then(dispatch(conferenceWillLeave(conference)))
-            .then(dispatch(disconnect()))
-            .then(dispatch(setIAmVisitor(Boolean(vnode))))
+            .then(() => dispatch(conferenceWillLeave(conference)))
+            .then(() => dispatch(disconnect()))
+            .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
 
             // we do not clear local tracks on error, so we need to manually clear them
-            .then(dispatch(destroyLocalTracks()))
+            .then(() => dispatch(destroyLocalTracks()))
+            .then(() => dispatch(conferenceWillInit()))
+            .then(() => dispatch(connect()))
             .then(() => {
-                dispatch(conferenceWillInit());
-            })
-            .then(dispatch(connect()));
+                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                if (typeof APP !== 'undefined') {
+                    APP.conference.startConference([]);
+                }
+            });
         break;
     }
     }
