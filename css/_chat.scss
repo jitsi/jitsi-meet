@@ -1,35 +1,3 @@
-#sideToolbarContainer {
-    background-color: $chatBackgroundColor;
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-    transition: width .16s ease-in-out;
-    width: $sidebarWidth;
-    z-index: 300;
-
-    @media (max-width: 580px) {
-        height: 100vh;
-        height: -webkit-fill-available;
-        left: 0;
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: auto;
-    }
-}
-
-.chat-panel {
-    display: flex;
-    flex-direction: column;
-    // extract header + tabs height
-    height: calc(100% - 119px);
-}
-
-.chat-panel-no-tabs {
-    // extract header height
-    height: calc(100% - 70px);
-}
-
 #chat-conversation-container {
     // extract message input height
     height: calc(100% - 64px);
@@ -76,27 +44,6 @@
     }
 }
 
-
-.chat-header {
-    height: 70px;
-    position: relative;
-    width: 100%;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    padding: 16px;
-    align-items: center;
-    box-sizing: border-box;
-    color: #fff;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 32px;
-
-    .jitsi-icon {
-        cursor: pointer;
-    }
-}
-
 .chat-input-container {
     padding: 0 16px 24px;
 }
@@ -112,72 +59,12 @@
     margin-right: 8px;
 }
 
-.smiley-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 38px;
-    width: 38px;
-    margin: 2px;
-    border-radius: 3px;
-}
-
-#chat-input .smiley-button {
-    @media (hover: hover) and (pointer: fine) {
-        &:hover {
-            background-color: #484A4F;
-        }
-    }
-}
-
-.remoteuser {
-    color: #B8C7E0;
-}
-
-.usrmsg-form {
-    flex: 1;
-}
-
-#usermsg {
-    -ms-overflow-style: none;
-    border: 0px none;
-    border-radius:0;
-    box-shadow: none;
-    color: white;
-    font-size: 14px;
-    padding: 10px;
-    overflow-y: auto;
-    resize: none;
-    scrollbar-width: none;
-    width: 100%;
-    word-break: break-word;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-}
-
-#usermsg:hover {
-    border: 0px none;
-    box-shadow: none;
-}
-#usermsg:focus,
-#usermsg:active {
-    border-bottom: 1px solid white;
-    padding-bottom: 8px;
- }
-
 #nickname {
     text-align: center;
     color: #9d9d9d;
     font-size: 16px;
     margin: auto 0;
     padding: 0 16px;
-
-    #nickname-title {
-        margin-bottom: 5px;
-        display: block;
-    }
 
     label[for="nickinput"] {
         > div > span {
@@ -191,24 +78,6 @@
     label {
         line-height: 24px;
     }
-
-    .enter-chat {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 16px;
-        height: 40px;
-        background: #1B67EC;
-        border-radius: 3px;
-        color: #fff;
-        cursor: pointer;
-
-        &.disabled {
-            color: #AFB6BC;
-            background: #11336E;
-            pointer-events: none;
-        }
-    }
 }
 
 .mobile-browser {
@@ -216,14 +85,6 @@
         input {
             height: 48px;
         }
-
-        .enter-chat {
-            height: 48px;
-        }
-    }
-
-    #usermsg {
-        font-size: 16px;
     }
 
     .chatmessage .usermessage {
@@ -231,32 +92,7 @@
     }
 }
 
-.sideToolbarContainer {
-    * {
-        -webkit-user-select: text;
-        user-select: text;
-    }
-}
-
-.sr-only {
-    border: 0 !important;
-    clip: rect(1px, 1px, 1px, 1px) !important;
-    clip-path: inset(50%) !important;
-    height: 1px !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    position: absolute !important;
-    width: 1px !important;
-    white-space: nowrap !important;
-}
-
 .chatmessage {
-    &.localuser {
-        background-color: #484A4F;
-        border-radius: 6px 0px 6px 6px;
-    }
-
     &.error {
         border-radius: 0px;
 
@@ -286,13 +122,6 @@
 #smileys img {
     width: 22px;
     padding: 2px;
-}
-
-#smileysarea {
-    display: flex;
-    max-height: 150px;
-    min-height: 35px;
-    overflow: hidden;
 }
 
 .smiley-input {
@@ -343,10 +172,6 @@
     background-color: rgba(255, 255, 255, 0.15);
     border-radius: 5px;
     cursor: pointer;
-}
-
-#usermsg::-webkit-scrollbar-track-piece {
-    background: #3a3a3a;
 }
 
 .chat-message-group {

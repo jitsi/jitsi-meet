@@ -1,5 +1,5 @@
 /**
- * The size of the chat.
+ * The size of the chat. Equal to $sidebarWidth SCSS variable.
  */
 export const CHAT_SIZE = 315;
 

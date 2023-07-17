@@ -1,14 +1,15 @@
-import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { sendMessage, setIsPollsTabFocused, toggleChat } from '../../actions.web';
-import { CHAT_TABS, SMALL_WIDTH_THRESHOLD } from '../../constants';
+import { CHAT_SIZE, CHAT_TABS, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
@@ -77,6 +78,70 @@ interface IProps extends AbstractProps {
     _showNamePrompt: boolean;
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+        container: {
+            backgroundColor: theme.palette.ui01,
+            flexShrink: 0,
+            overflow: 'hidden',
+            position: 'relative',
+            transition: 'width .16s ease-in-out',
+            width: `${CHAT_SIZE}px`,
+            zIndex: 300,
+
+            '@media (max-width: 580px)': {
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+                right: 0,
+                top: 0,
+                width: 'auto'
+            },
+
+            '*': {
+                userSelect: 'text',
+                '-webkit-user-select': 'text'
+            }
+        },
+
+        chatHeader: {
+            height: '60px',
+            position: 'relative',
+            width: '100%',
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            color: theme.palette.text01,
+            ...withPixelLineHeight(theme.typography.heading6),
+
+            '.jitsi-icon': {
+                cursor: 'pointer'
+            }
+        },
+
+        chatPanel: {
+            display: 'flex',
+            flexDirection: 'column',
+
+            // extract header + tabs height
+            height: 'calc(100% - 110px)'
+        },
+
+        chatPanelNoTabs: {
+            // extract header height
+            height: 'calc(100% - 60px)'
+        },
+
+        pollsPanel: {
+            // extract header + tabs height
+            height: 'calc(100% - 110px)'
+        }
+    };
+});
+
 const Chat = ({
     _isModal,
     _isOpen,
@@ -93,6 +158,8 @@ const Chat = ({
     dispatch,
     t
 }: IProps) => {
+    const { classes, cx } = useStyles();
+
     /**
     * Sends a text message.
     *
@@ -120,7 +187,7 @@ const Chat = ({
      * @param {KeyboardEvent} event - Esc key click to close the popup.
      * @returns {void}
      */
-    const _onEscClick = useCallback((event: React.KeyboardEvent) => {
+    const onEscClick = useCallback((event: React.KeyboardEvent) => {
         if (event.key === 'Escape' && _isOpen) {
             event.preventDefault();
             event.stopPropagation();
@@ -134,7 +201,7 @@ const Chat = ({
      * @param {string} id - Id of the clicked tab.
      * @returns {void}
      */
-    const _onChangeTab = useCallback((id: string) => {
+    const onChangeTab = useCallback((id: string) => {
         dispatch(setIsPollsTabFocused(id !== CHAT_TABS.CHAT));
     }, []);
 
@@ -145,15 +212,15 @@ const Chat = ({
      * @private
      * @returns {ReactElement}
      */
-    function _renderChat() {
+    function renderChat() {
         return (
             <>
-                {_isPollsEnabled && _renderTabs()}
+                {_isPollsEnabled && renderTabs()}
                 <div
                     aria-labelledby = { CHAT_TABS.CHAT }
-                    className = { clsx(
-                        'chat-panel',
-                        !_isPollsEnabled && 'chat-panel-no-tabs',
+                    className = { cx(
+                        classes.chatPanel,
+                        !_isPollsEnabled && classes.chatPanelNoTabs,
                         _isPollsTabFocused && 'hide'
                     ) }
                     id = { `${CHAT_TABS.CHAT}-panel` }
@@ -169,7 +236,7 @@ const Chat = ({
                     <>
                         <div
                             aria-labelledby = { CHAT_TABS.POLLS }
-                            className = { clsx('polls-panel', !_isPollsTabFocused && 'hide') }
+                            className = { cx(classes.pollsPanel, !_isPollsTabFocused && 'hide') }
                             id = { `${CHAT_TABS.POLLS}-panel` }
                             role = 'tabpanel'
                             tabIndex = { 0 }>
@@ -188,11 +255,11 @@ const Chat = ({
      * @private
      * @returns {ReactElement}
      */
-    function _renderTabs() {
+    function renderTabs() {
         return (
             <Tabs
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
-                onChange = { _onChangeTab }
+                onChange = { onChangeTab }
                 selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
                 tabs = { [ {
                     accessibilityLabel: t('chat.tabs.chat'),
@@ -213,16 +280,16 @@ const Chat = ({
 
     return (
         _isOpen ? <div
-            className = 'sideToolbarContainer'
+            className = { classes.container }
             id = 'sideToolbarContainer'
-            onKeyDown = { _onEscClick } >
+            onKeyDown = { onEscClick } >
             <ChatHeader
-                className = 'chat-header'
+                className = { cx('chat-header', classes.chatHeader) }
                 isPollsEnabled = { _isPollsEnabled }
                 onCancel = { onToggleChat } />
             {_showNamePrompt
                 ? <DisplayNameForm isPollsEnabled = { _isPollsEnabled } />
-                : _renderChat()}
+                : renderChat()}
         </div> : null
     );
 };
