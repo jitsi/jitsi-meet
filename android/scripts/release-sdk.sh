@@ -29,6 +29,10 @@ if [[ $MVN_HTTP == 1 ]]; then
     # Push React Native
     echo "Pushing React Native ${RN_VERSION} to the Maven repo"
     pushd ${THIS_DIR}/../../node_modules/react-native/android/com/facebook/react/react-native/${RN_VERSION}
+    cat react-native-${RN_VERSION}.pom \
+        | sed "s#<packaging>pom</packaging>#<packaging>aar</packaging>#" \
+        | sed "/<optional>/d" \
+        > react-native-${RN_VERSION}-fixed.pom
     mvn \
         deploy:deploy-file \
         -Durl=${MVN_REPO} \
@@ -36,7 +40,7 @@ if [[ $MVN_HTTP == 1 ]]; then
         -Dfile=react-native-${RN_VERSION}-release.aar \
         -Dpackaging=aar \
         -DgeneratePom=false \
-        -DpomFile=react-native-${RN_VERSION}.pom || true
+        -DpomFile=react-native-${RN_VERSION}-fixed.pom || true
     popd
     # Push JSC
     echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
@@ -55,13 +59,17 @@ else
     if [[ ! -d ${MVN_REPO}/com/facebook/react/react-native/${RN_VERSION} ]]; then
         echo "Pushing React Native ${RN_VERSION} to the Maven repo"
         pushd ${THIS_DIR}/../../node_modules/react-native/android/com/facebook/react/react-native/${RN_VERSION}
+        cat react-native-${RN_VERSION}.pom \
+            | sed "s#<packaging>pom</packaging>#<packaging>aar</packaging>#" \
+            | sed "/<optional>/d" \
+            > react-native-${RN_VERSION}-fixed.pom
         mvn \
             deploy:deploy-file \
             -Durl=${MVN_REPO} \
             -Dfile=react-native-${RN_VERSION}-release.aar \
             -Dpackaging=aar \
             -DgeneratePom=false \
-            -DpomFile=react-native-${RN_VERSION}.pom
+            -DpomFile=react-native-${RN_VERSION}-fixed.pom
         popd
     fi
 
