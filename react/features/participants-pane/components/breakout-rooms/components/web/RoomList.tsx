@@ -23,6 +23,7 @@ import { LeaveButton } from './LeaveButton';
 import RoomActionEllipsis from './RoomActionEllipsis';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomParticipantContextMenu } from './RoomParticipantContextMenu';
+import { useTranslation } from 'react-i18next';
 
 interface IProps {
 
@@ -42,6 +43,7 @@ const useStyles = makeStyles()(theme => {
 
 export const RoomList = ({ searchString }: IProps) => {
     const { classes } = useStyles();
+    const { t } = useTranslation();
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
                     .filter((room: IRoom) => room.id !== currentRoomId)
@@ -66,8 +68,10 @@ export const RoomList = ({ searchString }: IProps) => {
             {inBreakoutRoom && <LeaveButton className = { classes.topMargin } />}
             {showAutoAssign && <AutoAssignButton className = { classes.topMargin } />}
             <div
+                aria-label = {t('breakoutRooms.breakoutList', 'breakout list')}
                 className = { classes.topMargin }
-                id = 'breakout-rooms-list'>
+                id = 'breakout-rooms-list'
+                role = 'list' >
                 {rooms.map(room => (
                     <React.Fragment key = { room.id }>
                         <CollapsibleRoom

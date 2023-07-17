@@ -87,13 +87,15 @@ export const RoomContextMenu = ({
 
     return (
         <ContextMenu
+            accessibilityLabel = {t('breakoutRooms.settings', 'Settings')}
             entity = { room }
             isDrawerOpen = { Boolean(room) }
             offsetTarget = { offsetTarget }
             onClick = { lowerMenu }
             onDrawerClose = { onSelect }
             onMouseEnter = { onEnter }
-            onMouseLeave = { onLeave }>
+            onMouseLeave = { onLeave }
+            role = 'menu'>
             {/* @ts-ignore */}
             <ContextMenuItemGroup actions = { actions } />
         </ContextMenu>

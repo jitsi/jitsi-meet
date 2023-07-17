@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -234,6 +234,22 @@ const ContextMenu = ({
             {children}
         </div>);
     }
+
+/*     const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            // Close the menu or perform desired action
+        } else if (event.key === 'ArrowUp') {
+            // Move focus to the previous menu item
+            event.preventDefault();
+
+            // Logic to handle focus movement
+        } else if (event.key === 'ArrowDown') {
+            // Move focus to the next menu item
+            event.preventDefault();
+
+            // Logic to handle focus movement
+        }
+    }, []); */
 
     return _overflowDrawer
         ? <JitsiPortal>
