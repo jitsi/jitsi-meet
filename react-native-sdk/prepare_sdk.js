@@ -107,10 +107,6 @@ copyFolderRecursiveSync(
     `${iosSrcPath}/dropbox`,
     iosDestPath
 );
-copyFolderRecursiveSync(
-    '../ios/sdk/src/picture-in-picture',
-    iosDestPath
-);
 fs.copyFileSync(
     `${iosSrcPath}/AppInfo.m`,
     `${iosDestPath}/AppInfo.m`
