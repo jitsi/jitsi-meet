@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
+import { getMessagesGroupedBySender } from '../../functions';
 import { IMessage } from '../../types';
-import AbstractMessageContainer, { IProps as AbstractProps } from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import styles from './styles';
 
-interface IProps extends AbstractProps {
+interface IProps extends WithTranslation {
 
     /**
-     * Function to be used to translate i18n labels.
+     * The messages array to render.
      */
-    t: Function;
+    messages: IMessage[];
 }
 
 /**
  * Implements a container to render all the chat messages in a conference.
  */
-class MessageContainer extends AbstractMessageContainer<IProps, any> {
+class MessageContainer extends Component<IProps> {
     /**
      * Instantiates a new instance of the component.
      *
@@ -40,7 +40,7 @@ class MessageContainer extends AbstractMessageContainer<IProps, any> {
      * @inheritdoc
      */
     render() {
-        const data = this._getMessagesGroupedBySender();
+        const data = getMessagesGroupedBySender(this.props.messages);
 
         return (
             <FlatList
@@ -97,4 +97,4 @@ class MessageContainer extends AbstractMessageContainer<IProps, any> {
     }
 }
 
-export default translate(connect()(MessageContainer));
+export default translate(MessageContainer);

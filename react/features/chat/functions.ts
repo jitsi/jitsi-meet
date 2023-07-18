@@ -172,3 +172,34 @@ export function getPrivateNoticeMessage(message: IMessage) {
         recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
     });
 }
+
+/**
+ * Iterates over all the messages and creates nested arrays which hold
+ * consecutive messages sent by the same participant.
+ *
+ * @param {IMessage[]} messages - The messages to group.
+ * @returns {Array<Array<Object>>}
+ */
+export function getMessagesGroupedBySender(messages: IMessage[]) {
+    const messagesCount = messages.length;
+    const groups: IMessage[][] = [];
+    let currentGrouping: IMessage[] = [];
+    let currentGroupParticipantId;
+
+    for (let i = 0; i < messagesCount; i++) {
+        const message = messages[i];
+
+        if (message.id === currentGroupParticipantId) {
+            currentGrouping.push(message);
+        } else {
+            currentGrouping.length && groups.push(currentGrouping);
+
+            currentGrouping = [ message ];
+            currentGroupParticipantId = message.id;
+        }
+    }
+
+    currentGrouping.length && groups.push(currentGrouping);
+
+    return groups;
+}
