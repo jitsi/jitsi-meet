@@ -29,6 +29,11 @@ export const SET_LOBBY_VISIBILITY = 'TOGGLE_LOBBY_VISIBILITY';
 export const SET_PASSWORD_JOIN_FAILED = 'SET_PASSWORD_JOIN_FAILED';
 
 /**
+ * Action type used to set that the display name on lobby/prejoin screen is manadatory.
+ */
+export const SET_LOBBY_DISPLAY_NAME_REQUIRED = 'SET_LOBBY_DISPLAY_NAME_REQUIRED';
+
+/**
  * Action type to set a lobby chat participant's state to chatting
  */
  export const SET_LOBBY_PARTICIPANT_CHAT_STATE = 'SET_LOBBY_PARTICIPANT_CHAT_STATE';

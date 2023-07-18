@@ -440,7 +440,7 @@ export function _mapStateToProps(state: IReduxState) {
     const participantId = localParticipant?.id;
     const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);
     const { disableInviteFunctions } = state['features/base/config'];
-    const { isDisplayNameRequired, knocking, passwordJoinFailed } = state['features/lobby'];
+    const { isDisplayNameRequiredError, knocking, passwordJoinFailed } = state['features/lobby'];
     const { iAmSipGateway } = state['features/base/config'];
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
@@ -450,7 +450,7 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         _deviceStatusVisible: deviceStatusVisible,
-        _isDisplayNameRequiredActive: isDisplayNameRequired,
+        _isDisplayNameRequiredActive: Boolean(isDisplayNameRequiredError),
         _knocking: knocking,
         _lobbyChatMessages: messages,
         _lobbyMessageRecipient: lobbyMessageRecipient?.name,

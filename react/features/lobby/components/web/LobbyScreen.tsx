@@ -154,19 +154,21 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
     _renderParticipantInfo() {
         const { displayName } = this.state;
         const { _isDisplayNameRequiredActive, t } = this.props;
+        const showError = _isDisplayNameRequiredActive && !displayName;
 
         return (
             <>
                 <Input
+                    autoFocus = { true }
                     className = 'lobby-prejoin-input'
-                    error = { _isDisplayNameRequiredActive }
+                    error = { showError }
                     id = 'lobby-name-field'
                     onChange = { this._onChangeDisplayName }
                     placeholder = { t('lobby.nameField') }
                     testId = 'lobby.nameField'
                     value = { displayName } />
 
-                {_isDisplayNameRequiredActive && <div
+                { showError && <div
                     className = 'lobby-prejoin-error'
                     data-testid = 'lobby.errorMessage'>{t('prejoin.errorMissingName')}</div>}
             </>

@@ -35,7 +35,7 @@ export function isDeviceStatusVisible(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function isDisplayNameRequired(state: IReduxState): boolean {
-    return Boolean(state['features/prejoin']?.isDisplayNameRequired
+    return Boolean(state['features/lobby']?.isDisplayNameRequired
         || state['features/base/config']?.requireDisplayName);
 }
 

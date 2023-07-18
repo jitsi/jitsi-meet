@@ -267,7 +267,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const state = getState();
     const { membersOnly } = state['features/base/conference'];
     const nonFirstFailure = Boolean(membersOnly);
-    const { isDisplayNameRequired } = state['features/lobby'];
+    const { isDisplayNameRequiredError } = state['features/lobby'];
     const { prejoinConfig } = state['features/base/config'];
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
@@ -280,7 +280,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         dispatch(openLobbyScreen());
 
         // if there was an error about display name and pre-join is not enabled
-        if (shouldAutoKnock(state) || (isDisplayNameRequired && !prejoinConfig?.enabled)) {
+        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled)) {
             dispatch(startKnocking());
         }
 

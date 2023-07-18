@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { IReduxState, IStore } from '../../app/types';
-import { setPrejoinDisplayNameRequired } from '../../prejoin/actions.any';
+import { setLobbyDisplayNameRequired } from '../../lobby/actions';
 import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
@@ -233,12 +233,12 @@ export function _connectInternal(id?: string, password?: string) {
                 _onConnectionFailed);
 
             /**
-             * Marks the display name for the prejoin screen as required.
-             * This can happen if a user tries to join a room with lobby enabled.
+             * Marks the display name for the lobby/prejoin screen as required.
+             * This can happen if a user tries to join a room with lobby enabled and no display name set.
              */
             connection.addEventListener(
                 JitsiConnectionEvents.DISPLAY_NAME_REQUIRED,
-                () => dispatch(setPrejoinDisplayNameRequired())
+                () => dispatch(setLobbyDisplayNameRequired())
             );
 
             /**

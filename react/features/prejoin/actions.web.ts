@@ -66,8 +66,6 @@ const STATUS_REQ_FREQUENCY = 2000;
  */
 const STATUS_REQ_CAP = 45;
 
-export * from './actions.any';
-
 /**
  * Polls for status change after dial out.
  * Changes dialog message based on response, closes the dialog if there is an error,

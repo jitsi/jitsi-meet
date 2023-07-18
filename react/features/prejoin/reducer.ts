@@ -1,5 +1,3 @@
-import { CONFERENCE_FAILED } from '../base/conference/actionTypes';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
@@ -12,7 +10,6 @@ import {
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
@@ -28,7 +25,6 @@ const DEFAULT_STATE = {
     },
     dialOutNumber: '',
     dialOutStatus: 'prejoin.dialing',
-    isDisplayNameRequired: false,
     name: '',
     rawError: '',
     showPrejoin: true,
@@ -47,7 +43,6 @@ export interface IPrejoinState {
     };
     dialOutNumber: string;
     dialOutStatus: string;
-    isDisplayNameRequired: boolean;
     joiningInProgress?: boolean;
     name: string;
     precallTestResults?: {
@@ -74,16 +69,6 @@ PersistenceRegistry.register('features/prejoin', {
 ReducerRegistry.register<IPrejoinState>(
     'features/prejoin', (state = DEFAULT_STATE, action): IPrejoinState => {
         switch (action.type) {
-        case CONFERENCE_FAILED: {
-            if (action.error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED) {
-                return {
-                    ...state,
-                    isDisplayNameRequired: true
-                };
-            }
-
-            return state;
-        }
         case PREJOIN_JOINING_IN_PROGRESS:
             return {
                 ...state,
@@ -152,13 +137,6 @@ ReducerRegistry.register<IPrejoinState>(
             return {
                 ...state,
                 showJoinByPhoneDialog: action.value
-            };
-        }
-
-        case SET_PREJOIN_DISPLAY_NAME_REQUIRED: {
-            return {
-                ...state,
-                isDisplayNameRequired: true
             };
         }
 

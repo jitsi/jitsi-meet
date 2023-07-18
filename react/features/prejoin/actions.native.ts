@@ -1,4 +1,3 @@
-// we need for using joinConference from actions.web in actions.any in lobby feature
 import { IStore } from '../app/types';
 
 /**
