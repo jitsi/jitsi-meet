@@ -10,7 +10,6 @@ node node_modules/@jitsi/react-native-sdk/update_dependencies.js
 ```
 This will check and update all your dependencies.<br/><br/>
 
-
  [comment]: # (These deps definitely need to be added manually, more could be neccesary)
 
 Because of SVG use in react native, you need to update metro.config your project's file:
@@ -56,13 +55,6 @@ module.exports = (async () => {
         - Audio
         - Voice over IP
         - Background fetch
-- Add Copy Sounds step:
-1. Open XCode, go to Build Phases and add this step and the script below.
-
-```
-    SOUNDS_DIR="${PROJECT_DIR}/../node_modules/@jitsi/react-native-sdk/sounds"
-    cp $SOUNDS_DIR/* ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/
-```
 
 Run `cd ios && pod install && cd ..`
 
@@ -75,3 +67,7 @@ Run `cd ios && pod install && cd ..`
     <uses-permission android:name="android.permission.CAMERA" />
   ```
 
+If you want to test all the steps before applying them to your app, you can check our React Native SDK sample app here:
+```
+https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
+```
