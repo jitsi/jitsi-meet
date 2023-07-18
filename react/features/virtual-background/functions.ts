@@ -18,6 +18,9 @@ export function checkBlurSupport() {
     return filterSupport;
 }
 
+export function checkVirtualBackgroundEnabled() : boolean {
+    return true ? APP.store.getState()['features/base/config'].enableVirtualBackground || APP.store.getState()['features/base/config'].enableVirtualBackground === undefined : false;
+}
 /**
  * Convert blob to base64.
  *

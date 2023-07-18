@@ -330,6 +330,7 @@ export interface IConfig {
     enableRemb?: boolean;
     enableSaveLogs?: boolean;
     enableTcc?: boolean;
+    enableVirtualBackground?: boolean;
     enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
     etherpad_base?: string;
