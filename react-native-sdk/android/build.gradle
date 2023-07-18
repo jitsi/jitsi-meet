@@ -138,3 +138,19 @@ if (isNewArchitectureEnabled()) {
     codegenJavaPackageName = "org.jitsi.meet.sdk"
   }
 }
+
+// Copy sounds to assets directory
+android.libraryVariants.all { def variant ->
+    def mergeAssetsTask = variant.mergeAssetsProvider.get()
+    def mergeResourcesTask = variant.mergeResourcesProvider.get()
+    mergeAssetsTask.doLast {
+        def assetsDir = mergeAssetsTask.outputDir.get()
+        def soundsDir = "${projectDir}/../sounds"
+        copy {
+            from("${soundsDir}")
+            include("*.wav")
+            include("*.mp3")
+            into("${assetsDir}/sounds")
+        }
+    }
+}
