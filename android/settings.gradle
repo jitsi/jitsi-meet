@@ -27,8 +27,8 @@ include ':react-native-giphy'
 project(':react-native-giphy').projectDir = new File(rootProject.projectDir, '../node_modules/@giphy/react-native-sdk/android')
 include ':react-native-google-signin'
 project(':react-native-google-signin').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-google-signin/google-signin/android')
-include ':react-native-immersive'
-project(':react-native-immersive').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-immersive/android')
+include ':react-native-immersive-mode'
+project(':react-native-immersive-mode').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-immersive-mode/android')
 include ':react-native-keep-awake'
 project(':react-native-keep-awake').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keep-awake/android')
 include ':react-native-orientation-locker'
