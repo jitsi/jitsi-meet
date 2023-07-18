@@ -22,4 +22,14 @@ Pod::Spec.new do |s|
   s.dependency 'react-native-webrtc'
 
   s.dependency 'ObjectiveDropboxOfficial', '6.2.3'
+
+  s.script_phase = {
+      :name => 'Copy Sound Files',
+      :script => '
+          SOURCE_PATH="${PODS_TARGET_SRCROOT}/sounds"
+          TARGET_PATH="$(dirname ${CONFIGURATION_BUILD_DIR})"
+          PROJECT_NAME=$(basename $(dirname $(dirname ${PROJECT_DIR}))).app
+          cp -R "${PODS_TARGET_SRCROOT}/sounds/" "${TARGET_PATH}/${PROJECT_NAME}"
+      ',
+  }
 end
