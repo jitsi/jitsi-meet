@@ -88,7 +88,8 @@ const styles = (theme: Theme) => {
     return {
         container: {
             display: 'flex',
-            flexDirection: 'column' as const
+            flexDirection: 'column' as const,
+            padding: '0 2px'
         },
 
         divider: {
