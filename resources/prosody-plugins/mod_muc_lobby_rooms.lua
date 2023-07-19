@@ -400,6 +400,17 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
 
+        -- Check for display name if missing return an error
+        local displayName = stanza:get_child_text('nick', 'http://jabber.org/protocol/nick');
+        if not displayName or #displayName == 0 then
+            local reply = st.error_reply(stanza, 'modify', 'not-acceptable');
+            reply.tags[1].attr.code = '406';
+            reply:tag('displayname-required', { xmlns = 'http://jitsi.org/jitmeet', lobby = 'true' }):up():up();
+
+            event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
+            return true;
+        end
+
         -- we want to add the custom lobbyroom field to fill in the lobby room jid
         local invitee = event.stanza.attr.from;
         local affiliation = room:get_affiliation(invitee);
