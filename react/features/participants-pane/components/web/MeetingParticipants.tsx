@@ -16,8 +16,9 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
-import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
+import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
+import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
@@ -50,7 +51,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 interface IProps {
-    currentRoom?: { name: string; };
+    currentRoom?: {
+        jid: string;
+        name: string;
+    };
     overflowDrawer?: boolean;
     participantsCount?: number;
     searchString: string;
@@ -102,6 +106,7 @@ function MeetingParticipants({
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
 
     const { classes: styles, cx } = useStyles();
 
@@ -122,6 +127,10 @@ function MeetingParticipants({
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
+                { currentRoom?.name && _isCurrentRoomRenamable
+                    && <RenameButton
+                        breakoutRoomJid = { currentRoom?.jid }
+                        name = { currentRoom?.name } /> }
             </div>
             {showInviteButton && <InviteButton />}
             <Input
