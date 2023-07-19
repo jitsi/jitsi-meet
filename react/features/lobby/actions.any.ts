@@ -15,7 +15,6 @@ import {
     KNOCKING_PARTICIPANT_LEFT,
     REMOVE_LOBBY_CHAT_WITH_MODERATOR,
     SET_KNOCKING_STATE,
-    SET_LOBBY_DISPLAY_NAME_REQUIRED,
     SET_LOBBY_MODE_ENABLED,
     SET_LOBBY_PARTICIPANT_CHAT_STATE,
     SET_LOBBY_VISIBILITY,
@@ -421,13 +420,3 @@ export function setLobbyMessageListener() {
     };
 }
 
-/**
- * Action used to set the stance of the display name.
- *
- * @returns {Object}
- */
-export function setLobbyDisplayNameRequired() {
-    return {
-        type: SET_LOBBY_DISPLAY_NAME_REQUIRED
-    };
-}

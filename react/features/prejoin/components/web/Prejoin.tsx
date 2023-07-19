@@ -452,8 +452,7 @@ const Prejoin = ({
  */
 function mapStateToProps(state: IReduxState) {
     const name = getDisplayName(state);
-    const showErrorOnJoin = (isDisplayNameRequired(state) || state['features/lobby'].isDisplayNameRequiredError)
-        && !name;
+    const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { id: participantId } = getLocalParticipant(state) ?? {};
     const { joiningInProgress } = state['features/prejoin'];
     const { room } = state['features/base/conference'];
