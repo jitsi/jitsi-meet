@@ -1,3 +1,5 @@
+import { IReduxState } from '../app/types';
+
 let filterSupport: boolean | undefined;
 
 /**
@@ -16,6 +18,16 @@ export function checkBlurSupport() {
     }
 
     return filterSupport;
+}
+
+/**
+ * Checks if virtual background is enabled.
+ *
+ * @param {IReduxState} state - The state of the app.
+ * @returns {boolean} True if virtual background is enabled and false if virtual background is disabled.
+ */
+export function checkVirtualBackgroundEnabled(state: IReduxState) {
+    return state['features/base/config'].disableVirtualBackground !== true;
 }
 
 /**
