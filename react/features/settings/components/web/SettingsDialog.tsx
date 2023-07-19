@@ -141,7 +141,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
     const virtualBackgroundSupported = checkBlurSupport();
-    const enableVirtualBackground = checkVirtualBackgroundEnabled();
+    const enableVirtualBackground = checkVirtualBackgroundEnabled(state);
     const tabs: IDialogTab<any>[] = [];
     const _iAmVisitor = iAmVisitor(state);
 

@@ -72,7 +72,7 @@ function _mapStateToProps(state: IReduxState) {
         visible: checkBlurSupport()
         && getMultipleVideoSendingSupportFeatureFlag(state)
         && !isScreenVideoShared(state)
-        && checkVirtualBackgroundEnabled()
+        && checkVirtualBackgroundEnabled(state)
     };
 }
 
