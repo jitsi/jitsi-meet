@@ -1,6 +1,4 @@
-// @ts-expect-error
-import { Immersive } from 'react-native-immersive';
-import { AnyAction } from 'redux';
+import ImmersiveMode from 'react-native-immersive-mode';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
@@ -8,12 +6,18 @@ import { getCurrentConference } from '../../base/conference/functions';
 import { isAnyDialogOpen } from '../../base/dialog/functions';
 import { FULLSCREEN_ENABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import Platform from '../../base/react/Platform.native';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
-import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
+import { _setImmersiveSubscription } from './actions';
+import logger from './logger';
+
+type BarVisibilityType = {
+    navigationBottomBar: boolean;
+    statusBar: boolean;
+};
+
+type ImmersiveListener = (visibility: BarVisibilityType) => void;
 
 /**
  * Middleware that captures conference actions and activates or deactivates the
@@ -28,20 +32,14 @@ import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_IMMERSIVE_LISTENER:
-        return _setImmersiveListenerF(store, next, action);
-
     case APP_WILL_MOUNT: {
-        const result = next(action);
+        _setImmersiveListener(store, _onImmersiveChange.bind(undefined, store));
 
-        store.dispatch(
-            _setImmersiveListenerA(_onImmersiveChange.bind(undefined, store)));
-
-        return result;
+        break;
     }
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(_setImmersiveListenerA(undefined));
+        _setImmersiveListener(store, undefined);
         break;
 
     }
@@ -95,11 +93,9 @@ function _onImmersiveChange({ getState }: IStore) {
  * @returns {void}
  */
 function _setFullScreen(fullScreen: boolean) {
-    // XXX The React Native module Immersive is only implemented on Android and
-    // throws on other platforms.
-    if (Platform.OS === 'android') {
-        fullScreen ? Immersive.on() : Immersive.off();
-    }
+    logger.info(`Setting full-screen mode: ${fullScreen}`);
+    ImmersiveMode.fullLayout(fullScreen);
+    ImmersiveMode.setBarMode(fullScreen ? 'Full' : 'Normal');
 }
 
 /**
@@ -109,29 +105,14 @@ function _setFullScreen(fullScreen: boolean) {
  *
  * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The redux action {@code _SET_IMMERSIVE_LISTENER}
- * which is being dispatched in the specified store.
+ * @param {Function} listener - Listener for immersive state.
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setImmersiveListenerF({ getState }: IStore, next: Function, action: AnyAction) {
-    // XXX The React Native module Immersive is only implemented on Android and
-    // throws on other platforms.
-    if (Platform.OS === 'android') {
-        // Remove the old Immersive listener and add the new one.
-        const { listener: oldListener } = getState()['features/full-screen'];
-        const result = next(action);
-        const { listener: newListener } = getState()['features/full-screen'];
+function _setImmersiveListener({ dispatch, getState }: IStore, listener?: ImmersiveListener) {
+    const { subscription } = getState()['features/full-screen'];
 
-        if (oldListener !== newListener) {
-            oldListener && Immersive.removeImmersiveListener(oldListener);
-            newListener && Immersive.addImmersiveListener(newListener);
-        }
+    subscription?.remove();
 
-        return result;
-    }
-
-    return next(action);
+    dispatch(_setImmersiveSubscription(listener ? ImmersiveMode.addEventListener(listener) : undefined));
 }

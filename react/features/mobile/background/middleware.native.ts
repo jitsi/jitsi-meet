@@ -1,5 +1,4 @@
 import { AppState } from 'react-native';
-import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
@@ -23,12 +22,12 @@ MiddlewareRegistry.register(store => next => action => {
     case APP_WILL_MOUNT: {
         const { dispatch } = store;
 
-        _setAppStateListener(store, next, action, _onAppStateChange.bind(undefined, dispatch));
+        _setAppStateListener(store, _onAppStateChange.bind(undefined, dispatch));
         break;
     }
 
     case APP_WILL_UNMOUNT:
-        _setAppStateListener(store, next, action, undefined);
+        _setAppStateListener(store, undefined);
         break;
     }
 
@@ -55,20 +54,14 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  *
  * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The redux action {@code _SET_IMMERSIVE_LISTENER}
- * which is being dispatched in the specified store.
  * @param {any} listener - Listener for app state status.
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAppStateListener({ dispatch, getState }: IStore, next: Function, action: AnyAction, listener: any) {
+function _setAppStateListener({ dispatch, getState }: IStore, listener: any) {
     const { subscription } = getState()['features/background'];
-    const result = next(action);
 
     subscription?.remove();
-    listener && dispatch(_setAppStateSubscription(AppState.addEventListener('change', listener)));
 
-    return result;
+    dispatch(_setAppStateSubscription(listener ? AppState.addEventListener('change', listener) : undefined));
 }

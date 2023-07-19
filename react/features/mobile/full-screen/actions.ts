@@ -1,19 +1,21 @@
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
+import { NativeEventSubscription } from 'react-native';
+
+import { _SET_IMMERSIVE_SUBSCRIPTION } from './actionTypes';
 
 /**
  * Sets the change event listener to be used with react-native-immersive's API.
  *
- * @param {Function} [listener] - The function to be used with
+ * @param {Function} subscription - The function to be used with
  * react-native-immersive's API as the change event listener.
  * @protected
  * @returns {{
- *     type: _SET_IMMERSIVE_LISTENER,
- *     listener: ?Function
+ *     type: _SET_IMMERSIVE_SUBSCRIPTION,
+ *     subscription: ?NativeEventSubscription
  * }}
  */
-export function _setImmersiveListener(listener?: Function) {
+export function _setImmersiveSubscription(subscription?: NativeEventSubscription) {
     return {
-        type: _SET_IMMERSIVE_LISTENER,
-        listener
+        type: _SET_IMMERSIVE_SUBSCRIPTION,
+        subscription
     };
 }
