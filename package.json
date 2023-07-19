@@ -89,7 +89,7 @@
     "react-native-dialog": "https://github.com/jitsi/react-native-dialog/releases/download/v9.2.2-jitsi.1/react-native-dialog-9.2.2.tgz",
     "react-native-gesture-handler": "2.9.0",
     "react-native-get-random-values": "1.7.2",
-    "react-native-immersive": "2.0.0",
+    "react-native-immersive-mode": "2.0.1",
     "react-native-keep-awake": "4.0.0",
     "react-native-orientation-locker": "1.5.0",
     "react-native-pager-view": "5.4.9",

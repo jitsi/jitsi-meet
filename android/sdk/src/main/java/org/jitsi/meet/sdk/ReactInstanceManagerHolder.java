@@ -105,7 +105,7 @@ class ReactInstanceManagerHolder {
             new com.oney.WebRTCModule.WebRTCModulePackage(),
             new com.swmansion.gesturehandler.RNGestureHandlerPackage(),
             new org.linusu.RNGetRandomValuesPackage(),
-            new com.rnimmersive.RNImmersivePackage(),
+            new com.rnimmersivemode.RNImmersiveModePackage(),
             new com.swmansion.rnscreens.RNScreensPackage(),
             new com.zmxv.RNSound.RNSoundPackage(),
             new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
