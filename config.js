@@ -1306,7 +1306,7 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When false, virtual background feature will be disabled.
+    // When true, virtual background feature will be disabled.
     // disableVirtualBackground: false,
 
     // When true the user cannot add more images to be used as virtual background.
