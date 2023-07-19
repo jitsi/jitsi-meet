@@ -245,6 +245,12 @@ function rename_breakout_room(room_jid, name)
     if main_room then
         if main_room._data.breakout_rooms then
             main_room._data.breakout_rooms[room_jid] = name;
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(room_jid);
+
+            if breakout_room then
+                breakout_room:set_subject(breakout_room.jid, name);
+            end
+
         end
         main_room:save(true);
         broadcast_breakout_rooms(main_room_jid);
@@ -336,12 +342,12 @@ end
 function on_breakout_room_pre_create(event)
     local breakout_room = event.room;
     local main_room, main_room_jid = get_main_room(breakout_room.jid);
+    local name = main_room._data.breakout_rooms[breakout_room.jid];
 
     -- Only allow existent breakout rooms to be started.
     -- Authorisation of breakout rooms is done by their random uuid name
-    if main_room and main_room._data.breakout_rooms and main_room._data.breakout_rooms[breakout_room.jid] then
-        breakout_room._data.subject = main_room._data.breakout_rooms[breakout_room.jid];
-        breakout_room.save();
+    if main_room and main_room._data.breakout_rooms and name then
+        breakout_room:set_subject(breakout_room.jid, name);
     else
         module:log('debug', 'Invalid breakout room %s will not be created.', breakout_room.jid);
         breakout_room:destroy(main_room_jid, 'Breakout room is invalid.');

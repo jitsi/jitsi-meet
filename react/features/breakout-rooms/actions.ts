@@ -84,13 +84,15 @@ export function closeBreakoutRoom(roomId: string) {
  * @param {string} name - New name / subject for the breakout room.
  * @returns {Function}
  */
-export function renameBreakoutRoom(breakoutRoomJid: string, name: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        sendAnalytics(createBreakoutRoomsEvent('rename'));
+export function renameBreakoutRoom(breakoutRoomJid: string, name = '') {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const trimmedName = name.trim();
 
-        // $FlowExpectedError
-        getCurrentConference(getState)?.getBreakoutRooms()
-            ?.renameBreakoutRoom(breakoutRoomJid, name);
+        if (trimmedName.length !== 0) {
+            sendAnalytics(createBreakoutRoomsEvent('rename'));
+            getCurrentConference(getState)?.getBreakoutRooms()
+                ?.renameBreakoutRoom(breakoutRoomJid, trimmedName);
+        }
     };
 }
 
