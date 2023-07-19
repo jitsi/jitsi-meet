@@ -69,7 +69,10 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
-        visible: checkBlurSupport() && getMultipleVideoSendingSupportFeatureFlag(state) && !isScreenVideoShared(state) && checkVirtualBackgroundEnabled()
+        visible: checkBlurSupport()
+        && getMultipleVideoSendingSupportFeatureFlag(state)
+        && !isScreenVideoShared(state)
+        && checkVirtualBackgroundEnabled()
     };
 }
 

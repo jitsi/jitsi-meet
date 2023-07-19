@@ -1307,7 +1307,7 @@ var config = {
     // },
 
     // When false, virtual background feature will be disabled.
-    // enableVirtualBackground: true,
+    // disableVirtualBackground: false,
 
     // When true the user cannot add more images to be used as virtual background.
     // Only the default ones from will be available.
