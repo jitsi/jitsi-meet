@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { batch, connect } from 'react-redux';
+import { batch, connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { getButtonNotifyMode, getParticipantMenuButtonsWithNotifyClick } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -17,7 +18,9 @@ import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuIte
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { renderConnectionStatus } from '../../actions.web';
+import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
@@ -139,6 +142,22 @@ const LocalVideoMenuTriggerButton = ({
 }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
+    const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
+
+    const notifyClick = useCallback(
+        (buttonKey: string) => {
+            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+
+            if (!notifyMode) {
+                return;
+            }
+
+            APP.API.notifyParticipantMenuButtonClicked(
+                buttonKey,
+                _localParticipantId,
+                notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+            );
+        }, [ buttonsWithNotifyClick, getButtonNotifyMode ]);
 
     const _onPopoverOpen = useCallback(() => {
         showPopover?.();
@@ -164,22 +183,35 @@ const LocalVideoMenuTriggerButton = ({
                     {_showLocalVideoFlipButton
                         && <FlipLocalVideoButton
                             className = { _overflowDrawer ? classes.flipText : '' }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.FLIP_LOCAL_VIDEO) }
+                            notifyMode = { getButtonNotifyMode(BUTTONS.FLIP_LOCAL_VIDEO, buttonsWithNotifyClick) }
                             onClick = { hidePopover } />
                     }
                     {_showHideSelfViewButton
                         && <HideSelfViewVideoButton
                             className = { _overflowDrawer ? classes.flipText : '' }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.HIDE_SELF_VIEW) }
+                            notifyMode = { getButtonNotifyMode(BUTTONS.HIDE_SELF_VIEW, buttonsWithNotifyClick) }
                             onClick = { hidePopover } />
                     }
                     {
                         _showPinToStage && <TogglePinToStageButton
                             className = { _overflowDrawer ? classes.flipText : '' }
                             noIcon = { true }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.PIN_TO_STAGE) }
+                            notifyMode = { getButtonNotifyMode(BUTTONS.PIN_TO_STAGE, buttonsWithNotifyClick) }
                             onClick = { hidePopover }
                             participantID = { _localParticipantId } />
                     }
-                    {isMobileBrowser()
-                        && <ConnectionStatusButton participantId = { _localParticipantId } />
+                    {
+                        isMobileBrowser() && <ConnectionStatusButton
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.CONN_STATUS) }
+                            notifyMode = { getButtonNotifyMode(BUTTONS.CONN_STATUS, buttonsWithNotifyClick) }
+                            participantID = { _localParticipantId } />
                     }
                 </ContextMenuItemGroup>
             </ContextMenu>

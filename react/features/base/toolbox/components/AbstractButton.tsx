@@ -337,12 +337,12 @@ export default class AbstractButton<P extends IProps, S=any> extends Component<P
      * @private
      * @returns {void}
      */
-    _onClick(e?: React.MouseEvent<HTMLElement> | GestureResponderEvent) {
-        const { afterClick, handleClick, notifyMode, buttonKey } = this.props;
+    _onClick(e?: React.MouseEvent | GestureResponderEvent) {
+        const { afterClick, buttonKey, handleClick, notifyMode } = this.props;
 
         if (typeof APP !== 'undefined' && notifyMode) {
             APP.API.notifyToolbarButtonClicked(
-                buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+                    buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
         }
 

@@ -4,12 +4,18 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../../../base/avatar/components/Avatar';
+import {
+    getButtonNotifyMode,
+    getParticipantMenuButtonsWithNotifyClick
+} from '../../../../../base/config/functions.web';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
+import { NOTIFY_CLICK_MODE } from '../../../../../toolbox/constants';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
+import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../../../../video-menu/constants';
 import { AVATAR_SIZE } from '../../../../constants';
 
 
@@ -72,11 +78,30 @@ export const RoomParticipantContextMenu = ({
     const lowerMenu = useCallback(() => onSelect(true), [ onSelect ]);
     const rooms: Object = useSelector(getBreakoutRooms);
     const overflowDrawer = useSelector(showOverflowDrawer);
+    const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
+
+    const notifyClick = useCallback(
+        (buttonKey: string, participantId?: string) => {
+            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+
+            if (!notifyMode) {
+                return;
+            }
+
+            APP.API.notifyParticipantMenuButtonClicked(
+                buttonKey,
+                participantId,
+                notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+            );
+        }, [ buttonsWithNotifyClick, getButtonNotifyMode ]);
 
     const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: any) => {
         if (room.id !== entity?.room?.id) {
             return (<SendToRoomButton
                 key = { room.id }
+                // eslint-disable-next-line react/jsx-no-bind
+                notifyClick = { () => notifyClick(BUTTONS.SEND_PARTICIPANT_TO_ROOM, entity?.jid) }
+                notifyMode = { getButtonNotifyMode(BUTTONS.SEND_PARTICIPANT_TO_ROOM, buttonsWithNotifyClick) }
                 onClick = { lowerMenu }
                 participantID = { entity?.jid ?? '' }
                 room = { room } />);

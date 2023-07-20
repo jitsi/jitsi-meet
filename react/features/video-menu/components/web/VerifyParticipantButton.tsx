@@ -1,38 +1,34 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../app/types';
 import { IconCheck } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { startVerification } from '../../../e2ee/actions';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { IButtonProps } from '../../types';
 
 /**
- * The type of the React {@code Component} props of
- * {@link VerifyParticipantButton}.
+ * Implements a React {@link Component} which displays a button that
+ * verifies the participant.
+ *
+ * @returns {JSX.Element}
  */
-interface IProps {
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: IStore['dispatch'];
-
-    /**
-      * The ID of the participant that this button is supposed to verified.
-      */
-    participantID: string;
-}
-
 const VerifyParticipantButton = ({
-    dispatch,
+    notifyClick,
+    notifyMode,
     participantID
-}: IProps) => {
+}: IButtonProps): JSX.Element => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
 
     const _handleClick = useCallback(() => {
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
+        }
         dispatch(startVerification(participantID));
-    }, [ participantID ]);
+    }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     return (
         <ContextMenuItem
@@ -46,20 +42,4 @@ const VerifyParticipantButton = ({
     );
 };
 
-/**
- * Maps (parts of) the Redux state to the associated {@code RemoteVideoMenuTriggerButton}'s props.
- *
- * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The own props of the component.
- * @private
- * @returns {IProps}
- */
-function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
-    const { participantID } = ownProps;
-
-    return {
-        _participantID: participantID
-    };
-}
-
-export default connect(_mapStateToProps)(VerifyParticipantButton);
+export default VerifyParticipantButton;
