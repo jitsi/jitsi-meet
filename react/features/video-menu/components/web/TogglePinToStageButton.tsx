@@ -6,8 +6,10 @@ import { IconPin, IconPinned } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { togglePinStageParticipant } from '../../../filmstrip/actions.web';
 import { getPinnedActiveParticipants } from '../../../filmstrip/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { IButtonProps } from '../../types';
 
-interface IProps {
+interface IProps extends IButtonProps {
 
     /**
      * Button text class name.
@@ -23,22 +25,28 @@ interface IProps {
      * Click handler executed aside from the main action.
      */
     onClick?: Function;
-
-    /**
-     * The ID for the participant on which the button will act.
-     */
-    participantID: string;
 }
 
-const TogglePinToStageButton = ({ className, noIcon = false, onClick, participantID }: IProps) => {
+const TogglePinToStageButton = ({
+    className,
+    noIcon = false,
+    notifyClick,
+    notifyMode,
+    onClick,
+    participantID
+}: IProps): JSX.Element => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const isActive = Boolean(useSelector(getPinnedActiveParticipants)
         .find(p => p.participantId === participantID));
     const _onClick = useCallback(() => {
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
+        }
         dispatch(togglePinStageParticipant(participantID));
         onClick?.();
-    }, [ participantID, isActive ]);
+    }, [ dispatch, isActive, notifyClick, onClick, participantID ]);
 
     const text = isActive
         ? t('videothumbnail.unpinFromStage')

@@ -8,8 +8,10 @@ import { IconRingGroup } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
 import { IRoom } from '../../../breakout-rooms/types';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { IButtonProps } from '../../types';
 
-interface IProps {
+interface IProps extends IButtonProps {
 
     /**
      * Click handler.
@@ -17,24 +19,29 @@ interface IProps {
     onClick?: Function;
 
     /**
-     * The ID for the participant on which the button will act.
-     */
-    participantID: string;
-
-    /**
      * The room to send the participant to.
      */
     room: IRoom;
 }
 
-const SendToRoomButton = ({ onClick, participantID, room }: IProps) => {
+const SendToRoomButton = ({
+    notifyClick,
+    notifyMode,
+    onClick,
+    participantID,
+    room
+}: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _onClick = useCallback(() => {
+        notifyClick?.();
+        if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            return;
+        }
         onClick?.();
         sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
         dispatch(sendParticipantToRoom(participantID, room.id));
-    }, [ participantID, room ]);
+    }, [ dispatch, notifyClick, notifyMode, onClick, participantID, room, sendAnalytics ]);
 
     const roomName = room.name || t('breakoutRooms.mainRoom');
 

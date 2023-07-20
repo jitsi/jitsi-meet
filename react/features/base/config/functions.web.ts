@@ -1,7 +1,14 @@
 import { IReduxState } from '../../app/types';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import { NOTIFY_CLICK_MODE } from '../../toolbox/constants';
 
-import { IConfig, IDeeplinkingConfig, IDeeplinkingMobileConfig, IDeeplinkingPlatformConfig } from './configType';
+import {
+    IConfig,
+    IDeeplinkingConfig,
+    IDeeplinkingMobileConfig,
+    IDeeplinkingPlatformConfig,
+    NotifyClickButton
+} from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
 export * from './functions.any';
@@ -120,14 +127,21 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
 }
 
 /**
- * Returns the list of buttons that have that notify the api when clicked.
+ * Common logic to gather buttons that have to notify the api when clicked.
  *
- * @param {Object} state - The redux state.
- * @returns {Array} - The list of buttons.
+ * @param {Array} buttonsWithNotifyClick - The array of systme buttons that need to notify the api.
+ * @param {Array} customButtons - The custom buttons.
+ * @returns {Array}
  */
-export function getButtonsWithNotifyClick(state: IReduxState): Array<{ key: string; preventExecution: boolean; }> {
-    const { buttonsWithNotifyClick, customToolbarButtons } = state['features/base/config'];
-    const customButtons = customToolbarButtons?.map(({ id }) => {
+const buildButtonsArray = (
+        buttonsWithNotifyClick?: NotifyClickButton[],
+        customButtons?: {
+            icon: string;
+            id: string;
+            text: string;
+        }[]
+): NotifyClickButton[] => {
+    const customButtonsWithNotifyClick = customButtons?.map(({ id }) => {
         return {
             key: id,
             preventExecution: false
@@ -135,13 +149,69 @@ export function getButtonsWithNotifyClick(state: IReduxState): Array<{ key: stri
     });
 
     const buttons = Array.isArray(buttonsWithNotifyClick)
-        ? buttonsWithNotifyClick as Array<{ key: string; preventExecution: boolean; }>
+        ? buttonsWithNotifyClick as NotifyClickButton[]
         : [];
 
-    if (customButtons) {
-        buttons.push(...customButtons);
+    if (customButtonsWithNotifyClick) {
+        buttons.push(...customButtonsWithNotifyClick);
     }
 
     return buttons;
+};
+
+/**
+ * Returns the list of toolbar buttons that have to notify the api when clicked.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array} - The list of buttons.
+ */
+export function getButtonsWithNotifyClick(
+        state: IReduxState
+): NotifyClickButton[] {
+    const { buttonsWithNotifyClick, customToolbarButtons } = state['features/base/config'];
+
+    return buildButtonsArray(
+        buttonsWithNotifyClick,
+        customToolbarButtons
+    );
 }
 
+/**
+ * Returns the list of participant menu buttons that have that notify the api when clicked.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array} - The list of participant menu buttons.
+ */
+export function getParticipantMenuButtonsWithNotifyClick(
+        state: IReduxState
+): NotifyClickButton[] {
+    const { participantMenuButtonsWithNotifyClick, customParticipantMenuButtons } = state['features/base/config'];
+
+    return buildButtonsArray(
+        participantMenuButtonsWithNotifyClick,
+        customParticipantMenuButtons
+    );
+}
+
+/**
+ * Returns the notify mode for the specified button.
+ *
+ * @param {string} buttonKey - The button key.
+ * @param {Array} buttonsWithNotifyClick - The buttons with notify click.
+ * @returns {string|undefined}
+ */
+export const getButtonNotifyMode = (
+        buttonKey: string,
+        buttonsWithNotifyClick?: NotifyClickButton[]
+): string | undefined => {
+    const notify = buttonsWithNotifyClick?.find(
+        (btn: NotifyClickButton) =>
+            (typeof btn === 'string' && btn === buttonKey) || (typeof btn === 'object' && btn.key === buttonKey)
+    );
+
+    if (notify) {
+        return typeof notify === 'string' || notify.preventExecution
+            ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+            : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+    }
+};
