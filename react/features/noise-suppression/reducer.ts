@@ -15,14 +15,14 @@ const DEFAULT_STATE = {
     enabled: false
 };
 
+PersistenceRegistry.register(STORE_NAME);
+
 /**
  * Reduces the Redux actions of the feature features/noise-suppression.
  */
 ReducerRegistry.register<INoiseSuppressionState>(STORE_NAME,
 (state = DEFAULT_STATE, action): INoiseSuppressionState => {
     const { enabled } = action;
-
-    PersistenceRegistry.register(STORE_NAME);
 
     switch (action.type) {
     case SET_NOISE_SUPPRESSION_ENABLED:
