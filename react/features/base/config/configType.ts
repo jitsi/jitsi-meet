@@ -126,6 +126,25 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IWatchRTCConfiguration {
+    allowBrowserLogCollection?: boolean;
+    collectionInterval?: number;
+    console?: {
+        level: string;
+        override: boolean;
+    };
+    debug?: boolean;
+    keys?: any;
+    logGetStats?: boolean;
+    proxyUrl?: string;
+    rtcApiKey: string;
+    rtcPeerId?: string;
+    rtcRoomId?: string;
+    rtcTags?: string[];
+    rtcToken?: string;
+    wsUrl?: string;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -145,6 +164,7 @@ export interface IConfig {
         rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
+        watchRTCEnabled?: boolean;
         whiteListedEvents?: string[];
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
@@ -560,6 +580,7 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
     };
+    watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;

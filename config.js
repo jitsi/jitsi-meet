@@ -1008,6 +1008,11 @@ var config = {
         //      "libs/analytics-ga.min.js", // google-analytics
         //      "https://example.com/my-custom-analytics.js",
         // ],
+
+        // By enabling watchRTCEnabled option you would want to use watchRTC feature
+        // This would also require to configure watchRTCConfigParams.
+        // Please remember to keep rtcstatsEnabled disabled for watchRTC to work.
+        // watchRTCEnabled: false,
     },
 
     // Logs that should go be passed through the 'log' event if a handler is defined for it
@@ -1601,6 +1606,40 @@ var config = {
     //     // The server used to support whiteboard collaboration.
     //     // https://github.com/jitsi/excalidraw-backend
     //     collabServerBaseUrl: 'https://excalidraw-backend.example.com',
+    // },
+
+    // The watchRTC initialize config params as described :
+    // https://testrtc.com/docs/installing-the-watchrtc-javascript-sdk/#h-set-up-the-sdk
+    // https://www.npmjs.com/package/@testrtc/watchrtc-sdk
+    // watchRTCConfigParams: {
+    //         /** Watchrtc api key */
+    //         rtcApiKey: string;
+    //         /** Identifier for the session */
+    //         rtcRoomId?: string;
+    //         /** Identifier for the current peer */
+    //         rtcPeerId?: string;
+    //         /**
+    //          * ["tag1", "tag2", "tag3"]
+    //          * @deprecated use 'keys' instead
+    //          */
+    //         rtcTags?: string[];
+    //         /** { "key1": "value1", "key2": "value2"} */
+    //         keys?: any;
+    //         /** Enables additional logging */
+    //         debug?: boolean;
+    //         rtcToken?: string;
+    //         /**
+    //          * @deprecated No longer needed. Use "proxyUrl" instead.
+    //          */
+    //         wsUrl?: string;
+    //         proxyUrl?: string;
+    //         console?: {
+    //             level: string;
+    //             override: boolean;
+    //         };
+    //         allowBrowserLogCollection?: boolean;
+    //         collectionInterval?: number;
+    //         logGetStats?: boolean;
     // },
 };
 
