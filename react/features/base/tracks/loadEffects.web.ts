@@ -1,4 +1,5 @@
 import { IStore } from '../../app/types';
+import { NoiseSuppressionEffect } from '../../stream-effects/noise-suppression/NoiseSuppressionEffect';
 import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 
 import logger from './logger';
@@ -12,6 +13,9 @@ import logger from './logger';
 export default function loadEffects(store: IStore): Promise<any> {
     const state = store.getState();
     const virtualBackground = state['features/virtual-background'];
+    const noiseSuppression = state['features/noise-suppression'];
+    const { noiseSuppression: nsOptions } = state['features/base/config'];
+
 
     const backgroundPromise = virtualBackground.backgroundEffectEnabled
         ? createVirtualBackgroundEffect(virtualBackground)
@@ -22,5 +26,9 @@ export default function loadEffects(store: IStore): Promise<any> {
             })
         : Promise.resolve();
 
-    return Promise.all([ backgroundPromise ]);
+    const noiseSuppressionPromise = noiseSuppression?.enabled
+        ? Promise.resolve(new NoiseSuppressionEffect(nsOptions))
+        : Promise.resolve();
+
+    return Promise.all([ backgroundPromise, noiseSuppressionPromise ]);
 }
