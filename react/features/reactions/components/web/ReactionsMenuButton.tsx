@@ -1,15 +1,11 @@
-import React, { ReactElement, useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
-import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp, IconFaceSmile } from '../../../base/icons/svg';
-import { raiseHand } from '../../../base/participants/actions';
-import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import AbstractButton, { type IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import ToolboxButtonWithPopup from '../../../base/toolbox/components/web/ToolboxButtonWithPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -120,16 +116,6 @@ function ReactionsMenuButton({
         isOpen && toggleReactionsMenu();
     }, [ isOpen, toggleReactionsMenu ]);
 
-    const localParticipant = useSelector(getLocalParticipant);
-    const raisedHand = useMemo(() => hasRaisedHand(localParticipant), [ localParticipant ]);
-    const handleClick = useCallback(() => {
-        sendAnalytics(createToolbarEvent(
-            'raise.hand',
-            { enable: !raisedHand }));
-
-        dispatch(raiseHand(!raisedHand));
-    }, [ raisedHand ]);
-
     if (!showRaiseHand && (!_reactionsButtonEnabled || !_reactionsEnabled)) {
         return null;
     }
@@ -145,7 +131,6 @@ function ReactionsMenuButton({
             ? (
                 <RaiseHandButton
                     buttonKey = { buttonKey }
-                    handleClick = { handleClick }
                     notifyMode = { notifyMode } />)
             : (
                 <ToolboxButtonWithPopup
@@ -158,7 +143,6 @@ function ReactionsMenuButton({
                     visible = { isOpen }>
                     <RaiseHandButton
                         buttonKey = { buttonKey }
-                        handleClick = { handleClick }
                         notifyMode = { notifyMode } />
                 </ToolboxButtonWithPopup>);
     } else {
