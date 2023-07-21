@@ -8,8 +8,15 @@ import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 
 /**
  * JitsiMeetExternalAPI id - unique for a webpage.
+ * TODO: This shouldn't be computed here.
  */
-export const API_ID = parseURLParams(window.location).jitsi_meet_external_api_id;
+let _apiID;
+
+try {
+    _apiID = parseURLParams(window.location).jitsi_meet_external_api_id;
+} catch (_) { /* Ignore. */ }
+
+export const API_ID = _apiID;
 
 /**
  * The payload name for the datachannel/endpoint text message event.
