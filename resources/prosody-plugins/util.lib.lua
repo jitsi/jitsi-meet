@@ -291,7 +291,7 @@ end
 -- @returns result of the http call or nil if
 -- the external call failed after the last retry
 function http_get_with_retry(url, retry, auth_token)
-    local content, code;
+    local content, code, cache_for;
     local timeout_occurred;
     local wait, done = async.waiter();
     local request_headers = http_headers or {}
@@ -304,7 +304,17 @@ function http_get_with_retry(url, retry, auth_token)
             code = code_;
             if code == 200 or code == 204 then
                 module:log("debug", "External call was successful, content %s", content_);
-                content = content_
+                content = content_;
+
+                -- if there is cache-control header, let's return the max-age value
+                if response_ and response_.headers and response_.headers['cache-control'] then
+                    local vals = {};
+                    for k, v in response_.headers['cache-control']:gmatch('(%w+)=(%w+)') do
+                      vals[k] = v;
+                    end
+                    -- max-age=123 will be parsed by the regex ^ to age=123
+                    cache_for = vals.age;
+                end
             else
                 module:log("warn", "Error on GET request: Code %s, Content %s",
                     code_, content_);
@@ -351,7 +361,7 @@ function http_get_with_retry(url, retry, auth_token)
     timer.add_task(http_timeout, cancel);
     wait();
 
-    return content, code;
+    return content, code, cache_for;
 end
 
 -- Checks whether there is status in the <x node
