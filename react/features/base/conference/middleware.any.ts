@@ -24,7 +24,7 @@ import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
-import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
@@ -392,17 +392,21 @@ function _logJwtErrors(message: string, state: IReduxState) {
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     _logJwtErrors(action.error.message, getState());
 
-    dispatch(showErrorNotification({
-        descriptionKey: 'dialog.tokenAuthFailed',
-        titleKey: 'dialog.tokenAuthFailedTitle'
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    const { connection, error } = action;
+
+    // do not show the notification when we will prompt the user
+    // for username and password
+    if (error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
+        && getState()['features/base/jwt'].jwt) {
+        dispatch(showErrorNotification({
+            descriptionKey: 'dialog.tokenAuthFailed',
+            titleKey: 'dialog.tokenAuthFailedTitle'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    }
 
     const result = next(action);
 
     _removeUnloadHandler(getState);
-
-    const { connection } = action;
-    const { error } = action;
 
     forEachConference(getState, conference => {
         // TODO: revisit this
