@@ -35,6 +35,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
 import { destroyLocalTracks } from '../tracks/actions.any';
+import { getLocalTracks } from '../tracks/functions.any';
 
 import {
     CONFERENCE_FAILED,
@@ -204,10 +205,19 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         if (newConfig) {
             dispatch(overwriteConfig(newConfig)) // @ts-ignore
-                .then(dispatch(conferenceWillLeave(conference)))
-                .then(conference.leave())
-                .then(dispatch(disconnect()))
-                .then(dispatch(connect()));
+                .then(() => dispatch(conferenceWillLeave(conference)))
+                .then(() => conference.leave())
+                .then(() => dispatch(disconnect()))
+                .then(() => dispatch(connect()))
+                .then(() => {
+                    // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                    if (typeof APP !== 'undefined') {
+                        const localTracks = getLocalTracks(getState()['features/base/tracks']);
+                        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+
+                        APP.conference.startConference(jitsiTracks).catch(logger.error);
+                    }
+                });
         }
 
         break;
