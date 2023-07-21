@@ -161,7 +161,7 @@ end);
 
 function handle_create_persistent_lobby(event)
     local room = event.room;
-    prosody.events.fire_event("create-lobby-room", { room = room; });
+    prosody.events.fire_event("create-lobby-room", event);
 
     set_persistent_lobby(room);
     room:set_persistent(true);
