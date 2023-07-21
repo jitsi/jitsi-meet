@@ -403,7 +403,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         -- Check for display name if missing return an error
         local displayName = stanza:get_child_text('nick', 'http://jabber.org/protocol/nick');
-        if not displayName or #displayName == 0 then
+        if (not displayName or #displayName == 0) and not room._data.lobby_skip_display_name_check then
             local reply = st.error_reply(stanza, 'modify', 'not-acceptable');
             reply.tags[1].attr.code = '406';
             reply:tag('displayname-required', { xmlns = 'http://jitsi.org/jitmeet', lobby = 'true' }):up():up();
@@ -418,6 +418,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if not affiliation or affiliation == 'none' then
             local reply = st.error_reply(stanza, 'auth', 'registration-required');
             reply.tags[1].attr.code = '407';
+            if room._data.lobby_extra_reason then
+                reply:tag(room._data.lobby_extra_reason, { xmlns = 'http://jitsi.org/jitmeet' }):up();
+            end
             reply:tag('lobbyroom', { xmlns = 'http://jitsi.org/jitmeet' }):text(room._data.lobbyroom):up():up();
 
             -- TODO: Drop this tag at some point (when all mobile clients and jigasi are updated), as this violates the rfc
@@ -466,6 +469,8 @@ function handle_create_lobby(event)
     end
     -- Now it is safe to set the room to members only
     room:set_members_only(true);
+    room._data.lobby_extra_reason = event.reason;
+    room._data.lobby_skip_display_name_check = event.skip_display_name_check;
 
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
