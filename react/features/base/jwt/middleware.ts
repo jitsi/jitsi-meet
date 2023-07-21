@@ -153,6 +153,12 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     _overwriteLocalParticipant(
                         store, { ...newUser,
                             features: context.features });
+                } else if (jwtPayload.name || jwtPayload.picture) {
+                    // there are some tokens (firebase) having picture and name on the main level.
+                    _overwriteLocalParticipant(store, {
+                        avatarURL: jwtPayload.picture,
+                        name: jwtPayload.name
+                    });
                 }
             }
         } else if (typeof APP === 'undefined') {
