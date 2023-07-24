@@ -16,6 +16,19 @@ const NotificationsTransition = ({ children }: { children: ReactElement[]; }) =>
         const toMount = children?.filter(child =>
             childrenToRender.findIndex(c => c.props.uid === child.props.uid) === -1) ?? [];
 
+        /**
+         * Update current notifications.
+         * In some cases the UID is the same but the other props change.
+         * This way we make sure the notification displays the latest info.
+         */
+        children.forEach(child => {
+            const index = childrenToRender.findIndex(c => c.props.uid === child.props.uid);
+
+            if (index !== -1) {
+                childrenToRender[index] = child;
+            }
+        });
+
         if (toUnmount.length > 0) {
             const ids = new Map(timeoutIds);
 
