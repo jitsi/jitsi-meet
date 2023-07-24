@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -23,7 +24,7 @@ import { LeaveButton } from './LeaveButton';
 import RoomActionEllipsis from './RoomActionEllipsis';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomParticipantContextMenu } from './RoomParticipantContextMenu';
-import { useTranslation } from 'react-i18next';
+
 
 interface IProps {
 
@@ -68,7 +69,7 @@ export const RoomList = ({ searchString }: IProps) => {
             {inBreakoutRoom && <LeaveButton className = { classes.topMargin } />}
             {showAutoAssign && <AutoAssignButton className = { classes.topMargin } />}
             <div
-                aria-label = {t('breakoutRooms.breakoutList', 'breakout list')}
+                aria-label = { t('breakoutRooms.breakoutList', 'breakout list') }
                 className = { classes.topMargin }
                 id = 'breakout-rooms-list'
                 role = 'list' >

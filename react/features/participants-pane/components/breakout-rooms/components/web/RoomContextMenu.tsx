@@ -87,7 +87,7 @@ export const RoomContextMenu = ({
 
     return (
         <ContextMenu
-            accessibilityLabel = {t('breakoutRooms.settings', 'Settings')}
+            accessibilityLabel = { t('breakoutRooms.settings', 'Settings') }
             entity = { room }
             isDrawerOpen = { Boolean(room) }
             offsetTarget = { offsetTarget }

@@ -1,4 +1,5 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { FocusOn } from 'react-focus-on';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -8,6 +9,8 @@ import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { spacing } from '../../Tokens';
+import useContextMenu from '../../hooks/useContextMenu.web';
+import { IRoom } from '../../../../breakout-rooms/types';
 
 /**
  * Get a style property from a style declaration as a float.
@@ -180,15 +183,19 @@ const ContextMenu = ({
     tabIndex,
     ...aria
 }: IProps) => {
-    const [ isHidden, setIsHidden ] = useState(true);
+    const [isHidden, setIsHidden] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { classes: styles, cx } = useStyles();
     const _overflowDrawer = useSelector(showOverflowDrawer);
+    const [menuLeave, lowerMenu] = useContextMenu<IRoom>();
 
+
+    // console.log('\\PPPPPP', hidden)
     useLayoutEffect(() => {
         if (_overflowDrawer) {
             return;
         }
+        console.log('\\LLLL', entity, offsetTarget, containerRef.current, offsetTarget?.offsetParent);
         if (entity && offsetTarget
             && containerRef.current
             && offsetTarget?.offsetParent
@@ -216,70 +223,185 @@ const ContextMenu = ({
                 : `${offsetTop}`;
 
             setIsHidden(false);
+
+            console.log('\\FFFF', offsetTarget, isHidden)
         } else {
             hidden === undefined && setIsHidden(true);
+            console.log('\\CCCCC', offsetTarget, isHidden)
         }
-    }, [ entity, offsetTarget, _overflowDrawer ]);
+    }, [entity, offsetTarget, _overflowDrawer]);
 
     useEffect(() => {
         if (hidden !== undefined) {
             setIsHidden(hidden);
         }
-    }, [ hidden ]);
+    }, [hidden]);
 
     if (_overflowDrawer && inDrawer) {
         return (<div
-            className = { styles.drawer }
-            onClick = { onDrawerClose }>
+            className={styles.drawer}
+            onClick={onDrawerClose}>
             {children}
         </div>);
     }
 
-/*     const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        const { current: list } = containerRef;
+        const currentFocus = document.activeElement;
+
+        const moveFocus = (
+            list: Element | null,
+            currentFocus: Element | null,
+            traversalFunction: (
+                list: Element | null,
+                currentFocus: Element | null
+            ) => Element | null
+        ) => {
+            let wrappedOnce = false;
+            let nextFocus = traversalFunction(list, currentFocus);
+
+            while (list && nextFocus) {
+                // Prevent infinite loop.
+                if (nextFocus === list.firstChild) {
+                    if (wrappedOnce) {
+                        return;
+                    }
+                    wrappedOnce = true;
+                }
+
+                // Same logic as useAutocomplete.js
+                const nextFocusDisabled
+                    = (nextFocus as HTMLInputElement).disabled
+                    || nextFocus.getAttribute('aria-disabled') === 'true';
+
+                if (!nextFocus.hasAttribute('tabindex') || nextFocusDisabled) {
+                    // Move to the next element.
+                    nextFocus = traversalFunction(list, nextFocus);
+                } else {
+                    (nextFocus as HTMLElement).focus();
+
+                    return;
+                }
+            }
+        };
+
+        const previousItem = (
+            list: Element | null,
+            item: Element | null
+        ): Element | null => {
+            function lastChild(element: Element | null): Element | null {
+                while (element?.lastElementChild) {
+                    element = element.lastElementChild;
+                }
+
+                return element;
+            }
+
+            if (!list) {
+                return null;
+            }
+            if (list === item) {
+                return list.lastElementChild;
+            }
+            if (item && item.previousElementSibling) {
+                return lastChild(item.previousElementSibling);
+            }
+            if (item && item.parentElement !== list) {
+                return item.parentElement;
+            }
+
+            return lastChild(list.lastElementChild);
+        };
+
+        const nextItem = (
+            list: Element | null,
+            item: Element | null
+        ): Element | null => {
+            if (!list) {
+                return null;
+            }
+
+            if (list === item) {
+                return list.firstElementChild;
+            }
+            if (item && item.firstElementChild) {
+                return item.firstElementChild;
+            }
+            if (item && item.nextElementSibling) {
+                return item.nextElementSibling;
+            }
+            while (item && item.parentElement !== list) {
+                item = item.parentElement;
+                if (item && item.nextElementSibling) {
+                    return item.nextElementSibling;
+                }
+            }
+
+            return list?.firstElementChild;
+        };
+
         if (event.key === 'Escape') {
             // Close the menu or perform desired action
+            console.log('\\AAA', 'Escape');
+            event.preventDefault();
+            menuLeave();
+
+            // lowerMenu();
+            // list!.className = styles.contextMenuHidden;
+
         } else if (event.key === 'ArrowUp') {
             // Move focus to the previous menu item
+            console.log('\\AAA', 'ArrowUp');
             event.preventDefault();
+            moveFocus(list, currentFocus, previousItem);
 
             // Logic to handle focus movement
         } else if (event.key === 'ArrowDown') {
             // Move focus to the next menu item
+            console.log('\\AAA', 'ArrowDown');
             event.preventDefault();
+            moveFocus(list, currentFocus, nextItem);
 
             // Logic to handle focus movement
         }
-    }, []); */
+    }, []);
 
     return _overflowDrawer
         ? <JitsiPortal>
             <Drawer
-                isOpen = { Boolean(isDrawerOpen && _overflowDrawer) }
-                onClose = { onDrawerClose }>
+                isOpen={Boolean(isDrawerOpen && _overflowDrawer)}
+                onClose={onDrawerClose}>
                 <div
-                    className = { styles.drawer }
-                    onClick = { onDrawerClose }>
+                    className={styles.drawer}
+                    onClick={onDrawerClose}>
                     {children}
                 </div>
             </Drawer>
         </JitsiPortal>
-        : <div
-            { ...aria }
-            aria-label = { accessibilityLabel }
-            className = { cx(styles.contextMenu,
-                isHidden && styles.contextMenuHidden,
-                className
-            ) }
-            id = { id }
-            onClick = { onClick }
-            onKeyDown = { onKeyDown }
-            onMouseEnter = { onMouseEnter }
-            onMouseLeave = { onMouseLeave }
-            ref = { containerRef }
-            role = { role }
-            tabIndex = { tabIndex }>
-            {children}
-        </div>;
+        : <>
+            {!isHidden && (
+
+                <FocusOn autoFocus={false} >
+                    <div
+                        {...aria}
+                        aria-label={accessibilityLabel}
+                        className={cx(styles.contextMenu,
+                            isHidden && styles.contextMenuHidden,
+                            className
+                        )}
+                        id={id}
+                        onClick={onClick}
+                        onKeyDown={handleKeyDown}
+                        onMouseEnter={onMouseEnter}
+                        onMouseLeave={onMouseLeave}
+                        ref={containerRef}
+                        role={role}
+                        tabIndex={tabIndex}>
+                        {children}
+                    </div>
+                </FocusOn >
+            )}
+        </>;
 };
 
 export default ContextMenu;
