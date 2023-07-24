@@ -42,6 +42,7 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
+local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
@@ -363,9 +364,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 
     host_module:hook('muc-occupant-pre-join', function (event)
-        local room, stanza = event.room, event.stanza;
+        local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-        if is_healthcheck_room(room.jid) or not room:get_members_only() then
+        if is_healthcheck_room(room.jid) or not room:get_members_only() or ends_with(occupant.nick, '/focus') then
             return;
         end
 
@@ -392,7 +393,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if whitelistJoin then
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 0 then
-                event.occupant.role = 'participant';
+                occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
                 room:save();
 
