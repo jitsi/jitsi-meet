@@ -39,11 +39,6 @@
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
         builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
-#if TARGET_IPHONE_SIMULATOR
-        // CallKit has started to create problems starting with the iOS 16 simulator.
-        // Disable it since it never worked in the simulator anyway.
-        [builder setFeatureFlag:@"call-integration.enabled" withBoolean:NO];
-#endif
     }];
 
   [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
