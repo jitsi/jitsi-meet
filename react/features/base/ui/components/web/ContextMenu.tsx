@@ -1,5 +1,7 @@
 import React, { KeyboardEvent, ReactNode,
-    useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';import { useSelector } from 'react-redux';
+    useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { FocusOn } from 'react-focus-on';
+import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import Drawer from '../../../../toolbox/components/web/Drawer';
@@ -8,7 +10,7 @@ import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { spacing } from '../../Tokens';
-import { FocusOn } from 'react-focus-on';
+
 
 /**
  * Get a style property from a style declaration as a float.
@@ -377,30 +379,30 @@ const ContextMenu = ({
         </JitsiPortal>
         : <FocusOn
 
-        // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
-        // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
-        // our DialogPortal positioning calculations.
-        enabled = { !isHidden }
-        onClickOutside = { removeFocus }
-        onEscapeKey = { removeFocus }>
-        <div
-            { ...aria }
-            aria-label = { accessibilityLabel }
-            className = { cx(styles.contextMenu,
+            // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
+            // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
+            // our DialogPortal positioning calculations.
+            enabled = { !isHidden }
+            onClickOutside = { removeFocus }
+            onEscapeKey = { removeFocus }>
+            <div
+                { ...aria }
+                aria-label = { accessibilityLabel }
+                className = { cx(styles.contextMenu,
                 isHidden && styles.contextMenuHidden,
                 className
-            ) }
-            id = { id }
-            onClick = { onClick }
-            onKeyDown = { onKeyDown ?? handleKeyDown }
-            onMouseEnter = { onMouseEnter }
-            onMouseLeave = { onMouseLeave }
-            ref = { containerRef }
-            role = { role }
-            tabIndex = { tabIndex }>
-            {children}
-        </div>
-    </FocusOn >;
+                ) }
+                id = { id }
+                onClick = { onClick }
+                onKeyDown = { onKeyDown ?? handleKeyDown }
+                onMouseEnter = { onMouseEnter }
+                onMouseLeave = { onMouseLeave }
+                ref = { containerRef }
+                role = { role }
+                tabIndex = { tabIndex }>
+                {children}
+            </div>
+        </FocusOn >;
 };
 
 export default ContextMenu;

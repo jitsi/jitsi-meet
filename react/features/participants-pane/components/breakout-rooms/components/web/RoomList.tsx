@@ -79,7 +79,7 @@ export const RoomList = ({ searchString }: IProps) => {
                 {rooms.map(room => (
                     <React.Fragment key = { room.id }>
                         <CollapsibleRoom
-                            isHighlighted
+                            isHighlighted = { true }
                             onRaiseMenu = { onRaiseMenu(room) }
                             participantContextEntity = { raiseParticipantContext.entity }
                             raiseParticipantContextMenu = { raiseParticipantMenu }
