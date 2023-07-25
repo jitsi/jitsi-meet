@@ -576,6 +576,7 @@ export interface IConfig {
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;
+    tokenLogoutUrl?: string;
     toolbarButtons?: Array<ToolbarButtons>;
     toolbarConfig?: {
         alwaysVisible?: boolean;

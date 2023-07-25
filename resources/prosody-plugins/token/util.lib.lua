@@ -297,6 +297,9 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
           end
+        elseif claims["user_id"] then
+          session.jitsi_meet_context_user = {};
+          session.jitsi_meet_context_user.id = claims["user_id"];
         end
         return true;
     else

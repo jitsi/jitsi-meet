@@ -49,6 +49,7 @@ import {
     SET_ROOM
 } from './actionTypes';
 import {
+    authStatusChanged,
     conferenceFailed,
     conferenceWillInit,
     conferenceWillLeave,
@@ -351,8 +352,22 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-async function _connectionEstablished({ dispatch }: IStore, next: Function, action: AnyAction) {
+async function _connectionEstablished({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
+
+    const { tokenAuthUrl = false } = getState()['features/base/config'];
+
+    // if there is token auth URL defined and local participant is using jwt
+    // this means it is logged in when connection is established, so we can change the state
+    if (tokenAuthUrl) {
+        let email;
+
+        if (getState()['features/base/jwt'].jwt) {
+            email = getLocalParticipant(getState())?.email;
+        }
+
+        dispatch(authStatusChanged(true, email || ''));
+    }
 
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.

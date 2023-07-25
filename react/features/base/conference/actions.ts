@@ -95,9 +95,14 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     // Dispatches into features/base/conference follow:
 
-    conference.on(
-        JitsiConferenceEvents.AUTH_STATUS_CHANGED,
-        (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    // we want to ignore this event in case of tokenAuthUrl config
+    // we are deprecating this and at some point will get rid of it
+    if (!state['features/base/config'].tokenAuthUrl) {
+        conference.on(
+            JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+            (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    }
+
     conference.on(
         JitsiConferenceEvents.CONFERENCE_FAILED,
         (err: string, ...args: any[]) => dispatch(conferenceFailed(conference, err, ...args)));
