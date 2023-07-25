@@ -5,12 +5,10 @@ export default {
         alignSelf: 'center',
         backgroundColor: BaseTheme.palette.ui01,
         borderRadius: BaseTheme.shape.borderRadius,
-        paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: BaseTheme.spacing[1]
+        padding: 6
     },
 
     displayNamePadding: {
-        padding: BaseTheme.spacing[1],
         paddingRight: 6
     },
 
