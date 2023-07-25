@@ -275,12 +275,15 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             error.recoverable = true;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [ _lobbyJid, lobbyWaitingForHost ] = error.params;
+
         const result = next(action);
 
         dispatch(openLobbyScreen());
 
         // if there was an error about display name and pre-join is not enabled
-        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled)) {
+        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled) || lobbyWaitingForHost) {
             dispatch(startKnocking());
         }
 

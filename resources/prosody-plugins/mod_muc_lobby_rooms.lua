@@ -484,7 +484,18 @@ function handle_create_lobby(event)
 end
 
 function handle_destroy_lobby(event)
-    destroy_lobby_room(event.room, event.newjid, event.message);
+    local room = event.room;
+
+    -- since this is called by backend rather than triggered by UI, we need to
+    -- trigger a 104 (config change) status message so UI state is properly updated for existing users (and jicofo)
+    destroy_lobby_room(room, event.newjid, event.message);
+
+    -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
+    room:broadcast_message(
+        st.message({ type='groupchat', from=room.jid })
+            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' })
+    );
 end
 
 module:hook_global('config-reloaded', load_config);

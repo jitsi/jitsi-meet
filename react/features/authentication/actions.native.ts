@@ -55,9 +55,13 @@ export function cancelWaitForOwner() {
         // clients/consumers need an event.
         const { authRequired } = getState()['features/base/conference'];
 
-        authRequired && dispatch(conferenceLeft(authRequired));
+        if (authRequired) {
+            dispatch(conferenceLeft(authRequired));
 
-        dispatch(appNavigate(undefined));
+            // in case we are showing lobby and on top of it wait for owner
+            // we do not want to navigate away from the conference
+            dispatch(appNavigate(undefined));
+        }
     };
 }
 

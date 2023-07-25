@@ -89,8 +89,11 @@ MiddlewareRegistry.register(store => next => action => {
         // CONFERENCE_FAILED caused by
         // JitsiConferenceErrors.AUTHENTICATION_REQUIRED.
         let recoverable;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [ _lobbyJid, lobbyWaitingForHost ] = error.params;
 
-        if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+        if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED
+            || (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR && lobbyWaitingForHost)) {
             if (typeof error.recoverable === 'undefined') {
                 error.recoverable = true;
             }
@@ -149,9 +152,17 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        store.dispatch(openLogoutDialog(() =>
-            conference.room.moderator.logout(() => store.dispatch(hangup(true)))
-        ));
+        store.dispatch(openLogoutDialog(() => {
+            const logoutUrl = store.getState()['features/base/config'].tokenLogoutUrl;
+
+            if (logoutUrl) {
+                window.location.href = logoutUrl;
+
+                return;
+            }
+
+            conference.room.moderator.logout(() => store.dispatch(hangup(true)));
+        }));
 
         break;
     }

@@ -1646,10 +1646,14 @@ export default {
                 APP.store.dispatch(conferenceUniqueIdSet(room, ...args));
             });
 
-        room.on(
-            JitsiConferenceEvents.AUTH_STATUS_CHANGED,
-            (authEnabled, authLogin) =>
-                APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
+        // we want to ignore this event in case of tokenAuthUrl config
+        // we are deprecating this and at some point will get rid of it
+        if (!config.tokenAuthUrl) {
+            room.on(
+                JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+                (authEnabled, authLogin) =>
+                    APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
+        }
 
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED, user => {
             APP.store.dispatch(updateRemoteParticipantFeatures(user));
