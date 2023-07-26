@@ -18,7 +18,7 @@ import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiTh
 
 
 interface IAppProps {
-    flags: [];
+    flags: object;
     meetingOptions: {
         domain: string;
         roomName: string;
