@@ -8,7 +8,7 @@ import './react/features/mobile/polyfills';
 
 // @ts-ignore
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import {View, ViewStyle} from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
