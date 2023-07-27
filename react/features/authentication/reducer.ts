@@ -1,8 +1,10 @@
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { assign } from '../base/redux/functions';
 
 import {
     CANCEL_LOGIN,
+    SET_TOKEN_AUTH_URL_SUCCESS,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -15,8 +17,16 @@ export interface IAuthenticationState {
     thenableWithCancel?: {
         cancel: Function;
     };
+    tokenAuthUrlSuccessful?: boolean;
     waitForOwnerTimeoutID?: number;
 }
+
+/**
+ * Sets up the persistence of the feature {@code authentication}.
+ */
+PersistenceRegistry.register('features/authentication', {
+    tokenAuthUrlSuccessful: true
+});
 
 /**
  * Listens for actions which change the state of the authentication feature.
@@ -34,6 +44,10 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             error: undefined,
             progress: undefined,
             thenableWithCancel: undefined
+        });
+    case SET_TOKEN_AUTH_URL_SUCCESS:
+        return assign(state, {
+            tokenAuthUrlSuccessful: action.value
         });
 
     case STOP_WAIT_FOR_OWNER:

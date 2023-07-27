@@ -2,7 +2,8 @@ import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    SET_ROOM
 } from '../base/conference/actionTypes';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hangup } from '../base/connection/actions';
@@ -31,8 +32,10 @@ import {
     openLoginDialog,
     openWaitForOwnerDialog,
     redirectToDefaultLocation,
+    setTokenAuthUrlSuccess,
     stopWaitForOwner,
-    waitForOwner } from './actions';
+    waitForOwner
+} from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 
@@ -107,12 +110,25 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_JOINED:
+    case CONFERENCE_JOINED: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const config = state['features/base/config'];
+
+        if (isTokenAuthEnabled(config)
+            && config.tokenAuthUrlAutoRedirect
+            && state['features/base/jwt'].jwt) {
+            // auto redirect is turned on and we have succesfully logged in
+            // let's mark that
+            dispatch(setTokenAuthUrlSuccess(true));
+        }
+
         if (_isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
         store.dispatch(hideLoginDialog());
         break;
+    }
 
     case CONFERENCE_LEFT:
         store.dispatch(stopWaitForOwner());
@@ -146,14 +162,24 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case LOGOUT: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const config = state['features/base/config'];
         const { conference } = store.getState()['features/base/conference'];
 
         if (!conference) {
             break;
         }
 
-        store.dispatch(openLogoutDialog(() => {
-            const logoutUrl = store.getState()['features/base/config'].tokenLogoutUrl;
+        dispatch(openLogoutDialog(() => {
+            const logoutUrl = config.tokenLogoutUrl;
+
+            if (isTokenAuthEnabled(config)
+                && config.tokenAuthUrlAutoRedirect
+                && state['features/base/jwt'].jwt) {
+                // user is logging out remove auto redirect indication
+                dispatch(setTokenAuthUrlSuccess(false));
+            }
 
             if (logoutUrl) {
                 window.location.href = logoutUrl;
@@ -161,8 +187,27 @@ MiddlewareRegistry.register(store => next => action => {
                 return;
             }
 
-            conference.room.moderator.logout(() => store.dispatch(hangup(true)));
+            conference.room.moderator.logout(() => dispatch(hangup(true)));
         }));
+
+        break;
+    }
+
+    case SET_ROOM: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const config = state['features/base/config'];
+
+        if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect
+            && state['features/authentication'].tokenAuthUrlSuccessful) {
+            // if we have auto redirect enabled, and we have previously logged in successfully
+            // let's redirect to the auth url to get the token and login again
+            dispatch(setTokenAuthUrlSuccess(false));
+
+            const { room } = action;
+
+            window.location.href = getTokenAuthUrl(config)(room, false);
+        }
 
         break;
     }
@@ -248,8 +293,10 @@ function _handleLogin({ dispatch, getState }: IStore) {
         }
 
         // FIXME: This method will not preserve the other URL params that were originally passed.
-        // redirectToTokenAuthService
-        window.location.href = getTokenAuthUrl(config)(room, false);
+        const tokenAuthServiceUrl = getTokenAuthUrl(config)(room, false);
+
+        // we have already shown the prejoin screen so no need to show it again(if enabled) after obtaining the token
+        window.location.href = `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
     } else {
         dispatch(openLoginDialog());
     }
