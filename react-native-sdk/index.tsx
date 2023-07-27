@@ -8,7 +8,7 @@ import './react/features/mobile/polyfills';
 
 // @ts-ignore
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View } from 'react-native';
+import {View, ViewStyle} from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
@@ -28,6 +28,7 @@ interface IAppProps {
     meetingOptions: {
         domain: string;
         roomName: string;
+        jwt: string;
         onReadyToClose?: Function;
         onConferenceJoined?: Function;
         onConferenceWillJoin?: Function;
@@ -71,7 +72,8 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
 
     useEffect(
         () => {
-            const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
+            const urlJwt = meetingOptions.jwt ? `?jwt=${meetingOptions.jwt}` : '';
+            const url = `${meetingOptions.domain}/${meetingOptions.roomName}${urlJwt}`;
 
             setAppProps({
                 'url': {
@@ -94,9 +96,8 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
     );
 
     return (
-        <View style = { style }>
+        <View style = { style as ViewStyle }>
             <JitsiThemePaperProvider>
-                {/* @ts-ignore */}
                 <App
                     { ...appProps }
                     ref = { app } />
