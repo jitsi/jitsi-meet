@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Label from '../../base/label/components/native/Label';
 import { StyleType, combineStyles } from '../../base/styles/functions.native';
 
-import AbstractVideoQualityLabel, {
-    IProps as AbstractProps,
-    _abstractMapStateToProps
-} from './AbstractVideoQualityLabel';
 import styles from './styles';
 
-interface IProps extends AbstractProps {
+interface IProps extends WithTranslation {
+
+    /**
+     * Whether or not the conference is in audio only mode.
+     */
+    _audioOnly: boolean;
 
     /**
      * Style of the component passed as props.
@@ -28,7 +31,7 @@ interface IProps extends AbstractProps {
  * is kept consistent with web and in the future we may introduce the required
  * api and extend this component with actual quality indication.
  */
-class VideoQualityLabel extends AbstractVideoQualityLabel<IProps> {
+class VideoQualityLabel extends Component<IProps> {
 
     /**
      * Implements React {@link Component}'s render.
@@ -51,4 +54,22 @@ class VideoQualityLabel extends AbstractVideoQualityLabel<IProps> {
     }
 }
 
-export default translate(connect(_abstractMapStateToProps)(VideoQualityLabel));
+/**
+ * Maps (parts of) the Redux state to the associated
+ * {@code AbstractVideoQualityLabel}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _audioOnly: boolean
+ * }}
+ */
+function _mapStateToProps(state: IReduxState) {
+    const { enabled: audioOnly } = state['features/base/audio-only'];
+
+    return {
+        _audioOnly: audioOnly
+    };
+}
+
+export default translate(connect(_mapStateToProps)(VideoQualityLabel));

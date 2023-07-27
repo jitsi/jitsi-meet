@@ -8,6 +8,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
+import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 // eslint-disable-next-line
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
@@ -40,13 +41,18 @@ interface IProps {
     dispatch: IStore['dispatch'];
 
     /**
+    * Is unsafe room warning available?
+    */
+    isUnsafeRoomWarningAvailable: boolean;
+
+    /**
     * Is welcome page available?
     */
     isWelcomePageAvailable: boolean;
 }
 
 
-const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) => {
+const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWelcomePageAvailable }: IProps) => {
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
@@ -92,10 +98,13 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
                     component = { Prejoin }
                     name = { screen.preJoin }
                     options = { preJoinScreenOptions } />
-                <RootStack.Screen
-                    component = { UnsafeRoomWarning }
-                    name = { screen.unsafeRoomWarning }
-                    options = { unsafeMeetingScreenOptions } />
+                {
+                    isUnsafeRoomWarningAvailable
+                    && <RootStack.Screen
+                        component = { UnsafeRoomWarning }
+                        name = { screen.unsafeRoomWarning }
+                        options = { unsafeMeetingScreenOptions } />
+                }
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
@@ -113,6 +122,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
  */
 function mapStateToProps(state: IReduxState) {
     return {
+        isUnsafeRoomWarningAvailable: isUnsafeRoomWarningEnabled(state),
         isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
 }

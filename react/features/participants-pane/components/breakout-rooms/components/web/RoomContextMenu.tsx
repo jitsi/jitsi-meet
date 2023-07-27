@@ -4,13 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
-import { IconCloseLarge, IconRingGroup } from '../../../../../base/icons/svg';
+import { openDialog } from '../../../../../base/dialog/actions';
+import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
+import { isBreakoutRoomRenameAllowed } from '../../../../functions';
+
+import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
+
 
 interface IProps {
 
@@ -50,6 +55,7 @@ export const RoomContextMenu = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const _isBreakoutRoomRenameAllowed = useSelector(isBreakoutRoomRenameAllowed);
     const _overflowDrawer = useSelector(showOverflowDrawer);
 
     const onJoinRoom = useCallback(() => {
@@ -59,6 +65,13 @@ export const RoomContextMenu = ({
 
     const onRemoveBreakoutRoom = useCallback(() => {
         dispatch(removeBreakoutRoom(room?.jid ?? ''));
+    }, [ dispatch, room ]);
+
+    const onRenameBreakoutRoom = useCallback(() => {
+        dispatch(openDialog(BreakoutRoomNamePrompt, {
+            breakoutRoomJid: room?.jid,
+            initialRoomName: room?.name
+        }));
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
@@ -73,6 +86,13 @@ export const RoomContextMenu = ({
             icon: IconRingGroup,
             onClick: onJoinRoom,
             text: t('breakoutRooms.actions.join')
+        } : null,
+        !room?.isMainRoom && _isBreakoutRoomRenameAllowed ? {
+            accessibilityLabel: t('breakoutRooms.actions.rename'),
+            icon: IconEdit,
+            id: `rename-room-${room?.id}`,
+            onClick: onRenameBreakoutRoom,
+            text: t('breakoutRooms.actions.rename')
         } : null,
         !room?.isMainRoom && isLocalModerator ? {
             accessibilityLabel: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close'),

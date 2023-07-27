@@ -33,8 +33,8 @@ import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
-import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
+import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
+import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 

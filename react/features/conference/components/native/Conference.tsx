@@ -443,7 +443,7 @@ class Conference extends AbstractConference<IProps, State> {
                         )
                     }
 
-                    <LonelyMeetingExperience />
+                    { !_shouldDisplayTileView && <LonelyMeetingExperience /> }
 
                     {
                         _shouldDisplayTileView

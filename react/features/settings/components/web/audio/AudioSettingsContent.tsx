@@ -192,7 +192,6 @@ const AudioSettingsContent = ({
                 jitsiTrack = { jitsiTrack }
                 key = { `me-${index}` }
                 length = { length }
-                listHeaderId = { microphoneHeaderId }
                 measureAudioLevels = { measureAudioLevels }
                 onClick = { _onMicrophoneEntryClick }>
                 {label}
@@ -221,7 +220,6 @@ const AudioSettingsContent = ({
                 isSelected = { isSelected }
                 key = { key }
                 length = { length }
-                listHeaderId = { speakerHeaderId }
                 onClick = { _onSpeakerEntryClick }>
                 {label}
             </SpeakerEntry>

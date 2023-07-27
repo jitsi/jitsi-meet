@@ -374,10 +374,12 @@ const Prejoin = ({
                 className = { classes.inputContainer }
                 data-testid = 'prejoin.screen'>
                 {showDisplayNameField.current ? (<Input
+                    accessibilityLabel = { t('dialog.enterDisplayName') }
                     autoComplete = { 'name' }
                     autoFocus = { true }
                     className = { classes.input }
                     error = { showErrorOnJoin }
+                    id = 'premeeting-name-input'
                     onChange = { setName }
                     onKeyPress = { showUnsafeRoomWarning && !unsafeRoomConsent ? undefined : onInputKeyPress }
                     placeholder = { t('dialog.enterDisplayName') }

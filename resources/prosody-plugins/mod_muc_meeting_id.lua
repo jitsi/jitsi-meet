@@ -81,7 +81,7 @@ module:hook('muc-occupant-pre-join', function (event)
     local room, stanza = event.room, event.stanza;
 
     -- we skip processing only if jicofo_lock is set to false
-    if room.jicofo_lock == false or is_healthcheck_room(stanza.attr.from) then
+    if room._data.jicofo_lock == false or is_healthcheck_room(stanza.attr.from) then
         return;
     end
 
@@ -89,7 +89,7 @@ module:hook('muc-occupant-pre-join', function (event)
     if ends_with(occupant.nick, '/focus') then
         module:fire_event('jicofo-unlock-room', { room = room; });
     else
-        room.jicofo_lock = true;
+        room._data.jicofo_lock = true;
         if not room.pre_join_queue then
             room.pre_join_queue = queue.new(QUEUE_MAX_SIZE);
         end
@@ -108,15 +108,18 @@ end, 8); -- just after the rate limit
 function handle_jicofo_unlock(event)
     local room = event.room;
 
-    room.jicofo_lock = false;
+    room._data.jicofo_lock = false;
     if not room.pre_join_queue then
         return;
     end
 
     -- and now let's handle all pre_join_queue events
     for _, ev in room.pre_join_queue:items() do
-        module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
-        room:handle_normal_presence(ev.origin, ev.stanza);
+        -- if the connection was closed while waiting in the queue, ignore
+        if ev.origin.conn then
+            module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
+            room:handle_normal_presence(ev.origin, ev.stanza);
+        end
     end
     room.pre_join_queue = nil;
 end

@@ -25,6 +25,7 @@ export { default as IconDeviceHeadphone } from './headset.svg';
 export { default as IconDotsHorizontal } from './dots-horizontal.svg';
 export { default as IconDownload } from './download.svg';
 export { default as IconE2EE } from './e2ee.svg';
+export { default as IconEdit } from './edit.svg';
 export { default as IconEnlarge } from './enlarge.svg';
 export { default as IconEnterFullscreen } from './enter-fullscreen.svg';
 export { default as IconEnvelope } from './envelope.svg';

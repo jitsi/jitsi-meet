@@ -3,20 +3,12 @@ import { API_ID } from '../../../modules/API';
 import { setRoom } from '../base/conference/actions';
 import {
     configWillLoad,
-    loadConfigError,
-    setConfig,
-    storeConfig
+    setConfig
 } from '../base/config/actions';
-import { createFakeConfig, restoreConfig } from '../base/config/functions.web';
 import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import { inIframe } from '../base/util/iframeUtils';
-import { parseURLParams } from '../base/util/parseURLParams';
-import {
-    appendURLParam,
-    getBackendSafeRoomName,
-    parseURIString
-} from '../base/util/uri';
+import { parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
@@ -68,7 +60,8 @@ export function appNavigate(uri?: string) {
         }
 
         location.protocol || (location.protocol = 'https:');
-        const { contextRoot, host, room } = location;
+
+        const { room } = location;
         const locationURL = new URL(location.toString());
 
         // There are notifications now that gets displayed after we technically left
@@ -77,55 +70,7 @@ export function appNavigate(uri?: string) {
 
         dispatch(configWillLoad(locationURL, room));
 
-        let protocol = location.protocol.toLowerCase();
-
-        // The React Native app supports an app-specific scheme which is sure to not
-        // be supported by fetch.
-        protocol !== 'http:' && protocol !== 'https:' && (protocol = 'https:');
-
-        const baseURL = `${protocol}//${host}${contextRoot || '/'}`;
-        let url = `${baseURL}config.js`;
-
-        // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
-
-        const { release } = parseURLParams(location, true, 'search');
-
-        release && (url = appendURLParam(url, 'release', release));
-
-        let config;
-
-        // Avoid (re)loading the config when there is no room.
-        if (!room) {
-            config = restoreConfig(baseURL);
-        }
-
-        if (!config) {
-            try {
-                config = await loadConfig(url);
-                dispatch(storeConfig(baseURL, config));
-            } catch (error: any) {
-                config = restoreConfig(baseURL);
-
-                if (!config) {
-                    if (room) {
-                        dispatch(loadConfigError(error, locationURL));
-
-                        return;
-                    }
-
-                    // If there is no room (we are on the welcome page), don't fail, just create a fake one.
-                    logger.warn('Failed to load config but there is no room, applying a fake one');
-                    config = createFakeConfig(baseURL);
-                }
-            }
-        }
-
-        if (getState()['features/base/config'].locationURL !== locationURL) {
-            dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL));
-
-            return;
-        }
+        const config = await loadConfig();
 
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));

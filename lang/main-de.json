@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Konferenzlink: {{url}}"
+        },
         "add": "Einladen",
         "addContacts": "Laden Sie Ihre Kontakte ein",
         "contacts": "Kontakte",
@@ -38,6 +41,18 @@
     },
     "audioOnly": {
         "audioOnly": "Geringe Bandbreite"
+    },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "z.B. 10000000 für 10 Mbps",
+        "assumedBandwidthBpsWarning": "Höhere Werte können zu Netzwerk-Problemen führen.",
+        "customValue": "spezifischer Wert",
+        "customValueEffect": "setzt den Wert in bps",
+        "leaveEmpty": "leer lassen",
+        "leaveEmptyEffect": "aktiviert die automatische Abschätzung",
+        "possibleValues": "Mögliche Werte",
+        "setAssumedBandwidthBps": "Angenommene Bandbreite (bps)",
+        "title": "Einstellungen Bandbreite",
+        "zeroEffect": "schaltet Video aus"
     },
     "breakoutRooms": {
         "actions": {
@@ -156,6 +171,7 @@
         "localport_plural": "Lokale Ports:",
         "maxEnabledResolution": "max. senden",
         "more": "Mehr anzeigen",
+        "no": "Nein",
         "packetloss": "Paketverlust:",
         "participant_id": "Personen-ID:",
         "quality": {
@@ -174,7 +190,8 @@
         "status": "Verbindung:",
         "transport": "Protokoll:",
         "transport_plural": "Protokolle:",
-        "video_ssrc": "Video-SSRC:"
+        "video_ssrc": "Video-SSRC:",
+        "yes": "Ja"
     },
     "dateUtils": {
         "earlier": "Früher",
@@ -240,6 +257,8 @@
         "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
         "accessibilityLabel": {
+            "Cancel": "Abbrechen (Popup schließen)",
+            "Ok": "OK (Speichern und Popup schließen)",
             "close": "Popup schließen",
             "liveStreaming": "Livestream",
             "sharingTabs": "Optionen zum Teilen"
@@ -445,6 +464,9 @@
         "title": "Diese Konferenz einbetten"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Ihre Auswahl: {{rating}}"
+        },
         "average": "Durchschnittlich",
         "bad": "Schlecht",
         "detailsLabel": "Sagen Sie uns mehr dazu.",
@@ -673,6 +695,7 @@
         "connectedTwoMembers": "{{first}} und {{second}} nehmen am Meeting teil",
         "dataChannelClosed": "Schlechte Videoqualität",
         "dataChannelClosedDescription": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher ist die Videoqulität auf die schlechteste Stufe limitiert.",
+        "disabledIframe": "Die Einbettung ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "dontRemindMe": "Nicht erinnern",
@@ -867,9 +890,11 @@
         "lookGood": "Ihr Mikrofon scheint zu funktionieren.",
         "or": "oder",
         "premeeting": "Vorschau",
+        "proceedAnyway": "Trotzdem fortsetzen",
         "screenSharingError": "Fehler bei Bildschirmfreigabe:",
         "showScreen": "Konferenzvorschau aktivieren",
         "startWithPhone": "Mit Telefonaudio starten",
+        "unsafeRoomConsent": "Ich verstehe das Risiko und möchte der Konferenz beitreten",
         "videoOnlyError": "Videofehler:",
         "videoTrackError": "Videotrack konnte nicht erstellt werden.",
         "viewAllNumbers": "alle Nummern anzeigen"
@@ -971,8 +996,14 @@
     "security": {
         "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem Passwort gesichert werden. Personen müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
-        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
-        "title": "Sicherheitsoptionen"
+        "insecureRoomNameWarningNative": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten. {{recommendAction}} Lernen Sie mehr über die Absicherung Ihrer Konferenz ",
+        "insecureRoomNameWarningWeb": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten {{recommendAction}} Lernen Sie <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> mehr über die Absicherung Ihrer Konferenz.",
+        "title": "Sicherheitsoptionen",
+        "unsafeRoomActions": {
+            "meeting": "Erwägen Sie die Absicherung Ihrer Konferenz über den Sicherheits-Button.",
+            "prejoin": "Erwägen Sie einen einzigartigeren Raumnamen zu wählen.",
+            "welcome": "Erwägen Sie einen einzigartigeren Raumnamen zu wählen oder wählen Sie einen der Vorschläge."
+        }
     },
     "settings": {
         "audio": "Audio",
@@ -1042,6 +1073,7 @@
         "links": "Links",
         "privacy": "Datenschutz",
         "profileSection": "Profil",
+        "sdkVersion": "SDK-Version",
         "serverURL": "Server-URL",
         "showAdvanced": "Erweiterte Einstellungen anzeigen",
         "startCarModeInLowBandwidthMode": "Automodus mit Datensparmodus starten",
@@ -1140,6 +1172,7 @@
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
             "muteEveryonesVideoStream": "Alle Kameras ausschalten",
+            "muteGUMPending": "Verbinde Ihr Mikrofon",
             "noiseSuppression": "Rauschunterdrückung",
             "openChat": "Chat öffnen",
             "participants": "Anwesende",
@@ -1147,6 +1180,7 @@
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
             "raiseHand": "Hand heben",
+            "reactions": "Interaktionen",
             "reactionsMenu": "Interaktionsmenü öffnen / schließen",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Personen stummschalten",
@@ -1172,6 +1206,7 @@
             "unmute": "Stummschaltung aufheben",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
+            "videomuteGUMPending": "Verbinde Ihre Kamera",
             "videounmute": "Kamera einschalten"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
@@ -1222,6 +1257,7 @@
         "mute": "Stummschalten",
         "muteEveryone": "Alle stummschalten",
         "muteEveryonesVideo": "Alle Kameras ausschalten",
+        "muteGUMPending": "Verbinde Ihre Kamera",
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
         "noAudioSignalDescSuggestion": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stummgeschaltet haben, sollten Sie einen Wechsel auf das vorgeschlagene Gerät in Erwägung ziehen.",
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
@@ -1244,6 +1280,7 @@
         "reactionLike": "Daumen hoch senden",
         "reactionSilence": "Stille senden",
         "reactionSurprised": "Überrascht senden",
+        "reactions": "Interaktionen",
         "security": "Sicherheitsoptionen",
         "selectBackground": "Hintergrund auswählen",
         "shareRoom": "Person einladen",
@@ -1266,6 +1303,7 @@
         "unmute": "Stummschaltung aufheben",
         "videoSettings": "Kameraeinstellungen",
         "videomute": "Kamera stoppen",
+        "videomuteGUMPending": "Verbinde Ihre Kamera",
         "videounmute": "Kamera einschalten"
     },
     "transcribing": {
@@ -1354,6 +1392,10 @@
         "videomute": "Person hat die Kamera angehalten"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Aktueller Hintergrund: {{background}}",
+            "selectBackground": "Hintergrund auswählen"
+        },
         "addBackground": "Hintergrund hinzufügen",
         "apply": "Anwenden",
         "backgroundEffectError": "Hintergrund konnte nicht aktiviert werden.",
@@ -1377,7 +1419,14 @@
         "webAssemblyWarning": "WebAssembly wird nicht unterstützt",
         "webAssemblyWarningDescription": "WebAssembly ist deaktiviert oder wird in diesem Browser nicht unterstützt"
     },
-    "visitorsLabel": "Anzahl Gäste: {{count}}",
+    "visitors": {
+        "chatIndicator": "(Gast)",
+        "labelTooltip": "Anzahl Gäste: {{count}}",
+        "notification": {
+            "description": "Bitte melden Sie sich um teilzunehmen",
+            "title": "Sie sind Gast in der Konferenz"
+        }
+    },
     "volumeSlider": "Lautstärkeregler",
     "welcomepage": {
         "accessibilityLabel": {

@@ -68,6 +68,33 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
+type ParticipantMenuButtonsWithNotifyClick = 'allow-video' |
+    'ask-unmute' |
+    'conn-status' |
+    'flip-local-video' |
+    'grant-moderator' |
+    'hide-self-view' |
+    'kick' |
+    'mute' |
+    'mute-others' |
+    'mute-others-video' |
+    'mute-video' |
+    'pinToStage' |
+    'privateMessage' |
+    'remote-control' |
+    'send-participant-to-room' |
+    'verify';
+
+type NotifyClickButtonKey = string |
+    ButtonsWithNotifyClick |
+    ParticipantMenuButtonsWithNotifyClick;
+
+export type NotifyClickButton = NotifyClickButtonKey |
+    {
+        key: NotifyClickButtonKey;
+        preventExecution: boolean;
+    };
+
 export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
@@ -126,6 +153,25 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IWatchRTCConfiguration {
+    allowBrowserLogCollection?: boolean;
+    collectionInterval?: number;
+    console?: {
+        level: string;
+        override: boolean;
+    };
+    debug?: boolean;
+    keys?: any;
+    logGetStats?: boolean;
+    proxyUrl?: string;
+    rtcApiKey: string;
+    rtcPeerId?: string;
+    rtcRoomId?: string;
+    rtcTags?: string[];
+    rtcToken?: string;
+    wsUrl?: string;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -145,6 +191,7 @@ export interface IConfig {
         rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
+        watchRTCEnabled?: boolean;
         whiteListedEvents?: string[];
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
@@ -283,6 +330,7 @@ export interface IConfig {
     disableThirdPartyRequests?: boolean;
     disableTileEnlargement?: boolean;
     disableTileView?: boolean;
+    disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;
     doNotFlipLocalVideo?: boolean;
@@ -390,7 +438,7 @@ export interface IConfig {
         domain: string;
         focus?: string;
         muc: string;
-        visitorFocus: string;
+        visitorFocus?: string;
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
@@ -441,12 +489,16 @@ export interface IConfig {
     opusMaxAverageBitrate?: number;
     p2p?: {
         backToP2PDelay?: number;
-        disabledCodec?: string;
+        codecPreferenceOrder?: Array<string>;
         enabled?: boolean;
         iceTransportPolicy?: string;
-        preferredCodec?: string;
+        mobileCodecPreferenceOrder?: Array<string>;
         stunServers?: Array<{ urls: string; }>;
     };
+    participantMenuButtonsWithNotifyClick?: Array<string | ParticipantMenuButtonsWithNotifyClick | {
+        key: string | ParticipantMenuButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;
@@ -524,6 +576,7 @@ export interface IConfig {
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;
+    tokenLogoutUrl?: string;
     toolbarButtons?: Array<ToolbarButtons>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
@@ -545,8 +598,7 @@ export interface IConfig {
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
-        disabledCodec?: string;
-        enforcePreferredCodec?: boolean;
+        codecPreferenceOrder?: Array<string>;
         maxBitratesVideo?: {
             [key: string]: {
                 high?: number;
@@ -557,9 +609,10 @@ export interface IConfig {
         minHeightForQualityLvl?: {
             [key: number]: string;
         };
+        mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
-        preferredCodec?: string;
     };
+    watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;

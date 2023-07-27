@@ -4,6 +4,7 @@ import { FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { openSheet } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
@@ -24,9 +25,12 @@ import {
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
 import {
+    isCurrentRoomRenamable,
     participantMatchesSearch,
     shouldRenderInviteButton
 } from '../../functions';
+import { BREAKOUT_CONTEXT_MENU_ACTIONS } from '../../types';
+import BreakoutRoomContextMenu from '../breakout-rooms/components/native/BreakoutRoomContextMenu';
 
 import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
@@ -49,6 +53,11 @@ interface IProps extends WithTranslation {
      * Checks if add-people feature is enabled.
      */
     _isAddPeopleFeatureEnabled: boolean;
+
+    /**
+     * Indicates whether the room that is currently joined can be renamed.
+     */
+    _isCurrentRoomRenamable: boolean;
 
     /**
      * The local participant.
@@ -126,6 +135,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
 
         this._keyExtractor = this._keyExtractor.bind(this);
         this._onInvite = this._onInvite.bind(this);
+        this._openContextMenu = this._openContextMenu.bind(this);
         this._renderParticipant = this._renderParticipant.bind(this);
         this._onSearchStringChange = this._onSearchStringChange.bind(this);
     }
@@ -186,6 +196,18 @@ class MeetingParticipantList extends PureComponent<IProps> {
     }
 
     /**
+     * Opens the context menu to rename the current breakout room.
+     *
+     * @returns {void}
+     */
+    _openContextMenu() {
+        this.props.dispatch(openSheet(BreakoutRoomContextMenu, {
+            room: this.props._currentRoom,
+            actions: [ BREAKOUT_CONTEXT_MENU_ACTIONS.RENAME ]
+        }));
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -194,6 +216,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
     render() {
         const {
             _currentRoom,
+            _isCurrentRoomRenamable,
             _inviteOthersControl,
             _localParticipant,
             _participantsCount,
@@ -229,6 +252,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
         const _visitorsLabelText = _visitorsCount > 0
             ? t('participantsPane.headings.visitors', { count: _visitorsCount })
             : undefined;
+        const onLongPress = _isCurrentRoomRenamable ? this._openContextMenu : undefined;
 
         return (
             <>
@@ -236,7 +260,8 @@ class MeetingParticipantList extends PureComponent<IProps> {
                 }
                 <CollapsibleList
                     containerStyle = { finalContainerStyle }
-                    title = { title } >
+                    onLongPress = { onLongPress }
+                    title = { title }>
                     {
                         _showInviteButton
                         && <Button
@@ -298,6 +323,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _currentRoom,
         _isAddPeopleFeatureEnabled,
+        _isCurrentRoomRenamable: isCurrentRoomRenamable(state),
         _inviteOthersControl,
         _participantsCount,
         _remoteParticipants,

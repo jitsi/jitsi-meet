@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import ReactFocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -39,6 +39,16 @@ interface IProps {
      * Whether displaying of the popover should be prevented.
      */
     disablePopover?: boolean;
+
+    /**
+     * Whether we can reach the popover element via keyboard or not when trigger is 'hover' (true by default).
+     *
+     * Only works when trigger is set to 'hover'.
+     *
+     * There are some rare cases where we want to set this to false,
+     * when the popover content is not necessary for screen reader users, because accessible elsewhere.
+     */
+    focusable?: boolean;
 
     /**
      * The id of the dom element acting as the Popover label (matches aria-labelledby).
@@ -103,6 +113,14 @@ interface IState {
         position: string;
         top?: string;
     } | null;
+
+    /**
+     * Whether the popover should be focus locked or not.
+     *
+     * This is enabled if we notice the popover is interactive
+     * (trigger is click or focusable is true).
+     */
+    enableFocusLock: boolean;
 }
 
 /**
@@ -119,6 +137,7 @@ class Popover extends Component<IProps, IState> {
      */
     static defaultProps = {
         className: '',
+        focusable: true,
         id: '',
         trigger: 'hover'
     };
@@ -140,10 +159,12 @@ class Popover extends Component<IProps, IState> {
         super(props);
 
         this.state = {
-            contextMenuStyle: null
+            contextMenuStyle: null,
+            enableFocusLock: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._enableFocusLock = this._enableFocusLock.bind(this);
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
@@ -207,8 +228,8 @@ class Popover extends Component<IProps, IState> {
         const { children,
             className,
             content,
+            focusable,
             headingId,
-            headingLabel,
             id,
             overflowDrawer,
             visible,
@@ -242,35 +263,40 @@ class Popover extends Component<IProps, IState> {
                 onKeyPress = { this._onKeyPress }
                 { ...(trigger === 'hover' ? {
                     onMouseEnter: this._onShowDialog,
-                    onMouseLeave: this._onHideDialog,
-                    tabIndex: 0
+                    onMouseLeave: this._onHideDialog
                 } : {}) }
+                { ...(trigger === 'hover' && focusable && {
+                    role: 'button',
+                    tabIndex: 0
+                }) }
                 ref = { this._containerRef }>
                 { visible && (
                     <DialogPortal
                         getRef = { this._setContextMenuRef }
+                        onVisible = { this._isInteractive() ? this._enableFocusLock : undefined }
                         setSize = { this._setContextMenuStyle }
                         style = { this.state.contextMenuStyle }
                         targetSelector = '.popover-content'>
-                        <ReactFocusLock
-                            lockProps = {{
-                                role: 'dialog',
-                                'aria-modal': true,
-                                'aria-labelledby': headingId,
-                                'aria-label': !headingId && headingLabel ? headingLabel : undefined
-                            }}
+                        <FocusOn
+
+                            // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
+                            // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
+                            // our DialogPortal positioning calculations.
+                            enabled = { Boolean(this._contextMenuRef) && this.state.enableFocusLock }
                             returnFocus = {
 
                                 // If we return the focus to an element outside the viewport the page will scroll to
                                 // this element which in our case is undesirable and the element is outside of the
-                                // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
-                                // when it is hidden the whole page will move up in order to show the toolbox. This is
-                                // usually followed up with displaying the toolbox (because now it is on focus) but
-                                // because of the animation the whole scenario looks like jumping large video.
+                                // viewport on purpose (to be hidden). For example if we return the focus to the
+                                // toolbox when it is hidden the whole page will move up in order to show the
+                                // toolbox. This is usually followed up with displaying the toolbox (because now it
+                                // is on focus) but because of the animation the whole scenario looks like jumping
+                                // large video.
                                 isElementInTheViewport
-                            }>
+                            }
+                            shards = { this._contextMenuRef && [ this._contextMenuRef ] }>
                             {this._renderContent()}
-                        </ReactFocusLock>
+                        </FocusOn>
                     </DialogPortal>
                 )}
                 { children }
@@ -299,7 +325,9 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _setContextMenuRef(elem: HTMLElement) {
-        this._contextMenuRef = elem;
+        if (!elem || document.body.contains(elem)) {
+            this._contextMenuRef = elem;
+        }
     }
 
     /**
@@ -361,12 +389,12 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onClick(event: React.MouseEvent) {
-        const { allowClick, trigger, visible } = this.props;
+        const { allowClick, trigger, focusable, visible } = this.props;
 
         if (!allowClick) {
             event.stopPropagation();
         }
-        if (trigger === 'click') {
+        if (trigger === 'click' || focusable) {
             if (visible) {
                 this._onHideDialog();
             } else {
@@ -383,7 +411,9 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
+        // first check that the element we pressed is the actual popover toggle or any of its descendant,
+        // otherwise pressing space or enter in any child element of the popover _dialog_ will trigger this.
+        if (e.currentTarget.contains(e.target as Node) && (e.key === ' ' || e.key === 'Enter')) {
             e.preventDefault();
             if (this.props.visible) {
                 this._onHideDialog();
@@ -435,17 +465,48 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger } = this.props;
+        const { content, position, trigger, headingId, headingLabel } = this.props;
 
         return (
-            <div
-                className = { `popover ${trigger}` }
-                onKeyDown = { this._onEscKey }>
-                <div className = { `popover-content ${position.split('-')[0]}` }>
+            <div className = { `popover ${trigger}` }>
+                <div
+                    className = { `popover-content ${position.split('-')[0]}` }
+                    data-autofocus = { this.state.enableFocusLock }
+                    onKeyDown = { this._onEscKey }
+                    { ...(this.state.enableFocusLock && {
+                        'aria-modal': true,
+                        'aria-label': !headingId && headingLabel ? headingLabel : undefined,
+                        'aria-labelledby': headingId,
+                        role: 'dialog',
+                        tabIndex: -1
+                    }) }>
                     { content }
                 </div>
             </div>
         );
+    }
+
+    /**
+     * Returns whether the popover is considered interactive or not.
+     *
+     * Interactive means the popover content is certainly composed of buttons, links…
+     * Non-interactive popovers are mostly tooltips.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _isInteractive() {
+        return this.props.trigger === 'click' || Boolean(this.props.focusable);
+    }
+
+    /**
+     * Enables the focus lock in the popover dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _enableFocusLock() {
+        this.setState({ enableFocusLock: true });
     }
 }
 

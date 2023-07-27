@@ -34,15 +34,12 @@ function CopyMeetingLinkSection({ url }: IProps) {
 
     return (
         <>
-            <label
-                className = { classes.label }
-                htmlFor = { 'copy-button-id' }
-                id = 'copy-button-label'>{t('addPeople.shareLink')}</label>
+            <p className = { classes.label }>{t('addPeople.shareLink')}</p>
             <CopyButton
-                aria-label = { t('addPeople.copyLink') }
+                accessibilityText = { t('addPeople.accessibilityLabel.meetingLink', { url: getDecodedURI(url) }) }
                 className = 'invite-more-dialog-conference-url'
                 displayedText = { getDecodedURI(url) }
-                id = 'copy-button-id'
+                id = 'add-people-copy-link-button'
                 textOnCopySuccess = { t('addPeople.linkCopied') }
                 textOnHover = { t('addPeople.copyLink') }
                 textToCopy = { url } />

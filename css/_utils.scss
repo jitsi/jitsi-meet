@@ -3,7 +3,7 @@
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
 /**
@@ -25,19 +25,34 @@
 }
 
 /**
- * Shows an inline element.
+ * resets default button styles,
+ * mostly intended to be used on interactive elements that
+ * differ from their default styles (e.g. <a>) or have custom styles
  */
-.show-inline {
-    display: inline-block !important;
+.invisible-button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
 }
 
+
 /**
- * Shows a flex element.
+ * style an element the same as an <a>
+ * useful on some cases where we visually have a link but it's actually a <button>
  */
-.show-flex {
-    display: -webkit-box !important;
-    display: -moz-box !important;
-    display: -ms-flexbox !important;
-    display: -webkit-flex !important;
-    display: flex !important;
+.as-link {
+    @extend .invisible-button;
+
+    display: inline;
+    color: #44A5FF;
+    text-decoration: none;
+    font-weight: bold;
+
+    &:focus,
+    &:hover,
+    &:active {
+        text-decoration: underline;
+    }
 }

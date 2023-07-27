@@ -36,7 +36,8 @@ export interface IProps extends AbstractButtonProps {
  * An abstract implementation of a button for starting and stopping recording.
  */
 export default class AbstractRecordButton<P extends IProps> extends AbstractButton<P> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.recording';
+    accessibilityLabel = 'dialog.startRecording';
+    toggledAccessibilityLabel = 'dialog.stopRecording';
     icon = IconRecord;
     label = 'dialog.startRecording';
     toggledLabel = 'dialog.stopRecording';

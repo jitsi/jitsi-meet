@@ -259,6 +259,11 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer',
             color: theme.palette.link01,
             transition: 'color .2s ease',
+            border: 0,
+            background: 0,
+            padding: 0,
+            display: 'inline',
+            fontWeight: 'bold',
 
             '&:hover': {
                 color: theme.palette.link01Hover,
@@ -714,13 +719,12 @@ const ConnectionStatsTable = ({
 
     const _renderSaveLogs = () => (
         <span>
-            <a
+            <button
                 className = { cx(classes.link, 'savelogs') }
                 onClick = { onSaveLogs }
-                role = 'button'
-                tabIndex = { 0 }>
+                type = 'button'>
                 {t('connectionindicator.savelogs')}
-            </a>
+            </button>
             <span> | </span>
         </span>
     );
@@ -732,13 +736,12 @@ const ConnectionStatsTable = ({
                 : 'connectionindicator.more';
 
         return (
-            <a
+            <button
                 className = { cx(classes.link, 'showmore') }
                 onClick = { onShowMore }
-                role = 'button'
-                tabIndex = { 0 }>
+                type = 'button'>
                 {t(translationKey)}
-            </a>
+            </button>
         );
     };
 

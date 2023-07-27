@@ -6,6 +6,7 @@ import {
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import { INVITE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
@@ -20,6 +21,7 @@ import {
 import { IParticipant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
 import { normalizeAccents } from '../base/util/strings';
+import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../breakout-rooms/constants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
@@ -282,3 +284,28 @@ export const isMuteAllVisible = (state: IReduxState) => {
 
     return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator;
 };
+
+/**
+ * Returns true if reanming the currently joined breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if reanming the currently joined breakout room is allowed and false otherwise.
+ */
+export function isCurrentRoomRenamable(state: IReduxState) {
+    return isInBreakoutRoom(state) && isBreakoutRoomRenameAllowed(state);
+}
+
+/**
+ * Returns true if renaming a breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if renaming a breakout room is allowed and false otherwise.
+ */
+export function isBreakoutRoomRenameAllowed(state: IReduxState) {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const conference = getCurrentConference(state);
+    const isRenameBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
+
+    return isLocalModerator && isRenameBreakoutRoomsSupported;
+}

@@ -82,7 +82,7 @@ function _deleteRecentListEntry(
  * @returns {Object}
  */
 function _storeCurrentConference(state: IRecentListState, { locationURL }: { locationURL: { href: string; }; }) {
-    const conference = locationURL.href;
+    const conference = getURLWithoutParamsNormalized(new URL(locationURL.href));
 
     // If the current conference is already in the list, we remove it to re-add
     // it to the top.

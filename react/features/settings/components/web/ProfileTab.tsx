@@ -2,11 +2,12 @@ import { Theme } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
-// @ts-expect-error
-import UIEvents from '../../../../../service/UI/UIEvents';
 import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
+import { IStore } from '../../../app/types';
+import { login, logout } from '../../../authentication/actions.web';
 import Avatar from '../../../base/avatar/components/Avatar';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
@@ -14,7 +15,6 @@ import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { openLogoutDialog } from '../../actions';
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -22,7 +22,7 @@ import { openLogoutDialog } from '../../actions';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
-     * Whether or not server-side authentication is available.
+     * Whether server-side authentication is available.
      */
     authEnabled: boolean;
 
@@ -35,6 +35,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * CSS classes object.
      */
     classes: any;
+
+    /**
+     * Invoked to change the configured calendar integration.
+     */
+    dispatch: IStore['dispatch'];
 
     /**
      * The display name to display for the local participant.
@@ -204,13 +209,11 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
         if (this.props.authLogin) {
             sendAnalytics(createProfilePanelButtonEvent('logout.button'));
 
-            APP.store.dispatch(openLogoutDialog(
-                () => APP.UI.emitEvent(UIEvents.LOGOUT)
-            ));
+            this.props.dispatch(logout());
         } else {
             sendAnalytics(createProfilePanelButtonEvent('login.button'));
 
-            APP.UI.emitEvent(UIEvents.AUTH_CLICKED);
+            this.props.dispatch(login());
         }
     }
 
@@ -246,4 +249,4 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(ProfileTab));
+export default withStyles(styles)(translate(connect()(ProfileTab)));

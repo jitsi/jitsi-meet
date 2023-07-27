@@ -128,6 +128,7 @@ const events = {
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
+    'non-participant-message-received': 'nonParticipantMessageReceived',
     'notification-triggered': 'notificationTriggered',
     'outgoing-message': 'outgoingMessage',
     'p2p-status-changed': 'p2pStatusChanged',
@@ -395,7 +396,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = 'camera; microphone; display-capture; autoplay; clipboard-write; hid';
+        this._frame.allow = 'camera; microphone; display-capture; autoplay; clipboard-write; hid; screen-wake-lock';
         this._frame.name = frameName;
         this._frame.id = frameName;
         this._setSize(height, width);

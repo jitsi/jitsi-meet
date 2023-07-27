@@ -244,6 +244,12 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
 export const TOOLBOX_ENABLED = 'toolbox.enabled';
 
 /**
+ * Flag indicating if the unsafe room warning should be enabled.
+ * Default: disabled (false).
+ */
+export const UNSAFE_ROOM_WARNING = 'unsaferoomwarning.enabled';
+
+/**
  * Flag indicating if the video mute button should be displayed.
  * Default: enabled (true).
  */

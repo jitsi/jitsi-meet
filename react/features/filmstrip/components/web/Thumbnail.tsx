@@ -903,6 +903,7 @@ class Thumbnail extends Component<IProps, IState> {
                 tabIndex = { 0 }>
                 {avatarURL ? (
                     <img
+                        alt = ''
                         className = 'sharedVideoAvatar'
                         src = { avatarURL } />
                 )
@@ -1105,6 +1106,20 @@ class Thumbnail extends Component<IProps, IState> {
                     ? <span id = 'localVideoWrapper'>{video}</span>
                     : video)}
                 <div className = { classes.containerBackground } />
+                {/* put the bottom container before the top container in the dom,
+                because it contains the participant name that should be announced first by screen readers */}
+                <div
+                    className = { clsx(classes.indicatorsContainer,
+                        classes.indicatorsBottomContainer,
+                        _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
+                    ) }>
+                    <ThumbnailBottomIndicators
+                        className = { classes.indicatorsBackground }
+                        local = { local }
+                        participantId = { id }
+                        showStatusIndicators = { !isWhiteboardParticipant(_participant) }
+                        thumbnailType = { _thumbnailType } />
+                </div>
                 <div
                     className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsTopContainer,
@@ -1122,18 +1137,6 @@ class Thumbnail extends Component<IProps, IState> {
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {_shouldDisplayTintBackground && <div className = { classes.tintBackground } />}
-                <div
-                    className = { clsx(classes.indicatorsContainer,
-                        classes.indicatorsBottomContainer,
-                        _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
-                    ) }>
-                    <ThumbnailBottomIndicators
-                        className = { classes.indicatorsBackground }
-                        local = { local }
-                        participantId = { id }
-                        showStatusIndicators = { !isWhiteboardParticipant(_participant) }
-                        thumbnailType = { _thumbnailType } />
-                </div>
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
                 { !local && (
                     <div className = 'presence-label-container'>

@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconMessage } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
+import { toggleChat } from '../../actions.web';
 
 import ChatCounter from './ChatCounter';
 
@@ -58,6 +62,24 @@ class ChatButton extends AbstractButton<IProps> {
                 <ChatCounter />
             </div>
         );
+    }
+
+    /**
+     * Handles clicking the button, and toggles the chat.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        const { dispatch } = this.props;
+
+        sendAnalytics(createToolbarEvent(
+            'toggle.chat',
+            {
+                enable: !this.props._chatOpen
+            }));
+        dispatch(closeOverflowMenuIfOpen());
+        dispatch(toggleChat());
     }
 }
 

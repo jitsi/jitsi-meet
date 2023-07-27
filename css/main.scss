@@ -37,7 +37,6 @@ $flagsImagePath: "../images/";
 @import 'modals/screen-share/share-audio';
 @import 'modals/screen-share/share-screen-warning';
 @import 'videolayout_default';
-@import 'notice';
 @import 'subject';
 @import 'popup_menu';
 @import 'recording';
@@ -73,12 +72,10 @@ $flagsImagePath: "../images/";
 @import 'premeeting/main';
 @import 'modals/invite/invite_more';
 @import 'modals/security/security';
-@import 'e2ee';
 @import 'responsive';
 @import 'drawer';
 @import 'participants-pane';
 @import 'reactions-menu';
 @import 'plan-limit';
-@import 'polls';
 
 /* Modules END */

@@ -1,8 +1,11 @@
 import { connect } from 'react-redux';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconRaiseHand } from '../../../base/icons/svg';
+import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
@@ -39,6 +42,22 @@ class RaiseHandButton extends AbstractButton<IProps> {
      */
     _isToggled() {
         return this.props.raisedHand;
+    }
+
+    /**
+     * Handles clicking the button, and toggles the raise hand.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        const { dispatch, raisedHand } = this.props;
+
+        sendAnalytics(createToolbarEvent(
+            'raise.hand',
+            { enable: !raisedHand }));
+
+        dispatch(raiseHand(!raisedHand));
     }
 }
 

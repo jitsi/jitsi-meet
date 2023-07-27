@@ -32,6 +32,7 @@ const RaisedHandsCountLabel = () => {
         content = { t('raisedHandsLabel') }
         position = { 'bottom' }>
         <Label
+            accessibilityText = { t('raisedHandsLabel') }
             className = { styles.label }
             icon = { IconRaiseHand }
             iconColor = { theme.palette.icon04 }

@@ -20,11 +20,6 @@ export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 export const SET_SKIP_PREJOIN_RELOAD = 'SET_SKIP_PREJOIN_RELOAD';
 
 /**
- * Action type used to set the mandatory stance of the prejoin display name.
- */
-export const SET_PREJOIN_DISPLAY_NAME_REQUIRED = 'SET_PREJOIN_DISPLAY_NAME_REQUIRED';
-
-/**
  * Action type to set the country to dial out to.
  */
 export const SET_DIALOUT_COUNTRY = 'SET_DIALOUT_COUNTRY';

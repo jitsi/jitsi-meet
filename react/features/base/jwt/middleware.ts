@@ -54,8 +54,7 @@ function _overwriteLocalParticipant(
         { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; }) {
     let localParticipant;
 
-    if ((avatarURL || email || name)
-            && (localParticipant = getLocalParticipant(getState))) {
+    if ((avatarURL || email || name || features) && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: IParticipant = {
             id: localParticipant.id,
             local: true
@@ -154,6 +153,13 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     _overwriteLocalParticipant(
                         store, { ...newUser,
                             features: context.features });
+                } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
+                    // there are some tokens (firebase) having picture and name on the main level.
+                    _overwriteLocalParticipant(store, {
+                        avatarURL: jwtPayload.picture,
+                        name: jwtPayload.name,
+                        email: jwtPayload.email
+                    });
                 }
             }
         } else if (typeof APP === 'undefined') {

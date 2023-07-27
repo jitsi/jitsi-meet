@@ -41,7 +41,7 @@ import {
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
-import { shouldAutoKnock } from '../prejoin/functions';
+import { isPrejoinPageVisible, shouldAutoKnock } from '../prejoin/functions';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -267,17 +267,23 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const state = getState();
     const { membersOnly } = state['features/base/conference'];
     const nonFirstFailure = Boolean(membersOnly);
+    const { isDisplayNameRequiredError } = state['features/lobby'];
+    const { prejoinConfig } = state['features/base/config'];
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
             error.recoverable = true;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [ _lobbyJid, lobbyWaitingForHost ] = error.params;
+
         const result = next(action);
 
         dispatch(openLobbyScreen());
 
-        if (shouldAutoKnock(state)) {
+        // if there was an error about display name and pre-join is not enabled
+        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled) || lobbyWaitingForHost) {
             dispatch(startKnocking());
         }
 
@@ -287,6 +293,18 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         }
 
         dispatch(setPasswordJoinFailed(nonFirstFailure));
+
+        return result;
+    } else if (error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED) {
+        const [ isLobbyEnabled ] = error.params;
+
+        const result = next(action);
+
+        // if the error is due to required display name because lobby is enabled for the room
+        // if not showing the prejoin page then show lobby UI
+        if (isLobbyEnabled && !isPrejoinPageVisible(state)) {
+            dispatch(openLobbyScreen());
+        }
 
         return result;
     }

@@ -1,4 +1,3 @@
-import '../authentication/middleware';
 import '../dynamic-branding/middleware';
 import '../gifs/middleware';
 import '../mobile/audio-mode/middleware';

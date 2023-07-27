@@ -78,6 +78,25 @@ export function closeBreakoutRoom(roomId: string) {
 }
 
 /**
+ * Action to rename a breakout room.
+ *
+ * @param {string} breakoutRoomJid - The jid of the breakout room to rename.
+ * @param {string} name - New name / subject for the breakout room.
+ * @returns {Function}
+ */
+export function renameBreakoutRoom(breakoutRoomJid: string, name = '') {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const trimmedName = name.trim();
+
+        if (trimmedName.length !== 0) {
+            sendAnalytics(createBreakoutRoomsEvent('rename'));
+            getCurrentConference(getState)?.getBreakoutRooms()
+                ?.renameBreakoutRoom(breakoutRoomJid, trimmedName);
+        }
+    };
+}
+
+/**
  * Action to remove a breakout room.
  *
  * @param {string} breakoutRoomJid - The jid of the breakout room to remove.

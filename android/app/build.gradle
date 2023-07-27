@@ -81,7 +81,8 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     if (!rootProject.ext.libreBuild) {
-        implementation 'com.google.android.gms:play-services-auth:16.0.1'
+        // Sync with react-native-google-signin
+        implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
         // Firebase
         //  - Crashlytics

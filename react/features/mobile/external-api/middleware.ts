@@ -32,12 +32,13 @@ import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
-import { MEDIA_TYPE } from '../../base/media/constants';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import {
     getLocalParticipant,
     getParticipantById,
-    getRemoteParticipants
+    getRemoteParticipants,
+    isScreenShareParticipantById
 } from '../../base/participants/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
@@ -198,7 +199,9 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
 
         const { participant } = action;
 
-        if (participant?.isVirtualScreenshareParticipant) {
+        const isVirtualScreenshareParticipant = isScreenShareParticipantById(store.getState(), participant.id);
+
+        if (isVirtualScreenshareParticipant) {
             break;
         }
 
@@ -253,7 +256,7 @@ externalAPIEnabled && StateListenerRegistry.register(
     /* listener */ debounce((tracks: ITrack[], store: IStore) => {
         const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
         const newScreenShares = tracks
-            .filter(track => track.mediaType === 'video' && track.videoType === 'desktop')
+            .filter(track => track.mediaType === MEDIA_TYPE.SCREENSHARE || track.videoType === VIDEO_TYPE.DESKTOP)
             .map(track => track.participantId);
 
         oldScreenShares.forEach(participantId => {

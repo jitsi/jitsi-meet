@@ -25,11 +25,11 @@
     }
 
     &__link {
-        color: $linkFontColor;
+        color: #489afe;
         @include transition(color .1s ease-out);
 
         &:hover {
-            color: $linkHoverFontColor;
+            color: #287ade;
             cursor: pointer;
             text-decoration: none;
 

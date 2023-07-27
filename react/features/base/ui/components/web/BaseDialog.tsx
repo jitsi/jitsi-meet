@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useContext, useEffect } from 'react';
-import FocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
@@ -170,21 +170,20 @@ const BaseDialog = ({
         if (e.key === 'Enter' && !disableEnter) {
             submit?.();
         }
-    }, []);
+    }, [ disableEnter, onClose, submit ]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
 
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [ handleKeyDown ]);
 
     return (
         <div className = { cx(classes.container, isUnmounting && 'unmount') }>
-            <div
-                className = { classes.backdrop }
-                onClick = { onBackdropClick } />
-            <FocusLock
+            <div className = { classes.backdrop } />
+            <FocusOn
                 className = { classes.focusLock }
+                onClickOutside = { onBackdropClick }
                 returnFocus = {
 
                     // If we return the focus to an element outside the viewport the page will scroll to
@@ -196,14 +195,16 @@ const BaseDialog = ({
                     isElementInTheViewport
                 }>
                 <div
-                    aria-describedby = { description }
-                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-description = { description }
+                    aria-label = { title ?? t(titleKey ?? '') }
                     aria-modal = { true }
                     className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
-                    role = 'dialog'>
+                    data-autofocus = { true }
+                    role = 'dialog'
+                    tabIndex = { -1 }>
                     {children}
                 </div>
-            </FocusLock>
+            </FocusOn>
         </div>
     );
 };

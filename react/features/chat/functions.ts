@@ -5,9 +5,12 @@ import aliases from 'react-emoji-render/data/aliases';
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
 import { IReduxState } from '../app/types';
+import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import i18next from '../base/i18n/i18next';
 import { escapeRegexp } from '../base/util/helpers';
 
-import { IMessage } from './reducer';
+import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { IMessage } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -131,4 +134,41 @@ export function areSmileysDisabled(state: IReduxState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;
+}
+
+/**
+ * Returns the timestamp to display for the message.
+ *
+ * @param {IMessage} message - The message from which to get the timestamp.
+ * @returns {string}
+ */
+export function getFormattedTimestamp(message: IMessage) {
+    return getLocalizedDateFormatter(new Date(message.timestamp))
+        .format(TIMESTAMP_FORMAT);
+}
+
+/**
+ * Generates the message text to be rendered in the component.
+ *
+ * @param {IMessage} message - The message from which to get the text.
+ * @returns {string}
+ */
+export function getMessageText(message: IMessage) {
+    return message.messageType === MESSAGE_TYPE_ERROR
+        ? i18next.t('chat.error', {
+            error: message.message
+        })
+        : message.message;
+}
+
+/**
+ * Returns the message that is displayed as a notice for private messages.
+ *
+ * @param {IMessage} message - The message to be checked.
+ * @returns {string}
+ */
+export function getPrivateNoticeMessage(message: IMessage) {
+    return i18next.t('chat.privateNotice', {
+        recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
+    });
 }

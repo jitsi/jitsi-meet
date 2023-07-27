@@ -12,3 +12,25 @@ export const NATIVE_VOLUME_SLIDER_SCALE = 19;
  * recognizes whole numbers.
  */
 export const VOLUME_SLIDER_SCALE = 100;
+
+/**
+ * Participant context menu button keys.
+ */
+export const PARTICIPANT_MENU_BUTTONS = {
+    ALLOW_VIDEO: 'allow-video',
+    ASK_UNMUTE: 'ask-unmute',
+    CONN_STATUS: 'conn-status',
+    FLIP_LOCAL_VIDEO: 'flip-local-video',
+    GRANT_MODERATOR: 'grant-moderator',
+    HIDE_SELF_VIEW: 'hide-self-view',
+    KICK: 'kick',
+    MUTE: 'mute',
+    MUTE_OTHERS: 'mute-others',
+    MUTE_OTHERS_VIDEO: 'mute-others-video',
+    MUTE_VIDEO: 'mute-video',
+    PIN_TO_STAGE: 'pinToStage',
+    PRIVATE_MESSAGE: 'privateMessage',
+    REMOTE_CONTROL: 'remote-control',
+    SEND_PARTICIPANT_TO_ROOM: 'send-participant-to-room',
+    VERIFY: 'verify'
+};

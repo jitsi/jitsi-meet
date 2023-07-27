@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Text, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -8,8 +8,13 @@ import { translate } from '../../../base/i18n/functions';
 import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifMessage } from '../../../gifs/functions.native';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
-import { replaceNonUnicodeEmojis } from '../../functions';
-import AbstractChatMessage, { IProps } from '../AbstractChatMessage';
+import {
+    getFormattedTimestamp,
+    getMessageText,
+    getPrivateNoticeMessage,
+    replaceNonUnicodeEmojis
+} from '../../functions';
+import { IChatMessageProps } from '../../types';
 
 import GifMessage from './GifMessage';
 import PrivateMessageButton from './PrivateMessageButton';
@@ -19,7 +24,7 @@ import styles from './styles';
 /**
  * Renders a single chat message.
  */
-class ChatMessage extends AbstractChatMessage<IProps> {
+class ChatMessage extends Component<IChatMessageProps> {
     /**
      * Implements {@code Component#render}.
      *
@@ -67,7 +72,7 @@ class ChatMessage extends AbstractChatMessage<IProps> {
             messageBubbleStyle.push(styles.lobbyMessageBubble);
         }
 
-        const messageText = replaceNonUnicodeEmojis(this._getMessageText());
+        const messageText = replaceNonUnicodeEmojis(getMessageText(this.props.message));
 
         return (
             <View style = { styles.messageWrapper as ViewStyle } >
@@ -147,7 +152,7 @@ class ChatMessage extends AbstractChatMessage<IProps> {
 
         return (
             <Text style = { message.lobbyChat ? styles.lobbyMsgNotice : styles.privateNotice }>
-                { this._getPrivateNoticeMessage() }
+                { getPrivateNoticeMessage(this.props.message) }
             </Text>
         );
     }
@@ -189,7 +194,7 @@ class ChatMessage extends AbstractChatMessage<IProps> {
 
         return (
             <Text style = { styles.timeText }>
-                { this._getFormattedTimestamp() }
+                { getFormattedTimestamp(this.props.message) }
             </Text>
         );
     }

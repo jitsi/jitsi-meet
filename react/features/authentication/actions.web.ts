@@ -1,12 +1,11 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
-import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
-    CANCEL_LOGIN
+    CANCEL_LOGIN,
+    LOGIN,
+    LOGOUT
 } from './actionTypes';
-import LoginDialog from './components/web/LoginDialog';
-import WaitForOwnerDialog from './components/web/WaitForOwnerDialog';
 
 export * from './actions.any';
 
@@ -25,41 +24,51 @@ export function cancelLogin() {
 
 /**
  * Cancels authentication, closes {@link WaitForOwnerDialog}
- * and navigates back to the welcome page.
+ * and navigates back to the welcome page only in the case of authentication required error.
+ * We can be showing the dialog while lobby is enabled and participant is still waiting there and hiding this dialog
+ * should do nothing.
  *
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: IStore['dispatch']) => {
-        dispatch(maybeRedirectToWelcomePage());
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { authRequired } = getState()['features/base/conference'];
+
+        authRequired && dispatch(maybeRedirectToWelcomePage());
+    };
+}
+
+/** .
+ * Redirect to the default location (e.g. Welcome page).
+ *
+ * @returns {Function}
+ */
+export function redirectToDefaultLocation() {
+    return (dispatch: IStore['dispatch']) => dispatch(maybeRedirectToWelcomePage());
+}
+
+/**
+ * Login.
+ *
+ * @returns {{
+ *     type: LOGIN
+ * }}
+ */
+export function login() {
+    return {
+        type: LOGIN
     };
 }
 
 /**
- * Hides a authentication dialog where the local participant
- * should authenticate.
+ * Logout.
  *
- * @returns {Function}.
+ * @returns {{
+ *     type: LOGOUT
+ * }}
  */
-export function hideLoginDialog() {
-    return hideDialog(LoginDialog);
+export function logout() {
+    return {
+        type: LOGOUT
+    };
 }
-
-/**
- * Shows a notification dialog that authentication is required to create the.
- * Conference.
- * This is used for external auth.
- *
- * @param {string} room - The room name.
- * @param {Function} onAuthNow - The function to be invoked when external authentication.
- *
- * @returns {Function}.
- */
-export function openAuthDialog(room: String, onAuthNow?: Function) {
-    return openDialog(WaitForOwnerDialog, {
-        room,
-        onAuthNow
-    });
-}
-
-

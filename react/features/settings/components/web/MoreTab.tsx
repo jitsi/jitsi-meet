@@ -88,7 +88,8 @@ const styles = (theme: Theme) => {
     return {
         container: {
             display: 'flex',
-            flexDirection: 'column' as const
+            flexDirection: 'column' as const,
+            padding: '0 2px'
         },
 
         divider: {
@@ -254,6 +255,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
 
         return (
             <Select
+                id = 'more-maxStageParticipants-select'
                 label = { t('settings.maxStageParticipants') }
                 onChange = { this._onMaxStageParticipantsSelect }
                 options = { maxParticipantsItems }
@@ -286,6 +288,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         return (
             <Select
                 className = { classes.bottomMargin }
+                id = 'more-language-select'
                 label = { t('settings.language') }
                 onChange = { this._onLanguageItemSelect }
                 options = { languageItems }

@@ -23,6 +23,11 @@ interface IProps {
     getRef?: Function;
 
     /**
+     * Function called when the portal target becomes actually visible.
+     */
+    onVisible?: Function;
+
+    /**
      * Function used to get the updated size info of the container on it's resize.
      */
     setSize?: Function;
@@ -45,7 +50,7 @@ interface IProps {
  *
  * @returns {ReactElement}
  */
-function DialogPortal({ children, className, style, getRef, setSize, targetSelector }: IProps) {
+function DialogPortal({ children, className, style, getRef, setSize, targetSelector, onVisible }: IProps) {
     const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
@@ -74,7 +79,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
             getRef(portalTarget);
             portalTarget.style.zIndex = `${ZINDEX_DIALOG_PORTAL}`;
         }
-    }, [ portalTarget ]);
+    }, [ portalTarget, getRef ]);
 
     useEffect(() => {
         const size = {
@@ -89,6 +94,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
                 clearTimeout(timerRef.current);
                 timerRef.current = window.setTimeout(() => {
                     portalTarget.style.visibility = 'visible';
+                    onVisible?.();
                 }, 100);
             }
         });

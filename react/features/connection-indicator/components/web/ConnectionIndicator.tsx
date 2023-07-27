@@ -347,12 +347,14 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
             _connectionIndicatorInactiveDisabled,
             _videoTrack,
             classes,
-            iconSize
+            iconSize,
+            t
         } = this.props;
 
         return (
             <div
                 style = {{ fontSize: iconSize }}>
+                <span className = 'sr-only'>{ t('videothumbnail.connectionInfo') }</span>
                 <ConnectionIndicatorIcon
                     classes = { classes }
                     colorClass = { this._getConnectionColorClass() }

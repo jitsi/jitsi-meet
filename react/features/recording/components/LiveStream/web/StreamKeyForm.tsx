@@ -40,20 +40,6 @@ const styles = (theme: Theme) => {
 class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
 
     /**
-     * Initializes a new {@code StreamKeyForm} instance.
-     *
-     * @param {IProps} props - The React {@code Component} props to initialize
-     * the new {@code StreamKeyForm} instance with.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onOpenHelp = this._onOpenHelp.bind(this);
-        this._onOpenHelpKeyPress = this._onOpenHelpKeyPress.bind(this);
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -66,6 +52,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
             <div className = 'stream-key-form'>
                 <Input
                     autoFocus = { true }
+                    id = 'streamkey-input'
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
                     onChange = { this._onInputChange }
@@ -83,12 +70,10 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                         }
                         { this.props._liveStreaming.helpURL
                             ? <a
-                                aria-label = { t('liveStreaming.streamIdHelp') }
                                 className = { classes.helperLink }
-                                onClick = { this._onOpenHelp }
-                                onKeyPress = { this._onOpenHelpKeyPress }
-                                role = 'link'
-                                tabIndex = { 0 }>
+                                href = { this.props._liveStreaming.helpURL }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
                                 { t('liveStreaming.streamIdHelp') }
                             </a>
                             : null
@@ -111,33 +96,6 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                 </div>
             </div>
         );
-    }
-
-    /**
-     * Opens a new tab with information on how to manually locate a YouTube
-     * broadcast stream key.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onOpenHelp() {
-        window.open(this.props._liveStreaming.helpURL, '_blank', 'noopener');
-    }
-
-    /**
-     * Opens a new tab with information on how to manually locate a YouTube
-     * broadcast stream key.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onOpenHelpKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ') {
-            e.preventDefault();
-            this._onOpenHelp();
-        }
     }
 }
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
-import { IMessage } from '../../reducer';
+import { IMessage } from '../../types';
 
 import ChatMessage from './ChatMessage';
 

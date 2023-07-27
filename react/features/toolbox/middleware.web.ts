@@ -8,7 +8,7 @@ import {
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 
-import './subscriber';
+import './subscriber.web';
 
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
@@ -18,7 +18,6 @@ import './subscriber';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-
     switch (action.type) {
     case CLEAR_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
@@ -45,7 +44,6 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 type DocumentElement = {
-    mozRequestFullScreen?: Function;
     requestFullscreen?: Function;
     webkitRequestFullscreen?: Function;
 };
@@ -63,34 +61,26 @@ type DocumentElement = {
 function _setFullScreen(next: Function, action: AnyAction) {
     const result = next(action);
 
-    if (typeof APP === 'object') {
-        const { fullScreen } = action;
+    const { fullScreen } = action;
 
-        if (fullScreen) {
-            const documentElement: DocumentElement
-                = document.documentElement || {};
+    if (fullScreen) {
+        const documentElement: DocumentElement
+            = document.documentElement || {};
 
-            if (typeof documentElement.requestFullscreen === 'function') {
-                documentElement.requestFullscreen();
-            } else if (
-                typeof documentElement.mozRequestFullScreen === 'function') {
-                documentElement.mozRequestFullScreen();
-            } else if (
-                typeof documentElement.webkitRequestFullscreen === 'function') {
-                documentElement.webkitRequestFullscreen();
-            }
-
-            return result;
+        if (typeof documentElement.requestFullscreen === 'function') {
+            documentElement.requestFullscreen();
+        } else if (
+            typeof documentElement.webkitRequestFullscreen === 'function') {
+            documentElement.webkitRequestFullscreen();
         }
 
-        if (typeof document.exitFullscreen === 'function') {
-            document.exitFullscreen();
+        return result;
+    }
 
-        } else if (typeof document.mozCancelFullScreen === 'function') {
-            document.mozCancelFullScreen();
-        } else if (typeof document.webkitExitFullscreen === 'function') {
-            document.webkitExitFullscreen();
-        }
+    if (typeof document.exitFullscreen === 'function') {
+        document.exitFullscreen();
+    } else if (typeof document.webkitExitFullscreen === 'function') {
+        document.webkitExitFullscreen();
     }
 
     return result;

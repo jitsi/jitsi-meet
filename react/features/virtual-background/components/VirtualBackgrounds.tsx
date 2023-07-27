@@ -360,6 +360,24 @@ function VirtualBackgrounds({
         await setPreviewIsLoaded(loaded);
     }, []);
 
+    // create a full list of {backgroundId: backgroundLabel} to easily retrieve label of selected background
+    const labelsMap: Record<string, string> = {
+        none: t('virtualBackground.none'),
+        'slight-blur': t('virtualBackground.slightBlur'),
+        blur: t('virtualBackground.blur'),
+        ..._images.reduce<Record<string, string>>((acc, image) => {
+            acc[image.id] = image.tooltip ? t(`virtualBackground.${image.tooltip}`) : '';
+
+            return acc;
+        }, {}),
+        ...storedImages.reduce<Record<string, string>>((acc, image, index) => {
+            acc[image.id] = t('virtualBackground.uploadedImage', { index: index + 1 });
+
+            return acc;
+        }, {})
+    };
+    const currentBackgroundLabel = labelsMap[selectedThumbnail] || labelsMap.none;
+
     return (
         <>
             <VirtualBackgroundPreview
@@ -372,6 +390,13 @@ function VirtualBackgrounds({
                 </div>
             ) : (
                 <div className = { classes.container }>
+                    <span
+                        className = 'sr-only'
+                        id = 'virtual-background-current-info'>
+                        { t('virtualBackground.accessibilityLabel.currentBackground', {
+                            background: currentBackgroundLabel
+                        }) }
+                    </span>
                     {_showUploadButton
                     && <UploadImageButton
                         setLoading = { setLoading }
@@ -380,6 +405,8 @@ function VirtualBackgrounds({
                         showLabel = { previewIsLoaded }
                         storedImages = { storedImages } />}
                     <div
+                        aria-describedby = 'virtual-background-current-info'
+                        aria-label = { t('virtualBackground.accessibilityLabel.selectBackground') }
                         className = { classes.thumbnailContainer }
                         role = 'radiogroup'
                         tabIndex = { -1 }>

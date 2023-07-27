@@ -1,11 +1,10 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
 import { IReduxState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
 import { iAmVisitor } from '../../visitors/functions';
 import { getReplaceParticipant } from '../config/functions';
-import { disconnect } from '../connection/actions';
+import { hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../media/actions';
@@ -41,6 +40,7 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
+    CONFERENCE_WILL_INIT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_CLOSED,
@@ -95,9 +95,14 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     // Dispatches into features/base/conference follow:
 
-    conference.on(
-        JitsiConferenceEvents.AUTH_STATUS_CHANGED,
-        (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    // we want to ignore this event in case of tokenAuthUrl config
+    // we are deprecating this and at some point will get rid of it
+    if (!state['features/base/config'].tokenAuthUrl) {
+        conference.on(
+            JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+            (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    }
+
     conference.on(
         JitsiConferenceEvents.CONFERENCE_FAILED,
         (err: string, ...args: any[]) => dispatch(conferenceFailed(conference, err, ...args)));
@@ -464,6 +469,19 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
 }
 
 /**
+ * Signals the intention of the application to have a conference initialized.
+ *
+ * @returns {{
+ *     type: CONFERENCE_WILL_INIT
+ * }}
+ */
+export function conferenceWillInit() {
+    return {
+        type: CONFERENCE_WILL_INIT
+    };
+}
+
+/**
  * Signals the intention of the application to have the local participant
  * join the specified conference.
  *
@@ -647,17 +665,8 @@ export function kickedOut(conference: IJitsiConference, participant: Object) {
  * @returns {Function}
  */
 export function leaveConference() {
-    return async (dispatch: IStore['dispatch']) => {
-
-        // FIXME: these should be unified.
-        if (navigator.product === 'ReactNative') {
-            dispatch(appNavigate(undefined));
-        } else {
-            dispatch(disconnect(true));
-        }
-    };
+    return async (dispatch: IStore['dispatch']) => dispatch(hangup(true));
 }
-
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.
