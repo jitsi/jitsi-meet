@@ -19,7 +19,7 @@ import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiTh
 interface IUserInfo {
     email: string,
     displayName: string;
-    avatarUrl: string;
+    avatarURL: string;
 }
 interface IAppProps {
     flags: object;
