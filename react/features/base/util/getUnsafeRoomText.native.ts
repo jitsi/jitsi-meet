@@ -21,6 +21,7 @@ export default function getUnsafeRoomText(state: IReduxState, t: Function, conte
     const link = React.createElement(Link, {
         url: securityUrl,
         children: 'here',
+        key: 'support-link',
         style: { color: BaseTheme.palette.action01 } });
 
     const options = {
