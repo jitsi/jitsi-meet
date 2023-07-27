@@ -256,7 +256,7 @@ externalAPIEnabled && StateListenerRegistry.register(
     /* listener */ debounce((tracks: ITrack[], store: IStore) => {
         const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
         const newScreenShares = tracks
-            .filter(track => track.mediaType === MEDIA_TYPE.SCREENSHARE && track.videoType === VIDEO_TYPE.DESKTOP)
+            .filter(track => track.mediaType === MEDIA_TYPE.SCREENSHARE || track.videoType === VIDEO_TYPE.DESKTOP)
             .map(track => track.participantId);
 
         oldScreenShares.forEach(participantId => {
