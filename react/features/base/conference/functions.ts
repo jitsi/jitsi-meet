@@ -304,10 +304,7 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
         // and the visitor will be redirected back to a vnode from jicofo
         if (config.oldConfig && username) {
             return {
-                hosts: {
-                    domain: config.oldConfig.hosts.domain,
-                    muc: config.oldConfig.hosts.muc
-                },
+                hosts: config.oldConfig.hosts,
                 focusUserJid: focusJid,
                 disableLocalStats: false,
                 bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
@@ -323,14 +320,16 @@ export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
 
     const oldConfig = {
         hosts: {
-            domain: config.hosts.domain,
-            muc: config.hosts.muc
+            domain: ''
         },
         focusUserJid: config.focusUserJid,
         bosh: config.bosh,
         p2p: config.p2p,
         websocket: config.websocket
     };
+
+    // copy original hosts, to make sure we do not use a modified one later
+    Object.assign(oldConfig.hosts, config.hosts);
 
     const domain = `${vnode}.meet.jitsi`;
 
