@@ -22,7 +22,7 @@ interface IUserInfo {
     avatarUrl: string;
 }
 interface IAppProps {
-    flags: [];
+    flags: object;
     meetingOptions: {
         domain: string;
         roomName: string;
