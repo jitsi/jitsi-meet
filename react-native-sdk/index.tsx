@@ -17,6 +17,12 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
+interface IUserInfo {
+    email: string,
+    displayName: string;
+    avatarURL: string;
+}
+
 interface IAppProps {
     flags: object;
     meetingOptions: {
@@ -31,7 +37,8 @@ interface IAppProps {
             startWithAudioMuted?: boolean;
             startAudioOnly?: boolean;
             startWithVideoMuted?: boolean;
-        }
+        },
+        userInfo: IUserInfo
     };
     style?: Object;
 }
@@ -78,7 +85,10 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
                     onConferenceLeft: meetingOptions.onConferenceLeft,
                     onParticipantJoined: meetingOptions.onParticipantJoined
                 },
-                'flags': { ...flags }
+                'flags': { ...flags },
+                'userInfo': {
+                    ...meetingOptions.userInfo
+                }
             });
         }, []
     );
