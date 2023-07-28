@@ -41,7 +41,7 @@ s2s_whitelist = {
 };
 
 s2sout_override = {
-    ["conference.jitmeet.example.com"] = "tcp://127.0.0.1"5269"; -- needed for visitors to send messages to main room
+    ["conference.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for visitors to send messages to main room
     ["jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for the main room when connecting in to send main participants
     ["visitors.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for sending promotion request to visitors.jitmeet.example.com component
 }
