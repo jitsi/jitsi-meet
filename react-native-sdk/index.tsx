@@ -17,18 +17,21 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
+interface IUrl {
+    domain: string;
+    jwt: string;
+    roomName: string;
+}
+
 interface IUserInfo {
-    email: string,
-    displayName: string;
     avatarURL: string;
+    displayName: string;
+    email: string;
 }
 
 interface IAppProps {
     flags: object;
     meetingOptions: {
-        domain: string;
-        roomName: string;
-        jwt: string;
         onReadyToClose?: Function;
         onConferenceJoined?: Function;
         onConferenceWillJoin?: Function;
@@ -38,8 +41,9 @@ interface IAppProps {
             startWithAudioMuted?: boolean;
             startAudioOnly?: boolean;
             startWithVideoMuted?: boolean;
-        },
-        userInfo: IUserInfo
+        }
+        url: IUrl;
+        userInfo: IUserInfo;
     };
     style?: Object;
 }
@@ -72,8 +76,8 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
 
     useEffect(
         () => {
-            const urlJwt = meetingOptions.jwt ? `?jwt=${meetingOptions.jwt}` : '';
-            const url = `${meetingOptions.domain}/${meetingOptions.roomName}${urlJwt}`;
+            const urlJwt = meetingOptions.url.jwt ? `?jwt=${meetingOptions.url.jwt}` : '';
+            const url = `${meetingOptions.url.domain}/${meetingOptions.url.roomName}${urlJwt}`;
 
             setAppProps({
                 'url': {
