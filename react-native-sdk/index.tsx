@@ -128,8 +128,9 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
      * Without this change the call remains active without having the jitsi screen.
      */
     useLayoutEffect(() => {
-            const dispatch = app.current?.state?.store?.dispatch;
-            dispatch && dispatch(appNavigate(undefined));
+        const dispatch = app.current?.state?.store?.dispatch;
+
+        dispatch && dispatch(appNavigate(undefined));
     }, []);
 
 
