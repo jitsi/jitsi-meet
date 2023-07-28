@@ -70,7 +70,7 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
     useEffect(
         () => {
             const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
-            
+        
             setAppProps({
                 'url': {
                     url,
