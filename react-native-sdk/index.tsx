@@ -16,11 +16,13 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 // @ts-ignore
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
+
 interface IUserInfo {
     email: string,
     displayName: string;
     avatarURL: string;
 }
+
 interface IAppProps {
     flags: object;
     meetingOptions: {
@@ -70,7 +72,7 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
     useEffect(
         () => {
             const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
-        
+
             setAppProps({
                 'url': {
                     url,
