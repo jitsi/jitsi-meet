@@ -6,14 +6,12 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 
-// @ts-ignore
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
-// @ts-ignore
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
@@ -55,7 +53,6 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
-    // eslint-disable-next-line arrow-body-style
     useImperativeHandle(ref, () => ({
         close: () => {
             const dispatch = app.current.state.store.dispatch;
