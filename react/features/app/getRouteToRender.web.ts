@@ -1,6 +1,7 @@
 // @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 
+import { getTokenAuthUrl } from '../authentication/functions';
 import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
 import { isSupportedBrowser } from '../base/environment/environment';
@@ -36,11 +37,24 @@ export function _getRouteToRender(stateful: IStateful) {
  * @returns {Promise|undefined}
  */
 function _getWebConferenceRoute(state: IReduxState) {
-    if (!isRoomValid(state['features/base/conference'].room)) {
+    const room = state['features/base/conference'].room;
+
+    if (!isRoomValid(room)) {
         return;
     }
 
     const route = _getEmptyRoute();
+    const config = state['features/base/config'];
+
+    // if we have auto redirect enabled, and we have previously logged in successfully
+    // let's redirect to the auth url to get the token and login again
+    if (config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
+        && state['features/authentication'].tokenAuthUrlSuccessful
+        && !state['features/base/jwt'].jwt && room) {
+        route.href = getTokenAuthUrl(config, room);
+
+        return Promise.resolve(route);
+    }
 
     // Update the location if it doesn't match. This happens when a room is
     // joined from the welcome page. The reason for doing this instead of using

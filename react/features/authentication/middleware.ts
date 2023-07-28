@@ -1,9 +1,9 @@
 import { IStore } from '../app/types';
+import { APP_WILL_NAVIGATE } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    SET_ROOM
+    CONFERENCE_LEFT
 } from '../base/conference/actionTypes';
 import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
@@ -194,20 +194,21 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_ROOM: {
+    case APP_WILL_NAVIGATE: {
         const { dispatch, getState } = store;
         const state = getState();
         const config = state['features/base/config'];
-        const { room } = action;
+        const room = state['features/base/conference'].room;
 
-        if (isRoomValid(room) && isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect
+        if (isRoomValid(room)
+            && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
             && state['features/authentication'].tokenAuthUrlSuccessful
             && !state['features/base/jwt'].jwt) {
             // if we have auto redirect enabled, and we have previously logged in successfully
-            // let's redirect to the auth url to get the token and login again
+            // we will redirect to the auth url to get the token and login again
+            // we want to mark token auth success to false as if login is unsuccessful
+            // the participant can join anonymously and not go in login loop
             dispatch(setTokenAuthUrlSuccess(false));
-
-            window.location.href = getTokenAuthUrl(config)(room, false);
         }
 
         break;
@@ -293,11 +294,18 @@ function _handleLogin({ dispatch, getState }: IStore) {
             return;
         }
 
-        // FIXME: This method will not preserve the other URL params that were originally passed.
-        const tokenAuthServiceUrl = getTokenAuthUrl(config)(room, false);
+        if (!room) {
+            return;
+        }
 
-        // we have already shown the prejoin screen so no need to show it again(if enabled) after obtaining the token
-        window.location.href = `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
+        // FIXME: This method will not preserve the other URL params that were originally passed.
+        const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
+
+        if (tokenAuthServiceUrl) {
+            // we have already shown the prejoin screen, so no need to show it again after obtaining the token
+            window.location.href = `${tokenAuthServiceUrl}${
+                tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
+        }
     } else {
         dispatch(openLoginDialog());
     }
