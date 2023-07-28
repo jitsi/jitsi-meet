@@ -35,7 +35,7 @@ export function connect(id?: string, password?: string) {
                     }
                 })
                 .then(j => j && dispatch(setJWT(j)))
-                .then(() => _connectInternal(id, password));
+                .then(() => dispatch(_connectInternal(id, password)));
         }
 
         // used by jibri
