@@ -5,6 +5,7 @@ import {
     CONFERENCE_LEFT,
     SET_ROOM
 } from '../base/conference/actionTypes';
+import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hangup } from '../base/connection/actions';
 import { hideDialog } from '../base/dialog/actions';
@@ -197,14 +198,14 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const state = getState();
         const config = state['features/base/config'];
+        const { room } = action;
 
-        if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect
-            && state['features/authentication'].tokenAuthUrlSuccessful) {
+        if (isRoomValid(room) && isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect
+            && state['features/authentication'].tokenAuthUrlSuccessful
+            && !state['features/base/jwt'].jwt) {
             // if we have auto redirect enabled, and we have previously logged in successfully
             // let's redirect to the auth url to get the token and login again
             dispatch(setTokenAuthUrlSuccess(false));
-
-            const { room } = action;
 
             window.location.href = getTokenAuthUrl(config)(room, false);
         }
