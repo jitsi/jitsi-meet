@@ -19,6 +19,7 @@ interface IEventListeners {
     onConferenceJoined?: Function;
     onConferenceLeft?: Function;
     onConferenceWillJoin?: Function;
+    onEnterPictureInPicture?: Function;
     onParticipantJoined?: Function;
     onReadyToClose?: Function;
 }
@@ -101,11 +102,12 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             setAppProps({
                 'flags': flags,
                 'rnSdkHandlers': {
-                    onReadyToClose: eventListeners.onReadyToClose,
                     onConferenceJoined: eventListeners.onConferenceJoined,
                     onConferenceWillJoin: eventListeners.onConferenceWillJoin,
                     onConferenceLeft: eventListeners.onConferenceLeft,
-                    onParticipantJoined: eventListeners.onParticipantJoined
+                    onEnterPictureInPicture: eventListeners.onEnterPictureInPicture,
+                    onParticipantJoined: eventListeners.onParticipantJoined,
+                    onReadyToClose: eventListeners.onReadyToClose
                 },
                 'url': urlProps,
                 'userInfo': userInfo
