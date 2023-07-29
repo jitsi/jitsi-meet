@@ -33,9 +33,11 @@ export function enterPictureInPicture() {
                             new Error('Picture-in-Picture not supported'))
                     : Promise.resolve();
 
-            p.then(
-                () => dispatch({ type: ENTER_PICTURE_IN_PICTURE }),
-                (e: string) => logger.warn(`Error entering PiP mode: ${e}`));
+            p.catch((e: string) => logger.warn(`Error entering PiP mode: ${e}`));
+
+            // We should still dispatch ENTER_PICTURE_IN_PICTURE for cases where
+            // the external app needs to handle the event (ie. react-native-sdk)
+            p.finally(() => dispatch({ type: ENTER_PICTURE_IN_PICTURE }));
         }
     };
 }
