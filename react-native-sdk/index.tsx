@@ -16,11 +16,11 @@ import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiTh
 
 
 interface IEventListeners {
-    onReadyToClose?: Function;
     onConferenceJoined?: Function;
-    onConferenceWillJoin?: Function;
     onConferenceLeft?: Function;
+    onConferenceWillJoin?: Function;
     onParticipantJoined?: Function;
+    onReadyToClose?: Function;
 }
 
 interface IUserInfo {
