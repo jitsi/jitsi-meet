@@ -79,11 +79,11 @@ https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
 
 
 ### Using JWT tokens
-- If you are planning to use tokens you can update your domain and room name inside meeting options.
+- If you are planning to use tokens you can update your server url and room name inside meeting options.
 - For example:
 ```javascript
-  const meetingOptions = {
-     domain: 'YOUR_DOMAIN',
-     roomName: 'ROOM_NAME?jwt=JWT_TOKEN'
-  }
+  <JitsiMeeting
+    room={'ThisIsNotATestRoomName'}
+    serverURL={'https://meet.jit.si/'}
+    token={'dkhalhfajhflahlfaahalhfahfsl'} />
 ```

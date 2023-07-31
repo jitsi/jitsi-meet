@@ -15,12 +15,6 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
-interface IUrl {
-    room: string;
-    serverURL: string;
-    token: string;
-}
-
 interface IUserInfo {
     avatarURL: string;
     displayName: string;
@@ -30,29 +24,36 @@ interface IUserInfo {
 interface IAppProps {
     config: object;
     flags: object;
-    meetingOptions: {
+    eventListeners: {
         onReadyToClose?: Function;
         onConferenceJoined?: Function;
         onConferenceWillJoin?: Function;
         onConferenceLeft?: Function;
         onParticipantJoined?: Function;
-        settings?: {
-            startWithAudioMuted?: boolean;
-            startAudioOnly?: boolean;
-            startWithVideoMuted?: boolean;
-        }
-        url: IUrl;
-        userInfo: IUserInfo;
     };
+    room: string;
+    serverURL?: string;
+    token?: string;
+    userInfo?: IUserInfo;
     style?: Object;
 }
 
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef(({ config, flags, meetingOptions, style }: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
+    const {
+        config,
+        eventListeners,
+        flags,
+        room,
+        serverURL,
+        style,
+        token,
+        userInfo
+    } = props;
 
     // eslint-disable-next-line arrow-body-style
     useImperativeHandle(ref, () => ({
@@ -75,26 +76,26 @@ export const JitsiMeeting = forwardRef(({ config, flags, meetingOptions, style }
 
     useEffect(
         () => {
-            const urlJwt = meetingOptions.url.token ? `?jwt=${meetingOptions.url.token}` : '';
-            const url = `${meetingOptions.url.serverURL}/${meetingOptions.url.room}${urlJwt}`;
+            const url = {
+                config,
+                jwt: token,
+                room: !room.includes('://') ? room : undefined,
+                serverURL: !room.includes('://') ? serverURL : undefined,
+                url: room.includes('://') ? room : undefined
+            };
+
 
             setAppProps({
-                'config': { ...config },
-                'flags': { ...flags },
+                'flags': flags,
                 'rnSdkHandlers': {
-                    onReadyToClose: meetingOptions.onReadyToClose,
-                    onConferenceJoined: meetingOptions.onConferenceJoined,
-                    onConferenceWillJoin: meetingOptions.onConferenceWillJoin,
-                    onConferenceLeft: meetingOptions.onConferenceLeft,
-                    onParticipantJoined: meetingOptions.onParticipantJoined
+                    onReadyToClose: eventListeners.onReadyToClose,
+                    onConferenceJoined: eventListeners.onConferenceJoined,
+                    onConferenceWillJoin: eventListeners.onConferenceWillJoin,
+                    onConferenceLeft: eventListeners.onConferenceLeft,
+                    onParticipantJoined: eventListeners.onParticipantJoined
                 },
-                'url': {
-                    url,
-                    settings: meetingOptions.settings
-                },
-                'userInfo': {
-                    ...meetingOptions.userInfo
-                }
+                'url': url,
+                'userInfo': userInfo
             });
         }, []
     );
