@@ -123,6 +123,7 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
     );
 
 
+    // eslint-disable-next-line arrow-body-style
     useLayoutEffect(() => {
         /**
          * When you close the component you need to reset it.
@@ -131,7 +132,7 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
         */
         return () => {
             const dispatch = app.current?.state?.store?.dispatch;
-            
+
             dispatch && dispatch(appNavigate(undefined));
         };
     }, []);
