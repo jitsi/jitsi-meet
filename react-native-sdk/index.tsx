@@ -6,49 +6,56 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 
-// @ts-ignore
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
-// @ts-ignore
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
+interface IEventListeners {
+    onConferenceJoined?: Function;
+    onConferenceLeft?: Function;
+    onConferenceWillJoin?: Function;
+    onParticipantJoined?: Function;
+    onReadyToClose?: Function;
+}
+
 interface IUserInfo {
-    email: string,
-    displayName: string;
     avatarURL: string;
+    displayName: string;
+    email: string;
 }
 
 interface IAppProps {
+    config: object;
     flags: object;
-    meetingOptions: {
-        domain: string;
-        roomName: string;
-        onReadyToClose?: Function;
-        onConferenceJoined?: Function;
-        onConferenceWillJoin?: Function;
-        onConferenceLeft?: Function;
-        onParticipantJoined?: Function;
-        settings?: {
-            startWithAudioMuted?: boolean;
-            startAudioOnly?: boolean;
-            startWithVideoMuted?: boolean;
-        },
-        userInfo: IUserInfo
-    };
+    eventListeners: IEventListeners;
+    room: string;
+    serverURL?: string;
     style?: Object;
+    token?: string;
+    userInfo?: IUserInfo;
 }
 
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
+    const {
+        config,
+        eventListeners,
+        flags,
+        room,
+        serverURL,
+        style,
+        token,
+        userInfo
+    } = props;
 
     // eslint-disable-next-line arrow-body-style
     useImperativeHandle(ref, () => ({
@@ -71,32 +78,44 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
 
     useEffect(
         () => {
-            const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
+            const urlObj = {
+                config,
+                jwt: token
+            };
+
+            let urlProps;
+
+            if (room.includes('://')) {
+                urlProps = {
+                    ...urlObj,
+                    url: room
+                };
+            } else {
+                urlProps = {
+                    ...urlObj,
+                    room,
+                    serverURL
+                };
+            }
 
             setAppProps({
-                'url': {
-                    url,
-                    config: meetingOptions.settings
-                },
+                'flags': flags,
                 'rnSdkHandlers': {
-                    onReadyToClose: meetingOptions.onReadyToClose,
-                    onConferenceJoined: meetingOptions.onConferenceJoined,
-                    onConferenceWillJoin: meetingOptions.onConferenceWillJoin,
-                    onConferenceLeft: meetingOptions.onConferenceLeft,
-                    onParticipantJoined: meetingOptions.onParticipantJoined
+                    onReadyToClose: eventListeners.onReadyToClose,
+                    onConferenceJoined: eventListeners.onConferenceJoined,
+                    onConferenceWillJoin: eventListeners.onConferenceWillJoin,
+                    onConferenceLeft: eventListeners.onConferenceLeft,
+                    onParticipantJoined: eventListeners.onParticipantJoined
                 },
-                'flags': { ...flags },
-                'userInfo': {
-                    ...meetingOptions.userInfo
-                }
+                'url': urlProps,
+                'userInfo': userInfo
             });
         }, []
     );
 
     return (
-        <View style = { style }>
+        <View style = { style as ViewStyle }>
             <JitsiThemePaperProvider>
-                {/* @ts-ignore */}
                 <App
                     { ...appProps }
                     ref = { app } />
