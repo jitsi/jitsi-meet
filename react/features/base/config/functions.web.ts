@@ -146,7 +146,7 @@ const buildButtonsArray = (
         let preventExecution = false;
         if (id === 'InviteButton-id') {
         preventExecution = true; // Set preventExecution to true for a specific button
-    }
+        }
         return {
             key: id,
             preventExecution: false
