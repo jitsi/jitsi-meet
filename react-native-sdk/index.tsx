@@ -122,15 +122,17 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
         }, []
     );
 
-    /**
-     * When you close the component you need to reset it.
-     * In some cases it needs to be added as the parent component may have been destroyed.
-     * Without this change the call remains active without having the jitsi screen.
-     */
-    useLayoutEffect(() => {
-        const dispatch = app.current?.state?.store?.dispatch;
 
-        dispatch && dispatch(appNavigate(undefined));
+    useLayoutEffect(() => {
+        /**
+         * When you close the component you need to reset it.
+         * In some cases it needs to be added as the parent component may have been destroyed.
+         * Without this change the call remains active without having the jitsi screen.
+        */
+        return () => {
+            const dispatch = app.current?.state?.store?.dispatch;
+            dispatch && dispatch(appNavigate(undefined));
+        }
     }, []);
 
 
