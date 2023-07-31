@@ -76,13 +76,25 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
 
     useEffect(
         () => {
-            const url = {
+            const urlObj = {
                 config,
                 jwt: token,
-                room: room.includes('://') ? undefined : room,
-                serverURL: room.includes('://') ? undefined : serverURL,
-                url: room.includes('://') ? room : undefined
             };
+
+            let urlProps;
+
+            if (room.includes('://')) {
+                urlProps = {
+                    ...urlObj,
+                    url: room
+                }
+            } else {
+                urlProps = {
+                    ...urlObj,
+                    room,
+                    serverURL
+                }
+            }
 
             setAppProps({
                 'flags': flags,
@@ -93,7 +105,7 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
                     onConferenceLeft: eventListeners.onConferenceLeft,
                     onParticipantJoined: eventListeners.onParticipantJoined
                 },
-                'url': url,
+                'url': urlProps,
                 'userInfo': userInfo
             });
         }, []
