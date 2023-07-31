@@ -79,7 +79,7 @@ export const JitsiMeeting = forwardRef(({ config, flags, meetingOptions, style }
             const url = `${meetingOptions.url.serverURL}/${meetingOptions.url.room}${urlJwt}`;
 
             setAppProps({
-                'config': {...config},
+                'config': { ...config },
                 'flags': { ...flags },
                 'rnSdkHandlers': {
                     onReadyToClose: meetingOptions.onReadyToClose,
