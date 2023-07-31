@@ -79,8 +79,8 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             const url = {
                 config,
                 jwt: token,
-                room: !room.includes('://') ? room : undefined,
-                serverURL: !room.includes('://') ? serverURL : undefined,
+                room: room.includes('://') ? undefined : room,
+                serverURL: room.includes('://') ? undefined : serverURL,
                 url: room.includes('://') ? room : undefined
             };
 
