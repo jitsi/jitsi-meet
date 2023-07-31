@@ -16,9 +16,9 @@ import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiTh
 
 
 interface IUrl {
-    domain: string;
-    jwt: string;
-    roomName: string;
+    room: string;
+    serverURL: string;
+    token: string;
 }
 
 interface IUserInfo {
@@ -28,6 +28,7 @@ interface IUserInfo {
 }
 
 interface IAppProps {
+    config: object;
     flags: object;
     meetingOptions: {
         onReadyToClose?: Function;
@@ -49,7 +50,7 @@ interface IAppProps {
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef(({ config, flags, meetingOptions, style }: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
 
@@ -74,14 +75,12 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
 
     useEffect(
         () => {
-            const urlJwt = meetingOptions.url.jwt ? `?jwt=${meetingOptions.url.jwt}` : '';
-            const url = `${meetingOptions.url.domain}/${meetingOptions.url.roomName}${urlJwt}`;
+            const urlJwt = meetingOptions.url.token ? `?jwt=${meetingOptions.url.token}` : '';
+            const url = `${meetingOptions.url.serverURL}/${meetingOptions.url.room}${urlJwt}`;
 
             setAppProps({
-                'url': {
-                    url,
-                    config: meetingOptions.settings
-                },
+                'config': {...config},
+                'flags': { ...flags },
                 'rnSdkHandlers': {
                     onReadyToClose: meetingOptions.onReadyToClose,
                     onConferenceJoined: meetingOptions.onConferenceJoined,
@@ -89,7 +88,10 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
                     onConferenceLeft: meetingOptions.onConferenceLeft,
                     onParticipantJoined: meetingOptions.onParticipantJoined
                 },
-                'flags': { ...flags },
+                'url': {
+                    url,
+                    settings: meetingOptions.settings
+                },
                 'userInfo': {
                     ...meetingOptions.userInfo
                 }
