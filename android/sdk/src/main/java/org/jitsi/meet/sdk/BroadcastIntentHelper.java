@@ -54,4 +54,10 @@ public class BroadcastIntentHelper {
         intent.putExtra("enabled", enabled);
         return intent;
     }
+    
+    public static Intent buildRetrieveParticipantsInfo(String requestId) {
+        Intent intent = new Intent(BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
+        intent.putExtra("requestId", requestId);
+        return intent;
+    }
 }
