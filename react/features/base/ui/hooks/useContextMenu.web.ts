@@ -69,7 +69,6 @@ const useContextMenu = <T>(): [(force?: boolean | Object) => void,
 
     const menuLeave = useCallback(() => {
         isMouseOverMenu.current = false;
-        lowerMenu();
     }, [ lowerMenu ]);
 
     return [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ];

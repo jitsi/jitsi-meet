@@ -19,6 +19,11 @@ interface IProps {
     className?: string;
 
     /**
+    * The breakout name for aria-label.
+    */
+    defaultName?: string;
+
+    /**
      * Whether or not the actions should be hidden.
      */
     hideActions?: boolean;
@@ -111,7 +116,15 @@ const useStyles = makeStyles()(theme => {
         },
 
         highlighted: {
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.ui02,
+
+            '& .actions': {
+                display: 'flex',
+                position: 'relative',
+                top: 'auto',
+                boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
+                backgroundColor: theme.palette.ui02
+            }
         },
 
         detailsContainer: {
@@ -179,6 +192,7 @@ const useStyles = makeStyles()(theme => {
 const ListItem = ({
     actions,
     className,
+    defaultName,
     icon,
     id,
     hideActions = false,
@@ -229,6 +243,7 @@ const ListItem = ({
 
     return (
         <div
+            aria-label = { defaultName }
             className = { cx('list-item-container',
                 classes.container,
                 isHighlighted && classes.highlighted,
@@ -237,6 +252,7 @@ const ListItem = ({
             data-testid = { testId }
             id = { id }
             onClick = { onClick }
+            role = 'listitem'
             { ...(isMobile
                 ? {
                     onTouchEnd: _onTouchEnd,
