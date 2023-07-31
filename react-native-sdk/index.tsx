@@ -78,7 +78,7 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
         () => {
             const urlObj = {
                 config,
-                jwt: token,
+                jwt: token
             };
 
             let urlProps;
@@ -87,13 +87,13 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
                 urlProps = {
                     ...urlObj,
                     url: room
-                }
+                };
             } else {
                 urlProps = {
                     ...urlObj,
                     room,
                     serverURL
-                }
+                };
             }
 
             setAppProps({
