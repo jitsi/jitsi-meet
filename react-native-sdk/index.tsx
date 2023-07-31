@@ -15,6 +15,14 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
+interface IEventListeners {
+    onReadyToClose?: Function;
+    onConferenceJoined?: Function;
+    onConferenceWillJoin?: Function;
+    onConferenceLeft?: Function;
+    onParticipantJoined?: Function;
+}
+
 interface IUserInfo {
     avatarURL: string;
     displayName: string;
@@ -24,18 +32,12 @@ interface IUserInfo {
 interface IAppProps {
     config: object;
     flags: object;
-    eventListeners: {
-        onReadyToClose?: Function;
-        onConferenceJoined?: Function;
-        onConferenceWillJoin?: Function;
-        onConferenceLeft?: Function;
-        onParticipantJoined?: Function;
-    };
+    eventListeners: IEventListeners;
     room: string;
     serverURL?: string;
+    style?: Object;
     token?: string;
     userInfo?: IUserInfo;
-    style?: Object;
 }
 
 /**
