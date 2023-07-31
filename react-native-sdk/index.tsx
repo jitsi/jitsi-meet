@@ -1,10 +1,7 @@
 /* eslint-disable lines-around-comment,  no-undef, no-unused-vars  */
 
-import 'react-native-gesture-handler';
-// Apply all necessary polyfills as early as possible
-// to make sure anything imported henceforth sees them.
-import 'react-native-get-random-values';
-import './react/features/mobile/polyfills';
+// NB: This import must always come first.
+import './react/bootstrap.native';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
@@ -12,7 +9,6 @@ import { View, ViewStyle } from 'react-native';
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
-import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
 
 interface IEventListeners {
@@ -117,11 +113,9 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
 
     return (
         <View style = { style as ViewStyle }>
-            <JitsiThemePaperProvider>
-                <App
-                    { ...appProps }
-                    ref = { app } />
-            </JitsiThemePaperProvider>
+            <App
+                { ...appProps }
+                ref = { app } />
         </View>
     );
 });

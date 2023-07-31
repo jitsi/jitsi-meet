@@ -12,6 +12,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actions';
 import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
 import { updateSettings } from '../../base/settings/actions';
+import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
@@ -87,6 +88,20 @@ export class App extends AbstractApp<IProps> {
         const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
 
         logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt}`);
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        return (
+            <JitsiThemePaperProvider>
+                { super.render() }
+            </JitsiThemePaperProvider>
+        );
     }
 
     /**
