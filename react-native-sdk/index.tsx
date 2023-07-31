@@ -131,8 +131,9 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
         */
         return () => {
             const dispatch = app.current?.state?.store?.dispatch;
+            
             dispatch && dispatch(appNavigate(undefined));
-        }
+        };
     }, []);
 
 
