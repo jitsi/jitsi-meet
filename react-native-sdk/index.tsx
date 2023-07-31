@@ -84,7 +84,6 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
                 url: room.includes('://') ? room : undefined
             };
 
-
             setAppProps({
                 'flags': flags,
                 'rnSdkHandlers': {
