@@ -1,5 +1,7 @@
 import { getAppProp } from '../../base/app/functions';
 import {
+    CONFERENCE_BLURRED,
+    CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
@@ -23,6 +25,12 @@ const externalAPIEnabled = isExternalAPIAvailable();
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case CONFERENCE_BLURRED:
+        rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
+        break;
+    case CONFERENCE_FOCUSED:
+        rnSdkHandlers?.onConferenceFocused && rnSdkHandlers?.onConferenceFocused();
+        break;
     case CONFERENCE_JOINED:
         rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
         break;

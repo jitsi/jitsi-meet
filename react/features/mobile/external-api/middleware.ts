@@ -10,7 +10,9 @@ import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
+    CONFERENCE_BLURRED,
     CONFERENCE_FAILED,
+    CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
@@ -149,6 +151,14 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         _sendConferenceEvent(store, action);
         _registerForEndpointTextMessages(store);
+        break;
+
+    case CONFERENCE_BLURRED:
+        sendEvent(store, CONFERENCE_BLURRED, {});
+        break;
+
+    case CONFERENCE_FOCUSED:
+        sendEvent(store, CONFERENCE_FOCUSED, {});
         break;
 
     case CONNECTION_DISCONNECTED: {
