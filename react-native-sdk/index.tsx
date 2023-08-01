@@ -118,7 +118,6 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
         }, []
     );
 
-
     // eslint-disable-next-line arrow-body-style
     useLayoutEffect(() => {
         /**
@@ -132,7 +131,6 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             dispatch && dispatch(appNavigate(undefined));
         };
     }, []);
-
 
     return (
         <View style = { style as ViewStyle }>
