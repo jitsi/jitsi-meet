@@ -6,7 +6,14 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 import './react/features/mobile/polyfills';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+    forwardRef,
+    useEffect,
+    useLayoutEffect,
+    useImperativeHandle,
+    useRef,
+    useState
+} from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
@@ -114,6 +121,18 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             });
         }, []
     );
+
+    /**
+     * When you close the component you need to reset it.
+     * In some cases it needs to be added as the parent component may have been destroyed.
+     * Without this change the call remains active without having the jitsi screen.
+     */
+    useLayoutEffect(() => {
+        return () => {
+            const dispatch = app.current?.state?.store?.dispatch;
+            dispatch && dispatch(appNavigate(undefined));
+        };
+    }, []);
 
     return (
         <View style = { style as ViewStyle }>
