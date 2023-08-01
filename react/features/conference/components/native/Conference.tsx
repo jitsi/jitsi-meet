@@ -1,5 +1,5 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
@@ -608,24 +608,16 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
 }
 
 export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
-    const isFocused = useIsFocused();
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (isFocused) {
-            setPictureInPictureEnabled(true);
-        } else {
-            setPictureInPictureEnabled(false);
-        }
-
-        // We also need to disable PiP when we are back on the WelcomePage
-        return () => setPictureInPictureEnabled(false);
-    }, [ isFocused ]);
 
     useFocusEffect(useCallback(() => {
         dispatch({ type: CONFERENCE_FOCUSED });
+        setPictureInPictureEnabled(true);
 
-        return () => dispatch({ type: CONFERENCE_BLURRED });
+        return () => {
+            dispatch({ type: CONFERENCE_BLURRED });
+            setPictureInPictureEnabled(false);
+        };
     }, []));
 
     return ( // @ts-ignore
