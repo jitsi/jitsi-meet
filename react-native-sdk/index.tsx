@@ -9,8 +9,8 @@ import './react/features/mobile/polyfills';
 import React, {
     forwardRef,
     useEffect,
-    useLayoutEffect,
     useImperativeHandle,
+    useLayoutEffect,
     useRef,
     useState
 } from 'react';
