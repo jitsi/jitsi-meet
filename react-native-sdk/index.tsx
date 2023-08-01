@@ -3,7 +3,14 @@
 // NB: This import must always come first.
 import './react/bootstrap.native';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useLayoutEffect,
+    useRef,
+    useState
+} from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
@@ -110,6 +117,22 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             });
         }, []
     );
+
+
+    // eslint-disable-next-line arrow-body-style
+    useLayoutEffect(() => {
+        /**
+         * When you close the component you need to reset it.
+         * In some cases it needs to be added as the parent component may have been destroyed.
+         * Without this change the call remains active without having the jitsi screen.
+        */
+        return () => {
+            const dispatch = app.current?.state?.store?.dispatch;
+
+            dispatch && dispatch(appNavigate(undefined));
+        };
+    }, []);
+
 
     return (
         <View style = { style as ViewStyle }>
