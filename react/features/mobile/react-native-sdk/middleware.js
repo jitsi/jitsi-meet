@@ -23,17 +23,17 @@ const externalAPIEnabled = isExternalAPIAvailable();
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
-    case READY_TO_CLOSE:
-        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
-        break;
     case CONFERENCE_JOINED:
         rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
+        break;
+    case CONFERENCE_LEFT:
+        //  Props are torn down at this point, perhaps need to leave this one out
         break;
     case CONFERENCE_WILL_JOIN:
         rnSdkHandlers?.onConferenceWillJoin && rnSdkHandlers?.onConferenceWillJoin();
         break;
-    case CONFERENCE_LEFT:
-        //  Props are torn down at this point, perhaps need to leave this one out
+    case ENTER_PICTURE_IN_PICTURE:
+        rnSdkHandlers?.onEnterPictureInPicture && rnSdkHandlers?.onEnterPictureInPicture();
         break;
     case PARTICIPANT_JOINED: {
         const { participant } = action;
@@ -42,8 +42,8 @@ const externalAPIEnabled = isExternalAPIAvailable();
         rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
         break;
     }
-    case ENTER_PICTURE_IN_PICTURE:
-        rnSdkHandlers?.onEnterPictureInPicture && rnSdkHandlers?.onEnterPictureInPicture();
+    case READY_TO_CLOSE:
+        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
         break;
     }
 
