@@ -35,8 +35,8 @@ interface IUserInfo {
 
 interface IAppProps {
     config: object;
-    flags: object;
-    eventListeners: IEventListeners;
+    eventListeners?: IEventListeners;
+    flags?: object;
     room: string;
     serverURL?: string;
     style?: Object;
@@ -105,12 +105,12 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             setAppProps({
                 'flags': flags,
                 'rnSdkHandlers': {
-                    onConferenceJoined: eventListeners.onConferenceJoined,
-                    onConferenceWillJoin: eventListeners.onConferenceWillJoin,
-                    onConferenceLeft: eventListeners.onConferenceLeft,
-                    onEnterPictureInPicture: eventListeners.onEnterPictureInPicture,
-                    onParticipantJoined: eventListeners.onParticipantJoined,
-                    onReadyToClose: eventListeners.onReadyToClose
+                    onConferenceJoined: eventListeners?.onConferenceJoined,
+                    onConferenceWillJoin: eventListeners?.onConferenceWillJoin,
+                    onConferenceLeft: eventListeners?.onConferenceLeft,
+                    onEnterPictureInPicture: eventListeners?.onEnterPictureInPicture,
+                    onParticipantJoined: eventListeners?.onParticipantJoined,
+                    onReadyToClose: eventListeners?.onReadyToClose
                 },
                 'url': urlProps,
                 'userInfo': userInfo
