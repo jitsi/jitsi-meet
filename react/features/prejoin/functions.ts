@@ -176,10 +176,11 @@ export function shouldAutoKnock(state: IReduxState): boolean {
 /**
  * Returns true if the unsafe room warning flag is enabled.
  *
- * @param {IReduxState} stateful - The state of the app.
+ * @param {IReduxState} state - The state of the app.
  * @returns {boolean}
  */
-export function isUnsafeRoomWarningEnabled(stateful: IReduxState): boolean {
-    return Boolean(navigator.product === 'ReactNative'
-        && getFeatureFlag(stateful, UNSAFE_ROOM_WARNING, true));
+export function isUnsafeRoomWarningEnabled(state: IReduxState): boolean {
+    const { enableInsecureRoomNameWarning = false } = state['features/base/config'];
+
+    return getFeatureFlag(state, UNSAFE_ROOM_WARNING, enableInsecureRoomNameWarning);
 }
