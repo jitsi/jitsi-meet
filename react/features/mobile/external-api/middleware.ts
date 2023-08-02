@@ -34,6 +34,7 @@ import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import {
@@ -381,6 +382,10 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED, ({ enabled }: any) => {
         dispatch(setRequestingSubtitles(enabled));
     });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA, () => {
+        dispatch(toggleCameraFacingMode());
+    });
 }
 
 /**
@@ -400,6 +405,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
     eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
     eventEmitter.removeAllListeners(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_CAMERA);
 }
 
 /**
