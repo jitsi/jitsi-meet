@@ -60,4 +60,8 @@ public class BroadcastIntentHelper {
         intent.putExtra("requestId", requestId);
         return intent;
     }
+
+    public static Intent buildToggleCameraIntent() {
+        return new Intent(BroadcastAction.Type.TOGGLE_CAMERA.getAction());
+    }
 }
