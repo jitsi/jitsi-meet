@@ -1,5 +1,5 @@
-import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
@@ -10,10 +10,11 @@ import {
     ViewStyle
 } from 'react-native';
 import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions';
 import { IReduxState, IStore } from '../../../app/types';
+import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
 import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
@@ -59,7 +60,6 @@ import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
 import styles from './styles';
-
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -608,18 +608,17 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
 }
 
 export default withSafeAreaInsets(connect(_mapStateToProps)(props => {
-    const isFocused = useIsFocused();
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (isFocused) {
-            setPictureInPictureEnabled(true);
-        } else {
+    useFocusEffect(useCallback(() => {
+        dispatch({ type: CONFERENCE_FOCUSED });
+        setPictureInPictureEnabled(true);
+
+        return () => {
+            dispatch({ type: CONFERENCE_BLURRED });
             setPictureInPictureEnabled(false);
-        }
-
-        // We also need to disable PiP when we are back on the WelcomePage
-        return () => setPictureInPictureEnabled(false);
-    }, [ isFocused ]);
+        };
+    }, []));
 
     return ( // @ts-ignore
         <Conference { ...props } />

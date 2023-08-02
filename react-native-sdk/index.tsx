@@ -19,6 +19,8 @@ import { setAudioMuted, setVideoMuted } from './react/features/base/media/action
 
 
 interface IEventListeners {
+    onConferenceBlurred?: Function;
+    onConferenceFocused?: Function;
     onConferenceJoined?: Function;
     onConferenceLeft?: Function;
     onConferenceWillJoin?: Function;
@@ -105,6 +107,8 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             setAppProps({
                 'flags': flags,
                 'rnSdkHandlers': {
+                    onConferenceBlurred: eventListeners?.onConferenceBlurred,
+                    onConferenceFocused: eventListeners?.onConferenceFocused,
                     onConferenceJoined: eventListeners?.onConferenceJoined,
                     onConferenceWillJoin: eventListeners?.onConferenceWillJoin,
                     onConferenceLeft: eventListeners?.onConferenceLeft,
