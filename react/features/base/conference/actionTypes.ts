@@ -54,6 +54,25 @@ export const CONFERENCE_JOIN_IN_PROGRESS = 'CONFERENCE_JOIN_IN_PROGRESS';
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
 /**
+ * The type of (redux) action which signals that the conference is out of focus.
+ * For example, if the user navigates to the Chat screen.
+ * 
+ * {
+ *      type: CONFERENCE_BLURRED,
+ * }
+ */
+export const CONFERENCE_BLURRED = 'CONFERENCE_BLURRED';
+
+/**
+ * The type of (redux) action which signals that the conference is in focus.
+ * 
+ * {
+ *      type: CONFERENCE_FOCUSED,
+ * }
+ */
+export const CONFERENCE_FOCUSED = 'CONFERENCE_FOCUSED';
+
+/**
  * The type of (redux) action, which indicates conference local subject changes.
  *
  * {
