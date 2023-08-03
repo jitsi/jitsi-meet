@@ -4,7 +4,7 @@ import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS,REQUEST_SHARED_VIDEO_STATE } from './actionTypes'
-import { SharedVideoDialog } from './components';
+import SharedVideoDialog from './components/web/SharedVideoDialog';
 
 /**
  * Resets the status of the shared video.
@@ -39,7 +39,7 @@ export function resetSharedVideoStatus() {
  * }}
  */
 export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted, previousOwnerId }: {
-    muted?: boolean; ownerId?: string; status: string; time: number; videoUrl: string; previousOwnerId?: string;
+    muted?: boolean; ownerId?: string; status?: string; time?: number; videoUrl?: string; previousOwnerId?: string;
 }) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
@@ -100,7 +100,7 @@ export function playSharedVideo(videoUrl: string) {
                 status: 'start',
                 time: 0,
                 ownerId: localParticipant?.id,
-                previousOwnerId: null
+                previousOwnerId: undefined
             }));
         }
     };
@@ -222,3 +222,4 @@ export function requestSharedVideoStateFromVideoOwner(currentVideoState) {
         ...currentVideoState
     };
 }
+
