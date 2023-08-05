@@ -19,6 +19,7 @@ import {
     IMobileDynamicLink
 } from './configType';
 import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
+import { SS_DEFAULT_FRAME_RATE } from '../../settings/constants';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -394,6 +395,9 @@ function _translateLegacyConfig(oldValue: IConfig) {
     ) {
         newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
     }
+
+    newValue.desktopSharingFrameRate = 
+        oldValue.desktopSharingFrameRate || { min: SS_DEFAULT_FRAME_RATE, max: SS_DEFAULT_FRAME_RATE };
 
     newValue.disabledSounds = newValue.disabledSounds || [];
 
