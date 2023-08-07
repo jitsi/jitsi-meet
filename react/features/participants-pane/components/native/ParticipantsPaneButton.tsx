@@ -1,3 +1,5 @@
+import React from 'react';
+import { View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
@@ -6,6 +8,9 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+
+import ParticipantsCounter from './ParticipantsConter';
+import styles from './styles';
 
 
 /**
@@ -24,6 +29,22 @@ class ParticipantsPaneButton extends AbstractButton<AbstractButtonProps> {
      */
     _handleClick() {
         return navigate(screen.conference.participants);
+    }
+
+    /**
+     * Overrides AbstractButton's {@link Component#render()}.
+     *
+     * @override
+     * @protected
+     * @returns {React$Node}
+     */
+    render() {
+        return (
+            <View style = { styles.participantsButtonBadge as ViewStyle }>
+                {super.render()}
+                <ParticipantsCounter />
+            </View>
+        );
     }
 }
 
