@@ -44,7 +44,8 @@ export const screen = {
             help: 'Help',
             privacy: 'Privacy',
             terms: 'Terms'
-        }
+        },
+        profile: 'Profile'
     },
     unsafeRoomWarning: 'Unsafe Room Warning'
 };

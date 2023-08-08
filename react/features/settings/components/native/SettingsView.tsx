@@ -8,6 +8,7 @@ import {
     Platform,
     ScrollView,
     Text,
+    TouchableHighlight,
     View,
     ViewStyle
 } from 'react-native';
@@ -19,6 +20,8 @@ import { IReduxState, IStore } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { getLegalUrls } from '../../../base/config/functions.native';
 import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconArrowRight } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { updateSettings } from '../../../base/settings/actions';
@@ -26,11 +29,13 @@ import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
-import { AVATAR_SIZE } from '../../../welcome/components/styles';
+import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { isServerURLChangeEnabled, normalizeUserInputURL } from '../../functions.native';
 
 import FormRow from './FormRow';
 import FormSection from './FormSection';
+import { AVATAR_SIZE } from './constants';
 import styles from './styles';
 
 /**
@@ -250,6 +255,15 @@ class SettingsView extends Component<IProps, IState> {
     }
 
     /**
+     * Opens the profile settings screen.
+     *
+     * @returns {void}
+     */
+    _onPressProfile() {
+        navigate(screen.settings.profile, {});
+    }
+
+    /**
      * Implements React's {@link Component#render()}, renders the settings page.
      *
      * @inheritdoc
@@ -262,7 +276,6 @@ class SettingsView extends Component<IProps, IState> {
             disableP2P,
             disableSelfView,
             displayName,
-            email,
             serverURL,
             startCarMode,
             startWithAudioMuted,
@@ -283,32 +296,23 @@ class SettingsView extends Component<IProps, IState> {
                 safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) }
                 style = { styles.settingsViewContainer }>
                 <ScrollView bounces = { scrollBounces }>
-                    <View style = { styles.avatarContainer as ViewStyle }>
-                        <Avatar
-                            participantId = { this.props._localParticipantId }
-                            size = { AVATAR_SIZE } />
+                    <View style = { styles.profileContainerWrapper }>
+                        <TouchableHighlight onPress = { this._onPressProfile }>
+                            <View
+                                style = { styles.profileContainer as ViewStyle }>
+                                <Avatar
+                                    participantId = { this.props._localParticipantId }
+                                    size = { AVATAR_SIZE } />
+                                <Text style = { styles.displayName }>
+                                    { displayName }
+                                </Text>
+                                <Icon
+                                    size = { 24 }
+                                    src = { IconArrowRight }
+                                    style = { styles.profileViewArrow } />
+                            </View>
+                        </TouchableHighlight>
                     </View>
-                    <FormSection
-                        label = 'settingsView.profileSection'>
-                        <Input
-                            customStyles = {{ container: styles.customContainer }}
-                            label = { t('settingsView.displayName') }
-                            onChange = { this._onChangeDisplayName }
-                            placeholder = { t('settingsView.displayNamePlaceholderText') }
-                            textContentType = { 'name' } // iOS only
-                            value = { displayName ?? '' } />
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
-                        <Input
-                            autoCapitalize = 'none'
-                            customStyles = {{ container: styles.customContainer }}
-                            keyboardType = { 'email-address' }
-                            label = { t('settingsView.email') }
-                            onChange = { this._onChangeEmail }
-                            placeholder = { t('settingsView.emailPlaceholderText') }
-                            textContentType = { 'emailAddress' } // iOS only
-                            value = { email ?? '' } />
-                    </FormSection>
                     <FormSection
                         label = 'settingsView.conferenceSection'>
                         <Input
@@ -322,36 +326,30 @@ class SettingsView extends Component<IProps, IState> {
                             placeholder = { this.props._serverURL }
                             textContentType = { 'URL' } // iOS only
                             value = { serverURL ?? '' } />
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startCarModeInLowBandwidthMode'>
                             <Switch
                                 checked = { Boolean(startCarMode) }
                                 onChange = { this._onStartCarmodeInLowBandwidthMode } />
                         </FormRow>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <FormRow
                             label = 'settingsView.startWithAudioMuted'>
                             <Switch
                                 checked = { Boolean(startWithAudioMuted) }
                                 onChange = { this._onStartAudioMutedChange } />
                         </FormRow>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'settingsView.startWithVideoMuted'>
                             <Switch
                                 checked = { Boolean(startWithVideoMuted) }
                                 onChange = { this._onStartVideoMutedChange } />
                         </FormRow>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <FormRow label = 'videothumbnail.hideSelfView'>
                             <Switch
                                 checked = { Boolean(disableSelfView) }
                                 onChange = { this._onDisableSelfView } />
                         </FormRow>
                     </FormSection>
+                    {/* @ts-ignore */}
+                    <Divider style = { styles.fieldSeparator } />
                     <FormSection
                         label = 'settingsView.links'>
                         <Button
@@ -360,16 +358,12 @@ class SettingsView extends Component<IProps, IState> {
                             onClick = { this._onShowHelpPressed }
                             style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.terms'
                             labelKey = 'settingsView.terms'
                             onClick = { this._onShowTermsPressed }
                             style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <Button
                             accessibilityLabel = 'settingsView.privacy'
                             labelKey = 'settingsView.privacy'
@@ -377,6 +371,8 @@ class SettingsView extends Component<IProps, IState> {
                             style = { styles.linksButton }
                             type = { BUTTON_TYPES.TERTIARY } />
                     </FormSection>
+                    {/* @ts-ignore */}
+                    <Divider style = { styles.fieldSeparator } />
                     <FormSection
                         label = 'settingsView.buildInfoSection'>
                         <FormRow
@@ -385,8 +381,6 @@ class SettingsView extends Component<IProps, IState> {
                                 {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                             </Text>
                         </FormRow>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
                         <FormRow
                             label = 'settingsView.sdkVersion'>
                             <Text style = { styles.text }>
@@ -394,6 +388,8 @@ class SettingsView extends Component<IProps, IState> {
                             </Text>
                         </FormRow>
                     </FormSection>
+                    {/* @ts-ignore */}
+                    <Divider style = { styles.fieldSeparator } />
                     <FormSection
                         label = 'settingsView.advanced'>
                         { Platform.OS === 'android' && (
@@ -414,16 +410,19 @@ class SettingsView extends Component<IProps, IState> {
                                 checked = { Boolean(disableP2P) }
                                 onChange = { this._onDisableP2P } />
                         </FormRow>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
+
                         {AppInfo.GOOGLE_SERVICES_ENABLED && (
-                            <FormRow
-                                fieldSeparator = { true }
-                                label = 'settingsView.disableCrashReporting'>
-                                <Switch
-                                    checked = { Boolean(disableCrashReporting) }
-                                    onChange = { this._onDisableCrashReporting } />
-                            </FormRow>
+                            <>
+                                {/* @ts-ignore */}
+                                <Divider style = { styles.fieldSeparator } />
+                                <FormRow
+                                    fieldSeparator = { true }
+                                    label = 'settingsView.disableCrashReporting'>
+                                    <Switch
+                                        checked = { Boolean(disableCrashReporting) }
+                                        onChange = { this._onDisableCrashReporting } />
+                                </FormRow>
+                            </>
                         )}
                     </FormSection>
                 </ScrollView>

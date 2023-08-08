@@ -3,11 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import ProfileView from '../../../../../settings/components/native/ProfileView';
 import SettingsView
     from '../../../../../settings/components/native/SettingsView';
 import { screen } from '../../../routes';
 import {
     navigationContainerTheme,
+    profileSettingsScreenOptions,
     settingsScreenOptions,
     welcomeScreenOptions
 } from '../../../screenOptions';
@@ -41,6 +43,12 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
                 scrollBounces = { isInWelcomePage } />
         ), []);
 
+    const ProfileScreen = useCallback(() =>
+        (<ProfileView
+            addBottomInset = { !isInWelcomePage }
+            scrollBounces = { isInWelcomePage } />)
+    , []);
+
     return (
         <NavigationContainer
             independent = { true }
@@ -56,6 +64,13 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
                     }}>
                     { SettingsScreen }
                 </SettingsStack.Screen>
+                <SettingsStack.Screen
+                    component = { ProfileScreen }
+                    name = { screen.settings.profile }
+                    options = {{
+                        ...profileSettingsScreenOptions,
+                        title: t('settingsView.profileSection')
+                    }} />
             </SettingsStack.Navigator>
         </NavigationContainer>
     );
