@@ -38,6 +38,11 @@ case "$1" in
         if [ "$RET" = "false" ] ; then
             echo "Application secret is mandatory"
         fi
+        # Not allowed unix special characters in secret: /, \, ", ', `
+        if echo "$RET" | grep -q '[/\\\"\`]' ; then
+            echo "Application secret contains invalid characters: /, \\, \", ', \`"
+            exit 1
+        fi
         APP_SECRET=$RET
 
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
