@@ -2060,6 +2060,19 @@ class API {
     }
 
     /**
+     * Notify the external application (if API is enabled) when the compute pressure changed.
+     *
+     * @param {Array} records - The new pressure records.
+     * @returns {void}
+     */
+    notifyComputePressureChanged(records) {
+        this._sendEvent({
+            name: 'compute-pressure-changed',
+            records
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

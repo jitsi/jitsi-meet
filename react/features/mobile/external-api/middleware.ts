@@ -10,7 +10,9 @@ import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
+    CONFERENCE_BLURRED,
     CONFERENCE_FAILED,
+    CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
@@ -32,6 +34,7 @@ import { getURLWithoutParams } from '../../base/connection/utils';
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import {
@@ -149,6 +152,14 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         _sendConferenceEvent(store, action);
         _registerForEndpointTextMessages(store);
+        break;
+
+    case CONFERENCE_BLURRED:
+        sendEvent(store, CONFERENCE_BLURRED, {});
+        break;
+
+    case CONFERENCE_FOCUSED:
+        sendEvent(store, CONFERENCE_FOCUSED, {});
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -371,6 +382,10 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED, ({ enabled }: any) => {
         dispatch(setRequestingSubtitles(enabled));
     });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA, () => {
+        dispatch(toggleCameraFacingMode());
+    });
 }
 
 /**
@@ -390,6 +405,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
     eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
     eventEmitter.removeAllListeners(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_CAMERA);
 }
 
 /**

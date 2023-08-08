@@ -1,54 +1,67 @@
 /* eslint-disable lines-around-comment,  no-undef, no-unused-vars  */
 
-import 'react-native-gesture-handler';
-// Apply all necessary polyfills as early as possible
-// to make sure anything imported henceforth sees them.
-import 'react-native-get-random-values';
-import './react/features/mobile/polyfills';
+// NB: This import must always come first.
+import './react/bootstrap.native';
 
-// @ts-ignore
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View } from 'react-native';
+import React, {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useLayoutEffect,
+    useRef,
+    useState
+} from 'react';
+import { View, ViewStyle } from 'react-native';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
-// @ts-ignore
-import JitsiThemePaperProvider from './react/features/base/ui/components/JitsiThemeProvider.native';
 
+
+interface IEventListeners {
+    onConferenceBlurred?: Function;
+    onConferenceFocused?: Function;
+    onConferenceJoined?: Function;
+    onConferenceLeft?: Function;
+    onConferenceWillJoin?: Function;
+    onEnterPictureInPicture?: Function;
+    onParticipantJoined?: Function;
+    onReadyToClose?: Function;
+}
 
 interface IUserInfo {
-    email: string,
-    displayName: string;
     avatarURL: string;
+    displayName: string;
+    email: string;
 }
 
 interface IAppProps {
-    flags: object;
-    meetingOptions: {
-        domain: string;
-        roomName: string;
-        onReadyToClose?: Function;
-        onConferenceJoined?: Function;
-        onConferenceWillJoin?: Function;
-        onConferenceLeft?: Function;
-        onParticipantJoined?: Function;
-        settings?: {
-            startWithAudioMuted?: boolean;
-            startAudioOnly?: boolean;
-            startWithVideoMuted?: boolean;
-        },
-        userInfo: IUserInfo
-    };
+    config: object;
+    eventListeners?: IEventListeners;
+    flags?: object;
+    room: string;
+    serverURL?: string;
     style?: Object;
+    token?: string;
+    userInfo?: IUserInfo;
 }
 
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
+    const {
+        config,
+        eventListeners,
+        flags,
+        room,
+        serverURL,
+        style,
+        token,
+        userInfo
+    } = props;
 
     // eslint-disable-next-line arrow-body-style
     useImperativeHandle(ref, () => ({
@@ -71,36 +84,63 @@ export const JitsiMeeting = forwardRef(({ flags, meetingOptions, style }: IAppPr
 
     useEffect(
         () => {
-            const url = `${meetingOptions.domain}/${meetingOptions.roomName}`;
+            const urlObj = {
+                config,
+                jwt: token
+            };
+
+            let urlProps;
+
+            if (room.includes('://')) {
+                urlProps = {
+                    ...urlObj,
+                    url: room
+                };
+            } else {
+                urlProps = {
+                    ...urlObj,
+                    room,
+                    serverURL
+                };
+            }
 
             setAppProps({
-                'url': {
-                    url,
-                    config: meetingOptions.settings
-                },
+                'flags': flags,
                 'rnSdkHandlers': {
-                    onReadyToClose: meetingOptions.onReadyToClose,
-                    onConferenceJoined: meetingOptions.onConferenceJoined,
-                    onConferenceWillJoin: meetingOptions.onConferenceWillJoin,
-                    onConferenceLeft: meetingOptions.onConferenceLeft,
-                    onParticipantJoined: meetingOptions.onParticipantJoined
+                    onConferenceBlurred: eventListeners?.onConferenceBlurred,
+                    onConferenceFocused: eventListeners?.onConferenceFocused,
+                    onConferenceJoined: eventListeners?.onConferenceJoined,
+                    onConferenceWillJoin: eventListeners?.onConferenceWillJoin,
+                    onConferenceLeft: eventListeners?.onConferenceLeft,
+                    onEnterPictureInPicture: eventListeners?.onEnterPictureInPicture,
+                    onParticipantJoined: eventListeners?.onParticipantJoined,
+                    onReadyToClose: eventListeners?.onReadyToClose
                 },
-                'flags': { ...flags },
-                'userInfo': {
-                    ...meetingOptions.userInfo
-                }
+                'url': urlProps,
+                'userInfo': userInfo
             });
         }, []
     );
 
+    // eslint-disable-next-line arrow-body-style
+    useLayoutEffect(() => {
+        /**
+         * When you close the component you need to reset it.
+         * In some cases it needs to be added as the parent component may have been destroyed.
+         * Without this change the call remains active without having the jitsi screen.
+        */
+        return () => {
+            const dispatch = app.current?.state?.store?.dispatch;
+
+            dispatch && dispatch(appNavigate(undefined));
+        };
+    }, []);
+
     return (
-        <View style = { style }>
-            <JitsiThemePaperProvider>
-                {/* @ts-ignore */}
-                <App
-                    { ...appProps }
-                    ref = { app } />
-            </JitsiThemePaperProvider>
+        <View style = { style as ViewStyle }>
+            <App
+                { ...appProps }
+                ref = { app } />
         </View>
     );
 });

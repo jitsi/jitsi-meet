@@ -73,6 +73,26 @@ export default {
         marginTop: 14
     },
 
+    participantsBadge: {
+        backgroundColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.spacing[2],
+        borderColor: 'white',
+        overflow: 'hidden',
+        height: BaseTheme.spacing[3],
+        minWidth: BaseTheme.spacing[3],
+        color: BaseTheme.palette.text01,
+        ...BaseTheme.typography.labelBold,
+        position: 'absolute',
+        right: -3,
+        top: -3,
+        textAlign: 'center'
+    },
+
+    participantsButtonBadge: {
+        display: 'flex',
+        position: 'relative'
+    },
+
     participantContainer: {
         alignItems: 'center',
         display: 'flex',

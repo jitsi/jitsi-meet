@@ -72,6 +72,7 @@ function setupJitsiLocalStorage() {
             logger.error('Can\'t parse localStorageContent.', error);
         }
 
+        jitsiLocalStorage.setLocalStorageDisabled(true);
         jitsiLocalStorage.on('changed', onFakeLocalStorageChanged);
     }
 }

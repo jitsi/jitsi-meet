@@ -1,5 +1,7 @@
 import { getAppProp } from '../../base/app/functions';
 import {
+    CONFERENCE_BLURRED,
+    CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
@@ -8,6 +10,7 @@ import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
+import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 
 import { isExternalAPIAvailable } from './functions';
 
@@ -22,17 +25,23 @@ const externalAPIEnabled = isExternalAPIAvailable();
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
-    case READY_TO_CLOSE:
-        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
+    case CONFERENCE_BLURRED:
+        rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
+        break;
+    case CONFERENCE_FOCUSED:
+        rnSdkHandlers?.onConferenceFocused && rnSdkHandlers?.onConferenceFocused();
         break;
     case CONFERENCE_JOINED:
         rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
         break;
+    case CONFERENCE_LEFT:
+        //  Props are torn down at this point, perhaps need to leave this one out
+        break;
     case CONFERENCE_WILL_JOIN:
         rnSdkHandlers?.onConferenceWillJoin && rnSdkHandlers?.onConferenceWillJoin();
         break;
-    case CONFERENCE_LEFT:
-        //  Props are torn down at this point, perhaps need to leave this one out
+    case ENTER_PICTURE_IN_PICTURE:
+        rnSdkHandlers?.onEnterPictureInPicture && rnSdkHandlers?.onEnterPictureInPicture();
         break;
     case PARTICIPANT_JOINED: {
         const { participant } = action;
@@ -41,10 +50,11 @@ const externalAPIEnabled = isExternalAPIAvailable();
         rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
         break;
     }
+    case READY_TO_CLOSE:
+        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
+        break;
     }
-
 
     return result;
 }
 );
-

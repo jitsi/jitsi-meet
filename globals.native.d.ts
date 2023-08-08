@@ -17,6 +17,8 @@ interface IWindow {
     innerWidth: number;
     interfaceConfig: any;
     location: ILocation;
+    PressureObserver?: any;
+    PressureRecord?: any;
     self: any;
     top: any;
 
