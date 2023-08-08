@@ -80,6 +80,16 @@ interface IState {
      */
     serverURL?: string;
 
+    soundsIncomingMessage?: boolean;
+
+    soundsParticipantJoined?: boolean;
+
+    soundsParticipantKnocking?: boolean;
+
+    soundsParticipantLeft?: boolean;
+
+    soundsReactions?: boolean;
+
     /**
      * State variable for start car mode.
      */
@@ -141,6 +151,11 @@ interface IProps extends WithTranslation {
         displayName?: string;
         email?: string;
         serverURL?: string;
+        soundsIncomingMessage?: boolean;
+        soundsParticipantJoined?: boolean;
+        soundsParticipantKnocking?: boolean;
+        soundsParticipantLeft?: boolean;
+        soundsReactions?: boolean;
         startCarMode?: boolean;
         startWithAudioMuted?: boolean;
         startWithVideoMuted?: boolean;
@@ -197,6 +212,11 @@ class SettingsView extends Component<IProps, IState> {
             displayName,
             email,
             serverURL,
+            soundsIncomingMessage,
+            soundsParticipantJoined,
+            soundsParticipantKnocking,
+            soundsParticipantLeft,
+            soundsReactions,
             startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
@@ -210,6 +230,11 @@ class SettingsView extends Component<IProps, IState> {
             displayName: displayName || '',
             email: email || '',
             serverURL: serverURL || '',
+            soundsIncomingMessage,
+            soundsParticipantJoined,
+            soundsParticipantKnocking,
+            soundsParticipantLeft,
+            soundsReactions,
             startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
@@ -236,6 +261,11 @@ class SettingsView extends Component<IProps, IState> {
         this._onShowPrivacyPressed = this._onShowPrivacyPressed.bind(this);
         this._onShowTermsPressed = this._onShowTermsPressed.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
+        this._onSoundsReactionsToggled = this._onSoundsReactionsToggled.bind(this);
+        this._onSoundsIncomingMessageToggled = this._onSoundsIncomingMessageToggled.bind(this);
+        this._onSoundsParticipantJoinedToggled = this._onSoundsParticipantJoinedToggled.bind(this);
+        this._onSoundsParticipantKnockingToggled = this._onSoundsParticipantKnockingToggled.bind(this);
+        this._onSoundsParticipantLeftToggled = this._onSoundsParticipantLeftToggled.bind(this);
     }
 
     /**
@@ -264,6 +294,71 @@ class SettingsView extends Component<IProps, IState> {
     }
 
     /**
+     *  Toggles the reactions sounds.
+     *
+     * @param {boolean} soundsReactions - The state of the sounds.
+     * @returns {void}
+     */
+    _onSoundsReactionsToggled(soundsReactions?: boolean) {
+        this.setState({
+            soundsReactions
+        });
+        this._updateSettings({ soundsReactions });
+    }
+
+    /**
+     *  Toggles the incoming message sounds.
+     *
+     * @param {boolean} soundsIncomingMessage - The state of the sounds.
+     * @returns {void}
+     */
+    _onSoundsIncomingMessageToggled(soundsIncomingMessage?: boolean) {
+        this.setState({
+            soundsIncomingMessage
+        });
+        this._updateSettings({ soundsIncomingMessage });
+    }
+
+    /**
+     *  Toggles the participants joined sounds.
+     *
+     * @param {boolean} soundsParticipantJoined - The state of the sounds.
+     * @returns {void}
+     */
+    _onSoundsParticipantJoinedToggled(soundsParticipantJoined?: boolean) {
+        this.setState({
+            soundsParticipantJoined
+        });
+        this._updateSettings({ soundsParticipantJoined });
+    }
+
+    /**
+     *  Toggles the participants knocking sounds.
+     *
+     * @param {boolean} soundsParticipantKnocking - The state of the sounds.
+     * @returns {void}
+     */
+    _onSoundsParticipantKnockingToggled(soundsParticipantKnocking?: boolean) {
+        this.setState({
+            soundsParticipantKnocking
+        });
+        this._updateSettings({ soundsParticipantKnocking });
+    }
+
+    /**
+     *  Toggles the participants left sounds.
+     *
+     * @param {boolean} soundsParticipantLeft - The state of the sounds.
+     * @returns {void}
+     */
+    _onSoundsParticipantLeftToggled(soundsParticipantLeft?: boolean) {
+        this.setState({
+            soundsParticipantLeft
+        });
+        this._updateSettings({ soundsParticipantLeft });
+    }
+
+    /**
      * Implements React's {@link Component#render()}, renders the settings page.
      *
      * @inheritdoc
@@ -277,6 +372,11 @@ class SettingsView extends Component<IProps, IState> {
             disableSelfView,
             displayName,
             serverURL,
+            soundsReactions,
+            soundsIncomingMessage,
+            soundsParticipantJoined,
+            soundsParticipantKnocking,
+            soundsParticipantLeft,
             startCarMode,
             startWithAudioMuted,
             startWithVideoMuted
@@ -346,6 +446,36 @@ class SettingsView extends Component<IProps, IState> {
                             <Switch
                                 checked = { Boolean(disableSelfView) }
                                 onChange = { this._onDisableSelfView } />
+                        </FormRow>
+                    </FormSection>
+                    {/* @ts-ignore */}
+                    <Divider style = { styles.fieldSeparator } />
+                    <FormSection
+                        label = 'settings.playSounds'>
+                        <FormRow label = 'settings.reactions'>
+                            <Switch
+                                checked = { Boolean(soundsReactions) }
+                                onChange = { this._onSoundsReactionsToggled } />
+                        </FormRow>
+                        <FormRow label = 'settings.incomingMessage'>
+                            <Switch
+                                checked = { Boolean(soundsIncomingMessage) }
+                                onChange = { this._onSoundsIncomingMessageToggled } />
+                        </FormRow>
+                        <FormRow label = 'settings.participantJoined'>
+                            <Switch
+                                checked = { Boolean(soundsParticipantJoined) }
+                                onChange = { this._onSoundsParticipantJoinedToggled } />
+                        </FormRow>
+                        <FormRow label = 'settings.participantKnocking'>
+                            <Switch
+                                checked = { Boolean(soundsParticipantKnocking) }
+                                onChange = { this._onSoundsParticipantKnockingToggled } />
+                        </FormRow>
+                        <FormRow label = 'settings.participantLeft'>
+                            <Switch
+                                checked = { Boolean(soundsParticipantLeft) }
+                                onChange = { this._onSoundsParticipantLeftToggled } />
                         </FormRow>
                     </FormSection>
                     {/* @ts-ignore */}

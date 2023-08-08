@@ -22,7 +22,9 @@ const ProfileView = (props: { addBottomInset?: boolean; scrollBounces?: boolean;
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const { displayName: reduxDisplayName, email: reduxEmail } = useSelector(state => state['features/base/settings']);
+    const { displayName: reduxDisplayName, email: reduxEmail } = useSelector(
+        (state: IReduxState) => state['features/base/settings']
+    );
     const participant = useSelector((state: IReduxState) => getLocalParticipant(state));
 
     const [ displayName, setDisplayName ] = useState(reduxDisplayName);
