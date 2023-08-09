@@ -1,5 +1,5 @@
-// @ts-expect-error
-import Bourne from '@hapi/bourne';
+// @ts-ignore
+import { safeJsonParse } from '@jitsi/js-utils/json';
 import { NativeModules } from 'react-native';
 
 import { loadScript } from '../util/loadScript.native';
@@ -20,7 +20,7 @@ export async function loadConfig(url: string): Promise<Object> {
     try {
         const configTxt = await loadScript(url, 10 * 1000 /* Timeout in ms */, true /* skipeval */);
         const configJson = await JavaScriptSandbox.evaluate(`${configTxt}\nJSON.stringify(config);`);
-        const config = Bourne.parse(configJson);
+        const config = safeJsonParse(configJson);
 
         if (typeof config !== 'object') {
             throw new Error('config is not an object');
