@@ -294,7 +294,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
             if (receivedTokenAuthServiceUrl) {
                 dispatch(openTokenAuthUrl(receivedTokenAuthServiceUrl,
-                    `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`)
+                    `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
+                        ? '&' : '#'}skipPrejoin=true`)
                 );
             }
 

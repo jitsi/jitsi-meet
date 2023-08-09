@@ -38,7 +38,7 @@ export function cancelWaitForOwner() {
     };
 }
 
-/** .
+/**
  * Redirect to the default location (e.g. Welcome page).
  *
  * @returns {Function}
@@ -73,14 +73,14 @@ export function logout() {
     };
 }
 
-/** .
+/**
  * Opens token auth URL page.
+ *
  * @param {string} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service.
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
- * is being dispatched.
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(receivedTokenAuthServiceUrl: string | undefined, tokenAuthServiceUrl: string): any {
+export function openTokenAuthUrl(receivedTokenAuthServiceUrl?: string | undefined, tokenAuthServiceUrl?: string): any {
     // Dummy.
 }
