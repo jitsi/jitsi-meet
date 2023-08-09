@@ -80,31 +80,31 @@ const Input = forwardRef<TextInput, IProps>(({
         const { nativeEvent: { text } } = e;
 
         onChange?.(text);
-    }, []);
+    }, [ onChange ]);
 
     const clearInput = useCallback(() => {
         onChange?.('');
-    }, []);
+    }, [ onChange ]);
 
     const handleBlur = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(false);
         onBlur?.(e);
-    }, []);
+    }, [ onBlur ]);
 
     const handleFocus = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         setFocused(true);
         onFocus?.(e);
-    }, []);
+    }, [ onFocus ]);
 
     const handleKeyPress = useCallback((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
         onKeyPress?.(e);
-    }, []);
+    }, [ onKeyPress ]);
 
     const handleSubmitEditing = useCallback((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
         const { nativeEvent: { text } } = e;
 
         onSubmitEditing?.(text);
-    }, []);
+    }, [ onSubmitEditing ]);
 
     return (<View style = { [ styles.inputContainer, customStyles?.container ] }>
         {label && <Text style = { styles.label }>{ label }</Text>}
