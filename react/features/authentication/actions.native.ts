@@ -3,11 +3,11 @@ import { IStore } from '../app/types';
 import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
+import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../mobile/navigation/routes';
 
-import {CANCEL_LOGIN, LOGIN} from './actionTypes';
+import { CANCEL_LOGIN, LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
-import {navigateRoot} from "../mobile/navigation/rootNavigationContainerRef";
-import {screen} from "../mobile/navigation/routes";
 
 export * from './actions.any';
 
