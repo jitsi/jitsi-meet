@@ -1511,6 +1511,7 @@ var config = {
     //     'dialog.sessTerminated', // shown when there is a failed conference session
     //     'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
     //     'dialog.tokenAuthFailed', // show when an invalid jwt is used
+    //     'dialog.tokenAuthFailedWithReasons', // show when an invalid jwt is used with the reason behind the error
     //     'dialog.transcribing', // transcribing notifications (pending, off)
     //     'dialOut.statusMessage', // shown when dial out status is updated.
     //     'liveStreaming.busy', // shown when livestreaming service is busy
