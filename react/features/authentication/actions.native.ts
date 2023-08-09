@@ -4,8 +4,10 @@ import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
 
-import { CANCEL_LOGIN } from './actionTypes';
+import {CANCEL_LOGIN, LOGIN} from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
+import {navigateRoot} from "../mobile/navigation/rootNavigationContainerRef";
+import {screen} from "../mobile/navigation/routes";
 
 export * from './actions.any';
 
@@ -51,7 +53,7 @@ export function cancelWaitForOwner() {
         // recoverable by the feature room-lock and, consequently,
         // recoverable-aware features such as mobile's external-api did not
         // deliver the CONFERENCE_FAILED to the SDK clients/consumers. Since the
-        // app/user is going to nativate to WelcomePage, the SDK
+        // app/user is going to navigate to WelcomePage, the SDK
         // clients/consumers need an event.
         const { authRequired } = getState()['features/base/conference'];
 
@@ -72,4 +74,37 @@ export function cancelWaitForOwner() {
  */
 export function redirectToDefaultLocation() {
     return (dispatch: IStore['dispatch']) => dispatch(appNavigate(undefined));
+}
+
+/** .
+ * Opens token auth URL page.
+ * @param {String} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service
+ * @param {String} tokenAuthServiceUrl - Authentication service URL.
+ * is being dispatched.
+ *
+ * @returns {Function}
+ */
+export function openTokenAuthUrl(receivedTokenAuthServiceUrl: string | undefined, tokenAuthServiceUrl: string) {
+    return (dispatch: IStore['dispatch']) => {
+        if (receivedTokenAuthServiceUrl) {
+            navigateRoot(screen.authentication, {
+                tokenAuthServiceUrl
+            });
+        } else {
+            dispatch(redirectToDefaultLocation())
+        }
+    }
+}
+
+/**
+ * Login.
+ *
+ * @returns {{
+ *     type: LOGIN
+ * }}
+ */
+export function login() {
+    return {
+        type: LOGIN
+    };
 }

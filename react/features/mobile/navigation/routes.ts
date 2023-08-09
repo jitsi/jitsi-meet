@@ -9,6 +9,7 @@ export const screen = {
     dialInSummary: 'Dial-In Info',
     connecting: 'Connecting',
     preJoin: 'Pre-Join',
+    authentication: 'Authenticate',
     conference: {
         root: 'Conference root',
         main: 'Conference',

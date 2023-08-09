@@ -9,14 +9,13 @@ import DialInSummary from '../../../invite/components/dial-in-summary/native/Dia
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
 import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
-// eslint-disable-next-line
-// @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
+    authenticationScreenOptions,
     conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
@@ -29,6 +28,8 @@ import {
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
+import AuthenticationPage
+    from '../../../authentication/components/native/AuthenticationPage';
 
 const RootStack = createStackNavigator();
 
@@ -78,7 +79,9 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                 {
                     isWelcomePageAvailable
                         && <>
-                            <RootStack.Screen // @ts-ignore
+                            <RootStack.Screen
+
+                                // @ts-ignore
                                 component = { WelcomePage }
                                 name = { screen.welcome.main }
                                 options = { welcomeScreenOptions } />
@@ -105,6 +108,12 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
                 }
+                <RootStack.Screen
+
+                    // @ts-ignore
+                    component = { AuthenticationPage }
+                    name = { screen.authentication }
+                    options = { authenticationScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }

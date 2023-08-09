@@ -27,7 +27,7 @@ export const isTokenAuthEnabled = (config: IConfig) =>
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
  * constructed.
  */
-export const getTokenAuthUrl = (config: IConfig, roomName: string) => {
+export const getTokenAuthUrl = (config: IConfig, roomName: string | undefined) => {
 
     const url = config.tokenAuthUrl;
 

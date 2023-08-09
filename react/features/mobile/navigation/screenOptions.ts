@@ -87,6 +87,38 @@ export const presentationScreenOptions = {
 };
 
 /**
+ * Screen options for authenticate modal.
+ */
+export const authenticationScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
+};
+
+/**
+ * Screen options for dial-in summary modal.
+ */
+export const dialInSummaryScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
+};
+
+/**
+ * Screen options for lobby modal.
+ */
+export const lobbyScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => lobbyScreenHeaderCloseButton()
+};
+
+/**
+ * Screen options for lobby chat modal.
+ */
+export const lobbyChatScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => screenHeaderCloseButton(goBackToLobbyScreen)
+};
+
+/**
  * Screen options for car mode.
  */
 export const carmodeScreenOptions = presentationScreenOptions;
@@ -95,14 +127,6 @@ export const carmodeScreenOptions = presentationScreenOptions;
  * Screen options for chat.
  */
 export const chatScreenOptions = presentationScreenOptions;
-
-/**
- * Dial-IN Info screen options and transition types.
- */
-export const dialInSummaryScreenOptions = {
-    ...presentationScreenOptions,
-    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
-};
 
 /**
  * Screen options for invite modal.
@@ -138,22 +162,6 @@ export const liveStreamScreenOptions = presentationScreenOptions;
  * Screen options for subtitles modal.
  */
 export const subtitlesScreenOptions = presentationScreenOptions;
-
-/**
- * Screen options for lobby modal.
- */
-export const lobbyScreenOptions = {
-    ...presentationScreenOptions,
-    headerLeft: () => lobbyScreenHeaderCloseButton()
-};
-
-/**
- * Screen options for lobby chat modal.
- */
-export const lobbyChatScreenOptions = {
-    ...presentationScreenOptions,
-    headerLeft: () => screenHeaderCloseButton(goBackToLobbyScreen)
-};
 
 /**
  * Screen options for salesforce link modal.
