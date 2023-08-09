@@ -1,5 +1,5 @@
-// @ts-expect-error
-import Bourne from '@hapi/bourne';
+// @ts-ignore
+import { safeJsonParse } from '@jitsi/js-utils/json';
 
 import { reportError } from './helpers';
 
@@ -62,7 +62,7 @@ export function parseURLParams(
             if (!dontParse) {
                 const decoded = decodeURIComponent(value).replace(/\\&/, '&');
 
-                value = decoded === 'undefined' ? undefined : Bourne.parse(decoded);
+                value = decoded === 'undefined' ? undefined : safeJsonParse(decoded);
             }
         } catch (e: any) {
             reportError(

@@ -1,8 +1,8 @@
-// @ts-expect-error
-import Bourne from '@hapi/bourne';
-// eslint-disable-next-line lines-around-comment
-// @ts-expect-error
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { safeJsonParse } from '@jitsi/js-utils/json';
 import React, { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -217,7 +217,7 @@ function VirtualBackgrounds({
     const { classes, cx } = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
-    const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
+    const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && safeJsonParse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
