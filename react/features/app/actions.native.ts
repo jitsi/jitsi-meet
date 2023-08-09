@@ -137,25 +137,24 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setConfig(config));
         dispatch(setRoom(room));
 
-        if (room) {
+        if (!room) {
+            goBackToRoot(getState(), dispatch);
+
+            return;
+        }
+
+        dispatch(createDesiredLocalTracks());
+        dispatch(clearNotifications());
+
+        if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
             if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
                 navigateRoot(screen.unsafeRoomWarning);
-
-                return;
-            }
-            dispatch(createDesiredLocalTracks());
-            dispatch(clearNotifications());
-
-            const { hidePrejoin } = options;
-
-            if (!hidePrejoin && isPrejoinPageEnabled(getState())) {
-                navigateRoot(screen.preJoin);
             } else {
-                dispatch(connect());
-                navigateRoot(screen.conference.root);
+                navigateRoot(screen.preJoin);
             }
         } else {
-            goBackToRoot(getState(), dispatch);
+            dispatch(connect());
+            navigateRoot(screen.conference.root);
         }
     };
 }
