@@ -1,8 +1,8 @@
-// @ts-expect-error
-import Bourne from '@hapi/bourne';
-// eslint-disable-next-line lines-around-comment
-// @ts-expect-error
+// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { safeJsonParse } from '@jitsi/js-utils/json';
 
 import { browser } from '../lib-jitsi-meet';
 import { inIframe } from '../util/iframeUtils';
@@ -61,7 +61,7 @@ function setupJitsiLocalStorage() {
 
     if (shouldUseHostPageLocalStorage(urlParams)) {
         try {
-            const localStorageContent = Bourne.parse(urlParams['appData.localStorageContent']);
+            const localStorageContent = safeJsonParse(urlParams['appData.localStorageContent']);
 
             if (typeof localStorageContent === 'object') {
                 Object.keys(localStorageContent).forEach(key => {
