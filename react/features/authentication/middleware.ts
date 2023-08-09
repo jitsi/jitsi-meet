@@ -294,8 +294,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
             if (receivedTokenAuthServiceUrl) {
                 dispatch(openTokenAuthUrl(receivedTokenAuthServiceUrl,
-                    `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
-                    ? '&' : '#'}skipPrejoin=true`));
+                    `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`)
+                );
             }
 
             return;
@@ -310,8 +310,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         if (receivedTokenAuthServiceUrl) {
 
             // we have already shown the prejoin screen, so no need to show it again after obtaining the token
-            window.location.href
-                = `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
+            window.location.href = `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
                 ? '&' : '#'}skipPrejoin=true`;
         }
     } else {

@@ -5,6 +5,7 @@ import { StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import AuthenticationPage from '../../../authentication/components/native/AuthenticationPage';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
@@ -28,8 +29,7 @@ import {
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import AuthenticationPage
-    from '../../../authentication/components/native/AuthenticationPage';
+
 
 const RootStack = createStackNavigator();
 

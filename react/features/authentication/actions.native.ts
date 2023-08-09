@@ -78,8 +78,8 @@ export function redirectToDefaultLocation() {
 
 /** .
  * Opens token auth URL page.
- * @param {String} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service
- * @param {String} tokenAuthServiceUrl - Authentication service URL.
+ * @param {string} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service.
+ * @param {string} tokenAuthServiceUrl - Authentication service URL.
  * is being dispatched.
  *
  * @returns {Function}
@@ -91,9 +91,9 @@ export function openTokenAuthUrl(receivedTokenAuthServiceUrl: string | undefined
                 tokenAuthServiceUrl
             });
         } else {
-            dispatch(redirectToDefaultLocation())
+            dispatch(redirectToDefaultLocation());
         }
-    }
+    };
 }
 
 /**
