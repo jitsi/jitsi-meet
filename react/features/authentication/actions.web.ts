@@ -81,6 +81,7 @@ export function logout() {
  *
  * @returns {Function}
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function openTokenAuthUrl(receivedTokenAuthServiceUrl?: string | undefined, tokenAuthServiceUrl?: string): any {
     // Dummy.
 }
