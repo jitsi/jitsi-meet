@@ -105,5 +105,5 @@ export function updateRemoteParticipantsOnLeave(store: IStore, participantId: st
 export function isTileViewModeDisabled(state: IReduxState) {
     const { tileView = {} } = state['features/base/config'];
 
-    return tileView.enabled === false;
+    return tileView.disabled;
 }
