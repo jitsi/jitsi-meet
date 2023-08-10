@@ -83,7 +83,7 @@ export function redirectToDefaultLocation() {
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
+export function openTokenAuthUrl(tokenAuthServiceUrl: string | undefined) {
     return (dispatch: IStore['dispatch']) => {
 
         if (tokenAuthServiceUrl) {

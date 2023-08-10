@@ -80,7 +80,7 @@ export function logout() {
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(tokenAuthServiceUrl?: string): any {
+export function openTokenAuthUrl(tokenAuthServiceUrl?: string | undefined): any {
 
     if (tokenAuthServiceUrl) {
 
