@@ -85,9 +85,11 @@ export function redirectToDefaultLocation() {
  */
 export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
     return (dispatch: IStore['dispatch']) => {
+
         if (tokenAuthServiceUrl) {
             navigateRoot(screen.authentication, {
-                tokenAuthServiceUrl
+                tokenAuthServiceUrl: `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
+                    ? '&' : '#'}skipPrejoin=true`
             });
         } else {
             dispatch(redirectToDefaultLocation());

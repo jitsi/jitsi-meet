@@ -292,9 +292,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
                 titleKey: 'dialog.tokenAuthFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-            dispatch(openTokenAuthUrl(`${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
-                ? '&' : '#'}skipPrejoin=true`)
-            );
+            dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
 
             return;
         }
@@ -304,13 +302,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         }
 
         // FIXME: This method will not preserve the other URL params that were originally passed.
-
-        if (tokenAuthServiceUrl) {
-
-            // we have already shown the prejoin screen, so no need to show it again after obtaining the token
-            window.location.href = `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
-                ? '&' : '#'}skipPrejoin=true`;
-        }
+        dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
     } else {
         dispatch(openLoginDialog());
     }

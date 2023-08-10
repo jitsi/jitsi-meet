@@ -76,13 +76,16 @@ export function logout() {
 /**
  * Opens token auth URL page.
  *
- * @param {string} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service.
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tokenAuthServiceUrl?: string): any {
-    // Dummy.
+export function openTokenAuthUrl(tokenAuthServiceUrl?: string): any {
+
+    if (tokenAuthServiceUrl) {
+
+        // we have already shown the prejoin screen, so no need to show it again after obtaining the token
+        window.location.href = `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
+            ? '&' : '#'}skipPrejoin=true`;
+    }
 }
