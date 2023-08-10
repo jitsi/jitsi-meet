@@ -79,14 +79,13 @@ export function redirectToDefaultLocation() {
 /**
  * Opens token auth URL page.
  *
- * @param {string} receivedTokenAuthServiceUrl - URL pointing to JWT token authentication service.
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(receivedTokenAuthServiceUrl: string | undefined, tokenAuthServiceUrl: string) {
+export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
     return (dispatch: IStore['dispatch']) => {
-        if (receivedTokenAuthServiceUrl) {
+        if (tokenAuthServiceUrl) {
             navigateRoot(screen.authentication, {
                 tokenAuthServiceUrl
             });

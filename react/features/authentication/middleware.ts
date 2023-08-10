@@ -283,7 +283,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const state = getState();
     const config = state['features/base/config'];
     const room = getBackendSafeRoomName(state['features/base/conference'].room);
-    const receivedTokenAuthServiceUrl = getTokenAuthUrl(config, room);
+    const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
 
     if (isTokenAuthEnabled(config)) {
         if (typeof APP === 'undefined') {
@@ -292,12 +292,9 @@ function _handleLogin({ dispatch, getState }: IStore) {
                 titleKey: 'dialog.tokenAuthFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-            if (receivedTokenAuthServiceUrl) {
-                dispatch(openTokenAuthUrl(receivedTokenAuthServiceUrl,
-                    `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
-                        ? '&' : '#'}skipPrejoin=true`)
-                );
-            }
+            dispatch(openTokenAuthUrl(`${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
+                ? '&' : '#'}skipPrejoin=true`)
+            );
 
             return;
         }
@@ -308,10 +305,10 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
         // FIXME: This method will not preserve the other URL params that were originally passed.
 
-        if (receivedTokenAuthServiceUrl) {
+        if (tokenAuthServiceUrl) {
 
             // we have already shown the prejoin screen, so no need to show it again after obtaining the token
-            window.location.href = `${receivedTokenAuthServiceUrl}${receivedTokenAuthServiceUrl.includes('#')
+            window.location.href = `${tokenAuthServiceUrl}${tokenAuthServiceUrl.includes('#')
                 ? '&' : '#'}skipPrejoin=true`;
         }
     } else {
