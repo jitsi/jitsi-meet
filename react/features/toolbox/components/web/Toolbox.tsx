@@ -63,7 +63,7 @@ interface IProps extends WithTranslation {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not a dialog is displayed.
