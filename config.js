@@ -1594,6 +1594,8 @@ var config = {
 
     // Tile view related config options.
     // tileView: {
+    //     // Tileview is disabled only if enabled flag is specifically set to false. If not specified, it is enabled.
+    //     enabled: true,
     //     // The optimal number of tiles that are going to be shown in tile view. Depending on the screen size it may
     //     // not be possible to show the exact number of participants specified here.
     //     numberOfVisibleTiles: 25,

@@ -573,6 +573,7 @@ export interface IConfig {
         testMode?: boolean;
     };
     tileView?: {
+        enabled?: boolean;
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;
