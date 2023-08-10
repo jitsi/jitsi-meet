@@ -287,11 +287,6 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
     if (isTokenAuthEnabled(config)) {
         if (typeof APP === 'undefined') {
-            dispatch(showErrorNotification({
-                descriptionKey: 'dialog.tokenAuthUnsupported',
-                titleKey: 'dialog.tokenAuthFailedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-
             dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
 
             return;
