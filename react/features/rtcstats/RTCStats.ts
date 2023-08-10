@@ -30,12 +30,7 @@ class RTCStats {
     init() {
         this._connStateEvents = [];
 
-        console.log('[ADBG JM]: Running init...');
-
-
         if (!this._initialized) {
-            console.log('[ADBG JM]: Running init once...');
-
             JitsiMeetJS.rtcstats.events.on(
                 'rtstats_pc_event',
                 (pcEvent: any) => this.handleRTCStatsEvent(pcEvent));

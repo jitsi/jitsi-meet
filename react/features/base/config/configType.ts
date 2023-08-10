@@ -570,7 +570,6 @@ export interface IConfig {
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
-        rtcstatsUseLibJitsi?: boolean;
         testMode?: boolean;
     };
     tileView?: {

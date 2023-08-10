@@ -31,8 +31,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
     switch (action.type) {
     case CONFERENCE_JOINED: {
-
-        console.log('[ADBG]: Logging something here...');
         if (isRTCStatsEnabled(state)) {
             RTCStats.init();
         }

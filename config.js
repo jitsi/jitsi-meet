@@ -99,11 +99,6 @@ var config = {
         // This takes a value between 0 and 100 which determines the probability for
         // the callstats to be enabled.
         // callStatsThreshold: 5, // enable callstats for 5% of the users.
-
-        // This determines if rtcstats from lib-jitsi-meet will be used instead of the one
-        // here in jitsi-meet directly
-        // rtcstatsUseLibJitsi: false,
-
     },
 
     // Disables moderator indicators.
