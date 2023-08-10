@@ -199,6 +199,7 @@ export function getToolbarTimeout(state: IReduxState) {
     * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
     */
 export function getAllToolboxButtons(_customToolbarButtons?: {
+    backgroundColor?: string;
     icon: string;
     id: string;
     text: string;
@@ -395,10 +396,11 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         group: 4
     };
 
-    const customButtons = _customToolbarButtons?.reduce((prev, { icon, id, text }) => {
+    const customButtons = _customToolbarButtons?.reduce((prev, { backgroundColor, icon, id, text }) => {
         return {
             ...prev,
             [id]: {
+                backgroundColor,
                 key: id,
                 Content: CustomOptionButton,
                 group: 4,

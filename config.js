@@ -871,7 +871,7 @@ var config = {
     // customParticipantMenuButtons: [],
 
     // An array with custom option buttons for the toolbar
-    // type:  Array<{ icon: string; id: string; text: string; }>
+    // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
 
     // Stats
