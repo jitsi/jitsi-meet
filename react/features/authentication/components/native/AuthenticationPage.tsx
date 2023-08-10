@@ -4,14 +4,14 @@ import React, {useCallback} from 'react';
 import { WithTranslation } from 'react-i18next';
 import { Linking, View, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { useStore } from 'react-redux';
 
+import { appNavigate } from '../../../app/actions.native';
+import { getCurrentConferenceUrl } from '../../../base/connection/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 
 import styles, { INDICATOR_COLOR } from './styles';
-import {useDispatch, useStore} from "react-redux";
-import {appNavigate} from "../../../app/actions.native";
-import {getCurrentConferenceUrl} from "../../../base/connection/functions";
 
 
 interface IProps extends WithTranslation {
