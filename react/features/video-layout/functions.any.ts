@@ -60,9 +60,9 @@ export function getCurrentLayout(state: IReduxState) {
  * @returns {boolean} True if tile view should be displayed.
  */
 export function shouldDisplayTileView(state: IReduxState) {
-    const tileviewDisabled = isTileViewModeDisabled(state);
+    const tileViewDisabled = isTileViewModeDisabled(state);
 
-    if (tileviewDisabled) {
+    if (tileViewDisabled) {
         return false;
     }
 

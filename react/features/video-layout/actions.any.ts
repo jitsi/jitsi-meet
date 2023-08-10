@@ -36,9 +36,9 @@ export function virtualScreenshareParticipantsUpdated(participantIds: Array<stri
  */
 export function setTileView(enabled?: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const tileviewDisabled = isTileViewModeDisabled(getState());
+        const tileViewDisabled = isTileViewModeDisabled(getState());
 
-        !tileviewDisabled && dispatch({
+        !tileViewDisabled && dispatch({
             type: SET_TILE_VIEW,
             enabled
         });
