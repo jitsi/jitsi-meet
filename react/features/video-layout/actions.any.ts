@@ -1,4 +1,5 @@
 import { IStore } from '../app/types';
+import { isTileViewModeDisabled } from '../filmstrip/functions.any';
 
 import {
     SET_TILE_VIEW,
@@ -34,9 +35,13 @@ export function virtualScreenshareParticipantsUpdated(participantIds: Array<stri
  * }}
  */
 export function setTileView(enabled?: boolean) {
-    return {
-        type: SET_TILE_VIEW,
-        enabled
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const tileViewDisabled = isTileViewModeDisabled(getState());
+
+        !tileViewDisabled && dispatch({
+            type: SET_TILE_VIEW,
+            enabled
+        });
     };
 }
 
