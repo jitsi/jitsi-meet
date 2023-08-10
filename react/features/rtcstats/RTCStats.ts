@@ -3,6 +3,7 @@ import {
     PC_CON_STATE_CHANGE,
     PC_STATE_CONNECTED,
     PC_STATE_FAILED
+    // @ts-expect-error
 } from '@jitsi/rtcstats/events';
 
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -19,7 +20,7 @@ import {
  * Handle lib-jitsi-meet rtcstats events and send jitsi-meet specific statistics.
  */
 class RTCStats {
-    private _connStateEvents = [];
+    private _connStateEvents: Array<any> = [];
     private _initialized = false;
 
     /**
