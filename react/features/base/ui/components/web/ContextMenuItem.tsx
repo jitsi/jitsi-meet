@@ -17,6 +17,11 @@ export interface IProps {
     accessibilityLabel: string;
 
     /**
+     * The context menu item background color.
+     */
+    backgroundColor?: string;
+
+    /**
      * Component children.
      */
     children?: ReactNode;
@@ -163,6 +168,7 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItem = ({
     accessibilityLabel,
+    backgroundColor,
     children,
     className,
     controls,
@@ -181,7 +187,7 @@ const ContextMenuItem = ({
     textClassName }: IProps) => {
     const { classes: styles, cx } = useStyles();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-
+    const style = backgroundColor ? { backgroundColor } : {};
     const onKeyPressHandler = useCallback(e => {
         // only trigger the fallback behavior (onClick) if we dont have any explicit keyboard event handler
         if (onClick && !onKeyPress && !onKeyDown && (e.key === 'Enter' || e.key === ' ')) {
@@ -223,6 +229,7 @@ const ContextMenuItem = ({
             onKeyDown = { disabled ? undefined : onKeyDown }
             onKeyPress = { disabled ? undefined : onKeyPressHandler }
             role = { onClick ? role : undefined }
+            style = { style }
             tabIndex = { onClick ? tabIndex : undefined }>
             {customIcon ? customIcon
                 : icon && <Icon
