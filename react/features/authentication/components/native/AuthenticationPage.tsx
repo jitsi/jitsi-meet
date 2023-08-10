@@ -1,5 +1,6 @@
+/* eslint-disable react/jsx-no-bind */
 import { Route } from '@react-navigation/native';
-import React  from 'react';
+import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { View, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -38,7 +39,7 @@ const AuthenticationPage: React.FunctionComponent<IProps> = ({ route }: IProps) 
                 startInLoadingState = { true }
                 style = { styles.webView } />
         </JitsiScreen>
-    )
-}
+    );
+};
 
 export default AuthenticationPage;

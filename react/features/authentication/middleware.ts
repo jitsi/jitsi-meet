@@ -16,8 +16,6 @@ import {
 } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getBackendSafeRoomName } from '../base/util/uri';
-import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
