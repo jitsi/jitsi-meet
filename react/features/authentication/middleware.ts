@@ -8,7 +8,7 @@ import {
 import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hangup } from '../base/connection/actions';
-import { hideDialog } from '../base/dialog/actions';
+import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import {
     JitsiConferenceErrors,
@@ -37,7 +37,7 @@ import {
     stopWaitForOwner,
     waitForOwner
 } from './actions';
-import { LoginDialog, WaitForOwnerDialog } from './components';
+import { LoginDialog, LoginQuestionDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 
 /**
@@ -301,10 +301,17 @@ function _handleLogin({ dispatch, getState }: IStore) {
         // FIXME: This method will not preserve the other URL params that were originally passed.
         const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
 
-        if (tokenAuthServiceUrl) {
-            // we have already shown the prejoin screen, so no need to show it again after obtaining the token
-            window.location.href = `${tokenAuthServiceUrl}${
-                tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
+        if (tokenAuthServiceUrl && LoginQuestionDialog) {
+            dispatch(openDialog(LoginQuestionDialog, {
+                handler: () => {
+                    // give time for the dialog to close
+                    setTimeout(() => {
+                        // we have already shown the prejoin screen, no need to show it again after obtaining the token
+                        window.location.href = `${tokenAuthServiceUrl}${
+                            tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
+                    }, 500);
+                }
+            }));
         }
     } else {
         dispatch(openLoginDialog());
