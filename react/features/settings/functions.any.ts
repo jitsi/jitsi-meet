@@ -198,8 +198,14 @@ export function getProfileTabProps(stateful: IStateful) {
         authLogin,
         conference
     } = state['features/base/conference'];
-    const { hideEmailInSettings } = state['features/base/config'];
+    const config = state['features/base/config'];
+    let { hideEmailInSettings } = config;
     const localParticipant = getLocalParticipant(state);
+
+    if (config.gravatar?.disabled
+        || (localParticipant?.avatarURL && localParticipant?.avatarURL.length > 0)) {
+        hideEmailInSettings = true;
+    }
 
     return {
         authEnabled: Boolean(conference && authEnabled),
