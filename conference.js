@@ -130,6 +130,7 @@ import {
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { openLeaveReasonDialog } from './react/features/conference/actions.web';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
@@ -2430,7 +2431,7 @@ export default {
      * @param {boolean} [requestFeedback=false] if user feedback should be
      * requested
      */
-    hangup(requestFeedback = false) {
+    async hangup(requestFeedback = false, feedbackTitleKey) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2447,36 +2448,34 @@ export default {
 
         APP.UI.removeAllListeners();
 
-        let requestFeedbackPromise;
+        let feedbackResult = true;
 
         if (requestFeedback) {
-            requestFeedbackPromise
-                = APP.store.dispatch(maybeOpenFeedbackDialog(room))
+            try {
+                feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, feedbackTitleKey));
 
-                    // false because the thank you dialog shouldn't be displayed
-                    .catch(() => Promise.resolve(false));
-        } else {
-            requestFeedbackPromise = Promise.resolve(true);
+                if (!feedbackResult.wasDialogShown) {
+                    await APP.store.dispatch(openLeaveReasonDialog(feedbackTitleKey));
+                }
+            } catch {
+                feedbackResult = false;
+            }
         }
 
-        Promise.all([
-            requestFeedbackPromise,
-            this.leaveRoom()
-        ])
-        .then(values => {
-            this._room = undefined;
-            room = undefined;
+        await this.leaveRoom();
 
-            /**
-             * Don't call {@code notifyReadyToClose} if the promotional page flag is set
-             * and let the page take care of sending the message, since there will be
-             * a redirect to the page regardlessly.
-             */
-            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
-                APP.API.notifyReadyToClose();
-            }
-            APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
-        });
+        this._room = undefined;
+        room = undefined;
+
+        /**
+         * Don't call {@code notifyReadyToClose} if the promotional page flag is set
+         * and let the page take care of sending the message, since there will be
+         * a redirect to the page regardlessly.
+         */
+        if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+            APP.API.notifyReadyToClose();
+        }
+        APP.store.dispatch(maybeRedirectToWelcomePage(feedbackResult));
     },
 
     /**

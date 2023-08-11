@@ -1,11 +1,13 @@
 import { IStore } from '../app/types';
 import { configureInitialDevices } from '../base/devices/actions.web';
+import { openDialog } from '../base/dialog/actions';
 import { getParticipantDisplayName } from '../base/participants/functions';
 import { getBackendSafeRoomName } from '../base/util/uri';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
+import LeaveReasonDialog from './components/web/LeaveReasonDialog.web';
 import logger from './logger';
 
 /**
@@ -36,6 +38,25 @@ export function notifyKickedOut(participant: any, _?: Function) {
             titleArguments: args
         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
     };
+}
+
+
+/**
+ * Opens {@code LeaveReasonDialog}.
+ *
+ * @param {string} [titleKey] - The translation key of the dialog title.
+ * @param {Function} [onClose] - An optional callback to invoke when the dialog
+ * is closed.
+ *
+ * @returns {Promise} Resolved when the dialog is closed.
+ */
+export function openLeaveReasonDialog(titleKey?: string) {
+    return (dispatch: IStore['dispatch']): Promise<void> => new Promise(resolve => {
+        dispatch(openDialog(LeaveReasonDialog, {
+            onClose: resolve,
+            titleKey
+        }));
+    });
 }
 
 /**
