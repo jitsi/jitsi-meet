@@ -7,7 +7,8 @@ import {
     IDeeplinkingConfig,
     IDeeplinkingMobileConfig,
     IDeeplinkingPlatformConfig,
-    NotifyClickButton
+    NotifyClickButton,
+    ToolbarButton
 } from './configType';
 import { TOOLBAR_BUTTONS } from './constants';
 
@@ -46,7 +47,7 @@ export function getToolbarButtons(state: IReduxState): Array<string> {
     const buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
 
     if (customButtons) {
-        buttons.push(...customButtons);
+        buttons.push(...customButtons as ToolbarButton[]);
     }
 
     return buttons;
