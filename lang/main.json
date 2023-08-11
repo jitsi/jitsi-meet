@@ -413,6 +413,7 @@
         "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
+        "sessTerminatedReason": "The meeting has been terminated",
         "sessionRestarted": "Call restarted because of a connection issue.",
         "shareAudio": "Continue",
         "shareAudioTitle": "How to share audio",
