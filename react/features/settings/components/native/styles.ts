@@ -11,6 +11,7 @@ export default {
     profileContainerWrapper: {
         margin: BaseTheme.spacing[4]
     },
+
     profileContainer: {
         backgroundColor: BaseTheme.palette.ui02,
         borderRadius: BaseTheme.shape.borderRadius,
@@ -90,6 +91,7 @@ export default {
     fieldLabelContainer: {
         alignItems: 'center',
         flexDirection: 'row',
+        flex: 3,
         paddingLeft: BaseTheme.spacing[3]
     },
 
@@ -154,6 +156,31 @@ export default {
         marginTop: BaseTheme.spacing[2]
     },
 
+    languageButton: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+
+    languageOption: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: BaseTheme.spacing[6],
+        marginHorizontal: BaseTheme.spacing[4],
+        borderBottomWidth: 1,
+        borderColor: BaseTheme.palette.ui05
+    },
+
+    selectedLanguage: {
+        color: BaseTheme.palette.text03
+    },
+
+    languageText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginRight: BaseTheme.spacing[3]
+    },
+
     /**
      * Standard text input field style.
      */
@@ -182,10 +209,18 @@ export default {
         flex: 1
     },
 
+    linksSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        flex: 1,
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
     linksButton: {
-        alignSelf: 'stretch',
-        textAlign: 'left',
-        marginHorizontal: BaseTheme.spacing[3],
+        width: '33%',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
         ...BaseTheme.typography.bodyShortBoldLarge
     }
 };

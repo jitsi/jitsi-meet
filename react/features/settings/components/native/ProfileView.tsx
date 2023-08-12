@@ -18,7 +18,7 @@ import FormSection from './FormSection';
 import { AVATAR_SIZE } from './constants';
 import styles from './styles';
 
-const ProfileView = (props: { addBottomInset?: boolean; scrollBounces?: boolean; }) => {
+const ProfileView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -44,7 +44,7 @@ const ProfileView = (props: { addBottomInset?: boolean; scrollBounces?: boolean;
             email
         }));
 
-        navigate(screen.settings.main, {});
+        navigate(screen.settings.main);
     },
     [ dispatch, updateSettings, email, displayName ]);
 
@@ -53,10 +53,10 @@ const ProfileView = (props: { addBottomInset?: boolean; scrollBounces?: boolean;
             disableForcedKeyboardDismiss = { true }
 
             // @ts-ignore
-            safeAreaInsets = { [ props.addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) }
+            safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) }
             style = { styles.settingsViewContainer }>
             <ScrollView
-                bounces = { props.scrollBounces }
+                bounces = { isInWelcomePage }
                 contentContainerStyle = { styles.profileView as ViewStyle }>
                 <View>
                     <View style = { styles.avatarContainer as ViewStyle }>
@@ -64,7 +64,6 @@ const ProfileView = (props: { addBottomInset?: boolean; scrollBounces?: boolean;
                             participantId = { participant?.id }
                             size = { AVATAR_SIZE } />
                     </View>
-
                     <FormSection>
                         <Input
                             customStyles = {{ container: styles.customContainer }}

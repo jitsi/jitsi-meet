@@ -1,8 +1,10 @@
 import { IStateful } from '../base/app/types';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getUserSelectedCameraDeviceId } from '../base/settings/functions.web';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcutsHelpDescriptions } from '../keyboard-shortcuts/functions';
+import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
 export * from './functions.any';
@@ -114,4 +116,32 @@ export function getVirtualBackgroundTabProps(stateful: IStateful, isDisplayedOnW
         options: state['features/virtual-background'],
         selectedVideoInputId
     };
+}
+
+/**
+ * Used for web. Indicates if the setting section is enabled.
+ *
+ * @param {string} settingName - The name of the setting section as defined in
+ * interface_config.js and SettingsMenu.js.
+ * @returns {boolean} True to indicate that the given setting section
+ * is enabled, false otherwise.
+ */
+export function isSettingEnabled(settingName: string) {
+    return interfaceConfig.SETTINGS_SECTIONS.includes(settingName);
+}
+
+
+/**
+ * Returns true if moderator tab in settings should be visible/accessible.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
+ */
+export function shouldShowModeratorSettings(stateful: IStateful) {
+    const state = toState(stateful);
+    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
+    const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
+
+    return hasModeratorRights && !hideModeratorSettingsTab;
 }

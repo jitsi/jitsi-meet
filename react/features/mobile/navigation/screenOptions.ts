@@ -210,6 +210,11 @@ export const profileSettingsScreenOptions = {
 };
 
 /**
+ * Screen options for language select screen.
+ */
+export const languageSelectScreenOptions = profileSettingsScreenOptions;
+
+/**
  * Screen options for pre-join screen.
  */
 export const unsafeMeetingScreenOptions = preJoinScreenOptions;
