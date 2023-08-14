@@ -1,4 +1,4 @@
-type ToolbarButtons = 'camera' |
+export type ToolbarButton = 'camera' |
     'chat' |
     'closedcaptions' |
     'desktop' |
@@ -15,6 +15,9 @@ type ToolbarButtons = 'camera' |
     'linktosalesforce' |
     'livestreaming' |
     'microphone' |
+    'mute-everyone' |
+    'mute-video-everyone' |
+    'noisesuppression' |
     'participants-pane' |
     'profile' |
     'raisehand' |
@@ -30,6 +33,7 @@ type ToolbarButtons = 'camera' |
     'tileview' |
     'toggle-camera' |
     'videoquality' |
+    'whiteboard' |
     '__end';
 
 type ButtonsWithNotifyClick = 'camera' |
@@ -579,7 +583,7 @@ export interface IConfig {
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenLogoutUrl?: string;
-    toolbarButtons?: Array<ToolbarButtons>;
+    toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
         autoHideWhileChatIsOpen?: boolean;
