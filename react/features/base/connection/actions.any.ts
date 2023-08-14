@@ -13,6 +13,7 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_REDIRECTED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
@@ -137,6 +138,38 @@ export function connectionFailed(
 }
 
 /**
+ * Create an action for when the connection needs to be redirected to a visitor node or back to the main node.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} which
+ * failed.
+ * @param {string | undefined} vnode - The vnode to use or undefined if moving back to the main room.
+ * @param {string} focusJid - The focus jid to use.
+ * @param {string} username - The username to use.
+ * @public
+ * @returns {{
+ *     type: CONNECTION_FAILED,
+ *     connection: JitsiConnection,
+ *     vnode: string?,
+ *     focusJid: string,
+ *     username: string?
+ * }}
+ */
+export function connectionRedirected(
+        connection: Object,
+        vnode: String,
+        focusJid: String,
+        username: String) {
+
+    return {
+        type: CONNECTION_REDIRECTED,
+        connection,
+        vnode,
+        focusJid,
+        username
+    };
+}
+
+/**
  * Constructs options to be passed to the constructor of {@code JitsiConnection}
  * based on the redux state.
  *
@@ -230,6 +263,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_FAILED,
                 _onConnectionFailed);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_REDIRECTED,
+                _onConnectionRedirected);
 
             /**
              * Unsubscribe the connection instance from
@@ -296,6 +332,21 @@ export function _connectInternal(id?: string, password?: string) {
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
                 dispatch(connectionEstablished(connection, Date.now()));
                 resolve(connection);
+            }
+
+            /**
+             * Rejects external promise when connection fails.
+             *
+             * @param {string|undefined} vnode - The vnode to connect to.
+             * @param {string} focusJid - The focus jid to use.
+             * @param {string|undefined} username - The username to use when joining. This is after promotion from
+             * visitor to main participant.
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
+                dispatch(connectionRedirected(connection, vnode, focusJid, username));
             }
 
             connection.connect({
