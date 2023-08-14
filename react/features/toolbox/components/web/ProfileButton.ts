@@ -103,14 +103,13 @@ class ProfileButton extends AbstractButton<IProps> {
  * @returns {Object}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { defaultLocalDisplayName, disableProfile } = state['features/base/config'];
+    const { defaultLocalDisplayName } = state['features/base/config'];
 
     return {
         _defaultLocalDisplayName: defaultLocalDisplayName ?? '',
         _localParticipant: getLocalParticipant(state),
         _unclickable: !interfaceConfig.SETTINGS_SECTIONS.includes('profile'),
-        customClass: 'profile-button-avatar',
-        visible: !disableProfile
+        customClass: 'profile-button-avatar'
     };
 };
 

@@ -16,8 +16,10 @@ import {
     IDeeplinkingConfig,
     IDeeplinkingMobileConfig,
     IDeeplinkingPlatformConfig,
-    IMobileDynamicLink
+    IMobileDynamicLink,
+    ToolbarButton
 } from './configType';
+import { TOOLBAR_BUTTONS } from './constants';
 import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
 /**
@@ -544,6 +546,11 @@ function _translateLegacyConfig(oldValue: IConfig) {
             ...newValue.securityUi || {},
             hideLobbyButton: oldValue.hideLobbyButton
         };
+    }
+
+    if (oldValue.disableProfile) {
+        newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
+            .filter((button: ToolbarButton) => button !== 'profile');
     }
 
     _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);
