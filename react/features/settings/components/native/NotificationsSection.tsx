@@ -85,7 +85,7 @@ const NotificationsSection = () => {
         dispatch(updateSettings({
             userSelectedNotifications: {
                 ...enabledNotifications,
-                [name]: enabled
+                [name]: Boolean(enabled)
             }
         }
         )

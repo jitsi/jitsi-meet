@@ -72,7 +72,7 @@ export function normalizeUserInputURL(url: string) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The section of notifications to be configured.
  */
-export function getNotificationsMap(stateful: IStateful) {
+export function getNotificationsMap(stateful: IStateful): { [key: string]: boolean; } {
     const state = toState(stateful);
     const { notifications } = state['features/base/config'];
     const { userSelectedNotifications } = state['features/base/settings'];
