@@ -49,7 +49,11 @@ export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | Rea
  * {@code true}; otherwise, {@code false}.
  */
 export function isPrejoinPageEnabled(stateful: IStateful) {
-    return getFeatureFlag(toState(stateful), PREJOIN_PAGE_ENABLED, true);
+    const state = toState(stateful);
+    const { prejoinConfig } = state['features/base/config'];
+    const isPrejoinEnabledInConfig = prejoinConfig?.enabled;
+
+    return getFeatureFlag(state, PREJOIN_PAGE_ENABLED, isPrejoinEnabledInConfig ?? true);
 }
 
 /**

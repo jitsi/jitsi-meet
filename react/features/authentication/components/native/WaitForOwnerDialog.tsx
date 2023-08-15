@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { IStore } from '../../../app/types';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
-import { cancelWaitForOwner, openLoginDialog } from '../../actions.native';
+import { cancelWaitForOwner, login } from '../../actions.native';
+
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -77,7 +78,9 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @returns {void}
      */
     _onLogin() {
-        this.props.dispatch(openLoginDialog());
+        this.props.dispatch(login());
+
+        return true;
     }
 }
 
