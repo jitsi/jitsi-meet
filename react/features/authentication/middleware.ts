@@ -8,7 +8,7 @@ import {
 import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hangup } from '../base/connection/actions';
-import { hideDialog, openDialog } from '../base/dialog/actions';
+import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import {
     JitsiConferenceErrors,
@@ -16,8 +16,6 @@ import {
 } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getBackendSafeRoomName } from '../base/util/uri';
-import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
@@ -31,14 +29,16 @@ import {
 import {
     hideLoginDialog,
     openLoginDialog,
+    openTokenAuthUrl,
     openWaitForOwnerDialog,
     redirectToDefaultLocation,
     setTokenAuthUrlSuccess,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
-import { LoginDialog, LoginQuestionDialog, WaitForOwnerDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
+import logger from './logger';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -282,45 +282,26 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const config = state['features/base/config'];
     const room = getBackendSafeRoomName(state['features/base/conference'].room);
 
-    if (isTokenAuthEnabled(config)) {
-        if (typeof APP === 'undefined') {
-            dispatch(showErrorNotification({
-                descriptionKey: 'dialog.tokenAuthUnsupported',
-                titleKey: 'dialog.tokenAuthFailedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    if (!room) {
+        logger.warn('Cannot handle login, room is undefined!');
 
-            dispatch(redirectToDefaultLocation());
-
-            return;
-        }
-
-        if (!room) {
-            return;
-        }
-
-        // FIXME: This method will not preserve the other URL params that were originally passed.
-        const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
-
-        if (tokenAuthServiceUrl && LoginQuestionDialog) {
-            const redirect = () => {
-                // we have already shown the prejoin screen, no need to show it again after obtaining the token
-                window.location.href = `${tokenAuthServiceUrl}${
-                    tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
-            };
-
-            // show warning for leaving conference only when in a conference
-            if (state['features/base/conference'].conference) {
-                dispatch(openDialog(LoginQuestionDialog, {
-                    handler: () => {
-                        // give time for the dialog to close
-                        setTimeout(redirect, 500);
-                    }
-                }));
-            } else {
-                redirect();
-            }
-        }
-    } else {
-        dispatch(openLoginDialog());
+        return;
     }
+
+    if (!isTokenAuthEnabled(config)) {
+        dispatch(openLoginDialog());
+
+        return;
+    }
+
+    // FIXME: This method will not preserve the other URL params that were originally passed.
+    const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
+
+    if (!tokenAuthServiceUrl) {
+        logger.warn('Cannot handle login, token service URL is not set');
+
+        return;
+    }
+
+    dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
 }
