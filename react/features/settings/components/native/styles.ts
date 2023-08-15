@@ -3,19 +3,60 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
 
-const TEXT_SIZE = 14;
-
-
 /**
  * The styles of the native components of the feature {@code settings}.
  */
 export default {
 
+    profileContainerWrapper: {
+        margin: BaseTheme.spacing[4]
+    },
+
+    profileContainer: {
+        backgroundColor: BaseTheme.palette.ui02,
+        borderRadius: BaseTheme.shape.borderRadius,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        padding: BaseTheme.spacing[3]
+    },
+
+    profileView: {
+        flexGrow: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+    },
+
+    applyProfileSettingsButton: {
+        marginHorizontal: BaseTheme.spacing[4],
+        marginVertical: BaseTheme.spacing[3]
+    },
+
     avatarContainer: {
         alignItems: 'center',
-        flexDirection: 'column',
-        height: 180,
-        justifyContent: 'center'
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: BaseTheme.spacing[3],
+        margin: BaseTheme.spacing[4]
+    },
+
+    gavatarMessageContainer: {
+        marginHorizontal: BaseTheme.spacing[4],
+        color: BaseTheme.palette.text02,
+        marginTop: -BaseTheme.spacing[2],
+        ...BaseTheme.typography.bodyShortRegular
+    },
+
+    displayName: {
+        ...BaseTheme.typography.bodyLongRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginLeft: BaseTheme.spacing[3],
+        position: 'relative'
+    },
+
+    profileViewArrow: {
+        position: 'absolute',
+        right: BaseTheme.spacing[3]
     },
 
     /**
@@ -50,29 +91,25 @@ export default {
     fieldLabelContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        paddingLeft: 8
+        flex: 3,
+        paddingLeft: BaseTheme.spacing[3]
     },
 
     /**
      * Text of the field labels on the form.
      */
     fieldLabelText: {
-        fontSize: TEXT_SIZE
-    },
-
-    /**
-     * Appended style for column layout fields.
-     */
-    fieldLabelTextColumn: {
-        fontSize: 12
+        ...BaseTheme.typography.bodyShortRegularLarge
     },
 
     /**
      * Field container style for all but last row {@code View}.
      */
     fieldSeparator: {
+        marginHorizontal: BaseTheme.spacing[4],
         borderBottomWidth: 1,
-        borderColor: BaseTheme.palette.ui05
+        borderColor: BaseTheme.palette.ui05,
+        marginVertical: BaseTheme.spacing[3]
     },
 
     /**
@@ -84,7 +121,7 @@ export default {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        paddingRight: 8
+        paddingRight: BaseTheme.spacing[3]
     },
 
     /**
@@ -97,10 +134,10 @@ export default {
     },
 
     formSectionTitleText: {
-        ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.text01,
-        opacity: 0.6,
-        textAlign: 'center'
+        ...BaseTheme.typography.bodyShortBold,
+        color: BaseTheme.palette.text02,
+        marginHorizontal: BaseTheme.spacing[4],
+        marginVertical: BaseTheme.spacing[3]
     },
 
     /**
@@ -115,8 +152,33 @@ export default {
      */
     customContainer: {
         marginBottom: BaseTheme.spacing[3],
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[4],
         marginTop: BaseTheme.spacing[2]
+    },
+
+    languageButton: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+
+    languageOption: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: BaseTheme.spacing[6],
+        marginHorizontal: BaseTheme.spacing[4],
+        borderBottomWidth: 1,
+        borderColor: BaseTheme.palette.ui05
+    },
+
+    selectedLanguage: {
+        color: BaseTheme.palette.text03
+    },
+
+    languageText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginRight: BaseTheme.spacing[3]
     },
 
     /**
@@ -125,7 +187,7 @@ export default {
     textInputField: {
         color: BaseTheme.palette.field01,
         flex: 1,
-        fontSize: TEXT_SIZE,
+        ...BaseTheme.typography.bodyShortRegularLarge,
         textAlign: 'right'
     },
 
@@ -147,9 +209,18 @@ export default {
         flex: 1
     },
 
+    linksSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        flex: 1,
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
     linksButton: {
-        alignSelf: 'center',
-        maxWidth: 400,
-        width: 'auto'
+        width: '33%',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        ...BaseTheme.typography.bodyShortBoldLarge
     }
 };

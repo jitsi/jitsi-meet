@@ -1,3 +1,8 @@
+import { IStateful } from '../base/app/types';
+import { isLocalParticipantModerator } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
+import { getParticipantsPaneConfig } from '../participants-pane/functions';
+
 export * from './functions.any';
 
 /**
@@ -15,4 +20,19 @@ export function getShortcutsTabProps(_stateful: any, _isDisplayedOnWelcomePage?:
     return {
         keyboardShortcutsEnabled: false
     };
+}
+
+/**
+ * Returns true if moderator tab in settings should be visible/accessible.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
+ */
+export function shouldShowModeratorSettings(stateful: IStateful) {
+    const state = toState(stateful);
+    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
+    const hasModeratorRights = isLocalParticipantModerator(state);
+
+    return hasModeratorRights && !hideModeratorSettingsTab;
 }

@@ -197,6 +197,24 @@ export const preJoinScreenOptions = {
 };
 
 /**
+ * Screen options for profile setting.
+ */
+export const profileSettingsScreenOptions = {
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.ui01
+    },
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    },
+    headerBackTitleVisible: false
+};
+
+/**
+ * Screen options for language select screen.
+ */
+export const languageSelectScreenOptions = profileSettingsScreenOptions;
+
+/**
  * Screen options for pre-join screen.
  */
 export const unsafeMeetingScreenOptions = preJoinScreenOptions;
