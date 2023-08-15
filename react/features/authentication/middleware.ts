@@ -302,16 +302,23 @@ function _handleLogin({ dispatch, getState }: IStore) {
         const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
 
         if (tokenAuthServiceUrl && LoginQuestionDialog) {
-            dispatch(openDialog(LoginQuestionDialog, {
-                handler: () => {
-                    // give time for the dialog to close
-                    setTimeout(() => {
-                        // we have already shown the prejoin screen, no need to show it again after obtaining the token
-                        window.location.href = `${tokenAuthServiceUrl}${
-                            tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
-                    }, 500);
-                }
-            }));
+            const redirect = () => {
+                // we have already shown the prejoin screen, no need to show it again after obtaining the token
+                window.location.href = `${tokenAuthServiceUrl}${
+                    tokenAuthServiceUrl.includes('#') ? '&' : '#'}skipPrejoin=true`;
+            };
+
+            // show warning for leaving conference only when in a conference
+            if (state['features/base/conference'].conference) {
+                dispatch(openDialog(LoginQuestionDialog, {
+                    handler: () => {
+                        // give time for the dialog to close
+                        setTimeout(redirect, 500);
+                    }
+                }));
+            } else {
+                redirect();
+            }
         }
     } else {
         dispatch(openLoginDialog());
