@@ -1,6 +1,6 @@
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
-import I18nextXHRBackend from 'i18next-xhr-backend';
+import I18nextXHRBackend, { HttpBackendOptions } from 'i18next-http-backend';
 import _ from 'lodash';
 
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
@@ -61,10 +61,10 @@ export const DEFAULT_LANGUAGE = 'en';
 /**
  * The options to initialize i18next with.
  *
- * @type {Object}
+ * @type {i18next.InitOptions}
  */
-const options = {
-    backend: {
+const options: i18next.InitOptions = {
+    backend: <HttpBackendOptions>{
         loadPath: 'lang/{{ns}}-{{lng}}.json'
     },
     defaultNS: 'main',
@@ -76,6 +76,7 @@ const options = {
     ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
     react: {
         // re-render when a new resource bundle is added
+        // @ts-expect-error. Fixed in i18next 19.6.1.
         bindI18nStore: 'added',
         useSuspense: false
     },
@@ -89,7 +90,7 @@ const options = {
 
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
-    .use(languageDetector) // @ts-ignore
+    .use(languageDetector)
     .init(options);
 
 // Add default language which is preloaded from the source code.
