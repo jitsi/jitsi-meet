@@ -5,6 +5,7 @@ import { getTokenAuthUrl } from '../authentication/functions';
 import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
 import { isSupportedBrowser } from '../base/environment/environment';
+import { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
 import Conference from '../conference/components/web/Conference';
 import { getDeepLinkingPage } from '../deep-linking/functions';
@@ -48,9 +49,9 @@ function _getWebConferenceRoute(state: IReduxState) {
 
     // if we have auto redirect enabled, and we have previously logged in successfully
     // let's redirect to the auth url to get the token and login again
-    if (config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
-        && state['features/authentication'].tokenAuthUrlSuccessful
-        && !state['features/base/jwt'].jwt && room) {
+    if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
+            && state['features/authentication'].tokenAuthUrlSuccessful
+            && !state['features/base/jwt'].jwt && room) {
         route.href = getTokenAuthUrl(config, room);
 
         return Promise.resolve(route);

@@ -1,6 +1,7 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
+import { browser } from '../base/lib-jitsi-meet';
 import { appendURLHashParam } from '../base/util/uri';
 
 import {
@@ -87,11 +88,18 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const redirect = () => {
             // We have already shown the prejoin screen, no need to show it again after obtaining the token.
-            window.location.href = appendURLHashParam(tokenAuthServiceUrl, 'skipPrejoin', 'true');
+            let url = appendURLHashParam(tokenAuthServiceUrl, 'skipPrejoin', 'true');
+
+            if (browser.isElectron()) {
+                url = appendURLHashParam(url, 'electron', 'true');
+                window.open(url, '_blank');
+            } else {
+                window.location.href = url;
+            }
         };
 
         // Show warning for leaving conference only when in a conference.
-        if (getState()['features/base/conference'].conference) {
+        if (!browser.isElectron() && getState()['features/base/conference'].conference) {
             dispatch(openDialog(LoginQuestionDialog, {
                 handler: () => {
                     // Give time for the dialog to close.
