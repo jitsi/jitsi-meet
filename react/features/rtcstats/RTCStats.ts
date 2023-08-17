@@ -6,7 +6,7 @@ import {
     // @ts-expect-error
 } from '@jitsi/rtcstats/events';
 
-import JitsiMeetJS from '../base/lib-jitsi-meet';
+import JitsiMeetJS, { RTCStatsEvents } from '../base/lib-jitsi-meet';
 
 import logger from './logger';
 import {
@@ -32,8 +32,8 @@ class RTCStats {
         this._connStateEvents = [];
 
         if (!this._initialized) {
-            JitsiMeetJS.rtcstats.events.on(
-                'rtstats_pc_event',
+            JitsiMeetJS.rtcstats.on(
+                RTCStatsEvents.RTC_STATS_PC_EVENT,
                 (pcEvent: any) => this.handleRTCStatsEvent(pcEvent));
             this._initialized = true;
         }
@@ -103,7 +103,11 @@ class RTCStats {
     /**
      * RTCStats client can notify the APP of any PeerConnection related event that occurs.
      *
-     * @param {Object} event - Rtcstats event.
+     * @param {Object} event - The PeerConnection event.
+     * @param {string} event.type - The event type.
+     * @param {Object} event.body - Event body.
+     * @param {string} event.body.isP2P - PeerConnection type.
+     * @param {string} event.body.state - PeerConnection state change which triggered the event.
      * @returns {void}
      */
     handleRTCStatsEvent(event: any) {
