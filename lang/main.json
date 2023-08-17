@@ -250,13 +250,13 @@
     "dialog": {
         "Back": "Back",
         "Cancel": "Cancel",
-        "IamHost": "I am the host",
+        "IamHost": "Log-in",
         "Ok": "OK",
         "Remove": "Remove",
         "Share": "Share",
         "Submit": "Submit",
-        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHostTitle": "Waiting for the host ...",
+        "WaitForHostMsg": "The conference has not yet started because no moderators have yet arrived. If you'd like to become a moderator please log-in. Otherwise, please wait.",
+        "WaitingForHostTitle": "Waiting for a moderator...",
         "Yes": "Yes",
         "accessibilityLabel": {
             "Cancel": "Cancel (leave dialog)",
