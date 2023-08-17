@@ -50,8 +50,8 @@ import {
 } from '../../react/features/base/participants/functions';
 import { updateSettings } from '../../react/features/base/settings/actions';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
-import { toggleCamera } from '../../react/features/base/tracks/actions.any';
-import { isToggleCameraEnabled } from '../../react/features/base/tracks/functions';
+import { setCameraFacingMode } from '../../react/features/base/tracks/actions.web';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../react/features/base/tracks/constants';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,
@@ -395,12 +395,8 @@ function initCommands() {
             sendAnalytics(createApiEvent('film.strip.resize'));
             APP.store.dispatch(resizeFilmStrip(options.width));
         },
-        'toggle-camera': () => {
-            if (!isToggleCameraEnabled(APP.store.getState())) {
-                return;
-            }
-
-            APP.store.dispatch(toggleCamera());
+        'toggle-camera': facingMode => {
+            APP.store.dispatch(setCameraFacingMode(facingMode));
         },
         'toggle-camera-mirror': () => {
             const state = APP.store.getState();
@@ -528,6 +524,18 @@ function initCommands() {
             } catch (err) {
                 logger.error('Failed sending endpoint text message', err);
             }
+        },
+        'send-camera-facing-mode-message': (to, facingMode) => {
+            if (!to) {
+                logger.warn('Participant id not set');
+
+                return;
+            }
+
+            APP.conference.sendEndpointMessage(to, {
+                name: CAMERA_FACING_MODE_MESSAGE,
+                facingMode
+            });
         },
         'overwrite-names': participantList => {
             logger.debug('Overwrite names command received');

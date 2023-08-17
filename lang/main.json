@@ -269,6 +269,8 @@
         "addMeetingNote": "Add a note about this meeting",
         "addOptionalNote": "Add a note (optional):",
         "allow": "Allow",
+        "allowToggleCameraDialog": "Do you allow {{initiatorName}} to toggle your camera facing mode?",
+        "allowToggleCameraTitle": "Allow toggle camera?",
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
