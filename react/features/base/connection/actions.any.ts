@@ -349,9 +349,13 @@ export function _connectInternal(id?: string, password?: string) {
                 dispatch(connectionRedirected(connection, vnode, focusJid, username));
             }
 
+            // in case of configured http url for conference request we need the room name
+            const name = getBackendSafeRoomName(state['features/base/conference'].room);
+
             connection.connect({
                 id,
-                password
+                password,
+                name
             });
         });
     };
