@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { updateSettings } from '../base/settings/actions';
@@ -67,6 +68,7 @@ MiddlewareRegistry.register(store => next => async action => {
         break;
     }
     case CONFERENCE_FAILED:
+    case CONNECTION_FAILED:
         store.dispatch(setJoiningInProgress(false));
         break;
     case CONFERENCE_JOINED:
