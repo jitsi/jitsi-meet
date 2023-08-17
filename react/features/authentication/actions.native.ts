@@ -7,7 +7,7 @@ import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
 import { appendURLHashParam } from '../base/util/uri';
 
-import { CANCEL_LOGIN, LOGIN } from './actionTypes';
+import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
 
 export * from './actions.any';
@@ -92,18 +92,5 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
 
     return () => {
         Linking.openURL(url);
-    };
-}
-
-/**
- * Login.
- *
- * @returns {{
- *     type: LOGIN
- * }}
- */
-export function login() {
-    return {
-        type: LOGIN
     };
 }

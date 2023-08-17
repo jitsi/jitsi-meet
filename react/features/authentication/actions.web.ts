@@ -4,11 +4,7 @@ import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { appendURLHashParam } from '../base/util/uri';
 
-import {
-    CANCEL_LOGIN,
-    LOGIN,
-    LOGOUT
-} from './actionTypes';
+import { CANCEL_LOGIN } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
 
 export * from './actions.any';
@@ -49,32 +45,6 @@ export function cancelWaitForOwner() {
  */
 export function redirectToDefaultLocation() {
     return (dispatch: IStore['dispatch']) => dispatch(maybeRedirectToWelcomePage());
-}
-
-/**
- * Login.
- *
- * @returns {{
- *     type: LOGIN
- * }}
- */
-export function login() {
-    return {
-        type: LOGIN
-    };
-}
-
-/**
- * Logout.
- *
- * @returns {{
- *     type: LOGOUT
- * }}
- */
-export function logout() {
-    return {
-        type: LOGOUT
-    };
 }
 
 /**
