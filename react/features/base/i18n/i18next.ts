@@ -65,7 +65,9 @@ export const DEFAULT_LANGUAGE = 'en';
  */
 const options: i18next.InitOptions = {
     backend: <HttpBackendOptions>{
-        loadPath: 'lang/{{ns}}-{{lng}}.json'
+        loadPath: (lng: string[], ns: string[]) =>
+            // eslint-disable-next-line no-extra-parens
+            (ns[0] === 'main' ? 'lang/{{ns}}-{{lng}}.json' : 'lang/{{ns}}.json')
     },
     defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
