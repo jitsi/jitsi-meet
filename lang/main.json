@@ -550,6 +550,7 @@
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "You have reached the limit of your plan.",
         "sip": "SIP address",
+        "sipAudioOnly": "SIP audio only address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
         "upgradeOptions": "Please check the upgrade options on"
