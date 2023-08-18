@@ -7,7 +7,6 @@ import {
 } from '../base/conference/actionTypes';
 import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
-import { hangup } from '../base/connection/actions';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import {
@@ -39,6 +38,7 @@ import {
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 import logger from './logger';
+
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -163,33 +163,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case LOGOUT: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const config = state['features/base/config'];
-        const { conference } = store.getState()['features/base/conference'];
-
-        if (!conference) {
-            break;
-        }
-
-        dispatch(openLogoutDialog(() => {
-            const logoutUrl = config.tokenLogoutUrl;
-
-            if (isTokenAuthEnabled(config)
-                && config.tokenAuthUrlAutoRedirect
-                && state['features/base/jwt'].jwt) {
-                // user is logging out remove auto redirect indication
-                dispatch(setTokenAuthUrlSuccess(false));
-            }
-
-            if (logoutUrl) {
-                window.location.href = logoutUrl;
-
-                return;
-            }
-
-            conference.room.moderator.logout(() => dispatch(hangup(true)));
-        }));
+        _handleLogout(store);
 
         break;
     }
@@ -304,4 +278,23 @@ function _handleLogin({ dispatch, getState }: IStore) {
     }
 
     dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+}
+
+/**
+ * Handles logout challenge. Opens logout dialog and hangs up the conference.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {string} logoutUrl - The url for logging out.
+ * @returns {void}
+ */
+function _handleLogout({ dispatch, getState }: IStore) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+
+    if (!conference) {
+        return;
+    }
+
+    dispatch(openLogoutDialog());
 }
