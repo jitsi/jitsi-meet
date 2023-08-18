@@ -56,7 +56,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
         if (countryCode) {
             return (
                 <td className = 'flag-cell'>
-                    {countryCode === 'SIP'
+                    {countryCode === 'SIP' || countryCode === 'SIP_AUDIO_ONLY'
                         ? <Icon src = { IconSip } />
                         : <i className = { `flag iti-flag ${countryCode}` } />
                     }
@@ -129,6 +129,8 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
 
                     if (countryCode === 'SIP') {
                         countryName = t('info.sip');
+                    } else if (countryCode === 'SIP_AUDIO_ONLY') {
+                        countryName = t('info.sipAudioOnly');
                     } else {
                         countryName = t(`countries:countries.${countryCode}`);
 
