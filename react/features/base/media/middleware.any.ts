@@ -223,18 +223,15 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
     const audioMuted = roomIsValid ? getStartWithAudioMuted(state) : _AUDIO_INITIAL_MEDIA_STATE.muted;
     const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
 
-    sendAnalytics(
-        createStartMutedConfigurationEvent('local', audioMuted, Boolean(videoMuted)));
-    logger.log(
-        `Start muted: ${audioMuted ? 'audio, ' : ''}${
-            videoMuted ? 'video' : ''}`);
+    sendAnalytics(createStartMutedConfigurationEvent('local', audioMuted, Boolean(videoMuted)));
+    logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
 
     // Unconditionally express the desires/expectations/intents of the app and
     // the user i.e. the state of base/media. Eventually, practice/reality i.e.
     // the state of base/tracks will or will not agree with the desires.
-    dispatch(setAudioMuted(audioMuted));
+    roomIsValid && dispatch(setAudioMuted(audioMuted));
     dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
-    dispatch(setVideoMuted(videoMuted));
+    roomIsValid && dispatch(setVideoMuted(videoMuted));
 
     // startAudioOnly
     //
