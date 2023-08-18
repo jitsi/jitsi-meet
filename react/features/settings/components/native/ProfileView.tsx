@@ -1,26 +1,39 @@
-import React, { useCallback, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { login, logout } from '../../../authentication/actions.native';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { updateSettings } from '../../../base/settings/actions';
+import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
+import HeaderNavigationButton
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
+import {
+    goBack,
+    navigate
+} from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 
 import FormSection from './FormSection';
 import { AVATAR_SIZE } from './constants';
 import styles from './styles';
 
-const ProfileView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
+
+const ProfileView = ({ isInWelcomePage }: {
+    isInWelcomePage?: boolean;
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const navigation = useNavigation();
 
     const { displayName: reduxDisplayName, email: reduxEmail } = useSelector(
         (state: IReduxState) => state['features/base/settings']
@@ -29,6 +42,8 @@ const ProfileView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
 
     const [ displayName, setDisplayName ] = useState(reduxDisplayName);
     const [ email, setEmail ] = useState(reduxEmail);
+
+    const { authLogin: isAutenticated } = useSelector((state: IReduxState) => state['features/base/conference']);
 
     const onDisplayNameChanged = useCallback(newDisplayName => {
         setDisplayName(newDisplayName);
@@ -47,6 +62,50 @@ const ProfileView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
         navigate(screen.settings.main);
     },
     [ dispatch, updateSettings, email, displayName ]);
+
+    const onLogin = useCallback(() => {
+        dispatch(login());
+    }, [ dispatch ]);
+
+    const onLogout = useCallback(() => {
+        dispatch(logout());
+    }, [ dispatch ]);
+
+    const headerLeft = () => (
+        <HeaderNavigationButton
+            color = { BaseThemeNative.palette.link01 }
+            onPress = { goBack }
+            src = { IconArrowLeft }
+            style = { styles.backBtn }
+            twoActions = { true } />
+    );
+
+    const headerRight = () => {
+        if (isAutenticated) {
+            return (
+                <HeaderNavigationButton
+                    label = { t('toolbar.logout') }
+                    onPress = { onLogout }
+                    style = { styles.logBtn }
+                    twoActions = { true } />
+            );
+        }
+
+        return (
+            <HeaderNavigationButton
+                label = { t('toolbar.login') }
+                onPress = { onLogin }
+                style = { styles.logBtn }
+                twoActions = { true } />
+        );
+    };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft,
+            headerRight: !isInWelcomePage && headerRight
+        });
+    }, [ navigation ]);
 
     return (
         <JitsiScreen

@@ -222,5 +222,13 @@ export default {
         flexDirection: 'row',
         alignItems: 'center',
         ...BaseTheme.typography.bodyShortBoldLarge
+    },
+
+    logBtn: {
+        marginRight: BaseTheme.spacing[2]
+    },
+
+    backBtn: {
+        marginLeft: BaseTheme.spacing[2]
     }
 };

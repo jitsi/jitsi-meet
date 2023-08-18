@@ -1,16 +1,21 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
+import { setTokenAuthUrlSuccess } from '../authentication/actions.web';
+import { isTokenAuthEnabled } from '../authentication/functions';
 import {
     setFollowMe,
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../base/conference/actions';
+import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
+import browser from '../base/lib-jitsi-meet';
 import { updateSettings } from '../base/settings/actions';
-import { getLocalVideoTrack } from '../base/tracks/functions.any';
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
+import { getLocalVideoTrack } from '../base/tracks/functions.web';
+import { appendURLHashParam } from '../base/util/uri';
+import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions.web';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
@@ -28,15 +33,45 @@ import {
     getShortcutsTabProps
 } from './functions.web';
 
+
 /**
  * Opens {@code LogoutDialog}.
  *
- * @param {Function} onLogout - The event in {@code LogoutDialog} that should be
- *  enabled on click.
  * @returns {Function}
  */
-export function openLogoutDialog(onLogout: Function) {
-    return openDialog(LogoutDialog, { onLogout });
+export function openLogoutDialog() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        const config = state['features/base/config'];
+        const logoutUrl = config.tokenLogoutUrl;
+
+        const { conference } = state['features/base/conference'];
+        const { jwt } = state['features/base/jwt'];
+
+        dispatch(openDialog(LogoutDialog, {
+            onLogout() {
+                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+
+                    // user is logging out remove auto redirect indication
+                    dispatch(setTokenAuthUrlSuccess(false));
+                }
+
+                if (logoutUrl && browser.isElectron()) {
+                    const url = appendURLHashParam(logoutUrl, 'electron', 'true');
+
+                    window.open(url, '_blank');
+                    dispatch(hangup(true));
+                } else {
+                    if (logoutUrl) {
+                        window.location.href = logoutUrl;
+                    }
+
+                    conference?.room.moderator.logout(() => dispatch(hangup(true)));
+                }
+            }
+        }));
+    };
 }
 
 /**
