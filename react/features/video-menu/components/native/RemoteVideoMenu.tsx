@@ -18,7 +18,7 @@ import {
     getParticipantDisplayName,
     isLocalParticipantModerator
 } from '../../../base/participants/functions';
-import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { IRoom } from '../../../breakout-rooms/types';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 
@@ -66,6 +66,11 @@ interface IProps {
      * Whether or not to display the remote mute buttons.
      */
     _disableRemoteMute: boolean;
+
+    /**
+     * Whether or not the current room is a breakout room.
+     */
+    _isBreakoutRoom: boolean;
 
     /**
      * Whether the participant is present in the room or not.
@@ -130,6 +135,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             _disablePrivateChat,
             _disableRemoteMute,
             _disableGrantModerator,
+            _isBreakoutRoom,
             _isParticipantAvailable,
             _moderator,
             _rooms,
@@ -160,7 +166,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 { !_disableKick && <KickButton { ...buttonProps } /> }
-                { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
+                { !_disableGrantModerator && !_isBreakoutRoom && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...connectionStatusButtonProps } />
@@ -235,12 +241,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const shouldDisableKick = disableKick || !kickOutEnabled;
     const moderator = isLocalParticipantModerator(state);
     const _iAmVisitor = state['features/visitors'].iAmVisitor;
+    const _isBreakoutRoom = isInBreakoutRoom(state);
 
     return {
         _currentRoomId,
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _disablePrivateChat: Boolean(disablePrivateChat) || _iAmVisitor,
+        _isBreakoutRoom,
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
