@@ -2454,7 +2454,7 @@ export default {
             try {
                 feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, feedbackTitleKey));
 
-                if (!feedbackResult.wasDialogShown) {
+                if (!feedbackResult.wasDialogShown && feedbackTitleKey) {
                     await APP.store.dispatch(openLeaveReasonDialog(feedbackTitleKey));
                 }
             } catch {
@@ -2470,7 +2470,7 @@ export default {
         /**
          * Don't call {@code notifyReadyToClose} if the promotional page flag is set
          * and let the page take care of sending the message, since there will be
-         * a redirect to the page regardlessly.
+         * a redirect to the page anyway.
          */
         if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
             APP.API.notifyReadyToClose();
