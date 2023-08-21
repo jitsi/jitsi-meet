@@ -41,12 +41,12 @@ export function cancelFeedback(score: number, message: string) {
  * @param {JistiConference} conference - The conference for which the feedback
  * would be about. The conference is passed in because feedback can occur after
  * a conference has been left, so references to it may no longer exist in redux.
- * @param {string} titleKey - The translation key of the feedback dialog title.
+ * @param {string} title - The feedback dialog title.
  * @returns {Promise} Resolved with value - false if the dialog is enabled and
  * resolved with true if the dialog is disabled or the feedback was already
  * submitted. Rejected if another dialog is already displayed.
  */
-export function maybeOpenFeedbackDialog(conference: IJitsiConference, titleKey?: string) {
+export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: string) {
     type R = {
         feedbackSubmitted: boolean;
         showThankYou: boolean;
@@ -72,9 +72,9 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, titleKey?:
                 showThankYou: true,
                 wasDialogShown: false
             });
-        } else if (conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
+        } else if (!conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
             return new Promise(resolve => {
-                dispatch(openFeedbackDialog(conference, titleKey, () => {
+                dispatch(openFeedbackDialog(conference, title, () => {
                     const { submitted } = getState()['features/feedback'];
 
                     resolve({
@@ -103,16 +103,16 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, titleKey?:
  * @param {JitsiConference} conference - The JitsiConference that is being
  * rated. The conference is passed in because feedback can occur after a
  * conference has been left, so references to it may no longer exist in redux.
- * @param {string} [titleKey] - The translation key of the dialog title.
+ * @param {string} [title] - The feedback dialog title.
  * @param {Function} [onClose] - An optional callback to invoke when the dialog
  * is closed.
  * @returns {Object}
  */
-export function openFeedbackDialog(conference?: IJitsiConference, titleKey?: string, onClose?: Function) {
+export function openFeedbackDialog(conference?: IJitsiConference, title?: string, onClose?: Function) {
     return openDialog(FeedbackDialog, {
         conference,
         onClose,
-        titleKey
+        title
     });
 }
 

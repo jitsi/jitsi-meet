@@ -1,3 +1,5 @@
+import i18next from 'i18next';
+
 import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
@@ -119,7 +121,7 @@ MiddlewareRegistry.register(store => next => action => {
                     Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
                 ];
 
-                dispatch(hangup(true, titlekey));
+                dispatch(hangup(true, i18next.t(titlekey)));
             }
         }
 

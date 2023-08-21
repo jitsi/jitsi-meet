@@ -2429,9 +2429,10 @@ export default {
     /**
      * Disconnect from the conference and optionally request user feedback.
      * @param {boolean} [requestFeedback=false] if user feedback should be
+     * @param {string} [feedbackTitle] the title of the feedback dialog
      * requested
      */
-    async hangup(requestFeedback = false, feedbackTitleKey) {
+    async hangup(requestFeedback = false, feedbackTitle) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2452,10 +2453,10 @@ export default {
 
         if (requestFeedback) {
             try {
-                feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, feedbackTitleKey));
+                feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, feedbackTitle));
 
-                if (!feedbackResult.wasDialogShown && feedbackTitleKey) {
-                    await APP.store.dispatch(openLeaveReasonDialog(feedbackTitleKey));
+                if (!feedbackResult.wasDialogShown && feedbackTitle) {
+                    await APP.store.dispatch(openLeaveReasonDialog(feedbackTitle));
                 }
             } catch {
                 feedbackResult = false;

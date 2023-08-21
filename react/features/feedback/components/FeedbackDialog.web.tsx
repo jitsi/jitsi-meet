@@ -61,7 +61,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            fontSize: '20px'
+            fontSize: '16px'
         },
 
         details: {
@@ -104,9 +104,9 @@ interface IProps {
     onClose: Function;
 
     /**
-     * The translation key of the title to display in the dialog. Usually the reason that triggered the feedback.
+     * The title to display in the dialog. Usually the reason that triggered the feedback.
      */
-    titleKey?: string;
+    title?: string;
 }
 
 /**
@@ -117,7 +117,7 @@ interface IProps {
  * @param {IProps} props - Component's props.
  * @returns {JSX}
  */
-const FeedbackDialog = ({ conference, onClose, titleKey }: IProps) => {
+const FeedbackDialog = ({ conference, onClose, title }: IProps) => {
     const { classes } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -293,7 +293,7 @@ const FeedbackDialog = ({ conference, onClose, titleKey }: IProps) => {
             size = 'large'
             titleKey = 'feedback.rateExperience'>
             <div className = { classes.dialog }>
-                {titleKey ? <div className = { classes.title }>{t(titleKey)}</div> : null}
+                {title ? <div className = { classes.title }>{t(title)}</div> : null}
                 <div className = { classes.rating }>
                     <div
                         className = { classes.stars }

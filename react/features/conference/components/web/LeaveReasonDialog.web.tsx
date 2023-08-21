@@ -27,9 +27,9 @@ interface IProps {
     onClose: () => void;
 
     /**
-     * The translation key of the title to display in the dialog.
+     * The title to display in the dialog.
      */
-    titleKey?: string;
+    title?: string;
 }
 
 /**
@@ -38,7 +38,7 @@ interface IProps {
  * @param {IProps} props - Component's props.
  * @returns {JSX}
  */
-const LeaveReasonDialog = ({ onClose, titleKey }: IProps) => {
+const LeaveReasonDialog = ({ onClose, title }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
 
@@ -52,7 +52,7 @@ const LeaveReasonDialog = ({ onClose, titleKey }: IProps) => {
             onSubmit = { onClose }
             size = 'medium'>
             <div className = { classes.dialog }>
-                {titleKey ? <div className = { classes.text }>{t(titleKey)}</div> : null}
+                {title ? <div className = { classes.text }>{t(title)}</div> : null}
             </div>
         </Dialog>
     );

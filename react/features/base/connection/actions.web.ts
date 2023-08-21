@@ -58,10 +58,10 @@ export function connect(id?: string, password?: string) {
  *
  * @param {boolean} [requestFeedback] - Whether to attempt showing a
  * request for call feedback.
- * @param {string} [feedbackTitleKey] - The translation key for the feedback title.
+ * @param {string} [feedbackTitle] - The feedback title.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, feedbackTitleKey?: string) {
+export function hangup(requestFeedback = false, feedbackTitle?: string) {
     // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore['dispatch']) => {
         if (LocalRecordingManager.isRecordingLocally()) {
@@ -77,6 +77,6 @@ export function hangup(requestFeedback = false, feedbackTitleKey?: string) {
             });
         }
 
-        return APP.conference.hangup(requestFeedback, feedbackTitleKey);
+        return APP.conference.hangup(requestFeedback, feedbackTitle);
     };
 }
