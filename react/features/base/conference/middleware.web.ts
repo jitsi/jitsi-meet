@@ -115,14 +115,11 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (errorName === JitsiConferenceErrors.CONFERENCE_DESTROYED) {
             const [ reason ] = action.error.params;
+            const titlekey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
+                Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
+            ];
 
-            if (Object.values(TRIGGER_READY_TO_CLOSE_REASONS).includes(reason)) {
-                const titlekey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
-                    Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
-                ];
-
-                dispatch(hangup(true, i18next.t(titlekey)));
-            }
+            dispatch(hangup(true, i18next.t(titlekey)));
         }
 
         releaseScreenLock();

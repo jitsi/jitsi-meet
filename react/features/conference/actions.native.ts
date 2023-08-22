@@ -35,6 +35,30 @@ export function notifyKickedOut(participant: any, submit?: Function) {
 }
 
 /**
+ * Notify that we've been kicked out of the conference.
+ *
+ * @param {string} reasonKey - The translation key for the reason why the conference failed.
+ * @param {?Function} submit - The function to execute after submiting the dialog.
+ * @returns {Function}
+ */
+export function notifyConferenceFailed(reasonKey: string, submit?: Function) {
+    return (dispatch: IStore['dispatch']) => {
+        if (!reasonKey) {
+            submit?.();
+
+            return;
+        }
+
+        dispatch(openDialog(AlertDialog, {
+            contentKey: {
+                key: reasonKey
+            },
+            onSubmit: submit
+        }));
+    };
+}
+
+/**
  * Dismisses calendar notification about next or ongoing event.
  *
  * @returns {Object}
