@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
 import { cancelWaitForOwner, login } from '../../actions.native';
@@ -11,6 +11,11 @@ import { cancelWaitForOwner, login } from '../../actions.native';
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
 interface IProps {
+
+    /**
+     * Whether to show alternative cancel button text.
+     */
+    _alternativeCancelText?: boolean;
 
     /**
      * Redux store dispatch function.
@@ -53,7 +58,7 @@ class WaitForOwnerDialog extends Component<IProps> {
     render() {
         return (
             <ConfirmDialog
-                cancelLabel = 'dialog.Cancel'
+                cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
                 onCancel = { this._onCancel }
@@ -84,4 +89,20 @@ class WaitForOwnerDialog extends Component<IProps> {
     }
 }
 
-export default translate(connect()(WaitForOwnerDialog));
+/**
+ * Maps (parts of) the redux state to the associated
+ * {@code WaitForOwnerDialog}'s props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {IProps}
+ */
+function mapStateToProps(state: IReduxState) {
+    const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
+
+    return {
+        _alternativeCancelText: membersOnly && lobbyWaitingForHost
+    };
+}
+
+export default translate(connect(mapStateToProps)(WaitForOwnerDialog));
