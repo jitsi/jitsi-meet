@@ -663,7 +663,6 @@
         "notificationLobbyDisabled": "Lobby has been disabled by {{originParticipantName}}",
         "notificationLobbyEnabled": "Lobby has been enabled by {{originParticipantName}}",
         "notificationTitle": "Lobby",
-        "passwordField": "Enter meeting password",
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "rejectAll": "Reject all",

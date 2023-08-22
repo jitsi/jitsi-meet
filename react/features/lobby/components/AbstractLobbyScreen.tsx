@@ -445,7 +445,7 @@ export function _mapStateToProps(state: IReduxState) {
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
     const deviceStatusVisible = isDeviceStatusVisible(state);
-    const { membersOnly } = state['features/base/conference'];
+    const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
 
     return {
@@ -461,7 +461,7 @@ export function _mapStateToProps(state: IReduxState) {
         _participantId: participantId,
         _participantName: localParticipant?.name,
         _passwordJoinFailed: passwordJoinFailed,
-        _renderPassword: !iAmSipGateway && !disableLobbyPassword,
+        _renderPassword: !iAmSipGateway && !disableLobbyPassword && !lobbyWaitingForHost,
         showCopyUrlButton
     };
 }
