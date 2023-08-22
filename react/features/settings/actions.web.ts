@@ -11,7 +11,7 @@ import {
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
-import browser from '../base/lib-jitsi-meet';
+import { browser } from '../base/lib-jitsi-meet';
 import { updateSettings } from '../base/settings/actions';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
