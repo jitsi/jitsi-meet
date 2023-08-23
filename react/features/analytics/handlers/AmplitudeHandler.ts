@@ -43,6 +43,7 @@ export default class AmplitudeHandler extends AbstractHandler {
         } else {
             const amplitudeOptions: any = {
                 includeReferrer: true,
+                includeUtm: true,
                 onError
             };
 
