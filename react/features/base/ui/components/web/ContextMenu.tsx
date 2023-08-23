@@ -49,6 +49,11 @@ interface IProps {
     accessibilityLabel?: string;
 
     /**
+     * To activate the FocusOn component.
+     */
+    activateFocusTrap?: boolean;
+
+    /**
      * Children of the context menu.
      */
     children: ReactNode;
@@ -166,6 +171,7 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenu = ({
     accessibilityLabel,
+    activateFocusTrap = false,
     children,
     className,
     entity,
@@ -382,7 +388,7 @@ const ContextMenu = ({
             // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
             // our DialogPortal positioning calculations.
-            enabled = { !isHidden }
+            enabled = { activateFocusTrap && !isHidden }
             onClickOutside = { removeFocus }
             onEscapeKey = { removeFocus }>
             <div
