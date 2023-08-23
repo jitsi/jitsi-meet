@@ -17,8 +17,6 @@ import logger from './logger';
  * @returns {void}
  */
 function onFakeLocalStorageChanged() {
-    console.error(jitsiLocalStorage.serialize([ 'jitsiLocalStorage' ]));
-
     APP.API.notifyLocalStorageChanged(jitsiLocalStorage.serialize([ 'jitsiLocalStorage' ]));
 }
 
