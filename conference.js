@@ -441,7 +441,7 @@ export default {
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
-        const initialDevices = config.disableInitialGUM ? [] : [ MEDIA_TYPE.AUDIO ];
+        const initialDevices = config.startSilent || config.disableInitialGUM ? [] : [ MEDIA_TYPE.AUDIO ];
         const requestedAudio = !config.disableInitialGUM;
         let requestedVideo = false;
 

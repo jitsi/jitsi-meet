@@ -10,7 +10,7 @@ export const settingsNavigationContainerRef = React.createRef<NavigationContaine
  * @param {Object} params - Params to pass to the destination route.
  * @returns {Function}
  */
-export function navigate(name: string, params: Object) {
+export function navigate(name: string, params?: Object) {
     return settingsNavigationContainerRef.current?.navigate(name, params);
 }
 

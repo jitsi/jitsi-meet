@@ -23,11 +23,8 @@ const VideoLayout = {
     /**
      * Handler for local flip X changed event.
      */
-    onLocalFlipXChanged() {
+    onLocalFlipXChanged(localFlipX) {
         if (largeVideo) {
-            const { store } = APP;
-            const { localFlipX } = store.getState()['features/base/settings'];
-
             largeVideo.onLocalFlipXChange(localFlipX);
         }
     },

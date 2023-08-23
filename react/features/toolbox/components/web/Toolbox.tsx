@@ -63,7 +63,7 @@ interface IProps extends WithTranslation {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * Whether or not a dialog is displayed.
@@ -290,7 +290,7 @@ const Toolbox = ({
 
         setButtonsNotifyClickMode(buttons);
         const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
-        let { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
+        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
 
         const keys = Object.keys(buttons);
@@ -302,11 +302,8 @@ const Toolbox = ({
             !_jwtDisabledButtons.includes(key)
             && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
         );
-        const filteredKeys = filtered.map(button => button.key);
 
-        order = order.filter(key => filteredKeys.includes(buttons[key as keyof typeof buttons].key));
-
-        let sliceIndex = order.length + 2;
+        let sliceIndex = _overflowDrawer ? order.length + 2 : order.length + 1;
 
         if (isHangupVisible) {
             sliceIndex -= 1;

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { cancelWaitForOwner, login } from '../../actions.web';
@@ -11,6 +11,11 @@ import { cancelWaitForOwner, login } from '../../actions.web';
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
 interface IProps extends WithTranslation {
+
+    /**
+     * Whether to show alternative cancel button text.
+     */
+    _alternativeCancelText?: boolean;
 
     /**
      * Redux store dispatch method.
@@ -71,6 +76,8 @@ class WaitForOwnerDialog extends PureComponent<IProps> {
 
         return (
             <Dialog
+                cancel = {{ translationKey:
+                        this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }}
                 disableBackdropClose = { true }
                 hideCloseButton = { true }
                 ok = {{ translationKey: 'dialog.IamHost' }}
@@ -85,4 +92,20 @@ class WaitForOwnerDialog extends PureComponent<IProps> {
     }
 }
 
-export default translate(connect()(WaitForOwnerDialog));
+/**
+ * Maps (parts of) the redux state to the associated
+ * {@code WaitForOwnerDialog}'s props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {IProps}
+ */
+function mapStateToProps(state: IReduxState) {
+    const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
+
+    return {
+        _alternativeCancelText: membersOnly && lobbyWaitingForHost
+    };
+}
+
+export default translate(connect(mapStateToProps)(WaitForOwnerDialog));

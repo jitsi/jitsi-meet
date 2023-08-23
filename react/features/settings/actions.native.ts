@@ -1,10 +1,38 @@
+import { Linking } from 'react-native';
+
+import { IStore } from '../app/types';
+import { isTokenAuthEnabled } from '../authentication/functions';
+import { hangup } from '../base/connection/actions.native';
+import { openDialog } from '../base/dialog/actions';
+
+import LogoutDialog from './components/native/LogoutDialog';
+
+
 /**
  * Opens {@code LogoutDialog}.
  *
- * @param {Function} _onLogout - The event in {@code LogoutDialog} that should be
- *  enabled on click.
  * @returns {Function}
  */
-export function openLogoutDialog(_onLogout: Function): any {
-    // this is available only for web at the moment
+export function openLogoutDialog() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { conference } = state['features/base/conference'];
+
+        const config = state['features/base/config'];
+        const logoutUrl = config.tokenLogoutUrl;
+
+        dispatch(openDialog(LogoutDialog, {
+            onLogout() {
+                if (isTokenAuthEnabled(config)) {
+                    if (logoutUrl) {
+                        Linking.openURL(logoutUrl);
+                    }
+
+                    dispatch(hangup(true));
+                } else {
+                    conference?.room.moderator.logout(() => dispatch(hangup(true)));
+                }
+            }
+        }));
+    };
 }

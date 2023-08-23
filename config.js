@@ -871,7 +871,7 @@ var config = {
     // customParticipantMenuButtons: [],
 
     // An array with custom option buttons for the toolbar
-    // type:  Array<{ icon: string; id: string; text: string; }>
+    // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
 
     // Stats
@@ -1511,6 +1511,7 @@ var config = {
     //     'dialog.sessTerminated', // shown when there is a failed conference session
     //     'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
     //     'dialog.tokenAuthFailed', // show when an invalid jwt is used
+    //     'dialog.tokenAuthFailedWithReasons', // show when an invalid jwt is used with the reason behind the error
     //     'dialog.transcribing', // transcribing notifications (pending, off)
     //     'dialOut.statusMessage', // shown when dial out status is updated.
     //     'liveStreaming.busy', // shown when livestreaming service is busy
@@ -1593,6 +1594,8 @@ var config = {
 
     // Tile view related config options.
     // tileView: {
+    //     // Whether tileview should be disabled.
+    //     disabled: false,
     //     // The optimal number of tiles that are going to be shown in tile view. Depending on the screen size it may
     //     // not be possible to show the exact number of participants specified here.
     //     numberOfVisibleTiles: 25,

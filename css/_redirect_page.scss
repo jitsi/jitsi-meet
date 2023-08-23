@@ -14,7 +14,7 @@
             line-height: 24px;
         }
     }
-    .hint-msg{
+    .hint-msg {
         p {
             margin: 26px auto;
             font-weight: 600;
@@ -29,6 +29,12 @@
             height: 86px;
             margin: 0 auto;
             background: transparent;
+        }
+    }
+    .forbidden-msg {
+        p {
+            font-size: 16px;
+            margin-top: 15px;
         }
     }
 }

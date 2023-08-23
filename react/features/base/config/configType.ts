@@ -1,4 +1,4 @@
-type ToolbarButtons = 'camera' |
+export type ToolbarButton = 'camera' |
     'chat' |
     'closedcaptions' |
     'desktop' |
@@ -15,6 +15,9 @@ type ToolbarButtons = 'camera' |
     'linktosalesforce' |
     'livestreaming' |
     'microphone' |
+    'mute-everyone' |
+    'mute-video-everyone' |
+    'noisesuppression' |
     'participants-pane' |
     'profile' |
     'raisehand' |
@@ -30,6 +33,7 @@ type ToolbarButtons = 'camera' |
     'tileview' |
     'toggle-camera' |
     'videoquality' |
+    'whiteboard' |
     '__end';
 
 type ButtonsWithNotifyClick = 'camera' |
@@ -270,7 +274,7 @@ export interface IConfig {
     };
     corsAvatarURLs?: Array<string>;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
-    customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
+    customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
@@ -573,12 +577,13 @@ export interface IConfig {
         testMode?: boolean;
     };
     tileView?: {
+        disabled?: boolean;
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenLogoutUrl?: string;
-    toolbarButtons?: Array<ToolbarButtons>;
+    toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
         autoHideWhileChatIsOpen?: boolean;

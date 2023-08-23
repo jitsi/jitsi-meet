@@ -3,11 +3,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import LanguageSelectView from '../../../../../settings/components/native/LanguageSelectView';
+import ProfileView from '../../../../../settings/components/native/ProfileView';
 import SettingsView
     from '../../../../../settings/components/native/SettingsView';
 import { screen } from '../../../routes';
 import {
+    languageSelectScreenOptions,
     navigationContainerTheme,
+    profileSettingsScreenOptions,
     settingsScreenOptions,
     welcomeScreenOptions
 } from '../../../screenOptions';
@@ -37,9 +41,18 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
     const SettingsScreen = useCallback(() =>
         (
             <SettingsView
-                addBottomInset = { !isInWelcomePage }
-                scrollBounces = { isInWelcomePage } />
+                isInWelcomePage = { isInWelcomePage } />
         ), []);
+
+    const ProfileScreen = useCallback(() =>
+        (<ProfileView
+            isInWelcomePage = { isInWelcomePage } />)
+    , []);
+
+    const LanguageSelectScreen = useCallback(() =>
+        (<LanguageSelectView
+            isInWelcomePage = { isInWelcomePage } />)
+    , []);
 
     return (
         <NavigationContainer
@@ -56,6 +69,20 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
                     }}>
                     { SettingsScreen }
                 </SettingsStack.Screen>
+                <SettingsStack.Screen
+                    component = { ProfileScreen }
+                    name = { screen.settings.profile }
+                    options = {{
+                        ...profileSettingsScreenOptions,
+                        title: t('settingsView.profileSection')
+                    }} />
+                <SettingsStack.Screen
+                    component = { LanguageSelectScreen }
+                    name = { screen.settings.language }
+                    options = {{
+                        ...languageSelectScreenOptions,
+                        title: t('settings.language')
+                    }} />
             </SettingsStack.Navigator>
         </NavigationContainer>
     );

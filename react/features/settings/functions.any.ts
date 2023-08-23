@@ -5,29 +5,17 @@ import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
 import {
-    getLocalParticipant,
-    isLocalParticipantModerator
+    getLocalParticipant
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
-import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
-/**
- * Used for web. Indicates if the setting section is enabled.
- *
- * @param {string} settingName - The name of the setting section as defined in
- * interface_config.js and SettingsMenu.js.
- * @returns {boolean} True to indicate that the given setting section
- * is enabled, false otherwise.
- */
-export function isSettingEnabled(settingName: string) {
-    return interfaceConfig.SETTINGS_SECTIONS.includes(settingName);
-}
+import { shouldShowModeratorSettings } from './functions';
 
 /**
  * Returns true if user is allowed to change Server URL.
@@ -84,7 +72,7 @@ export function normalizeUserInputURL(url: string) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The section of notifications to be configured.
  */
-export function getNotificationsMap(stateful: IStateful) {
+export function getNotificationsMap(stateful: IStateful): { [key: string]: boolean; } {
     const state = toState(stateful);
     const { notifications } = state['features/base/config'];
     const { userSelectedNotifications } = state['features/base/settings'];
@@ -168,21 +156,6 @@ export function getModeratorTabProps(stateful: IStateful) {
 }
 
 /**
- * Returns true if moderator tab in settings should be visible/accessible.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
- */
-export function shouldShowModeratorSettings(stateful: IStateful) {
-    const state = toState(stateful);
-    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
-    const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
-
-    return hasModeratorRights && !hideModeratorSettingsTab;
-}
-
-/**
  * Returns the properties for the "Profile" tab from settings dialog from Redux
  * state.
  *
@@ -198,8 +171,14 @@ export function getProfileTabProps(stateful: IStateful) {
         authLogin,
         conference
     } = state['features/base/conference'];
-    const { hideEmailInSettings } = state['features/base/config'];
+    const config = state['features/base/config'];
+    let { hideEmailInSettings } = config;
     const localParticipant = getLocalParticipant(state);
+
+    if (config.gravatar?.disabled
+        || (localParticipant?.avatarURL && localParticipant?.avatarURL.length > 0)) {
+        hideEmailInSettings = true;
+    }
 
     return {
         authEnabled: Boolean(conference && authEnabled),

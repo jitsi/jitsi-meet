@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 import { AnyAction } from 'redux';
 
 // @ts-ignore
@@ -10,7 +11,7 @@ import {
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { reloadNow } from '../../app/actions';
-import { IReduxState, IStore } from '../../app/types';
+import { IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { readyToClose } from '../../mobile/external-api/actions';
@@ -383,21 +384,13 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
 /**
  * Logs jwt validation errors from xmpp and from the client-side validator.
  *
- * @param {string} message -The error message from xmpp.
- * @param {Object} state - The redux state.
+ * @param {string} message - The error message from xmpp.
+ * @param {string} errors - The detailed errors.
  * @returns {void}
  */
-function _logJwtErrors(message: string, state: IReduxState) {
-    const { jwt } = state['features/base/jwt'];
-
-    if (!jwt) {
-        return;
-    }
-
-    const errorKeys = validateJwt(jwt);
-
+function _logJwtErrors(message: string, errors: string) {
     message && logger.error(`JWT error: ${message}`);
-    errorKeys.length && logger.error('JWT parsing error:', errorKeys);
+    errors && logger.error('JWT parsing errors:', errors);
 }
 
 /**
@@ -415,18 +408,25 @@ function _logJwtErrors(message: string, state: IReduxState) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    _logJwtErrors(action.error.message, getState());
-
     const { connection, error } = action;
+    const { jwt } = getState()['features/base/jwt'];
 
-    // do not show the notification when we will prompt the user
-    // for username and password
-    if (error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-        && getState()['features/base/jwt'].jwt) {
-        dispatch(showErrorNotification({
-            descriptionKey: 'dialog.tokenAuthFailed',
-            titleKey: 'dialog.tokenAuthFailedTitle'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    if (jwt) {
+        const errors: string = validateJwt(jwt).map((err: any) =>
+            i18n.t(`dialog.tokenAuthFailedReason.${err.key}`, err.args))
+        .join(' ');
+
+        _logJwtErrors(error.message, errors);
+
+        // do not show the notification when we will prompt the user
+        // for username and password
+        if (error.name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+            dispatch(showErrorNotification({
+                descriptionKey: errors ? 'dialog.tokenAuthFailedWithReasons' : 'dialog.tokenAuthFailed',
+                descriptionArguments: { reason: errors },
+                titleKey: 'dialog.tokenAuthFailedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }
     }
 
     const result = next(action);

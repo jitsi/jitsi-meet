@@ -20,7 +20,7 @@ interface IProps extends WithTranslation {
     /**
      * The i18n key of the text label of the section.
      */
-    label: string;
+    label?: string;
 }
 
 /**
@@ -31,12 +31,9 @@ interface IProps extends WithTranslation {
 function FormSection({ children, label, t }: IProps) {
     return (
         <View>
-            <View
-                style = { styles.formSectionTitleContent }>
-                <Text style = { styles.formSectionTitleText }>
-                    { t(label) }
-                </Text>
-            </View>
+            {label && <Text style = { styles.formSectionTitleText }>
+                { t(label) }
+            </Text>}
             { children }
         </View>
     );
