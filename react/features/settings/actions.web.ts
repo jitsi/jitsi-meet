@@ -65,6 +65,8 @@ export function openLogoutDialog() {
                 } else {
                     if (logoutUrl) {
                         window.location.href = logoutUrl;
+
+                        return;
                     }
 
                     conference?.room.moderator.logout(() => dispatch(hangup(true)));
