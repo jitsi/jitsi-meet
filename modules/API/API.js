@@ -1141,7 +1141,11 @@ class API {
      */
     _sendEvent(event = {}) {
         if (this._enabled) {
-            transport.sendEvent(event);
+            try {
+                transport.sendEvent(event);
+            } catch (error) {
+                logger.error('Failed to send and IFrame API event', error);
+            }
         }
     }
 
@@ -1475,11 +1479,43 @@ class API {
      * @param {Array<string>} args - Array of strings composing the log message.
      * @returns {void}
      */
-    notifyLog(logLevel, args) {
+    notifyLog(logLevel, args = []) {
+        if (!Array.isArray(args)) {
+            logger.error('notifyLog received wrong argument types!');
+
+            return;
+        }
+
+        // Trying to convert arguments to strings. Otherwise in order to send the event the arguments will be formatted
+        // with JSON.stringify which can throw an error because of circular objects and we will lose the whole log.
+        const formattedArguments = [];
+
+        args.forEach(arg => {
+            let formattedArgument = '';
+
+            if (arg instanceof Error) {
+                formattedArgument += `${arg.toString()}: ${arg.stack}`;
+            } else if (typeof arg === 'object') {
+                // NOTE: The non-enumerable properties of the objects wouldn't be included in the string after
+                // JSON.strigify. For example Map instance will be translated to '{}'. So I think we have to eventually
+                // do something better for parsing the arguments. But since this option for strigify is part of the
+                // public interface and I think it could be useful in some cases I will it for now.
+                try {
+                    formattedArgument += JSON.stringify(arg);
+                } catch (error) {
+                    formattedArgument += arg;
+                }
+            } else {
+                formattedArgument += arg;
+            }
+
+            formattedArguments.push(formattedArgument);
+        });
+
         this._sendEvent({
             name: 'log',
             logLevel,
-            args
+            args: formattedArguments
         });
     }
 
