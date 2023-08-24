@@ -84,8 +84,6 @@ class WaitForOwnerDialog extends Component<IProps> {
      */
     _onLogin() {
         this.props.dispatch(login());
-
-        return true;
     }
 }
 
