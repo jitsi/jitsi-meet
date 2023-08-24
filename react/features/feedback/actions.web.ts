@@ -72,7 +72,7 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
                 showThankYou: true,
                 wasDialogShown: false
             });
-        } else if (!conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
+        } else if (conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
             return new Promise(resolve => {
                 dispatch(openFeedbackDialog(conference, title, () => {
                     const { submitted } = getState()['features/feedback'];
