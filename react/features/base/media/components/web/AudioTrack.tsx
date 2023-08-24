@@ -51,7 +51,7 @@ class AudioTrack extends Component<IProps> {
     /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
-    _ref: HTMLAudioElement | null;
+    _ref: React.RefObject<HTMLAudioElement>;
 
     /**
      * The current timeout ID for play() retries.
@@ -80,7 +80,7 @@ class AudioTrack extends Component<IProps> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._errorHandler = this._errorHandler.bind(this);
-        this._setRef = this._setRef.bind(this);
+        this._ref = React.createRef();
         this._play = this._play.bind(this);
     }
 
@@ -94,19 +94,22 @@ class AudioTrack extends Component<IProps> {
     componentDidMount() {
         this._attachTrack(this.props.audioTrack);
 
-        if (this._ref) {
+        if (this._ref?.current) {
+            const audio = this._ref?.current;
             const { _muted, _volume } = this.props;
 
             if (typeof _volume === 'number') {
-                this._ref.volume = _volume;
+                audio.volume = _volume;
             }
 
             if (typeof _muted === 'boolean') {
-                this._ref.muted = _muted;
+                audio.muted = _muted;
             }
 
             // @ts-ignore
-            this._ref.addEventListener('error', this._errorHandler);
+            audio.addEventListener('error', this._errorHandler);
+        } else { // This should never happen
+            logger.error(`The react reference is null for AudioTrack ${this.props?.id}`);
         }
     }
 
@@ -121,7 +124,7 @@ class AudioTrack extends Component<IProps> {
         this._detachTrack(this.props.audioTrack);
 
         // @ts-ignore
-        this._ref?.removeEventListener('error', this._errorHandler);
+        this._ref?.current?.removeEventListener('error', this._errorHandler);
     }
 
     /**
@@ -141,19 +144,25 @@ class AudioTrack extends Component<IProps> {
             this._attachTrack(nextProps.audioTrack);
         }
 
-        if (this._ref) {
-            const currentVolume = this._ref.volume;
+        if (this._ref?.current) {
+            const audio = this._ref?.current;
+            const currentVolume = audio.volume;
             const nextVolume = nextProps._volume;
 
             if (typeof nextVolume === 'number' && !isNaN(nextVolume) && currentVolume !== nextVolume) {
-                this._ref.volume = nextVolume;
+                if (nextVolume === 0) {
+                    logger.debug(`Setting audio element ${nextProps?.id} volume to 0`);
+                }
+                audio.volume = nextVolume;
             }
 
-            const currentMuted = this._ref.muted;
+            const currentMuted = audio.muted;
             const nextMuted = nextProps._muted;
 
             if (typeof nextMuted === 'boolean' && currentMuted !== nextMuted) {
-                this._ref.muted = nextMuted;
+                logger.debug(`Setting audio element ${nextProps?.id} muted to true`);
+
+                audio.muted = nextMuted;
             }
         }
 
@@ -173,7 +182,7 @@ class AudioTrack extends Component<IProps> {
             <audio
                 autoPlay = { autoPlay }
                 id = { id }
-                ref = { this._setRef } />
+                ref = { this._ref } />
         );
     }
 
@@ -185,12 +194,29 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     _attachTrack(track?: ITrack) {
+        const { id } = this.props;
+
         if (!track?.jitsiTrack) {
+            logger.warn(`Attach is called on audio element ${id} without tracks passed!`);
+
             return;
         }
 
-        track.jitsiTrack.attach(this._ref);
-        this._play();
+        if (!this._ref?.current) {
+            logger.warn(`Attempting to attach track ${track?.jitsiTrack} on AudioTrack ${id} without reference!`);
+
+            return;
+        }
+
+        track.jitsiTrack.attach(this._ref.current)
+            .catch((error: Error) => {
+                logger.error(
+                    `Attaching the remote track ${track.jitsiTrack} to video with id ${id} has failed with `,
+                    error);
+            })
+            .finally(() => {
+                this._play();
+            });
     }
 
     /**
@@ -202,10 +228,10 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     _detachTrack(track?: ITrack) {
-        if (this._ref && track && track.jitsiTrack) {
+        if (this._ref?.current && track && track.jitsiTrack) {
             clearTimeout(this._playTimeout);
             this._playTimeout = undefined;
-            track.jitsiTrack.detach(this._ref);
+            track.jitsiTrack.detach(this._ref.current);
         }
     }
 
@@ -229,18 +255,20 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     _play(retries = 0) {
-        if (!this._ref) {
+        const { autoPlay, id } = this.props;
+
+        if (!this._ref?.current) {
             // nothing to play.
+            logger.warn(`Attempting to call play on AudioTrack ${id} without reference!`);
 
             return;
         }
-        const { autoPlay, id } = this.props;
 
         if (autoPlay) {
             // Ensure the audio gets play() called on it. This may be necessary in the
             // case where the local video container was moved and re-attached, in which
             // case the audio may not autoplay.
-            this._ref.play()
+            this._ref.current.play()
             .then(() => {
                 if (retries !== 0) {
                     // success after some failures
@@ -249,7 +277,7 @@ class AudioTrack extends Component<IProps> {
                     logger.info(`Successfully played audio track! retries: ${retries}`);
                 }
             }, e => {
-                logger.error(`Failed to play audio track! retry: ${retries} ; Error: ${e}`);
+                logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
                     this._playTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
@@ -263,17 +291,6 @@ class AudioTrack extends Component<IProps> {
                 }
             });
         }
-    }
-
-    /**
-     * Sets the reference to the HTML audio element.
-     *
-     * @param {HTMLAudioElement} audioElement - The HTML audio element instance.
-     * @private
-     * @returns {void}
-     */
-    _setRef(audioElement: HTMLAudioElement | null) {
-        this._ref = audioElement;
     }
 }
 
