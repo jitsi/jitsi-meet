@@ -46,6 +46,7 @@ local JSON_TYPE_MOVE_TO_ROOM_REQUEST = 'features/breakout-rooms/move-to-room';
 local JSON_TYPE_REMOVE_BREAKOUT_ROOM = 'features/breakout-rooms/remove';
 local JSON_TYPE_RENAME_BREAKOUT_ROOM = 'features/breakout-rooms/rename';
 local JSON_TYPE_UPDATE_BREAKOUT_ROOMS = 'features/breakout-rooms/update';
+local JSON_TYPE_MESSAGE_TO_ROOM = 'features/breakout-rooms/message-to-room';
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -257,6 +258,19 @@ function rename_breakout_room(room_jid, name)
     end
 end
 
+function message_breakout_room(room_jid, textContent, nick)
+    local breakout_room = breakout_rooms_muc_service.get_room_from_jid(room_jid);
+
+    if breakout_room then
+        breakout_room:broadcast_message(
+            st.message({ 
+                from = breakout_room.name .. '/' .. nick,
+                type = 'groupchat
+            }):tag('body'):text(textContent)
+        );
+    end
+end
+
 -- Handling events
 
 function on_message(event)
@@ -332,6 +346,9 @@ function on_message(event)
         });
 
         send_json_msg(participant_jid, json_msg)
+        return true;
+    elseif message.attr.type == JSON_TYPE_MESSAGE_TO_ROOM then
+        message_breakout_room(message.attr.roomJid, message.attr.textContent, occupant.nick);
         return true;
     end
 
