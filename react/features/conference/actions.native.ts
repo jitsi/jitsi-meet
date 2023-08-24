@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { openDialog } from '../base/dialog/actions';
+import { hideDialog, openDialog } from '../base/dialog/actions';
 import AlertDialog from '../base/dialog/components/native/AlertDialog';
 import { getParticipantDisplayName } from '../base/participants/functions';
 
@@ -49,12 +49,20 @@ export function notifyConferenceFailed(reasonKey: string, submit?: Function) {
             return;
         }
 
-        dispatch(openDialog(AlertDialog, {
+        // we have to push the opening of the dialog to the queue
+        // so that we make sure it will be visible after the events
+        // of conference destroyed are done
+        setTimeout(() => dispatch(openDialog(AlertDialog, {
             contentKey: {
                 key: reasonKey
             },
-            onSubmit: submit
-        }));
+            params: {
+            },
+            onSubmit: () => {
+                submit?.();
+                dispatch(hideDialog(AlertDialog));
+            }
+        })));
     };
 }
 

@@ -34,7 +34,6 @@ function HangupMenu() {
         dispatch(hideSheet());
         sendAnalytics(createToolbarEvent('endmeeting'));
         dispatch(endConference());
-        dispatch(appNavigate(undefined));
     }, [ hideSheet ]);
 
     const handleLeaveConference = useCallback(() => {
