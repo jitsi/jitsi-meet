@@ -96,6 +96,7 @@ const Dialog = ({
     onCancel,
     onSubmit,
     size,
+    testId,
     title,
     titleKey
 }: IDialogProps) => {
@@ -127,6 +128,7 @@ const Dialog = ({
             onClose = { onClose }
             size = { size }
             submit = { submit }
+            testId = { testId }
             title = { title }
             titleKey = { titleKey }>
             <div className = { classes.header }>

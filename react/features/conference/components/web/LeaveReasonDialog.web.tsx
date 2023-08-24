@@ -50,7 +50,8 @@ const LeaveReasonDialog = ({ onClose, title }: IProps) => {
         <Dialog
             cancel = {{ hidden: true }}
             onSubmit = { onClose }
-            size = 'medium'>
+            size = 'medium'
+            testId = 'dialog.leaveReason'>
             <div className = { classes.dialog }>
                 {title ? <div className = { classes.text }>{t(title)}</div> : null}
             </div>
