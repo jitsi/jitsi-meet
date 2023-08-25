@@ -401,6 +401,7 @@ export interface IConfig {
         disableResizable?: boolean;
         disableStageFilmstrip?: boolean;
         disableTopPanel?: boolean;
+        disabled?: boolean;
         minParticipantCountForTopPanel?: number;
     };
     firefox_fake_device?: string;
