@@ -119,7 +119,7 @@ MiddlewareRegistry.register(store => next => action => {
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];
 
-            dispatch(hangup(true, i18next.t(titlekey)));
+            dispatch(hangup(true, i18next.t(titlekey) || reason));
         }
 
         releaseScreenLock();
