@@ -1015,6 +1015,10 @@ var config = {
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>',
 
+        // Enables Amplitude UTM tracking:
+        // Default value is false.
+        // amplitudeIncludeUTM: false,
+
         // Obfuscates room name sent to analytics (amplitude, rtcstats)
         // Default value is false.
         // obfuscateRoomName: false,
