@@ -1,22 +1,42 @@
-import React, { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
 
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../../../base/i18n/i18next';
+import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
+import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
+import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { goBack, navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 
 import styles from './styles';
 
 const LanguageSelectView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
     const { t } = useTranslation();
+    const navigation = useNavigation();
     const { language: currentLanguage = DEFAULT_LANGUAGE } = i18next;
 
     const setLanguage = useCallback(language => () => {
         i18next.changeLanguage(language);
         navigate(screen.settings.main);
     }, [ i18next ]);
+
+    const headerLeft = () => (
+        <HeaderNavigationButton
+            color = { BaseThemeNative.palette.link01 }
+            onPress = { goBack }
+            src = { IconArrowLeft }
+            style = { styles.backBtn }
+            twoActions = { true } />
+    );
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft
+        });
+    }, [ navigation ]);
 
     return (
         <JitsiScreen
