@@ -3,8 +3,8 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants/functions';
-import { setLobbyChatActiveState } from '../actions.any';
-import { setPrivateMessageRecipient } from '../actions.web';
+import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../actions.any';
+
 
 export interface IProps extends WithTranslation {
 
