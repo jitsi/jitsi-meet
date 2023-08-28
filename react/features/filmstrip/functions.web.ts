@@ -764,6 +764,18 @@ export function isStageFilmstripEnabled(state: IReduxState) {
 }
 
 /**
+ * Whether the vertical/horizontal filmstrip is disabled.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isFilmstripDisabled(state: IReduxState) {
+    const { filmstrip } = state['features/base/config'];
+
+    return Boolean(filmstrip?.disabled);
+}
+
+/**
  * Gets the thumbnail type by filmstrip type.
  *
  * @param {string} currentLayout - Current app layout.
