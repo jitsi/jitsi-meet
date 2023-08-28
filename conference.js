@@ -130,6 +130,7 @@ import {
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { openLeaveReasonDialog } from './react/features/conference/actions.web';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
@@ -2428,9 +2429,10 @@ export default {
     /**
      * Disconnect from the conference and optionally request user feedback.
      * @param {boolean} [requestFeedback=false] if user feedback should be
+     * @param {string} [hangupReason] the reason for leaving the meeting
      * requested
      */
-    hangup(requestFeedback = false) {
+    async hangup(requestFeedback = false, hangupReason) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2447,36 +2449,33 @@ export default {
 
         APP.UI.removeAllListeners();
 
-        let requestFeedbackPromise;
+        let feedbackResult = {};
 
         if (requestFeedback) {
-            requestFeedbackPromise
-                = APP.store.dispatch(maybeOpenFeedbackDialog(room))
-
-                    // false because the thank you dialog shouldn't be displayed
-                    .catch(() => Promise.resolve(false));
-        } else {
-            requestFeedbackPromise = Promise.resolve(true);
+            try {
+                feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, hangupReason));
+            } catch (err) { // eslint-disable-line no-empty
+            }
         }
 
-        Promise.all([
-            requestFeedbackPromise,
-            this.leaveRoom()
-        ])
-        .then(values => {
-            this._room = undefined;
-            room = undefined;
+        if (!feedbackResult.wasDialogShown && hangupReason) {
+            await APP.store.dispatch(openLeaveReasonDialog(hangupReason));
+        }
 
-            /**
-             * Don't call {@code notifyReadyToClose} if the promotional page flag is set
-             * and let the page take care of sending the message, since there will be
-             * a redirect to the page regardlessly.
-             */
-            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
-                APP.API.notifyReadyToClose();
-            }
-            APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
-        });
+        await this.leaveRoom();
+
+        this._room = undefined;
+        room = undefined;
+
+        /**
+         * Don't call {@code notifyReadyToClose} if the promotional page flag is set
+         * and let the page take care of sending the message, since there will be
+         * a redirect to the page anyway.
+         */
+        if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+            APP.API.notifyReadyToClose();
+        }
+        APP.store.dispatch(maybeRedirectToWelcomePage(feedbackResult));
     },
 
     /**

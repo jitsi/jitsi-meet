@@ -9,10 +9,8 @@ import { IReduxState, IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    KICKED_OUT
+    CONFERENCE_LEFT
 } from '../base/conference/actionTypes';
-import { conferenceLeft } from '../base/conference/actions';
 import { getCurrentConference } from '../base/conference/functions';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
@@ -41,7 +39,7 @@ import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions.any';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
-import { dismissCalendarNotification, notifyKickedOut } from './actions';
+import { dismissCalendarNotification } from './actions';
 import { IFRAME_DISABLED_TIMEOUT_MINUTES, IFRAME_EMBED_ALLOWED_LOCATIONS } from './constants';
 
 
@@ -60,20 +58,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_REDUCED_UI: {
         _setReducedUI(store);
-
-        break;
-    }
-
-    case KICKED_OUT: {
-        const { dispatch } = store;
-
-        dispatch(notifyKickedOut(
-            action.participant,
-            () => {
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
-        ));
 
         break;
     }
