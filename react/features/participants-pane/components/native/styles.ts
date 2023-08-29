@@ -85,7 +85,8 @@ export default {
         position: 'absolute',
         right: -3,
         top: -3,
-        textAlign: 'center'
+        textAlign: 'center',
+        paddingHorizontal: 2
     },
 
     participantsButtonBadge: {
