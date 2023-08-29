@@ -180,7 +180,7 @@ export default {
     languageText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
-        marginRight: BaseTheme.spacing[3]
+        marginHorizontal: BaseTheme.spacing[2]
     },
 
     /**
@@ -227,10 +227,10 @@ export default {
     },
 
     logBtn: {
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[3]
     },
 
     backBtn: {
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[3]
     }
 };
