@@ -1,3 +1,9 @@
+/* global APP */
+
+/* eslint-disable max-len */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable valid-jsdoc */
 
 import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
@@ -35,19 +41,19 @@ MiddlewareRegistry.register(store => next => action => {
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const { videoUrl, status, ownerId, time, muted, volume, previousOwnerId } = action;
-    const sharedVideoCurrentState:ISharedVideoState = state['features/shared-video'];
+    const sharedVideoCurrentState: ISharedVideoState = state['features/shared-video'];
 
-    const getNewVideoOwnerId=(conference,localParticipantId)=>{
-        const remoteParticipantIds = conference? Object.keys(conference.participants) : []
-        const allParticipantIds=[localParticipantId,...remoteParticipantIds]
-        allParticipantIds.sort(function (a, b) {
-            return (a).localeCompare(b);
-        })
-        console.log('!!! All participant Ids ', allParticipantIds)
-        console.log('!!! Local participant Id ', localParticipantId)
+    const getNewVideoOwnerId = (conference, localParticipantId) => {
+        const remoteParticipantIds = conference ? Object.keys(conference.participants) : [];
+        const allParticipantIds = [ localParticipantId, ...remoteParticipantIds ];
 
-        return allParticipantIds[0].length>0 && allParticipantIds[0]
-    }
+        allParticipantIds.sort((a, b) => a.localeCompare(b));
+        console.log('!!! All participant Ids ', allParticipantIds);
+        console.log('!!! Local participant Id ', localParticipantId);
+
+        return allParticipantIds[0].length > 0 && allParticipantIds[0];
+    };
+
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
@@ -55,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         conference.addCommandListener(SHARED_VIDEO,
             ({ value, attributes }: { attributes: {
-                from: string; muted: string; state: string; time: string; ownerId:string; previousOwnerId:string }; value: string; }) => {
+                from: string; muted: string; ownerId: string; previousOwnerId: string; state: string; time: string; }; value: string; }) => {
 
                 const { from } = attributes;
                 const sharedVideoStatus = attributes.state;
@@ -80,26 +86,25 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_LEFT:
         dispatch(resetSharedVideoStatus());
         break;
-     case REQUEST_SHARED_VIDEO_STATE:
-        sendRequestSharedVideoStateCommand(conference, videoUrl, localParticipantId)
+    case REQUEST_SHARED_VIDEO_STATE:
+        sendRequestSharedVideoStateCommand(conference, videoUrl, localParticipantId);
         break;
-        
+
     case PARTICIPANT_LEFT: {
-        const hasVideoOwnerLeft=action.participant.id === sharedVideoCurrentState.ownerId
+        const hasVideoOwnerLeft = action.participant.id === sharedVideoCurrentState.ownerId;
 
         if (hasVideoOwnerLeft) {
 
-            const {['disabled']: deletedKey, ...newState} = {...sharedVideoCurrentState}
+            const { 'disabled': deletedKey, ...newState } = { ...sharedVideoCurrentState };
 
-            if(conference && getNewVideoOwnerId(conference,localParticipantId)===localParticipantId)
-            {
-                newState.ownerId=localParticipantId
-                newState.previousOwnerId=sharedVideoCurrentState.ownerId
+            if (conference && getNewVideoOwnerId(conference, localParticipantId) === localParticipantId) {
+                newState.ownerId = localParticipantId;
+                newState.previousOwnerId = sharedVideoCurrentState.ownerId;
 
 
                 dispatch(setSharedVideoStatus({
                     ...newState
-                    }))
+                }));
             }
         }
         break;
@@ -108,6 +113,7 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
         const localParticipantId = getLocalParticipant(state)?.id;
         const { videoUrl, status, ownerId, time, muted, volume } = action;
+
         const operator = status === PLAYBACK_STATUSES.PLAYING ? 'is' : '';
 
         // logger.debug(`User with id: ${ownerId} ${operator} ${status} video sharing.`);
@@ -116,7 +122,7 @@ MiddlewareRegistry.register(store => next => action => {
             APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.VIDEO, status, ownerId);
         }
 
-        getNewVideoOwnerId(conference,localParticipantId)
+        getNewVideoOwnerId(conference, localParticipantId);
         if (sharedVideoCurrentState.ownerId === '' || localParticipantId === sharedVideoCurrentState.ownerId) {
             sendShareVideoCommand({
                 conference,
@@ -155,8 +161,8 @@ MiddlewareRegistry.register(store => next => action => {
                 muted: true,
                 status: 'stop',
                 time: 0,
-                ownerId:sharedVideoCurrentState.ownerId, 
-                previousOwnerId:sharedVideoCurrentState.previousOwnerId
+                ownerId: sharedVideoCurrentState.ownerId,
+                previousOwnerId: sharedVideoCurrentState.previousOwnerId
             });
         }
         break;
@@ -185,10 +191,10 @@ StateListenerRegistry.register(
 
                     if (isSharingStatus(status)) {
                         handleSharingVideoStatus(store, value, attributes, conference);
-                    } else if (status === 'stop') {                        
+                    } else if (status === 'stop') {
                         dispatch(participantLeft(value, conference));
                         if (localParticipantId !== from) {
-                            fetchStoppedVideoUrl()
+                            fetchStoppedVideoUrl();
                             dispatch(resetSharedVideoStatus());
                         }
                     }
@@ -211,7 +217,8 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function handleSharingVideoStatus(store: IStore, videoUrl: string,
-        { state, time, from, muted, ownerId, previousOwnerId }: { from: string; muted: string; state: string; time: string; ownerId:string; previousOwnerId:string; },
+        // eslint-disable-next-line max-len
+        { state, time, from, muted, ownerId, previousOwnerId }: { from: string; muted: string; ownerId: string; previousOwnerId: string; state: string; time: string; },
         conference: IJitsiConference) {
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState())?.id;
@@ -233,14 +240,14 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     }
 
     if (localParticipantId !== from) {
-        const newState={
+        const newState = {
             muted: muted === 'true',
-            ownerId: ownerId,
+            ownerId,
             status: state,
             time: Number(time),
             videoUrl,
             previousOwnerId
-        }
+        };
 
         dispatch(setSharedVideoStatus(newState));
     }
@@ -256,14 +263,15 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
  * @param {JitsiConference} conference - The current conference.
  * @param {string} localParticipantId - The id of the local participant.
  * @param {string} time - The seek position of the video.
- * @param {string} ownerId - The id of video owner
- * @param {string} previousOwnerId - The id of the previous video
+ * @param {string} ownerId - The id of video owner.
+ * @param {string} previousOwnerId - The id of the previous video.
  * @returns {void}
  */
+// eslint-disable-next-line max-len, require-jsdoc
 function sendShareVideoCommand({ id, status, conference, localParticipantId = '', time, muted, ownerId, previousOwnerId }: {
     conference?: IJitsiConference; id: string; localParticipantId?: string; muted: boolean;
-    status: string; time: number; ownerId?: string; previousOwnerId?: string;
-}) {
+    ownerId?: string; previousOwnerId?: string; status: string; time: number;
+}): void {
     conference?.sendCommandOnce(SHARED_VIDEO, {
 
         value: id,
@@ -297,7 +305,7 @@ function sendRequestSharedVideoStateCommand(conference, videoUrl, localParticipa
 }
 
 /**
- * Set up state change listener to receive reqeusts for shraed video state broadcast by the video owner
+ * Set up state change listener to receive reqeusts for shraed video state broadcast by the video owner.
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
@@ -309,12 +317,15 @@ StateListenerRegistry.register(
                     const { dispatch, getState } = store;
                     const { from } = attributes;
                     const localParticipantId = getLocalParticipant(getState())?.id;
-                    const videoState = APP.store.getState()['features/shared-video']
+                    const videoState = APP.store.getState()['features/shared-video'];
 
-                    if (videoState.status==='pause' && localParticipantId===videoState.ownerId && localParticipantId!==from) {
-                        const newVideoState={...videoState, time:videoState.time+0.001}
+                    // eslint-disable-next-line max-len
+                    if (videoState.status === 'pause' && localParticipantId === videoState.ownerId && localParticipantId !== from) {
+                        const newVideoState = { ...videoState,
+                            time: videoState.time + 0.001 };
+
                         dispatch(setSharedVideoStatus(newVideoState));
-                    } 
+                    }
                 }
             );
         }

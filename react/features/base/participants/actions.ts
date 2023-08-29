@@ -30,6 +30,7 @@ import {
 import {
     DISCO_REMOTE_CONTROL_FEATURE
 } from './constants';
+// eslint-disable-next-line import/order
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
@@ -37,7 +38,8 @@ import {
     getParticipantDisplayName,
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
-import logger from './logger';
+
+// import logger from './logger';
 import { FakeParticipant, IJitsiParticipant, IParticipant } from './types';
 
 /**
@@ -324,9 +326,9 @@ export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
                     });
                 }
             })
-            .catch((error: any) => {
-                logger.error(`Failed to get participant features for ${id}!`, error);
-            });
+        .catch((error: any) => {
+            logger.error(`Failed to get participant features for ${id}!`, error);
+        });
     };
 }
 

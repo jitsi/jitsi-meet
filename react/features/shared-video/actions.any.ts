@@ -3,7 +3,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS,REQUEST_SHARED_VIDEO_STATE } from './actionTypes'
+import { REQUEST_SHARED_VIDEO_STATE, RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import SharedVideoDialog from './components/web/SharedVideoDialog';
 
 /**
@@ -39,7 +39,7 @@ export function resetSharedVideoStatus() {
  * }}
  */
 export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted, previousOwnerId }: {
-    muted?: boolean; ownerId?: string; status?: string; time?: number; videoUrl?: string; previousOwnerId?: string;
+    muted?: boolean; ownerId?: string; previousOwnerId?: string; status?: string; time?: number; videoUrl?: string;
 }) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
@@ -146,20 +146,20 @@ export function updateSharedVideoOwner(ownerId: string) {
                 status: currentVideoState.status,
                 time: currentVideoState.time,
                 muted: currentVideoState.muted,
-                ownerId: ownerId,
+                ownerId,
                 previousOwnerId: currentVideoState.ownerId
             }));
         }
     };
 }
 
-/**
+/** ...
  *
  * Pauses a shared video
  *
  * @returns {Function}
  */
-export function pauseSharedVideo() {
+export function pauseSharedVideo(): (dispatch: IStore['dispatch'], getState: IStore['getState']) => void {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState());
         const state = getState();
@@ -181,21 +181,27 @@ export function pauseSharedVideo() {
 
 
 /**
- *
  * Shared video state is updated with the passed object
  *
- * @param {string} videoUrl - The video url to be played.
+ * @param {Object} updatedState - The video url to be played.
  *
  * @returns {Function}
  */
-export function updateVideoState(updatedState) {
+export function updateVideoState(updatedState: {
+    muted?: boolean | undefined;
+    ownerId?: string | undefined;
+    previousOwnerId?: string | undefined;
+    status?: string | undefined;
+    time?: number | undefined;
+    videoUrl?: string | undefined;
+}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const currentVideoState = state['features/shared-video'];
         const localParticipantId = getLocalParticipant(state)?.id;
         const conference = getCurrentConference(state);
 
-        if (conference && localParticipantId && localParticipantId===currentVideoState.ownerId){
+        if (conference && localParticipantId && localParticipantId === currentVideoState.ownerId) {
             dispatch(setSharedVideoStatus(updatedState ? updatedState : currentVideoState));
         }
     };
@@ -215,7 +221,8 @@ export function updateVideoState(updatedState) {
 * }}
 */
 
-export function requestSharedVideoStateFromVideoOwner(currentVideoState) {
+// eslint-disable-next-line require-jsdoc
+export function requestSharedVideoStateFromVideoOwner(currentVideoState: any) {
     // const currentVideoState = state['features/shared-video']
     return {
         type: REQUEST_SHARED_VIDEO_STATE,

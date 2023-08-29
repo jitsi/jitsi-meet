@@ -1,13 +1,11 @@
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { openDialog } from '../../base/dialog/actions';
+import { translate } from '../../base/i18n/functions';
 import { IconRoomBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { AbstractButton } from '../../base/toolbox/components';
-import type { AbstractButtonProps } from '../../base/toolbox/components';
+import AbstractButton, { AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 
 import { isRoomBackgroundDefined } from './../functions';
-
-import { RoomBackgroundDialog } from './index';
+import RoomBackgroundDialog from './RoomBackgroundDialog';
 
 /**
  * The type of the React {@code Component} props of {@link RoomBackgroundButton}.

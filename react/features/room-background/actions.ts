@@ -1,9 +1,8 @@
 import type { Dispatch } from 'redux';
 
-import {
-    getLocalParticipant,
-    participantUpdated
-} from './../base/participants';
+// import { participantUpdated } from '../base/participants/actions';
+import { getLocalParticipant } from '../base/participants/functions';
+
 import {
     SET_BACKGROUND_DATA
 } from './actionTypes';
@@ -18,11 +17,15 @@ import {
  * @param {string} backgroundColor - Optional color for the background.
  * @returns {Function}
  */
-export function setBackgroundImage(backgroundImageUrl: string, backgroundColor: string) {
+export function setBackgroundImage() {
+
     return async (dispatch: Dispatch<any>, getState: Function) => {
+        getState();
+        dispatch(undefined);
 
         const state = getState();
         const localParticipant = getLocalParticipant(state);
+
         const previousBackgroundData = extractBackgroundProperties(localParticipant?.backgroundData);
 
         if (
@@ -33,13 +36,13 @@ export function setBackgroundImage(backgroundImageUrl: string, backgroundColor: 
             return;
         }
 
-        // Adding lastUpdate to help the synchronization of the last background set among the participants.
+        Adding lastUpdate to help the synchronization of the last background set among the participants.
         const lastUpdate = Date.now();
         const backgroundData = `${backgroundColor}|${backgroundImageUrl}|${lastUpdate}`;
 
-        // Update local participants background information
+        Update local participants background information
         dispatch(participantUpdated({
-            id: localParticipant.id,
+            id: localParticipant ? localParticipant.id : '',
             local: localParticipant.local,
             backgroundData
         }));

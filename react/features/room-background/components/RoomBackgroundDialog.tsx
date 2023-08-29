@@ -1,9 +1,10 @@
+/* eslint-disable react/jsx-no-bind */
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { Tooltip } from '../../base/tooltip';
+import Tooltip from '../../../features/base/tooltip/components/Tooltip';
+import { translate } from '../../base/i18n/functions';
+import Dialog from '../../base/ui/components/web/Dialog';
 import { setBackgroundImage } from '../actions';
 
 const images = [
@@ -61,12 +62,12 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Function;
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function;
 };
 
 /**

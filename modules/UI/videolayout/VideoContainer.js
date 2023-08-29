@@ -9,7 +9,7 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
 import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
 import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video/components/LargeVideoBackground';
-import { isRoomBackgroundDefined } from '../../../react/features/room-background';
+import { isRoomBackgroundDefined } from '../../../react/features/room-background/functions';
 import { LAYOUTS } from '../../../react/features/video-layout/constants';
 import { getCurrentLayout } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */

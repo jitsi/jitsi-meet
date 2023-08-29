@@ -105,7 +105,6 @@ import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
-import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';

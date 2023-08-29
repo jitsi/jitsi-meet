@@ -1,6 +1,6 @@
 import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
-// import { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 import { createSharedVideoEvent as createEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -50,7 +50,6 @@ export interface IProps {
      * Docks the toolbox.
      */
     _dockToolbox: Function;
-    
 
     /**
      * Indicates whether the local audio is muted.
@@ -78,6 +77,11 @@ export interface IProps {
      * The shared video owner id.
      */
     _ownerId?: string;
+
+    /**
+     * The shared video previous owner id.
+     */
+    _previousOwnerId?: string;
 
     /**
      * Updates the shared video status.
@@ -109,11 +113,6 @@ export interface IProps {
       * The video id.
       */
     videoId: string;
-
-    /**
-     * The shared video previous owner id.
-     */
-    _previousOwnerId?: string;
 }
 
 /**
@@ -183,54 +182,71 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @returns {void}
      */
     processUpdatedProps() {
+        // eslint-disable-next-line max-len
         const { _videoUrl, _status, _time, _isOwner, _muted, _ownerId, _previousOwnerId, _setSharedVideoStatus } = this.props;
-   
-        const hasOwnerChanged = _ownerId!== _previousOwnerId
 
-        const hasPreviousOwner = _previousOwnerId!=null
+        const hasOwnerChanged = _ownerId !== _previousOwnerId;
 
-        let timeout:number;
+        const hasPreviousOwner = _previousOwnerId !== null;
 
-        APP.API.notifySharedVideoStateUpdated({videoUrl:_videoUrl, status:_status, time:_time, muted:_muted, ownerId:_ownerId, previousOwnerId:_previousOwnerId});
+        let timeout: NodeJS.Timeout;
 
-        if(hasOwnerChanged && _isOwner)
-            _setSharedVideoStatus({ videoUrl:_videoUrl, status:_status, time:_time, muted:_muted, ownerId:_ownerId, previousOwnerId:_ownerId })
-        
-        if(hasOwnerChanged && hasPreviousOwner && _time)
-        {
-            timeout = setTimeout(()=>{
-                this.seek(_time)
-                this.pause()
-                _setSharedVideoStatus({ videoUrl:_videoUrl, status:'pause', time:_time, muted:_muted, ownerId:_ownerId, previousOwnerId:_ownerId })
+        APP.API.notifySharedVideoStateUpdated({ videoUrl: _videoUrl,
+            status: _status,
+            time: _time,
+            muted: _muted,
+            ownerId: _ownerId,
+            previousOwnerId: _previousOwnerId });
+
+        if (hasOwnerChanged && _isOwner) {
+            _setSharedVideoStatus({ videoUrl: _videoUrl,
+                status: _status,
+                time: _time,
+                muted: _muted,
+                ownerId: _ownerId,
+                previousOwnerId: _ownerId });
+        }
+
+        if (hasOwnerChanged && hasPreviousOwner && _time) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            timeout = setTimeout(() => {
+                this.seek(_time);
+                this.pause();
+                _setSharedVideoStatus({ videoUrl: _videoUrl,
+                    status: 'pause',
+                    time: _time,
+                    muted: _muted,
+                    ownerId: _ownerId,
+                    previousOwnerId: _ownerId });
             }, 2000);
-            return ;
+
+            return;
         }
-        else
-        {
-            const playerTime = this.getTime();
 
-            if (shouldSeekToPosition(Number(_time), Number(playerTime))) {
-                this.seek(Number(_time));
+        const playerTime = this.getTime();
+
+        if (shouldSeekToPosition(Number(_time), Number(playerTime))) {
+            this.seek(Number(_time));
+        }
+
+        if (this.getPlaybackStatus() !== _status) {
+            if (_status === PLAYBACK_STATUSES.PLAYING) {
+                this.play();
             }
 
-            if (this.getPlaybackStatus() !== _status) {
-                if (_status === PLAYBACK_STATUSES.PLAYING) {
-                    this.play();
-                }
-
-                if (_status === PLAYBACK_STATUSES.PAUSED) {
-                    this.pause();
-                }
-            }
-
-            if (this.isMuted() !== _muted) {
-                if (_muted) {
-                    this.mute();
-                } else {
-                    this.unMute();
-                }
+            if (_status === PLAYBACK_STATUSES.PAUSED) {
+                this.pause();
             }
         }
+
+        if (this.isMuted() !== _muted) {
+            if (_muted) {
+                this.mute();
+            } else {
+                this.unMute();
+            }
+        }
+
     }
 
     /**
@@ -327,12 +343,11 @@ class AbstractVideoManager extends PureComponent<IProps> {
             _time
         } = this.props;
 
-        const actualTime=_ownerId===_previousOwnerId ?  this.getTime() : _time
+        const actualTime = _ownerId === _previousOwnerId ? this.getTime() : _time;
 
         _setSharedVideoStatus({
             videoUrl: _videoUrl,
             status,
-            // time: this.getTime(),
             time: actualTime,
             ownerId: _ownerId,
             muted: this.isMuted(),

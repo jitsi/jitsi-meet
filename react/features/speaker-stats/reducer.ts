@@ -50,6 +50,7 @@ export interface ISpeaker {
     isDominantSpeaker: () => boolean;
     isLocalStats: () => boolean;
     isModerator?: boolean;
+    isSharedVideoOwner: boolean;
     markAsHasLeft: () => boolean;
     setDisplayName: (newName: string) => void;
     setDominantSpeaker: (isNowDominantSpeaker: boolean, silence: boolean) => void;

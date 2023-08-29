@@ -1,4 +1,4 @@
-import { ReducerRegistry } from '../base/redux';
+import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     SET_BACKGROUND_DATA

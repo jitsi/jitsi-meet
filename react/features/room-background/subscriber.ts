@@ -1,13 +1,11 @@
-// import { getLocalParticipant } from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import {
-    refreshResizingLargeVideo
-} from './../large-video';
 import { updateBackgroundData } from './actions';
 import { extractBackgroundProperties } from './functions';
 
-declare var APP: Object;
+// import { extractBackgroundProperties } from './functions';
+
+// declare var APP: Object;
 
 /**
  * Updates the room background when participants backgroundData property is updated.
@@ -37,13 +35,12 @@ StateListenerRegistry.register(
         if (typeof APP !== 'undefined') {
             const backgroundProperties = extractBackgroundProperties(backgroundData);
 
-
             APP.API.notifyBackgroundChanged(
-                state.local.id,
-                {
-                    backgroundImageUrl: backgroundProperties.backgroundImageUrl,
-                    backgroundColor: backgroundProperties.backgroundColor
-                });
+            state.local.id,
+            {
+                backgroundImageUrl: backgroundProperties.backgroundImageUrl,
+                backgroundColor: backgroundProperties.backgroundColor
+            });
         }
     }
 );
@@ -51,9 +48,9 @@ StateListenerRegistry.register(
 /**
  * When the background of the room is updated, resize the video.
  */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/room-background'],
-    /* listener */(state, { dispatch }) => {
-        dispatch(refreshResizingLargeVideo(true));
-    }
-);
+// StateListenerRegistry.register(
+//     /* selector */ state => state['features/room-background'],
+//     /* listener */(state, { dispatch }) => {
+//         dispatch(refreshResizingLargeVideo(true));
+//     }
+// );
