@@ -19,6 +19,7 @@ import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
+import { IVirtualBackground } from '../reducer';
 
 import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
@@ -72,7 +73,7 @@ interface IProps extends WithTranslation {
     /**
      * Virtual background options.
      */
-    options: any;
+    options: IVirtualBackground;
 
     /**
      * Returns the selected thumbnail identifier.
@@ -254,8 +255,8 @@ function VirtualBackgrounds({
 
     const enableBlur = useCallback(async () => {
         onOptionsChange({
+            backgroundEffectEnabled: true,
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
-            enabled: true,
             blurValue: 25,
             selectedThumbnail: 'blur'
         });
@@ -272,8 +273,8 @@ function VirtualBackgrounds({
 
     const enableSlideBlur = useCallback(async () => {
         onOptionsChange({
+            backgroundEffectEnabled: true,
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
-            enabled: true,
             blurValue: 8,
             selectedThumbnail: 'slight-blur'
         });
@@ -290,7 +291,7 @@ function VirtualBackgrounds({
 
     const removeBackground = useCallback(async () => {
         onOptionsChange({
-            enabled: false,
+            backgroundEffectEnabled: false,
             selectedThumbnail: 'none'
         });
         logger.info('"None" option set for virtual background preview!');
@@ -310,10 +311,10 @@ function VirtualBackgrounds({
 
         if (image) {
             onOptionsChange({
-                backgroundType: 'image',
-                enabled: true,
-                url: image.src,
-                selectedThumbnail: image.id
+                backgroundEffectEnabled: true,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                selectedThumbnail: image.id,
+                virtualSource: image.src
             });
             logger.info('Uploaded image set for virtual background preview!');
         }
@@ -328,10 +329,10 @@ function VirtualBackgrounds({
                 const url = await toDataURL(image.src);
 
                 onOptionsChange({
-                    backgroundType: 'image',
-                    enabled: true,
-                    url,
-                    selectedThumbnail: image.id
+                    backgroundEffectEnabled: true,
+                    backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                    selectedThumbnail: image.id,
+                    virtualSource: url
                 });
                 logger.info('Image set for virtual background preview!');
             } catch (err) {
