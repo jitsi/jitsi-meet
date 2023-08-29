@@ -284,12 +284,12 @@ export function restoreConferenceOptions(stateful: IStateful) {
  * Override the global config (that is, window.config) with XMPP configuration required to join as a visitor.
  *
  * @param {IStateful} stateful - The redux store state.
- * @param {Array<string>} params - The received parameters.
+ * @param {string|undefined} vnode - The received parameters.
+ * @param {string} focusJid - The received parameters.
+ * @param {string|undefined} username - The received parameters.
  * @returns {Object}
  */
-export function getVisitorOptions(stateful: IStateful, params: Array<string>) {
-    const [ vnode, focusJid, username ] = params;
-
+export function getVisitorOptions(stateful: IStateful, vnode: string, focusJid: string, username: string) {
     const config = toState(stateful)['features/base/config'];
 
     if (!config?.hosts) {

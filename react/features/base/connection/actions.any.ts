@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { IReduxState, IStore } from '../../app/types';
-import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
@@ -230,6 +230,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_FAILED,
                 _onConnectionFailed);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_REDIRECTED,
+                _onConnectionRedirected);
 
             /**
              * Unsubscribe the connection instance from
@@ -298,9 +301,28 @@ export function _connectInternal(id?: string, password?: string) {
                 resolve(connection);
             }
 
+            /**
+             * Rejects external promise when connection fails.
+             *
+             * @param {string|undefined} vnode - The vnode to connect to.
+             * @param {string} focusJid - The focus jid to use.
+             * @param {string|undefined} username - The username to use when joining. This is after promotion from
+             * visitor to main participant.
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
+                dispatch(redirect(vnode, focusJid, username));
+            }
+
+            // in case of configured http url for conference request we need the room name
+            const name = getBackendSafeRoomName(state['features/base/conference'].room);
+
             connection.connect({
                 id,
-                password
+                password,
+                name
             });
         });
     };

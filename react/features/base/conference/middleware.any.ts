@@ -18,7 +18,6 @@ import { showErrorNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
-import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
@@ -34,7 +33,6 @@ import {
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
-import { destroyLocalTracks } from '../tracks/actions.any';
 import { getLocalTracks } from '../tracks/functions.any';
 
 import {
@@ -51,7 +49,6 @@ import {
 import {
     authStatusChanged,
     conferenceFailed,
-    conferenceWillInit,
     conferenceWillLeave,
     createConference,
     setLocalSubject,
@@ -63,7 +60,6 @@ import {
     _removeLocalTracksFromConference,
     forEachConference,
     getCurrentConference,
-    getVisitorOptions,
     restoreConferenceOptions
 } from './functions';
 import logger from './logger';
@@ -202,34 +198,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
         sendAnalytics(createOfferAnswerFailedEvent());
         break;
-
-    case JitsiConferenceErrors.REDIRECTED: {
-        const newConfig = getVisitorOptions(getState, error.params);
-
-        if (!newConfig) {
-            logger.warn('Not redirected missing params');
-            break;
-        }
-
-        const [ vnode ] = error.params;
-
-        dispatch(overwriteConfig(newConfig)) // @ts-ignore
-            .then(() => dispatch(conferenceWillLeave(conference)))
-            .then(() => dispatch(disconnect()))
-            .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
-
-            // we do not clear local tracks on error, so we need to manually clear them
-            .then(() => dispatch(destroyLocalTracks()))
-            .then(() => dispatch(conferenceWillInit()))
-            .then(() => dispatch(connect()))
-            .then(() => {
-                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                if (typeof APP !== 'undefined') {
-                    APP.conference.startConference([]);
-                }
-            });
-        break;
-    }
     }
 
     !error.recoverable
