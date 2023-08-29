@@ -90,7 +90,6 @@ class InputDialog extends AbstractDialog<IProps, IState> {
 
         return (
             <Dialog.Container
-                coverScreen = { false }
                 visible = { true }>
                 <Dialog.Title>
                     { t(titleKey ?? '') }

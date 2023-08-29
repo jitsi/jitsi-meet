@@ -40,7 +40,6 @@ class AlertDialog extends AbstractDialog<IProps> {
 
         return (
             <Dialog.Container
-                coverScreen = { false }
                 visible = { true }>
                 <Dialog.Description>
                     { content }
