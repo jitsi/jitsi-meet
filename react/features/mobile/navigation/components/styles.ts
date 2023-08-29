@@ -43,7 +43,7 @@ export const navigationStyles = {
     },
 
     headerNavigationButton: {
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[3]
     },
 
     headerNavigationButtonDisabled: {
