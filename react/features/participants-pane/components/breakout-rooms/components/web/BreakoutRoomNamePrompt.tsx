@@ -20,10 +20,10 @@ export default function BreakoutRoomNamePrompt({ breakoutRoomJid, initialRoomNam
     const okDisabled = !roomName;
     const dispatch = useDispatch();
     const onBreakoutRoomNameChange = useCallback((newRoomName: string) => {
-        setRoomName(newRoomName?.trim());
+        setRoomName(newRoomName);
     }, [ setRoomName ]);
     const onSubmit = useCallback(() => {
-        dispatch(renameBreakoutRoom(breakoutRoomJid, roomName));
+        dispatch(renameBreakoutRoom(breakoutRoomJid, roomName?.trim()));
     }, [ breakoutRoomJid, dispatch, roomName ]);
 
     return (<Dialog
