@@ -15,6 +15,7 @@ import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
 import logger from '../logger';
+import { IVirtualBackground } from '../reducer';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
@@ -39,7 +40,7 @@ export interface IProps extends WithTranslation {
     /**
      * Represents the virtual background set options.
      */
-    options: any;
+    options: IVirtualBackground;
 
     /**
      * The id of the selected video device.
