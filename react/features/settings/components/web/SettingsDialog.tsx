@@ -212,15 +212,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             cancel: () => {
                 const { options } = getVirtualBackgroundTabProps(state, isDisplayedOnWelcomePage);
 
-                return submitVirtualBackgroundTab({
-                    options: {
-                        backgroundType: options.backgroundType,
-                        enabled: options.backgroundEffectEnabled,
-                        url: options.virtualSource,
-                        selectedThumbnail: options.selectedThumbnail,
-                        blurValue: options.blurValue
-                    }
-                }, true);
+                return submitVirtualBackgroundTab({ options }, true);
             },
             icon: IconImage
         });
