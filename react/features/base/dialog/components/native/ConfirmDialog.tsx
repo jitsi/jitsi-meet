@@ -105,7 +105,6 @@ class ConfirmDialog extends AbstractDialog<IProps> {
 
         return (
             <Dialog.Container
-                coverScreen = { false }
                 visible = { true }>
                 {
                     title && <Dialog.Title>

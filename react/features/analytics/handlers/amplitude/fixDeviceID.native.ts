@@ -27,7 +27,7 @@ export async function fixDeviceID(amplitude: Amplitude) {
             return;
         }
 
-        amplitude.setDeviceId(uid);
-        DefaultPreference.set('amplitudeDeviceId', uid);
+        amplitude.setDeviceId(uid as any);
+        DefaultPreference.set('amplitudeDeviceId', uid as any);
     }
 }
