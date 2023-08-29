@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableRipple } from 'react-native-paper';
+import { TouchableHighlight } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import styles from '../../../react/components/native/styles';
@@ -22,47 +22,47 @@ const IconButton: React.FC<IIconButtonProps> = ({
     const { PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     let color;
-    let rippleColor;
+    let underlayColor;
     let iconButtonContainerStyles;
 
     if (type === PRIMARY) {
         color = BaseTheme.palette.icon01;
         iconButtonContainerStyles = styles.iconButtonContainerPrimary;
-        rippleColor = BaseTheme.palette.action01;
+        underlayColor = BaseTheme.palette.action01;
     } else if (type === SECONDARY) {
         color = BaseTheme.palette.icon04;
         iconButtonContainerStyles = styles.iconButtonContainerSecondary;
-        rippleColor = BaseTheme.palette.action02;
+        underlayColor = BaseTheme.palette.action02;
     } else if (type === TERTIARY) {
         color = iconColor;
         iconButtonContainerStyles = styles.iconButtonContainer;
-        rippleColor = BaseTheme.palette.action03;
+        underlayColor = BaseTheme.palette.action03;
     } else {
         color = iconColor;
-        rippleColor = tapColor;
+        underlayColor = tapColor;
     }
 
     if (disabled) {
         color = BaseTheme.palette.icon03;
         iconButtonContainerStyles = styles.iconButtonContainerDisabled;
-        rippleColor = 'transparent';
+        underlayColor = 'transparent';
     }
 
     return (
-        <TouchableRipple
+        <TouchableHighlight
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
             onPress = { onPress }
-            rippleColor = { rippleColor }
             style = { [
                 iconButtonContainerStyles,
                 style
-            ] }>
+            ] }
+            underlayColor = { underlayColor }>
             <Icon
                 color = { color }
                 size = { 20 || size }
                 src = { src } />
-        </TouchableRipple>
+        </TouchableHighlight>
     );
 };
 
