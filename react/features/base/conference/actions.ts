@@ -2,9 +2,11 @@ import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEve
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
 import { endpointMessageReceived } from '../../subtitles/actions.any';
+import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
+import { overwriteConfig } from '../config/actions';
 import { getReplaceParticipant } from '../config/functions';
-import { hangup } from '../connection/actions';
+import { connect, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../media/actions';
@@ -73,6 +75,7 @@ import {
     getConferenceOptions,
     getConferenceState,
     getCurrentConference,
+    getVisitorOptions,
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
@@ -981,5 +984,43 @@ export function setAssumedBandwidthBps(assumedBandwidthBps: number) {
     return {
         type: SET_ASSUMED_BANDWIDTH_BPS,
         assumedBandwidthBps
+    };
+}
+
+/**
+ * Redirects to a new visitor node.
+ *
+ * @param {string | undefined} vnode - The vnode to use or undefined if moving back to the main room.
+ * @param {string} focusJid - The focus jid to use.
+ * @param {string} username - The username to use.
+ * @returns {void}
+ */
+export function redirect(vnode: string, focusJid: string, username: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { conference, joining } = getState()['features/base/conference'];
+
+        const newConfig = getVisitorOptions(getState, vnode, focusJid, username);
+
+        if (!newConfig) {
+            logger.warn('Not redirected missing params');
+
+            return;
+        }
+
+        dispatch(overwriteConfig(newConfig)) // @ts-ignore
+            .then(() => dispatch(conferenceWillLeave(conference || joining)))
+            .then(() => dispatch(disconnect()))
+            .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
+
+            // we do not clear local tracks on error, so we need to manually clear them
+            .then(() => dispatch(destroyLocalTracks()))
+            .then(() => dispatch(conferenceWillInit()))
+            .then(() => dispatch(connect()))
+            .then(() => {
+                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                if (typeof APP !== 'undefined') {
+                    APP.conference.startConference([]);
+                }
+            });
     };
 }

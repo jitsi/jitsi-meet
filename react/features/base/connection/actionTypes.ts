@@ -32,18 +32,6 @@ export const CONNECTION_ESTABLISHED = 'CONNECTION_ESTABLISHED';
 export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 
 /**
- * The type of (redux) action which signals that a connection failed.
- *
- * {
- *     type: CONNECTION_REDIRECTED,
- *     connection: JitsiConnection,
- *     vnode: string | undefined,
- *     focusJid: string | undefined
- * }
- */
-export const CONNECTION_REDIRECTED = 'CONNECTION_REDIRECTED';
-
-/**
  * The type of (redux) action which signals that a connection will connect.
  *
  * {

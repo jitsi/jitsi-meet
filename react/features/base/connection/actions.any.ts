@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { IReduxState, IStore } from '../../app/types';
-import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
@@ -13,7 +13,6 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
-    CONNECTION_REDIRECTED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
@@ -134,38 +133,6 @@ export function connectionFailed(
         type: CONNECTION_FAILED,
         connection,
         error
-    };
-}
-
-/**
- * Create an action for when the connection needs to be redirected to a visitor node or back to the main node.
- *
- * @param {JitsiConnection} connection - The {@code JitsiConnection} which
- * failed.
- * @param {string | undefined} vnode - The vnode to use or undefined if moving back to the main room.
- * @param {string} focusJid - The focus jid to use.
- * @param {string} username - The username to use.
- * @public
- * @returns {{
- *     type: CONNECTION_FAILED,
- *     connection: JitsiConnection,
- *     vnode: string?,
- *     focusJid: string,
- *     username: string?
- * }}
- */
-export function connectionRedirected(
-        connection: Object,
-        vnode: String,
-        focusJid: String,
-        username: String) {
-
-    return {
-        type: CONNECTION_REDIRECTED,
-        connection,
-        vnode,
-        focusJid,
-        username
     };
 }
 
@@ -346,7 +313,7 @@ export function _connectInternal(id?: string, password?: string) {
              */
             function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
-                dispatch(connectionRedirected(connection, vnode, focusJid, username));
+                dispatch(redirect(vnode, focusJid, username));
             }
 
             // in case of configured http url for conference request we need the room name

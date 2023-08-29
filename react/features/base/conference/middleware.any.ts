@@ -18,10 +18,9 @@ import { showErrorNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
-import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_REDIRECTED } from '../connection/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConnectionErrors } from '../lib-jitsi-meet';
@@ -34,7 +33,6 @@ import {
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
-import { destroyLocalTracks } from '../tracks/actions.any';
 import { getLocalTracks } from '../tracks/functions.any';
 
 import {
@@ -51,7 +49,6 @@ import {
 import {
     authStatusChanged,
     conferenceFailed,
-    conferenceWillInit,
     conferenceWillLeave,
     createConference,
     setLocalSubject,
@@ -63,7 +60,6 @@ import {
     _removeLocalTracksFromConference,
     forEachConference,
     getCurrentConference,
-    getVisitorOptions,
     restoreConferenceOptions
 } from './functions';
 import logger from './logger';
@@ -92,9 +88,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED:
         return _connectionFailed(store, next, action);
-
-    case CONNECTION_REDIRECTED:
-        return _connectionRedirected(store, next, action);
 
     case CONFERENCE_SUBJECT_CHANGED:
         return _conferenceSubjectChanged(store, next, action);
@@ -719,47 +712,4 @@ function _setAssumedBandwidthBps({ getState }: IStore, next: Function, action: A
     }
 
     return next(action);
-}
-
-/**
- * Redirects to a new visitor node.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _connectionRedirected({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    const result = next(action);
-    const { conference, joining } = getState()['features/base/conference'];
-
-    const { vnode, focusJid, username } = action;
-    const newConfig = getVisitorOptions(getState, vnode, focusJid, username);
-
-    if (!newConfig) {
-        logger.warn('Not redirected missing params');
-
-        return;
-    }
-
-    dispatch(overwriteConfig(newConfig)) // @ts-ignore
-        .then(() => dispatch(conferenceWillLeave(conference || joining)))
-        .then(() => dispatch(disconnect()))
-        .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
-
-        // we do not clear local tracks on error, so we need to manually clear them
-        .then(() => dispatch(destroyLocalTracks()))
-        .then(() => dispatch(conferenceWillInit()))
-        .then(() => dispatch(connect()))
-        .then(() => {
-            // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-            if (typeof APP !== 'undefined') {
-                APP.conference.startConference([]);
-            }
-        });
-
-    return result;
 }
