@@ -73,8 +73,9 @@ export default {
     fieldContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        minHeight: 56,
-        paddingHorizontal: 8
+        minHeight: BaseTheme.spacing[8],
+        paddingHorizontal: BaseTheme.spacing[2],
+        justifyContent: 'space-between'
     },
 
     /**
@@ -90,9 +91,10 @@ export default {
      */
     fieldLabelContainer: {
         alignItems: 'center',
+        flexShrink: 1,
         flexDirection: 'row',
-        flex: 3,
-        paddingLeft: BaseTheme.spacing[3]
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[1]
     },
 
     /**
@@ -118,8 +120,8 @@ export default {
      */
     fieldValueContainer: {
         alignItems: 'center',
-        flex: 1,
         flexDirection: 'row',
+        flexShrink: 1,
         justifyContent: 'flex-end',
         paddingRight: BaseTheme.spacing[3]
     },
