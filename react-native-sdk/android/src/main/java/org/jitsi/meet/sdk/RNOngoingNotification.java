@@ -38,11 +38,10 @@ import java.util.Random;
  * {@link JitsiMeetOngoingConferenceService}. It allows the user to easily get back to the app
  * and to hangup from within the notification itself.
  */
-class OngoingNotification implements OngoingNotificationInterface {
-    private static final String TAG = OngoingNotification.class.getSimpleName();
+class RNOngoingNotification implements OngoingNotificationInterface {
+    private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
     private static long startingTime = 0;
-
 
     public void createOngoingConferenceNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -103,29 +102,10 @@ class OngoingNotification implements OngoingNotificationInterface {
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
-        NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, R.string.ongoing_notification_action_hang_up);
-
-        JitsiMeetOngoingConferenceService.Action toggleAudioAction = isMuted
-            ? JitsiMeetOngoingConferenceService.Action.UNMUTE : JitsiMeetOngoingConferenceService.Action.MUTE;
-        int toggleAudioTitle = isMuted ? R.string.ongoing_notification_action_unmute : R.string.ongoing_notification_action_mute;
-        NotificationCompat.Action audioAction = createAction(context, toggleAudioAction, toggleAudioTitle);
-
-        builder.addAction(hangupAction);
-        builder.addAction(audioAction);
-
         return builder.build();
     }
 
     public void resetStartingtime() {
         startingTime = 0;
-    }
-
-    private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, @StringRes int titleId) {
-        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-        intent.setAction(action.getName());
-        PendingIntent pendingIntent
-            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        String title = context.getString(titleId);
-        return new NotificationCompat.Action(0, title, pendingIntent);
     }
 }

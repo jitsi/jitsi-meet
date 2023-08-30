@@ -41,18 +41,25 @@ import java.util.HashMap;
  * See: https://developer.android.com/guide/components/services
  */
 public class JitsiMeetOngoingConferenceService extends Service
-    implements OngoingConferenceTracker.OngoingConferenceListener {
+    implements OngoingConferenceTracker.OngoingConferenceListener{
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
     private static final String EXTRA_DATA_KEY = "extraDataKey";
     private static final String EXTRA_DATA_BUNDLE_KEY = "extraDataBundleKey";
     private static final String IS_AUDIO_MUTED_KEY = "isAudioMuted";
 
+    private static final String ONGOING_NOTIFICATION = "org.jitsi.meet.sdk.OngoingNotification";
+    private static final String RN_ONGOING_NOTIFICATION = "org.jitsi.meet.sdk.RNOngoingNotification";
+
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
+
+    private static final OngoingNotificationInterface ongoingNotification = getOngoingNotification();
 
     private boolean isAudioMuted;
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        OngoingNotification.createOngoingConferenceNotificationChannel();
+        if (ongoingNotification != null) {
+            ongoingNotification.createOngoingConferenceNotificationChannel();
+        }
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
@@ -89,12 +96,12 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCreate() {
         super.onCreate();
 
-        Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted);
+        Notification notification = ongoingNotification.buildOngoingConferenceNotification(isAudioMuted);
         if (notification == null) {
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
+            startForeground(ongoingNotification.NOTIFICATION_ID, notification);
             JitsiMeetLogger.i(TAG + " Service started");
         }
 
@@ -126,13 +133,13 @@ public class JitsiMeetOngoingConferenceService extends Service
         if (isAudioMuted != null) {
             this.isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
 
-            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted);
+            Notification notification = ongoingNotification.buildOngoingConferenceNotification(isAudioMuted);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
             } else {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(OngoingNotification.NOTIFICATION_ID, notification);
+                notificationManager.notify(ongoingNotification.NOTIFICATION_ID, notification);
             }
         }
 
@@ -168,7 +175,10 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCurrentConferenceChanged(String conferenceUrl) {
         if (conferenceUrl == null) {
             stopSelf();
-            OngoingNotification.resetStartingtime();
+
+            if (ongoingNotification !=null) {
+                ongoingNotification.resetStartingtime();
+            }
             JitsiMeetLogger.i(TAG + "Service stopped");
         }
     }
@@ -212,16 +222,34 @@ public class JitsiMeetOngoingConferenceService extends Service
         @Override
         public void onReceive(Context context, Intent intent) {
             isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
-            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted);
+            Notification notification = ongoingNotification.buildOngoingConferenceNotification(isAudioMuted);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't update service, notification is null");
             } else {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(OngoingNotification.NOTIFICATION_ID, notification);
+                notificationManager.notify(ongoingNotification.NOTIFICATION_ID, notification);
 
                 JitsiMeetLogger.i(TAG + " audio muted changed");
             }
+        }
+    }
+
+    public static OngoingNotificationInterface getOngoingNotification() {
+        try {
+            try {
+                Class<?> c = Class.forName(ONGOING_NOTIFICATION);
+
+                return (OngoingNotificationInterface) c.newInstance();
+            } catch (ClassNotFoundException e) {
+                Class<?> cSecond = Class.forName(RN_ONGOING_NOTIFICATION);
+
+                return (OngoingNotificationInterface) cSecond.newInstance();
+            }
+        } catch(Exception e) {
+            JitsiMeetLogger.e(e, "Could not instantiate ongoing notification");
+
+            return null;
         }
     }
 }

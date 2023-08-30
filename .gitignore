@@ -107,3 +107,6 @@ react-native-sdk/node_modules
 react-native-sdk/react
 react-native-sdk/service
 react-native-sdk/sounds
+
+!react-native-sdk/android/src/main/org/jitsi/meet/sdk/RNOngoingNotification
+

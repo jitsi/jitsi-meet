@@ -11,8 +11,7 @@
         "url": "git+https://github.com/jitsi/jitsi-meet.git"
     },
     "dependencies": {
-        "@hapi/bourne": "2.0.0",
-        "@jitsi/js-utils": "2.0.5",
+        "@jitsi/js-utils": "2.1.2",
         "@jitsi/logger": "2.0.0",
         "@jitsi/rtcstats": "9.5.1",
         "@react-navigation/bottom-tabs": "6.5.8",
@@ -25,11 +24,10 @@
         "grapheme-splitter": "1.0.4",
         "i18n-iso-countries": "6.8.0",
         "i18next": "17.0.6",
-        "i18next-xhr-backend": "3.0.0",
         "js-md5": "0.6.1",
         "js-sha512": "0.8.0",
         "jwt-decode": "2.2.0",
-        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1670.0.0+10ebc843/lib-jitsi-meet.tgz",
+        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1678.0.0+77e6803f/lib-jitsi-meet.tgz",
         "lodash": "4.17.21",
         "moment": "2.29.4",
         "moment-duration-format": "2.2.2",

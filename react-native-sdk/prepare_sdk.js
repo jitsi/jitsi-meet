@@ -188,12 +188,24 @@ fs.copyFileSync(
     `${androidTargetPath}/JavaScriptSandboxModule.java`
 );
 fs.copyFileSync(
+    `${androidSourcePath}/JitsiMeetOngoingConferenceService.java`,
+    `${androidTargetPath}/JitsiMeetOngoingConferenceService.java`
+);
+fs.copyFileSync(
     `${androidSourcePath}/LocaleDetector.java`,
     `${androidTargetPath}/LocaleDetector.java`
 );
 fs.copyFileSync(
     `${androidSourcePath}/LogBridgeModule.java`,
     `${androidTargetPath}/LogBridgeModule.java`
+);
+fs.copyFileSync(
+    `${androidSourcePath}/NotificationChannels.java`,
+    `${androidTargetPath}/NotificationChannels.java`
+);
+fs.copyFileSync(
+    `${androidSourcePath}/OngoingNotificationInterface.java`,
+    `${androidTargetPath}/OngoingNotificationInterface.java`
 );
 fs.copyFileSync(
     `${androidSourcePath}/PictureInPictureModule.java`,
