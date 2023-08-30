@@ -15,12 +15,12 @@ type Props = AbstractButtonProps & {
     /**
      * True if the background of the room is set.
      */
-    _isBackgroundRoomEnabled: boolean,
+    _isBackgroundRoomEnabled: boolean;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function;
 };
 
 /**

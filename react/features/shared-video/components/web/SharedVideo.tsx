@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-// @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -10,6 +9,8 @@ import { getToolboxHeight } from '../../../toolbox/functions.web';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
+
+declare const interfaceConfig: any;
 
 interface IProps {
 

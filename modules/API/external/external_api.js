@@ -93,7 +93,7 @@ const commands = {
     toggleVideo: 'toggle-video',
     toggleWhiteboard: 'toggle-whiteboard',
     updateSharedVideoOwner: 'update-shared-video-owner',
-    updateSharedVideoState: 'update-shared-video-state',
+    updateSharedVideoState: 'update-shared-video-state'
 };
 
 /**
@@ -151,8 +151,8 @@ const events = {
     'speaker-stats-collect-started': 'speakerStatsCollectStarted',
     'speaker-stats-collect-stopped': 'speakerStatsCollectStopped',
     'speaker-stats-updated': 'speakerStatsUpdated',
-    'shared-video-state-updated' : 'sharedVideoStateUpdated',
-    'shared-video-stopped' : 'sharedVideoStopped',
+    'shared-video-state-updated': 'sharedVideoStateUpdated',
+    'shared-video-stopped': 'sharedVideoStopped',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',

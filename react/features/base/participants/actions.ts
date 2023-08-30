@@ -39,7 +39,7 @@ import {
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
 
-// import logger from './logger';
+import logger from './logger';
 import { FakeParticipant, IJitsiParticipant, IParticipant } from './types';
 
 /**

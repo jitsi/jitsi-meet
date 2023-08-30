@@ -9,6 +9,7 @@ export enum FakeParticipant {
 
 export interface IParticipant {
     avatarURL?: string;
+    backgroundData?: string;
     botType?: string;
     conference?: IJitsiConference;
     displayName?: string;

@@ -43,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
     const { videoUrl, status, ownerId, time, muted, volume, previousOwnerId } = action;
     const sharedVideoCurrentState: ISharedVideoState = state['features/shared-video'];
 
-    const getNewVideoOwnerId = (conference, localParticipantId) => {
+    const getNewVideoOwnerId = (conference: any, localParticipantId: any) => {
         const remoteParticipantIds = conference ? Object.keys(conference.participants) : [];
         const allParticipantIds = [ localParticipantId, ...remoteParticipantIds ];
 
@@ -182,7 +182,7 @@ StateListenerRegistry.register(
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
             conference.addCommandListener(SHARED_VIDEO,
-                ({ value, attributes }) => {
+                ({ value, attributes }: { attributes: any; value: any; }) => {
 
                     const { dispatch, getState } = store;
                     const { from } = attributes;
@@ -295,7 +295,7 @@ function sendShareVideoCommand({ id, status, conference, localParticipantId = ''
  * @param {string} localParticipantId - The id of the local participant.
  * @returns {void}
  */
-function sendRequestSharedVideoStateCommand(conference, videoUrl, localParticipantId) {
+function sendRequestSharedVideoStateCommand(conference: any, videoUrl: any, localParticipantId: any) {
     conference.sendCommandOnce(REQUEST_SHARED_VIDEO_STATE_COMMAND, {
         value: videoUrl,
         attributes: {
@@ -312,7 +312,7 @@ StateListenerRegistry.register(
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
             conference.addCommandListener(REQUEST_SHARED_VIDEO_STATE_COMMAND,
-                ({ value, attributes }) => {
+                ({ value, attributes }: { attributes: any; value: any; }) => {
 
                     const { dispatch, getState } = store;
                     const { from } = attributes;
@@ -322,7 +322,7 @@ StateListenerRegistry.register(
                     // eslint-disable-next-line max-len
                     if (videoState.status === 'pause' && localParticipantId === videoState.ownerId && localParticipantId !== from) {
                         const newVideoState = { ...videoState,
-                            time: videoState.time + 0.001 };
+                            time: videoState?.time + 0.001 };
 
                         dispatch(setSharedVideoStatus(newVideoState));
                     }

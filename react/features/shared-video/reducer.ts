@@ -1,4 +1,5 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+
 import { RESET_SHARED_VIDEO_STATUS, SET_DISABLE_BUTTON, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 
 const initialState = {};
@@ -7,11 +8,11 @@ export interface ISharedVideoState {
     disabled?: boolean;
     muted?: boolean;
     ownerId?: string;
+    previousOwnerId?: string;
     status?: string;
     time?: number;
     videoUrl?: string;
     volume?: number;
-    previousOwnerId?: string;
 }
 
 /**

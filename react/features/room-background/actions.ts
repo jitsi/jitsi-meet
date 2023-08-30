@@ -1,6 +1,6 @@
 import type { Dispatch } from 'redux';
 
-// import { participantUpdated } from '../base/participants/actions';
+import { participantUpdated } from '../base/participants/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
 import {
@@ -17,7 +17,7 @@ import {
  * @param {string} backgroundColor - Optional color for the background.
  * @returns {Function}
  */
-export function setBackgroundImage() {
+export function setBackgroundImage(backgroundImageUrl: string, backgroundColor: string) {
 
     return async (dispatch: Dispatch<any>, getState: Function) => {
         getState();
@@ -36,14 +36,14 @@ export function setBackgroundImage() {
             return;
         }
 
-        Adding lastUpdate to help the synchronization of the last background set among the participants.
+        // Adding lastUpdate to help the synchronization of the last background set among the participants.
         const lastUpdate = Date.now();
         const backgroundData = `${backgroundColor}|${backgroundImageUrl}|${lastUpdate}`;
 
-        Update local participants background information
+        // Update local participants background information
         dispatch(participantUpdated({
             id: localParticipant ? localParticipant.id : '',
-            local: localParticipant.local,
+            local: localParticipant?.local,
             backgroundData
         }));
 
@@ -77,7 +77,7 @@ export function updateBackgroundData(serializedBackgroundData: String) {
  * @param {Object} value - The custom data to be set.
  * @returns {Object}
  */
-function setBackgroundData(value) {
+function setBackgroundData(value: any) {
     return {
         type: SET_BACKGROUND_DATA,
         value

@@ -3,9 +3,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { updateBackgroundData } from './actions';
 import { extractBackgroundProperties } from './functions';
 
-// import { extractBackgroundProperties } from './functions';
-
-// declare var APP: Object;
+declare const APP: any;
 
 /**
  * Updates the room background when participants backgroundData property is updated.

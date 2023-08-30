@@ -293,7 +293,7 @@ export function fetchDetailedSpeakerStats() {
     const sharedVideoCurrentState = state['features/shared-video'];
 
     const getLocalSpeakerStats = () => {
-        const stats = conference.getSpeakerStats();
+        const stats = conference?.getSpeakerStats();
 
         for (const userId in stats) {
             if (stats[userId]) {
@@ -301,15 +301,15 @@ export function fetchDetailedSpeakerStats() {
                     const meString = 'Me';
 
                     stats[userId].setDisplayName(
-                        localParticipant.name
-                            ? `${localParticipant.name} (${meString})`
+                        localParticipant?.name
+                            ? `${localParticipant?.name} (${meString})`
                             : meString
                     );
                 }
 
                 if (!stats[userId].getDisplayName()) {
                     stats[userId].setDisplayName(
-                        conference.getParticipantById(userId)?.name
+                        conference?.getParticipantById(userId)?.name
                     );
                 }
             }
@@ -322,11 +322,12 @@ export function fetchDetailedSpeakerStats() {
         = Object.keys(speakerStats).length === 0 && conference ? getLocalSpeakerStats() : speakerStats;
 
     Object.keys(localSpeakerStats).forEach(key => {
-        const handRaised = raisedHandsQueue.find(item => item.id === key);
+        const handRaised = raisedHandsQueue.find((item: any) => item.id === key);
 
         localSpeakerStats[key].raisedHandTimestamp = handRaised ? handRaised.raisedHandTimestamp : 0;
 
-        localSpeakerStats[key].isSharedVideoOwner = sharedVideoCurrentState && sharedVideoCurrentState.ownerId && sharedVideoCurrentState.ownerId===key
+        localSpeakerStats[key].isSharedVideoOwner = sharedVideoCurrentState?.ownerId
+            && sharedVideoCurrentState?.ownerId === key;
     });
 
     APP.API.notifySpeakerStatsReceived(localSpeakerStats);

@@ -53,12 +53,13 @@ export function isVideoPlaying(stateful: IStateful): boolean {
     return videoPlaying;
 }
 
-/**
- * Fetch stopped video url
+/** .........
+ * Fetch stopped video url.
+ *
  * @returns {void}
  */
 export function fetchStoppedVideoUrl() {
-    
+
     const state = APP.store.getState();
     const sharedVideoCurrentState = state['features/shared-video'];
 
