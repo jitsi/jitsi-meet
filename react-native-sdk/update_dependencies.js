@@ -10,6 +10,8 @@ const packageJSON = require(pathToPackageJSON);
 
 const RNSDKpackageJSON = require(path.resolve(__dirname, './package.json'));
 
+const { versionCompare } = require('./compare_dependencies');
+
 /**
  * Updates dependencies from the app package.json with the peer dependencies of the RNSDK package.json.
  */
@@ -59,4 +61,15 @@ function updateDependencies() {
     );
 }
 
-updateDependencies();
+/**
+ * Updates dependencies from the app package.json with the peer dependencies of the RNSDK package.json.
+ */
+function compareDependencies() {
+    updateDependencies();
+
+    for (const key in RNSDKpackageJSON.peerDependencies) {
+        versionCompare(packageJSON.dependencies[key], RNSDKpackageJSON.peerDependencies[key], key)
+    }
+}
+
+compareDependencies();
