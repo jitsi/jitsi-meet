@@ -146,6 +146,7 @@ export interface IDynamicBrandingState {
     avatarBackgrounds: string[];
     backgroundColor: string;
     backgroundImageUrl: string;
+    brandedIcons?: Record<string, string>;
     customizationFailed: boolean;
     customizationReady: boolean;
     defaultBranding: boolean;
@@ -171,6 +172,7 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
+            brandedIcons,
             defaultBranding,
             didPageUrl,
             inviteDomain,
@@ -187,6 +189,7 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
+            brandedIcons,
             defaultBranding,
             didPageUrl,
             inviteDomain,
