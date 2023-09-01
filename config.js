@@ -1298,6 +1298,16 @@ var config = {
         // A list of images that can be used as video backgrounds.
         // When this field is present, the default images will be replaced with those provided.
         virtualBackgrounds: ['https://example.com/img.jpg'],
+        // Object containing customized icons that should replace the default ones.
+        // The keys need to be the exact same icon names used in here:
+        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
+        // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
+        // files containing svg xml icons in the size that the default icons come in.
+        customIcons: {
+            IconArrowUp: 'https://example.com/arrow-up.svg',
+            IconDownload: 'https://example.com/download.svg',
+            IconRemoteControlStart: 'https://example.com/remote-start.svg',
+        },
         // Object containing a theme's properties. It also supports partial overwrites of the main theme.
         // For a list of all possible theme tokens and their current defaults, please check:
         // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json

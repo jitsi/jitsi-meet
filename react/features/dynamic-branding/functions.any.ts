@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
+import logger from './logger';
 
 /**
  * Extracts the fqn part from a path, where fqn represents
@@ -64,3 +65,31 @@ export async function getDynamicBrandingUrl(stateful: IStateful) {
 export function isDynamicBrandingDataLoaded(state: IReduxState) {
     return state['features/dynamic-branding'].customizationReady;
 }
+
+/**
+ * Fetch SVG XMLs from branding icons urls.
+ *
+ * @param {Object} customIcons - The map of branded icons.
+ * @returns {Object}
+ */
+export const fetchCustomIcons = async (customIcons: Record<string, string>) => {
+    const localCustomIcons: Record<string, string> = {};
+
+    for (const [ key, url ] of Object.entries(customIcons)) {
+        try {
+            const response = await fetch(url);
+
+            if (response.ok) {
+                const svgXml = await response.text();
+
+                localCustomIcons[key] = svgXml;
+            } else {
+                logger.error(`Failed to fetch ${url}. Status: ${response.status}`);
+            }
+        } catch (error) {
+            logger.error(`Error fetching ${url}:`, error);
+        }
+    }
+
+    return localCustomIcons;
+};

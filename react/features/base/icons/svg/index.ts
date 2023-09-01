@@ -1,109 +1,235 @@
-export { default as IconAddUser } from './add-user.svg';
-export { default as IconArrowBack } from './arrow-back.svg';
-export { default as IconArrowDown } from './arrow-down.svg';
-export { default as IconArrowDownLarge } from './arrow-down-large.svg';
-export { default as IconArrowLeft } from './arrow-left.svg';
-export { default as IconArrowUp } from './arrow-up.svg';
-export { default as IconArrowUpLarge } from './arrow-up-large.svg';
-export { default as IconAudioOnly } from './visibility.svg';
-export { default as IconAudioOnlyOff } from './visibility-off.svg';
-export { default as IconBluetooth } from './bluetooth.svg';
-export { default as IconBell } from './bell.svg';
-export { default as IconCalendar } from './calendar.svg';
-export { default as IconCameraRefresh } from './camera-refresh.svg';
-export { default as IconCar } from './car.svg';
-export { default as IconChatUnread } from './chat-unread.svg';
-export { default as IconCheck } from './check.svg';
-export { default as IconCloseCircle } from './close-circle.svg';
-export { default as IconCloseLarge } from './close-large.svg';
-export { default as IconCloudUpload } from './cloud-upload.svg';
-export { default as IconCode } from './code.svg';
-export { default as IconConnection } from './connection.svg';
-export { default as IconConnectionInactive } from './ninja.svg';
-export { default as IconCopy } from './copy.svg';
-export { default as IconDeviceHeadphone } from './headset.svg';
-export { default as IconDotsHorizontal } from './dots-horizontal.svg';
-export { default as IconDownload } from './download.svg';
-export { default as IconE2EE } from './e2ee.svg';
-export { default as IconEdit } from './edit.svg';
-export { default as IconEnlarge } from './enlarge.svg';
-export { default as IconEnterFullscreen } from './enter-fullscreen.svg';
-export { default as IconEnvelope } from './envelope.svg';
-export { default as IconEmotionsAngry } from './emotions-angry.svg';
-export { default as IconEmotionsDisgusted } from './emotions-disgusted.svg';
-export { default as IconEmotionsFearful } from './emotions-fearful.svg';
-export { default as IconEmotionsHappy } from './emotions-happy.svg';
-export { default as IconEmotionsNeutral } from './emotions-neutral.svg';
-export { default as IconEmotionsSad } from './emotions-sad.svg';
-export { default as IconEmotionsSurprised } from './emotions-surprised.svg';
-export { default as IconExclamationSolid } from './exclamation-solid.svg';
-export { default as IconExclamationTriangle } from './exclamation-triangle.svg';
-export { default as IconExitFullscreen } from './exit-fullscreen.svg';
-export { default as IconFaceSmile } from './face-smile.svg';
-export { default as IconFavorite } from './favorite.svg';
-export { default as IconFavoriteSolid } from './favorite-solid.svg';
-export { default as IconFeedback } from './feedback.svg';
-export { default as IconGear } from './gear.svg';
-export { default as IconGoogle } from './google.svg';
-export { default as IconHangup } from './hangup.svg';
-export { default as IconHelp } from './help.svg';
-export { default as IconHighlight } from './highlight.svg';
-export { default as IconImage } from './image.svg';
-export { default as IconInfo } from './info.svg';
-export { default as IconInfoCircle } from './info-circle.svg';
-export { default as IconMessage } from './message.svg';
-export { default as IconMeter } from './meter.svg';
-export { default as IconMic } from './mic.svg';
-export { default as IconMicSlash } from './mic-slash.svg';
-export { default as IconModerator } from './moderator.svg';
-export { default as IconNoiseSuppressionOff } from './noise-suppression-off.svg';
-export { default as IconNoiseSuppressionOn } from './noise-suppression-on.svg';
-export { default as IconArrowRight } from './arrow-right.svg';
-export { default as IconOffice365 } from './office365.svg';
-export { default as IconPerformance } from './performance.svg';
-export { default as IconPhoneRinging } from './phone-ringing.svg';
-export { default as IconPin } from './pin.svg';
-export { default as IconPinned } from './pinned.svg';
-export { default as IconPlay } from './play.svg';
-export { default as IconPlus } from './plus.svg';
-export { default as IconRaiseHand } from './raise-hand.svg';
-export { default as IconRecord } from './record.svg';
-export { default as IconRecordAccount } from './account-record.svg';
-export { default as IconRecordContact } from './contact-record.svg';
-export { default as IconRecordLead } from './lead-record.svg';
-export { default as IconRecordOpportunity } from './opportunity-record.svg';
-export { default as IconRemoteControlStart } from './start-remote-control.svg';
-export { default as IconRemoteControlStop } from './stop-remote-control.svg';
-export { default as IconReply } from './reply.svg';
-export { default as IconRestore } from './restore.svg';
-export { default as IconRingGroup } from './icon-ring-group.svg';
-export { default as IconScreenshare } from './screenshare.svg';
-export { default as IconSearch } from './search.svg';
-export { default as IconSecurityOff } from './security-off.svg';
-export { default as IconSecurityOn } from './security-on.svg';
-export { default as IconSend } from './send.svg';
-export { default as IconShare } from './share.svg';
-export { default as IconShareDoc } from './share-doc.svg';
-export { default as IconShortcuts } from './shortcuts.svg';
-export { default as IconSip } from './sip.svg';
-export { default as IconSites } from './sites.svg';
-export { default as IconStop } from './stop.svg';
-export { default as IconStopScreenshare } from './stop-screenshare.svg';
-export { default as IconSubtitles } from './subtitles.svg';
-export { default as IconTileView } from './tile-view.svg';
-export { default as IconTrash } from './trash.svg';
-export { default as IconUserDeleted } from './user-deleted.svg';
-export { default as IconUsers } from './users.svg';
-export { default as IconUser } from './user.svg';
-export { default as IconVideo } from './video.svg';
-export { default as IconVideoOff } from './video-off.svg';
-export { default as IconVolumeOff } from './volume-off.svg';
-export { default as IconVolumeUp } from './volume-up.svg';
-export { default as IconWarning } from './warning.svg';
-export { default as IconWarningCircle } from './warning-circle.svg';
-export { default as IconWhiteboard } from './whiteboard.svg';
-export { default as IconWhiteboardHide } from './whiteboard-hide.svg';
-export { default as IconWifi1Bar } from './wifi-1.svg';
-export { default as IconWifi2Bars } from './wifi-2.svg';
-export { default as IconWifi3Bars } from './wifi-3.svg';
-export { default as IconYahoo } from './yahoo.svg';
+import withBranding from '../components/withBranding';
+
+import { DEFAULT_ICON } from './constants';
+
+const {
+    IconAddUser,
+    IconArrowBack,
+    IconArrowDown,
+    IconArrowDownLarge,
+    IconArrowLeft,
+    IconArrowUp,
+    IconArrowUpLarge,
+    IconAudioOnly,
+    IconAudioOnlyOff,
+    IconBluetooth,
+    IconBell,
+    IconCalendar,
+    IconCameraRefresh,
+    IconCar,
+    IconChatUnread,
+    IconCheck,
+    IconCloseCircle,
+    IconCloseLarge,
+    IconCloudUpload,
+    IconCode,
+    IconConnection,
+    IconConnectionInactive,
+    IconCopy,
+    IconDeviceHeadphone,
+    IconDotsHorizontal,
+    IconDownload,
+    IconE2EE,
+    IconEdit,
+    IconEnlarge,
+    IconEnterFullscreen,
+    IconEnvelope,
+    IconEmotionsAngry,
+    IconEmotionsDisgusted,
+    IconEmotionsFearful,
+    IconEmotionsHappy,
+    IconEmotionsNeutral,
+    IconEmotionsSad,
+    IconEmotionsSurprised,
+    IconExclamationSolid,
+    IconExclamationTriangle,
+    IconExitFullscreen,
+    IconFaceSmile,
+    IconFavorite,
+    IconFavoriteSolid,
+    IconFeedback,
+    IconGear,
+    IconGoogle,
+    IconHangup,
+    IconHelp,
+    IconHighlight,
+    IconImage,
+    IconInfo,
+    IconInfoCircle,
+    IconMessage,
+    IconMeter,
+    IconMic,
+    IconMicSlash,
+    IconModerator,
+    IconNoiseSuppressionOff,
+    IconNoiseSuppressionOn,
+    IconArrowRight,
+    IconOffice365,
+    IconPerformance,
+    IconPhoneRinging,
+    IconPin,
+    IconPinned,
+    IconPlay,
+    IconPlus,
+    IconRaiseHand,
+    IconRecord,
+    IconRecordAccount,
+    IconRecordContact,
+    IconRecordLead,
+    IconRecordOpportunity,
+    IconRemoteControlStart,
+    IconRemoteControlStop,
+    IconReply,
+    IconRestore,
+    IconRingGroup,
+    IconScreenshare,
+    IconSearch,
+    IconSecurityOff,
+    IconSecurityOn,
+    IconSend,
+    IconShare,
+    IconShareDoc,
+    IconShortcuts,
+    IconSip,
+    IconSites,
+    IconStop,
+    IconStopScreenshare,
+    IconSubtitles,
+    IconTileView,
+    IconTrash,
+    IconUserDeleted,
+    IconUsers,
+    IconUser,
+    IconVideo,
+    IconVideoOff,
+    IconVolumeOff,
+    IconVolumeUp,
+    IconWarning,
+    IconWarningCircle,
+    IconWhiteboard,
+    IconWhiteboardHide,
+    IconWifi1Bar,
+    IconWifi2Bars,
+    IconWifi3Bars,
+    IconYahoo
+} = Object.keys(DEFAULT_ICON).reduce((exportedIcons: Record<string, any>, key) => {
+    return {
+        ...exportedIcons,
+        [key]: withBranding({
+            iconName: key,
+            DefaultIcon: DEFAULT_ICON[key]
+        })
+    };
+}, {});
+
+export {
+    IconAddUser,
+    IconArrowBack,
+    IconArrowDown,
+    IconArrowDownLarge,
+    IconArrowLeft,
+    IconArrowUp,
+    IconArrowUpLarge,
+    IconAudioOnly,
+    IconAudioOnlyOff,
+    IconBluetooth,
+    IconBell,
+    IconCalendar,
+    IconCameraRefresh,
+    IconCar,
+    IconChatUnread,
+    IconCheck,
+    IconCloseCircle,
+    IconCloseLarge,
+    IconCloudUpload,
+    IconCode,
+    IconConnection,
+    IconConnectionInactive,
+    IconCopy,
+    IconDeviceHeadphone,
+    IconDotsHorizontal,
+    IconDownload,
+    IconE2EE,
+    IconEdit,
+    IconEnlarge,
+    IconEnterFullscreen,
+    IconEnvelope,
+    IconEmotionsAngry,
+    IconEmotionsDisgusted,
+    IconEmotionsFearful,
+    IconEmotionsHappy,
+    IconEmotionsNeutral,
+    IconEmotionsSad,
+    IconEmotionsSurprised,
+    IconExclamationSolid,
+    IconExclamationTriangle,
+    IconExitFullscreen,
+    IconFaceSmile,
+    IconFavorite,
+    IconFavoriteSolid,
+    IconFeedback,
+    IconGear,
+    IconGoogle,
+    IconHangup,
+    IconHelp,
+    IconHighlight,
+    IconImage,
+    IconInfo,
+    IconInfoCircle,
+    IconMessage,
+    IconMeter,
+    IconMic,
+    IconMicSlash,
+    IconModerator,
+    IconNoiseSuppressionOff,
+    IconNoiseSuppressionOn,
+    IconArrowRight,
+    IconOffice365,
+    IconPerformance,
+    IconPhoneRinging,
+    IconPin,
+    IconPinned,
+    IconPlay,
+    IconPlus,
+    IconRaiseHand,
+    IconRecord,
+    IconRecordAccount,
+    IconRecordContact,
+    IconRecordLead,
+    IconRecordOpportunity,
+    IconRemoteControlStart,
+    IconRemoteControlStop,
+    IconReply,
+    IconRestore,
+    IconRingGroup,
+    IconScreenshare,
+    IconSearch,
+    IconSecurityOff,
+    IconSecurityOn,
+    IconSend,
+    IconShare,
+    IconShareDoc,
+    IconShortcuts,
+    IconSip,
+    IconSites,
+    IconStop,
+    IconStopScreenshare,
+    IconSubtitles,
+    IconTileView,
+    IconTrash,
+    IconUserDeleted,
+    IconUsers,
+    IconUser,
+    IconVideo,
+    IconVideoOff,
+    IconVolumeOff,
+    IconVolumeUp,
+    IconWarning,
+    IconWarningCircle,
+    IconWhiteboard,
+    IconWhiteboardHide,
+    IconWifi1Bar,
+    IconWifi2Bars,
+    IconWifi3Bars,
+    IconYahoo
+};
