@@ -15,7 +15,6 @@ import Chat from '../../../chat/components/web/Chat';
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
-import { isFilmstripDisabled } from '../../../filmstrip/functions.web';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.web';
 import LobbyScreen from '../../../lobby/components/web/LobbyScreen';
@@ -63,11 +62,6 @@ interface IProps extends AbstractProps, WithTranslation {
      * The alpha(opacity) of the background.
      */
     _backgroundAlpha?: number;
-
-    /**
-     * Whether the vertical/horizonal filmstrip is disabled.
-     */
-    _filmstripDisabled: boolean;
 
     /**
      * Are any overlays visible?
@@ -205,14 +199,12 @@ class Conference extends AbstractConference<IProps, any> {
      */
     render() {
         const {
-            _filmstripDisabled,
             _isAnyOverlayVisible,
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
             _showLobby,
             _showPrejoin,
-            _shouldDisplayTileView,
             t
         } = this.props;
 
@@ -238,7 +230,7 @@ class Conference extends AbstractConference<IProps, any> {
                             _showPrejoin || _showLobby || (<>
                                 <StageFilmstrip />
                                 <ScreenshareFilmstrip />
-                                { (!_filmstripDisabled || _shouldDisplayTileView) && <MainFilmstrip /> }
+                                <MainFilmstrip />
                             </>)
                         }
                     </div>
@@ -404,7 +396,6 @@ function _mapStateToProps(state: IReduxState) {
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
-        _filmstripDisabled: isFilmstripDisabled(state),
         _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ''],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
