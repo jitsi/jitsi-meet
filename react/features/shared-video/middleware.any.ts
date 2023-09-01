@@ -322,7 +322,7 @@ StateListenerRegistry.register(
                     // eslint-disable-next-line max-len
                     if (videoState.status === 'pause' && localParticipantId === videoState.ownerId && localParticipantId !== from) {
                         const newVideoState = { ...videoState,
-                            time: videoState?.time + 0.001 };
+                            time: videoState.time ? videoState?.time + 0.001 : undefined };
 
                         dispatch(setSharedVideoStatus(newVideoState));
                     }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect as reduxConnect } from 'react-redux';
 
+// @ts-expect-error
 import { connect } from '../../../../../connection';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';

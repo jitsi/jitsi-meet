@@ -1,3 +1,4 @@
+// @ts-expect-error
 import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';

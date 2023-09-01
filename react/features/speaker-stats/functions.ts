@@ -318,18 +318,17 @@ export function fetchDetailedSpeakerStats() {
         return stats;
     };
 
-    const localSpeakerStats
+    const localSpeakerStats: ISpeakerStats | undefined
         = Object.keys(speakerStats).length === 0 && conference ? getLocalSpeakerStats() : speakerStats;
 
-    Object.keys(localSpeakerStats).forEach(key => {
-        const handRaised = raisedHandsQueue.find((item: any) => item.id === key);
+    if (localSpeakerStats !== undefined) {
+        Object.keys(localSpeakerStats).forEach(key => {
+            const handRaised = raisedHandsQueue.find((item: any) => item.id === key);
 
-        localSpeakerStats[key].raisedHandTimestamp = handRaised ? handRaised.raisedHandTimestamp : 0;
+            localSpeakerStats[key].raisedHandTimestamp = handRaised ? handRaised.raisedHandTimestamp : 0;
 
-        localSpeakerStats[key].isSharedVideoOwner = sharedVideoCurrentState?.ownerId
-            && sharedVideoCurrentState?.ownerId === key;
-    });
-
-    APP.API.notifySpeakerStatsReceived(localSpeakerStats);
-
+            localSpeakerStats[key].isSharedVideoOwner = sharedVideoCurrentState.ownerId === key;
+        });
+        APP.API.notifySpeakerStatsReceived(localSpeakerStats);
+    }
 }
