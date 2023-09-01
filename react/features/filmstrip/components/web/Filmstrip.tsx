@@ -43,6 +43,7 @@ import {
     isStageFilmstripTopPanel,
     shouldRemoteVideosBeVisible
 } from '../../functions';
+import { isFilmstripDisabled } from '../../functions.web';
 
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
@@ -73,6 +74,11 @@ interface IProps extends WithTranslation {
      * Whether or not to hide the self view.
      */
     _disableSelfView: boolean;
+
+    /**
+     * Whether vertical/horizontal filmstrip is disabled through config.
+     */
+    _filmstripDisabled: boolean;
 
     /**
      * The height of the filmstrip.
@@ -333,6 +339,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         const {
             _currentLayout,
             _disableSelfView,
+            _filmstripDisabled,
             _localScreenShareId,
             _mainFilmstripVisible,
             _resizableFilmstrip,
@@ -381,7 +388,8 @@ class Filmstrip extends PureComponent <IProps, IState> {
         let toolbar = null;
 
         if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled
-            && _currentLayout !== LAYOUTS.TILE_VIEW && (filmstripType === FILMSTRIP_TYPE.MAIN
+            && _currentLayout !== LAYOUTS.TILE_VIEW
+            && ((filmstripType === FILMSTRIP_TYPE.MAIN && !_filmstripDisabled)
                 || (filmstripType === FILMSTRIP_TYPE.STAGE && _topPanelFilmstrip))) {
             toolbar = this._renderToggleButton();
         }
@@ -885,6 +893,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
     const { clientWidth, clientHeight } = state['features/base/responsive-ui'];
+    const filmstripDisabled = isFilmstripDisabled(state);
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
@@ -893,7 +902,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const shouldReduceHeight = reduceHeight && isMobileBrowser();
     const _topPanelVisible = isStageFilmstripTopPanel(state) && topPanelVisible;
 
-    let isVisible = visible || filmstripType !== FILMSTRIP_TYPE.MAIN;
+    const notDisabled = visible && !filmstripDisabled;
+    let isVisible = notDisabled || filmstripType !== FILMSTRIP_TYPE.MAIN;
 
     if (_topPanelFilmstrip) {
         isVisible = _topPanelVisible;
@@ -912,13 +922,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _chatOpen: state['features/chat'].isOpen,
         _currentLayout,
         _disableSelfView: disableSelfView,
+        _filmstripDisabled: filmstripDisabled,
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,
-        _mainFilmstripVisible: visible,
+        _mainFilmstripVisible: notDisabled,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length ?? 0,
