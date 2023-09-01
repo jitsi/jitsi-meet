@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '15.x'
+          node-version: 16
       - id: changelog_reader
         name: Get Changelog Entry
         uses: mindsers/changelog-reader-action@v2
@@ -31,7 +31,7 @@ jobs:
       - name: Generate external JS file for client
         run: bash ./scripts/generate-js-api.sh
       - name: Create tag
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

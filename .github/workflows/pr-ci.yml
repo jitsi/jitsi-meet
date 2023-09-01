@@ -13,16 +13,16 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: '15.x'
+        node-version: 16
     - id: changelog_reader
       name: Get Changelog Entry
       uses: mindsers/changelog-reader-action@v2
       with:
         path: ./CHANGELOG.md
-    - uses: mukunku/tag-exists-action@v1.0.0
+    - uses: mukunku/tag-exists-action@v1.3.0
       id: checkTag
       with:
         tag: 'ivicos_${{ steps.changelog_reader.outputs.version }}'
