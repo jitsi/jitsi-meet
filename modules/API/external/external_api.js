@@ -1421,4 +1421,158 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 index }));
         }
     }
+
+    /**
+     * Sets a background image for the room.
+     *
+     * @param {string} backgroundImageUrl - URL of the background image.
+     * @param {string} backgroundColor - Custom color code for the background.
+     * @returns {void}
+     */
+    setBackgroundImage(backgroundImageUrl, backgroundColor) {
+        this.executeCommand(
+                'setBackgroundImage',
+                backgroundImageUrl,
+                backgroundColor);
+    }
+
+    /**
+     * Sets an overlay for the video flow of the local user.
+     *
+     * @param { string } overlayImageUrl - URL of the overlay image.
+     * @param { string } overlayColor - Color of the overlay if no image is given.
+     * @param { string } mode - Mode chosen for the overlay : Example 'fusion' if given background transparent,
+     * 'circle' if a circular shape should be manually extracted from the overlay (default). It is possible to
+     * add a size ratio simply by adding it to the shape name, example 'square-0.8' for a square of size 80%
+     * from the maximum possible.
+     * @returns {void}
+     */
+    setForegroundOverlay(overlayImageUrl, overlayColor, mode) {
+        this.executeCommand(
+                'setForegroundOverlay',
+                overlayImageUrl,
+                overlayColor,
+                mode
+        );
+    }
+
+    /**
+     * Start collecting speaker stats.
+     *
+     * @param { number } intervalRequest - Interval (ms) between each speaker stats notification.
+     * @param { boolean } repeatedRequest - Express if the request should be repeated.
+     * @returns {void}
+     */
+    startCollectSpeakerStats(intervalRequest = 1000, repeatedRequest = true) {
+        this.executeCommand('getSpeakerStats', repeatedRequest, intervalRequest);
+    }
+
+    /**
+     * Stop collecting speaker stats.
+     *
+     * @returns {void}
+     */
+    stopCollectSpeakerStats() {
+        this.executeCommand('stopSpeakerStats');
+    }
+
+    /**
+     * Returns the current language of the user interface.
+     *
+     * @returns {Promise} - Resolves with language code of the user interface.
+     */
+    getCurrentUILanguage() {
+        return this._transport.sendRequest({
+            name: 'get-current-ui-language'
+        });
+    }
+
+    /**
+     * Sets the User Interface Language.
+     *
+     * @param { number } language - Language code of the language to set.
+     * @returns {void}
+     */
+    setUILanguage(language) {
+        this.executeCommand('setUILanguage', language);
+    }
+
+    /**
+     * Returns the Id of local participant.
+     *
+     * @returns {Promise} - Resolves with Id of local participant.
+     */
+    getLocalParticipantId() {
+        return this._transport.sendRequest({
+            name: 'get-local-participant-id'
+        });
+    }
+
+    /**
+     * Start sharing video.
+     *
+     * @param { string } videoUrl - Youtube video url parameter.
+     * @returns {void}
+     */
+    startShareVideo(videoUrl) {
+        this.executeCommand('startShareVideo', videoUrl);
+    }
+
+    /**
+     * Updates owner of the shared video.
+     *
+     * @param { string } ownerId - Owner Id of the shared video.
+     * @returns {void}
+     */
+    updateSharedVideoOwner(ownerId) {
+        this.executeCommand('updateSharedVideoOwner', ownerId);
+    }
+
+    /**
+     * Stops sharing video.
+     *
+     * @returns {void}
+     */
+    stopShareVideo() {
+        this.executeCommand('stopShareVideo');
+    }
+
+    /**
+     * Pauses sharing video.
+     *
+     * @returns {void}
+     */
+    pauseShareVideo() {
+        this.executeCommand('pauseShareVideo');
+    }
+
+    /**
+     * Returns the current language of state of the shared video.
+     *
+     * @returns {Promise} - Resolves with current state of the video.
+     */
+    getCurrentSharedVideoState() {
+        return this._transport.sendRequest({
+            name: 'get-current-shared-video-state'
+        });
+    }
+
+    /**
+     * Updates state the shared video.
+     *
+     * @param { string } updatedState - Video state object to be set.
+     * @returns {void}
+     */
+    updateSharedVideoState(updatedState) {
+        this.executeCommand('updateSharedVideoState', updatedState);
+    }
+
+    /**
+     * Request shared video state update notification from videoOwner.
+     *
+     * @returns {void}
+     */
+    requestSharedVideoStateUpdateFromVideoOwner() {
+        this.executeCommand('requestSharedVideoStateUpdateFromVideoOwner');
+    }
 }
