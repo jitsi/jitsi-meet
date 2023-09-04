@@ -393,7 +393,7 @@ PODS:
   - react-native-webrtc (111.0.3):
     - JitsiWebRTC (~> 111.0.0)
     - React-Core
-  - react-native-webview (11.15.1):
+  - react-native-webview (13.5.1):
     - React-Core
   - React-perflogger (0.69.11)
   - React-RCTActionSheet (0.69.11):
@@ -756,7 +756,7 @@ SPEC CHECKSUMS:
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   react-native-webrtc: 4d1669c2ed29767fe70b0169428b4466589ecf8b
-  react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
+  react-native-webview: 8baa0f5c6d336d6ba488e942bcadea5bf51f050a
   React-perflogger: fdee2a0c512167ae4c19c4e230ccf6aa66a6aff0
   React-RCTActionSheet: 1cf5fef4e372f1c877969710a51bea4bb25e78fe
   React-RCTAnimation: 73816e3acd1f5e3f00166fc7eedb34f6b112f734

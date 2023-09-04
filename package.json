@@ -105,7 +105,7 @@
     "react-native-video": "https://git@github.com/react-native-video/react-native-video#7c48ae7c8544b2b537fb60194e9620b9fcceae52",
     "react-native-watch-connectivity": "1.0.11",
     "react-native-webrtc": "111.0.3",
-    "react-native-webview": "11.15.1",
+    "react-native-webview": "13.5.1",
     "react-native-youtube-iframe": "2.2.1",
     "react-redux": "7.2.9",
     "react-textarea-autosize": "8.3.0",
