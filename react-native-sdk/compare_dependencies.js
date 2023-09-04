@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /**
  * Compares two software version numbers.
  *
