@@ -26,12 +26,12 @@ function versionCompare(v1, v2, dependency) {
     v1parts = v1parts.map((x) => {
         const match = (/[A-Za-zαß]/).exec(x);
 
-        return Number(match ? x.replace(match[0], '.' + x.charCodeAt(match.index)) : x);
+        return Number(match ? x.replace(match[0], `. ${x.charCodeAt(match.index)}`) : x);
     });
     v2parts = v2parts.map((x) => {
         const match = (/[A-Za-zαß]/).exec(x);
 
-        return Number(match ? x.replace(match[0], '.' + x.charCodeAt(match.index)) : x);
+        return Number(match ? x.replace(match[0], `. ${x.charCodeAt(match.index)}`) : x);
     });
 
     for (let i = 0; i < v1parts.length; ++i) {
