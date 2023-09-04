@@ -9,10 +9,12 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
-
+import { getLocalTrack } from '../tracks/functions';
 
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
@@ -182,13 +184,20 @@ MiddlewareRegistry.register(store => next => action => {
             APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
         }
         break;
-    case SET_VIDEO_INPUT_DEVICE:
+    case SET_VIDEO_INPUT_DEVICE: {
+        const localTrack = getLocalTrack(store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO);
+
+        // on mobile devices the video stream has to be stopped before replacing it
+        if (isMobileBrowser() && localTrack && !localTrack.muted) {
+            localTrack.jitsiTrack.stopStream();
+        }
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(replaceVideoTrackById(action.deviceId));
         } else {
             APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
         }
         break;
+    }
     case UPDATE_DEVICE_LIST:
         logDeviceList(groupDevicesByKind(action.devices));
         if (areDeviceLabelsInitialized(store.getState())) {
