@@ -2,14 +2,11 @@ import ImmersiveMode from 'react-native-immersive-mode';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
-import { getCurrentConference } from '../../base/conference/functions';
-import { isAnyDialogOpen } from '../../base/dialog/functions';
-import { FULLSCREEN_ENABLED } from '../../base/flags/constants';
-import { getFeatureFlag } from '../../base/flags/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 
 import { _setImmersiveSubscription } from './actions';
+import { shouldUseFullScreen } from './functions';
 import logger from './logger';
 
 type BarVisibilityType = {
@@ -48,14 +45,7 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 StateListenerRegistry.register(
-    /* selector */ state => {
-        const { enabled: audioOnly } = state['features/base/audio-only'];
-        const conference = getCurrentConference(state);
-        const dialogOpen = isAnyDialogOpen(state);
-        const fullscreenEnabled = getFeatureFlag(state, FULLSCREEN_ENABLED, true);
-
-        return conference ? !audioOnly && !dialogOpen && fullscreenEnabled : false;
-    },
+    /* selector */ shouldUseFullScreen,
     /* listener */ fullScreen => _setFullScreen(fullScreen)
 );
 
@@ -73,13 +63,7 @@ function _onImmersiveChange({ getState }: IStore) {
     const { appState } = state['features/background'];
 
     if (appState === 'active') {
-        const { enabled: audioOnly } = state['features/base/audio-only'];
-        const conference = getCurrentConference(state);
-        const dialogOpen = isAnyDialogOpen(state);
-        const fullscreenEnabled = getFeatureFlag(state, FULLSCREEN_ENABLED, true);
-        const fullScreen = conference ? !audioOnly && !dialogOpen && fullscreenEnabled : false;
-
-        _setFullScreen(fullScreen);
+        _setFullScreen(shouldUseFullScreen(state));
     }
 }
 
