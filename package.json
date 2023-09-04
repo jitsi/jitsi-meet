@@ -102,7 +102,7 @@
     "react-native-svg-transformer": "1.1.0",
     "react-native-tab-view": "3.5.2",
     "react-native-url-polyfill": "2.0.0",
-    "react-native-video": "https://git@github.com/react-native-video/react-native-video#7c48ae7c8544b2b537fb60194e9620b9fcceae52",
+    "react-native-video": "6.0.0-alpha.7",
     "react-native-watch-connectivity": "1.1.0",
     "react-native-webrtc": "111.0.3",
     "react-native-webview": "13.5.1",
