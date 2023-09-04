@@ -24,6 +24,9 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 // Corresponds to animation duration from the animatedFadeIn and animatedFadeOut CSS classes.
 const FADE_DURATION_MS = 300;
 
+// Background resizing when applying a room background image.
+const BACKGROUND_RESIZING_RATIO = 0.7;
+
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method

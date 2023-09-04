@@ -1,7 +1,6 @@
 import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 
 import configLanguageDetector from './configLanguageDetector';
-// import customNavigatorDetector from './customNavigatorDetector';
 
 /**
  * The ordered list (by name) of language detectors to be utilized as backends
@@ -11,8 +10,6 @@ import configLanguageDetector from './configLanguageDetector';
  */
 const order = [
     configLanguageDetector.name
-    // 'querystring',
-    // 'localStorage'
 ];
 
 // Allow i18next to detect the system language reported by the Web browser

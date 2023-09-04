@@ -153,9 +153,9 @@ export function updateSharedVideoOwner(ownerId: string) {
     };
 }
 
-/** ...
+/**
  *
- * Pauses a shared video
+ * Pauses a shared video.
  *
  * @returns {Function}
  */
@@ -181,7 +181,7 @@ export function pauseSharedVideo(): (dispatch: IStore['dispatch'], getState: ISt
 
 
 /**
- * Shared video state is updated with the passed object
+ * Shared video state is updated with the passed object.
  *
  * @param {Object} updatedState - The video url to be played.
  *

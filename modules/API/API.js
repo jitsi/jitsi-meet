@@ -27,6 +27,7 @@ import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { DEFAULT_LANGUAGE, i18next } from '../../react/features/base/i18n/i18next';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
@@ -99,13 +100,25 @@ import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/part
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
+import { setBackgroundImage } from '../../react/features/room-background/actions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
-import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
+import {
+    pauseSharedVideo,
+    playSharedVideo,
+    requestSharedVideoStateFromVideoOwner,
+    stopSharedVideo,
+    updateSharedVideoOwner,
+    updateVideoState
+} from '../../react/features/shared-video/actions.any';
+import { extractYoutubeIdOrURL, fetchStoppedVideoUrl } from '../../react/features/shared-video/functions';
+import {
+    fetchDetailedSpeakerStats
+} from '../../react/features/speaker-stats/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
@@ -120,11 +133,6 @@ import {
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
-import { setBackgroundImage } from '../../react/features/room-background/actions';
-import { playSharedVideo, stopSharedVideo, updateSharedVideoOwner, pauseSharedVideo, updateVideoState, requestSharedVideoStateFromVideoOwner } from '../../react/features/shared-video/actions.any';
-import {
-    fetchDetailedSpeakerStats
-} from '../../react/features/speaker-stats/functions';
 
 const logger = Logger.getLogger(__filename);
 
@@ -153,6 +161,13 @@ let audioAvailable = true;
  * @type {boolean}
  */
 let videoAvailable = true;
+
+/**
+ * The timer for collection of speaker stats.
+ *
+ * @type {boolean}
+ */
+let speakerStatsTimer;
 
 /**
  * Initializes supported commands.
@@ -608,7 +623,7 @@ function initCommands() {
         'stop-share-video': () => {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
-            fetchStoppedVideoUrl()
+            fetchStoppedVideoUrl();
             APP.store.dispatch(stopSharedVideo());
         },
         'pause-share-video': () => {
@@ -622,11 +637,12 @@ function initCommands() {
             logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stateupdaterequest'));
 
-            const videoState = APP.store.getState()['features/shared-video']
+            const videoState = APP.store.getState()['features/shared-video'];
             const conference = getCurrentConference(APP.store.getState());
 
             if (!conference) {
                 logger.error('Conference is not defined');
+
                 return;
             }
             APP.store.dispatch(requestSharedVideoStateFromVideoOwner(videoState));
@@ -2068,7 +2084,7 @@ class API {
     /**
      * Notify external application (if API is enabled) the updated state of the shared video.
      *
-     * @param {Object} sharedVideoState - State of the shared video
+     * @param {Object} sharedVideoState - State of the shared video.
      * @returns {void}
      */
     notifySharedVideoStateUpdated(sharedVideoState) {
@@ -2078,10 +2094,10 @@ class API {
         });
     }
 
-     /**
+    /**
      * Notify external application (if API is enabled) the updated ownerId of the shared video.
      *
-     * @param {Object} ownerId - Id of the current shared video owner
+     * @param {Object} videoUrl - Id of the current shared video owner.
      * @returns {void}
      */
     notifySharedVideoStopped(videoUrl) {
