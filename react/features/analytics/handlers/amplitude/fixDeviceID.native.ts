@@ -1,6 +1,6 @@
 import { Amplitude } from '@amplitude/react-native';
 import DefaultPreference from 'react-native-default-preference';
-import { getUniqueId } from 'react-native-device-info';
+import { syncUniqueId } from 'react-native-device-info';
 
 import logger from '../../logger';
 
@@ -17,17 +17,17 @@ export async function fixDeviceID(amplitude: Amplitude) {
     const current = await DefaultPreference.get('amplitudeDeviceId');
 
     if (current) {
-        amplitude.setDeviceId(current);
+        await amplitude.setDeviceId(current);
     } else {
-        const uid = getUniqueId();
+        syncUniqueId().then(uid => {
+            if (!uid) {
+                logger.warn('Device ID is not set!');
 
-        if (!uid) {
-            logger.warn('Device ID is not set!');
+                return;
+            }
 
-            return;
-        }
-
-        amplitude.setDeviceId(uid as any);
-        DefaultPreference.set('amplitudeDeviceId', uid as any);
+            amplitude.setDeviceId(uid as string);
+            DefaultPreference.set('amplitudeDeviceId', uid as string);
+        });
     }
 }
