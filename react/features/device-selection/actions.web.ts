@@ -6,7 +6,7 @@ import {
     setVideoInputDevice
 } from '../base/devices/actions';
 import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
-import { isAndroidMobileBrowser } from '../base/environment/utils';
+import { isMobileBrowser } from '../base/environment/utils';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { updateSettings } from '../base/settings/actions';
 import { getLocalTrack } from '../base/tracks/functions.any';
@@ -86,7 +86,7 @@ export function submitVideoDeviceSelectionTab(newState: any, isDisplayedOnWelcom
 
             // on some android devices the current video stream has to be stopped
             // before creating a new one to replace the old one with
-            if (isAndroidMobileBrowser() && localTrack && !localTrack.muted) {
+            if (isMobileBrowser() && localTrack && !localTrack.muted) {
                 localTrack.jitsiTrack.stopStream();
             }
             dispatch(setVideoInputDevice(newState.selectedVideoInputId));
