@@ -6,10 +6,7 @@ import {
     setVideoInputDevice
 } from '../base/devices/actions';
 import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
-import { isMobileBrowser } from '../base/environment/utils';
-import { MEDIA_TYPE } from '../base/media/constants';
 import { updateSettings } from '../base/settings/actions';
-import { getLocalTrack } from '../base/tracks/functions.any';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
@@ -82,13 +79,6 @@ export function submitVideoDeviceSelectionTab(newState: any, isDisplayedOnWelcom
                 userSelectedCameraDeviceLabel:
                     getDeviceLabelById(getState(), newState.selectedVideoInputId, 'videoInput')
             }));
-            const localTrack = getLocalTrack(getState()['features/base/tracks'], MEDIA_TYPE.VIDEO);
-
-            // on some android devices the current video stream has to be stopped
-            // before creating a new one to replace the old one with
-            if (isMobileBrowser() && localTrack && !localTrack.muted) {
-                localTrack.jitsiTrack.stopStream();
-            }
             dispatch(setVideoInputDevice(newState.selectedVideoInputId));
         }
         if (newState.localFlipX !== currentState.localFlipX) {
