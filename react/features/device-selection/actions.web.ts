@@ -88,10 +88,8 @@ export function submitVideoDeviceSelectionTab(newState: any, isDisplayedOnWelcom
             // before creating a new one to replace the old one with
             if (isAndroidMobileBrowser() && localTrack && !localTrack.muted) {
                 localTrack.jitsiTrack.stopStream();
-                dispatch(setVideoInputDevice(newState.selectedVideoInputId));
-            } else {
-                dispatch(setVideoInputDevice(newState.selectedVideoInputId));
             }
+            dispatch(setVideoInputDevice(newState.selectedVideoInputId));
         }
         if (newState.localFlipX !== currentState.localFlipX) {
             dispatch(updateSettings({
