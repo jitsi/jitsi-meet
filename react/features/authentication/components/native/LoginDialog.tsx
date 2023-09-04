@@ -140,6 +140,7 @@ class LoginDialog extends Component<IProps, IState> {
 
         return (
             <Dialog.Container
+                coverScreen = { false }
                 visible = { true }>
                 <Dialog.Title>
                     { t('dialog.login') }
