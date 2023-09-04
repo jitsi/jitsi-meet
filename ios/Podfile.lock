@@ -385,10 +385,10 @@ PODS:
     - React-Core
   - react-native-splash-screen (3.3.0):
     - React-Core
-  - react-native-video (6.0.0-alpha.1):
+  - react-native-video (6.0.0-alpha.7):
     - React-Core
-    - react-native-video/Video (= 6.0.0-alpha.1)
-  - react-native-video/Video (6.0.0-alpha.1):
+    - react-native-video/Video (= 6.0.0-alpha.7)
+  - react-native-video/Video (6.0.0-alpha.7):
     - PromisesSwift
     - React-Core
   - react-native-webrtc (111.0.3):
@@ -759,7 +759,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
+  react-native-video: 967eead48aaa42c25a9e1d65c3b1ab30762a88df
   react-native-webrtc: 4d1669c2ed29767fe70b0169428b4466589ecf8b
   react-native-webview: 8baa0f5c6d336d6ba488e942bcadea5bf51f050a
   React-perflogger: fdee2a0c512167ae4c19c4e230ccf6aa66a6aff0
