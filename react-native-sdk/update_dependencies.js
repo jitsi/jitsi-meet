@@ -68,7 +68,7 @@ function compareDependencies() {
     updateDependencies();
 
     for (const key in RNSDKpackageJSON.peerDependencies) {
-        versionCompare(packageJSON.dependencies[key], RNSDKpackageJSON.peerDependencies[key], key)
+        versionCompare(packageJSON.dependencies[key], RNSDKpackageJSON.peerDependencies[key], key);
     }
 }
 

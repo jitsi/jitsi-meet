@@ -23,12 +23,14 @@ function versionCompare(v1, v2, dependency) {
         v2parts.push('0');
     }
 
-    v1parts = v1parts.map(function(x){
+    v1parts = v1parts.map((x) => {
         const match = (/[A-Za-zαß]/).exec(x);
+
         return Number(match ? x.replace(match[0], '.' + x.charCodeAt(match.index)) : x);
     });
-    v2parts = v2parts.map(function(x){
+    v2parts = v2parts.map((x) => {
         const match = (/[A-Za-zαß]/).exec(x);
+
         return Number(match ? x.replace(match[0], '.' + x.charCodeAt(match.index)) : x);
     });
 
