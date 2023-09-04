@@ -79,10 +79,8 @@ export function submitVideoDeviceSelectionTab(newState: any, isDisplayedOnWelcom
                 userSelectedCameraDeviceLabel:
                     getDeviceLabelById(getState(), newState.selectedVideoInputId, 'videoInput')
             }));
-
             dispatch(setVideoInputDevice(newState.selectedVideoInputId));
         }
-
         if (newState.localFlipX !== currentState.localFlipX) {
             dispatch(updateSettings({
                 localFlipX: newState.localFlipX

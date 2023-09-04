@@ -14,7 +14,7 @@ import {
     getDeviceIdByLabel,
     groupDevicesByKind
 } from '../base/devices/functions.web';
-import { isIosMobileBrowser } from '../base/environment/utils';
+import { isIosMobileBrowser, isMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
 import {
@@ -97,7 +97,7 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
 export function getVideoDeviceSelectionDialogProps(stateful: IStateful, isDisplayedOnWelcomePage: boolean) {
     // On mobile Safari because of https://bugs.webkit.org/show_bug.cgi?id=179363#c30, the old track is stopped
     // by the browser when a new track is created for preview. That's why we are disabling all previews.
-    const disablePreviews = isIosMobileBrowser();
+    const disablePreviews = isMobileBrowser();
 
     const state = toState(stateful);
     const settings = state['features/base/settings'];
