@@ -1,24 +1,25 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { getConferenceName } from '../../../base/conference/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCloseLarge, IconWarning } from '../../../base/icons/svg';
+import { IconWarning } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
-import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { IPrejoinProps } from '../../types';
 
 import { preJoinStyles as styles } from './styles';
+
 
 const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
@@ -41,25 +42,9 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
         return true;
     }, [ dispatch ]);
 
-    const headerLeft = () => {
-        if (Platform.OS === 'ios') {
-            return (
-                <HeaderNavigationButton
-                    label = { t('dialog.close') }
-                    onPress = { goBack } />
-            );
-        }
-
-        return (
-            <HeaderNavigationButton
-                onPress = { goBack }
-                src = { IconCloseLarge } />
-        );
-    };
-
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft,
+            headerLeft: () => screenHeaderCloseButton(goBack),
             headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);

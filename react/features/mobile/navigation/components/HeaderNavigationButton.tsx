@@ -74,7 +74,7 @@ const HeaderNavigationButton = ({ color, disabled, label, onPress, src, style, t
                         size = { 24 }
                         src = { src }
                         style = { [
-                            navigationStyles.headerNavigationButton,
+                            navigationStyles.headerNavigationButtonIcon,
                             style
                         ] } />
                 ) : (
@@ -87,8 +87,7 @@ const HeaderNavigationButton = ({ color, disabled, label, onPress, src, style, t
                             btnStyle,
                             style
                         ] }
-                        type = { BUTTON_TYPES.TERTIARY }
-                        useRippleColor = { false } />
+                        type = { BUTTON_TYPES.TERTIARY } />
                 )}
         </>
     );

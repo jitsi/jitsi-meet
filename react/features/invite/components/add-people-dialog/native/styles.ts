@@ -116,6 +116,6 @@ export default {
     },
 
     sendBtn: {
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[3]
     }
 };

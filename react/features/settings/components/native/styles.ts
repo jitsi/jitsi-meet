@@ -158,9 +158,17 @@ export default {
         marginTop: BaseTheme.spacing[2]
     },
 
+    languageButtonContainer: {
+        borderRadius: BaseTheme.shape.borderRadius,
+        overflow: 'hidden'
+    },
+
     languageButton: {
+        alignItems: 'center',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        height: BaseTheme.spacing[7],
+        justifyContent: 'center'
     },
 
     languageOption: {
@@ -180,7 +188,7 @@ export default {
     languageText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
-        marginRight: BaseTheme.spacing[3]
+        marginHorizontal: BaseTheme.spacing[2]
     },
 
     /**
@@ -227,10 +235,10 @@ export default {
     },
 
     logBtn: {
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[3]
     },
 
     backBtn: {
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[3]
     }
 };

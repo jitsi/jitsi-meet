@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
-    Platform,
     StyleProp,
     Text,
     TextStyle,
@@ -19,7 +18,6 @@ import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -30,7 +28,7 @@ import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
-import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
@@ -39,6 +37,7 @@ import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 
 import { preJoinStyles as styles } from './styles';
+
 
 const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
@@ -83,22 +82,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         return true;
     }, [ dispatch ]);
 
-    const headerLeft = () => {
-        if (Platform.OS === 'ios') {
-            return (
-                <HeaderNavigationButton
-                    label = { t('dialog.close') }
-                    onPress = { goBack } />
-            );
-        }
-
-        return (
-            <HeaderNavigationButton
-                onPress = { goBack }
-                src = { IconCloseLarge } />
-        );
-    };
-
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
     const joinButtonDisabled = !displayName && isDisplayNameMandatory;
 
@@ -111,7 +94,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft,
+            headerLeft: () => screenHeaderCloseButton(goBack),
             headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);
