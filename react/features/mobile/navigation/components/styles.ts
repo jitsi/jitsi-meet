@@ -43,7 +43,9 @@ export const navigationStyles = {
     },
 
     headerNavigationButton: {
-        marginLeft: BaseTheme.spacing[3]
+        borderRadius: BaseTheme.shape.borderRadius,
+        marginLeft: BaseTheme.spacing[3],
+        padding: BaseTheme.spacing[2]
     },
 
     headerNavigationButtonDisabled: {
