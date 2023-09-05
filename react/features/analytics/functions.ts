@@ -82,6 +82,7 @@ export async function createHandlers({ getState }: IStore) {
     } = config;
     const {
         amplitudeAPPKey,
+        amplitudeIncludeUTM,
         blackListedEvents,
         scriptURLs,
         googleAnalyticsTrackingId,
@@ -92,6 +93,7 @@ export async function createHandlers({ getState }: IStore) {
     const { group, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
+        amplitudeIncludeUTM,
         blackListedEvents,
         envType: deploymentInfo?.envType || 'dev',
         googleAnalyticsTrackingId,
