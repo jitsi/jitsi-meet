@@ -28,6 +28,7 @@ import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
+import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
@@ -36,7 +37,6 @@ import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 
 import { preJoinStyles as styles } from './styles';
-import {screenHeaderCloseButton} from "../../../mobile/navigation/functions";
 
 
 const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {

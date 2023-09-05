@@ -168,7 +168,7 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[7],
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
 
     languageOption: {

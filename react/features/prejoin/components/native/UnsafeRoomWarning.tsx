@@ -13,12 +13,12 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
+import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { IPrejoinProps } from '../../types';
 
 import { preJoinStyles as styles } from './styles';
-import {screenHeaderCloseButton} from "../../../mobile/navigation/functions";
 
 
 const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
