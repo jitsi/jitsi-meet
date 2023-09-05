@@ -30,6 +30,33 @@ import MeetingParticipants from './MeetingParticipants';
 
 const useStyles = makeStyles()(theme => {
     return {
+        participantsPane: {
+            backgroundColor: theme.palette.ui01,
+            flexShrink: 0,
+            overflow: 'hidden',
+            position: 'relative',
+            transition: 'width .16s ease-in-out',
+            width: '315px',
+            zIndex: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            fontWeight: 600,
+            height: '100%',
+
+            [[ '& > *:first-child', '& > *:last-child' ] as any]: {
+                flexShrink: 0
+            },
+
+            '@media (max-width: 580px)': {
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+                right: 0,
+                top: 0,
+                width: '100%'
+            }
+        },
+
         container: {
             boxSizing: 'border-box',
             flex: 1,
@@ -87,7 +114,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 const ParticipantsPane = () => {
-    const { classes } = useStyles();
+    const { classes, cx } = useStyles();
     const paneOpen = useSelector(getParticipantsPaneOpen);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
         .conference?.getBreakoutRooms()?.isSupported();
@@ -136,49 +163,47 @@ const ParticipantsPane = () => {
     }
 
     return (
-        <div className = 'participants_pane'>
-            <div className = 'participants_pane-content'>
-                <div className = { classes.header }>
-                    <ClickableIcon
-                        accessibilityLabel = { t('participantsPane.close', 'Close') }
-                        icon = { IconCloseLarge }
-                        onClick = { onClosePane } />
-                </div>
-                <div className = { classes.container }>
-                    <LobbyParticipants />
-                    <br className = { classes.antiCollapse } />
-                    <MeetingParticipants
-                        searchString = { searchString }
-                        setSearchString = { setSearchString } />
-                    {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
-                    {showAddRoomButton && <AddBreakoutRoomButton />}
-                </div>
-                {showFooter && (
-                    <div className = { classes.footer }>
-                        {showMuteAllButton && (
-                            <Button
-                                accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                labelKey = { 'participantsPane.actions.muteAll' }
-                                onClick = { onMuteAll }
-                                type = { BUTTON_TYPES.SECONDARY } />
-                        )}
-                        {showMoreActionsButton && (
-                            <div className = { classes.footerMoreContainer }>
-                                <Button
-                                    accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
-                                    icon = { IconDotsHorizontal }
-                                    id = 'participants-pane-context-menu'
-                                    onClick = { onToggleContext }
-                                    type = { BUTTON_TYPES.SECONDARY } />
-                                <FooterContextMenu
-                                    isOpen = { contextOpen }
-                                    onDrawerClose = { onDrawerClose }
-                                    onMouseLeave = { onToggleContext } />
-                            </div>
-                        )}
-                    </div>
-                )}
+        <div className = { cx('participants_pane', classes.participantsPane) }>
+            <div className = { classes.header }>
+                <ClickableIcon
+                    accessibilityLabel = { t('participantsPane.close', 'Close') }
+                    icon = { IconCloseLarge }
+                    onClick = { onClosePane } />
             </div>
+            <div className = { classes.container }>
+                <LobbyParticipants />
+                <br className = { classes.antiCollapse } />
+                <MeetingParticipants
+                    searchString = { searchString }
+                    setSearchString = { setSearchString } />
+                {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
+                {showAddRoomButton && <AddBreakoutRoomButton />}
+            </div>
+            {showFooter && (
+                <div className = { classes.footer }>
+                    {showMuteAllButton && (
+                        <Button
+                            accessibilityLabel = { t('participantsPane.actions.muteAll') }
+                            labelKey = { 'participantsPane.actions.muteAll' }
+                            onClick = { onMuteAll }
+                            type = { BUTTON_TYPES.SECONDARY } />
+                    )}
+                    {showMoreActionsButton && (
+                        <div className = { classes.footerMoreContainer }>
+                            <Button
+                                accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
+                                icon = { IconDotsHorizontal }
+                                id = 'participants-pane-context-menu'
+                                onClick = { onToggleContext }
+                                type = { BUTTON_TYPES.SECONDARY } />
+                            <FooterContextMenu
+                                isOpen = { contextOpen }
+                                onDrawerClose = { onDrawerClose }
+                                onMouseLeave = { onToggleContext } />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
