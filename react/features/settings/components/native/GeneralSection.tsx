@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TouchableHighlight, View, ViewStyle } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
