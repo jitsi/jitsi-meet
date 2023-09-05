@@ -158,9 +158,17 @@ export default {
         marginTop: BaseTheme.spacing[2]
     },
 
+    languageButtonContainer: {
+        borderRadius: BaseTheme.shape.borderRadius,
+        overflow: 'hidden'
+    },
+
     languageButton: {
+        alignItems: 'center',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        height: BaseTheme.spacing[7],
+        justifyContent: 'center',
     },
 
     languageOption: {

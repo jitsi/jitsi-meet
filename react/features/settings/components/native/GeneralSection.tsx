@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { TouchableHighlight, View, ViewStyle } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -64,17 +65,17 @@ const GeneralSection = () => {
             </FormRow>}
 
             <FormRow label = 'settings.language'>
-                <TouchableHighlight onPress = { navigateToLanguageSelect }>
-                    <View style = { styles.languageButton as ViewStyle }>
-                        <Text
-                            style = { styles.languageText }>{t(`languages:${language}`)}</Text>
-                        <View>
+                <View style = { styles.languageButtonContainer as ViewStyle }>
+                    <TouchableHighlight onPress = { navigateToLanguageSelect }>
+                        <View style = { styles.languageButton as ViewStyle }>
+                            <Text
+                                style = { styles.languageText }>{t(`languages:${language}`)}</Text>
                             <Icon
                                 size = { 24 }
                                 src = { IconArrowRight } />
                         </View>
-                    </View>
-                </TouchableHighlight>
+                    </TouchableHighlight>
+                </View>
             </FormRow>
         </FormSection>
     );
