@@ -59,19 +59,19 @@ function copyFolderRecursiveSync(source, target) {
  */
 function mergeDependencyVersions() {
 
-    //Updates SDK dependencies to match project dependencies.
+    // Updates SDK dependencies to match project dependencies.
     for (const key in SDKPackageJSON.dependencies) {
-        SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
+        if (SDKPackageJSON.dependencies.hasOwnProperty(key)) {
+            SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
+        }
     }
 
-    //Updates SDK peer dependencies.
+    // Updates SDK peer dependencies.
     for (const key in packageJSON.dependencies) {
         if (SDKPackageJSON.peerDependencies.hasOwnProperty(key)) {
 
             // Updates all peer dependencies except react and react-native.
-            if (key === 'react' || key === 'react-native') {
-                SDKPackageJSON.peerDependencies[key] = SDKPackageJSON.peerDependencies[key];
-            } else {
+            if (key !== 'react' && key !== 'react-native') {
                 SDKPackageJSON.peerDependencies[key] = packageJSON.dependencies[key];
             }
         }
