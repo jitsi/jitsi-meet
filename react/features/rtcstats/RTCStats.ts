@@ -5,164 +5,38 @@ import {
     PC_STATE_FAILED
     // @ts-expect-error
 } from '@jitsi/rtcstats/events';
-// @ts-expect-error
-import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
-// @ts-expect-error
-import traceInit from '@jitsi/rtcstats/trace-ws';
-/* eslint-enable lines-around-comment */
 
-import { createRTCStatsTraceCloseEvent } from '../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../analytics/functions';
+import JitsiMeetJS, { RTCStatsEvents } from '../base/lib-jitsi-meet';
 
 import logger from './logger';
 import {
     DominantSpeakerData,
     E2ERTTData,
     FaceLandmarksData,
-    InitOptions,
     VideoTypeData
 } from './types';
 
 /**
- * Filter out RTCPeerConnection that are created by callstats.io.
- *
- * @param {*} config - Config object sent to the PC c'tor.
- * @returns {boolean}
- */
-function connectionFilter(config: any) {
-    if (config?.iceServers[0] && config.iceServers[0].urls) {
-        for (const iceUrl of config.iceServers[0].urls) {
-            if (iceUrl.indexOf('callstats.io') >= 0) {
-                return true;
-            }
-        }
-    }
-}
-
-/**
- * Class that controls the rtcstats flow, because it overwrites and proxies global function it should only be
- * initialized once.
+ * Handle lib-jitsi-meet rtcstats events and send jitsi-meet specific statistics.
  */
 class RTCStats {
-    trace: any;
-    options?: InitOptions;
-    isPeerConnectionWrapped = false;
-    connStateEvents: any = [];
+    private _connStateEvents: Array<any> = [];
+    private _initialized = false;
 
     /**
-     * Initialize the rtcstats components, if the options have changed.
+     * Handles rtcstats events.
      *
-     * @param {Oject} newOptions -.
      * @returns {void}
      */
-    maybeInit(newOptions: InitOptions) {
-        const oldOptions = this.options;
-        const changed = !oldOptions || (oldOptions.endpoint !== newOptions.endpoint
-            || oldOptions.meetingFqn !== newOptions.meetingFqn
-            || oldOptions.pollInterval !== newOptions.pollInterval
-            || oldOptions.sendSdp !== newOptions.sendSdp
-            || oldOptions.useLegacy !== newOptions.useLegacy);
+    init() {
+        this._connStateEvents = [];
 
-        if (changed) {
-            this.reset();
-
-            if (newOptions.meetingFqn && newOptions.endpoint) {
-                this.init(newOptions);
-            } else {
-                logger.warn('RTCStats is enabled but it has not been configured.');
-            }
+        if (!this._initialized) {
+            JitsiMeetJS.rtcstats.on(
+                RTCStatsEvents.RTC_STATS_PC_EVENT,
+                (pcEvent: any) => this.handleRTCStatsEvent(pcEvent));
+            this._initialized = true;
         }
-    }
-
-    /**
-     * Wrapper method for the underlying trace object to be used as a static reference from inside the wrapped
-     * PeerConnection.
-     *
-     * @param {any[]} data - The stats entry to send to the rtcstats endpoint.
-     * @returns {void}
-     */
-    statsEntry(...data: any[]) {
-        this.trace?.statsEntry(...data);
-    }
-
-    /**
-     * Initialize the rtcstats components. First off we initialize the trace, which is a wrapped websocket
-     * that does the actual communication with the server. Secondly, the rtcstats component is initialized,
-     * it overwrites GUM and PeerConnection global functions and adds a proxy over them used to capture stats.
-     * Note, lib-jitsi-meet takes references to these methods before initializing so the init method needs to be
-     * loaded before it does.
-     *
-     * @param {Object} options -.
-     * @param {string} options.endpoint - The Amplitude app key required.
-     * @param {string} options.meetingFqn - The meeting fqn.
-     * @param {boolean} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
-     * an effect on chrome based applications.
-     * @param {number} options.pollInterval - The getstats poll interval in ms.
-     * @param {boolean} options.sendSdp - Determines if the client sends SDP to the rtcstats server.
-     * @returns {void}
-     */
-    init(options: InitOptions) {
-
-        const { endpoint, meetingFqn, useLegacy, pollInterval, sendSdp } = options;
-
-        const traceOptions = {
-            endpoint,
-            meetingFqn,
-            onCloseCallback: this.handleTraceWSClose.bind(this),
-            useLegacy
-        };
-
-        this.trace = traceInit(traceOptions);
-        if (!this.isPeerConnectionWrapped) {
-            const rtcstatsOptions = {
-                connectionFilter,
-                pollInterval,
-                useLegacy,
-                sendSdp,
-                eventCallback: this.handleRtcstatsEvent.bind(this)
-            };
-
-            const statsEntryCallback = { statsEntry: this.statsEntry.bind(this) };
-
-            rtcstatsInit(statsEntryCallback, rtcstatsOptions);
-            this.isPeerConnectionWrapped = true;
-        }
-        this.options = options;
-    }
-
-    /**
-     * Check whether or not the RTCStats is initialized.
-     *
-     * @returns {boolean}
-     */
-    isInitialized() {
-        return this.options !== undefined;
-    }
-
-    /**
-     * Resets the rtcstats.
-     *
-     * @returns {void}
-     */
-    reset() {
-        delete this.options;
-
-        if (this.trace) {
-            this.trace.close();
-            delete this.trace;
-        }
-    }
-
-    /**
-     * Send identity data to rtcstats server, this will be reflected in the identity section of the stats dump.
-     * It can be generally used to send additional metadata that might be relevant such as amplitude user data
-     * or deployment specific information.
-     *
-     * @param {any} identityData - Metadata object to send as identity.
-     * @returns {void}
-     */
-    sendIdentityData(identityData: any) {
-        this.trace?.identity('identity', null, identityData);
     }
 
     /**
@@ -172,7 +46,7 @@ class RTCStats {
      * @returns {void}
      */
     sendLogs(logEntries: Array<string | any>) {
-        this.trace?.statsEntry('logs', null, logEntries);
+        JitsiMeetJS.rtcstats.sendStatsEntry('logs', logEntries);
     }
 
     /**
@@ -182,7 +56,7 @@ class RTCStats {
      * @returns {void}
      */
     sendDominantSpeakerData(dominantSpeakerData: DominantSpeakerData) {
-        this.trace?.statsEntry('dominantSpeaker', null, dominantSpeakerData);
+        JitsiMeetJS.rtcstats.sendStatsEntry('dominantSpeaker', dominantSpeakerData);
     }
 
     /**
@@ -191,8 +65,8 @@ class RTCStats {
      * @param {Object} e2eRttData - The object that holds the e2e data.
      * @returns {void}
      */
-    sendE2eRttData(e2eRttData: E2ERTTData) {
-        this.trace?.statsEntry('e2eRtt', null, e2eRttData);
+    sendE2ERTTData(e2eRttData: E2ERTTData) {
+        JitsiMeetJS.rtcstats.sendStatsEntry('e2eRtt', e2eRttData);
     }
 
     /**
@@ -203,7 +77,7 @@ class RTCStats {
      * @returns {void}
      */
     sendConferenceTimestamp(timestamp: number) {
-        this.trace?.statsEntry('conferenceStartTimestamp', null, timestamp);
+        JitsiMeetJS.rtcstats.sendStatsEntry('conferenceStartTimestamp', timestamp);
     }
 
     /**
@@ -213,7 +87,7 @@ class RTCStats {
      * @returns {void}
      */
     sendVideoTypeData(videoTypeData: VideoTypeData) {
-        this.trace?.statsEntry('setVideoType', null, videoTypeData);
+        JitsiMeetJS.rtcstats.sendStatsEntry('setVideoType', videoTypeData);
     }
 
     /**
@@ -223,53 +97,32 @@ class RTCStats {
      * @returns {void}
      */
     sendFaceLandmarksData(faceLandmarksData: FaceLandmarksData) {
-        this.trace?.statsEntry('faceLandmarks', null, faceLandmarksData);
-    }
-
-    /**
-     * Connect to the rtcstats server instance. Stats (data obtained from getstats) won't be send until the
-     * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
-     * connected and sent once it is established.
-     *
-     * @param {boolean} isBreakoutRoom - Flag indicating if the user is in a breakout room.
-     * @returns {void}
-     */
-    connect(isBreakoutRoom: boolean) {
-        this.trace?.connect(isBreakoutRoom);
-    }
-
-    /**
-     * Self explanatory; closes the web socked connection.
-     * Note, at the point of writing this documentation there was no method to reset the function overwrites,
-     * thus even if the websocket is closed the global function proxies are still active but send no data,
-     * this shouldn't influence the normal flow of the application.
-     *
-     * @returns {void}
-     */
-    close() {
-        this.trace?.close();
+        JitsiMeetJS.rtcstats.sendStatsEntry('faceLandmarks', faceLandmarksData);
     }
 
     /**
      * RTCStats client can notify the APP of any PeerConnection related event that occurs.
      *
-     * @param {Object} event - Rtcstats event.
+     * @param {Object} event - The PeerConnection event.
+     * @param {string} event.type - The event type.
+     * @param {Object} event.body - Event body.
+     * @param {string} event.body.isP2P - PeerConnection type.
+     * @param {string} event.body.state - PeerConnection state change which triggered the event.
      * @returns {void}
      */
-    handleRtcstatsEvent(event: any) {
+    handleRTCStatsEvent(event: any) {
         switch (event.type) {
         case PC_CON_STATE_CHANGE: {
-            const { body: { isP2P, state } = { state: null,
-                isP2P: null } } = event;
+            const { body: { isP2P = null, state = null } } = event;
 
-            this.connStateEvents.push(event.body);
+            this._connStateEvents.push(event.body);
 
             // We only report PC related connection issues. If the rtcstats websocket is not connected at this point
             // it usually means that none of our services can be reached i.e. there's problem with the internet
             // connection and not necessarily with reaching the JVB (due to a firewall or other reasons).
-            if (state === PC_STATE_FAILED && this.trace.isConnected()) {
+            if (state === PC_STATE_FAILED) {
                 const connectionType = isP2P ? 'P2P' : 'JVB';
-                const wasConnected = this.connStateEvents.some((connectionEvent: { isP2P: any; state: string; }) =>
+                const wasConnected = this._connStateEvents.some((connectionEvent: { isP2P: any; state: string; }) =>
                     (connectionEvent.isP2P === isP2P) && (connectionEvent.state === PC_STATE_CONNECTED));
 
                 logger.info(`${connectionType} PeerConnection failed, previously connected: ${wasConnected}`);
@@ -282,21 +135,6 @@ class RTCStats {
             break;
         }
         }
-    }
-
-    /**
-     * The way rtcstats is currently designed the ws wouldn't normally be closed by the application logic but rather
-     * by the page being closed/reloaded. Using this assumption any onclose event is most likely something abnormal
-     * that happened on the ws. We then track this in order to determine how many rtcstats connection were closed
-     * prematurely.
-     *
-     * @param {Object} closeEvent - Event sent by ws onclose.
-     * @returns {void}
-     */
-    handleTraceWSClose(closeEvent: any) {
-        logger.info('RTCStats trace ws closed', closeEvent);
-
-        sendAnalytics(createRTCStatsTraceCloseEvent(closeEvent));
     }
 }
 
