@@ -1,9 +1,12 @@
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
+import {
+    refreshResizingLargeVideo
+} from './../large-video/actions.web';
 import { updateBackgroundData } from './actions';
 import { extractBackgroundProperties } from './functions';
 
-declare const APP: any;
+declare let APP: any;
 
 /**
  * Updates the room background when participants backgroundData property is updated.
@@ -46,9 +49,9 @@ StateListenerRegistry.register(
 /**
  * When the background of the room is updated, resize the video.
  */
-// StateListenerRegistry.register(
-//     /* selector */ state => state['features/room-background'],
-//     /* listener */(state, { dispatch }) => {
-//         dispatch(refreshResizingLargeVideo(true));
-//     }
-// );
+StateListenerRegistry.register(
+    /* selector */ state => state['features/room-background'],
+    /* listener */(state, { dispatch }) => {
+        dispatch(refreshResizingLargeVideo(true));
+    }
+);

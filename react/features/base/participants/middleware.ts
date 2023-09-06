@@ -81,9 +81,11 @@ import {
 } from './functions';
 import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
-import { IJitsiParticipant } from './types';
+import { IJitsiParticipant, ILocalParticipant, IParticipant } from './types';
 
 import './subscriber';
+
+declare let APP: any;
 
 /**
  * Middleware that captures CONFERENCE_JOINED and CONFERENCE_LEFT actions and
@@ -427,6 +429,11 @@ StateListenerRegistry.register(
             const propertyHandlers: {
                 [key: string]: Function;
             } = {
+                'backgroundData': (_participant: IParticipant, value: string) =>
+                    _backgroundDataUpdated(
+                    store,
+                    getLocalParticipant(store.getState()),
+                    value),
                 'e2ee.enabled': (participant: IJitsiParticipant, value: string) =>
                     _e2eeUpdated(store, conference, participant.getId(), value),
                 'features_e2ee': (participant: IJitsiParticipant, value: boolean) =>
@@ -529,6 +536,35 @@ function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConferen
 
     if (maxMode !== MAX_MODE.THRESHOLD_EXCEEDED || !e2eeEnabled) {
         dispatch(toggleE2EE(e2eeEnabled));
+    }
+}
+
+
+/**
+ * Handles a background update.
+ *
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} localParticipant - Redux state of the local participant.
+ * @param {boolean} newValue - The new value of the serialized background properties.
+ * @returns {void}
+ */
+function _backgroundDataUpdated(
+        { dispatch }: IStore,
+        localParticipant: ILocalParticipant | undefined,
+        newValue: string
+) {
+
+    if (localParticipant?.backgroundData === newValue) {
+        return;
+    }
+
+    // Update the local participant information
+    if (localParticipant) {
+        dispatch(participantUpdated({
+            id: localParticipant.id,
+            local: localParticipant.local,
+            backgroundData: newValue
+        }));
     }
 }
 
@@ -642,7 +678,8 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
         local,
         localRecording,
         name,
-        raisedHandTimestamp
+        raisedHandTimestamp,
+        backgroundData
     } } = action;
 
     // Send an external update of the local participant's raised hand state
@@ -655,6 +692,18 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
             // Send raisedHand signalling only if there is a change
             if (conference && rHand !== getLocalParticipant(getState())?.raisedHandTimestamp) {
                 conference.setLocalParticipantProperty('raisedHand', rHand);
+            }
+        }
+    }
+
+    // Send an external update of the local participant's background color/image state
+    // if a new background color/image state is defined in the action.
+    if (typeof backgroundData !== 'undefined') {
+        if (local) {
+            const { conference } = getState()['features/base/conference'];
+
+            if (conference) {
+                conference.setLocalParticipantProperty('backgroundData', backgroundData);
             }
         }
     }

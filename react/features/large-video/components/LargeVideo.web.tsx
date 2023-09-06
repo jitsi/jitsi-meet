@@ -338,6 +338,29 @@ class LargeVideo extends Component<IProps> {
     }
 }
 
+/**
+ * Returns background properties depending on the states of room-background and dynamic branding.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Object}
+ */
+function _resolveBackground(state: IReduxState) {
+    const dynamicBrandingState = state['features/dynamic-branding'];
+    const { backgroundColor, backgroundImageUrl } = state['features/room-background'];
+
+    if (backgroundColor || backgroundImageUrl) {
+        return {
+            backgroundColor,
+            backgroundImageUrl
+        };
+    }
+
+    return {
+        backgroundColor: dynamicBrandingState.backgroundColor,
+        backgroundImageUrl: dynamicBrandingState.backgroundImageUrl
+    };
+}
 
 /**
  * Maps (parts of) the Redux state to the associated LargeVideo props.
@@ -348,7 +371,7 @@ class LargeVideo extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     const testingConfig = state['features/base/config'].testing;
-    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
+    const { backgroundColor, backgroundImageUrl } = _resolveBackground(state);
     const { isOpen: isChatOpen } = state['features/chat'];
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
     const { defaultLocalDisplayName, hideDominantSpeakerBadge } = state['features/base/config'];

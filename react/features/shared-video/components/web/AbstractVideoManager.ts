@@ -20,6 +20,8 @@ import { PLAYBACK_STATUSES } from '../../constants';
 
 const logger = Logger.getLogger(__filename);
 
+declare let APP: any;
+
 /**
  * Return true if the difference between the two times is larger than 5.
  *

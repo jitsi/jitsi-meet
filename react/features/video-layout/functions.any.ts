@@ -4,7 +4,7 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantCount, getPinnedParticipant } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 import { getReceiverVideoQualityLevel } from '../video-quality/functions';
@@ -126,7 +126,7 @@ export function updateAutoPinnedParticipant(
     // Unpin the screen share when the screen sharing participant leaves. Switch to tile view if no other
     // participant was pinned before screen share was auto-pinned, pin the previously pinned participant otherwise.
     if (!remoteScreenShares?.length) {
-        let participantId = null;
+        let participantId: string | null = null;
 
         if (pinned && !screenShares.find(share => share === pinned.id)) {
             participantId = pinned.id;

@@ -1,4 +1,6 @@
-// @ts-expect-error
+import type { Dispatch } from 'redux';
+
+// @ts-ignore
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { IStore } from '../app/types';
 import { MEDIA_TYPE } from '../base/media/constants';
@@ -78,8 +80,31 @@ export function resizeLargeVideo(width: number, height: number) {
         if (largeVideo) {
             const largeVideoContainer = VideoLayout.getLargeVideo();
 
-            largeVideoContainer.updateContainerSize(width, height);
-            largeVideoContainer.resize();
+            if (largeVideoContainer) {
+                largeVideoContainer.updateContainerSize(width, height);
+                largeVideoContainer.resize();
+            }
+        }
+    };
+}
+
+/**
+ * Resizes the large video elements (adjusted based on the presence of backgrounds).
+ *
+ * @param {boolean} animate - If resize process should be animated.
+ * @returns {Function}
+ */
+export function refreshResizingLargeVideo(animate: boolean) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const largeVideo = state['features/large-video'];
+
+        if (largeVideo) {
+            const largeVideoContainer = VideoLayout.getLargeVideo();
+
+            if (largeVideoContainer) {
+                largeVideoContainer.resize(animate);
+            }
         }
     };
 }
