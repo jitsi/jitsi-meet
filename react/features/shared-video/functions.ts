@@ -1,3 +1,4 @@
+/* global APP */
 import { IStateful } from '../base/app/types';
 import { getFakeParticipants } from '../base/participants/functions';
 

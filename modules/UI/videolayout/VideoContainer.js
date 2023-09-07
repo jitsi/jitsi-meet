@@ -412,17 +412,6 @@ export class VideoContainer extends LargeContainer {
         const width = shouldResizeVideo ? videoWidth * BACKGROUND_RESIZING_RATIO : videoWidth;
         const height = shouldResizeVideo ? videoHeight * BACKGROUND_RESIZING_RATIO : videoHeight;
 
-        console.log({
-            state,
-            currentLayout,
-            backgroundRoomDefined,
-            videoWidth,
-            videoHeight,
-            shouldResizeVideo,
-            width,
-            height
-        });
-
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
             // on the largeVideoElementsContainer. Also if the width/height of the video element is 0 the attached
