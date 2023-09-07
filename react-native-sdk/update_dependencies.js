@@ -23,13 +23,13 @@ function updateDependencies() {
         if (!packageJSON.dependencies.hasOwnProperty(key)) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
-        } else {
-            if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `> ${packageJSON.dependencies[key]}`)) {
-                packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
-                updated = true;
+        }
 
-                console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
-            }
+        if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `> ${packageJSON.dependencies[key]}`)) {
+            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            updated = true;
+
+            console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
         }
     }
 
