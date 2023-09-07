@@ -30,6 +30,8 @@ function updateDependencies() {
             updated = true;
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
+        } else {
+            updated = false;
         }
     }
 
@@ -43,6 +45,8 @@ function updateDependencies() {
     }
 
     if (!updated) {
+        console.log('No updates were applied regarding you dependencies.')
+
         return;
     }
 
