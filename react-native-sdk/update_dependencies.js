@@ -3,6 +3,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const semver = require('semver');
+
 
 const pathToPackageJSON = path.resolve(__dirname, '../../../package.json');
 
@@ -10,7 +12,6 @@ const packageJSON = require(pathToPackageJSON);
 
 const RNSDKpackageJSON = require(path.resolve(__dirname, './package.json'));
 
-const { versionCompare } = require('./compare_dependencies');
 
 /**
  * Updates dependencies from the app package.json with the peer dependencies of the RNSDK package.json.
@@ -22,6 +23,13 @@ function updateDependencies() {
         if (!packageJSON.dependencies.hasOwnProperty(key)) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
+        } else {
+            if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `> ${packageJSON.dependencies[key]}`)) {
+                packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+                updated = true;
+
+                console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
+            }
         }
     }
 
@@ -61,15 +69,4 @@ function updateDependencies() {
     );
 }
 
-/**
- * Updates dependencies from the app package.json with the peer dependencies of the RNSDK package.json.
- */
-function compareDependencies() {
-    updateDependencies();
-
-    for (const key in RNSDKpackageJSON.peerDependencies) {
-        versionCompare(packageJSON.dependencies[key], RNSDKpackageJSON.peerDependencies[key], key);
-    }
-}
-
-compareDependencies();
+updateDependencies();
