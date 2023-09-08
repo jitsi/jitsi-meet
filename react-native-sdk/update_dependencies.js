@@ -1,4 +1,4 @@
-/* eslint-disable guard-for-in no-continue */
+/* eslint-disable guard-for-in, no-continue */
 /* global __dirname */
 
 const fs = require('fs');
