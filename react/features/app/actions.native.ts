@@ -1,4 +1,5 @@
 import { setRoom } from '../base/conference/actions';
+import { getConferenceState } from '../base/conference/functions';
 import {
     configWillLoad,
     loadConfigError,
@@ -32,10 +33,6 @@ import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
-import {MEDIA_TYPE} from "../base/media/constants";
-import {isLocalTrackMuted} from "../base/tracks/functions.native";
-import {setVideoMuted} from "../base/media/actions";
-import {getConferenceState} from "../base/conference/functions";
 
 export * from './actions.any';
 
