@@ -26,7 +26,7 @@ function updateDependencies() {
         }
 
         if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `=${packageJSON.dependencies[key]}`)) {
-            return;
+            continue;
         }
 
         if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `>${packageJSON.dependencies[key]}`)) {
@@ -34,8 +34,6 @@ function updateDependencies() {
             updated = true;
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
-        } else {
-            updated = false;
         }
     }
 
@@ -49,7 +47,7 @@ function updateDependencies() {
     }
 
     if (!updated) {
-        console.log('No updates were applied regarding you dependencies.');
+        console.log('All your dependencies are up to date!');
 
         return;
     }
