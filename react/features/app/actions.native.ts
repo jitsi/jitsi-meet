@@ -32,6 +32,10 @@ import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
+import {MEDIA_TYPE} from "../base/media/constants";
+import {isLocalTrackMuted} from "../base/tracks/functions.native";
+import {setVideoMuted} from "../base/media/actions";
+import {getConferenceState} from "../base/conference/functions";
 
 export * from './actions.any';
 
@@ -74,8 +78,17 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         location.protocol || (location.protocol = 'https:');
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
+        const currentRoom = getState()['features/base/conference'].room;
+        const isInsideTheConference = Boolean(getConferenceState(getState()).conference);
 
         if (room) {
+
+            // We need to check if the participant is inside the conference
+            // so the authentication process does not get blocked.
+            if (room === currentRoom && isInsideTheConference) {
+                return;
+            }
+
             navigateRoot(screen.connecting);
         }
 
@@ -135,6 +148,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
+
         dispatch(setRoom(room));
 
         if (!room) {
