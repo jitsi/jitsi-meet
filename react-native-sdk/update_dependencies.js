@@ -49,7 +49,7 @@ function updateDependencies() {
     }
 
     if (!updated) {
-        console.log('No updates were applied regarding you dependencies.')
+        console.log('No updates were applied regarding you dependencies.');
 
         return;
     }
