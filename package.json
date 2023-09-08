@@ -115,6 +115,7 @@
     "redux-thunk": "2.4.1",
     "resemblejs": "4.0.0",
     "seamless-scroll-polyfill": "2.1.8",
+    "semver": "7.5.4",
     "tss-react": "4.4.4",
     "util": "0.12.1",
     "uuid": "8.3.2",
