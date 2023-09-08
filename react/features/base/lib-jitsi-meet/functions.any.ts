@@ -1,5 +1,5 @@
 import { IStateful } from '../app/types';
-import { ConnectionFailedError } from '../connection/actions.any';
+import { ConnectionFailedError } from '../connection/types';
 import { toState } from '../redux/functions';
 
 import JitsiMeetJS from './_';

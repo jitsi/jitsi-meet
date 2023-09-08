@@ -3,7 +3,9 @@ import _ from 'lodash';
 import { IReduxState, IStore } from '../../app/types';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
+import { IConfigState } from '../config/reducer';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
+import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
     getBackendSafeRoomName
@@ -18,53 +20,14 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
+import { ConnectionFailedError, IIceServers } from './types';
 
 /**
- * The error structure passed to the {@link connectionFailed} action.
- *
- * Note there was an intention to make the error resemble an Error instance (to
- * the extent that jitsi-meet needs it).
+ * The options that will be passed to the JitsiConnection instance.
  */
-export type ConnectionFailedError = {
-
-    /**
-     * The invalid credentials that were used to authenticate and the
-     * authentication failed.
-     */
-    credentials?: {
-
-        /**
-         * The XMPP user's ID.
-         */
-        jid: string;
-
-        /**
-         * The XMPP user's password.
-         */
-        password: string;
-    };
-
-    /**
-     * The details about the connection failed event.
-     */
-    details?: Object;
-
-    /**
-     * Error message.
-     */
-    message?: string;
-
-    /**
-     * One of {@link JitsiConnectionError} constants (defined in
-     * lib-jitsi-meet).
-     */
-    name: string;
-
-    /**
-     * Indicates whether this event is recoverable or not.
-     */
-    recoverable?: boolean;
-};
+interface IOptions extends IConfigState {
+    iceServersOverride?: IIceServers;
+}
 
 /**
  * Create an action for when the signaling connection has been lost.
@@ -147,7 +110,15 @@ export function connectionFailed(
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options = _.cloneDeep(state['features/base/config']);
+    const options: IOptions = _.cloneDeep(state['features/base/config']);
+
+    const { locationURL } = state['features/base/connection'];
+    const params = parseURLParams(locationURL || '');
+    const iceServersOverride = params['iceServers.replace'];
+
+    if (iceServersOverride) {
+        options.iceServersOverride = iceServersOverride;
+    }
 
     const { bosh } = options;
     let { websocket } = options;

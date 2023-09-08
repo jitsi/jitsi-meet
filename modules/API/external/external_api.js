@@ -305,6 +305,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * configuration options defined in config.js to be overridden.
      * @param {Object} [options.interfaceConfigOverwrite] - Object containing
      * configuration options defined in interface_config.js to be overridden.
+     * @param {IIceServers} [options.iceServers] - Object with rules that will be used to modify/remove the existing
+     * ice server configuration.
+     * NOTE: This property is currently experimental and may be removed in the future!
      * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
      * @param {string} [options.lang] - The meeting's default language.
@@ -334,6 +337,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             lang = undefined,
             onload = undefined,
             invitees,
+            iceServers,
             devices,
             userInfo,
             e2eeKey,
@@ -345,6 +349,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._parentNode = parentNode;
         this._url = generateURL(domain, {
             configOverwrite,
+            iceServers,
             interfaceConfigOverwrite,
             jwt,
             lang,
