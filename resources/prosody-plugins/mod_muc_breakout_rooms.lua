@@ -265,7 +265,7 @@ function message_breakout_room(room_jid, textContent, nick)
         breakout_room:broadcast_message(
             st.message({ 
                 from = breakout_room.name .. '/' .. nick,
-                type = 'groupchat
+                type = 'groupchat'
             }):tag('body'):text(textContent)
         );
     end
