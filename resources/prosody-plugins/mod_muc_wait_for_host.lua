@@ -70,6 +70,7 @@ module:hook('muc-occupant-pre-join', function (event)
             module:log('info', 'Host %s arrived in %s.', occupant.bare_jid, room.jid);
             audit_logger('room_jid:%s created_by:%s', room.jid,
                 session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or 'nil');
+            module:fire_event('room_host_arrived', room.jid, session);
             lobby_host:fire_event('destroy-lobby-room', {
                 room = room,
                 newjid = room.jid,
