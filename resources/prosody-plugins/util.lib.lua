@@ -236,9 +236,9 @@ function update_presence_identity(
         if creator_group then
             stanza:tag("creator_group"):text(creator_group):up();
         end
-        stanza:up();
     end
 
+    stanza:up(); -- Close identity tag
 end
 
 -- Utility function to check whether feature is present and enabled. Allow
