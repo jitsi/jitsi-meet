@@ -28,7 +28,9 @@ StateListenerRegistry.register(
     /* listener */(isVisible, store) => {
         const { innerWidth, innerHeight } = window;
 
-        store.dispatch(clientResized(innerWidth, innerHeight));
+        if (isVisible) {
+            store.dispatch(clientResized(innerWidth, innerHeight));
+        }
         VideoLayout.onResize(true);
         setTimeout(() => {
             const container = document.getElementsByClassName('remote-videos')?.[0];
@@ -38,6 +40,8 @@ StateListenerRegistry.register(
                 // eslint-disable-next-line no-extra-parens
                 (container as HTMLElement).style.overflow = 'auto';
             }
-            document.querySelectorAll('span.videocontainer').forEach(span => span.classList.remove('tile-transition'));
+            if (!isVisible) {
+                store.dispatch(clientResized(innerWidth, innerHeight));
+            }
         }, 300);
     });

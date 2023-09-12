@@ -33,15 +33,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (getCurrentLayout(store.getState()) === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
             document.getElementsByClassName('remote-videos')?.[0]?.classList.add('height-transition');
         }
-        if (getCurrentLayout(store.getState()) === LAYOUTS.TILE_VIEW) {
-            document.querySelectorAll('span.videocontainer').forEach(span => span.classList.add('tile-transition'));
-            const container = document.getElementsByClassName('remote-videos');
-
-            if (container.length > 0) {
-                // eslint-disable-next-line no-extra-parens
-                (container[0] as HTMLElement).style.overflow = 'hidden';
-            }
-        }
         break;
     }
 
