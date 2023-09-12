@@ -36,11 +36,8 @@ import { FILMSTRIP_SIZE } from '../../../filmstrip/constants';
 import { isFilmstripVisible } from '../../../filmstrip/functions.native';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
-import { startKnocking } from '../../../lobby/actions.any';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { navigate }
-    from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { shouldEnableAutoKnock } from '../../../mobile/navigation/functions';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
@@ -134,11 +131,6 @@ interface IProps extends AbstractProps {
      * smaller display areas).
      */
     _reducedUI: boolean;
-
-    /**
-     * Indicates if we should auto-knock.
-     */
-    _shouldEnableAutoKnock: boolean;
 
     /**
      * Indicates whether the lobby screen should be visible.
@@ -238,17 +230,11 @@ class Conference extends AbstractConference<IProps, State> {
      */
     componentDidUpdate(prevProps: IProps) {
         const {
-            _shouldEnableAutoKnock,
-            _showLobby,
-            dispatch
+            _showLobby
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
-
-            if (_shouldEnableAutoKnock) {
-                dispatch(startKnocking());
-            }
         }
 
         if (prevProps._showLobby && !_showLobby) {
@@ -600,7 +586,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
-        _shouldEnableAutoKnock: shouldEnableAutoKnock(state),
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)
