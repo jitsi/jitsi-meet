@@ -228,6 +228,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                 <DialInSummary
                     className = 'deep-linking-dial-in'
                     clickableNumbers = { true }
+                    hideError = { true }
                     room = { room }
                     url = { url } />
             </div>
