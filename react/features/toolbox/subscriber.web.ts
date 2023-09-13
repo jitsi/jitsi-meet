@@ -28,20 +28,6 @@ StateListenerRegistry.register(
     /* listener */(isVisible, store) => {
         const { innerWidth, innerHeight } = window;
 
-        if (isVisible) {
-            store.dispatch(clientResized(innerWidth, innerHeight));
-        }
+        store.dispatch(clientResized(innerWidth, innerHeight));
         VideoLayout.onResize(true);
-        setTimeout(() => {
-            const container = document.getElementsByClassName('remote-videos')?.[0];
-
-            if (container) {
-                container.classList.remove('height-transition');
-                // eslint-disable-next-line no-extra-parens
-                (container as HTMLElement).style.overflow = 'auto';
-            }
-            if (!isVisible) {
-                store.dispatch(clientResized(innerWidth, innerHeight));
-            }
-        }, 300);
     });

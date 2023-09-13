@@ -1,14 +1,11 @@
 import { AnyAction } from 'redux';
 
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { LAYOUTS } from '../video-layout/constants';
-import { getCurrentLayout } from '../video-layout/functions.any';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_FULL_SCREEN,
-    SET_TOOLBOX_TIMEOUT,
-    SET_TOOLBOX_VISIBLE
+    SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 
 import './subscriber.web';
@@ -26,13 +23,6 @@ MiddlewareRegistry.register(store => next => action => {
         const { timeoutID } = store.getState()['features/toolbox'];
 
         clearTimeout(timeoutID ?? undefined);
-        break;
-    }
-
-    case SET_TOOLBOX_VISIBLE: {
-        if (getCurrentLayout(store.getState()) === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            document.getElementsByClassName('remote-videos')?.[0]?.classList.add('height-transition');
-        }
         break;
     }
 
