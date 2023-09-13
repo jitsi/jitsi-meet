@@ -32,6 +32,11 @@ interface IProps extends WithTranslation {
     clickableNumbers: boolean;
 
     /**
+     * Whether to hide the error.
+     */
+    hideError?: boolean;
+
+    /**
      * The name of the conference to show a conferenceID for.
      */
     room: string;
@@ -167,14 +172,16 @@ class DialInSummary extends Component<IProps, State> {
         let contents;
 
         const { conferenceID, error, loading, numbersEnabled } = this.state;
-        const { classes, showTitle, room, clickableNumbers, scrollable, t } = this.props;
+        const { classes, hideError, showTitle, room, clickableNumbers, scrollable, t } = this.props;
 
         if (loading) {
             contents = '';
         } else if (numbersEnabled === false) {
             contents = t('info.dialInNotSupported');
         } else if (error) {
-            contents = error;
+            if (!hideError) {
+                contents = error;
+            }
         } else {
             className = clsx(classes.hasNumbers, scrollable && classes.scrollable);
             contents = [

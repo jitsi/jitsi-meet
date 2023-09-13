@@ -10,6 +10,9 @@ import DialInSummary from '../dial-in-summary/web/DialInSummary';
 
 import NoRoomError from './NoRoomError.web';
 
+/**
+ * TODO: This seems unused, so we can drop it.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     // @ts-ignore
     const { room } = parseURLParams(window.location, true, 'search');
