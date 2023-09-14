@@ -588,7 +588,7 @@ var config = {
     // },
 
     // Configs for the lobby screen.
-    // lobby {
+    // lobby: {
     //     // If Lobby is enabled, it starts knocking automatically. Replaces `autoKnockLobby`.
     //     autoKnock: false,
     //     // Enables the lobby chat. Replaces `enableLobbyChat`.
