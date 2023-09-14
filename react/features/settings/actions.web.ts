@@ -69,7 +69,7 @@ export function openLogoutDialog() {
                         return;
                     }
 
-                    conference?.room.moderator.logout(() => dispatch(hangup(true)));
+                    conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
                 }
             }
         }));

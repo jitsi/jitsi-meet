@@ -30,7 +30,7 @@ export function openLogoutDialog() {
 
                     dispatch(hangup(true));
                 } else {
-                    conference?.room.moderator.logout(() => dispatch(hangup(true)));
+                    conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
                 }
             }
         }));
