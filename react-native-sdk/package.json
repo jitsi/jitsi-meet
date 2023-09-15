@@ -25,6 +25,7 @@
         "i18n-iso-countries": "6.8.0",
         "i18next": "17.0.6",
         "js-md5": "0.6.1",
+        "i18next-http-backend": "^2.2.1",
         "js-sha512": "0.8.0",
         "jwt-decode": "2.2.0",
         "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1687.0.0+cafe30d7/lib-jitsi-meet.tgz",
