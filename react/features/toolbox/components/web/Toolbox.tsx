@@ -153,7 +153,7 @@ const useStyles = makeStyles()(() => {
             right: 'auto',
             margin: 0,
             marginBottom: '8px',
-            maxHeight: 'calc(100vh - 100px)',
+            maxHeight: 'calc(100dvh - 100px)',
             minWidth: '240px'
         },
 

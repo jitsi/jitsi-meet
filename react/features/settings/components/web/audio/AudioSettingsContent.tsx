@@ -98,7 +98,7 @@ const useStyles = makeStyles()(theme => {
             right: 'auto',
             margin: 0,
             marginBottom: theme.spacing(1),
-            maxHeight: 'calc(100vh - 100px)',
+            maxHeight: 'calc(100dvh - 100px)',
             overflow: 'auto',
             width: '300px'
         },

@@ -62,7 +62,7 @@ export interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            maxHeight: 'calc(100vh - 100px)',
+            maxHeight: 'calc(100dvh - 100px)',
             overflow: 'auto',
             margin: 0,
             marginBottom: theme.spacing(1),

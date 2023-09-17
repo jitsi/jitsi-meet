@@ -37,7 +37,7 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         drawerMenuContainer: {
-            height: '100vh',
+            height: '100dvh',
             display: 'flex',
             alignItems: 'flex-end'
         },
