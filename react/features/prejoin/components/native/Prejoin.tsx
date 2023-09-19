@@ -2,7 +2,8 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    BackHandler, Platform,
+    BackHandler,
+    Platform,
     StyleProp,
     Text,
     TextStyle,
@@ -18,6 +19,7 @@ import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -33,11 +35,11 @@ import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainer
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
+
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 
 import { preJoinStyles as styles } from './styles';
-import { IconCloseLarge } from '../../../base/icons/svg';
 
 
 const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
@@ -83,6 +85,16 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         return true;
     }, [ dispatch ]);
 
+    const { PRIMARY, TERTIARY } = BUTTON_TYPES;
+    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', goBack);
+
+        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
+
+    }, []);
+
     const headerLeft = () => {
         if (Platform.OS === 'ios') {
             return (
@@ -98,15 +110,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 src = { IconCloseLarge } />
         );
     };
-    const { PRIMARY, TERTIARY } = BUTTON_TYPES;
-    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
-
-    useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', goBack);
-
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
-
-    }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({

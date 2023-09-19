@@ -64,6 +64,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
                 src = { IconCloseLarge } />
         );
     };
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft,
