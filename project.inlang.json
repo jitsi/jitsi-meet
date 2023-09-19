@@ -11,6 +11,7 @@
     "plugin.inlang.i18next": {
         "pathPattern":{"main": "./lang/main-{languageTag}.json"},
         "ignore": [
+            "main",
             "languages.json",
             "translation-languages.json"
         ]
