@@ -59,6 +59,7 @@ export interface IJitsiConference {
     enableLobby: Function;
     end: Function;
     getBreakoutRooms: Function;
+    getConnection: Function;
     getLocalParticipantProperty: Function;
     getLocalTracks: Function;
     getMeetingUniqueId: Function;
