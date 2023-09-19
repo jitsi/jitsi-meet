@@ -1,5 +1,8 @@
 import { setRoom } from '../base/conference/actions';
-import { getConferenceState } from '../base/conference/functions';
+import {
+    getConferenceState,
+    getIsConferenceJoined
+} from '../base/conference/functions';
 import {
     configWillLoad,
     loadConfigError,
@@ -11,6 +14,7 @@ import {
     restoreConfig
 } from '../base/config/functions.native';
 import { connect, disconnect, setLocationURL } from '../base/connection/actions.native';
+import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
@@ -33,6 +37,7 @@ import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
+
 
 export * from './actions.any';
 
@@ -76,13 +81,24 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
         const currentRoom = getState()['features/base/conference'].room;
-        const isInsideTheConference = Boolean(getConferenceState(getState()).conference);
+        const { conference } = getConferenceState(getState());
 
         if (room) {
 
-            // We need to check if the participant is inside the conference
+            // We need to check for the conference
             // so the authentication process does not get blocked.
-            if (room === currentRoom && isInsideTheConference) {
+            if (room === currentRoom && conference) {
+
+                // If participant is not yet inside the conference,
+                // we need to check if the location is the same with the previous one.
+                if (!getIsConferenceJoined(getState())) {
+                    const pastLocationURL = conference.getConnection()[JITSI_CONNECTION_URL_KEY];
+
+                    if (locationURL === pastLocationURL) {
+                        return;
+                    }
+                }
+
                 return;
             }
 
