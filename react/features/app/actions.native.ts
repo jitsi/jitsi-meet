@@ -1,8 +1,5 @@
 import { setRoom } from '../base/conference/actions';
-import {
-    getConferenceState,
-    getIsConferenceJoined
-} from '../base/conference/functions';
+import { getConferenceState } from '../base/conference/functions';
 import {
     configWillLoad,
     loadConfigError,
@@ -90,6 +87,8 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
                 if (currentHostName === hostname  && currentPathName === pathname) {
+                    logger.warn(`Joining same conference using URL: ${currentLocationURL}`);
+
                     return;
                 }
             } else {
