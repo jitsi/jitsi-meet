@@ -78,31 +78,23 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         }
 
         location.protocol || (location.protocol = 'https:');
-        const { contextRoot, host, room } = location;
+        const { contextRoot, host, hostname, pathname, room } = location;
         const locationURL = new URL(location.toString());
-        const currentRoom = getState()['features/base/conference'].room;
         const { conference } = getConferenceState(getState());
 
         if (room) {
+            if (conference) {
 
-            // We need to check for the conference
-            // so the authentication process does not get blocked.
-            if (room === currentRoom && conference) {
+                // We need to check if the location is the same with the previous one.
+                const currentLocationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
+                const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
-                // If participant is not yet inside the conference,
-                // we need to check if the location is the same with the previous one.
-                if (!getIsConferenceJoined(getState())) {
-                    const pastLocationURL = conference.getConnection()[JITSI_CONNECTION_URL_KEY];
-
-                    if (locationURL === pastLocationURL) {
-                        return;
-                    }
+                if (currentHostName === hostname  && currentPathName === pathname) {
+                    return;
                 }
-
-                return;
+            } else {
+                navigateRoot(screen.connecting);
             }
-
-            navigateRoot(screen.connecting);
         }
 
         dispatch(disconnect());
