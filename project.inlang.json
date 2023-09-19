@@ -1,0 +1,18 @@
+{
+    "sourceLanguageTag": "en",
+    "languageTags": ["af","ar","be","bg","ca","cs","da","de","dsb","el","eo","es","esUs","et","eu","fa","fi","fr","frCA","gl","he","hi","hr","hsb","hu","hy","is","it","ja","kab","ko","lt","iv","ml","mn","mr","nl","oc","pl","pt","ptBR","ro","ru","sc","sk","sl","sq","sr","sv","te","tr","uk","vi","zhCN","zhTW"],
+    "modules": [
+        "https://cdn.jsdelivr.net/npm/@inlang/plugin-i18next@4/dist/index.js",
+        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-empty-pattern@1/dist/index.js",
+        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-identical-pattern@1/dist/index.js",
+        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-without-source@1/dist/index.js",
+        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-missing-translation@1/dist/index.js"
+    ],
+    "plugin.inlang.i18next": {
+        "pathPattern":{"main": "./lang/main-{languageTag}.json"},
+        "ignore": [
+            "languages.json",
+            "translation-languages.json"
+        ]
+    }
+}
