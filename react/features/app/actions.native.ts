@@ -86,7 +86,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 const currentLocationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
                 const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
-                if (currentHostName === hostname  && currentPathName === pathname) {
+                if (currentHostName === hostname && currentPathName === pathname) {
                     logger.warn(`Joining same conference using URL: ${currentLocationURL}`);
 
                     return;
