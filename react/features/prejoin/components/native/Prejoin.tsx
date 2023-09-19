@@ -35,7 +35,6 @@ import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainer
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 
