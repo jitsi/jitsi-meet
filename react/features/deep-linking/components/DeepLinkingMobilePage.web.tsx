@@ -30,7 +30,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         container: {
             background: '#1E1E1E',
             width: '100vw',
-            height: '100vh',
+            height: '100dvh',
             overflowX: 'hidden',
             overflowY: 'auto',
             justifyContent: 'center',
