@@ -154,17 +154,17 @@ $reactionCount: 20;
 	}
 
 	70% {
-		transform: translate(40px, -70vh) scale(1.5);
+		transform: translate(40px, -70dvh) scale(1.5);
 		opacity: 1;
 	}
 
 	75% {
-		transform: translate(40px, -70vh) scale(1.5);
+		transform: translate(40px, -70dvh) scale(1.5);
 		opacity: 1;
 	}
 
 	100% {
-		transform: translate(140px, -50vh) scale(1);
+		transform: translate(140px, -50dvh) scale(1);
 		opacity: 0;
 	}
 }
@@ -187,17 +187,17 @@ $reactionCount: 20;
 			}
 
 			70% {
-				transform: translate(#{$topX}px, -#{$topY}vh) scale(1.5);
+				transform: translate(#{$topX}px, -#{$topY}dvh) scale(1.5);
 				opacity: 1;
 			}
 
 			75% {
-				transform: translate(#{$topX}px, -#{$topY}vh) scale(1.5);
+				transform: translate(#{$topX}px, -#{$topY}dvh) scale(1.5);
 				opacity: 1;
 			}
 
 			100% {
-				transform: translate(#{$bottomX}px, -#{$bottomY}vh) scale(1);
+				transform: translate(#{$bottomX}px, -#{$bottomY}dvh) scale(1);
 				opacity: 0;
 			}
 		}

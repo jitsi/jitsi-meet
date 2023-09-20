@@ -93,7 +93,7 @@ const styles = (theme: Theme) => {
             color: theme.palette.text01
         },
         scrollable: {
-            height: '100vh',
+            height: '100dvh',
             overflowY: 'scroll' as const
         },
         roomName: {

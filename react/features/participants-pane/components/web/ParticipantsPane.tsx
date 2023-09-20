@@ -48,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '@media (max-width: 580px)': {
-                height: '100vh',
+                height: '100dvh',
                 position: 'fixed',
                 left: 0,
                 right: 0,

@@ -1,19 +1,26 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import {
+    Platform,
+    StyleProp,
+    Text,
+    TextStyle,
+    View,
+    ViewStyle
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { getConferenceName } from '../../../base/conference/functions';
 import Icon from '../../../base/icons/components/Icon';
-import { IconWarning } from '../../../base/icons/svg';
+import { IconCloseLarge, IconWarning } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
-import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
+import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { IPrejoinProps } from '../../types';
@@ -42,9 +49,25 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
         return true;
     }, [ dispatch ]);
 
+    const headerLeft = () => {
+        if (Platform.OS === 'ios') {
+            return (
+                <HeaderNavigationButton
+                    label = { t('dialog.close') }
+                    onPress = { goBack } />
+            );
+        }
+
+        return (
+            <HeaderNavigationButton
+                onPress = { goBack }
+                src = { IconCloseLarge } />
+        );
+    };
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft: () => screenHeaderCloseButton(goBack),
+            headerLeft,
             headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);

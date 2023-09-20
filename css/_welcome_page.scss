@@ -10,7 +10,7 @@ body.welcome-page {
     flex-direction: column;
     font-family: $welcomePageFontFamily;
     justify-content: space-between;
-    min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
 
     .header {
