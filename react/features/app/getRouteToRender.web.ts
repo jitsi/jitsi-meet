@@ -1,12 +1,13 @@
 // @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 
-import { getTokenAuthUrl } from '../authentication/functions';
+import { getTokenAuthUrl } from '../authentication/functions.web';
 import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
 import { isSupportedBrowser } from '../base/environment/environment';
 import { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
+import { parseURIString } from '../base/util/uri';
 import Conference from '../conference/components/web/Conference';
 import { getDeepLinkingPage } from '../deep-linking/functions';
 import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
@@ -52,9 +53,16 @@ function _getWebConferenceRoute(state: IReduxState) {
     if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
             && state['features/authentication'].tokenAuthUrlSuccessful
             && !state['features/base/jwt'].jwt && room) {
-        route.href = getTokenAuthUrl(config, room);
+        const { locationURL = { href: '' } } = state['features/base/connection'];
+        const { tenant } = parseURIString(locationURL.href) || {};
 
-        return Promise.resolve(route);
+        return getTokenAuthUrl(config, room, tenant)
+            .then((url: string | undefined) => {
+                route.href = url;
+
+                return route;
+            })
+            .catch(() => Promise.resolve(route));
     }
 
     // Update the location if it doesn't match. This happens when a room is
