@@ -47,7 +47,7 @@ module:hook('muc-occupant-pre-join', function (event)
 
     -- we ignore jicofo as we want it to join the room or if the room has already seen its
     -- authenticated host
-    if is_admin(occupant.bare_jid) or room.has_host then
+    if is_admin(occupant.bare_jid) or is_healthcheck_room(room.jid) or room.has_host then
         return;
     end
 

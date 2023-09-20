@@ -81,7 +81,7 @@ module:hook('muc-occupant-pre-join', function (event)
     local room, stanza = event.room, event.stanza;
 
     -- we skip processing only if jicofo_lock is set to false
-    if room._data.jicofo_lock == false or is_healthcheck_room(stanza.attr.from) then
+    if room._data.jicofo_lock == false or is_healthcheck_room(room.jid) then
         return;
     end
 
