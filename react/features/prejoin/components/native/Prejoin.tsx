@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
+    Platform,
     StyleProp,
     Text,
     TextStyle,
@@ -18,6 +19,7 @@ import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -28,7 +30,7 @@ import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
-import { screenHeaderCloseButton } from '../../../mobile/navigation/functions';
+import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
@@ -92,9 +94,25 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     }, []);
 
+    const headerLeft = () => {
+        if (Platform.OS === 'ios') {
+            return (
+                <HeaderNavigationButton
+                    label = { t('dialog.close') }
+                    onPress = { goBack } />
+            );
+        }
+
+        return (
+            <HeaderNavigationButton
+                onPress = { goBack }
+                src = { IconCloseLarge } />
+        );
+    };
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft: () => screenHeaderCloseButton(goBack),
+            headerLeft,
             headerTitle: t('prejoin.joinMeeting')
         });
     }, [ navigation ]);
