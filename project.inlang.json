@@ -9,10 +9,7 @@
         "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-missing-translation@1/dist/index.js"
     ],
     "plugin.inlang.i18next": {
-        "pathPattern":{"main": "./lang/main-{languageTag}.json"},
-        "ignore": [
-            "languages.json",
-            "translation-languages.json"
-        ]
+        "pathPattern": "./lang/main-{languageTag}.json",
+        "sourceLanguageFilePath": "./lang/main.json"
     }
 }
