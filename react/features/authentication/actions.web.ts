@@ -2,7 +2,6 @@ import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
-import { appendURLHashParam } from '../base/util/uri';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
@@ -57,14 +56,10 @@ export function redirectToDefaultLocation() {
 export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const redirect = () => {
-            // We have already shown the prejoin screen, no need to show it again after obtaining the token.
-            let url = appendURLHashParam(tokenAuthServiceUrl, 'skipPrejoin', 'true');
-
             if (browser.isElectron()) {
-                url = appendURLHashParam(url, 'electron', 'true');
-                window.open(url, '_blank');
+                window.open(tokenAuthServiceUrl, '_blank');
             } else {
-                window.location.href = url;
+                window.location.href = tokenAuthServiceUrl;
             }
         };
 

@@ -1,11 +1,10 @@
-import { Linking, Platform } from 'react-native';
+import { Linking } from 'react-native';
 
 import { appNavigate } from '../app/actions.native';
 import { IStore } from '../app/types';
 import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
-import { appendURLHashParam } from '../base/util/uri';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
@@ -85,12 +84,7 @@ export function redirectToDefaultLocation() {
  * @returns {Function}
  */
 export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
-    let url = appendURLHashParam(tokenAuthServiceUrl, 'skipPrejoin', 'true');
-
-    // Append ios=true or android=true to the token URL.
-    url = appendURLHashParam(url, Platform.OS, 'true');
-
     return () => {
-        Linking.openURL(url);
+        Linking.openURL(tokenAuthServiceUrl);
     };
 }

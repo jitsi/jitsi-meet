@@ -14,7 +14,7 @@ import {
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { getBackendSafeRoomName } from '../base/util/uri';
+import { parseURIString } from '../base/util/uri';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
@@ -254,7 +254,9 @@ function _isWaitingForOwner({ getState }: IStore) {
 function _handleLogin({ dispatch, getState }: IStore) {
     const state = getState();
     const config = state['features/base/config'];
-    const room = getBackendSafeRoomName(state['features/base/conference'].room);
+    const room = state['features/base/conference'].room;
+    const { locationURL = { href: '' } } = state['features/base/connection'];
+    const { tenant } = parseURIString(locationURL.href) || {};
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -268,16 +270,16 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    // FIXME: This method will not preserve the other URL params that were originally passed.
-    const tokenAuthServiceUrl = getTokenAuthUrl(config, room);
+    getTokenAuthUrl(config, room, tenant, true)
+        .then((tokenAuthServiceUrl: string | undefined) => {
+            if (!tokenAuthServiceUrl) {
+                logger.warn('Cannot handle login, token service URL is not set');
 
-    if (!tokenAuthServiceUrl) {
-        logger.warn('Cannot handle login, token service URL is not set');
+                return;
+            }
 
-        return;
-    }
-
-    dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+            return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+        });
 }
 
 /**
