@@ -5,17 +5,17 @@
         "countryReminder": "Выклік не ў ЗША? Калі ласка, пераканайцеся, што паказалі код краіны!",
         "disabled": "Пошук не даў выніку.",
         "failedToAdd": "Не атрымалася дадаць удзельнікаў",
+        "noResults": "Пошук не даў выніку",
+        "telephone": "Нумар: {{number}}",
+        "title": "Запрасіць людзей на гэтую сустрэчу",
         "footerText": "Выклік нумара адключаны.",
         "loading": "Пошук людзей і нумароў тэлефонаў",
         "loadingNumber": "Праверка нумара тэлефона",
         "loadingPeople": "Пошук людзей для запрашэння",
-        "noResults": "Пошук не даў выніку",
         "noValidNumbers": "Калі ласка, увядзіце нумар тэлефона",
         "searchNumbers": "Дадаць нумары тэлефонаў",
         "searchPeople": "Пошук людзей",
-        "searchPeopleAndNumbers": "Пошук людзей або даданне іх тэлефонаў",
-        "telephone": "Нумар: {{number}}",
-        "title": "Запрасіць людзей на гэтую сустрэчу"
+        "searchPeopleAndNumbers": "Пошук людзей або даданне іх тэлефонаў"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -93,12 +93,6 @@
         "connectedTo": "Падключаны да:",
         "framerate": "Частата кадраў:",
         "less": "Кароткая інфармацыя",
-        "localaddress_0": "Мясцовы адрас:",
-        "localaddress_1": "Мясцовыя адраса:",
-        "localaddress_2": "Мясцовыя адраса:",
-        "localport_0": "Мясцовы порт:",
-        "localport_1": "Мясцовыя парты:",
-        "localport_2": "Мясцовыя парты:",
         "more": "Падрабязная інфармацыя",
         "packetloss": "Страты пакетаў:",
         "quality": {
@@ -108,14 +102,20 @@
             "nonoptimal": "неаптымальна",
             "poor": "дрэнна"
         },
+        "resolution": "Дазвол:",
+        "status": "Сувязь:",
+        "localaddress_0": "Мясцовы адрас:",
+        "localaddress_1": "Мясцовыя адраса:",
+        "localaddress_2": "Мясцовыя адраса:",
+        "localport_0": "Мясцовы порт:",
+        "localport_1": "Мясцовыя парты:",
+        "localport_2": "Мясцовыя парты:",
         "remoteaddress_0": "Аддалёны адрас:",
         "remoteaddress_1": "Аддалёныя адраса:",
         "remoteaddress_2": "Аддалёныя адраса:",
         "remoteport_0": "Адлеглы порт:",
         "remoteport_1": "Адлеглыя парты:",
         "remoteport_2": "Адлеглыя парты:",
-        "resolution": "Дазвол:",
-        "status": "Сувязь:",
         "transport_0": "Метад адпраўкі:",
         "transport_1": "Метады адпраўкі:",
         "transport_2": "Метады адпраўкі:"
@@ -131,9 +131,9 @@
         "descriptionWithoutWeb": "Нічога не адбылося? Мы паспрабавалі запусціць вашу канферэнцыю ў настольным дадатку {{app}}.",
         "downloadApp": "Спампаваць дадатак",
         "launchWebButton": "Запусціць у браўзеры",
-        "openApp": "Перайсці да дадатку",
         "title": "Запуск вашай сустрэчы ў {{app}} …",
-        "tryAgainButton": "Паўтарыце ў настольным дадатку"
+        "tryAgainButton": "Паўтарыце ў настольным дадатку",
+        "openApp": "Перайсці да дадатку"
     },
     "defaultLink": "напр. {{url}}",
     "defaultNickname": "напр. Яна Цвяткова",
@@ -161,7 +161,6 @@
         "Share": "Падзяліцца",
         "Submit": "Адправіць",
         "WaitForHostMsg": "Канферэнцыя яшчэ не пачалася. Калі вы з'яўляецеся гаспадаром, калі ласка, падтвердіце сапраўднасць. У адваротным выпадку, калі ласка, пачакайце з'яўлення гаспадара.",
-        "WaitingForHost": "Чакаем арганізатара …",
         "Yes": "Так",
         "accessibilityLabel": {
             "liveStreaming": "Трансляцыя"
@@ -195,14 +194,9 @@
         "done": "Зроблена",
         "enterDisplayName": "Калі ласка, увядзіце сваё імя",
         "error": "Памылка",
-        "externalInstallationMsg": "Вам неабходна ўсталяваць наш дадатак для сумеснага скарыстання працоўнага стала.",
-        "externalInstallationTitle": "Патрабуецца пашырэнне",
-        "goToStore": "Перайсці да інтэрнэт-крамы",
         "gracefulShutdown": "тэхнічныя работы. Калі ласка, паспрабуйце пазней.",
         "incorrectPassword": "Памылка імя карыстальніка або пароля",
         "incorrectRoomLockPassword": "Няправільны пароль",
-        "inlineInstallExtension": "Усталяваць",
-        "inlineInstallationMsg": "Вам неабходна ўсталяваць нашу праграму для сумеснага выкарыстання працоўнага стала.",
         "internalError": "Што-та пайшло не так. Памылка: {{error}}",
         "internalErrorTitle": "Унутраная памылка",
         "kickMessage": "Вы можаце звязацца з {{participantDisplayName}} для атрымання больш падрабязнай інфармацыі.",
@@ -211,8 +205,6 @@
         "kickParticipantTitle": "Выдалiць гэтага ўдзельніка?",
         "kickTitle": "Ой! {{participantDisplayName}} выдалiў вас з канферэнцыі",
         "liveStreaming": "Трансляцыя",
-        "liveStreamingDisabledForGuestTooltip": "Госці не могуць пачаць трансляцыю.",
-        "liveStreamingDisabledTooltip": "Магчымасць трансляцыі адключаная.",
         "lockMessage": "Не атрымалася зачыніць канферэнцыю.",
         "lockRoom": "Дадаць канферэнцыю $t(lockRoomPasswordUppercase)",
         "lockTitle": "Блакаванне не атрымалася",
@@ -234,17 +226,11 @@
         "muteEveryoneTitle": "Заглушыць ўсіх?",
         "muteParticipantBody": "Вы не можаце ўключыць ім гук, але яны могуць зрабіць гэта самі ў любы момант.",
         "muteParticipantButton": "Выключыць гук",
-        "muteParticipantDialog": "Вы ўпэўненыя, што жадаеце адключыць мікрафон у дадзенага карыстальніка? Вы не зможаце адмяніць гэтае дзеянне, аднак ён зможа сам зноў уключыць мікрафон у любы момант.",
-        "muteParticipantTitle": "прыглушыць гэтага ўдзельніка?",
         "passwordLabel": "Сустрэча была заблакаваная ўдзельнікам. Калі ласка, увядзіце $t(lockRoomPassword), каб далучыцца.",
         "passwordNotSupported": "Усталяванне $t(lockRoomPassword) для канферэнцыі не падтрымліваецца.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) не падтрымліваецца",
         "passwordRequired": "Патрабуецца $t(lockRoomPasswordUppercase)",
-        "popupError": "Ваш браўзер блакуе ўсплывальныя вокны гэтага сайта. Калі ласка, дазвольце ўсплывальныя вокны ў перавагах бясьпекі браўзэра і паспрабуйце зноў.",
-        "popupErrorTitle": "Заблакавана ўсплывальнае акно",
         "recording": "Запіс",
-        "recordingDisabledForGuestTooltip": "Госці не могуць запісваць.",
-        "recordingDisabledTooltip": "Немагчыма пачаць запіс.",
         "rejoinNow": "Падключыцца зноў",
         "remoteControlAllowedMessage": "{{user}} прыняў ваш запыт на выдаленае кіраванне!",
         "remoteControlDeniedMessage": "{{user}} адхіліў ваш запыт на выдаленае кіраванне!",
@@ -260,10 +246,6 @@
         "reservationErrorMsg": "Код памылкі: {{code}}, паведамленне: {{msg}}",
         "retry": "Паўтарыць",
         "screenSharingAudio": "Падзяліцца аўдыё",
-        "screenSharingFailedToInstall": "Усталяваць не пашырэння для паказу экрана.",
-        "screenSharingFailedToInstallTitle": "Пашырэнне для паказу экрана не ўстаноўлена",
-        "screenSharingFirefoxPermissionDeniedError": "Што-та пайшло не так, калі мы спрабавалі падзяліцца вашым экранам. Калі ласка, пераканайцеся, што вы далі нам дазвол на гэта. ",
-        "screenSharingFirefoxPermissionDeniedTitle": "Памылка паказу экрана!",
         "screenSharingPermissionDeniedError": "Памылка доступу да вашага пашырэння для паказу экрана. Калі ласка, перазапусціце браўзэр і паспрабуйце зноў.",
         "sendPrivateMessage": "Вы нядаўна атрымалі асабістае паведамленне. Вы хацелі адказаць на яго, або адправіць сваё паведамленне групе?",
         "sendPrivateMessageCancel": "Апублікаваць у агульны чат",
@@ -275,7 +257,6 @@
         "shareVideoTitle": "Падзяліцца відэа",
         "shareYourScreen": "Паказаць экран",
         "shareYourScreenDisabled": "Дэманстрацыя экрана адключаная.",
-        "shareYourScreenDisabledForGuest": "Госці не могуць дэманстраваць экран.",
         "startLiveStreaming": "Пачаць трансляцыю",
         "startRecording": "Пачаць запіс",
         "startRemoteControlErrorMessage": "Памылка пачатку сесіі аддаленага кіравання!",
@@ -291,7 +272,26 @@
         "transcribing": "Расшыфроўка",
         "unlockRoom": "Прыбраць $t(lockRoomPassword)",
         "userPassword": "пароль карыстальніка",
-        "yourEntireScreen": "Увесь экран"
+        "yourEntireScreen": "Увесь экран",
+        "WaitingForHost": "Чакаем арганізатара …",
+        "externalInstallationMsg": "Вам неабходна ўсталяваць наш дадатак для сумеснага скарыстання працоўнага стала.",
+        "externalInstallationTitle": "Патрабуецца пашырэнне",
+        "goToStore": "Перайсці да інтэрнэт-крамы",
+        "inlineInstallExtension": "Усталяваць",
+        "inlineInstallationMsg": "Вам неабходна ўсталяваць нашу праграму для сумеснага выкарыстання працоўнага стала.",
+        "liveStreamingDisabledForGuestTooltip": "Госці не могуць пачаць трансляцыю.",
+        "liveStreamingDisabledTooltip": "Магчымасць трансляцыі адключаная.",
+        "muteParticipantDialog": "Вы ўпэўненыя, што жадаеце адключыць мікрафон у дадзенага карыстальніка? Вы не зможаце адмяніць гэтае дзеянне, аднак ён зможа сам зноў уключыць мікрафон у любы момант.",
+        "muteParticipantTitle": "прыглушыць гэтага ўдзельніка?",
+        "popupError": "Ваш браўзер блакуе ўсплывальныя вокны гэтага сайта. Калі ласка, дазвольце ўсплывальныя вокны ў перавагах бясьпекі браўзэра і паспрабуйце зноў.",
+        "popupErrorTitle": "Заблакавана ўсплывальнае акно",
+        "recordingDisabledForGuestTooltip": "Госці не могуць запісваць.",
+        "recordingDisabledTooltip": "Немагчыма пачаць запіс.",
+        "screenSharingFailedToInstall": "Усталяваць не пашырэння для паказу экрана.",
+        "screenSharingFailedToInstallTitle": "Пашырэнне для паказу экрана не ўстаноўлена",
+        "screenSharingFirefoxPermissionDeniedError": "Што-та пайшло не так, калі мы спрабавалі падзяліцца вашым экранам. Калі ласка, пераканайцеся, што вы далі нам дазвол на гэта. ",
+        "screenSharingFirefoxPermissionDeniedTitle": "Памылка паказу экрана!",
+        "shareYourScreenDisabledForGuest": "Госці не могуць дэманстраваць экран."
     },
     "documentSharing": {
         "title": "Агульны Дакумент"
@@ -304,9 +304,6 @@
         "rateExperience": "Ацэнка якасці сувязі",
         "veryBad": "Вельмі дрэнна",
         "veryGood": "Вельмі добра"
-    },
-    "helpView": {
-        "title": "Цэнтар дапамогi"
     },
     "incomingCall": {
         "answer": "Адказ",
@@ -452,7 +449,6 @@
         "disconnected": "злучэнне разарвана",
         "focus": "Фокус сустрэчы",
         "focusFail": "{{component}} недаступны, паўторыце праз {{ms}} з",
-        "grantedTo": "{{to}} атрымаў правы мадэратара!",
         "invitedOneMember": "{{name}} быў запрошаны",
         "invitedThreePlusMembers": "Запрошаны {{name}} і {{count}} іншых карыстальнікаў (ля)",
         "invitedTwoMembers": "{{first}} і {{second}} далучыліся да канферэнцыі",
@@ -474,7 +470,8 @@
         "startSilentTitle": "У вас адсутнічае гук!",
         "suboptimalBrowserWarning": "На жаль, ваш браўзэр не цалкам падтрымлівае дадзеную сістэму вэб-канференцый. Мы працуем над праблемай, аднак, пакуль рэкамендуем вам скарыстацца <a href='{{recommendedBrowserPageLink}}' target='_blank'> наступнымі браўзэрамі</a >.",
         "suboptimalExperienceTitle": "Папярэджанне браўзэра",
-        "unmute": "Уключыць мікрафон"
+        "unmute": "Уключыць мікрафон",
+        "grantedTo": "{{to}} атрымаў правы мадэратара!"
     },
     "passwordDigitsOnly": "Да {{number}} лічбаў",
     "passwordSetRemotely": "устаноўлены іншым удзельнікам",
@@ -684,15 +681,15 @@
         "speakerStats": "Статыстыка",
         "startScreenSharing": "Пачаць трансляцыю з экрана",
         "startSubtitles": "Уключыць субтытры",
-        "startvideoblur": "размыць фон на відэа",
         "stopScreenSharing": "Спыніць трансляцыю з экрана",
         "stopSharedVideo": "Спыніць відэа на YouTube",
         "stopSubtitles": "Адключыць субтытры",
-        "stopvideoblur": "Адключыць размыццё фону",
         "talkWhileMutedPopup": "Спрабуеце казаць? У вас адключаны гук.",
         "tileViewToggle": "Укл/Выкл плітку",
         "toggleCamera": "Укл/Выкл камеру",
-        "videomute": "Камера"
+        "videomute": "Камера",
+        "startvideoblur": "размыць фон на відэа",
+        "stopvideoblur": "Адключыць размыццё фону"
     },
     "transcribing": {
         "ccButtonTooltip": "Укл. / Выкл. Субтытры",
@@ -740,11 +737,11 @@
         "ld": "LD",
         "ldTooltip": "Відэа нізкай якасці",
         "lowDefinition": "Нізкая якасць",
-        "onlyAudioAvailable": "Толькі гук",
-        "onlyAudioSupported": "У гэтым браўзэры дазволены толькі гук.",
         "sd": "SD",
         "sdTooltip": "Відэа стандартнага якасці",
-        "standardDefinition": "Стандартнае якасць (SD)"
+        "standardDefinition": "Стандартнае якасць (SD)",
+        "onlyAudioAvailable": "Толькі гук",
+        "onlyAudioSupported": "У гэтым браўзэры дазволены толькі гук."
     },
     "videothumbnail": {
         "domute": "Выключыць гук",
@@ -788,5 +785,8 @@
         "sendFeedback": "Зваротная сувязь",
         "terms": "Умовы",
         "title": "Абароненая, поўнафункцыянальная і цалкам бясплатная сістэма відэаканферэнцый"
+    },
+    "helpView": {
+        "title": "Цэнтар дапамогi"
     }
 }

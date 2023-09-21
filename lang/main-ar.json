@@ -333,8 +333,6 @@
         "permissionCameraRequiredError": "مطلوب إذن الكاميرا للمشاركة في المؤتمرات بالفيديو. يرجى منحه في الإعدادات",
         "permissionErrorTitle": "الإذن مطلوب",
         "permissionMicRequiredError": "مطلوب إذن الميكروفون للمشاركة في المؤتمرات مع الصوت. يرجى منحه في الإعدادات",
-        "popupError": "يمنع متصفحك النوافذ المنبثقة من هذا الموقع. فعِّل رجاءً النوافذ المنبثقة في المتصفح من إعدادات الحماية وحاول مرة أخرى.",
-        "popupErrorTitle": "النوافذ المنبثقة محجوبة.",
         "readMore": "أكثر",
         "recentlyUsedObjects": "الأشياء المستخدمة مؤخرًا",
         "recording": "قيد التسجيل",
@@ -410,7 +408,9 @@
         "viewUpgradeOptions": "عرض خيارات الترقية",
         "viewUpgradeOptionsContent": "للحصول على وصول غير محدود إلى الميزات المتميزة مثل التسجيل والنسخ وتدفق RTMP والمزيد ، ستحتاج إلى ترقية خطتك.",
         "viewUpgradeOptionsTitle": "لقد اكتشفت ميزة مميزة!",
-        "yourEntireScreen": "شاشتك كاملةً"
+        "yourEntireScreen": "شاشتك كاملةً",
+        "popupError": "يمنع متصفحك النوافذ المنبثقة من هذا الموقع. فعِّل رجاءً النوافذ المنبثقة في المتصفح من إعدادات الحماية وحاول مرة أخرى.",
+        "popupErrorTitle": "النوافذ المنبثقة محجوبة."
     },
     "documentSharing": {
         "title": "الملف المشارك"
@@ -434,9 +434,6 @@
     "giphy": {
         "noResults": "لم يتم العثور على نتائج :(",
         "search": "ابحث في GIPHY"
-    },
-    "helpView": {
-        "title": "مركز المساعدة"
     },
     "incomingCall": {
         "answer": "أجب",
@@ -559,7 +556,6 @@
     "lobby": {
         "admit": "سمح بالدخول",
         "admitAll": "سمح للجميع بالدخول",
-        "allow": "اسمح",
         "backToKnockModeButton": "لا يوجد كلمة مرور، اطلب الإذن بالدخول بدلًا من ذلك.",
         "chat": "دردشة",
         "dialogTitle": "ونضع غرفة الانتظار",
@@ -591,12 +587,13 @@
         "notificationLobbyDisabled": "عطَّل {{originParticipantName}} وضع غرفة الانتظار",
         "notificationLobbyEnabled": "فعَّل {{originParticipantName}} وضع غرفة الانتظار",
         "notificationTitle": "غرفة الانتظار",
-        "passwordField": "أدخل كلمة الدخول إلى المُلتقى",
         "passwordJoinButton": "انضم",
         "reject": "رفض",
         "rejectAll": "رفض الكل",
         "title": "غرفة الانتظار",
-        "toggleLabel": "فعِّل غرفة الانتظار"
+        "toggleLabel": "فعِّل غرفة الانتظار",
+        "allow": "اسمح",
+        "passwordField": "أدخل كلمة الدخول إلى المُلتقى"
     },
     "localRecording": {
         "clientState": {
@@ -688,7 +685,6 @@
         "newDeviceCameraTitle": "اكتُشفَت كاميرا جديدة",
         "noiseSuppressionDesktopAudioDescription": "لا يمكن تمكين منع الضوضاء أثناء مشاركة صوت سطح المكتب ، يرجى تعطيله والمحاولة مرة أخرى.",
         "noiseSuppressionFailedTitle": "فشل في بدء قمع الضوضاء",
-        "noiseSuppressionNoTrackDescription": "يرجى إعادة صوت الميكروفون أولاً.",
         "noiseSuppressionStereoDescription": "قمع ضوضاء صوت الاستريو غير مدعوم حاليًا.",
         "oldElectronClientDescription1": "يبدو أنَّك تستعمل إصدارًا قديمًا من جيتسي يحوي ثغرة أمنية. تأكد رجاءً من أنَّك حدَّثته إلى ",
         "oldElectronClientDescription2": "أحدث إصدار",
@@ -716,7 +712,8 @@
         "videoUnmuteBlockedDescription": "تم حظر عملية إلغاء كتم الكاميرا مؤقتًا بسبب قيود النظام.",
         "videoUnmuteBlockedTitle": "تم حظر إعادة الكاميرا!",
         "viewLobby": "مشاهدة اللوبي",
-        "waitingParticipants": "{{waitingParticipants}} اشخاص"
+        "waitingParticipants": "{{waitingParticipants}} اشخاص",
+        "noiseSuppressionNoTrackDescription": "يرجى إعادة صوت الميكروفون أولاً."
     },
     "participantsPane": {
         "actions": {
@@ -853,9 +850,6 @@
         "rejected": "مرفوض",
         "ringing": "يرن..."
     },
-    "privacyView": {
-        "title": "خصوصية"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "حدد اسمك المراد عرضه",
@@ -938,8 +932,8 @@
     "security": {
         "about": "يمكنك إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
         "aboutReadOnly": "المشاركون بصفة رئيس الجلسة يمكنهم إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
-        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية.",
-        "title": "خيارات الأمان"
+        "title": "خيارات الأمان",
+        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية."
     },
     "settings": {
         "buttonLabel": "إعدادات",
@@ -975,13 +969,13 @@
         "selectCamera": "الكاميرا",
         "selectMic": "المايكروفون",
         "selfView": "عرض ذاتي",
-        "sounds": "اصوات",
         "speakers": "المذياع (مكبر الصوت)",
         "startAudioMuted": "بدء الجميع مكتومي الصوت",
         "startReactionsMuted": "كتم رد فعل الصوت للجميع",
         "startVideoMuted": "بدء الجميع دون فيديو",
         "talkWhileMuted": "تحدث أثناء كتم الصوت",
-        "title": "الإعدادات"
+        "title": "الإعدادات",
+        "sounds": "اصوات"
     },
     "settingsView": {
         "advanced": "إعدادات متقدمة",
@@ -1356,5 +1350,11 @@
         "startMeeting": "إبدأ المُلتقى",
         "terms": "الشروط",
         "title": "منصة عقد مؤتمرات ومُلتقيات آمنة وكاملة المزايا ومجانية بالمطلق"
+    },
+    "helpView": {
+        "title": "مركز المساعدة"
+    },
+    "privacyView": {
+        "title": "خصوصية"
     }
 }
