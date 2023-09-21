@@ -144,7 +144,7 @@ run_when_component_loaded(lobby_muc_component_host, function(host_module, host_n
             local lobby_room = event.room;
             local main_room = lobby_room.main_room;
 
-            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
+            if not main_room or is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
                 return;
             end
 
