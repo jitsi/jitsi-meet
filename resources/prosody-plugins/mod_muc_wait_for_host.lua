@@ -8,6 +8,7 @@
 -- This module depends on mod_persistent_lobby.
 local um_is_admin = require 'core.usermanager'.is_admin;
 local jid = require 'util.jid';
+local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
