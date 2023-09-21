@@ -33,11 +33,6 @@ interface IProps extends WithTranslation {
     _images: Array<Image>;
 
     /**
-     * The current local flip x status.
-     */
-    _localFlipX: boolean;
-
-    /**
     * Whether or not multi-stream send support is enabled.
     */
     _multiStreamModeEnabled: boolean;
@@ -48,22 +43,9 @@ interface IProps extends WithTranslation {
     _showUploadButton: boolean;
 
     /**
-     * Returns the selected virtual background object.
-     */
-    _virtualBackground: any;
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * The initial options copied in the state for the {@code VirtualBackground} component.
-     *
-     * NOTE: currently used only for electron in order to open the dialog in the correct state after desktop sharing
-     * selection.
-     */
-    initialOptions?: Object;
 
     /**
      * Options change handler.
@@ -205,13 +187,9 @@ const useStyles = makeStyles()(theme => {
  */
 function VirtualBackgrounds({
     _images,
-    _localFlipX,
-    selectedThumbnail,
     _showUploadButton,
-    _virtualBackground,
     onOptionsChange,
     options,
-    initialOptions,
     selectedVideoInputId,
     t
 }: IProps) {
@@ -220,10 +198,6 @@ function VirtualBackgrounds({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && safeJsonParse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-
-    useEffect(() => {
-        onOptionsChange({ ...initialOptions });
-    }, []);
 
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
@@ -377,7 +351,11 @@ function VirtualBackgrounds({
             return acc;
         }, {})
     };
-    const currentBackgroundLabel = labelsMap[selectedThumbnail] || labelsMap.none;
+    const currentBackgroundLabel = options?.selectedThumbnail ? labelsMap[options.selectedThumbnail] : labelsMap.none;
+    const isThumbnailSelected = useCallback(thumbnail => options?.selectedThumbnail === thumbnail, [ options ]);
+    const getSelectedThumbnailClass = useCallback(
+        thumbnail => isThumbnailSelected(thumbnail) && classes.selectedThumbnail, [ isThumbnailSelected, options ]
+    );
 
     return (
         <>
@@ -415,10 +393,10 @@ function VirtualBackgrounds({
                             content = { t('virtualBackground.removeBackground') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { selectedThumbnail === 'none' }
+                                aria-checked = { isThumbnailSelected('none') }
                                 aria-label = { t('virtualBackground.removeBackground') }
                                 className = { cx(classes.thumbnail, classes.noneThumbnail,
-                                    selectedThumbnail === 'none' && classes.selectedThumbnail) }
+                                    getSelectedThumbnailClass('none')) }
                                 onClick = { removeBackground }
                                 onKeyPress = { removeBackgroundKeyPress }
                                 role = 'radio'
@@ -430,10 +408,10 @@ function VirtualBackgrounds({
                             content = { t('virtualBackground.slightBlur') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { selectedThumbnail === 'slight-blur' }
+                                aria-checked = { isThumbnailSelected('slight-blur') }
                                 aria-label = { t('virtualBackground.slightBlur') }
                                 className = { cx(classes.thumbnail, classes.slightBlur,
-                                    selectedThumbnail === 'slight-blur' && classes.selectedThumbnail) }
+                                    getSelectedThumbnailClass('slight-blur')) }
                                 onClick = { enableSlideBlur }
                                 onKeyPress = { enableSlideBlurKeyPress }
                                 role = 'radio'
@@ -445,10 +423,10 @@ function VirtualBackgrounds({
                             content = { t('virtualBackground.blur') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { selectedThumbnail === 'blur' }
+                                aria-checked = { isThumbnailSelected('blur') }
                                 aria-label = { t('virtualBackground.blur') }
                                 className = { cx(classes.thumbnail, classes.blur,
-                                        selectedThumbnail === 'blur' && classes.selectedThumbnail) }
+                                    getSelectedThumbnailClass('blur')) }
                                 onClick = { enableBlur }
                                 onKeyPress = { enableBlurKeyPress }
                                 role = 'radio'
@@ -463,11 +441,9 @@ function VirtualBackgrounds({
                                 position = { 'top' }>
                                 <img
                                     alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                    aria-checked = { options?.selectedThumbnail === image.id
-                                        || selectedThumbnail === image.id }
+                                    aria-checked = { isThumbnailSelected(image.id) }
                                     className = { cx(classes.thumbnail,
-                                        (options?.selectedThumbnail === image.id
-                                            || selectedThumbnail === image.id) && classes.selectedThumbnail) }
+                                        getSelectedThumbnailClass(image.id)) }
                                     data-imageid = { image.id }
                                     onClick = { setImageBackground }
                                     onError = { onError }
@@ -483,9 +459,9 @@ function VirtualBackgrounds({
                                 key = { image.id }>
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
-                                    aria-checked = { selectedThumbnail === image.id }
+                                    aria-checked = { isThumbnailSelected(image.id) }
                                     className = { cx(classes.thumbnail,
-                                        selectedThumbnail === image.id && classes.selectedThumbnail) }
+                                        getSelectedThumbnailClass(image.id)) }
                                     data-imageid = { image.id }
                                     onClick = { setUploadedImageBackground }
                                     onError = { onError }
@@ -522,14 +498,11 @@ function VirtualBackgrounds({
  * @returns {{Props}}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { localFlipX } = state['features/base/settings'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
 
     return {
-        _localFlipX: Boolean(localFlipX),
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _virtualBackground: state['features/virtual-background'],
         _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages,
         _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
     };
