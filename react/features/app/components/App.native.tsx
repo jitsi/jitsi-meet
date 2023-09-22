@@ -112,11 +112,19 @@ export class App extends AbstractApp<IProps> {
     async _extraInit() {
         const { dispatch, getState } = this.state.store ?? {};
         const { flags = {} } = this.props;
+        let callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         // CallKit does not work on the simulator, make sure we disable it.
         if (Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()) {
-            flags['call-integration.enabled'] = false;
+            flags[CALL_INTEGRATION_ENABLED] = false;
+            callIntegrationEnabled = false;
             logger.info('Disabling CallKit because this is a simulator');
+        }
+
+        // Disable Android ConnectionService by default.
+        if (Platform.OS === 'android' && typeof callIntegrationEnabled === 'undefined') {
+            flags[CALL_INTEGRATION_ENABLED] = false;
+            callIntegrationEnabled = false;
         }
 
         // We set these early enough so then we avoid any unnecessary re-renders.
@@ -163,8 +171,6 @@ export class App extends AbstractApp<IProps> {
         dispatch?.(updateSettings(this.props.userInfo || {}));
 
         // Update settings with feature-flag.
-        const callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
-
         if (typeof callIntegrationEnabled !== 'undefined') {
             dispatch?.(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
         }
