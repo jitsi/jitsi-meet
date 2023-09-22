@@ -33,11 +33,10 @@ import {
 import {
     areDeviceLabelsInitialized,
     formatDeviceLabel,
-    groupDevicesByKind,
+    logDevices,
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
-import { IDevicesState } from './types';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -61,25 +60,6 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
  * A listener for device permissions changed reported from lib-jitsi-meet.
  */
 let permissionsListener: Function | undefined;
-
-/**
- * Logs the current device list.
- *
- * @param {Object} deviceList - Whatever is returned by {@link groupDevicesByKind}.
- * @returns {string}
- */
-function logDeviceList(deviceList: IDevicesState['availableDevices']) {
-    const devicesToStr = (list?: MediaDeviceInfo[]) =>
-        list?.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
-    const audioInputs = devicesToStr(deviceList.audioInput);
-    const audioOutputs = devicesToStr(deviceList.audioOutput);
-    const videoInputs = devicesToStr(deviceList.videoInput);
-
-    logger.debug('Device list updated:\n'
-        + `audioInput:\n${audioInputs}\n`
-        + `audioOutput:\n${audioOutputs}\n`
-        + `videoInput:\n${videoInputs}`);
-}
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -199,7 +179,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case UPDATE_DEVICE_LIST:
-        logDeviceList(groupDevicesByKind(action.devices));
+        logDevices(action.devices, 'Device list updated');
         if (areDeviceLabelsInitialized(store.getState())) {
             return _processPendingRequests(store, next, action);
         }

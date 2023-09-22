@@ -5,6 +5,7 @@ import { ISettingsState } from '../settings/reducer';
 import { setNewAudioOutputDevice } from '../sounds/functions.web';
 import { parseURLParams } from '../util/parseURLParams';
 
+import { DEVICE_LABEL_PREFIXES_TO_IGNORE } from './constants';
 import logger from './logger';
 import { IDevicesState } from './types';
 
@@ -177,6 +178,74 @@ export function filterAudioDevices(devices: MediaDeviceInfo[]) {
 }
 
 /**
+ * Filters the devices that start with one of the prefixes from DEVICE_LABEL_PREFIXES_TO_IGNORE.
+ *
+ * @param {MediaDeviceInfo[]} devices - The devices to be filtered.
+ * @returns {MediaDeviceInfo[]} - The filtered devices.
+ */
+export function filterIgnoredDevices(devices: MediaDeviceInfo[] = []) {
+    const ignoredDevices: MediaDeviceInfo[] = [];
+    const filteredDevices = devices.filter(device => {
+        if (!device.label) {
+            return true;
+        }
+
+        if (DEVICE_LABEL_PREFIXES_TO_IGNORE.find(prefix => device.label?.startsWith(prefix))) {
+            ignoredDevices.push(device);
+
+            return false;
+        }
+
+        return true;
+    });
+
+    return {
+        filteredDevices,
+        ignoredDevices
+    };
+}
+
+/**
+ * Check if the passed device arrays are different.
+ *
+ * @param {MediaDeviceInfo[]} devices1 - Array with devices to be compared.
+ * @param {MediaDeviceInfo[]} devices2 - Array with devices to be compared.
+ * @returns {boolean} - True if the device arrays are different and false otherwise.
+*/
+export function areDevicesDifferent(devices1: MediaDeviceInfo[] = [], devices2: MediaDeviceInfo[] = []) {
+    if (devices1.length !== devices2.length) {
+        return true;
+    }
+
+    for (let i = 0; i < devices1.length; i++) {
+        const device1 = devices1[i];
+        const found = devices2.find(({ deviceId, groupId, kind, label }) =>
+            device1.deviceId === deviceId
+            && device1.groupId === groupId
+            && device1.kind === kind
+            && device1.label === label
+        );
+
+        if (!found) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Flattens the availableDevices from redux.
+ *
+ * @param {IDevicesState.availableDevices} devices - The available devices from redux.
+ * @returns {MediaDeviceInfo[]} - The flattened array of devices.
+ */
+export function flattenAvailableDevices(
+        { audioInput = [], audioOutput = [], videoInput = [] }: IDevicesState['availableDevices']) {
+    return audioInput.concat(audioOutput).concat(videoInput);
+}
+
+/**
  * We want to strip any device details that are not very user friendly, like usb ids put in brackets at the end.
  *
  * @param {string} label - Device label to format.
@@ -238,6 +307,35 @@ export function getAudioOutputDeviceData(state: IReduxState) {
  */
 export function getVideoDeviceIds(state: IReduxState) {
     return state['features/base/devices'].availableDevices.videoInput?.map(({ deviceId }) => deviceId);
+}
+
+/**
+ * Converts an array of device info objects into string.
+ *
+ * @param {MediaDeviceInfo[]} devices - The devices.
+ * @returns {string}
+ */
+function devicesToStr(devices?: MediaDeviceInfo[]) {
+    return devices?.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
+}
+
+/**
+ * Logs an array of devices.
+ *
+ * @param {MediaDeviceInfo[]} devices - The array of devices.
+ * @param {string} title - The title that will be printed in the log.
+ * @returns {void}
+ */
+export function logDevices(devices: MediaDeviceInfo[], title = '') {
+    const deviceList = groupDevicesByKind(devices);
+    const audioInputs = devicesToStr(deviceList.audioInput);
+    const audioOutputs = devicesToStr(deviceList.audioOutput);
+    const videoInputs = devicesToStr(deviceList.videoInput);
+
+    logger.debug(`${title}:\n`
+        + `audioInput:\n${audioInputs}\n`
+        + `audioOutput:\n${audioOutputs}\n`
+        + `videoInput:\n${videoInputs}`);
 }
 
 /**
