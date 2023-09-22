@@ -503,7 +503,6 @@ DEPENDENCIES:
   - Firebase/DynamicLinks (~> 8.0)
   - "giphy-react-native-sdk (from `../node_modules/@giphy/react-native-sdk`)"
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - JitsiWebRTC (~> 111.0.0)
   - ObjectiveDropboxOfficial (= 6.2.3)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -787,6 +786,6 @@ SPEC CHECKSUMS:
   RNWatch: fd30ca40a5b5ef58dcbc195638e68219bc455236
   Yoga: 7f5ad94937ba3fc58c151ad1b7bbada2c275b28e
 
-PODFILE CHECKSUM: e3579df5272b8b697c9fdc0e55aa0845b189c4dd
+PODFILE CHECKSUM: 90720aee51cf2cab2e12611a28dbf55a688e969c
 
 COCOAPODS: 1.12.1

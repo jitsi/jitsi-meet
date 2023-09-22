@@ -46,7 +46,6 @@ target 'JitsiMeetSDK' do
 
   pod 'CocoaLumberjack', '3.7.2'
   pod 'ObjectiveDropboxOfficial', '6.2.3'
-  pod 'JitsiWebRTC', '~> 111.0.0'
 end
 
 target 'JitsiMeetSDKLite' do
