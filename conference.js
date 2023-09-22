@@ -65,7 +65,11 @@ import {
     updateDeviceList
 } from './react/features/base/devices/actions.web';
 import {
+    areDevicesDifferent,
+    filterIgnoredDevices,
+    flattenAvailableDevices,
     getDefaultDeviceId,
+    logDevices,
     setAudioOutputDeviceId
 } from './react/features/base/devices/functions.web';
 import {
@@ -2241,19 +2245,28 @@ export default {
      * @returns {Promise}
      */
     async _onDeviceListChanged(devices) {
-        const oldDevices = APP.store.getState()['features/base/devices'].availableDevices;
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
+        const state = APP.store.getState();
+        const { filteredDevices, ignoredDevices } = filterIgnoredDevices(devices);
+        const oldDevices = state['features/base/devices'].availableDevices;
 
-        APP.store.dispatch(updateDeviceList(devices));
+        if (!areDevicesDifferent(flattenAvailableDevices(oldDevices), filteredDevices)) {
+            return Promise.resolve();
+        }
+
+        logDevices(ignoredDevices, 'Ignored devices on device list changed:');
+
+        const localAudio = getLocalJitsiAudioTrack(state);
+        const localVideo = getLocalJitsiVideoTrack(state);
+
+        APP.store.dispatch(updateDeviceList(filteredDevices));
 
         // Firefox users can choose their preferred device in the gUM prompt. In that case
         // we should respect that and not attempt to switch to the preferred device from
         // our settings.
-        const newLabelsOnly = mediaDeviceHelper.newDeviceListAddedLabelsOnly(oldDevices, devices);
+        const newLabelsOnly = mediaDeviceHelper.newDeviceListAddedLabelsOnly(oldDevices, filteredDevices);
         const newDevices
             = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
-                devices,
+                filteredDevices,
                 localVideo,
                 localAudio,
                 newLabelsOnly);
@@ -2386,7 +2399,7 @@ export default {
 
         return Promise.all(promises)
             .then(() => {
-                APP.UI.onAvailableDevicesChanged(devices);
+                APP.UI.onAvailableDevicesChanged(filteredDevices);
             });
     },
 
