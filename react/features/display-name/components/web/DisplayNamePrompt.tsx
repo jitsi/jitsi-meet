@@ -7,6 +7,8 @@ import Input from '../../../base/ui/components/web/Input';
 import { onSetDisplayName } from '../../functions';
 import { IProps } from '../../types';
 
+const INITIAL_DISPLAY_NAME = '';
+
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
  */
@@ -16,6 +18,11 @@ interface IState {
      * The name to show in the display name text field.
      */
     displayName: string;
+
+    /**
+     * The result of the input validation.
+     */
+    isValid: boolean;
 }
 
 /**
@@ -37,7 +44,8 @@ class DisplayNamePrompt extends Component<IProps, IState> {
         super(props);
 
         this.state = {
-            displayName: ''
+            displayName: INITIAL_DISPLAY_NAME,
+            isValid: this.props.validateInput ? this.props.validateInput(INITIAL_DISPLAY_NAME) : true
         };
 
         // Bind event handlers so they are only bound once for every instance.
@@ -53,10 +61,19 @@ class DisplayNamePrompt extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     render() {
+        const disableCloseDialog = Boolean(this.props.validateInput);
+
         return (
             <Dialog
-                cancel = {{ translationKey: 'dialog.Cancel' }}
-                ok = {{ translationKey: 'dialog.Ok' }}
+                cancel = {{ hidden: true }}
+                disableBackdropClose = { disableCloseDialog }
+                disableEnter = { !this.state.isValid }
+                disableEscape = { disableCloseDialog }
+                hideCloseButton = { disableCloseDialog }
+                ok = {{
+                    disabled: !this.state.isValid,
+                    translationKey: 'dialog.Ok'
+                }}
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.displayNameRequired'>
                 <Input
@@ -80,6 +97,14 @@ class DisplayNamePrompt extends Component<IProps, IState> {
      * @returns {void}
      */
     _onDisplayNameChange(value: string) {
+        if (this.props.validateInput) {
+            this.setState({
+                isValid: this.props.validateInput(value),
+                displayName: value
+            });
+
+            return;
+        }
         this.setState({
             displayName: value
         });

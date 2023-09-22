@@ -795,3 +795,11 @@ export function getCountryFromDialCodeText(text: string) {
         || null
     );
 }
+
+/**
+ * Returns whether the display name is present.
+ *
+ * @param {string} value - The display name.
+ * @returns {boolean}
+ */
+export const hasDisplayName = (value: string): boolean => Boolean(value) && value.trim() !== '';

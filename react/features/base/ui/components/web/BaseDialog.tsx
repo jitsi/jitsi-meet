@@ -136,6 +136,7 @@ export interface IProps {
     description?: string;
     disableBackdropClose?: boolean;
     disableEnter?: boolean;
+    disableEscape?: boolean;
     onClose?: () => void;
     size?: 'large' | 'medium';
     submit?: () => void;
@@ -150,6 +151,7 @@ const BaseDialog = ({
     description,
     disableBackdropClose,
     disableEnter,
+    disableEscape,
     onClose,
     size = 'medium',
     submit,
@@ -166,7 +168,7 @@ const BaseDialog = ({
     }, [ disableBackdropClose, onClose ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && !disableEscape) {
             onClose?.();
         }
         if (e.key === 'Enter' && !disableEnter) {
