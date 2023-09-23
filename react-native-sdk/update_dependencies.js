@@ -25,6 +25,17 @@ function updateDependencies() {
             updated = true;
         }
 
+        if (!semver.valid(packageJSON.dependencies[key])) {
+            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            updated = true;
+
+            console.log(`
+⚠️We changed ${key} version number from ${packageJSON.dependencies[key]} to ${RNSDKpackageJSON.peerDependencies[key]}`
+            );
+
+            continue;
+        }
+
         if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `=${packageJSON.dependencies[key]}`)) {
             continue;
         }
