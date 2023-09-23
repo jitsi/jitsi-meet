@@ -158,15 +158,13 @@ class Watermarks extends Component<IProps, State> {
             _showJitsiWatermark
         } = this.props;
         const { noMargins, t } = this.props;
-        const className = `watermark ${noMargins ? 'leftwatermarknomargin' : 'leftwatermark'}`;
+        const className = `watermark leftwatermark ${noMargins ? 'no-margin' : ''}`;
 
         let reactElement = null;
 
         if (_showJitsiWatermark) {
             const style = {
                 backgroundImage: `url(${_logoUrl})`,
-                maxWidth: 140,
-                maxHeight: 70,
                 position: _logoLink ? 'static' : 'absolute'
             } as const;
 
