@@ -14,3 +14,6 @@ npm version --prefix ${THIS_DIR}/../react-native-sdk "${VERSION}" --no-git-tag-v
 
 npm install --prefix ${THIS_DIR}/../react-native-sdk
 
+# Run it once more in case dependencies were updated.
+npm install --prefix ${THIS_DIR}/../react-native-sdk
+
