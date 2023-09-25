@@ -18,7 +18,8 @@ export interface IWhiteboardState {
 }
 
 const DEFAULT_STATE: IWhiteboardState = {
-    isOpen: false
+    isOpen: false,
+    collabDetails: undefined
 };
 
 export interface IWhiteboardAction extends Partial<IWhiteboardState> {
