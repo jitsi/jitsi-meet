@@ -39,7 +39,7 @@ case "$1" in
             echo "Application secret is mandatory"
         fi
         # Not allowed unix special characters in secret: /, \, ", ', `
-        if echo "$RET" | grep -q '[/\\\"\`]' ; then
+        if echo "$RET" | grep -q "[/\\\"\`\']" ; then
             echo "Application secret contains invalid characters: /, \\, \", ', \`"
             exit 1
         fi
