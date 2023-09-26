@@ -224,7 +224,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
     // Set the handlers last, since this triggers emptying of the cache
     analytics.setAnalyticsHandlers(handlers);
 
-    if (!isMobileBrowser() && browser.isChrome()) {
+    if (!isMobileBrowser() && browser.isChromiumBased()) {
         const bannerCfg = state['features/base/config'].chromeExtensionBanner;
 
         checkChromeExtensionsInstalled(bannerCfg).then(extensionsInstalled => {

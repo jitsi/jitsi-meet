@@ -33,7 +33,7 @@ export function isScreenAudioShared(state: IReduxState) {
  * @returns {boolean}
  */
 export function isScreenAudioSupported() {
-    return (!isMobileBrowser() && browser.isChrome()) || (browser.isElectron() && isWindows());
+    return (!isMobileBrowser() && browser.isChromiumBased()) || (browser.isElectron() && isWindows());
 }
 
 /**
