@@ -104,9 +104,10 @@ export function reloadWithStoredParams() {
 export function maybeRedirectToTokenAuthUrl(
         dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
     const state = getState();
+    const config = state['features/base/config'];
     const { locationURL = { href: '' } } = state['features/base/connection'];
 
-    if (isTokenAuthEnabled(state['features/base/config'])) {
+    if (isTokenAuthEnabled(config)) {
         // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
         const jwt = state['features/base/jwt'].jwt;
         const expirationDate = getJwtExpirationDate(jwt);
