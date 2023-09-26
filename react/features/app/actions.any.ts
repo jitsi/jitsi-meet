@@ -3,8 +3,7 @@
 import { openTokenAuthUrl } from '../authentication/actions';
 
 // @ts-ignore
-import { getTokenAuthUrl } from '../authentication/functions';
-import { isTokenAuthEnabled } from '../authentication/functions.any';
+import { getTokenAuthUrl, isTokenAuthEnabled } from '../authentication/functions';
 import { getJwtExpirationDate } from '../base/jwt/functions';
 import { getLocationContextRoot, parseURIString } from '../base/util/uri';
 
@@ -107,33 +106,35 @@ export function maybeRedirectToTokenAuthUrl(
     const config = state['features/base/config'];
     const { locationURL = { href: '' } } = state['features/base/connection'];
 
-    if (isTokenAuthEnabled(config)) {
-        // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
-        const jwt = state['features/base/jwt'].jwt;
-        const expirationDate = getJwtExpirationDate(jwt);
+    if (!isTokenAuthEnabled(config)) {
+        return false;
+    }
 
-        // if there is jwt and its expiration time is less than 3 minutes away
-        // let's obtain new token
-        if (expirationDate && expirationDate.getTime() - Date.now() < 3 * 60 * 1000) {
-            const room = state['features/base/conference'].room;
-            const { tenant } = parseURIString(locationURL.href) || {};
+    // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
+    const jwt = state['features/base/jwt'].jwt;
+    const expirationDate = getJwtExpirationDate(jwt);
 
-            getTokenAuthUrl(config, room, tenant, true)
-                .then((tokenAuthServiceUrl: string | undefined) => {
-                    if (!tokenAuthServiceUrl) {
-                        logger.warn('Cannot handle login, token service URL is not set');
+    // if there is jwt and its expiration time is less than 3 minutes away
+    // let's obtain new token
+    if (expirationDate && expirationDate.getTime() - Date.now() < 3 * 60 * 1000) {
+        const room = state['features/base/conference'].room;
+        const { tenant } = parseURIString(locationURL.href) || {};
 
-                        return Promise.reject();
-                    }
+        getTokenAuthUrl(config, room, tenant, true)
+            .then((tokenAuthServiceUrl: string | undefined) => {
+                if (!tokenAuthServiceUrl) {
+                    logger.warn('Cannot handle login, token service URL is not set');
 
-                    return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
-                })
-                .catch(() => {
-                    failureCallback();
-                });
+                    return Promise.reject();
+                }
 
-            return true;
-        }
+                return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+            })
+            .catch(() => {
+                failureCallback();
+            });
+
+        return true;
     }
 
     return false;
