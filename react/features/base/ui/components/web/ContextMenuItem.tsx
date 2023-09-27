@@ -85,7 +85,7 @@ export interface IProps {
      * If no onClick handler is provided, we assume the context menu item is
      * not interactive and no role will be set.
      */
-    role?: 'tab' | 'button';
+    role?: 'tab' | 'button' | 'menuitem';
 
     /**
      * Whether the item is marked as selected.

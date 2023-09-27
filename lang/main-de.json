@@ -67,13 +67,16 @@
             "renameBreakoutRoom": "Breakout-Raum umbenennen",
             "sendToBreakoutRoom": "Anwesende in Breakout-Raum verschieben:"
         },
+        "breakoutList": "Breakout-Liste",
         "defaultName": "Breakout-Raum #{{index}}",
+        "hideParticipantList": "Teilnehmerliste ausblenden",
         "mainRoom": "Hauptraum",
         "notifications": {
             "joined": "Breakout-Raum \"{{name}}\" betreten",
             "joinedMainRoom": "Hauptraum betreten",
             "joinedTitle": "Breakout-Räume"
-        }
+        },
+        "showParticipantList": "Teilnehmerliste anzeigen"
     },
     "calendarSync": {
         "addMeetingURL": "Konferenzlink hinzufügen",
