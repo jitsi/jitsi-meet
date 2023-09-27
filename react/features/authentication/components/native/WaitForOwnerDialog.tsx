@@ -69,7 +69,7 @@ class WaitForOwnerDialog extends Component<IProps> {
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
-                isConfirmHidden = { _serverURL.includes('8x8.vc') }
+                isConfirmHidden = { _serverURL?.includes('8x8.vc') }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
