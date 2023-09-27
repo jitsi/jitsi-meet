@@ -31,10 +31,10 @@ import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
 import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
 
+import { maybeRedirectToTokenAuthUrl } from './actions.any';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
-
 
 export * from './actions.any';
 
@@ -205,10 +205,18 @@ export function reloadNow() {
         // @ts-ignore
         const newURL = addTrackStateToURL(locationURL, state);
 
-        logger.info(`Reloading the conference using URL: ${locationURL}`);
+        const reloadAction = () => {
+            logger.info(`Reloading the conference using URL: ${locationURL}`);
 
-        dispatch(appNavigate(toURLString(newURL), {
-            hidePrejoin: true
-        }));
+            dispatch(appNavigate(toURLString(newURL), {
+                hidePrejoin: true
+            }));
+        };
+
+        if (maybeRedirectToTokenAuthUrl(dispatch, getState, reloadAction)) {
+            return;
+        }
+
+        reloadAction();
     };
 }

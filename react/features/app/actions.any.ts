@@ -1,6 +1,14 @@
-import { getLocationContextRoot } from '../base/util/uri';
+// @ts-ignore
+// eslint-disable-next-line
+import { openTokenAuthUrl } from '../authentication/actions';
+
+// @ts-ignore
+import { getTokenAuthUrl, isTokenAuthEnabled } from '../authentication/functions';
+import { getJwtExpirationDate } from '../base/jwt/functions';
+import { getLocationContextRoot, parseURIString } from '../base/util/uri';
 
 import { addTrackStateToURL } from './functions.any';
+import logger from './logger';
 import { IStore } from './types';
 
 /**
@@ -81,6 +89,55 @@ export function reloadWithStoredParams() {
             windowLocation.reload();
         }
     };
+}
+
+/**
+ * Checks whether tokenAuthUrl is set, we have a jwt token that will expire soon
+ * and redirect to the auth url to obtain new token if this is the case.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {Function} getState - The Redux state.
+ * @param {Function} failureCallback - The callback on failure to obtain auth url.
+ * @returns {boolean} Whether we will redirect or not.
+ */
+export function maybeRedirectToTokenAuthUrl(
+        dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
+    const state = getState();
+    const config = state['features/base/config'];
+    const { locationURL = { href: '' } } = state['features/base/connection'];
+
+    if (!isTokenAuthEnabled(config)) {
+        return false;
+    }
+
+    // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
+    const jwt = state['features/base/jwt'].jwt;
+    const expirationDate = getJwtExpirationDate(jwt);
+
+    // if there is jwt and its expiration time is less than 3 minutes away
+    // let's obtain new token
+    if (expirationDate && expirationDate.getTime() - Date.now() < 3 * 60 * 1000) {
+        const room = state['features/base/conference'].room;
+        const { tenant } = parseURIString(locationURL.href) || {};
+
+        getTokenAuthUrl(config, room, tenant, true)
+            .then((tokenAuthServiceUrl: string | undefined) => {
+                if (!tokenAuthServiceUrl) {
+                    logger.warn('Cannot handle login, token service URL is not set');
+
+                    return Promise.reject();
+                }
+
+                return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+            })
+            .catch(() => {
+                failureCallback();
+            });
+
+        return true;
+    }
+
+    return false;
 }
 
 
