@@ -186,3 +186,23 @@ export function validateJwt(jwt: string) {
 
     return errors;
 }
+
+/**
+ * Extracts and returns the expiration date of jwt.
+ *
+ * @param {string|undefined} jwt - The jwt to check.
+ * @returns {Date} The expiration date of the jwt.
+ */
+export function getJwtExpirationDate(jwt: string | undefined) {
+    if (!jwt) {
+        return;
+    }
+
+    const payload = jwtDecode(jwt);
+
+    if (payload) {
+        const { exp } = payload;
+
+        return new Date(exp * 1000);
+    }
+}
