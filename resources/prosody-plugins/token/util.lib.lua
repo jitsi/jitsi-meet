@@ -381,7 +381,13 @@ function Util:verify_room(session, room_address)
         end
         module:log("debug", "room to check: %s", room_to_check)
         if not room_to_check then
-            return false
+            if not self.requireRoomClaim then
+                -- if we do not require to have the room claim, and it is missing
+                -- there is no point of continue and verifying the roomName and the tenant
+                return true;
+            end
+
+            return false;
         end
     end
 
