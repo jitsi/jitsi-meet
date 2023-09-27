@@ -194,6 +194,18 @@ fs.copyFileSync(
     `${androidTargetPath}/AudioModeModule.java`
 );
 fs.copyFileSync(
+    `${androidSourcePath}/BroadcastAction.java`,
+    `${androidTargetPath}/BroadcastAction.java`
+);
+fs.copyFileSync(
+    `${androidSourcePath}/BroadcastEvent.java`,
+    `${androidTargetPath}/BroadcastEvent.java`
+);
+fs.copyFileSync(
+    `${androidSourcePath}/BroadcastIntentHelper.java`,
+    `${androidTargetPath}/BroadcastIntentHelper.java`
+);
+fs.copyFileSync(
     `${androidSourcePath}/ConnectionService.java`,
     `${androidTargetPath}/ConnectionService.java`
 );
