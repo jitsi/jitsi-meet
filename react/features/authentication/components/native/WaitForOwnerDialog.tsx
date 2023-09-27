@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
@@ -16,6 +17,11 @@ interface IProps {
      * Whether to show alternative cancel button text.
      */
     _alternativeCancelText?: boolean;
+
+    /**
+     * URL where the meeting takes place.
+     */
+    _serverURL?: string;
 
     /**
      * Redux store dispatch function.
@@ -56,11 +62,14 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
+        const { _serverURL } = this.props;
+
         return (
             <ConfirmDialog
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
+                isConfirmHidden = { _serverURL.includes('8x8.vc') }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
@@ -97,9 +106,11 @@ class WaitForOwnerDialog extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
+    const serverURL = getDefaultURL(state);
 
     return {
-        _alternativeCancelText: membersOnly && lobbyWaitingForHost
+        _alternativeCancelText: membersOnly && lobbyWaitingForHost,
+        _serverURL: serverURL
     };
 }
 
