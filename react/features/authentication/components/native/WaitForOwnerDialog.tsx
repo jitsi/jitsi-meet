@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { getConferenceState } from '../../../base/conference/functions';
-import { JITSI_CONNECTION_URL_KEY } from '../../../base/connection/constants';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
 import { cancelWaitForOwner, login } from '../../actions.native';
