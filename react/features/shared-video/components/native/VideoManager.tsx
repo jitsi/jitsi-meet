@@ -2,9 +2,8 @@ import React, { RefObject } from 'react';
 import Video from 'react-native-video';
 import { connect } from 'react-redux';
 
-import logger from '../../logger';
-
 import { PLAYBACK_STATUSES } from '../../constants';
+import logger from '../../logger';
 
 import AbstractVideoManager, {
     IProps,
