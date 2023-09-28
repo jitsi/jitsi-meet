@@ -106,11 +106,10 @@ class WaitForOwnerDialog extends Component<IProps> {
 function mapStateToProps(state: IReduxState) {
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
     const { locationURL } = state['features/base/connection'];
-    const { hostname } = locationURL;
 
     return {
         _alternativeCancelText: membersOnly && lobbyWaitingForHost,
-        _hostname: hostname
+        _hostname: locationURL?.hostname
     };
 }
 
