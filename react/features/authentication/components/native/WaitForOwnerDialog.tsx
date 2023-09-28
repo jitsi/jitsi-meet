@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { getConferenceState } from '../../../base/conference/functions';
+import { JITSI_CONNECTION_URL_KEY } from '../../../base/connection/constants';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
-import { getServerURL } from '../../../base/settings/functions.native';
 import { cancelWaitForOwner, login } from '../../actions.native';
 
 
@@ -19,9 +20,9 @@ interface IProps {
     _alternativeCancelText?: boolean;
 
     /**
-     * URL where the meeting takes place.
+     * Location where the current meeting takes place.
      */
-    _serverURL?: string;
+    _locationURL?: string;
 
     /**
      * Redux store dispatch function.
@@ -62,14 +63,14 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { _serverURL } = this.props;
+        const { _locationURL } = this.props;
 
         return (
             <ConfirmDialog
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
-                isConfirmHidden = { _serverURL?.includes('8x8.vc') }
+                isConfirmHidden = { _locationURL?.includes('8x8.vc') }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
@@ -106,11 +107,12 @@ class WaitForOwnerDialog extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
-    const serverURL = getServerURL(state);
+    const { conference } = getConferenceState(state);
+    const locationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
 
     return {
         _alternativeCancelText: membersOnly && lobbyWaitingForHost,
-        _serverURL: serverURL
+        _locationURL: locationURL
     };
 }
 
