@@ -22,7 +22,7 @@ interface IProps {
     /**
      * Location where the current meeting takes place.
      */
-    _locationURL?: string;
+    _hostname?: string;
 
     /**
      * Redux store dispatch function.
@@ -63,14 +63,14 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { _locationURL } = this.props;
+        const { _hostname } = this.props;
 
         return (
             <ConfirmDialog
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
-                isConfirmHidden = { _locationURL?.includes('8x8.vc') }
+                isConfirmHidden = { _hostname?.includes('8x8.vc') }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
@@ -107,12 +107,12 @@ class WaitForOwnerDialog extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
-    const { conference } = getConferenceState(state);
-    const locationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
+    const { locationURL } = state['features/base/connection'];
+    const { hostname } = locationURL;
 
     return {
         _alternativeCancelText: membersOnly && lobbyWaitingForHost,
-        _locationURL: locationURL
+        _hostname: hostname
     };
 }
 
