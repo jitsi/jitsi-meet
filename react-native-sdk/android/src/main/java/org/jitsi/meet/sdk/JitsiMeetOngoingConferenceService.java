@@ -19,9 +19,12 @@ package org.jitsi.meet.sdk;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -47,6 +50,35 @@ public class JitsiMeetOngoingConferenceService extends Service
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
     private boolean isAudioMuted;
+
+    public static void launch(Context context, HashMap<String, Object> extraData) {
+        RNOngoingNotification.createOngoingConferenceNotificationChannel();
+
+        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+
+        Bundle extraDataBundle = new Bundle();
+        extraDataBundle.putSerializable(EXTRA_DATA_KEY, extraData);
+        intent.putExtra(EXTRA_DATA_BUNDLE_KEY, extraDataBundle);
+
+        ComponentName componentName;
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                componentName = context.startForegroundService(intent);
+            } else {
+                componentName = context.startService(intent);
+            }
+        } catch (RuntimeException e) {
+            // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
+            // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
+            JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
+            return;
+        }
+
+        if (componentName == null) {
+            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
+        }
+    }
 
     @Override
     public void onCreate() {
