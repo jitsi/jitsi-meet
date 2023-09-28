@@ -1,4 +1,3 @@
-// @ts-expect-error
 import React, { RefObject } from 'react';
 import Video from 'react-native-video';
 import { connect } from 'react-redux';
