@@ -1,8 +1,9 @@
 // @ts-expect-error
-import Logger from '@jitsi/logger';
 import React, { RefObject } from 'react';
 import Video from 'react-native-video';
 import { connect } from 'react-redux';
+
+import logger from '../../logger';
 
 import { PLAYBACK_STATUSES } from '../../constants';
 
@@ -10,9 +11,6 @@ import AbstractVideoManager, {
     IProps,
     _mapStateToProps
 } from './AbstractVideoManager';
-
-// @ts-ignore
-const logger = Logger.getLogger(__filename);
 
 interface IState {
     currentTime: number;
