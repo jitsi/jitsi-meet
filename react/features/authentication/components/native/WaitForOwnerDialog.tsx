@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getDefaultURL } from '../../../app/functions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
+import { getServerURL } from '../../../base/settings/functions.native';
 import { cancelWaitForOwner, login } from '../../actions.native';
 
 
@@ -106,7 +106,7 @@ class WaitForOwnerDialog extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
-    const serverURL = getDefaultURL(state);
+    const serverURL = getServerURL(state);
 
     return {
         _alternativeCancelText: membersOnly && lobbyWaitingForHost,
