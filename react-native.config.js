@@ -4,9 +4,27 @@
  * Podfile are wrong.
  */
 module.exports = {
-    project: {
-        ios: {
-            project: '.ios/jitsi-meet.xcworkspace'
+    // Exclude some dependencies from auto-linking for the lite SDK.
+    dependencies: {
+        '@giphy/react-native-sdk': {
+            platforms: {
+                ios: null
+            }
+        },
+        '@react-native-google-signin/google-signin': {
+            platforms: {
+                ios: null
+            }
+        },
+        'react-native-calendar-events': {
+            platforms: {
+                ios: null
+            }
+        },
+        'react-native-watch-connectivity': {
+            platforms: {
+                ios: null
+            }
         }
     }
 };

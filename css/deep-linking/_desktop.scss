@@ -68,6 +68,12 @@
                 }
                 .buttons {
                     margin-top: 16px;
+                    display: flex;
+                    align-items: center;
+
+                    &>button:first-child {
+                        margin-right: 8px;
+                    }
                 }
             }
         }

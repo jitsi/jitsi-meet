@@ -373,6 +373,7 @@
         "signedInAs": "",
         "start": "Покрeни eмитовање уживо",
         "streamIdHelp": "",
+        "title": "Емитовање уживо",
         "unavailableTitle": ""
     },
     "localRecording": {
@@ -525,6 +526,7 @@
         "serviceName": "",
         "signIn": "",
         "signOut": "Покрeнитe eмитовање уживо",
+        "title": "Снимањe",
         "unavailable": "",
         "unavailableTitle": ""
     },

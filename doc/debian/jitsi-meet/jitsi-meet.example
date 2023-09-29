@@ -1,8 +1,30 @@
 server_names_hash_bucket_size 64;
 
 types {
-# nginx's default mime.types doesn't include a mapping for wasm
+# nginx's default mime.types doesn't include a mapping for wasm or wav.
     application/wasm     wasm;
+    audio/wav            wav;
+}
+upstream prosody {
+    zone upstreams 64K;
+    server 127.0.0.1:5280;
+    keepalive 2;
+}
+upstream jvb1 {
+    zone upstreams 64K;
+    server 127.0.0.1:9090;
+    keepalive 2;
+}
+map $arg_vnode $prosody_node {
+    default prosody;
+    v1 v1;
+    v2 v2;
+    v3 v3;
+    v4 v4;
+    v5 v5;
+    v6 v6;
+    v7 v7;
+    v8 v8;
 }
 server {
     listen 80;
@@ -36,6 +58,8 @@ server {
 
     add_header Strict-Transport-Security "max-age=63072000" always;
     set $prefix "";
+    set $custom_index "";
+    set $config_js_location /etc/jitsi/meet/jitsi-meet.example.com-config.js;
 
     ssl_certificate /etc/jitsi/meet/jitsi-meet.example.com.crt;
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
@@ -55,16 +79,30 @@ server {
     gzip_proxied no-cache no-store private expired auth;
     gzip_min_length 512;
 
+    include /etc/jitsi/meet/jaas/*.conf;
+
     location = /config.js {
-        alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+        alias $config_js_location;
     }
 
     location = /external_api.js {
         alias /usr/share/jitsi-meet/libs/external_api.min.js;
     }
 
+    location = /_api/room-info {
+        proxy_pass http://prosody/room-info?prefix=$prefix&$args;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+    }
+
+    location ~ ^/_api/public/(.*)$ {
+        autoindex off;
+        alias /etc/jitsi/meet/public/$1;
+    }
+
     # ensure all static content can always be found first
-    location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization|.well-known)/(.*)$
+    location ~ ^/(libs|css|static|images|fonts|lang|sounds|.well-known)/(.*)$
     {
         add_header 'Access-Control-Allow-Origin' '*';
         alias /usr/share/jitsi-meet/$1/$2;
@@ -77,14 +115,16 @@ server {
 
     # BOSH
     location = /http-bind {
-        proxy_pass http://127.0.0.1:5280/http-bind?prefix=$prefix&$args;
+        proxy_pass http://$prosody_node/http-bind?prefix=$prefix&$args;
+        proxy_http_version 1.1;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
+        proxy_set_header Connection "";
     }
 
     # xmpp websockets
     location = /xmpp-websocket {
-        proxy_pass http://127.0.0.1:5280/xmpp-websocket?prefix=$prefix&$args;
+        proxy_pass http://$prosody_node/xmpp-websocket?prefix=$prefix&$args;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -94,7 +134,7 @@ server {
 
     # colibri (JVB) websockets for jvb1
     location ~ ^/colibri-ws/default-id/(.*) {
-        proxy_pass http://127.0.0.1:9090/colibri-ws/default-id/$1$is_args$args;
+        proxy_pass http://jvb1/colibri-ws/default-id/$1$is_args$args;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -111,11 +151,12 @@ server {
     #}
 
     location ~ ^/([^/?&:'"]+)$ {
+        set $roomname "$1";
         try_files $uri @root_path;
     }
 
     location @root_path {
-        rewrite ^/(.*)$ / break;
+        rewrite ^/(.*)$ /$custom_index break;
     }
 
     location ~ ^/([^/?&:'"]+)/config.js$
@@ -123,7 +164,14 @@ server {
         set $subdomain "$1.";
         set $subdir "$1/";
 
-        alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+        alias $config_js_location;
+    }
+
+    # Matches /(TENANT)/pwa-worker.js or /(TENANT)/manifest.json to rewrite to / and look for file
+    location ~ ^/([^/?&:'"]+)/(pwa-worker.js|manifest.json)$ {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        rewrite ^/([^/?&:'"]+)/(pwa-worker.js|manifest.json)$ /$2;
     }
 
     # BOSH for subdomains
@@ -142,6 +190,14 @@ server {
         set $prefix "$1";
 
         rewrite ^/(.*)$ /xmpp-websocket;
+    }
+
+    location ~ ^/([^/?&:'"]+)/_api/room-info {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /_api/room-info;
     }
 
     # Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /

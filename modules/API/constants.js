@@ -8,10 +8,24 @@ import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 
 /**
  * JitsiMeetExternalAPI id - unique for a webpage.
+ * TODO: This shouldn't be computed here.
  */
-export const API_ID = parseURLParams(window.location).jitsi_meet_external_api_id;
+let _apiID;
+
+try {
+    _apiID = parseURLParams(window.location).jitsi_meet_external_api_id;
+} catch (_) { /* Ignore. */ }
+
+export const API_ID = _apiID;
 
 /**
  * The payload name for the datachannel/endpoint text message event.
  */
 export const ENDPOINT_TEXT_MESSAGE_NAME = 'endpoint-text-message';
+
+/**
+ * The min value that can be set for the assumed bandwidth.
+ * Setting it to this value means not assuming any bandwidth,
+ * but rather allowing the estimations to take place.
+ */
+export const MIN_ASSUMED_BANDWIDTH_BPS = -1;

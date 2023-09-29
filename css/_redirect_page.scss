@@ -5,7 +5,7 @@
     font-size: 24px;
 
     .thanks-msg {
-        border-bottom: 1px solid $selectBg;
+        border-bottom: 1px solid #FFFFFF;
         padding-left: 30px;
         padding-right: 30px;
         p {
@@ -14,7 +14,7 @@
             line-height: 24px;
         }
     }
-    .hint-msg{
+    .hint-msg {
         p {
             margin: 26px auto;
             font-weight: 600;
@@ -28,7 +28,13 @@
             width: 120px;
             height: 86px;
             margin: 0 auto;
-            background: $happySoftwareBackground;
+            background: transparent;
+        }
+    }
+    .forbidden-msg {
+        p {
+            font-size: 16px;
+            margin-top: 15px;
         }
     }
 }

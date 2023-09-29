@@ -359,6 +359,7 @@
         "signedInAs": "",
         "start": "Կանգնացնել ուղիղ հեռարձակումը:",
         "streamIdHelp": "",
+        "title": "Ուղիղ Հեռարձակում",
         "unavailableTitle": ""
     },
     "localRecording": {
@@ -469,6 +470,7 @@
         "serviceName": "",
         "signIn": "",
         "signOut": "",
+        "title": "Գրանցում",
         "unavailable": "",
         "unavailableTitle": ""
     },

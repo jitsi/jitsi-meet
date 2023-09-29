@@ -12,6 +12,7 @@ VERSION=$1
 
 # iOS
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${VERSION}" ${THIS_DIR}/../ios/sdk/src/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${VERSION}" ${THIS_DIR}/../ios/sdk/src/Lite-Info.plist
 
 # Android
 sed -i "" -e "s/sdkVersion=.*/sdkVersion=${VERSION}/" ${THIS_DIR}/../android/gradle.properties

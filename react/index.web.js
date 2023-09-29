@@ -3,11 +3,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { App } from './features/app/components';
+import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
-import { Platform } from './features/base/react';
-import { getJitsiMeetGlobalNS } from './features/base/util';
-import PrejoinApp from './features/prejoin/components/PrejoinApp';
+import Platform from './features/base/react/Platform.web';
+import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
+import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
+import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;
@@ -43,7 +44,8 @@ const globalNS = getJitsiMeetGlobalNS();
 
 globalNS.entryPoints = {
     APP: App,
-    PREJOIN: PrejoinApp
+    PREJOIN: PrejoinApp,
+    DIALIN: DialInSummaryApp
 };
 
 globalNS.renderEntryPoint = ({

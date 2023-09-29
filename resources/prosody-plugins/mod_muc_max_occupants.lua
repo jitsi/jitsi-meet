@@ -30,7 +30,7 @@ local function check_for_max_occupants(event)
   end
   -- If we're a whitelisted user joining the room, don't bother checking the max
   -- occupants.
-  if whitelist and whitelist:contains(domain) or whitelist:contains(user..'@'..domain) then
+  if whitelist and (whitelist:contains(domain) or whitelist:contains(user..'@'..domain)) then
     return;
   end
 
@@ -53,7 +53,7 @@ local function check_for_max_occupants(event)
 		-- from the count.
 		for _, occupant in room:each_occupant() do
 			user, domain, res = split_jid(occupant.bare_jid);
-			if not whitelist:contains(domain) and not whitelist:contains(user..'@'..domain) then
+			if not whitelist or (not whitelist:contains(domain) and not whitelist:contains(user..'@'..domain)) then
 				slots = slots - 1
 			end
 		end

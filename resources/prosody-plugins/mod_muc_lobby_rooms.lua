@@ -30,6 +30,8 @@ local jid_bare = require 'util.jid'.bare;
 local json = require 'util.json';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
+local muc_util = module:require "muc/util";
+local valid_affiliations = muc_util.valid_affiliations;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
@@ -40,6 +42,7 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
+local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
@@ -332,11 +335,13 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if members_only then
             local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
+                module:fire_event('jitsi-lobby-enabled', { room = room; });
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
             destroy_lobby_room(room, room.jid);
+            module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
         end
     end);
@@ -359,9 +364,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 
     host_module:hook('muc-occupant-pre-join', function (event)
-        local room, stanza = event.room, event.stanza;
+        local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-        if is_healthcheck_room(room.jid) or not room:get_members_only() then
+        if is_healthcheck_room(room.jid) or not room:get_members_only() or ends_with(occupant.nick, '/focus') then
             return;
         end
 
@@ -388,12 +393,23 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if whitelistJoin then
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 0 then
-                event.occupant.role = 'participant';
+                occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
                 room:save();
 
                 return;
             end
+        end
+
+        -- Check for display name if missing return an error
+        local displayName = stanza:get_child_text('nick', 'http://jabber.org/protocol/nick');
+        if (not displayName or #displayName == 0) and not room._data.lobby_skip_display_name_check then
+            local reply = st.error_reply(stanza, 'modify', 'not-acceptable');
+            reply.tags[1].attr.code = '406';
+            reply:tag('displayname-required', { xmlns = 'http://jitsi.org/jitmeet', lobby = 'true' }):up():up();
+
+            event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
+            return true;
         end
 
         -- we want to add the custom lobbyroom field to fill in the lobby room jid
@@ -402,6 +418,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if not affiliation or affiliation == 'none' then
             local reply = st.error_reply(stanza, 'auth', 'registration-required');
             reply.tags[1].attr.code = '407';
+            if room._data.lobby_extra_reason then
+                reply:tag(room._data.lobby_extra_reason, { xmlns = 'http://jitsi.org/jitmeet' }):up();
+            end
             reply:tag('lobbyroom', { xmlns = 'http://jitsi.org/jitmeet' }):text(room._data.lobbyroom):up():up();
 
             -- TODO: Drop this tag at some point (when all mobile clients and jigasi are updated), as this violates the rfc
@@ -436,12 +455,47 @@ end);
 
 function handle_create_lobby(event)
     local room = event.room;
+
+    -- since this is called by backend rather than triggered by UI, we need to handle a few additional things:
+    --  1. Make sure existing participants are already members or they will get kicked out when set_members_only(true)
+    --  2. Trigger a 104 (config change) status message so UI state is properly updated for existing users
+
+    -- make sure all existing occupants are members
+    for _, occupant in room:each_occupant() do
+        local affiliation = room:get_affiliation(occupant.bare_jid);
+        if valid_affiliations[affiliation or "none"] < valid_affiliations.member then
+            room:set_affiliation(true, occupant.bare_jid, 'member');
+        end
+    end
+    -- Now it is safe to set the room to members only
     room:set_members_only(true);
-    attach_lobby_room(room)
+    room._data.lobby_extra_reason = event.reason;
+    room._data.lobby_skip_display_name_check = event.skip_display_name_check;
+
+    -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
+    room:broadcast_message(
+        st.message({ type='groupchat', from=room.jid })
+            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' })
+    );
+
+    -- Attach the lobby room.
+    attach_lobby_room(room);
 end
 
 function handle_destroy_lobby(event)
-    destroy_lobby_room(event.room, event.newjid, event.message);
+    local room = event.room;
+
+    -- since this is called by backend rather than triggered by UI, we need to
+    -- trigger a 104 (config change) status message so UI state is properly updated for existing users (and jicofo)
+    destroy_lobby_room(room, event.newjid, event.message);
+
+    -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
+    room:broadcast_message(
+        st.message({ type='groupchat', from=room.jid })
+            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' })
+    );
 end
 
 module:hook_global('config-reloaded', load_config);

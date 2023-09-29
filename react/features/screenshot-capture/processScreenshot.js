@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Helper method used to process screenshots captured by the {@code ScreenshotCaptureEffect}.
  *
@@ -7,6 +5,6 @@
  * @param {Object} options - Custom options required for processing.
  * @returns {void}
  */
-export function processScreenshot(canvas: HTMLCanvasElement, options: Object) { // eslint-disable-line no-unused-vars
+export function processScreenshot(canvas, options) { // eslint-disable-line no-unused-vars
     return;
 }

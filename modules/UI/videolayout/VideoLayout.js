@@ -2,12 +2,16 @@
 
 import Logger from '@jitsi/logger';
 
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media/constants';
 import {
+    getParticipantById,
     getPinnedParticipant,
-    getParticipantById
-} from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+    isScreenShareParticipantById
+} from '../../../react/features/base/participants/functions';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant
+} from '../../../react/features/base/tracks/functions.any';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -19,11 +23,8 @@ const VideoLayout = {
     /**
      * Handler for local flip X changed event.
      */
-    onLocalFlipXChanged() {
+    onLocalFlipXChanged(localFlipX) {
         if (largeVideo) {
-            const { store } = APP;
-            const { localFlipX } = store.getState()['features/base/settings'];
-
             largeVideo.onLocalFlipXChange(localFlipX);
         }
     },
@@ -86,9 +87,14 @@ const VideoLayout = {
     getRemoteVideoType(id) {
         const state = APP.store.getState();
         const participant = getParticipantById(state, id);
+        const isScreenShare = isScreenShareParticipantById(state, id);
 
-        if (participant?.isFakeParticipant) {
+        if (participant?.fakeParticipant && !isScreenShare) {
             return VIDEO_TYPE.CAMERA;
+        }
+
+        if (isScreenShare) {
+            return VIDEO_TYPE.DESKTOP;
         }
 
         const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
@@ -100,23 +106,6 @@ const VideoLayout = {
         const { id } = getPinnedParticipant(APP.store.getState()) || {};
 
         return id || null;
-    },
-
-    /**
-     * Shows/hides warning about a user's connectivity issues.
-     *
-     * @param {string} id - The ID of the remote participant(MUC nickname).
-     * @returns {void}
-     */
-    onParticipantConnectionStatusChanged(id) {
-        if (APP.conference.isLocalId(id)) {
-
-            return;
-        }
-
-        // We have to trigger full large video update to transition from
-        // avatar to video on connectivity restored.
-        this._updateLargeVideoIfDisplayed(id, true);
     },
 
     /**
@@ -147,12 +136,6 @@ const VideoLayout = {
         }
     },
 
-    changeUserAvatar(id, avatarUrl) {
-        if (this.isCurrentlyOnLarge(id)) {
-            largeVideo.updateAvatar(avatarUrl);
-        }
-    },
-
     isLargeVideoVisible() {
         return this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE);
     },
@@ -169,7 +152,7 @@ const VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
-    updateLargeVideo(id, forceUpdate) {
+    updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
             return;
         }
@@ -177,8 +160,13 @@ const VideoLayout = {
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
-        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        const participant = getParticipantById(state, id);
+        const videoTrack = getVideoTrackByParticipant(state, participant);
         const videoStream = videoTrack?.jitsiTrack;
+
+        if (videoStream && forceStreamToReattach) {
+            videoStream.forceStreamToReattach = forceStreamToReattach;
+        }
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
@@ -195,7 +183,6 @@ const VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
-
 
             largeVideo.updateLargeVideo(
                 id,
@@ -312,7 +299,7 @@ const VideoLayout = {
      */
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
-            this.updateLargeVideo(participantId, force);
+            this.updateLargeVideo(participantId, force, false);
         }
     },
 

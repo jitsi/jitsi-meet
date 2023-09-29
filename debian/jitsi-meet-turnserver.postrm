@@ -23,26 +23,12 @@ set -e
 
 
 case "$1" in
-    remove)
-        if [ -x "/etc/init.d/nginx" ]; then
-            invoke-rc.d nginx reload || true
-        fi
-        if [ -x "/etc/init.d/apache2" ]; then
-            invoke-rc.d apache2 reload || true
-        fi
-    ;;
     purge)
         rm -rf /etc/turnserver.conf
-        if [ -x "/etc/init.d/nginx" ]; then
-            invoke-rc.d nginx reload || true
-        fi
-        if [ -x "/etc/init.d/apache2" ]; then
-            invoke-rc.d apache2 reload || true
-        fi
         # Clear the debconf variable
         db_purge
     ;;
-    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;
 
     *)

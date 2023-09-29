@@ -1,10 +1,5 @@
 {
-    "colors": {
-        "moderationDisabled": "#E54B4B"
-    },
-    "headerSize": 60,
-    "ignoredChildClassName": "ignore-child",
-    "panePadding": 16,
+    "panePadding": 24,
     "participantsPaneWidth": 315,
     "MD_BREAKPOINT": "580px"
 }

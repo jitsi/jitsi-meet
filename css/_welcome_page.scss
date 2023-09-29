@@ -10,7 +10,7 @@ body.welcome-page {
     flex-direction: column;
     font-family: $welcomePageFontFamily;
     justify-content: space-between;
-    min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
 
     .header {
@@ -20,7 +20,6 @@ body.welcome-page {
         background-size: $welcomePageHeaderBackgroundSize;
         padding-bottom: $welcomePageHeaderPaddingBottom;
         background-color: #131519;
-        height: 400px;
         overflow: hidden;
         position: relative;
 
@@ -29,6 +28,16 @@ body.welcome-page {
             flex-direction: column;
             margin: $welcomePageHeaderContainerMargin;
             z-index: $zindex2;
+            align-items: center;
+            position: relative;
+            max-width: 688px;
+        }
+
+        .header-watermark-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
         }
 
         .header-text-title {
@@ -52,26 +61,58 @@ body.welcome-page {
 
         }
 
+        .insecure-room-name-warning {
+            align-items: center;
+            color: rgb(215, 121, 118);
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            margin-top: 15px;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+
+            .jitsi-icon {
+                margin-right: 15px;
+
+                svg {
+                    fill: rgb(215, 121, 118);
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+        }
+
+        ::placeholder {
+            color: #253858;
+        }
+
         #enter_room {
             display: $welcomePageEnterRoomDisplay;
             align-items: center;
             max-width: 480px;
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
-            background-color: #fff;
-            padding: $welcomePageEnterRoomPadding;
-            border-radius: 4px;
-            margin: $welcomePageEnterRoomMargin;
+            height: fit-content;
 
-            .enter-room-input-container {
+            .join-meeting-container {
+                margin: $welcomePageEnterRoomMargin;
+                padding: $welcomePageEnterRoomPadding;
+                border-radius: 4px;
+                background-color: #fff;
+                display: flex;
+                width: 100%;
                 text-align: left;
                 color: #253858;
+            }
+
+            .enter-room-input-container {
                 flex-grow: 1;
-                height: fit-content;
                 padding-right: 4px;
-                position: relative;
 
                 .enter-room-input {
+                    border-radius: 4px;
                     border: 0;
                     background: #fff;
                     display: inline-block;
@@ -80,59 +121,23 @@ body.welcome-page {
                     font-size: 14px;
                     padding-left: 10px;
 
-                    &:focus {
+                    &.focus-visible {
                         outline: auto 2px #005fcc;
                     }
                 }
-
-                .insecure-room-name-warning {
-                    align-items: center;
-                    color: $defaultWarningColor;
-                    display: flex;
-                    flex-direction: row;
-                    margin-top: 15px;
-
-                    .jitsi-icon {
-                        margin-right: 15px;
-
-                        svg {
-                            fill: $defaultWarningColor
-                        }
-                    }
-                }
-
-                ::placeholder {
-                    color: #253858;
-                }
-            }
-
-            .warning-without-link {
-                position: absolute;
-                top: 44px;
-                left: -10px;
-            }
-
-            .warning-with-link {
-                position: absolute;
-                top: 84px;
             }
 
         }
 
         #moderated-meetings {
             max-width: calc(100% - 40px);
-            padding: 16px 0 39px 0;
+            padding: 16px 0 0;
             width: $welcomePageEnterRoomWidth;
+            text-align: center;
 
-            p {
-                color: $welcomePageDescriptionColor;
-                float: left;
-                text-align: $welcomePageHeaderTextAlign;
-
-                a {
-                    color: inherit;
-                    font-weight: 600;
-                }
+            a {
+                color: inherit;
+                font-weight: 600;
             }
         }
     }
@@ -162,7 +167,7 @@ body.welcome-page {
             margin: 4px;
             display: $welcomePageTabButtonsDisplay;
 
-            .tab {
+            [role="tab"] {
                 background-color: #c7ddff;
                 border-radius: 7px;
                 cursor: pointer;
@@ -171,8 +176,10 @@ body.welcome-page {
                 margin: 2px;
                 padding: 7px 0;
                 text-align: center;
+                color: inherit;
+                border: 0;
 
-                &.selected {
+                &[aria-selected="true"] {
                     background-color: #FFF;
                 }
             }
@@ -200,8 +207,8 @@ body.welcome-page {
         color: $welcomePageDescriptionColor;
         padding: 4px;
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        right: 0;
         z-index: $zindex2;
 
         * {
@@ -224,6 +231,11 @@ body.welcome-page {
             width: $welcomePageWatermarkWidth;
             height: $welcomePageWatermarkHeight;
         }
+
+        .watermark.leftwatermarknomargin {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
     }
 
     &.without-content {
@@ -242,10 +254,17 @@ body.welcome-page {
         padding-top: 40px;
     }
 
-    .welcome-card-row {
+    .welcome-card-column {
         display: flex;
         justify-content: center;
-        padding: 0 32px;
+        flex-direction: column;
+        align-items: center;
+        max-width: 688px;
+        margin: auto;
+
+        > div {
+            margin-bottom: 16px;
+        }
     }
 
     .welcome-card-text {
@@ -253,7 +272,7 @@ body.welcome-page {
     }
 
     .welcome-card {
-        width: 49%;
+        width: 100%;
         border-radius: 8px;
 
         &--dark {
@@ -267,10 +286,6 @@ body.welcome-page {
 
         &--grey {
             background: #F2F3F4;
-        }
-
-        &--shadow {
-            box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.15);
         }
     }
 

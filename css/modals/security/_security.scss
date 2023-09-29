@@ -13,21 +13,23 @@
             }
 
             .password {
-                align-items: center;
+                align-items: flex-start;
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-start;
                 margin-top: 15px;
+                flex-direction: column;
 
                 &-actions {
-                    a {
+                    margin-top: 10px;
+                    button {
                         cursor: pointer;
                         text-decoration: none;
                         font-size: 14px;
                         color: #6FB1EA;
                     }
 
-                    & > :first-child:not(:last-child) {	
-                        margin-right: 24px;	
+                    & > :not(:last-child) {
+                        margin-right: 24px;
                     }
                 }
             }

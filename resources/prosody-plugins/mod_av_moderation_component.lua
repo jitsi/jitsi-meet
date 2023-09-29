@@ -8,7 +8,7 @@ local st = require 'util.stanza';
 
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
-    log('error', 'No muc_component specified. No muc to operate on!');
+    module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
 
@@ -141,11 +141,11 @@ function on_message(event)
         local from = event.stanza.attr.from;
         local occupant = room:get_occupant_by_real_jid(from);
         if not occupant then
-            log('warn', 'No occupant %s found for %s', from, room.jid);
+            module:log('warn', 'No occupant %s found for %s', from, room.jid);
             return false;
         end
         if occupant.role ~= 'moderator' then
-            log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+            module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
             return false;
         end
 

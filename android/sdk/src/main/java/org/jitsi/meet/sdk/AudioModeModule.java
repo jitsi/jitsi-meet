@@ -26,10 +26,13 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -196,7 +199,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
                     deviceInfo.putBoolean("selected", device.equals(selectedDevice));
                     data.pushMap(deviceInfo);
                 }
-                ReactInstanceManagerHolder.emitEvent(DEVICE_CHANGE_EVENT, data);
+                getContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(DEVICE_CHANGE_EVENT, data);
                 JitsiMeetLogger.i(TAG + " Updating audio device list");
             }
         });
@@ -210,6 +213,10 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    public ReactContext getContext(){
+        return this.getReactApplicationContext();
     }
 
     /**

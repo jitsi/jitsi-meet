@@ -83,7 +83,7 @@ module:hook("muc-occupant-pre-join", function (event)
     -- skipping events we had produced and clear our flag
     if stanza.delayed_join_skip == true then
         event.stanza.delayed_join_skip = nil;
-        return false;
+        return nil;
     end
 
     local throttle = room.join_rate_throttle;
@@ -101,7 +101,7 @@ module:hook("muc-occupant-pre-join", function (event)
 
         if not add_item_to_queue(room.join_rate_presence_queue, event, room, stanza.attr.from) then
             -- let's not stop processing the event
-            return false;
+            return nil;
         end
 
         if not room.join_rate_queue_timer then

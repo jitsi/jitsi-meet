@@ -107,7 +107,7 @@ extension SocketConnection: StreamDelegate {
                 streamHasSpaceAvailable?()
             }
         case .errorOccurred:
-            print("client stream error occured: \(String(describing: aStream.streamError))")
+            print("client stream error occurred: \(String(describing: aStream.streamError))")
             close()
             notifyDidClose(error: aStream.streamError)
 

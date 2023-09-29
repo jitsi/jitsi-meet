@@ -499,7 +499,7 @@ module:hook("pre-resource-unbind", function (event)
 				and session.hibernating == hibernate_time then
 					-- wait longer if the timeout isn't reached because push was enabled for this session
 					-- session.first_hibernated_push is the starting point for hibernation timeouts of those push enabled clients
-					-- wait for an additional resume_timeout seconds if no push occured since hibernation at all
+					-- wait for an additional resume_timeout seconds if no push occurred since hibernation at all
 					local current_time = os_time();
 					local timeout_start = math_max(session.hibernating, session.first_hibernated_push or session.hibernating);
 					if session.push_identifier ~= nil and not session.first_hibernated_push then

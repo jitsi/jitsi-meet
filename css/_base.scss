@@ -31,8 +31,8 @@ body {
     font-size: 12px;
     font-weight: 400;
     overflow: hidden;
-    color: $defaultColor;
-    background: $defaultBackground;
+    color: #F1F1F1;
+    background: #040404; // should match DEFAULT_BACKGROUND from interface_config
 }
 
 /**
@@ -41,18 +41,6 @@ body {
  */
 .js-focus-visible :focus:not(.focus-visible) {
   outline: none;
-}
-
-/**
- * AtlasKit sets a default margin on the rendered modals, so
- * when the shift-right class is set when the chat opens, we
- * pad the modal container in order for the modals to be centered
- * while also taking the chat size into consideration.
-*/
-@media (min-width: 581px) {
-    .shift-right .atlaskit-portal > div:not(.Tooltip) {
-        padding-left: $sidebarWidth;
-    }
 }
 
 .jitsi-icon {
@@ -76,10 +64,6 @@ p {
 
 body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
-}
-
-#nowebrtc {
-    display:none;
 }
 
 button, input, select, textarea {
@@ -106,7 +90,7 @@ input[type='text'], input[type='password'], textarea {
 
 button {
     color: #FFF;
-    background-color: $buttonBackground;
+    background-color: #44A5FF;
     border-radius: $borderRadius;
 
     &.no-icon {
@@ -138,6 +122,12 @@ form {
     background-size: contain;
 }
 
+.leftwatermarknomargin {
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 .rightwatermark {
     right: 32px;
     top: 32px;
@@ -151,22 +141,7 @@ form {
     font-size: 11pt;
     color: rgba(255,255,255,.50);
     text-decoration: none;
-    z-index: $poweredByZ;
-}
-
-.connected {
-    color: #21B9FC;
-    font-size: 12px;
-}
-
-.lastN, .disconnected {
-    color: #a3a3a3;
-    font-size: 12px;
-}
-
-#inviteLinkRef {
-    -webkit-user-select: text;
-    user-select: text;
+    z-index: 100;
 }
 
 /**
@@ -191,6 +166,24 @@ form {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, .5);
+    background: #3D3D3D;
     border-radius: 4px;
+}
+
+/* Necessary for the new icons to work properly. */
+.jitsi-icon svg path {
+    fill: inherit !important;
+}
+
+.sr-only {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
 }

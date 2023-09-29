@@ -7,7 +7,7 @@ local is_feature_allowed = module:require "util".is_feature_allowed;
 
 -- no token configuration but required
 if token_util == nil then
-    log("error", "no token configuration but it is required");
+    module:log("error", "no token configuration but it is required");
     return;
 end
 

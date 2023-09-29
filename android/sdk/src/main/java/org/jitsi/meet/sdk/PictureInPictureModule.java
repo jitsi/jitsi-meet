@@ -43,7 +43,7 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
     private static final String TAG = NAME;
 
     private static boolean isSupported;
-    private boolean isDisabled;
+    private boolean isEnabled;
 
     public PictureInPictureModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -84,7 +84,7 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
      */
     @TargetApi(Build.VERSION_CODES.O)
     public void enterPictureInPicture() {
-        if (isDisabled) {
+        if (!isEnabled) {
             return;
         }
 
@@ -132,8 +132,8 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setPictureInPictureDisabled(Boolean disabled) {
-        this.isDisabled = disabled;
+    public void setPictureInPictureEnabled(Boolean enabled) {
+        this.isEnabled = enabled;
     }
 
     public boolean isPictureInPictureSupported() {

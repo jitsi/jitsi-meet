@@ -33,46 +33,17 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 
 @implementation JitsiMeetView {
     /**
-     * The unique identifier of this `JitsiMeetView` within the process for the
-     * purposes of `ExternalAPI`. The name scope was inspired by postis which we
-     * use on Web for the similar purposes of the iframe-based external API.
-     */
-    NSString *externalAPIScope;
-
-    /**
      * React Native view where the entire content will be rendered.
      */
     RNRootView *rootView;
 }
 
-/**
- * The `JitsiMeetView`s associated with their `ExternalAPI` scopes (i.e. unique
- * identifiers within the process).
- */
-static NSMapTable<NSString *, JitsiMeetView *> *views;
-/**
- * This gets called automagically when the program starts.
- */
-__attribute__((constructor))
-static void initializeViewsMap() {
-    views = [NSMapTable strongToWeakObjectsMapTable];
-}
-
 #pragma mark Initializers
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self initWithXXX];
-    }
-
-    return self;
-}
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        [self initWithXXX];
+        [self doInitialize];
     }
 
     return self;
@@ -81,7 +52,7 @@ static void initializeViewsMap() {
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        [self initWithXXX];
+        [self doInitialize];
     }
 
     return self;
@@ -91,18 +62,20 @@ static void initializeViewsMap() {
  * Internal initialization:
  *
  * - sets the background color
- * - initializes the external API scope
+ * - registers necessary observers
  */
-- (void)initWithXXX {
-    // Hook this JitsiMeetView into ExternalAPI.
-    externalAPIScope = [NSUUID UUID].UUIDString;
-    [views setObject:self forKey:externalAPIScope];
-
+- (void)doInitialize {
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than
     // the default background color.
     self.backgroundColor
         = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
+    
+    [self registerObservers];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark API
@@ -160,7 +133,59 @@ static void initializeViewsMap() {
     [externalAPI sendSetVideoMuted:muted];
 }
 
+- (void)setClosedCaptionsEnabled:(BOOL)enabled {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetClosedCaptionsEnabled:enabled];
+}
+
+- (void)toggleCamera {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleCamera];
+}
+
 #pragma mark Private methods
+
+- (void)registerObservers {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleUpdateViewPropsNotification:) name:updateViewPropsNotificationName object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleSendEventNotification:) name:sendEventNotificationName object:nil];
+ }
+
+- (void)handleUpdateViewPropsNotification:(NSNotification *)notification {
+    NSDictionary *props = [notification.userInfo objectForKey:@"props"];
+    [self setProps:props];
+}
+
+- (void)handleSendEventNotification:(NSNotification *)notification {
+    NSString *eventName = notification.userInfo[@"name"];
+    NSString *eventData = notification.userInfo[@"data"];
+
+    SEL sel = NSSelectorFromString([self methodNameFromEventName:eventName]);
+    if (sel && [self.delegate respondsToSelector:sel]) {
+        [self.delegate performSelector:sel withObject:eventData];
+    }
+}
+
+/**
+  * Converts a specific event name i.e. redux action type description to a
+  * method name.
+  *
+  * @param eventName The event name to convert to a method name.
+  * @return A method name constructed from the specified `eventName`.
+  */
+ - (NSString *)methodNameFromEventName:(NSString *)eventName {
+    NSMutableString *methodName
+        = [NSMutableString stringWithCapacity:eventName.length];
+
+    for (NSString *c in [eventName componentsSeparatedByString:@"_"]) {
+        if (c.length) {
+            [methodName appendString:
+                methodName.length ? c.capitalizedString : c.lowercaseString];
+        }
+    }
+    [methodName appendString:@":"];
+
+    return methodName;
+ }
 
 /**
  * Passes the given props to the React Native application. The props which we pass
@@ -180,8 +205,6 @@ static void initializeViewsMap() {
             = [NSNumber numberWithBool:
                self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)]];
     }
-
-    props[@"externalAPIScope"] = externalAPIScope;
 
     // This method is supposed to be imperative i.e. a second
     // invocation with one and the same URL is expected to join the respective
@@ -211,28 +234,6 @@ static void initializeViewsMap() {
                 | UIViewAutoresizingFlexibleHeight;
         [self addSubview:rootView];
     }
-}
-
-+ (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps {
-    BOOL handled = NO;
-
-    if (views) {
-        for (NSString *externalAPIScope in views) {
-            JitsiMeetView *view
-                = [self viewForExternalAPIScope:externalAPIScope];
-
-            if (view) {
-                [view setProps:newProps];
-                handled = YES;
-            }
-        }
-    }
-
-    return handled;
-}
-
-+ (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
-    return [views objectForKey:externalAPIScope];
 }
 
 @end

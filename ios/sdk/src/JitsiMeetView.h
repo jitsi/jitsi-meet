@@ -45,5 +45,7 @@
 - (void)closeChat;
 - (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to;
 - (void)setVideoMuted:(BOOL)muted;
+- (void)setClosedCaptionsEnabled:(BOOL)enabled;
+- (void)toggleCamera;
 
 @end

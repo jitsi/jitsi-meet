@@ -16,7 +16,8 @@
 
 #import <Intents/Intents.h>
 
-#import "Dropbox.h"
+#import "Orientation.h"
+
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -25,8 +26,12 @@
 #import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
 
+#import <react-native-webrtc/WebRTCModuleOptions.h>
+
+#if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
-#import <WebRTC/RTCLogging.h>
+#import "Dropbox.h"
+#endif
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
@@ -49,6 +54,12 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+#if 0
+        // Initialize WebRTC options.
+        WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
+        options.loggingSeverity = RTCLoggingSeverityInfo;
+#endif
+
         // Initialize the one and only bridge for interfacing with React Native.
         _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
         
@@ -60,11 +71,6 @@
 
         // Register a log handler for React.
         registerReactLogHandler();
-
-#if 0
-        // Enable WebRTC logs
-        RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
-#endif
     }
 
     return self;
@@ -77,7 +83,9 @@
 
     _launchOptions = [launchOptions copy];
 
+#if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
+#endif
 
     return YES;
 }
@@ -87,14 +95,19 @@
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
     JitsiMeetConferenceOptions *options = [self optionsFromUserActivity:userActivity];
+    if (options) {
+        [JitsiMeetView updateProps:[options asProps]];
+        return true;
+    }
 
-    return options && [JitsiMeetView setPropsInViews:[options asProps]];
+    return false;
 }
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
+#if !defined(JITSI_MEET_SDK_LITE)
     if ([Dropbox application:app openURL:url options:options]) {
         return YES;
     }
@@ -104,6 +117,7 @@
                             options:options]) {
         return YES;
     }
+#endif
 
     if (_customUrlScheme == nil || ![_customUrlScheme isEqualToString:url.scheme]) {
         return NO;
@@ -112,8 +126,13 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
+    [JitsiMeetView updateProps:[conferenceOptions asProps]];
 
-    return [JitsiMeetView setPropsInViews:[conferenceOptions asProps]];
+    return true;
+}
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return [Orientation getOrientation];
 }
 
 #pragma mark - Utility methods

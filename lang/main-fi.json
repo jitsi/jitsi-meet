@@ -52,6 +52,7 @@
             "title": "Anna chatissä käytettävä lempinimi",
             "titleWithPolls": "Anna chatissä käytettävä lempinimi"
         },
+        "sendButton": "Lähetä",
         "title": "Chatti",
         "titleWithPolls": "Chatti"
     },
@@ -364,6 +365,7 @@
         "signedInAs": "Sisäänkirjautunut käyttäjä:",
         "start": "Aloita suoratoisto",
         "streamIdHelp": "Mikä tämä on?",
+        "title": "Suoratoisto",
         "unavailableTitle": "Suoratoisto ei käytettävissä"
     },
     "localRecording": {
@@ -427,7 +429,12 @@
         "startSilentTitle": "",
         "suboptimalExperienceDescription": "Valitettavasti {{appName}} ei taida toimia kovin hyvin täällä. Yritämme löytää parannuskeinoja, mutta sillä välin kannattaa käyttää jotain <a href='{{recommendedBrowserPageLink}}' target='_blank'>täysin tuettua selainta</a>.",
         "suboptimalExperienceTitle": "Selainvaroitus",
-        "unmute": ""
+        "unmute": "Poista mykistys"
+    },
+    "participantsPane": {
+        "actions": {
+            "muteEveryoneElse": "Mykistä kaikki muut"
+        }
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
@@ -474,6 +481,7 @@
         "serviceName": "Nauhoituspalvelu",
         "signIn": "Kirjaudu sisään",
         "signOut": "Kirjaudu ulos",
+        "title": "Nauhoitetaan",
         "unavailable": "Hups! {{serviceName}} ei ole käytettävissä. Yritämme ratkaista ongelman. Yritä myöhemmin uudelleen.",
         "unavailableTitle": "Nauhoitus ei käytettävissä"
     },
@@ -560,11 +568,13 @@
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
             "mute": "Säädä äänen mykistystä",
+            "muteEveryoneElse": "Mykistä kaikki muut",
             "pip": "Säädä Kuva kuvassa (PiP) -tilaa",
             "profile": "Muokkaa profiilia",
             "raiseHand": "Säädä käden nostoa",
             "recording": "Säädä nauhoitusta",
             "remoteMute": "Mykistä osanottaja",
+            "selectBackground": "Valitse tausta",
             "shareRoom": "Kutsu joku",
             "shareYourScreen": "Säädä näytön jakoa",
             "sharedvideo": "Säädä videon jakoa",
@@ -654,29 +664,37 @@
         "pending": "{{displayName}} on kutsuttu"
     },
     "videoStatus": {
+        "adjustFor": "Muokkaa:",
         "audioOnly": "ÄÄNI",
         "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
-        "callQuality": "",
+        "bestPerformance": "Paras suorituskyky",
+        "callQuality": "Videon laatu",
         "hd": "HD",
         "highDefinition": "Teräväpiirto",
+        "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
         "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
         "ld": "LD",
         "lowDefinition": "Alhainen kuvanlaatu",
         "onlyAudioAvailable": "Vain ääni -tila on käytettävissä",
         "onlyAudioSupported": "Tässä selaimessa tuemme vain ääntä.",
+        "performanceSettings": "Suorituskykyasetukset",
         "sd": "SD",
         "standardDefinition": "Vakiopiirto"
     },
     "videothumbnail": {
         "domute": "Mykistä",
+        "domuteOthers": "Mykistä kaikki muut",
+        "domuteVideoOfOthers": "Estä muiden kamera",
         "flip": "Käännä",
         "kick": "Poista",
         "moderator": "Valvoja",
-        "mute": "",
+        "mute": "Osallistuja on mykistetty",
         "muted": "Mykistetty",
+        "pinToStage": "Kiinnitä ruutuun",
         "remoteControl": "Etäkäyttö",
-        "show": "",
+        "show": "Näytä ruudulla",
+        "unpinFromStage": "Irroita kiinnitys",
         "videomute": ""
     },
     "welcomepage": {

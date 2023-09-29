@@ -40,7 +40,7 @@ function get_presence(room, nick)
     return nil;
 end
 
--- Checks for existance of a poltergeist occupant in a room.
+-- Checks for existence of a poltergeist occupant in a room.
 -- @param room the room instance where to check for the occupant
 -- @param nick the nick of the occupant
 -- @return true if occupant is found, false otherwise
@@ -152,8 +152,8 @@ end
 -- State for toggling the tagging of presence stanzas with ignored tag.
 --
 -- A poltergeist with it's full room/nick set to ignore will have a jitsi ignore
--- tag applied to all presence stanza's broadcasted. The following funcitons
--- assisst in managing this state.
+-- tag applied to all presence stanza's broadcasted. The following functions
+-- assist in managing this state.
 --------------------------------------------------------------------------------
 local presence_ignored = {}
 

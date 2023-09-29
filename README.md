@@ -18,7 +18,6 @@ Amongst others here are the main features Jitsi Meet offers:
 * Web and native SDKs for integration
 * HD audio and video
 * Content sharing
-* End-to-End Encryption
 * Raise hand and reactions
 * Chat with private conversations
 * Polls

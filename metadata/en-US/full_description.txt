@@ -1,0 +1,10 @@
+Jitsi Meet lets you stay in touch with all your teams, be they family, friends, or colleagues. Instant video conferences, efficiently adapting to your scale.
+
+* Unlimited users: There are no artificial restrictions on the number of users or conference participants. Server power and bandwidth are the only limiting factors.
+* No account needed.
+* Lock-protected rooms: Control the access to your conferences with a password.
+* Encrypted by default.
+* High quality: Audio and video are delivered with the clarity and richness of Opus and VP8.
+* Web browser ready: No downloads are required of your friends to join the conversation. Jitsi Meet works directly within their browsers as well. Simply share your conference URL with others to get started.
+* 100% open source: Powered by awesome communities from all over the world. And your friends at 8x8.
+* Invite by pretty URLs: You can meet at the easy to remember https://MySite.com/OurConf of your choice instead of joining the hard to remember rooms with seemingly random sequences of numbers and letters in their names.

@@ -15,6 +15,7 @@
  */
 package org.jitsi.meet.sdk;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
 import com.facebook.soloader.SoLoader;
+import org.wonday.orientation.OrientationActivityLifecycle;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +39,10 @@ public class JitsiInitializer implements Initializer<Boolean> {
 
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();
+
+        // Register activity lifecycle handler for the orientation locker module.
+        ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
+
         return true;
     }
 

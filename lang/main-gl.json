@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "privateNotice": "Mensaxe privada para {{recipient}}",
+        "sendButton": "Enviar",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "vostede"
@@ -385,6 +386,7 @@
         "signedInAs": "Está conectado como:",
         "start": "Arrincar unha difusión ao vivo",
         "streamIdHelp": "Que é isto?",
+        "title": "Difusión ao vivo",
         "unavailableTitle": "A difusión ao vivo non está dispoñíbel"
     },
     "localRecording": {
@@ -498,6 +500,7 @@
         "serviceName": "Servizo de gravación",
         "signIn": "Conectarse",
         "signOut": "Desconectarse",
+        "title": "Gravando",
         "unavailable": "Opa! O {{serviceName}} non está dispoñíbel actualmente. Estamos traballando na resolución da incidencia. Ténteo de novo máis adiante.",
         "unavailableTitle": "A gravación non está dispoñíbel"
     },
