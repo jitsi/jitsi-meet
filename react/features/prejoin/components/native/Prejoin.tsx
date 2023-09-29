@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
@@ -16,6 +16,7 @@ import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
+import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
@@ -28,6 +29,7 @@ import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
@@ -37,6 +39,7 @@ import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton'
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
+import { hasDisplayName } from '../../utils';
 
 import { preJoinStyles as styles } from './styles';
 
@@ -52,10 +55,19 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
     const isDisplayNameVisible
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
+    const isDisplayNameReadonly = !useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
+    const isDisplayNameMissing = useMemo(
+        () => !displayName && isDisplayNameMandatory, [ displayName, isDisplayNameMandatory ]);
+    const showDisplayNameError = useMemo(
+        () => !isDisplayNameReadonly && isDisplayNameMissing && isDisplayNameVisible,
+        [ isDisplayNameMissing, isDisplayNameReadonly, isDisplayNameVisible ]);
+    const showDisplayNameInput = useMemo(
+        () => isDisplayNameVisible && (displayName || !isDisplayNameReadonly),
+        [ displayName, isDisplayNameReadonly, isDisplayNameVisible ]);
     const [ isJoining, setIsJoining ]
         = useState(false);
     const onChangeDisplayName = useCallback(event => {
@@ -73,9 +85,20 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
+    const maybeJoin = useCallback(() => {
+        if (isDisplayNameMissing) {
+            dispatch(openDisplayNamePrompt({
+                onPostSubmit: onJoin,
+                validateInput: hasDisplayName
+            }));
+        } else {
+            onJoin();
+        }
+    }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
+
     const onJoinLowBandwidth = useCallback(() => {
         dispatch(setAudioOnly(true));
-        onJoin();
+        maybeJoin();
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
@@ -85,7 +108,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch ]);
 
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
-    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', goBack);
@@ -158,25 +180,30 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         styles = { styles.buttonStylesBorderless } />
                 </View>
                 {
-                    isDisplayNameVisible
-                    && <Input
+                    showDisplayNameInput && <Input
                         customStyles = {{ input: styles.customInput }}
+                        disabled = { isDisplayNameReadonly }
+                        error = { showDisplayNameError }
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }
                         value = { displayName } />
                 }
+                {showDisplayNameError && (
+                    <View style = { styles.errorContainer as StyleProp<TextStyle> }>
+                        <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
+                    </View>)}
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
-                    disabled = { joinButtonDisabled }
+                    disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeeting'
-                    onClick = { isJoining ? undefined : onJoin }
+                    onClick = { isJoining ? undefined : maybeJoin }
                     style = { styles.joinButton }
                     type = { PRIMARY } />
                 <Button
                     accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                    disabled = { joinButtonDisabled }
+                    disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                    onClick = { onJoinLowBandwidth }
+                    onClick = { isJoining ? undefined : onJoinLowBandwidth }
                     style = { styles.joinButton }
                     type = { TERTIARY } />
             </View>
