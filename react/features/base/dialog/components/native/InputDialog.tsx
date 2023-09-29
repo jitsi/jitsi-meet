@@ -21,6 +21,11 @@ interface IProps extends AbstractProps, WithTranslation {
     descriptionKey?: string;
 
     /**
+     * Whether to display the cancel button.
+     */
+    disableCancel?: boolean;
+
+    /**
      * An optional initial value to initiate the field with.
      */
     initialValue?: string;
@@ -52,6 +57,11 @@ interface IState extends AbstractState {
      * The current value of the field.
      */
     fieldValue?: string;
+
+    /**
+     * The result of the input validation.
+     */
+    isValid: boolean;
 }
 
 /**
@@ -68,6 +78,7 @@ class InputDialog extends AbstractDialog<IProps, IState> {
 
         this.state = {
             fieldValue: props.initialValue,
+            isValid: props.validateInput ? props.validateInput(props.initialValue) : true,
             submitting: false
         };
 
@@ -115,10 +126,11 @@ class InputDialog extends AbstractDialog<IProps, IState> {
                         </Dialog.Description>
                     )
                 }
-                <Dialog.Button
+                {!this.props.disableCancel && <Dialog.Button
                     label = { t('dialog.Cancel') }
-                    onPress = { this._onCancel } />
+                    onPress = { this._onCancel } />}
                 <Dialog.Button
+                    disabled = { !this.state.isValid }
                     label = { t('dialog.Ok') }
                     onPress = { this._onSubmitValue } />
             </Dialog.Container>
@@ -132,10 +144,14 @@ class InputDialog extends AbstractDialog<IProps, IState> {
      * @returns {void}
      */
     _onChangeText(fieldValue: string) {
-        if (this.props.validateInput && !this.props.validateInput(fieldValue)) {
+        if (this.props.validateInput) {
+            this.setState({
+                isValid: this.props.validateInput(fieldValue),
+                fieldValue
+            });
+
             return;
         }
-
         this.setState({
             fieldValue
         });

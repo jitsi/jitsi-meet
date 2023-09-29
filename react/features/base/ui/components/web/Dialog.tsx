@@ -92,6 +92,7 @@ const Dialog = ({
     disableBackdropClose,
     hideCloseButton,
     disableEnter,
+    disableEscape,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
     onSubmit,
@@ -125,6 +126,7 @@ const Dialog = ({
             description = { description }
             disableBackdropClose = { disableBackdropClose }
             disableEnter = { disableEnter }
+            disableEscape = { disableEscape }
             onClose = { onClose }
             size = { size }
             submit = { submit }
@@ -170,7 +172,7 @@ const Dialog = ({
                     id = 'modal-dialog-ok-button'
                     isSubmit = { true }
                     labelKey = { ok.translationKey }
-                    onClick = { submit } />}
+                    { ...(!ok.disabled && { onClick: submit }) } />}
             </div>
         </BaseDialog>
     );
