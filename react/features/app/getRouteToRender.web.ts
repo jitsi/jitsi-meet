@@ -53,10 +53,10 @@ function _getWebConferenceRoute(state: IReduxState) {
     if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
             && state['features/authentication'].tokenAuthUrlSuccessful
             && !state['features/base/jwt'].jwt && room) {
-        const { locationURL = { href: '' } } = state['features/base/connection'];
+        const { locationURL = { href: '' } as URL } = state['features/base/connection'];
         const { tenant } = parseURIString(locationURL.href) || {};
 
-        return getTokenAuthUrl(config, room, tenant)
+        return getTokenAuthUrl(config, room, tenant, false, locationURL)
             .then((url: string | undefined) => {
                 route.href = url;
 

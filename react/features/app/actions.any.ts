@@ -104,7 +104,7 @@ export function maybeRedirectToTokenAuthUrl(
         dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
     const state = getState();
     const config = state['features/base/config'];
-    const { locationURL = { href: '' } } = state['features/base/connection'];
+    const { locationURL = { href: '' } as URL } = state['features/base/connection'];
 
     if (!isTokenAuthEnabled(config)) {
         return false;
@@ -120,7 +120,7 @@ export function maybeRedirectToTokenAuthUrl(
         const room = state['features/base/conference'].room;
         const { tenant } = parseURIString(locationURL.href) || {};
 
-        getTokenAuthUrl(config, room, tenant, true)
+        getTokenAuthUrl(config, room, tenant, true, locationURL)
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {
                     logger.warn('Cannot handle login, token service URL is not set');
