@@ -16,12 +16,14 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
  * @param {boolean} skipPrejoin - Whether to skip pre-join page.
+ * @param {URL} locationURL - The location URL.
  * @returns {Object} The state object.
  */
 export const _getTokenAuthState = (
         roomName: string | undefined,
         tenant: string | undefined,
-        skipPrejoin: boolean | undefined = false): object => {
+        skipPrejoin: boolean | undefined = false,
+        locationURL: URL): object => {
     const state = {
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
@@ -34,7 +36,7 @@ export const _getTokenAuthState = (
         state['config.prejoinConfig.enabled'] = false;
     }
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(locationURL.hash);
 
     for (const [ key, value ] of params) {
         // we allow only config and interfaceConfig overrides in the state

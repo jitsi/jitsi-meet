@@ -35,6 +35,7 @@ function _cryptoRandom() {
  * @param {string} roomName - The name of the conference room for which the user will be authenticated.
  * @param {string} tenant - The name of the conference tenant.
  * @param {string} skipPrejoin - The name of the conference room for which the user will be authenticated.
+ * @param {URL} locationURL - The current location URL.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
@@ -44,7 +45,9 @@ export const getTokenAuthUrl = (
         config: IConfig,
         roomName: string | undefined,
         tenant: string | undefined,
-        skipPrejoin: boolean | undefined = false): Promise<string | undefined> => {
+        skipPrejoin: boolean | undefined = false,
+        // eslint-disable-next-line max-params
+        locationURL: URL): Promise<string | undefined> => {
 
     let url = config.tokenAuthUrl;
 
@@ -53,7 +56,7 @@ export const getTokenAuthUrl = (
     }
 
     if (url.indexOf('{state}')) {
-        const state = _getTokenAuthState(roomName, tenant, skipPrejoin);
+        const state = _getTokenAuthState(roomName, tenant, skipPrejoin, locationURL);
 
         if (browser.isElectron()) {
             // @ts-ignore
