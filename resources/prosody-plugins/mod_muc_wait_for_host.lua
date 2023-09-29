@@ -8,7 +8,9 @@
 -- This module depends on mod_persistent_lobby.
 local um_is_admin = require 'core.usermanager'.is_admin;
 local jid = require 'util.jid';
-local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
+local util = module:require "util";
+local is_healthcheck_room = util.is_healthcheck_room;
+local is_moderated = util.is_moderated;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
@@ -29,9 +31,12 @@ local lobby_host;
 if not disable_auto_owners then
     module:hook('muc-occupant-joined', function (event)
         local room, occupant, session = event.room, event.occupant, event.origin;
+        local is_moderated_room = is_moderated(room.jid);
 
         -- for jwt authenticated and username and password authenticated
-        if session.auth_token or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
+        -- only if it is not a moderated room
+        if not is_moderated_room and
+            (session.auth_token or (session.username and jid.host(occupant.bare_jid) == muc_domain_base)) then
             room:set_affiliation(true, occupant.bare_jid, 'owner');
         end
     end, 2);
