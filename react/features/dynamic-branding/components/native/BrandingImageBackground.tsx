@@ -19,7 +19,7 @@ interface IProps {
  * @returns {ReactElement}
  */
 const BrandingImageBackground: React.FC<IProps> = ({ uri }: IProps) => {
-    const imageType = uri?.substr(uri.lastIndexOf('/') + 1);
+    const imageType = uri?.slice(uri.lastIndexOf('/') + 1);
     const imgSrc = uri ? uri : undefined;
 
     let backgroundImage;
