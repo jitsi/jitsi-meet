@@ -6,18 +6,14 @@ local st = require "util.stanza";
 local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;
-local extract_subdomain = util.extract_subdomain;
+local is_moderated = util.is_moderated;
 local get_room_from_jid = util.get_room_from_jid;
 local presence_check_status = util.presence_check_status;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
-local moderated_subdomains;
-local moderated_rooms;
 local disable_revoke_owners;
 
 local function load_config()
-    moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
-    moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
     disable_revoke_owners = module:get_option_boolean("allowners_disable_revoke_owners", false);
 end
 load_config();
@@ -30,32 +26,6 @@ end
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should
 -- have length of 1
 local joining_moderator_participants = {};
-
--- Checks whether the jid is moderated, the room name is in moderated_rooms
--- or if the subdomain is in the moderated_subdomains
--- @return returns on of the:
---      -> false
---      -> true, room_name, subdomain
---      -> true, room_name, nil (if no subdomain is used for the room)
-local function is_moderated(room_jid)
-    if moderated_subdomains:empty() and moderated_rooms:empty() then
-        return false;
-    end
-
-    local room_node = jid.node(room_jid);
-    -- parses bare room address, for multidomain expected format is:
-    -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room_name = extract_subdomain(room_node);
-    if target_subdomain then
-        if moderated_subdomains:contains(target_subdomain) then
-            return true, target_room_name, target_subdomain;
-        end
-    elseif moderated_rooms:contains(room_node) then
-        return true, room_node, nil;
-    end
-
-    return false;
-end
 
 module:hook("muc-occupant-pre-join", function (event)
     local room, occupant = event.room, event.occupant;
@@ -82,9 +52,9 @@ module:hook("muc-occupant-pre-join", function (event)
 
 	-- FIX ME: luacheck warning 581
 	--   not (x == y)' can be replaced by 'x ~= y' (if neither side is a table or NaN)
-        if not (subdomain == session.jitsi_meet_context_group) then
+        if not (subdomain == session.jitsi_meet_domain) then
             module:log('debug', 'skip allowners for auth user and non matching room subdomain: %s, jwt subdomain: %s',
-                subdomain, session.jitsi_meet_context_group);
+                subdomain, session.jitsi_meet_domain);
             return;
         end
     end
