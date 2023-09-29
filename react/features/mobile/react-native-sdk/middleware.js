@@ -1,3 +1,4 @@
+import { NativeModules } from 'react-native';
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -15,6 +16,8 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
+const { JitsiMeetOngoingConferenceService } = NativeModules;
+
 
 /**
  * Check if native modules are being used or not. If not then the init of middleware doesn't happen.
@@ -32,6 +35,7 @@ const externalAPIEnabled = isExternalAPIAvailable();
         rnSdkHandlers?.onConferenceFocused && rnSdkHandlers?.onConferenceFocused();
         break;
     case CONFERENCE_JOINED:
+        JitsiMeetOngoingConferenceService.launch();
         rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
         break;
     case CONFERENCE_LEFT:
