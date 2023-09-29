@@ -9,7 +9,7 @@ var subdir = '<!--# echo var="subdir" default="" -->';
 var subdomain = '<!--# echo var="subdomain" default="" -->';
 
 if (subdomain) {
-    subdomain = subdomain.substr(0, subdomain.length - 1).split('.')
+    subdomain = subdomain.slice(0, -1).split('.')
         .join('_')
         .toLowerCase() + '.';
 }

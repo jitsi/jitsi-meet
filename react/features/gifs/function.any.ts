@@ -75,7 +75,7 @@ export function isGifMessage(message: string) {
 export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }, proxyUrl?: string) {
     const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
-    const id = embedUrl.substr(idx + 1);
+    const id = embedUrl.slice(idx + 1);
 
     if (proxyUrl) {
         return `${proxyUrl}gifs/id/${id}`;
