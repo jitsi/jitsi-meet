@@ -38,5 +38,6 @@
         "**/web/*",
         "**/*.web.ts",
         "**/*.web.tsx"
-    ]
+    ],
+    "extends": "@tsconfig/react-native/tsconfig.json"
 }
