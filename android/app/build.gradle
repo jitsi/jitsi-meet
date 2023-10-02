@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.facebook.react'
 
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
@@ -15,6 +16,8 @@ def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
+    namespace 'com.rndiffapp'
 
     packagingOptions {
         exclude 'lib/*/libhermes*.so'
@@ -75,6 +78,9 @@ android {
 }
 
 dependencies {
+
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.5.1'
 
