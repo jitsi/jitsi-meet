@@ -18,9 +18,9 @@ interface IProps {
     _alternativeCancelText?: boolean;
 
     /**
-     * Location where the current meeting takes place.
+     * Is confirm button hidden?
      */
-    _hostname?: string;
+    _isConfirmHidden?: boolean;
 
     /**
      * Redux store dispatch function.
@@ -61,14 +61,14 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { _hostname } = this.props;
+        const { _isConfirmHidden } = this.props;
 
         return (
             <ConfirmDialog
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
                 descriptionKey = 'dialog.WaitForHostMsg'
-                isConfirmHidden = { _hostname?.includes('8x8.vc') }
+                isConfirmHidden = { _isConfirmHidden }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
@@ -109,7 +109,7 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         _alternativeCancelText: membersOnly && lobbyWaitingForHost,
-        _hostname: locationURL?.hostname
+        _isConfirmHidden: locationURL?.hostname?.includes('8x8.vc')
     };
 }
 
