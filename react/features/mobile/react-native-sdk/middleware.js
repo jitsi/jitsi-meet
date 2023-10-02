@@ -1,4 +1,5 @@
 import { NativeModules } from 'react-native';
+
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
