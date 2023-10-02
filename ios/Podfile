@@ -4,9 +4,8 @@ require Pod::Executable.execute_command('node', ['-p',
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
-platform :ios, min_ios_version_supported
-prepare_react_native_project!
 
+platform :ios, '12.4'
 workspace 'jitsi-meet'
 
 target 'JitsiMeet' do
