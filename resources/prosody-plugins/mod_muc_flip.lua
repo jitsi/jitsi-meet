@@ -58,7 +58,7 @@ module:hook("muc-occupant-pre-join", function(event)
                 -- allow participant from flip device to bypass Lobby
                 local occupant_jid = stanza.attr.from;
                 local affiliation = room:get_affiliation(occupant_jid);
-                if not affiliation or affiliation == 0 then
+                if not affiliation or affiliation == 'none' or affiliation == 'member' then
                     module:log("debug", "Bypass lobby invitee %s", occupant_jid)
                     occupant.role = "participant";
                     room:set_affiliation(true, jid_bare(occupant_jid), "member")

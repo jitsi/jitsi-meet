@@ -392,7 +392,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         if whitelistJoin then
             local affiliation = room:get_affiliation(invitee);
-            if not affiliation or affiliation == 0 then
+            -- if it was already set to be whitelisted member
+            if not affiliation or affiliation == 'none' or affiliation == 'member' then
                 occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
                 room:save();
