@@ -17,8 +17,6 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
-    namespace 'com.rndiffapp'
-
     packagingOptions {
         exclude 'lib/*/libhermes*.so'
     }
