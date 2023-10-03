@@ -140,7 +140,7 @@
     "@types/offscreencanvas": "2019.7.2",
     "@types/pixelmatch": "5.2.5",
     "@types/punycode": "2.1.0",
-    "@types/react": "18.0.24",
+    "@types/react": "17.0.14",
     "@types/react-dom": "17.0.14",
     "@types/react-linkify": "1.0.1",
     "@types/react-native": "0.69.20",
