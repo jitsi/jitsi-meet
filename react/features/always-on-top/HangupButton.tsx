@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import { IconHangup } from '../base/icons/svg';
+import { DEFAULT_ICON } from '../base/icons/svg/constants';
 import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
@@ -17,7 +17,7 @@ type Props = Partial<IProps>;
 export default class HangupButton extends Component<Props> {
 
     accessibilityLabel = 'Hangup';
-    icon = IconHangup;
+    icon = DEFAULT_ICON.IconHangup;
 
     /**
      * Initializes a new {@code HangupButton} instance.
