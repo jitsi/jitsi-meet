@@ -83,6 +83,23 @@ export const preJoinStyles = {
         width: 352
     },
 
+    errorContainer: {
+        backgroundColor: BaseTheme.palette.actionDanger,
+        borderBottomRightRadius: BaseTheme.shape.borderRadius,
+        borderBottomLeftRadius: BaseTheme.shape.borderRadius,
+        boxSizing: 'border-box',
+        marginTop: -BaseTheme.spacing[2],
+        overflow: 'visible',
+        wordBreak: 'normal',
+        width: 352
+    },
+
+    error: {
+        padding: BaseTheme.spacing[1],
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
+    },
+
     preJoinRoomName: {
         ...BaseTheme.typography.heading5,
         color: BaseTheme.palette.text01,

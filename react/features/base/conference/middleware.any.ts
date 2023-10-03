@@ -16,6 +16,7 @@ import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { showErrorNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { hasDisplayName } from '../../prejoin/utils';
 import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
 import { iAmVisitor } from '../../visitors/functions';
@@ -276,7 +277,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
         && !conference.isHidden()) {
-        dispatch(openDisplayNamePrompt(undefined));
+        dispatch(openDisplayNamePrompt({
+            validateInput: hasDisplayName
+        }));
     }
 
     return result;

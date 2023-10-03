@@ -33,8 +33,10 @@ class DisplayNamePrompt extends Component<IProps> {
         return (
             <InputDialog
                 descriptionKey = 'dialog.enterDisplayName'
+                disableCancel = { true }
                 onSubmit = { this._onSetDisplayName }
-                titleKey = 'dialog.displayNameRequired' />
+                titleKey = 'dialog.displayNameRequired'
+                validateInput = { this.props.validateInput } />
         );
     }
 }
