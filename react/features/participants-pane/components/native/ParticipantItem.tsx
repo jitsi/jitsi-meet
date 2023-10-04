@@ -87,6 +87,8 @@ function ParticipantItem({
 }: IProps) {
 
     const { t } = useTranslation();
+    const participantNameContainerStyles
+        = isKnockingParticipant ? styles.lobbyParticipantNameContainer : styles.participantNameContainer;
 
     return (
         <View style = { styles.participantContainer as ViewStyle } >
@@ -102,7 +104,7 @@ function ParticipantItem({
                         styles.participantDetailsContainer,
                         raisedHand && styles.participantDetailsContainerRaisedHand
                     ] }>
-                    <View style = { styles.participantNameContainer as ViewStyle }>
+                    <View style = { participantNameContainerStyles as ViewStyle }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.participantName as TextStyle }>

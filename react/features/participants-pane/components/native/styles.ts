@@ -50,6 +50,13 @@ const contextMenuItem = {
     marginLeft: BaseTheme.spacing[3]
 };
 
+const participantNameContainer = {
+    display: 'flex',
+    flexDirection: 'row',
+    overflow: 'hidden',
+    paddingLeft: BaseTheme.spacing[3]
+};
+
 /**
  * The styles of the native components of the feature {@code participants}.
  */
@@ -126,16 +133,18 @@ export default {
     },
 
     participantNameContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        overflow: 'hidden',
-        paddingLeft: BaseTheme.spacing[3],
+        ...participantNameContainer,
         width: '100%'
     },
 
+    lobbyParticipantNameContainer: {
+        ...participantNameContainer,
+        width: '40%'
+    },
+
     participantName: {
-        overflow: 'hidden',
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        overflow: 'hidden'
     },
 
     moderatorLabel: {
