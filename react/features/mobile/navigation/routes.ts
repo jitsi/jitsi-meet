@@ -1,6 +1,6 @@
 export const screen = {
-    breakoutRooms: 'Breakout Rooms',
     conference: {
+        breakoutRooms: 'Breakout Rooms',
         carmode: 'Car Mode',
         chat: 'Chat',
         chatandpolls: {

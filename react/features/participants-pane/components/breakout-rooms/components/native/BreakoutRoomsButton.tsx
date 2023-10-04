@@ -32,7 +32,7 @@ class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
      * @returns {void}
      */
     _handleClick() {
-        return navigate(screen.breakoutRooms);
+        return navigate(screen.conference.breakoutRooms);
     }
 }
 
