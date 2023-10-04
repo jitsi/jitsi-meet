@@ -21,6 +21,9 @@ import GifsMenu from '../../../../../gifs/components/native/GifsMenu';
 import AddPeopleDialog
 // @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
+import BreakoutRooms
+// @ts-ignore
+    from '../../../../../participants-pane/components/breakout-rooms/components/native/BreakoutRooms';
 // @ts-ignore
 import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore
@@ -43,6 +46,7 @@ import LanguageSelectorDialog
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
+    breakoutRoomsScreenOptions,
     carmodeScreenOptions,
     chatScreenOptions,
     conferenceScreenOptions,
@@ -71,6 +75,7 @@ import {
     conferenceNavigationRef
     // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
+
 
 const ConferenceStack = createStackNavigator();
 
@@ -201,6 +206,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...subtitlesScreenOptions,
                         title: t('transcribing.subtitles')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { BreakoutRooms }
+                    name = { screen.conference.breakoutRooms }
+                    options = {{
+                        ...breakoutRoomsScreenOptions,
+                        title: t('breakoutRooms.title')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
