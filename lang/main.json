@@ -1152,7 +1152,7 @@
     },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
-        "Settings": "Settings",F
+        "Settings": "Settings",
         "accessibilityLabel": {
             "Settings": "Toggle settings",
             "audioOnly": "Toggle audio only",
