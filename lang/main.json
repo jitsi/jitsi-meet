@@ -77,7 +77,8 @@
             "joinedMainRoom": "Joining the main room",
             "joinedTitle": "Breakout Rooms"
         },
-        "showParticipantList": "Show participant list"
+        "showParticipantList": "Show participant list",
+        "title": "Breakout Rooms"
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
