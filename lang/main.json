@@ -67,6 +67,7 @@
             "renameBreakoutRoom": "Rename breakout room",
             "sendToBreakoutRoom": "Send participant to:"
         },
+        "buttonLabel": "Breakout rooms",
         "breakoutList": "breakout list",
         "defaultName": "Breakout room #{{index}}",
         "hideParticipantList": "Hide participant list",
@@ -1151,13 +1152,13 @@
     },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
-        "Settings": "Settings",
+        "Settings": "Settings",F
         "accessibilityLabel": {
             "Settings": "Toggle settings",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "boo": "Boo",
-            "breakoutRoom": "Join/leave breakout room",
+            "breakoutRooms": "Breakout rooms",
             "callQuality": "Manage video quality",
             "carmode": "Car Mode",
             "cc": "Toggle subtitles",

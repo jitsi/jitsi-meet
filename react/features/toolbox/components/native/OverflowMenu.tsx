@@ -35,6 +35,11 @@ import ScreenSharingButton from './ScreenSharingButton';
 interface IProps {
 
     /**
+     * True if breakout rooms feature is available, false otherwise.
+     */
+    _isBreakoutRoomsSupported?: boolean;
+
+    /**
      * True if the overflow menu is currently visible, false otherwise.
      */
     _isOpen: boolean;
@@ -103,6 +108,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      */
     render() {
         const {
+            _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
             _reactionsEnabled,
             _width,
@@ -150,6 +156,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
                 {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
+                {_isBreakoutRoomsSupported && <TileViewButton { ...buttonProps } />}
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <ClosedCaptionButton { ...buttonProps } />
@@ -191,7 +198,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { conference } = state['features/base/conference'];
+
     return {
+        _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _reactionsEnabled: isReactionsEnabled(state),
         _width: state['features/base/responsive-ui'].clientWidth
