@@ -116,8 +116,9 @@ const useStyles = makeStyles()(theme => {
 const ParticipantsPane = () => {
     const { classes, cx } = useStyles();
     const paneOpen = useSelector(getParticipantsPaneOpen);
-    const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
-        .conference?.getBreakoutRooms()?.isSupported();
+    const { conference } = useSelector(
+        (state: IReduxState) => state['features/base/conference']);
+    const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
     const showFooter = useSelector(isLocalParticipantModerator);
     const showMuteAllButton = useSelector(isMuteAllVisible);
