@@ -177,7 +177,9 @@ class MeetingParticipantList extends PureComponent<IProps> {
      * @returns {void}
      */
     _onSearchStringChange(text: string) {
-        this.props.setSearchString(text);
+        const { setSearchString } = this.props;
+
+        setSearchString(text);
     }
 
     /**
@@ -186,8 +188,10 @@ class MeetingParticipantList extends PureComponent<IProps> {
      * @returns {void}
      */
     _openContextMenu() {
-        this.props.dispatch(openSheet(BreakoutRoomContextMenu, {
-            room: this.props._currentRoom,
+        const { _currentRoom, dispatch } = this.props;
+
+        dispatch(openSheet(BreakoutRoomContextMenu, {
+            room: _currentRoom,
             actions: [ BREAKOUT_CONTEXT_MENU_ACTIONS.RENAME ]
         }));
     }
@@ -208,6 +212,7 @@ class MeetingParticipantList extends PureComponent<IProps> {
             _showInviteButton,
             _sortedRemoteParticipants,
             _visitorsCount,
+            searchString,
             t
         } = this.props;
         const title = _currentRoom?.name
@@ -251,13 +256,12 @@ class MeetingParticipantList extends PureComponent<IProps> {
                             input: styles.centerInput }}
                         onChange = { this._onSearchStringChange }
                         placeholder = { t('participantsPane.search') }
-                        value = { this.props.searchString } />
+                        value = { searchString } />
                     <FlatList
                         data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
                         keyExtractor = { this._keyExtractor }
                         renderItem = { this._renderParticipant }
                         scrollEnabled = { false }
-                        showsHorizontalScrollIndicator = { false }
                         windowSize = { 2 } />
                 </CollapsibleList>
             </>

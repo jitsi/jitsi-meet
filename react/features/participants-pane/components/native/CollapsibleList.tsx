@@ -43,14 +43,10 @@ const CollapsibleList = ({ children, onLongPress, title }: IProps) => {
                         src = { collapsed ? IconArrowDown : IconArrowUp } />
                 </TouchableOpacity>
                 <Text style = { styles.listTile as TextStyle }>
-                    {
-                        title
-                    }
+                    { title }
                 </Text>
             </TouchableOpacity>
-            {
-                !collapsed && children
-            }
+            { !collapsed && children }
         </View>
     );
 };
