@@ -32,7 +32,7 @@ class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
      * @returns {void}
      */
     _handleClick() {
-        // return navigate(screen.breakoutrooms);
+        return navigate(screen.breakoutRooms);
     }
 }
 
@@ -45,6 +45,9 @@ class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
 function _mapStateToProps(state:IReduxState) {
     const enabled = getFeatureFlag(state, BREAKOUT_ROOMS_BUTTON_ENABLED, true);
 
+    return {
+        visible: enabled
+    };
 }
 
 export default translate(connect(_mapStateToProps)(BreakoutRoomsButton))
