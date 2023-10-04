@@ -7,7 +7,6 @@ import { openSheet } from '../../../../../base/dialog/actions';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { participantMatchesSearch } from '../../../../functions';
 import CollapsibleList from '../../../native/CollapsibleList';
-import styles from '../../../native/styles';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';
@@ -18,6 +17,8 @@ interface IProps {
      * Room to display.
      */
     room: IRoom;
+
+    roomId: string;
 
     /**
      * Participants search string.
@@ -35,7 +36,7 @@ function _keyExtractor(item: any) {
     return item.jid;
 }
 
-export const CollapsibleRoom = ({ room, searchString }: IProps) => {
+export const CollapsibleRoom = ({ room, roomId, searchString }: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _openContextMenu = useCallback(() => {
@@ -46,29 +47,22 @@ export const CollapsibleRoom = ({ room, searchString }: IProps) => {
         = `${room.name
     || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
 
-    // Regarding the fact that we have 3 sections, we apply
-    // a certain height percentage for every section in order for all to fit
-    // inside the participants pane container
-    const containerStyle
-        = roomParticipantsNr > 2 ? styles.collapsibleRoomContainer : undefined;
-
     return (
         <CollapsibleList
-            containerStyle = { containerStyle }
             onLongPress = { _openContextMenu }
             title = { title }>
             <FlatList
-                bounces = { false }
                 data = { Object.values(room.participants || {}) }
-                horizontal = { false }
                 keyExtractor = { _keyExtractor }
+                listKey = { roomId }
+                nestedScrollEnabled
                 // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     ? <BreakoutRoomParticipantItem
                         item = { participant }
                         room = { room } />
                     : null }
-                scrollEnabled = { true }
+                scrollEnabled = { false }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />
         </CollapsibleList>

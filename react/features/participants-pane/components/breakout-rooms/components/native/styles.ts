@@ -15,8 +15,8 @@ export default {
 
     button: {
         marginTop: BaseTheme.spacing[3],
-        marginLeft: BaseTheme.spacing[3],
-        marginRight: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[2],
+        marginRight: BaseTheme.spacing[2]
     },
 
     collapsibleRoom: {
@@ -32,7 +32,7 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[7],
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[2],
         marginTop: BaseTheme.spacing[3]
     },
 
@@ -68,5 +68,24 @@ export default {
         alignSelf: 'center',
         justifyContent: 'center',
         marginTop: BaseTheme.spacing[3]
-    }
+    },
+
+    breakoutRoomsContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
+        flexDirection: 'column',
+        flex: 1,
+        height: 'auto',
+        paddingHorizontal: BaseTheme.spacing[3]
+    },
+
+    inputContainer: {
+        marginLeft: BaseTheme.spacing[2],
+        marginRight: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[4]
+    },
+
+    centerInput: {
+        paddingRight: BaseTheme.spacing[3],
+        textAlign: 'center'
+    },
 };

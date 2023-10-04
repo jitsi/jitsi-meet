@@ -171,10 +171,6 @@ export default {
         color: BaseTheme.palette.uiBackground
     },
 
-    lobbyListContent: {
-        height: '24%'
-    },
-
     lobbyButtonAdmit: {
         position: 'absolute',
         right: 16
@@ -182,7 +178,7 @@ export default {
 
     lobbyButtonReject: {
         position: 'absolute',
-        right: 104
+        right: 112
     },
 
     lobbyListDescription: {
@@ -202,31 +198,17 @@ export default {
         width: '100%'
     },
 
-    notLocalModeratorContainer: {
-        height: '100%'
-    },
-
-    meetingListContainer: {
-        height: '56%'
-    },
-
-    meetingListFullContainer: {
-        height: '80%'
-    },
-
     meetingListDescription: {
         ...participantListDescription,
         marginLeft: BaseTheme.spacing[3]
     },
 
-    collapsibleRoomContainer: {
-        height: '32%'
-    },
-
     participantsPaneContainer: {
         backgroundColor: BaseTheme.palette.ui01,
+        flexDirection: 'column',
         flex: 1,
-        justifyContent: 'center'
+        height: 'auto',
+        paddingHorizontal: BaseTheme.spacing[3]
     },
 
     participantsPaneFooter: {
@@ -240,8 +222,7 @@ export default {
         right: 0,
         position: 'absolute',
         paddingBottom: BaseTheme.spacing[2],
-        paddingLeft: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[3]
+        paddingRight: BaseTheme.spacing[4]
     },
 
     headerCloseIcon: {

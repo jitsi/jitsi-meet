@@ -90,24 +90,9 @@ interface IProps extends WithTranslation {
     _visitorsCount: number;
 
     /**
-     * List of breakout rooms that were created.
-     */
-    breakoutRooms: ArrayLike<any>;
-
-    /**
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Is the local participant moderator?
-     */
-    isLocalModerator: boolean;
-
-    /**
-     * List of participants waiting in lobby.
-     */
-    lobbyParticipants: ArrayLike<any>;
 
     /**
      * Participants search string.
@@ -223,31 +208,12 @@ class MeetingParticipantList extends PureComponent<IProps> {
             _showInviteButton,
             _sortedRemoteParticipants,
             _visitorsCount,
-            breakoutRooms,
-            isLocalModerator,
-            lobbyParticipants,
             t
         } = this.props;
         const title = _currentRoom?.name
             ? `${_currentRoom.name} (${_participantsCount})`
             : t('participantsPane.headings.participantsList',
                 { count: _participantsCount });
-
-        // Regarding the fact that we have 3 sections, we apply
-        // a certain height percentage for every section in order for all to fit
-        // inside the participants pane container
-        // If there are only meeting participants available,
-        // we take the full container height
-        const onlyMeetingParticipants
-            = breakoutRooms?.length === 0 && lobbyParticipants?.length === 0;
-        const containerStyleModerator
-            = onlyMeetingParticipants
-                ? styles.meetingListFullContainer : styles.meetingListContainer;
-        const containerStyle
-            = isLocalModerator
-                ? containerStyleModerator : styles.notLocalModeratorContainer;
-        const finalContainerStyle
-            = _participantsCount > 6 ? containerStyle : undefined;
         const { color, shareDialogVisible } = _inviteOthersControl;
         const _visitorsLabelText = _visitorsCount > 0
             ? t('participantsPane.headings.visitors', { count: _visitorsCount })
@@ -259,7 +225,6 @@ class MeetingParticipantList extends PureComponent<IProps> {
                 { _visitorsCount > 0 && <Text style = { styles.visitorsLabel }>{ _visitorsLabelText }</Text>
                 }
                 <CollapsibleList
-                    containerStyle = { finalContainerStyle }
                     onLongPress = { onLongPress }
                     title = { title }>
                     {
@@ -288,12 +253,10 @@ class MeetingParticipantList extends PureComponent<IProps> {
                         placeholder = { t('participantsPane.search') }
                         value = { this.props.searchString } />
                     <FlatList
-                        bounces = { false }
                         data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
-                        horizontal = { false }
                         keyExtractor = { this._keyExtractor }
                         renderItem = { this._renderParticipant }
-                        scrollEnabled = { true }
+                        scrollEnabled = { false }
                         showsHorizontalScrollIndicator = { false }
                         windowSize = { 2 } />
                 </CollapsibleList>

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
@@ -45,25 +45,16 @@ const LobbyParticipantList = () => {
         </View>
     );
 
-    // Regarding the fact that we have 3 sections, we apply
-    // a certain height percentage for every section in order for all to fit
-    // inside the participants pane container
-    const style = participants.length > 1 && styles.lobbyListContent;
-
     return (
         <CollapsibleList
             title = { title }>
-            <ScrollView
-                bounces = { false }
-                style = { style } >
-                {
-                    participants.map(p => (
-                        <LobbyParticipantItem
-                            key = { p.id }
-                            participant = { p } />)
-                    )
-                }
-            </ScrollView>
+            {
+                participants.map(p => (
+                    <LobbyParticipantItem
+                        key = { p.id }
+                        participant = { p } />)
+                )
+            }
         </CollapsibleList>
     );
 };
