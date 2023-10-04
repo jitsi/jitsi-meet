@@ -85,7 +85,7 @@ class TileViewButton<P extends IProps> extends AbstractButton<P> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { visible = enabled } = ownProps;
+    const visible = false;
 
     return {
         _tileViewEnabled: shouldDisplayTileView(state),

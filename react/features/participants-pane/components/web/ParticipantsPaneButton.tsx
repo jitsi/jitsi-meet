@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -9,8 +8,6 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions.web';
-
-import ParticipantsCounter from './ParticipantsCounter';
 
 /**
  * The type of the React {@code Component} props of {@link ParticipantsPaneButton}.
@@ -66,16 +63,10 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      *
      * @override
      * @protected
-     * @returns {React$Node}
+     * @returns {null}
      */
     render() {
-        return (
-            <div
-                className = 'toolbar-button-with-badge'>
-                {super.render()}
-                <ParticipantsCounter />
-            </div>
-        );
+        return null;
     }
 }
 

@@ -392,11 +392,9 @@ const Toolbox = ({
                                 ariaControls = 'overflow-menu'
                                 buttons = { overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc, val) => {
                                     if (val.key === 'reactions' && showReactionsInOverflowMenu) {
-                                        return acc;
                                     }
 
                                     if (val.key === 'raisehand' && showRaiseHandInReactionsMenu) {
-                                        return acc;
                                     }
 
                                     if (acc.length) {

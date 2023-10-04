@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
@@ -9,8 +8,6 @@ import { IconMessage } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
 import { toggleChat } from '../../actions.web';
-
-import ChatCounter from './ChatCounter';
 
 /**
  * The type of the React {@code Component} props of {@link ChatButton}.
@@ -51,17 +48,10 @@ class ChatButton extends AbstractButton<IProps> {
      *
      * @override
      * @protected
-     * @returns {boReact$Nodeolean}
+     * @returns {null}
      */
     render() {
-        return (
-            <div
-                className = 'toolbar-button-with-badge'
-                key = 'chatcontainer'>
-                {super.render()}
-                <ChatCounter />
-            </div>
-        );
+        return null;
     }
 
     /**
