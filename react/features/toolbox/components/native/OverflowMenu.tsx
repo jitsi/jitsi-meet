@@ -9,6 +9,8 @@ import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
+import BreakoutRoomsButton
+    from '../../../participants-pane/components/breakout-rooms/components/native/BreakoutRoomsButton';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
@@ -28,6 +30,7 @@ import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
+
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -156,7 +159,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
                 {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
                 {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
-                {_isBreakoutRoomsSupported && <TileViewButton { ...buttonProps } />}
+                {_isBreakoutRoomsSupported && <BreakoutRoomsButton { ...buttonProps } />}
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <ClosedCaptionButton { ...buttonProps } />
