@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
-import { IconUser } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
@@ -19,6 +18,11 @@ interface IProps extends IAvatarProps {
      * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
      */
     defaultAvatar?: string;
+
+    /**
+     * The user icon.
+     */
+    iconUser: Function;
 
     /**
      * ID of the component to be rendered.
@@ -122,6 +126,7 @@ const useStyles = makeStyles()(theme => {
 const StatelessAvatar = ({
     className,
     color,
+    iconUser,
     id,
     initials,
     onAvatarLoadError,
@@ -212,7 +217,7 @@ const StatelessAvatar = ({
             style = { _getAvatarStyle() }>
             <Icon
                 size = { '50%' }
-                src = { IconUser } />
+                src = { iconUser } />
         </div>
     );
 };
