@@ -1590,6 +1590,7 @@ var config = {
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
     //     'notify.screenShareNoAudio', // shown when the audio could not be shared for the selected screen
     //     'notify.screenSharingAudioOnlyTitle', // shown when the best performance mode has been affected by screen sharing
+    //     'notify.selfViewTitle', // shown "You can always un-hide the self-view from settings"
     //     'notify.startSilentTitle', // shown when user joined with no audio
     //     'notify.unmute', // shown to moderator when user raises hand during AV moderation
     //     'notify.videoMutedRemotelyTitle', // shown when user's video is muted by a remote party,
