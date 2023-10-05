@@ -652,9 +652,9 @@ class ConnectionStatsTable extends Component<Props> {
 
         if (!transport || transport.length === 0) {
             const NA = (
-                <tr key = 'address'>
+                <tr key = 'transport'>
                     <td>
-                        <span>{ t('connectionindicator.address') }</span>
+                        <span>{ t('connectionindicator.transport') }</span>
                     </td>
                     <td>
                         N/A
@@ -721,31 +721,6 @@ class ConnectionStatsTable extends Component<Props> {
 
         // First show remote statistics, then local, and then transport type.
         const tableRowConfigurations = [
-            {
-                additionalData,
-                data: data.remoteIP,
-                key: 'remoteaddress',
-                label: t('connectionindicator.remoteaddress',
-                    { count: data.remoteIP.length })
-            },
-            {
-                data: data.remotePort,
-                key: 'remoteport',
-                label: t('connectionindicator.remoteport',
-                        { count: transport.length })
-            },
-            {
-                data: data.localIP,
-                key: 'localaddress',
-                label: t('connectionindicator.localaddress',
-                    { count: data.localIP.length })
-            },
-            {
-                data: data.localPort,
-                key: 'localport',
-                label: t('connectionindicator.localport',
-                    { count: transport.length })
-            },
             {
                 data: data.transportType,
                 key: 'transport',
