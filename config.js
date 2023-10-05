@@ -1556,23 +1556,23 @@ var config = {
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
-    //     'notify.dataChannelClosed', // shown when the bridge channel has been disconnected
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.connectedOneMember', // show when a participant joined
-    //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
     //     'notify.connectedThreePlusMembers', // show when more than 2 participants joined simultaneously
-    //     'notify.leftOneMember', // show when a participant left
-    //     'notify.leftTwoMembers', // show when two participants left simultaneously
-    //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
+    //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
+    //     'notify.dataChannelClosed', // shown when the bridge channel has been disconnected
     //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
     //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.leftOneMember', // show when a participant left
+    //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
+    //     'notify.leftTwoMembers', // show when two participants left simultaneously
     //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
+    //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
-    //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
