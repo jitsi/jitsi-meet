@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import {useTranslation, WithTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { FlatList, Text } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import { openSheet } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
@@ -35,18 +35,11 @@ import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
-interface IProps extends WithTranslation {
-    /**
-     * The redux dispatch function.
-     */
-    dispatch: IStore['dispatch'];
-}
-
-
-const MeetingParticipantList = ({ dispatch }: IProps) => {
+const MeetingParticipantList = () => {
     const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
     const currentRoomId = useSelector(getCurrentRoomId);
     const currentRoom = useSelector(getBreakoutRooms)[currentRoomId];
+    const dispatch = useDispatch();
     const inviteOthersControl = useSelector(getInviteOthersControl);
     const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
     const keyExtractor = useCallback((item: string) => item,[]);
@@ -131,7 +124,7 @@ const MeetingParticipantList = ({ dispatch }: IProps) => {
                     placeholder = { t('participantsPane.search') }
                     value = { searchString } />
                 <FlatList
-                    data = { [ localParticipant?.id, ...sortedRemoteParticipants ] }
+                    data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
                     keyExtractor = { keyExtractor }
                     renderItem = { renderParticipant }
                     scrollEnabled = { false }

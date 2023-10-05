@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -17,7 +17,6 @@ import styles from './styles';
  * @returns {React$Element<any>}
  */
 const ParticipantsPane = () => {
-    const [ searchString, setSearchString ] = useState('');
     const isLocalModerator = useSelector(isLocalParticipantModerator);
 
     return (
@@ -32,9 +31,7 @@ const ParticipantsPane = () => {
                 ListHeaderComponent = {() =>
                     <>
                         <LobbyParticipantList />
-                        <MeetingParticipantList
-                            searchString = { searchString }
-                            setSearchString = { setSearchString } />
+                        <MeetingParticipantList />
                     </>
                 }
             />
