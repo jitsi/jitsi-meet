@@ -362,11 +362,11 @@ function on_occupant_joined(event)
         return;
     end
 
-    local main_room = get_main_room(room.jid);
+    local main_room, main_room_jid = get_main_room(room.jid);
 
     if main_room and main_room._data.breakout_rooms_active then
         if jid_node(event.occupant.jid) ~= 'focus' then
-            broadcast_breakout_rooms(room.jid);
+            broadcast_breakout_rooms(main_room_jid);
         end
 
         -- Prevent closing all rooms if a participant has joined (see on_occupant_left).
@@ -411,14 +411,14 @@ function on_occupant_left(event)
         return;
     end
 
-    local main_room = get_main_room(room_jid);
+    local main_room, main_room_jid = get_main_room(room_jid);
 
     if not main_room then
         return;
     end
 
     if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
-        broadcast_breakout_rooms(room_jid);
+        broadcast_breakout_rooms(main_room_jid);
     end
 
     -- Close the conference if all left for good.
