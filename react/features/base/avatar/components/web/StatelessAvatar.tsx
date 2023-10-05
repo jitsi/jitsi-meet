@@ -22,7 +22,7 @@ interface IProps extends IAvatarProps {
     /**
      * The user icon.
      */
-    iconUser: Function;
+    iconUser: any;
 
     /**
      * ID of the component to be rendered.
