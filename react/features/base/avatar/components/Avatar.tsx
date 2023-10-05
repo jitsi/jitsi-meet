@@ -183,6 +183,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
 
         const avatarProps: AbstractProps & {
             className?: string;
+            iconUser?: any;
             id?: string;
             status?: string;
             testId?: string;
@@ -227,9 +228,12 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             avatarProps.initials = initials;
         }
 
+        if (navigator.product !== 'ReactNative') {
+            avatarProps.iconUser = IconUser;
+        }
+
         return (
             <StatelessAvatar
-                iconUser = { IconUser }
                 { ...avatarProps } />
         );
     }
