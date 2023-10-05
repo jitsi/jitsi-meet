@@ -1595,6 +1595,7 @@ var config = {
     //     'notify.suboptimalExperienceTitle', // show the browser warning
     //     'notify.unmute', // shown to moderator when user raises hand during AV moderation
     //     'notify.videoMutedRemotelyTitle', // shown when user's video is muted by a remote party,
+    //     'notify.videoUnmuteBlockedTitle', // shown when camera unmute and desktop sharing are blocked
     //     'prejoin.errorDialOut',
     //     'prejoin.errorDialOutDisconnected',
     //     'prejoin.errorDialOutFailed',
