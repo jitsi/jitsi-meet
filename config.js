@@ -1589,7 +1589,7 @@ var config = {
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
     //     'notify.screenShareNoAudio', // shown when the audio could not be shared for the selected screen
-    //     'notify.screenSharingAudioOnlyTitle', // shown when the best performance mode has been affected by screen sharing
+    //     'notify.screenSharingAudioOnlyTitle', // shown when the best performance has been affected by screen sharing
     //     'notify.selfViewTitle', // show "You can always un-hide the self-view from settings"
     //     'notify.startSilentTitle', // shown when user joined with no audio
     //     'notify.suboptimalExperienceTitle', // show the browser warning
