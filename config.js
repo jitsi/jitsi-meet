@@ -1580,6 +1580,7 @@ var config = {
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
     //     'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
+    //     'notify.noiseSuppressionFailedTitle', // shown when failed to start noise suppression
     //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
     //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
