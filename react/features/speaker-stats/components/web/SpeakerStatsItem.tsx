@@ -4,6 +4,7 @@ import React from 'react';
 import Avatar from '../../../base/avatar/components/Avatar';
 import StatelessAvatar from '../../../base/avatar/components/web/StatelessAvatar';
 import { getInitials } from '../../../base/avatar/functions';
+import { IconUser } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import { FaceLandmarks } from '../../../face-landmarks/types';
 
@@ -78,6 +79,7 @@ const SpeakerStatsItem = (props: IProps) => {
                             <StatelessAvatar
                                 className = 'userAvatar'
                                 color = { BaseTheme.palette.ui04 }
+                                iconUser = { IconUser }
                                 initials = { getInitials(props.displayName) }
                                 size = { 32 } />
                         ) : (
