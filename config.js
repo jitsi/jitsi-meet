@@ -1562,7 +1562,6 @@ var config = {
     //     'notify.leftOneMember', // show when a participant left
     //     'notify.leftTwoMembers', // show when two participants left simultaneously
     //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
-    //     'notify.grantedTo', // shown when moderator rights were granted to a participant
     //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
