@@ -23,6 +23,7 @@ const ParticipantsPane = () => {
     return (
         <JitsiScreen
             footerComponent = { isLocalModerator ? ParticipantsPaneFooter : undefined }
+            safeAreaInsets = { [ 'bottom' ] }
             style = { styles.participantsPaneContainer }>
             <FlatList
                 data = {[]}

@@ -225,12 +225,12 @@ export default {
         backgroundColor: BaseTheme.palette.ui01,
         bottom: 0,
         flexDirection: 'row',
-        height: BaseTheme.spacing[12],
+        height: BaseTheme.spacing[10],
         justifyContent: 'flex-end',
         left: 0,
         right: 0,
         position: 'absolute',
-        paddingBottom: BaseTheme.spacing[2],
+        paddingBottom: BaseTheme.spacing[3],
         paddingRight: BaseTheme.spacing[4]
     },
 
@@ -241,7 +241,7 @@ export default {
     inviteButton: {
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3],
-        marginVertical: BaseTheme.spacing[3]
+        marginVertical: BaseTheme.spacing[2]
     },
 
     moreButton: {
