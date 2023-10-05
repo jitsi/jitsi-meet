@@ -7,10 +7,11 @@ const { browser } = JitsiMeetJS.util;
 
 const DEFAULT_OPTIMAL_BROWSERS = [
     'chrome',
+    'chromium',
     'electron',
     'firefox',
-    'nwjs',
-    'safari'
+    'safari',
+    'webkit'
 ];
 
 const DEFAULT_UNSUPPORTED_BROWSERS: string[] = [];
