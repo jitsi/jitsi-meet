@@ -49,30 +49,27 @@ const MeetingParticipantList = ({ dispatch }: IProps) => {
     const currentRoom = useSelector(getBreakoutRooms)[currentRoomId];
     const inviteOthersControl = useSelector(getInviteOthersControl);
     const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
-    const keyExtractor = useCallback((item: string) => {
-        return item;
-    }, []);
+    const keyExtractor = useCallback((item: string) => item,[]);
     const localParticipant = useSelector(getLocalParticipant);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
-
         dispatch(doInvitePeople());
-    }, [ dispatch ]);
-    const openContextMenu = useCallback(() => {
+    },[ dispatch ]);
+    const openContextMenu = useCallback(() =>
         dispatch(openSheet(BreakoutRoomContextMenu, {
             room: currentRoom,
             actions: [ BREAKOUT_CONTEXT_MENU_ACTIONS.RENAME ]
-        }));
-    }, [ dispatch ]);
+        })),[ dispatch ]);
     const onLongPress = _isCurrentRoomRenamable ? openContextMenu : undefined;
     const [ searchString, setSearchString ] = useState('');
-    const onSearchStringChange = useCallback((text: string) => {
-        setSearchString(text)
-    }, []);
+    const onSearchStringChange = useCallback((text: string) =>
+        setSearchString(text),[]);
     const participantsCount = useSelector(getParticipantCountWithFake);
     const remoteParticipants = useSelector(getRemoteParticipants);
     const renderParticipant = ({ item/* , index, separators */ }: any) => {
-        const participant = item === localParticipant?.id ? localParticipant : remoteParticipants.get(item);
+        const participant
+            = item === localParticipant?.id
+            ? localParticipant : remoteParticipants.get(item);
 
         if (participantMatchesSearch(participant, searchString)) {
             return (

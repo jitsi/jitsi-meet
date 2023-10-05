@@ -13,10 +13,9 @@ import { LobbyParticipantItem } from './LobbyParticipantItem';
 import styles from './styles';
 
 const LobbyParticipantList = () => {
+    const dispatch = useDispatch();
     const lobbyEnabled = useSelector(getLobbyEnabled);
     const participants = useSelector(getKnockingParticipants);
-
-    const dispatch = useDispatch();
     const admitAll = useCallback(() =>
         dispatch(admitMultiple(participants)),
         [ dispatch, participants ]);
@@ -46,8 +45,7 @@ const LobbyParticipantList = () => {
     );
 
     return (
-        <CollapsibleList
-            title = { title }>
+        <CollapsibleList title = { title }>
             {
                 participants.map(p => (
                     <LobbyParticipantItem

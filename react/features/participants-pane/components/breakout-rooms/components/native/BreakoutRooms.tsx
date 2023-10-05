@@ -26,13 +26,12 @@ const BreakoutRooms = () => {
     const currentRoomId = useSelector(getCurrentRoomId);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
-    const onSearchStringChange = useCallback((text: string) =>{
-        setSearchString(text)
-    }, [])
+    const [ searchString, setSearchString ] = useState('');
+    const onSearchStringChange = useCallback((text: string) =>
+            setSearchString(text),[]);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
         .filter(room => room.id !== currentRoomId)
         .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
-    const [ searchString, setSearchString ] = useState('');
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { t } = useTranslation();
@@ -52,7 +51,6 @@ const BreakoutRooms = () => {
             <FlatList
                 data = {[]}
                 keyExtractor = { (_e, i) => 'dom' + i.toString() }
-                ListEmptyComponent = { null }
                 renderItem = { null }
                 ListHeaderComponent = {() =>
                     <>

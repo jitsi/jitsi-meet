@@ -27,7 +27,6 @@ const ParticipantsPane = () => {
             <FlatList
                 data = {[]}
                 keyExtractor = { (_e, i) => 'dom' + i.toString() }
-                ListEmptyComponent = { null }
                 renderItem = { null }
                 ListHeaderComponent = {() =>
                     <>
