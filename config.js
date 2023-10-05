@@ -1575,6 +1575,7 @@ var config = {
     //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
+    //     'notify.moderator', // shown when user gets moderator privilege
     //     'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
