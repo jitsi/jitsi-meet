@@ -1582,6 +1582,7 @@ var config = {
     //     'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
     //     'notify.noiseSuppressionFailedTitle', // shown when failed to start noise suppression
     //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
+    //     'notify.participantsWantToJoin', // shown when lobby is enabled and participants request to join meeting
     //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
