@@ -20,11 +20,6 @@ interface IProps extends IAvatarProps {
     defaultAvatar?: string;
 
     /**
-     * The user icon.
-     */
-    iconUser: any;
-
-    /**
      * ID of the component to be rendered.
      */
     id?: string;
