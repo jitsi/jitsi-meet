@@ -324,7 +324,7 @@ module:hook('muc-occupant-groupchat', function(event)
     end
 
     -- send to main participants only messages from local occupants (skip from remote vnodes)
-    if occupant and occupant_host ~= main_domain then
+    if occupant and occupant_host == local_domain then
         local main_message = st.clone(stanza);
         main_message.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain);
         -- make sure we fix the from to be the real jid
