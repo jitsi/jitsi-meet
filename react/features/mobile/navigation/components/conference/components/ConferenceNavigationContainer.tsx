@@ -23,7 +23,7 @@ import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import BreakoutRooms
 // @ts-ignore
-    from '../../../../../participants-pane/components/breakout-rooms/components/native/BreakoutRooms';
+    from '../../../../../breakout-rooms/components/native/BreakoutRooms';
 // @ts-ignore
 import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore

@@ -29,7 +29,7 @@ import {
     shouldRenderInviteButton
 } from '../../functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS } from '../../types';
-import BreakoutRoomContextMenu from '../breakout-rooms/components/native/BreakoutRoomContextMenu';
+import BreakoutRoomContextMenu from '../../../breakout-rooms/components/native/BreakoutRoomContextMenu';
 
 import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';

@@ -4,19 +4,19 @@ import { TouchableOpacity, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../../../../analytics/functions';
-import { hideSheet, openDialog } from '../../../../../base/dialog/actions';
-import BottomSheet from '../../../../../base/dialog/components/native/BottomSheet';
-import Icon from '../../../../../base/icons/components/Icon';
-import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../../../base/icons/svg';
-import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
-import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
-import { getBreakoutRoomsConfig } from '../../../../../breakout-rooms/functions';
-import { IRoom } from '../../../../../breakout-rooms/types';
-import { isBreakoutRoomRenameAllowed } from '../../../../functions';
-import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../../types';
-import styles from '../../../native/styles';
+import { createBreakoutRoomsEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
+import { hideSheet, openDialog } from '../../../base/dialog/actions';
+import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../base/icons/svg';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
+import { getBreakoutRoomsConfig } from '../../functions';
+import { IRoom } from '../../types';
+import { isBreakoutRoomRenameAllowed } from '../../../participants-pane/functions';
+import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
+import styles from '../../../participants-pane/components/native/styles';
 
 import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
 

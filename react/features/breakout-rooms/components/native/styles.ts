@@ -1,4 +1,4 @@
-import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const baseButton = {
     borderRadius: BaseTheme.shape.borderRadius,

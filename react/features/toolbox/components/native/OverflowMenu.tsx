@@ -10,7 +10,7 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import BreakoutRoomsButton
-    from '../../../participants-pane/components/breakout-rooms/components/native/BreakoutRoomsButton';
+    from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';

@@ -3,7 +3,7 @@ import { GestureResponderEvent, Text, TextStyle, TouchableOpacity, View, ViewSty
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
-import styles from '../breakout-rooms/components/native/styles';
+import styles from '../../../breakout-rooms/components/native/styles';
 
 interface IProps {
 

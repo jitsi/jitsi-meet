@@ -3,17 +3,17 @@ import { FlatList } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../../../app/types';
-import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
-import { equals } from '../../../../../base/redux/functions';
-import Input from '../../../../../base/ui/components/native/Input';
+import { IReduxState } from '../../../app/types';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { equals } from '../../../base/redux/functions';
+import Input from '../../../base/ui/components/native/Input';
 import {
     getBreakoutRooms,
     getCurrentRoomId,
     isAddBreakoutRoomButtonVisible,
     isAutoAssignParticipantsVisible,
     isInBreakoutRoom
-} from '../../../../../breakout-rooms/functions';
+} from '../../functions';
 
 import AddBreakoutRoomButton from './AddBreakoutRoomButton';
 import AutoAssignButton from './AutoAssignButton';

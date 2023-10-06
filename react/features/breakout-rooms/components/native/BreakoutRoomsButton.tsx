@@ -1,20 +1,20 @@
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../../../app/types';
+import { IReduxState } from '../../../app/types';
 import {
     BREAKOUT_ROOMS_BUTTON_ENABLED
-} from '../../../../../base/flags/constants';
-import { getFeatureFlag } from '../../../../../base/flags/functions';
-import { translate } from '../../../../../base/i18n/functions';
-import { IconRingGroup } from '../../../../../base/icons/svg';
+} from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { translate } from '../../../base/i18n/functions';
+import { IconRingGroup } from '../../../base/icons/svg';
 import AbstractButton,
 {
     IProps as AbstractButtonProps
-} from '../../../../../base/toolbox/components/AbstractButton';
+} from '../../../base/toolbox/components/AbstractButton';
 import {
     navigate
-} from '../../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { screen } from '../../../../../mobile/navigation/routes';
+} from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 
 
 /**
