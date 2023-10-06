@@ -26,6 +26,7 @@ const BreakoutRooms = () => {
     const currentRoomId = useSelector(getCurrentRoomId);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
+    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(),[]);
     const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
             setSearchString(text),[]);
@@ -48,9 +49,11 @@ const BreakoutRooms = () => {
                 onChange = { onSearchStringChange }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
+
+            {/*Fixes warning regarding nested lists*/}
             <FlatList
-                data = {[]}
-                keyExtractor = { (_e, i) => 'dom' + i.toString() }
+                data = {[] as ReadonlyArray<undefined>}
+                keyExtractor = { keyExtractor }
                 renderItem = { null }
                 ListHeaderComponent = {() =>
                     <>

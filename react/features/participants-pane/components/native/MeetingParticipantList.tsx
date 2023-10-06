@@ -127,7 +127,6 @@ const MeetingParticipantList = () => {
                     data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
                     keyExtractor = { keyExtractor }
                     renderItem = { renderParticipant }
-                    scrollEnabled = { false }
                     windowSize = { 2 } />
             </CollapsibleList>
         </>

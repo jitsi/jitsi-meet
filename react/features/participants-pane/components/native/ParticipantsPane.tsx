@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -18,23 +18,25 @@ import styles from './styles';
  */
 const ParticipantsPane = () => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(),[]);
 
     return (
         <JitsiScreen
             footerComponent = { isLocalModerator ? ParticipantsPaneFooter : undefined }
             safeAreaInsets = { [ 'bottom' ] }
             style = { styles.participantsPaneContainer }>
+
+            {/*Fixes warning regarding nested lists*/}
             <FlatList
-                data = {[]}
-                keyExtractor = { (_e, i) => 'dom' + i.toString() }
+                data = {[] as ReadonlyArray<undefined>}
+                keyExtractor = { keyExtractor }
                 renderItem = { null }
                 ListHeaderComponent = {() =>
                     <>
                         <LobbyParticipantList />
                         <MeetingParticipantList />
                     </>
-                }
-            />
+                } />
         </JitsiScreen>
     );
 };
