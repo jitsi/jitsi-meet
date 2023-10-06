@@ -1533,6 +1533,7 @@ var config = {
     */
     // notifications: [
     //     'connection.CONNFAIL', // shown when the connection fails,
+    //     'dialog.cameraConstraintFailedError', // shown when the camera failed
     //     'dialog.cameraNotSendingData', // shown when there's no feed from user's camera
     //     'dialog.kickTitle', // shown when user has been kicked
     //     'dialog.liveStreaming', // livestreaming notifications (pending, on, off, limits)
@@ -1543,6 +1544,7 @@ var config = {
     //     'dialog.recording', // recording notifications (pending, on, off, limits)
     //     'dialog.remoteControlTitle', // remote control notifications (allowed, denied, start, stop, error)
     //     'dialog.reservationError',
+    //     'dialog.screenSharingFailedTitle', // shown when the screen sharing failed
     //     'dialog.serviceUnavailable', // shown when server is not reachable
     //     'dialog.sessTerminated', // shown when there is a failed conference session
     //     'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
@@ -1555,37 +1557,45 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
-    //     'notify.disconnected', // shown when a participant has left
     //     'notify.connectedOneMember', // show when a participant joined
-    //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
     //     'notify.connectedThreePlusMembers', // show when more than 2 participants joined simultaneously
-    //     'notify.leftOneMember', // show when a participant left
-    //     'notify.leftTwoMembers', // show when two participants left simultaneously
-    //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
-    //     'notify.grantedTo', // shown when moderator rights were granted to a participant
+    //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
+    //     'notify.dataChannelClosed', // shown when the bridge channel has been disconnected
     //     'notify.hostAskedUnmute', // shown to participant when host asks them to unmute
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
     //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.leftOneMember', // show when a participant left
+    //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
+    //     'notify.leftTwoMembers', // show when two participants left simultaneously
     //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
-    //     'notify.moderationStartedTitle', // shown when AV moderation is activated
-    //     'notify.moderationStoppedTitle', // shown when AV moderation is deactivated
+    //     'notify.localRecordingStarted', // shown when the local recording has been started
+    //     'notify.localRecordingStopped', // shown when the local recording has been stopped
+    //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
     //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
-    //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
+    //     'notify.moderator', // shown when user gets moderator privilege
     //     'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
     //     'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
+    //     'notify.noiseSuppressionFailedTitle', // shown when failed to start noise suppression
     //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
+    //     'notify.participantsWantToJoin', // shown when lobby is enabled and participants request to join meeting
     //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
+    //     'notify.screenShareNoAudio', // shown when the audio could not be shared for the selected screen
+    //     'notify.screenSharingAudioOnlyTitle', // shown when the best performance has been affected by screen sharing
+    //     'notify.selfViewTitle', // show "You can always un-hide the self-view from settings"
     //     'notify.startSilentTitle', // shown when user joined with no audio
+    //     'notify.suboptimalExperienceTitle', // show the browser warning
     //     'notify.unmute', // shown to moderator when user raises hand during AV moderation
     //     'notify.videoMutedRemotelyTitle', // shown when user's video is muted by a remote party,
+    //     'notify.videoUnmuteBlockedTitle', // shown when camera unmute and desktop sharing are blocked
     //     'prejoin.errorDialOut',
     //     'prejoin.errorDialOutDisconnected',
     //     'prejoin.errorDialOutFailed',
