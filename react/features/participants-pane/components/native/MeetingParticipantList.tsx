@@ -44,7 +44,8 @@ const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const inviteOthersControl = useSelector(getInviteOthersControl);
     const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
-    const keyExtractor = useCallback((item: string) => item, []);
+    const keyExtractor
+        = useCallback((e: undefined, i: number) => i.toString(), []);
     const localParticipant = useSelector(getLocalParticipant);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
@@ -128,8 +129,6 @@ const MeetingParticipantList = () => {
                     value = { searchString } />
                 <FlatList
                     data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
-
-                    // eslint-disable-next-line react/jsx-no-bind
                     keyExtractor = { keyExtractor }
                     renderItem = { renderParticipant }
                     windowSize = { 2 } />
