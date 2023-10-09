@@ -636,7 +636,7 @@ export default {
         // so that the user can try unmute later on and add audio/video
         // to the conference
         if (!tracks.find(t => t.isAudioTrack())) {
-            this.setAudioMuteStatus(true);
+            this.updateAudioIconEnabled();
         }
 
         if (!tracks.find(t => t.isVideoTrack())) {
@@ -845,7 +845,7 @@ export default {
             // This will only modify base/media.audio.muted which is then synced
             // up with the track at the end of local tracks initialization.
             muteLocalAudio(mute);
-            this.setAudioMuteStatus(mute);
+            this.updateAudioIconEnabled();
 
             return;
         } else if (this.isLocalAudioMuted() === mute) {
@@ -1394,7 +1394,7 @@ export default {
                 APP.store.dispatch(
                 replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
-                        this.setAudioMuteStatus(this.isLocalAudioMuted());
+                        this.updateAudioIconEnabled();
                     })
                     .then(resolve)
                     .catch(reject)
@@ -2673,15 +2673,6 @@ export default {
      */
     setVideoMuteStatus() {
         APP.UI.setVideoMuted(this.getMyUserId());
-    },
-
-    /**
-     * Sets the audio muted status.
-     *
-     * @param {boolean} muted - New muted status.
-     */
-    setAudioMuteStatus(muted) {
-        APP.UI.setAudioMuted(this.getMyUserId(), muted);
     },
 
     /**
