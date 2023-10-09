@@ -75,7 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
         } else if (isVideoTrack) {
             APP.conference.setVideoMuteStatus();
         } else {
-            APP.conference.setAudioMuteStatus(!muted);
+            APP.conference.updateAudioIconEnabled();
         }
 
         break;
@@ -102,7 +102,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         const { jitsiTrack } = action.track;
-        const muted = jitsiTrack.isMuted();
         const participantID = jitsiTrack.getParticipantId();
         const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
 
@@ -113,9 +112,7 @@ MiddlewareRegistry.register(store => next => action => {
                 APP.UI.setVideoMuted(participantID);
             }
         } else if (jitsiTrack.isLocal()) {
-            APP.conference.setAudioMuteStatus(muted);
-        } else {
-            APP.UI.setAudioMuted(participantID, muted);
+            APP.conference.updateAudioIconEnabled();
         }
 
         return result;
