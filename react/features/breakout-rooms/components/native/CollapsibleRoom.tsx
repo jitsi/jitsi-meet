@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../base/dialog/actions';
 import CollapsibleList from '../../../participants-pane/components/native/CollapsibleList';
-import { participantMatchesSearch } from '../../../participants-pane/functions';
 import { IRoom } from '../../types';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
@@ -19,11 +18,6 @@ interface IProps {
     room: IRoom;
 
     roomId: string;
-
-    /**
-     * Participants search string.
-     */
-    searchString: string;
 }
 
 /**
@@ -36,7 +30,7 @@ function _keyExtractor(item: any) {
     return item.jid;
 }
 
-export const CollapsibleRoom = ({ room, roomId, searchString }: IProps) => {
+export const CollapsibleRoom = ({ room, roomId }: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _openContextMenu = useCallback(() => {
@@ -57,11 +51,11 @@ export const CollapsibleRoom = ({ room, roomId, searchString }: IProps) => {
                 listKey = { roomId }
 
                 // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
-                renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
-                    ? <BreakoutRoomParticipantItem
+                renderItem = { ({ item: participant }) => (
+                    <BreakoutRoomParticipantItem
                         item = { participant }
                         room = { room } />
-                    : null }
+                ) }
                 scrollEnabled = { false }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />

@@ -130,6 +130,8 @@ const MeetingParticipantList = () => {
                 <FlatList
                     data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
                     keyExtractor = { keyExtractor }
+
+                    /* eslint-disable react/jsx-no-bind */
                     renderItem = { renderParticipant }
                     windowSize = { 2 } />
             </CollapsibleList>
