@@ -6,6 +6,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+import BreakoutRooms
+// @ts-ignore
+    from '../../../../../breakout-rooms/components/native/BreakoutRooms';
 // @ts-ignore
 import Chat from '../../../../../chat/components/native/Chat';
 // @ts-ignore
@@ -21,9 +24,6 @@ import GifsMenu from '../../../../../gifs/components/native/GifsMenu';
 import AddPeopleDialog
 // @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
-import BreakoutRooms
-// @ts-ignore
-    from '../../../../../breakout-rooms/components/native/BreakoutRooms';
 // @ts-ignore
 import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore

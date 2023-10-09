@@ -17,6 +17,8 @@ import {
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import BreakoutRoomContextMenu
+    from '../../../breakout-rooms/components/native/BreakoutRoomContextMenu';
 import {
     getBreakoutRooms,
     getCurrentRoomId
@@ -29,11 +31,11 @@ import {
     shouldRenderInviteButton
 } from '../../functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS } from '../../types';
-import BreakoutRoomContextMenu from '../../../breakout-rooms/components/native/BreakoutRoomContextMenu';
 
 import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
+
 
 const MeetingParticipantList = () => {
     const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
@@ -47,16 +49,16 @@ const MeetingParticipantList = () => {
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
-    },[ dispatch ]);
+    }, [ dispatch ]);
     const openContextMenu = useCallback(() =>
         dispatch(openSheet(BreakoutRoomContextMenu, {
             room: currentRoom,
             actions: [ BREAKOUT_CONTEXT_MENU_ACTIONS.RENAME ]
-        })),[ dispatch ]);
+        })), [ dispatch ]);
     const onLongPress = _isCurrentRoomRenamable ? openContextMenu : undefined;
     const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
-        setSearchString(text),[]);
+        setSearchString(text), []);
     const participantsCount = useSelector(getParticipantCountWithFake);
     const remoteParticipants = useSelector(getRemoteParticipants);
     const renderParticipant = ({ item/* , index, separators */ }: any) => {
@@ -73,7 +75,7 @@ const MeetingParticipantList = () => {
         }
 
         return null;
-    }
+    };
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const sortedRemoteParticipants = useSelector(
         (state:IReduxState) => state['features/filmstrip'].remoteParticipants);
@@ -88,7 +90,7 @@ const MeetingParticipantList = () => {
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
 
-    return(
+    return (
         <>
             {
                 visitorsCount > 0

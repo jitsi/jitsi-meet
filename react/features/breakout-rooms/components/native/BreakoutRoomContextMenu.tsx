@@ -11,14 +11,16 @@ import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
-import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
-import { getBreakoutRoomsConfig } from '../../functions';
-import { IRoom } from '../../types';
 import { isBreakoutRoomRenameAllowed } from '../../../participants-pane/functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
 import styles from '../../../participants-pane/components/native/styles';
 
+import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
+import { getBreakoutRoomsConfig } from '../../functions';
+import { IRoom } from '../../types';
+
 import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
+
 
 /**
  * An array with all possible breakout rooms actions.

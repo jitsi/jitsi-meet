@@ -8,9 +8,9 @@ import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
-import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
+import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { FlatList } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -25,11 +25,12 @@ import styles from './styles';
 const BreakoutRooms = () => {
     const currentRoomId = useSelector(getCurrentRoomId);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
-    const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
-    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(),[]);
+    const isBreakoutRoomsSupported = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
+    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(), []);
     const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
-            setSearchString(text),[]);
+        setSearchString(text), []);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
         .filter(room => room.id !== currentRoomId)
         .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
@@ -37,7 +38,7 @@ const BreakoutRooms = () => {
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { t } = useTranslation();
 
-    return(
+    return (
         <JitsiScreen
             safeAreaInsets = { [ 'bottom' ] }
             style = { styles.breakoutRoomsContainer }>
@@ -50,12 +51,13 @@ const BreakoutRooms = () => {
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
 
-            {/*Fixes warning regarding nested lists*/}
+            { /*Fixes warning regarding nested lists*/ }
             <FlatList
                 data = {[] as ReadonlyArray<undefined>}
                 keyExtractor = { keyExtractor }
-                renderItem = { null }
-                ListHeaderComponent = {() =>
+
+                /* eslint-disable react/jsx-no-bind */
+                ListHeaderComponent = {() => (
                     <>
                         {
                             showAutoAssign && <AutoAssignButton />
@@ -75,9 +77,10 @@ const BreakoutRooms = () => {
                             showAddBreakoutRoom && <AddBreakoutRoomButton />
                         }
                     </>
-            } />
+                )}
+                renderItem = { null } />
         </JitsiScreen>
-    )
+    );
 }
 
 export default BreakoutRooms;

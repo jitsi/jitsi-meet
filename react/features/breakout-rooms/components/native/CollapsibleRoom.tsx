@@ -4,9 +4,10 @@ import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../base/dialog/actions';
-import { IRoom } from '../../types';
 import { participantMatchesSearch } from '../../../participants-pane/functions';
 import CollapsibleList from '../../../participants-pane/components/native/CollapsibleList';
+
+import { IRoom } from '../../types';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';

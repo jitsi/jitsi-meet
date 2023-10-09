@@ -42,7 +42,7 @@ class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
  * @param {IReduxState} state - The Redux state.
  * @returns {Object}
  */
-function _mapStateToProps(state:IReduxState) {
+function _mapStateToProps(state: IReduxState) {
     const enabled = getFeatureFlag(state, BREAKOUT_ROOMS_BUTTON_ENABLED, true);
 
     return {
@@ -50,4 +50,4 @@ function _mapStateToProps(state:IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(BreakoutRoomsButton))
+export default translate(connect(_mapStateToProps)(BreakoutRoomsButton));

@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isLocalParticipantModerator, isParticipantModerator } from '../../../base/participants/functions';
-import { IRoom } from '../../types';
 import { showRoomParticipantMenu } from '../../../participants-pane/actions.native';
 import ParticipantItem from '../../../participants-pane/components/native/ParticipantItem';
+
+import { IRoom } from '../../types';
 
 interface IProps {
 
