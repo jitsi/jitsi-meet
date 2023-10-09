@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +31,6 @@ const BreakoutRooms = () => {
         .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
-    const { t } = useTranslation();
 
     return (
         <JitsiScreen
