@@ -1251,7 +1251,7 @@
         "pending": "{{displayName}} davet edildi"
     },
     "videoStatus": {
-        "adjustFor": "Ayala:",
+        "adjustFor": "Ayarla:",
         "audioOnly": "SES",
         "audioOnlyExpanded": "Yalnızca ses modundasınız. Bu mod bant genişliğinden tasarruf sağlar, ancak başkalarının videolarını göremezsiniz.",
         "bestPerformance": "En iyi performans",
