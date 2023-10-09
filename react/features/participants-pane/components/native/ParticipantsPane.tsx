@@ -29,16 +29,16 @@ const ParticipantsPane = () => {
 
             { /*Fixes warning regarding nested lists*/ }
             <FlatList
-                data = {[] as ReadonlyArray<undefined>}
-                keyExtractor = { keyExtractor }
 
-                /* eslint-disable react/jsx-no-bind */
+                // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                 ListHeaderComponent = {() => (
                     <>
                         <LobbyParticipantList />
                         <MeetingParticipantList />
                     </>
                 )}
+                data = { [] as ReadonlyArray<undefined> }
+                keyExtractor = { keyExtractor }
                 renderItem = { null } />
         </JitsiScreen>
     );

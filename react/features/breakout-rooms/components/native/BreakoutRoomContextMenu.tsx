@@ -14,7 +14,6 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import { isBreakoutRoomRenameAllowed } from '../../../participants-pane/functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
 import styles from '../../../participants-pane/components/native/styles';
-
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
 import { getBreakoutRoomsConfig } from '../../functions';
 import { IRoom } from '../../types';

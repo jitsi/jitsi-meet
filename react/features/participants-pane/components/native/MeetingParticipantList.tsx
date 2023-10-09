@@ -44,7 +44,7 @@ const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const inviteOthersControl = useSelector(getInviteOthersControl);
     const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
-    const keyExtractor = useCallback((item: string) => item,[]);
+    const keyExtractor = useCallback((item: string) => item, []);
     const localParticipant = useSelector(getLocalParticipant);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
@@ -62,8 +62,7 @@ const MeetingParticipantList = () => {
     const participantsCount = useSelector(getParticipantCountWithFake);
     const remoteParticipants = useSelector(getRemoteParticipants);
     const renderParticipant = ({ item/* , index, separators */ }: any) => {
-        const participant
-            = item === localParticipant?.id
+        const participant = item === localParticipant?.id
             ? localParticipant : remoteParticipants.get(item);
 
         if (participantMatchesSearch(participant, searchString)) {
@@ -78,14 +77,14 @@ const MeetingParticipantList = () => {
     };
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const sortedRemoteParticipants = useSelector(
-        (state:IReduxState) => state['features/filmstrip'].remoteParticipants);
+        (state: IReduxState) => state['features/filmstrip'].remoteParticipants);
     const { t } = useTranslation();
     const title = currentRoom?.name
         ? `${currentRoom.name} (${participantsCount})`
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
     const { color, shareDialogVisible } = inviteOthersControl;
-    const visitorsCount = useSelector((state:IReduxState) => state['features/visitors'].count || 0)
+    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
     const visitorsLabelText = visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
@@ -106,6 +105,8 @@ const MeetingParticipantList = () => {
                     && <Button
                         accessibilityLabel = 'participantsPane.actions.invite'
                         disabled = { shareDialogVisible }
+
+                        // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                         icon = { () => (
                             <Icon
                                 color = { color }
@@ -127,6 +128,8 @@ const MeetingParticipantList = () => {
                     value = { searchString } />
                 <FlatList
                     data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
+
+                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                     keyExtractor = { keyExtractor }
                     renderItem = { renderParticipant }
                     windowSize = { 2 } />

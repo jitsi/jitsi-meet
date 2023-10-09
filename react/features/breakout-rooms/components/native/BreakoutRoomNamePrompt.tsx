@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 
 import InputDialog from '../../../base/dialog/components/native/InputDialog';
 import { IBreakoutRoomNamePromptProps as IProps } from '../../../participants-pane/types';
-
 import { renameBreakoutRoom } from '../../actions';
 
 

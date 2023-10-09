@@ -51,20 +51,14 @@ const BreakoutRooms = () => {
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
 
-            { /*Fixes warning regarding nested lists*/ }
+            { /* Fixes warning regarding nested lists */ }
             <FlatList
-                data = {[] as ReadonlyArray<undefined>}
-                keyExtractor = { keyExtractor }
 
                 /* eslint-disable react/jsx-no-bind */
                 ListHeaderComponent = {() => (
                     <>
-                        {
-                            showAutoAssign && <AutoAssignButton />
-                        }
-                        {
-                            inBreakoutRoom && <LeaveBreakoutRoomButton />
-                        }
+                        { showAutoAssign && <AutoAssignButton /> }
+                        { inBreakoutRoom && <LeaveBreakoutRoomButton /> }
                         {
                             isBreakoutRoomsSupported
                             && rooms.map(room => (<CollapsibleRoom
@@ -73,11 +67,11 @@ const BreakoutRooms = () => {
                                 roomId = { room.id }
                                 searchString = { searchString } />))
                         }
-                        {
-                            showAddBreakoutRoom && <AddBreakoutRoomButton />
-                        }
+                        { showAddBreakoutRoom && <AddBreakoutRoomButton /> }
                     </>
                 )}
+                data = { [] as ReadonlyArray<undefined> }
+                keyExtractor = { keyExtractor }
                 renderItem = { null } />
         </JitsiScreen>
     );

@@ -4,9 +4,8 @@ import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../base/dialog/actions';
-import { participantMatchesSearch } from '../../../participants-pane/functions';
 import CollapsibleList from '../../../participants-pane/components/native/CollapsibleList';
-
+import { participantMatchesSearch } from '../../../participants-pane/functions';
 import { IRoom } from '../../types';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
@@ -57,6 +56,7 @@ export const CollapsibleRoom = ({ room, roomId, searchString }: IProps) => {
                 keyExtractor = { _keyExtractor }
                 listKey = { roomId }
                 nestedScrollEnabled
+
                 // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     ? <BreakoutRoomParticipantItem

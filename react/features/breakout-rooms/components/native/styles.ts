@@ -87,5 +87,5 @@ export default {
     centerInput: {
         paddingRight: BaseTheme.spacing[3],
         textAlign: 'center'
-    },
+    }
 };
