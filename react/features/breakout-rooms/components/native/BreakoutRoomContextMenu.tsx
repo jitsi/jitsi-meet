@@ -12,8 +12,8 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { isBreakoutRoomRenameAllowed } from '../../../participants-pane/functions';
-import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
 import styles from '../../../participants-pane/components/native/styles';
+import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
 import { getBreakoutRoomsConfig } from '../../functions';
 import { IRoom } from '../../types';
@@ -86,7 +86,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
                     </TouchableOpacity>
                 )
             }
-            {!room?.isMainRoom && actions.includes(ACTIONS.RENAME) && _isBreakoutRoomRenameAllowed
+            {
+                !room?.isMainRoom && actions.includes(ACTIONS.RENAME) && _isBreakoutRoomRenameAllowed
                 && <TouchableOpacity
                     onPress = { onRenameBreakoutRoom }
                     style = { styles.contextMenuItem as ViewStyle }>
@@ -96,7 +97,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
                     <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.rename')}</Text>
                 </TouchableOpacity>
             }
-            {!room?.isMainRoom && isLocalModerator && actions.includes(ACTIONS.REMOVE)
+            {
+                !room?.isMainRoom && isLocalModerator && actions.includes(ACTIONS.REMOVE)
                 && (room?.participants && Object.keys(room.participants).length > 0
                     ? <TouchableOpacity
                         onPress = { onCloseBreakoutRoom }

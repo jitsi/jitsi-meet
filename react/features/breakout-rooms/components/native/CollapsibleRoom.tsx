@@ -55,7 +55,6 @@ export const CollapsibleRoom = ({ room, roomId, searchString }: IProps) => {
                 data = { Object.values(room.participants || {}) }
                 keyExtractor = { _keyExtractor }
                 listKey = { roomId }
-                nestedScrollEnabled
 
                 // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)

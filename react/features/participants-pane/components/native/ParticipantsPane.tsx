@@ -27,16 +27,16 @@ const ParticipantsPane = () => {
             safeAreaInsets = { [ 'bottom' ] }
             style = { styles.participantsPaneContainer }>
 
-            { /*Fixes warning regarding nested lists*/ }
+            { /* Fixes warning regarding nested lists */ }
             <FlatList
 
-                // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
-                ListHeaderComponent = {() => (
+                // eslint-disable-next-line react/jsx-no-bind
+                ListHeaderComponent = { () => (
                     <>
                         <LobbyParticipantList />
                         <MeetingParticipantList />
                     </>
-                )}
+                ) }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }
                 renderItem = { null } />

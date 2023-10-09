@@ -55,7 +55,7 @@ const BreakoutRooms = () => {
             <FlatList
 
                 /* eslint-disable react/jsx-no-bind */
-                ListHeaderComponent = {() => (
+                ListHeaderComponent = { () => (
                     <>
                         { showAutoAssign && <AutoAssignButton /> }
                         { inBreakoutRoom && <LeaveBreakoutRoomButton /> }
@@ -69,12 +69,12 @@ const BreakoutRooms = () => {
                         }
                         { showAddBreakoutRoom && <AddBreakoutRoomButton /> }
                     </>
-                )}
+                ) }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }
                 renderItem = { null } />
         </JitsiScreen>
     );
-}
+};
 
 export default BreakoutRooms;
