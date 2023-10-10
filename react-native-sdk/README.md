@@ -87,3 +87,6 @@ https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
     serverURL={'https://meet.jit.si/'}
     token={'dkhalhfajhflahlfaahalhfahfsl'} />
 ```
+
+For more details on how you can use React Native SDK with React Native app, you can follow this link:
+https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-react-native-sdk
