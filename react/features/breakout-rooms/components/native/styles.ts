@@ -1,12 +1,5 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const baseButton = {
-    borderRadius: BaseTheme.shape.borderRadius,
-    height: BaseTheme.spacing[7],
-    marginTop: BaseTheme.spacing[3],
-    marginLeft: BaseTheme.spacing[3],
-    marginRight: BaseTheme.spacing[3]
-};
 
 /**
  * The styles of the native components of the feature {@code breakout rooms}.
@@ -14,16 +7,8 @@ const baseButton = {
 export default {
 
     button: {
-        marginTop: BaseTheme.spacing[3],
-        marginLeft: BaseTheme.spacing[2],
-        marginRight: BaseTheme.spacing[2]
-    },
-
-    collapsibleRoom: {
-        ...baseButton,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center'
+        marginBottom: BaseTheme.spacing[4],
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     collapsibleList: {
@@ -72,8 +57,8 @@ export default {
 
     breakoutRoomsContainer: {
         backgroundColor: BaseTheme.palette.ui01,
-        flexDirection: 'column',
         flex: 1,
+        flexDirection: 'column',
         height: 'auto',
         paddingHorizontal: BaseTheme.spacing[3]
     },

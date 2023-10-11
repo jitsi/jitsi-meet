@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { equals } from '../../../base/redux/functions';
 import {
     getBreakoutRooms,
@@ -25,6 +26,7 @@ const BreakoutRooms = () => {
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) =>
         state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
+    const isLocalModerator = useSelector(isLocalParticipantModerator);
     const keyExtractor = useCallback((e: undefined, i: number) => i.toString(), []);
     const rooms = Object.values(useSelector(getBreakoutRooms, equals))
         .filter(room => room.id !== currentRoomId)
@@ -34,7 +36,8 @@ const BreakoutRooms = () => {
 
     return (
         <JitsiScreen
-            safeAreaInsets = { [ 'bottom' ] }
+            footerComponent = { isLocalModerator && showAddBreakoutRoom
+                ? AddBreakoutRoomButton : null }
             style = { styles.breakoutRoomsContainer }>
 
             { /* Fixes warning regarding nested lists */ }
@@ -52,12 +55,12 @@ const BreakoutRooms = () => {
                                 room = { room }
                                 roomId = { room.id } />))
                         }
-                        { showAddBreakoutRoom && <AddBreakoutRoomButton /> }
                     </>
                 ) }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }
-                renderItem = { null } />
+                renderItem = { null }
+                windowSize = { 2 } />
         </JitsiScreen>
     );
 };
