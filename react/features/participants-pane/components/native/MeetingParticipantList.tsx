@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Text, TextStyle } from 'react-native';
+import {FlatList, Text, TextStyle, View} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -80,7 +80,7 @@ const MeetingParticipantList = () => {
         : undefined;
 
     return (
-        <>
+        <View style = { styles.meetingListContainer }>
             {
                 visitorsCount > 0
                 && <Text style = { styles.visitorsLabel }>
@@ -124,7 +124,7 @@ const MeetingParticipantList = () => {
                 /* eslint-disable react/jsx-no-bind */
                 renderItem = { renderParticipant }
                 windowSize = { 2 } />
-        </>
+        </View>
     );
 };
 

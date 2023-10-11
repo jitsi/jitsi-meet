@@ -185,25 +185,28 @@ export default {
         justifyContent: 'space-between'
     },
 
+    meetingListContainer: {
+        paddingHorizontal: BaseTheme.spacing[3]
+    },
+
     meetingListDescription: {
         ...participantListDescription
     },
 
     participantsPaneContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1,
         flexDirection: 'column',
-        paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[2]
     },
 
     participantsPaneFooterContainer: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
         bottom: 0,
         height: 128,
         left: 0,
         right: 0,
-        paddingHorizontal: BaseTheme.spacing[3]
+        paddingHorizontal: BaseTheme.spacing[4]
     },
 
     participantsPaneFooter: {
