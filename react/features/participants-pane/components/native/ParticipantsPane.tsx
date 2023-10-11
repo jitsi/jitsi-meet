@@ -24,7 +24,6 @@ const ParticipantsPane = () => {
     return (
         <JitsiScreen
             footerComponent = { isLocalModerator ? ParticipantsPaneFooter : undefined }
-            safeAreaInsets = { [ 'bottom' ] }
             style = { styles.participantsPaneContainer }>
 
             { /* Fixes warning regarding nested lists */ }
@@ -39,7 +38,8 @@ const ParticipantsPane = () => {
                 ) }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }
-                renderItem = { null } />
+                renderItem = { null }
+                windowSize = { 2 } />
         </JitsiScreen>
     );
 };

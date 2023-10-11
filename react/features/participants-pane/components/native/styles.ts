@@ -5,11 +5,13 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
  */
 const participantListDescription = {
     ...BaseTheme.typography.heading6,
-    color: BaseTheme.palette.text02,
-    paddingBottom: BaseTheme.spacing[3],
-    paddingTop: BaseTheme.spacing[3],
+    color: BaseTheme.palette.text01,
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: BaseTheme.spacing[2],
+    paddingVertical: BaseTheme.spacing[2],
     position: 'relative',
-    width: '55%'
+    width: '70%'
 };
 
 /**
@@ -61,24 +63,6 @@ const participantNameContainer = {
  * The styles of the native components of the feature {@code participants}.
  */
 export default {
-
-    participantActionsButtonAdmit: {
-        marginRight: BaseTheme.spacing[3],
-        position: 'absolute',
-        right: 88
-    },
-
-    participantActionsButtonReject: {
-        marginRight: BaseTheme.spacing[3],
-        position: 'absolute',
-        right: 0
-    },
-
-    admitAllButtonLabel: {
-        color: BaseTheme.palette.link01,
-        marginRight: BaseTheme.spacing[6],
-        marginTop: 14
-    },
 
     participantsBadge: {
         backgroundColor: BaseTheme.palette.ui03,
@@ -191,57 +175,54 @@ export default {
     },
 
     lobbyListDescription: {
-        fontSize: 15,
-        color: BaseTheme.palette.text01,
-        fontWeight: 'bold',
-        marginTop: BaseTheme.spacing[2]
+        ...participantListDescription
     },
 
     lobbyListDetails: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-        position: 'relative',
-        width: '100%'
+        justifyContent: 'space-between'
     },
 
     meetingListDescription: {
-        ...participantListDescription,
-        marginLeft: BaseTheme.spacing[3]
+        ...participantListDescription
     },
 
     participantsPaneContainer: {
-        backgroundColor: BaseTheme.palette.ui01,
-        flexDirection: 'column',
         flex: 1,
-        height: 'auto',
+        flexDirection: 'column',
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingVertical: BaseTheme.spacing[2],
+    },
+
+    participantsPaneFooterContainer: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        bottom: 0,
+        height: 128,
+        left: 0,
+        right: 0,
         paddingHorizontal: BaseTheme.spacing[3]
     },
 
     participantsPaneFooter: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
-        bottom: 0,
+        display: 'flex',
         flexDirection: 'row',
-        height: BaseTheme.spacing[10],
         justifyContent: 'flex-end',
-        left: 0,
-        right: 0,
-        position: 'absolute',
         paddingBottom: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[4]
-    },
-
-    headerCloseIcon: {
-        marginLeft: 12
+        width: '100%'
     },
 
     inviteButton: {
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3],
         marginVertical: BaseTheme.spacing[2]
+    },
+
+    breakoutRoomsButton: {
+        marginBottom: BaseTheme.spacing[2],
+        width: '100%'
     },
 
     moreButton: {

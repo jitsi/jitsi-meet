@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Text } from 'react-native';
+import { FlatList, Text, TextStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -32,7 +32,6 @@ import {
 } from '../../functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS } from '../../types';
 
-import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
@@ -98,43 +97,42 @@ const MeetingParticipantList = () => {
                     { visitorsLabelText }
                 </Text>
             }
-            <CollapsibleList
-                onLongPress = { onLongPress }
-                title = { title }>
-                {
-                    showInviteButton
-                    && <Button
-                        accessibilityLabel = 'participantsPane.actions.invite'
-                        disabled = { shareDialogVisible }
+            <Text style = { styles.meetingListDescription as TextStyle }>
+                { title }
+            </Text>
+            {
+                showInviteButton
+                && <Button
+                    accessibilityLabel = 'participantsPane.actions.invite'
+                    disabled = { shareDialogVisible }
 
-                        // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
-                        icon = { () => (
-                            <Icon
-                                color = { color }
-                                size = { 20 }
-                                src = { IconAddUser } />
-                        ) }
-                        labelKey = 'participantsPane.actions.invite'
-                        onClick = { onInvite }
-                        style = { styles.inviteButton }
-                        type = { BUTTON_TYPES.PRIMARY } />
-                }
-                <Input
-                    clearable = { true }
-                    customStyles = {{
-                        container: styles.inputContainer,
-                        input: styles.centerInput }}
-                    onChange = { onSearchStringChange }
-                    placeholder = { t('participantsPane.search') }
-                    value = { searchString } />
-                <FlatList
-                    data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
-                    keyExtractor = { keyExtractor }
+                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
+                    icon = { () => (
+                        <Icon
+                            color = { color }
+                            size = { 20 }
+                            src = { IconAddUser } />
+                    ) }
+                    labelKey = 'participantsPane.actions.invite'
+                    onClick = { onInvite }
+                    style = { styles.inviteButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
+            }
+            <Input
+                clearable = { true }
+                customStyles = {{
+                    container: styles.inputContainer,
+                    input: styles.centerInput }}
+                onChange = { onSearchStringChange }
+                placeholder = { t('participantsPane.search') }
+                value = { searchString } />
+            <FlatList
+                data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
+                keyExtractor = { keyExtractor }
 
-                    /* eslint-disable react/jsx-no-bind */
-                    renderItem = { renderParticipant }
-                    windowSize = { 2 } />
-            </CollapsibleList>
+                /* eslint-disable react/jsx-no-bind */
+                renderItem = { renderParticipant }
+                windowSize = { 2 } />
         </>
     );
 };
