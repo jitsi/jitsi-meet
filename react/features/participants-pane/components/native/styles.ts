@@ -205,8 +205,8 @@ export default {
         bottom: 0,
         height: 128,
         left: 0,
-        right: 0,
-        paddingHorizontal: BaseTheme.spacing[4]
+        paddingHorizontal: BaseTheme.spacing[4],
+        right: 0
     },
 
     participantsPaneFooter: {

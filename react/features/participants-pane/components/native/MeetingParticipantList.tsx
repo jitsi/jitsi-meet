@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {FlatList, Text, TextStyle, View} from 'react-native';
+import { FlatList, Text, TextStyle, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -22,18 +22,13 @@ import {
 } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
-import {
-    isCurrentRoomRenamable,
-    participantMatchesSearch,
-    shouldRenderInviteButton
-} from '../../functions';
+import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
 
 const MeetingParticipantList = () => {
-    const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
     const currentRoomId = useSelector(getCurrentRoomId);
     const currentRoom = useSelector(getBreakoutRooms)[currentRoomId];
     const dispatch = useDispatch();
