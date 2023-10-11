@@ -4,7 +4,6 @@ import { FlatList, Text, TextStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { openSheet } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
 import {
@@ -17,8 +16,6 @@ import {
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import BreakoutRoomContextMenu
-    from '../../../breakout-rooms/components/native/BreakoutRoomContextMenu';
 import {
     getBreakoutRooms,
     getCurrentRoomId
@@ -30,7 +27,6 @@ import {
     participantMatchesSearch,
     shouldRenderInviteButton
 } from '../../functions';
-import { BREAKOUT_CONTEXT_MENU_ACTIONS } from '../../types';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -50,12 +46,6 @@ const MeetingParticipantList = () => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
     }, [ dispatch ]);
-    const openContextMenu = useCallback(() =>
-        dispatch(openSheet(BreakoutRoomContextMenu, {
-            room: currentRoom,
-            actions: [ BREAKOUT_CONTEXT_MENU_ACTIONS.RENAME ]
-        })), [ dispatch ]);
-    const onLongPress = _isCurrentRoomRenamable ? openContextMenu : undefined;
     const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
         setSearchString(text), []);
@@ -98,7 +88,6 @@ const MeetingParticipantList = () => {
                 </Text>
             }
             <Text
-                onLongPress = { onLongPress }
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }
             </Text>
