@@ -24,6 +24,12 @@ export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
 export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
 
 /**
+ * Flag indicating that the Breakout Rooms button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const BREAKOUT_ROOMS_BUTTON_ENABLED = 'breakout-rooms.enabled';
+
+/**
  * Flag indicating if calendar integration should be enabled.
  * Default: enabled (true) on Android, auto-detected on iOS.
  */

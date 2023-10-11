@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Button from '../../../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../../../base/ui/constants.native';
-import { autoAssignToBreakoutRooms } from '../../../../../breakout-rooms/actions';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { autoAssignToBreakoutRooms } from '../../actions';
 
 import styles from './styles';
 

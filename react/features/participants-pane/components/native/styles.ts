@@ -5,11 +5,13 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
  */
 const participantListDescription = {
     ...BaseTheme.typography.heading6,
-    color: BaseTheme.palette.text02,
-    paddingBottom: BaseTheme.spacing[3],
-    paddingTop: BaseTheme.spacing[3],
+    color: BaseTheme.palette.text01,
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: BaseTheme.spacing[2],
+    paddingVertical: BaseTheme.spacing[2],
     position: 'relative',
-    width: '55%'
+    width: '70%'
 };
 
 /**
@@ -50,28 +52,17 @@ const contextMenuItem = {
     marginLeft: BaseTheme.spacing[3]
 };
 
+const participantNameContainer = {
+    display: 'flex',
+    flexDirection: 'row',
+    overflow: 'hidden',
+    paddingLeft: BaseTheme.spacing[3]
+};
+
 /**
  * The styles of the native components of the feature {@code participants}.
  */
 export default {
-
-    participantActionsButtonAdmit: {
-        marginRight: BaseTheme.spacing[3],
-        position: 'absolute',
-        right: 88
-    },
-
-    participantActionsButtonReject: {
-        marginRight: BaseTheme.spacing[3],
-        position: 'absolute',
-        right: 0
-    },
-
-    admitAllButtonLabel: {
-        color: BaseTheme.palette.link01,
-        marginRight: BaseTheme.spacing[6],
-        marginTop: 14
-    },
 
     participantsBadge: {
         backgroundColor: BaseTheme.palette.ui03,
@@ -126,16 +117,18 @@ export default {
     },
 
     participantNameContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        overflow: 'hidden',
-        paddingLeft: BaseTheme.spacing[3],
+        ...participantNameContainer,
         width: '100%'
     },
 
+    lobbyParticipantNameContainer: {
+        ...participantNameContainer,
+        width: '40%'
+    },
+
     participantName: {
-        overflow: 'hidden',
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        overflow: 'hidden'
     },
 
     moderatorLabel: {
@@ -171,10 +164,6 @@ export default {
         color: BaseTheme.palette.uiBackground
     },
 
-    lobbyListContent: {
-        height: '24%'
-    },
-
     lobbyButtonAdmit: {
         position: 'absolute',
         right: 16
@@ -182,76 +171,61 @@ export default {
 
     lobbyButtonReject: {
         position: 'absolute',
-        right: 104
+        right: 112
     },
 
     lobbyListDescription: {
-        fontSize: 15,
-        color: BaseTheme.palette.text01,
-        fontWeight: 'bold',
-        marginTop: BaseTheme.spacing[2]
+        ...participantListDescription
     },
 
     lobbyListDetails: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-        position: 'relative',
-        width: '100%'
-    },
-
-    notLocalModeratorContainer: {
-        height: '100%'
+        justifyContent: 'space-between'
     },
 
     meetingListContainer: {
-        height: '56%'
-    },
-
-    meetingListFullContainer: {
-        height: '80%'
+        paddingHorizontal: BaseTheme.spacing[3]
     },
 
     meetingListDescription: {
-        ...participantListDescription,
-        marginLeft: BaseTheme.spacing[3]
-    },
-
-    collapsibleRoomContainer: {
-        height: '32%'
+        ...participantListDescription
     },
 
     participantsPaneContainer: {
         backgroundColor: BaseTheme.palette.ui01,
         flex: 1,
-        justifyContent: 'center'
+        flexDirection: 'column',
+        paddingVertical: BaseTheme.spacing[2]
+    },
+
+    participantsPaneFooterContainer: {
+        alignItems: 'center',
+        bottom: 0,
+        height: 128,
+        left: 0,
+        paddingHorizontal: BaseTheme.spacing[4],
+        right: 0
     },
 
     participantsPaneFooter: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
-        bottom: 0,
+        display: 'flex',
         flexDirection: 'row',
-        height: BaseTheme.spacing[12],
         justifyContent: 'flex-end',
-        left: 0,
-        right: 0,
-        position: 'absolute',
-        paddingBottom: BaseTheme.spacing[2],
-        paddingLeft: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[3]
-    },
-
-    headerCloseIcon: {
-        marginLeft: 12
+        paddingBottom: BaseTheme.spacing[3],
+        width: '100%'
     },
 
     inviteButton: {
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3],
-        marginVertical: BaseTheme.spacing[3]
+        marginVertical: BaseTheme.spacing[2]
+    },
+
+    breakoutRoomsButton: {
+        marginBottom: BaseTheme.spacing[2],
+        width: '100%'
     },
 
     moreButton: {

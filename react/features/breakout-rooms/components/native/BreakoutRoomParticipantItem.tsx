@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../../../app/types';
-import { isLocalParticipantModerator, isParticipantModerator } from '../../../../../base/participants/functions';
-import { IRoom } from '../../../../../breakout-rooms/types';
-import { showRoomParticipantMenu } from '../../../../actions.native';
-import ParticipantItem from '../../../native/ParticipantItem';
+import { IReduxState } from '../../../app/types';
+import { isLocalParticipantModerator, isParticipantModerator } from '../../../base/participants/functions';
+import { showRoomParticipantMenu } from '../../../participants-pane/actions.native';
+import ParticipantItem from '../../../participants-pane/components/native/ParticipantItem';
+import { IRoom } from '../../types';
 
 interface IProps {
 

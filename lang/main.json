@@ -67,7 +67,8 @@
             "renameBreakoutRoom": "Rename breakout room",
             "sendToBreakoutRoom": "Send participant to:"
         },
-        "breakoutList": "breakout list",
+        "breakoutList": "Breakout list",
+        "buttonLabel": "Breakout rooms",
         "defaultName": "Breakout room #{{index}}",
         "hideParticipantList": "Hide participant list",
         "mainRoom": "Main room",
@@ -76,7 +77,8 @@
             "joinedMainRoom": "Joining the main room",
             "joinedTitle": "Breakout Rooms"
         },
-        "showParticipantList": "Show participant list"
+        "showParticipantList": "Show participant list",
+        "title": "Breakout Rooms"
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
@@ -811,6 +813,7 @@
             "askUnmute": "Ask to unmute",
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
+            "breakoutRooms": "Breakout rooms",
             "invite": "Invite Someone",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
@@ -1157,7 +1160,7 @@
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "boo": "Boo",
-            "breakoutRoom": "Join/leave breakout room",
+            "breakoutRooms": "Breakout rooms",
             "callQuality": "Manage video quality",
             "carmode": "Car Mode",
             "cc": "Toggle subtitles",

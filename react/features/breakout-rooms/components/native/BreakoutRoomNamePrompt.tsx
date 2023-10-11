@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import InputDialog from '../../../../../base/dialog/components/native/InputDialog';
-import { renameBreakoutRoom } from '../../../../../breakout-rooms/actions';
-import { IBreakoutRoomNamePromptProps as IProps } from '../../../../types';
+import InputDialog from '../../../base/dialog/components/native/InputDialog';
+import { IBreakoutRoomNamePromptProps as IProps } from '../../../participants-pane/types';
+import { renameBreakoutRoom } from '../../actions';
+
 
 /**
  * Implements a component to render a breakout room name prompt.

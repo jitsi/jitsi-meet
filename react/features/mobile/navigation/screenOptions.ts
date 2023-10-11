@@ -87,6 +87,11 @@ export const presentationScreenOptions = {
 };
 
 /**
+ * Screen options for breakout rooms screen.
+ */
+export const breakoutRoomsScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for car mode.
  */
 export const carmodeScreenOptions = presentationScreenOptions;
@@ -110,6 +115,11 @@ export const dialInSummaryScreenOptions = {
 export const inviteScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for live stream modal.
+ */
+export const liveStreamScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for participants modal.
  */
 export const participantsScreenOptions = presentationScreenOptions;
@@ -128,11 +138,6 @@ export const securityScreenOptions = presentationScreenOptions;
  * Screen options for recording modal.
  */
 export const recordingScreenOptions = presentationScreenOptions;
-
-/**
- * Screen options for live stream modal.
- */
-export const liveStreamScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for subtitles modal.
