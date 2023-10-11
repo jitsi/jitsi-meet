@@ -110,6 +110,10 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
                 return;
             end
 
+            if main_room and main_room._data.breakout_rooms_active then
+                return;
+            end
+
             local lobby_room_jid = main_room._data.lobbyroom;
 
             -- If occupant leaving results in main room being empty, we trigger room destroy if
@@ -145,6 +149,10 @@ run_when_component_loaded(lobby_muc_component_host, function(host_module, host_n
             local main_room = lobby_room.main_room;
 
             if not main_room or is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
+                return;
+            end
+
+            if main_room and main_room._data.breakout_rooms_active then
                 return;
             end
 
