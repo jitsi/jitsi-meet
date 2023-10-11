@@ -286,7 +286,7 @@ export const isMuteAllVisible = (state: IReduxState) => {
 };
 
 /**
- * Returns true if reanming the currently joined breakout room is allowed and false otherwise.
+ * Returns true if renaming the currently joined breakout room is allowed and false otherwise.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if reanming the currently joined breakout room is allowed and false otherwise.

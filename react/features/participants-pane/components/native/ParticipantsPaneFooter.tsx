@@ -1,3 +1,5 @@
+/* eslint-disable lines-around-comment */
+
 import React, { useCallback } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +12,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-// eslint-disable-next-line lines-around-comment
 import {
     navigate
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -30,8 +31,7 @@ import styles from './styles';
  */
 const ParticipantsPaneFooter = (): JSX.Element => {
     const dispatch = useDispatch();
-    const isBreakoutRoomsSupported
-        = useSelector((state: IReduxState) =>
+    const isBreakoutRoomsSupported = useSelector((state: IReduxState) =>
         state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported()
     );
     const openMoreMenu = useCallback(() => dispatch(openSheet(ContextMenuMore)), [ dispatch ]);
@@ -46,7 +46,6 @@ const ParticipantsPaneFooter = (): JSX.Element => {
                 isBreakoutRoomsSupported
                 && <Button
                     accessibilityLabel = 'participantsPane.actions.breakoutRooms'
-
                     // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                     icon = { () => (
                         <Icon
@@ -55,6 +54,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
                             src = { IconRingGroup } />
                     ) }
                     labelKey = 'participantsPane.actions.breakoutRooms'
+                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                     onClick = { () => navigate(screen.conference.breakoutRooms) }
                     style = { styles.breakoutRoomsButton }
                     type = { BUTTON_TYPES.SECONDARY } />

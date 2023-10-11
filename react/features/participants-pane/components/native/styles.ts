@@ -193,7 +193,7 @@ export default {
         flex: 1,
         flexDirection: 'column',
         paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: BaseTheme.spacing[2],
+        paddingVertical: BaseTheme.spacing[2]
     },
 
     participantsPaneFooterContainer: {

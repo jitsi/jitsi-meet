@@ -97,7 +97,9 @@ const MeetingParticipantList = () => {
                     { visitorsLabelText }
                 </Text>
             }
-            <Text style = { styles.meetingListDescription as TextStyle }>
+            <Text
+                onLongPress = { onLongPress }
+                style = { styles.meetingListDescription as TextStyle }>
                 { title }
             </Text>
             {

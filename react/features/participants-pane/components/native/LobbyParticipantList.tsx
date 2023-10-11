@@ -20,7 +20,7 @@ const LobbyParticipantList = () => {
         [ dispatch, participants ]);
     const { t } = useTranslation();
     const title = t('participantsPane.headings.waitingLobby',
-        { count: participants.length  });
+        { count: participants.length });
 
     if (!lobbyEnabled || !participants.length) {
         return null;
