@@ -37,7 +37,7 @@ const BreakoutRooms = () => {
     return (
         <JitsiScreen
             footerComponent = { isLocalModerator && showAddBreakoutRoom
-                ? AddBreakoutRoomButton : null }
+                ? AddBreakoutRoomButton : undefined }
             style = { styles.breakoutRoomsContainer }>
 
             { /* Fixes warning regarding nested lists */ }
