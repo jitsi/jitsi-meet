@@ -13,6 +13,7 @@ import {
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
+    RAISE_HAND_CLEAR,
     RAISE_HAND_UPDATED,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL
@@ -464,6 +465,12 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         return { ...state };
+    }
+    case RAISE_HAND_CLEAR: {
+        return {
+            ...state,
+            raisedHandsQueue: []
+        };
     }
     case RAISE_HAND_UPDATED: {
         return {
