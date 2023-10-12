@@ -19,7 +19,7 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import { translateToHTML } from '../base/i18n/functions';
 import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
-import { pinParticipant } from '../base/participants/actions';
+import { pinParticipant, raiseHandClear } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
@@ -89,6 +89,9 @@ StateListenerRegistry.register(
             // Unpin participant, in order to avoid the local participant
             // remaining pinned, since it's not destroyed across runs.
             dispatch(pinParticipant(null));
+
+            // Clear raised hands.
+            dispatch(raiseHandClear());
 
             // XXX I wonder if there is a better way to do this. At this stage
             // we do know what dialogs we want to keep but the list of those
