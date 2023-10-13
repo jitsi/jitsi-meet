@@ -177,11 +177,30 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
     if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
         && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
+        const { locationURL } = state['features/base/connection'];
+        let translationKey = 'notify.disabledIframe';
+        const hostname = locationURL?.hostname ?? '';
+        let domain = '';
+        let jaasDomain = '';
+
+        const mapping = {
+            '8x8.vc': 'https://jaas.8x8.vc',
+            'meet.jit.si': 'https://jitsi.org/jaas'
+        };
+
+        if (mapping[hostname]) {
+            translationKey = 'notify.disabledIframeSecondary';
+            domain = hostname;
+            jaasDomain = mapping[hostname];
+        }
+
         dispatch(showWarningNotification({
             description: translateToHTML(
                 i18next.t.bind(i18next),
-                'notify.disabledIframe',
+                translationKey,
                 {
+                    domain,
+                    jaasDomain,
                     timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
                 }
             )
