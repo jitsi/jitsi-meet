@@ -1,4 +1,4 @@
-import { getAppVersion, getBrowserSessionId } from '../../app/functions';
+import { getAppVersion, getBrowserSessionId, getClientVersion } from '../../app/functions';
 import { getJitsiMeetGlobalNS } from '../../base/util';
 
 import AbstractHandler from './AbstractHandler';
@@ -30,6 +30,7 @@ export default class JaneHandler extends AbstractHandler {
         this._participant = options.participant;
         this.uid = options.uid;
         this.browserSessionId = getBrowserSessionId();
+        this.jitsiClientVersion = getClientVersion();
 
     }
 
@@ -42,7 +43,8 @@ export default class JaneHandler extends AbstractHandler {
             'participant_id': participant.participant_id,
             'participant_type': participant.participant_type,
             'uid': this.uid,
-            'browser_session_id': this.browserSessionId
+            'browser_session_id': this.browserSessionId,
+            'app_version': this.jitsiClientVersion
         };
 
         if (navigator.product === 'ReactNative') {

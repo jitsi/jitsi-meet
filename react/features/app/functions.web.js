@@ -64,3 +64,13 @@ export function getBrowserSessionId() {
 export function getAppVersion() {
     return getName();
 }
+
+/**
+ * Returns web app version defined by Jane.
+ *
+ * @returns {string}
+ */
+export function getClientVersion() {
+    // eslint-disable-next-line no-undef
+    return process.env.APP_VERSION || '1.0';
+}

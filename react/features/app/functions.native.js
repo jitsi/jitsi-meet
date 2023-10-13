@@ -56,3 +56,12 @@ export function getBrowserSessionId() {
 export function getAppVersion() {
     return DeviceInfo.getVersion();
 }
+
+/**
+ * Returns native app version defined by Jane.
+ *
+ * @returns {string}
+ */
+export function getClientVersion() {
+    return getAppVersion();
+}
