@@ -115,7 +115,8 @@ class DesktopSourcePreview extends Component<IProps> {
             <img
                 alt = { this.props.t('welcomepage.logo.desktopPreviewThumbnail') }
                 className = 'desktop-source-preview-thumbnail'
-                src = { src } />);
+                src = { src } />
+        );
     }
 
     /**
