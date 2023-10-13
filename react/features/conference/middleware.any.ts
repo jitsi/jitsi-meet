@@ -181,17 +181,17 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         let translationKey = 'notify.disabledIframe';
         const hostname = locationURL?.hostname ?? '';
         let domain = '';
-        let jaasDomain = '';
 
-        const mapping = {
+        const mapping: Record<string, string> = {
             '8x8.vc': 'https://jaas.8x8.vc',
             'meet.jit.si': 'https://jitsi.org/jaas'
         };
 
-        if (mapping[hostname]) {
+        const jaasDomain = mapping[hostname];
+
+        if (jaasDomain) {
             translationKey = 'notify.disabledIframeSecondary';
             domain = hostname;
-            jaasDomain = mapping[hostname];
         }
 
         dispatch(showWarningNotification({
