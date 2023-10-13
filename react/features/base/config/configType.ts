@@ -157,6 +157,13 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IWhiteboardConfig {
+    collabServerBaseUrl?: string;
+    enabled?: boolean;
+    limitUrl?: string;
+    userLimit?: number;
+}
+
 export interface IWatchRTCConfiguration {
     allowBrowserLogCollection?: boolean;
     collectionInterval?: number;
@@ -630,8 +637,5 @@ export interface IConfig {
         customUrl?: string;
         disabled?: boolean;
     };
-    whiteboard?: {
-        collabServerBaseUrl?: string;
-        enabled?: boolean;
-    };
+    whiteboard?: IWhiteboardConfig;
 }

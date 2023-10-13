@@ -934,3 +934,27 @@ export function createGifSentEvent() {
         action: 'gif.sent'
     };
 }
+
+/**
+ * Creates an event which indicates the whiteboard was opened.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createOpenWhiteboardEvent() {
+    return {
+        action: 'whiteboard.open'
+    };
+}
+
+/**
+ * Creates an event which indicates the whiteboard limit was enforced.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRestrictWhiteboardEvent() {
+    return {
+        action: 'whiteboard.restrict'
+    };
+}
