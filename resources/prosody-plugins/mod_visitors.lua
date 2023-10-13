@@ -240,6 +240,36 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
     end);
 
+    -- when a main participant is kicked inform the visitor nodes
+    host_module:hook('muc-broadcast-presence', function(event)
+        local x, actor = event.x, event.actor;
+        if not actor or not presence_check_status(x, '307') then
+            return;
+        end
+
+        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+
+        -- ignore configured domains (jibri and transcribers)
+        if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
+                or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            return;
+        end
+
+        -- we want to update visitor node that a main participant is kicked
+        if stanza then
+            local vnodes = visitors_nodes[room.jid].nodes;
+            local user, _, res = jid.split(occupant.nick);
+            for k in pairs(vnodes) do
+                local fmuc_pr = st.clone(stanza);
+                fmuc_pr.attr.to = jid.join(user, k, res);
+                fmuc_pr.attr.from = occupant.jid;
+                module:send(fmuc_pr);
+            end
+        else
+            module:log('warn', 'No unavailable stanza found ... leak participant on visitor');
+        end
+    end);
+
     -- cleanup cache
     host_module:hook('muc-room-destroyed',function(event)
         local room = event.room;
