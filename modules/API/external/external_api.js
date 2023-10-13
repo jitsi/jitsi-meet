@@ -54,6 +54,7 @@ const commands = {
     removeBreakoutRoom: 'remove-breakout-room',
     resizeFilmStrip: 'resize-film-strip',
     resizeLargeVideo: 'resize-large-video',
+    sendCameraFacingMode: 'send-camera-facing-mode-message',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendParticipantToRoom: 'send-participant-to-room',
@@ -147,7 +148,6 @@ const events = {
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
-    '_request-desktop-sources': '_requestDesktopSources',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -160,7 +160,8 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
-    'whiteboard-status-changed': 'whiteboardStatusChanged'
+    'whiteboard-status-changed': 'whiteboardStatusChanged',
+    '_request-desktop-sources': '_requestDesktopSources'
 };
 
 /**
