@@ -1,10 +1,8 @@
-import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 
-import { DELETE_DESKTOP_SORCES, INIT_DESKTOP_SOURCES } from './actionTypes';
+import { DELETE_DESKTOP_SOURCES, SET_DESKTOP_SOURCES } from './actionTypes';
 import DesktopPicker from './components/DesktopPicker';
 import { _separateSourcesByType } from './functions';
-import { IDesktopSources } from './types';
 
 /**
  * Signals to open a dialog with the DesktopPicker component.
@@ -29,24 +27,10 @@ export function showDesktopPicker(options: { desktopSharingSources?: any; } = {}
  * @param {Array} sources - Desktop capturer sources.
  * @returns {Function}
  */
-export function executeInitDesktopSources(sources: any) {
-    return (dispatch: IStore['dispatch']) => {
-        const sourcesByType = _separateSourcesByType(sources || []);
-
-        dispatch(initDesktopSources(sourcesByType));
-    };
-}
-
-/**
- * Action used to init desktop sources.
- *
- * @param {IDesktopSources} sources - Desktop sources.
- * @returns {Object}
- */
-export function initDesktopSources(sources: IDesktopSources) {
+export function setDesktopSources(sources: Array<any>) {
     return {
-        type: INIT_DESKTOP_SOURCES,
-        sources
+        type: SET_DESKTOP_SOURCES,
+        sources: _separateSourcesByType(sources ?? [])
     };
 }
 
@@ -57,6 +41,6 @@ export function initDesktopSources(sources: IDesktopSources) {
  */
 export function deleteDesktopSources() {
     return {
-        type: DELETE_DESKTOP_SORCES
+        type: DELETE_DESKTOP_SOURCES
     };
 }

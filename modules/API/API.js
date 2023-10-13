@@ -67,7 +67,7 @@ import {
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
-import { executeInitDesktopSources } from '../../react/features/desktop-picker';
+import { setDesktopSources } from '../../react/features/desktop-picker';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -471,17 +471,6 @@ function initCommands() {
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
-        '_request-desktop-sources-result': data => {
-            if (data.error) {
-                logger.error(`Error to retrieve desktop sources result, error data: ${data.error}`);
-
-                return;
-            }
-
-            if (data.success?.data?.sources) {
-                APP.store.dispatch(executeInitDesktopSources(data.success.data.sources));
-            }
-        },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
@@ -850,6 +839,16 @@ function initCommands() {
         },
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard());
+        },
+        '_request-desktop-sources-result': data => {
+            if (data.error) {
+                logger.error(`Error to retrieve desktop sources result, error data: ${data.error}`);
+
+                return;
+            }
+            if (data.success?.data?.sources) {
+                APP.store.dispatch(setDesktopSources(data.success.data.sources));
+            }
         }
     };
     transport.on('event', ({ data, name }) => {

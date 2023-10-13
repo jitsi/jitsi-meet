@@ -1,7 +1,7 @@
 import { IReduxState } from '../app/types';
 
 import logger from './logger';
-import { IDesktopSources } from './types';
+import { ElectronWindowType } from './types';
 
 /**
  * Returns root conference state.
@@ -20,7 +20,7 @@ export const getDesktopPicker = (state: IReduxState) => state['features/desktop-
 export function getDesktopPickerSources(state: IReduxState) {
     const root = getDesktopPicker(state);
 
-    return root.sources as IDesktopSources;
+    return root.sources;
 }
 
 
@@ -44,7 +44,7 @@ export function obtainDesktopSources(types: string[], options: { thumbnailSize?:
     }
 
     return new Promise((resolve, reject) => {
-        const { JitsiMeetElectron } = window;
+        const { JitsiMeetElectron } = window as ElectronWindowType;
 
         if (JitsiMeetElectron?.obtainDesktopStreams) {
             JitsiMeetElectron.obtainDesktopStreams(
@@ -73,7 +73,7 @@ export function obtainDesktopSources(types: string[], options: { thumbnailSize?:
  * @returns {boolean} True if we use old jitsi meet electron, otherwise false.
  */
 export function oldJitsiMeetElectronUsage() {
-    const { JitsiMeetElectron } = window;
+    const { JitsiMeetElectron } = window as ElectronWindowType;
 
     if (JitsiMeetElectron?.obtainDesktopStreams) {
         return true;

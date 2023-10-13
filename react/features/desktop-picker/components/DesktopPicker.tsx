@@ -9,13 +9,13 @@ import { translate } from '../../base/i18n/functions';
 import Dialog from '../../base/ui/components/web/Dialog';
 import Tabs from '../../base/ui/components/web/Tabs';
 import { deleteDesktopSources } from '../actions';
+import { THUMBNAIL_SIZE } from '../constants';
 import {
     getDesktopPickerSources,
     obtainDesktopSources,
     oldJitsiMeetElectronUsage
 } from '../functions';
 import { IDesktopSources } from '../types';
-import { THUMBNAIL_SIZE } from '../utils';
 
 import DesktopPickerPane from './DesktopPickerPane';
 
@@ -191,10 +191,8 @@ class DesktopPicker extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: IProps) {
-        const usingOldJitsiMeetElectron = oldJitsiMeetElectronUsage();
-
         // skip logic if old jitsi meet electron used.
-        if (usingOldJitsiMeetElectron) {
+        if (oldJitsiMeetElectronUsage()) {
             return;
         }
 
@@ -202,7 +200,6 @@ class DesktopPicker extends PureComponent<IProps, IState> {
             const selectedSource = this._getSelectedSource(this.props._sources);
 
             // update state with latest thumbnail desktop sources
-            // eslint-disable-next-line react/no-did-update-set-state
             this.setState({
                 sources: this.props._sources,
                 selectedSource
@@ -436,31 +433,28 @@ class DesktopPicker extends PureComponent<IProps, IState> {
     _updateSources() {
         const { types } = this.state;
 
-        const usingOldJitsiMeetElectron = oldJitsiMeetElectronUsage();
+        if (oldJitsiMeetElectronUsage()) {
 
-        if (!usingOldJitsiMeetElectron) {
+            if (types.length > 0) {
+                obtainDesktopSources(
+                    this.state.types,
+                    { thumbnailSize: THUMBNAIL_SIZE }
+                )
+                .then((sources: any) => {
+                    const selectedSource = this._getSelectedSource(sources);
+
+                    this.setState({
+                        sources,
+                        selectedSource
+                    });
+                })
+                .catch(() => { /* ignore */ });
+            }
+        } else {
             APP.API.notifyRequestDesktopSources({
                 types,
                 thumbnailSize: THUMBNAIL_SIZE
             });
-
-            return;
-        }
-
-        if (types.length > 0) {
-            obtainDesktopSources(
-                this.state.types,
-                { thumbnailSize: THUMBNAIL_SIZE }
-            )
-            .then((sources: any) => {
-                const selectedSource = this._getSelectedSource(sources);
-
-                this.setState({
-                    sources,
-                    selectedSource
-                });
-            })
-            .catch(() => { /* ignore */ });
         }
     }
 }
