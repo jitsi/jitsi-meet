@@ -55,7 +55,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
     const isDisplayNameVisible
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
-    const isDisplayNameReadonly = !useSelector(isNameReadOnly);
+    const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
