@@ -74,16 +74,48 @@ class DesktopSourcePreview extends Component<IProps> {
                 className = { displayClasses }
                 onClick = { this._onClick }
                 onDoubleClick = { this._onDoubleClick }>
-                <div className = 'desktop-source-preview-image-container'>
-                    <img
-                        alt = { this.props.t('welcomepage.logo.desktopPreviewThumbnail') }
-                        className = 'desktop-source-preview-thumbnail'
-                        src = { this.props.source.thumbnail.toDataURL() } />
-                </div>
+                {this._renderThumbnailImageContainer()}
                 <div className = 'desktop-source-preview-label'>
                     { this.props.source.name }
                 </div>
             </div>
+        );
+    }
+
+    /**
+     * Render thumbnail screenshare image.
+     *
+     * @returns {Object} - Thumbnail image.
+     */
+    _renderThumbnailImageContainer() {
+        // default data URL for thumnbail image
+        let srcImage = this.props.source.thumbnail.dataUrl;
+
+        // legacy thumbnail image
+        if (typeof this.props.source.thumbnail.toDataURL === 'function') {
+            srcImage = this.props.source.thumbnail.toDataURL();
+        }
+
+        return (
+            <div className = 'desktop-source-preview-image-container'>
+                { this._renderThumbnailImage(srcImage) }
+            </div>
+        );
+
+    }
+
+    /**
+     * Render thumbnail screenshare image.
+     *
+     * @param {string} src - Of the image.
+     * @returns {Object} - Thumbnail image.
+     */
+    _renderThumbnailImage(src: string) {
+        return (
+            <img
+                alt = { this.props.t('welcomepage.logo.desktopPreviewThumbnail') }
+                className = 'desktop-source-preview-thumbnail'
+                src = { src } />
         );
     }
 

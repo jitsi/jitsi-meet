@@ -1,4 +1,28 @@
+import { IReduxState } from '../app/types';
+
 import logger from './logger';
+import { ElectronWindowType } from './types';
+
+/**
+ * Returns root conference state.
+ *
+ * @param {IReduxState} state - Global state.
+ * @returns {Object} Conference state.
+ */
+export const getDesktopPicker = (state: IReduxState) => state['features/desktop-picker'];
+
+/**
+* Selector to return a list of knocking participants.
+*
+* @param {IReduxState} state - State object.
+* @returns {IDesktopSources}
+*/
+export function getDesktopPickerSources(state: IReduxState) {
+    const root = getDesktopPicker(state);
+
+    return root.sources;
+}
+
 
 /**
  * Begins a request to get available DesktopCapturerSources.
@@ -20,7 +44,7 @@ export function obtainDesktopSources(types: string[], options: { thumbnailSize?:
     }
 
     return new Promise((resolve, reject) => {
-        const { JitsiMeetElectron } = window;
+        const { JitsiMeetElectron } = window as ElectronWindowType;
 
         if (JitsiMeetElectron?.obtainDesktopStreams) {
             JitsiMeetElectron.obtainDesktopStreams(
@@ -43,6 +67,20 @@ export function obtainDesktopSources(types: string[], options: { thumbnailSize?:
     });
 }
 
+/**
+ * Check usage of old jitsi meet electron version.
+ *
+ * @returns {boolean} True if we use old jitsi meet electron, otherwise false.
+ */
+export function oldJitsiMeetElectronUsage() {
+    const { JitsiMeetElectron } = window as ElectronWindowType;
+
+    if (JitsiMeetElectron?.obtainDesktopStreams) {
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Converts an array of DesktopCapturerSources to an object with types for keys
@@ -53,7 +91,7 @@ export function obtainDesktopSources(types: string[], options: { thumbnailSize?:
  * @returns {Object} An object with the sources split into separate arrays based
  * on source type.
  */
-function _separateSourcesByType(sources: Array<{ id: string; }> = []) {
+export function _separateSourcesByType(sources: Array<{ id: string; }> = []) {
     const sourcesByType: any = {
         screen: [],
         window: []
