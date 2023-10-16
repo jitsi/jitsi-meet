@@ -75,7 +75,6 @@ interface IProps extends WithTranslation {
  * The native container rendering the app settings page.
  */
 class SettingsView extends Component<IProps> {
-    _urlField: Object;
 
     /**
      * Opens the profile settings screen.
