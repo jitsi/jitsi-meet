@@ -120,7 +120,7 @@ export function constructOptions(state: IReduxState) {
         options.iceServersOverride = iceServersOverride;
     }
 
-    const { bosh } = options;
+    const { bosh, preferBosh } = options;
     let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
@@ -128,6 +128,10 @@ export function constructOptions(state: IReduxState) {
         if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
         }
+    }
+
+    if (preferBosh) {
+        websocket = undefined;
     }
 
     // WebSocket is preferred over BOSH.
