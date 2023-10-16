@@ -197,6 +197,7 @@ export default [
     'participantMenuButtonsWithNotifyClick',
     'participantsPane',
     'pcStatsInterval',
+    'preferBosh',
     'prejoinConfig',
     'prejoinPageEnabled',
     'recordingService',

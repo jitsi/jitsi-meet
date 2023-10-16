@@ -51,6 +51,9 @@ var config = {
     // Websocket URL (XMPP)
     // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
 
+    // Whether BOSH should be preferred over WebSocket if both are configured.
+    // preferBosh: false,
+
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
     // https://github.com/jitsi/jitsi-meet/issues/7376
