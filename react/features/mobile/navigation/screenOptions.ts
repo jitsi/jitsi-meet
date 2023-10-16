@@ -244,6 +244,7 @@ export const lobbyNavigationContainerScreenOptions = {
  * Screen options for settings navigation container screen.
  */
 export const settingsNavigationContainerScreenOptions = {
+    ...modalPresentation,
     gestureEnabled: true,
     headerShown: false
 };
