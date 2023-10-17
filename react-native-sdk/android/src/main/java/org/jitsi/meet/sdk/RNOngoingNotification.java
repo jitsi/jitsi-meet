@@ -27,9 +27,6 @@ import android.os.Build;
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 
-import com.facebook.react.ReactInstanceManager;
-
-
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.Random;
@@ -42,17 +39,14 @@ import java.util.Random;
 class RNOngoingNotification {
     private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
-    private static ReactInstanceManager reactInstanceManager;
-
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
-    static void createOngoingConferenceNotificationChannel() {
+    static void createOngoingConferenceNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
 
-        Context context = reactInstanceManager.getCurrentReactContext();
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;
@@ -76,8 +70,7 @@ class RNOngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(boolean isMuted) {
-        Context context = reactInstanceManager.getCurrentReactContext();
+    static Notification buildOngoingConferenceNotification(Context context, boolean isMuted) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
@@ -111,14 +104,5 @@ class RNOngoingNotification {
 
     static void resetStartingtime() {
         startingTime = 0;
-    }
-
-    private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, @StringRes int titleId) {
-        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-        intent.setAction(action.getName());
-        PendingIntent pendingIntent
-            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        String title = context.getString(titleId);
-        return new NotificationCompat.Action(0, title, pendingIntent);
     }
 }

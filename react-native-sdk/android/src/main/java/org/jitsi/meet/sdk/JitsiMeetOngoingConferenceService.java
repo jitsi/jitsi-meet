@@ -52,7 +52,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     private boolean isAudioMuted;
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        RNOngoingNotification.createOngoingConferenceNotificationChannel();
+        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
@@ -80,11 +80,16 @@ public class JitsiMeetOngoingConferenceService extends Service
         }
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public static void abort(Context context) {
+        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+        context.stopService(intent);
+    }
 
-        Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(isAudioMuted);
+    @Override
+    public void onCreate(Context context) {
+        super.onCreate(Context context);
+
+        Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(context, isAudioMuted);
         if (notification == null) {
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
@@ -96,7 +101,6 @@ public class JitsiMeetOngoingConferenceService extends Service
         RNOngoingConferenceTracker.getInstance().addListener(this);
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadcastEvent.Type.AUDIO_MUTED_CHANGED.getAction());
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -131,31 +135,6 @@ public class JitsiMeetOngoingConferenceService extends Service
             }
         }
 
-        final String actionName = intent.getAction();
-        final Action action = Action.fromName(actionName);
-
-        // When starting the service, there is no action passed in the intent
-        if (action != null) {
-            switch (action) {
-                case UNMUTE:
-                case MUTE:
-                    Intent muteBroadcastIntent = BroadcastIntentHelper.buildSetAudioMutedIntent(action == Action.MUTE);
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(muteBroadcastIntent);
-                    break;
-                case HANGUP:
-                    JitsiMeetLogger.i(TAG + " Hangup requested");
-
-                    Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
-
-                    stopSelf();
-                    break;
-                default:
-                    JitsiMeetLogger.w(TAG + " Unknown action received: " + action);
-                    break;
-            }
-        }
-
         return START_NOT_STICKY;
     }
 
@@ -165,31 +144,6 @@ public class JitsiMeetOngoingConferenceService extends Service
             stopSelf();
             RNOngoingNotification.resetStartingtime();
             JitsiMeetLogger.i(TAG + "Service stopped");
-        }
-    }
-
-    public enum Action {
-        HANGUP(TAG + ":HANGUP"),
-        MUTE(TAG + ":MUTE"),
-        UNMUTE(TAG + ":UNMUTE");
-
-        private final String name;
-
-        Action(String name) {
-            this.name = name;
-        }
-
-        public static Action fromName(String name) {
-            for (Action action : Action.values()) {
-                if (action.name.equalsIgnoreCase(name)) {
-                    return action;
-                }
-            }
-            return null;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 
