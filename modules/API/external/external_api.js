@@ -273,10 +273,10 @@ function parseArguments(args) {
 function parseSizeParam(value) {
     let parsedValue;
 
-    // This regex parses values of the form 100px, 100em, 100pt or 100%.
+    // This regex parses values of the form 100px, 100em, 100pt, 100vh, 100vw or 100%.
     // Values like 100 or 100px are handled outside of the regex, and
     // invalid values will be ignored and the minimum will be used.
-    const re = /([0-9]*\.?[0-9]+)(em|pt|px|%)$/;
+    const re = /([0-9]*\.?[0-9]+)(em|pt|px|((d|l|s)?v)(h|w)|%)$/;
 
     if (typeof value === 'string' && String(value).match(re) !== null) {
         parsedValue = value;
