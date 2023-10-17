@@ -1107,7 +1107,11 @@ class API {
         this._enabled = true;
 
         initCommands();
+
         this.notifyBrowserSupport(isSupportedBrowser());
+
+        // Let the embedder know we are ready.
+        this._sendEvent({ name: 'ready' });
     }
 
     /**
