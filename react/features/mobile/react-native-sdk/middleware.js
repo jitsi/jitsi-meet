@@ -17,7 +17,7 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
-const { JitsiMeetOngoingConferenceService } = NativeModules;
+const { JMOngoingConference } = NativeModules;
 
 
 /**
@@ -36,13 +36,15 @@ const { JitsiMeetOngoingConferenceService } = NativeModules;
         rnSdkHandlers?.onConferenceFocused && rnSdkHandlers?.onConferenceFocused();
         break;
     case CONFERENCE_JOINED:
-        JitsiMeetOngoingConferenceService.launch();
+        JMOngoingConference?.launchNotification();
         rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
         break;
     case CONFERENCE_LEFT:
+        JMOngoingConference?.destroyNotification();
         //  Props are torn down at this point, perhaps need to leave this one out
         break;
     case CONFERENCE_WILL_JOIN:
+        JMOngoingConference?.createNotification();
         rnSdkHandlers?.onConferenceWillJoin && rnSdkHandlers?.onConferenceWillJoin();
         break;
     case ENTER_PICTURE_IN_PICTURE:
@@ -56,6 +58,7 @@ const { JitsiMeetOngoingConferenceService } = NativeModules;
         break;
     }
     case READY_TO_CLOSE:
+        JMOngoingConference?.abortNotification();
         rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
         break;
     }
