@@ -225,7 +225,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
-        -- we want to update visitor node that a main participant left
+        --this is probably participant kick scenario, create an unavailable presence and send to vnodes.
+        if not stanza then
+            stanza = st.presence {from = occupant.nick; type = "unavailable";};
+        end
+
+        -- we want to update visitor node that a main participant left or kicked.
         if stanza then
             local vnodes = visitors_nodes[room.jid].nodes;
             local user, _, res = jid.split(occupant.nick);
@@ -235,8 +240,6 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 fmuc_pr.attr.from = occupant.jid;
                 module:send(fmuc_pr);
             end
-        else
-            module:log('warn', 'No unavailable stanza found ... leak participant on visitor');
         end
     end);
 
