@@ -249,9 +249,8 @@ end
 -- the token) and the value of the feature is true.
 -- If features is not present in the token we skip feature detection and allow
 -- everything.
-function is_feature_allowed(session, feature)
-    if (session.jitsi_meet_context_features == nil
-        or session.jitsi_meet_context_features[feature] == "true" or session.jitsi_meet_context_features[feature] == true) then
+function is_feature_allowed(features, ft)
+    if (features == nil or features[ft] == "true" or features[ft] == true) then
         return true;
     else
         return false;
