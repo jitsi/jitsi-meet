@@ -120,7 +120,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 newTranscriptMessage));
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && json.language.replace(countryCodeRegex, "") === translationLanguage) {
+                && json.language.replace(countryCodeRegex, '') === translationLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
