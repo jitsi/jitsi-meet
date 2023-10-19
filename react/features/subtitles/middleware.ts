@@ -95,6 +95,10 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
 
+    // regex to filter out all possible country codes after language code
+    // this should catch 'en-GB' 'en_GB' and 'enGB'
+    const countryCodeRegex = /[-_A-Z].*/;
+
     try {
         const transcriptMessageID = json.message_id;
         const participantName = json.participant.name;
@@ -116,8 +120,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 newTranscriptMessage));
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && json.language.slice(0, Math.min(json.language.length,
-                   translationLanguage.length)) === translationLanguage) {
+                && json.language.replace(countryCodeRegex, "") === translationLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
