@@ -302,6 +302,12 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           session.jitsi_meet_context_user.id = claims["user_id"];
         end
 
+        -- fire event that token has been verified and pass the session and the decoded token
+        prosody.events.fire_event('jitsi-authentication-token-verified', {
+            session = session;
+            claims = claims;
+        });
+
         if session.contextRequired and claims["context"] == nil then
             return false, "not-allowed", 'jwt missing required context claim';
         end
