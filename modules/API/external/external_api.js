@@ -1279,9 +1279,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Promise}
      */
-    _isElectronScreensharing() {
+    _isNewElectronScreensharingSupported() {
         return this._transport.sendRequest({
-            name: '_is_electron_screensharing'
+            name: '_new_electron_screensharing_supported'
         });
     }
 

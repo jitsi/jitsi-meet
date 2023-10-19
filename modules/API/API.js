@@ -993,12 +993,12 @@ function initCommands() {
             callback(isP2pActive(APP.store.getState()));
             break;
         }
-        case '_is_electron_screensharing': {
+        case '_new_electron_screensharing_supported': {
             callback(true);
             break;
         }
         default:
-            callback(null);
+            callback({ error: new Error('UnknownRequestError') });
 
             return false;
         }

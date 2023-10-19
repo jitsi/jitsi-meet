@@ -15,6 +15,7 @@ import { ElectronWindowType } from './types';
 export function obtainDesktopSources(options: { thumbnailSize?: Object; types: string[]; }) {
     const { JitsiMeetElectron } = window as ElectronWindowType;
 
+    // TODO: delete this after 2 releases
     if (JitsiMeetElectron?.obtainDesktopStreams) {
         return new Promise((resolve, reject) => {
             JitsiMeetElectron.obtainDesktopStreams(
