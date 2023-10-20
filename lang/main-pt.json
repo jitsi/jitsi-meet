@@ -67,13 +67,18 @@
             "renameBreakoutRoom": "Renomear sala",
             "sendToBreakoutRoom": "Enviar participante para:"
         },
+        "breakoutList": "lista de salas",
+        "buttonLabel": "Salas simultâneas",
         "defaultName": "Sala #{{index}}",
+        "hideParticipantList": "Ocultar lista de participantes",
         "mainRoom": "Sala principal",
         "notifications": {
             "joined": "Entrada na sala \"{{name}}\"",
             "joinedMainRoom": "Entrada na sala principal",
             "joinedTitle": "Salas simultâneas"
-        }
+        },
+        "showParticipantList": "Mostrar lista de participantes",
+        "title": "Salas simultâneas"
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
@@ -477,6 +482,10 @@
         "viewUpgradeOptions": "Ver opções de actualização",
         "viewUpgradeOptionsContent": "Para obter acesso ilimitado a funcionalidades premium como gravação, transcrições, RTMP Streaming & mais, terá de actualizar o seu plano.",
         "viewUpgradeOptionsTitle": "Descobriu uma característica premium!",
+        "whiteboardLimitContent": "Lamentamos, mas o limite de utilizadores do quadro branco foi atingido.",
+        "whiteboardLimitReference": "Para mais informações consultar",
+        "whiteboardLimitReferenceUrl": "o nosso sítio Web",
+        "whiteboardLimitTitle": "Restrição da utilização do quadro branco",
         "yourEntireScreen": "O seu ecrã inteiro"
     },
     "documentSharing": {
@@ -724,6 +733,7 @@
         "dataChannelClosed": "Deficiência na qualidade do vídeo",
         "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
         "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
+        "disabledIframeSecondary": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Por favor, use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
         "dontRemindMe": "Não me lembre",
@@ -799,7 +809,9 @@
         "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema.",
         "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
         "viewLobby": "Ver sala de espera",
-        "waitingParticipants": "{{waitingParticipants}} pessoas"
+        "waitingParticipants": "{{waitingParticipants}} pessoas",
+        "whiteboardLimitDescription": "Guarde o seu progresso, pois o limite de utilizadores será atingido em breve e o quadro branco será encerrado.",
+        "whiteboardLimitTitle": "Utilização do quadro branco"
     },
     "participantsPane": {
         "actions": {
@@ -808,6 +820,7 @@
             "askUnmute": "Pedir para ligar o som",
             "audioModeration": "Ligar o microfone deles",
             "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
+            "breakoutRooms": "Salas simultâneas",
             "invite": "Convidar alguém",
             "moreModerationActions": "Mais opções de moderação",
             "moreModerationControls": "Mais controlos de moderação",
@@ -1154,7 +1167,7 @@
             "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
-            "breakoutRoom": "Entrar/Sair da sala",
+            "breakoutRooms": "Salas simultâneas",
             "callQuality": "Gerir a qualidade do vídeo",
             "carmode": "Modo de condução",
             "cc": "Mudar legendas",
