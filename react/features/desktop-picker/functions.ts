@@ -30,8 +30,8 @@ export function obtainDesktopSources(options: { thumbnailSize?: Object; types: s
         });
     }
 
-    if (APP.API.requestDesktopSources) {
-        return APP.API.requestDesktopSources(options).then(({ sources, error }: any) => {
+    return APP.API.requestDesktopSources(options).then(
+        ({ sources, error }: { error: Error; sources: Array<{ id: string; }>; }) => {
             if (sources) {
                 return _separateSourcesByType(sources);
             } else if (error) {
@@ -41,9 +41,6 @@ export function obtainDesktopSources(options: { thumbnailSize?: Object; types: s
                 return null;
             }
         });
-    }
-
-    return Promise.reject(new Error('No screensharing method is supported'));
 }
 
 /**
