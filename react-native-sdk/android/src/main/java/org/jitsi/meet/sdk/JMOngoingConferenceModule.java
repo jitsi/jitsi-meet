@@ -2,6 +2,8 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.module.annotations.ReactModule;
@@ -12,47 +14,53 @@ class JMOngoingConferenceModule
     extends ReactContextBaseJavaModule {
 
     public static final String NAME = "JMOngoingConference";
-    private static final String JM_ONGOING_CONFERENCE_SERVICE
-        = "org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService";
 
-    public OngoingConferenceModule (ReactApplicationContext reactContext) {
+    public JMOngoingConferenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     public void createNotification() {
         Context context = getReactApplicationContext();
-        Object JMOngoingConferenceService = getJMOngoingConferenceService();
+        JitsiMeetOngoingConferenceService module
+            = JitsiMeetOngoingConferenceService.getInstance();
 
-        return JMOngoingConferenceService.onCreate(context);
+        if (module !=null) {
+            module.onCreate(context);
+        }
     }
 
     public void launchNotification() {
         Context context = getReactApplicationContext();
-        Object JMOngoingConferenceService = getJMOngoingConferenceService();
+        JitsiMeetOngoingConferenceService module
+            = JitsiMeetOngoingConferenceService.getInstance();
 
-        return JMOngoingConferenceService.launch(context);
+        if (module !=null) {
+            module.launch(context, null);
+        }
     }
 
     public void destroyNotification() {
-        Object JMOngoingConferenceService = getJMOngoingConferenceService();
+        JitsiMeetOngoingConferenceService module
+            = JitsiMeetOngoingConferenceService.getInstance();
 
-        return JMOngoingConferenceService.onDestroy();
+        if (module !=null) {
+            module.onDestroy();
+        }
     }
 
     public void abortNotification() {
         Context context = getReactApplicationContext();
-        Object JMOngoingConferenceService = getJMOngoingConferenceService();
+        JitsiMeetOngoingConferenceService module
+            = JitsiMeetOngoingConferenceService.getInstance();
 
-        return JMOngoingConferenceService.abort(context);
+        if (module !=null) {
+            module.abort(context);
+        }
     }
 
-    private static Object getJMOngoingConferenceService() {
-        try {
-            Class<?> c = Class.forName(JM_ONGOING_CONFERENCE_SERVICE);
-            c.getClass();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    @NonNull
+    @Override
+    public String getName() {
+        return NAME;
     }
 }
