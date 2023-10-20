@@ -42,6 +42,7 @@ interface IDimensions {
  */
 const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
+    const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
     const isOpen = useSelector(isWhiteboardOpen);
@@ -94,6 +95,13 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
         };
     };
 
+    const getExcalidrawAPI = useCallback(excalidrawAPI => {
+        if (excalidrawAPIRef.current) {
+            return;
+        }
+        excalidrawAPIRef.current = excalidrawAPI;
+    }, []);
+
     const getCollabAPI = useCallback(collabAPI => {
         if (collabAPIRef.current) {
             return;
@@ -141,7 +149,8 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 theme: 'light',
                                 UIOptions: WHITEBOARD_UI_OPTIONS
                             }}
-                            getCollabAPI = { getCollabAPI } />
+                            getCollabAPI = { getCollabAPI }
+                            getExcalidrawAPI = { getExcalidrawAPI } />
                     </div>
                 )
             }
