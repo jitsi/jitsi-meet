@@ -91,8 +91,7 @@ const commands = {
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
-    toggleWhiteboard: 'toggle-whiteboard',
-    _requestDesktopSourcesResult: '_request-desktop-sources-result'
+    toggleWhiteboard: 'toggle-whiteboard'
 };
 
 /**
@@ -160,7 +159,10 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
-    'whiteboard-status-changed': 'whiteboardStatusChanged',
+    'whiteboard-status-changed': 'whiteboardStatusChanged'
+};
+
+const requests = {
     '_request-desktop-sources': '_requestDesktopSources'
 };
 
@@ -688,6 +690,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             }
 
             return false;
+        });
+
+        this._transport.on('request', (request, callback) => {
+            const requestName = requests[request.name];
+            const data = {
+                ...request,
+                name: requestName
+            };
+
+            if (requestName) {
+                this.emit(requestName, data, callback);
+            }
         });
     }
 
@@ -1261,6 +1275,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the state of availability electron share screen via external api.
+     *
+     * @returns {Promise}
+     */
+    _isNewElectronScreensharingSupported() {
+        return this._transport.sendRequest({
+            name: '_new_electron_screensharing_supported'
+        });
+    }
+
+    /**
      * Pins a participant's video on to the stage view.
      *
      * @param {string} participantId - Participant id (JID) of the participant
@@ -1311,17 +1336,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         if (width <= this._width && height <= this._height) {
             this.executeCommand('resizeLargeVideo', width, height);
         }
-    }
-
-    /**
-     * Send request to request desktop sources.
-     *
-     * @returns {Promise} - Result.
-     */
-    _requestDesktopSources() {
-        return this._transport.sendRequest({
-            name: '_request-desktop-sources'
-        });
     }
 
     /**

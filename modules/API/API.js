@@ -67,7 +67,6 @@ import {
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
-import { setDesktopSources } from '../../react/features/desktop-picker/actions';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -839,16 +838,6 @@ function initCommands() {
         },
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard());
-        },
-        '_request-desktop-sources-result': data => {
-            if (data.error) {
-                logger.error(`Error to retrieve desktop sources result, error data: ${data.error}`);
-
-                return;
-            }
-            if (data.success?.data?.sources) {
-                APP.store.dispatch(setDesktopSources(data.success.data.sources));
-            }
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -1004,7 +993,13 @@ function initCommands() {
             callback(isP2pActive(APP.store.getState()));
             break;
         }
+        case '_new_electron_screensharing_supported': {
+            callback(true);
+            break;
+        }
         default:
+            callback({ error: new Error('UnknownRequestError') });
+
             return false;
         }
 
@@ -1296,8 +1291,8 @@ class API {
      * @param {Object} options - Object with the options for desktop sources.
      * @returns {void}
      */
-    notifyRequestDesktopSources(options) {
-        this._sendEvent({
+    requestDesktopSources(options) {
+        return transport.sendRequest({
             name: '_request-desktop-sources',
             options
         });
