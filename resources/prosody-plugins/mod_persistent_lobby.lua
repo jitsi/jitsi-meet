@@ -106,11 +106,8 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
             -- Check if room should be destroyed when someone leaves the main room
 
             local main_room = event.room;
+            local main_room_active = main_room and (main_room:has_occupant() or main_room._data.breakout_rooms_active);
             if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
-                return;
-            end
-
-            if main_room and main_room._data.breakout_rooms_active then
                 return;
             end
 
@@ -121,7 +118,7 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
             --   b) lobby does not exist (possible for lobby to be disabled manually by moderator in meeting)
             --
             -- (main room destroy also triggers lobby room destroy in muc_lobby_rooms)
-            if not main_room:has_occupant() then
+            if not main_room_active then
                 if lobby_room_jid == nil then  -- lobby disabled
                     trigger_room_destroy(main_room);
                 else -- lobby exists
@@ -147,18 +144,15 @@ run_when_component_loaded(lobby_muc_component_host, function(host_module, host_n
 
             local lobby_room = event.room;
             local main_room = lobby_room.main_room;
+            local main_room_active = main_room and (main_room:has_occupant() or main_room._data.breakout_rooms_active);
 
             if not main_room or is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
                 return;
             end
 
-            if main_room and main_room._data.breakout_rooms_active then
-                return;
-            end
-
             -- If both lobby room and main room are empty, we destroy main room.
             -- (main room destroy also triggers lobby room destroy in muc_lobby_rooms)
-            if not lobby_room:has_occupant() and main_room and not main_room:has_occupant() then
+            if not lobby_room:has_occupant() and not main_room_active then
                 trigger_room_destroy(main_room);
             end
 
