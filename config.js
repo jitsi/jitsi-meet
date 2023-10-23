@@ -1513,7 +1513,6 @@ var config = {
      disableLocalStats
      disableNS
      enableTalkWhileMuted
-     forceJVB121Ratio
      forceTurnRelay
      hiddenDomain
      hiddenFromRecorderFeatureEnabled

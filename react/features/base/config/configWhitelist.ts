@@ -158,7 +158,6 @@ export default [
     'filmstrip',
     'firefox_fake_device',
     'flags',
-    'forceJVB121Ratio',
     'forceTurnRelay',
     'gatherStats',
     'giphy',
