@@ -27,6 +27,7 @@ import { ConnectionFailedError, IIceServers } from './types';
  */
 interface IOptions extends IConfigState {
     iceServersOverride?: IIceServers;
+    preferVisitor?: boolean;
 }
 
 /**
@@ -112,7 +113,7 @@ export function constructOptions(state: IReduxState) {
     // redux store.
     const options: IOptions = _.cloneDeep(state['features/base/config']);
 
-    const { locationURL } = state['features/base/connection'];
+    const { locationURL, preferVisitor } = state['features/base/connection'];
     const params = parseURLParams(locationURL || '');
     const iceServersOverride = params['iceServers.replace'];
 
@@ -153,6 +154,10 @@ export function constructOptions(state: IReduxState) {
         if (options.conferenceRequestUrl) {
             options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
         }
+    }
+
+    if (preferVisitor) {
+        options.preferVisitor = true;
     }
 
     return options;
