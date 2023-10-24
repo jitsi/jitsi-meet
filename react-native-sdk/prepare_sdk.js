@@ -6,7 +6,9 @@ const packageJSON = require('../package.json');
 const SDKPackageJSON = require('./package.json');
 
 const androidSourcePath = '../android/sdk/src/main/java/org/jitsi/meet/sdk';
+const androidMainSourcePath = '../android/sdk/src/main/res';
 const androidTargetPath = './android/src/main/java/org/jitsi/meet/sdk';
+const androidMainTargetPath = './android/src/main/res';
 const iosSrcPath = '../ios/sdk/src';
 const iosDestPath = './ios/src';
 
@@ -170,6 +172,26 @@ copyFolderRecursiveSync(
      `${androidTargetPath}/log`
 );
 copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-hdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-mdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xhdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xxhdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xxxhdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
     `${androidSourcePath}/net`,
     `${androidTargetPath}/log`
 );
@@ -192,10 +214,6 @@ fs.copyFileSync(
 fs.copyFileSync(
     `${androidSourcePath}/AudioModeModule.java`,
     `${androidTargetPath}/AudioModeModule.java`
-);
-fs.copyFileSync(
-    `${androidSourcePath}/BroadcastEvent.java`,
-    `${androidTargetPath}/BroadcastEvent.java`
 );
 fs.copyFileSync(
     `${androidSourcePath}/ConnectionService.java`,
