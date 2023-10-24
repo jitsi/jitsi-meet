@@ -62,11 +62,6 @@ class RNOngoingNotification {
             return;
         }
 
-        channel = new NotificationChannel("JitsiOngoingConferenceChannel", "ongoing_notification_action_unmute", NotificationManager.IMPORTANCE_DEFAULT);
-        channel.enableLights(false);
-        channel.enableVibration(false);
-        channel.setShowBadge(false);
-
         notificationManager.createNotificationChannel(channel);
     }
 
