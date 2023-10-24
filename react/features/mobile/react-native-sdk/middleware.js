@@ -64,9 +64,12 @@ const { JMOngoingConference } = NativeModules;
     return result;
 });
 
-StateListenerRegistry.register(
+/**
+ * Check if native modules are being used or not.
+ */
+!externalAPIEnabled && StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, { dispatch }, previousConference) => {
+    (conference, previousConference) => {
         if (conference !== previousConference) {
             JMOngoingConference.launchNotification();
         } else if (conference && !previousConference) {
