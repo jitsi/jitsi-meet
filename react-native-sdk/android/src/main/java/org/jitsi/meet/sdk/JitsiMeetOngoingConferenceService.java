@@ -43,7 +43,6 @@ public class JitsiMeetOngoingConferenceService extends Service {
     private static final String EXTRA_DATA_KEY = "extraDataKey";
     private static final String EXTRA_DATA_BUNDLE_KEY = "extraDataBundleKey";
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
         RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
@@ -82,22 +81,5 @@ public class JitsiMeetOngoingConferenceService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    private class BroadcastReceiver extends android.content.BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(context);
-            if (notification == null) {
-                stopSelf();
-                JitsiMeetLogger.w(TAG + " Couldn't update service, notification is null");
-            } else {
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(RNOngoingNotification.NOTIFICATION_ID, notification);
-
-                JitsiMeetLogger.i(TAG + " audio muted changed");
-            }
-        }
     }
 }
