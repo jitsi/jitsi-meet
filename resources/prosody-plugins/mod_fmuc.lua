@@ -502,7 +502,7 @@ function route_s2s_stanza(event)
     end
 
      if stanza.name == 'message' then
-        if jid.resource(stanza.to) then
+        if jid.resource(stanza.attr.to) then
             -- there is no point of delivering messages to main participants individually
             return true; -- drop it
         end
