@@ -70,7 +70,7 @@ class RNOngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(Context context, boolean isMuted) {
+    static Notification buildOngoingConferenceNotification(Context context) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;

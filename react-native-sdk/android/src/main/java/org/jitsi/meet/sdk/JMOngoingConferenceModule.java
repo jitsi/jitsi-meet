@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 
 
@@ -19,43 +20,18 @@ class JMOngoingConferenceModule
         super(reactContext);
     }
 
-    public void createNotification() {
-        Context context = getReactApplicationContext();
-        JitsiMeetOngoingConferenceService module
-            = JitsiMeetOngoingConferenceService.getInstance();
-
-        if (module !=null) {
-            module.onCreate(context);
-        }
-    }
-
+    @ReactMethod
     public void launchNotification() {
         Context context = getReactApplicationContext();
-        JitsiMeetOngoingConferenceService module
-            = JitsiMeetOngoingConferenceService.getInstance();
 
-        if (module !=null) {
-            module.launch(context, null);
-        }
+        JitsiMeetOngoingConferenceService.launch(context, null);
     }
 
-    public void destroyNotification() {
-        JitsiMeetOngoingConferenceService module
-            = JitsiMeetOngoingConferenceService.getInstance();
-
-        if (module !=null) {
-            module.onDestroy();
-        }
-    }
-
+    @ReactMethod
     public void abortNotification() {
         Context context = getReactApplicationContext();
-        JitsiMeetOngoingConferenceService module
-            = JitsiMeetOngoingConferenceService.getInstance();
 
-        if (module !=null) {
-            module.abort(context);
-        }
+        JitsiMeetOngoingConferenceService.abort(context);
     }
 
     @NonNull

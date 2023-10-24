@@ -27,8 +27,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
@@ -40,22 +38,12 @@ import java.util.HashMap;
  *
  * See: https://developer.android.com/guide/components/services
  */
-public class JitsiMeetOngoingConferenceService extends Service
-    implements RNOngoingConferenceTracker.OngoingConferenceListener {
+public class JitsiMeetOngoingConferenceService extends Service {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
     private static final String EXTRA_DATA_KEY = "extraDataKey";
     private static final String EXTRA_DATA_BUNDLE_KEY = "extraDataBundleKey";
-    private static final String IS_AUDIO_MUTED_KEY = "isAudioMuted";
-
-    private static JitsiMeetOngoingConferenceService jmOngoingConferenceServiceInstance = new JitsiMeetOngoingConferenceService();
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
-
-    private boolean isAudioMuted;
-
-    public static JitsiMeetOngoingConferenceService getInstance() {
-        return jmOngoingConferenceServiceInstance;
-    }
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
         RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
@@ -91,52 +79,16 @@ public class JitsiMeetOngoingConferenceService extends Service
         context.stopService(intent);
     }
 
-    public void onCreate(Context context) {
-        super.onCreate();
-
-        Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(context, isAudioMuted);
-        if (notification == null) {
-            stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
-        } else {
-            startForeground(RNOngoingNotification.NOTIFICATION_ID, notification);
-            JitsiMeetLogger.i(TAG + " Service started");
-        }
-
-        RNOngoingConferenceTracker.getInstance().addListener(this);
-
-        IntentFilter intentFilter = new IntentFilter();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-    @Override
-    public void onDestroy() {
-        RNOngoingConferenceTracker.getInstance().removeListener(this);
-        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
-
-        super.onDestroy();
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onCurrentConferenceChanged(String conferenceUrl) {
-        if (conferenceUrl == null) {
-            stopSelf();
-            RNOngoingNotification.resetStartingtime();
-            JitsiMeetLogger.i(TAG + "Service stopped");
-        }
     }
 
     private class BroadcastReceiver extends android.content.BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
-            Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(context, isAudioMuted);
+            Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(context);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't update service, notification is null");
