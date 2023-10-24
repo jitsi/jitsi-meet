@@ -1,6 +1,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
@@ -23,8 +24,10 @@ class JMOngoingConferenceModule
     @ReactMethod
     public void launchNotification() {
         Context context = getReactApplicationContext();
+        Intent screenShareIntent = new Intent(BroadcastEvent.Type.SCREEN_SHARE_TOGGLED.getAction());
+        BroadcastEvent screenShareEvent = new BroadcastEvent(screenShareIntent);
 
-        JitsiMeetOngoingConferenceService.launch(context, null);
+        JitsiMeetOngoingConferenceService.launch(context, screenShareEvent.getData());
     }
 
     @ReactMethod

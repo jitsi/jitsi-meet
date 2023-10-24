@@ -64,40 +64,4 @@ class RNOngoingNotification {
 
         notificationManager.createNotificationChannel(channel);
     }
-
-    static Notification buildOngoingConferenceNotification(Context context) {
-        if (context == null) {
-            JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
-            return null;
-        }
-
-        Intent notificationIntent = new Intent(context, context.getClass());
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "JitsiOngoingConferenceChannel");
-
-        if (startingTime == 0) {
-            startingTime = System.currentTimeMillis();
-        }
-
-        builder
-            .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setContentTitle("ongoing_notification_title")
-            .setContentText("ongoing_notification_text")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .setWhen(startingTime)
-            .setUsesChronometer(true)
-            .setAutoCancel(false)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOnlyAlertOnce(true)
-            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
-
-        return builder.build();
-    }
-
-    static void resetStartingtime() {
-        startingTime = 0;
-    }
 }
