@@ -11,7 +11,7 @@ local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end
 
-local QUEUE_MAX_SIZE = 100;
+local QUEUE_MAX_SIZE = 500;
 
 -- Module that generates a unique meetingId, attaches it to the room
 -- and adds it to all disco info form data (when room is queried or in the
