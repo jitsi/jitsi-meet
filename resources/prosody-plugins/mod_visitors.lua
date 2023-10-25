@@ -305,7 +305,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local from = stanza.attr.from;
         local from_vnode = jid.host(from);
 
-        if occupant or not (visitors_nodes[to] or visitors_nodes[to].nodes[from_vnode]) then
+        if occupant or not (visitors_nodes[to]
+                            and visitors_nodes[to].nodes
+                            and visitors_nodes[to].nodes[from_vnode]) then
             return;
         end
 
