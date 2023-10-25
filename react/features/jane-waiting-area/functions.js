@@ -3,7 +3,7 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
-import { notifyBugsnag } from '../../../bugsnag';
+import { notifySentry } from '../../../sentry';
 import {
     createWaitingAreaParticipantStatusChangedEvent,
     sendAnalytics
@@ -148,7 +148,7 @@ export async function checkRoomStatus(jwtToken: string = ''): Promise<Object> {
 
                 return jsonify
                     .then(error => {
-                        notifyBugsnag('Unable to retrieve the room state.');
+                        notifySentry('Unable to retrieve the room state.');
                         throw Error(error);
                     });
             });
@@ -207,7 +207,7 @@ export function updateParticipantReadyStatus(status: string, jwt: string = ''): 
     .catch(error => {
         sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('failed'));
         console.error(error);
-        notifyBugsnag(error);
+        notifySentry(error);
     });
 }
 

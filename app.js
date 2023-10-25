@@ -11,7 +11,6 @@ import 'focus-visible';
 // the  local storage from the parent page when the localStorage is disabled. Also the setup is relying that
 // window.location is not changed and still has all URL parameters.
 import './react/features/base/jitsi-local-storage/setup';
-import { getBugsnagClient } from './bugsnag';
 import conference from './conference';
 import API from './modules/API';
 import UI from './modules/UI/UI';
@@ -25,8 +24,6 @@ if (window.Olm) {
         delete window.Olm;
     });
 }
-
-window.bugsnag = getBugsnagClient();
 
 window.APP = {
     API,

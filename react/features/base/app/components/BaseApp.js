@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
+import { ErrorBoundary } from '../../../app/components/ErrorBoundary';
 import { i18next } from '../../i18n';
 import {
     MiddlewareRegistry,
@@ -138,16 +139,18 @@ export default class BaseApp extends Component<*, State> {
 
         if (store) {
             return (
-                <I18nextProvider i18n = { i18next }>
-                    <Provider store = { store }>
-                        <Fragment>
-                            { this._createMainElement(component, props) }
-                            <SoundCollection />
-                            { this._createExtraElement() }
-                            { this._renderDialogContainer() }
-                        </Fragment>
-                    </Provider>
-                </I18nextProvider>
+                <ErrorBoundary>
+                    <I18nextProvider i18n = { i18next }>
+                        <Provider store = { store }>
+                            <Fragment>
+                                { this._createMainElement(component, props) }
+                                <SoundCollection />
+                                { this._createExtraElement() }
+                                { this._renderDialogContainer() }
+                            </Fragment>
+                        </Provider>
+                    </I18nextProvider>
+                </ErrorBoundary>
             );
         }
 

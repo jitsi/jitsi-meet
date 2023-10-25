@@ -1,14 +1,16 @@
 /* global __dirname */
-
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const process = require('process');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const { webAppVersion } = require('./package.json');
 const cacheVersionNumber = Math.random().toString(36)
 .substr(2, 5);
+const { webAppVersion } = require('./package.json');
+
+require('dotenv').config({ path: '.env.sentry' });
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -201,6 +203,12 @@ const config = {
             template: 'index.html',
             minify: false,
             inject: false
+        }),
+        sentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: 'jane-app',
+            project: 'jitsi-frontend',
+            release: webAppVersion
         })
     ].filter(Boolean),
     resolve: {

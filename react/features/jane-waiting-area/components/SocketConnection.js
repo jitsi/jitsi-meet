@@ -3,7 +3,7 @@
 
 import { Component } from 'react';
 
-import { notifyBugsnag } from '../../../../bugsnag';
+import { notifySentry } from '../../../../sentry';
 import { Socket } from '../../../../service/Websocket/socket';
 import {
     createWaitingAreaModalEvent,
@@ -143,7 +143,7 @@ class SocketConnection extends Component<Props> {
         if (status && status.error && !this.interval) {
             sendAnalytics(createWaitingAreaSocketEvent('error', status.error));
             sendAnalytics(createWaitingAreaModalEvent('polling.started'));
-            notifyBugsnag(status.error);
+            notifySentry(status.error);
             console.log('socket fallback to polling');
             this._polling();
         }
