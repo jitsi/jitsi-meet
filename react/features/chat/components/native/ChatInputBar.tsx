@@ -166,5 +166,4 @@ function _mapStateToProps(state: IReduxState) {
     }
 }
 
-
 export default translate(connect(_mapStateToProps)(ChatInputBar));
