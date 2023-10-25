@@ -15,9 +15,9 @@ const recipientContainer = {
 };
 
 const inputBar = {
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
 };
 
 /**

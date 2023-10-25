@@ -163,7 +163,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         aspectRatio
-    }
+    };
 }
 
 export default translate(connect(_mapStateToProps)(ChatInputBar));

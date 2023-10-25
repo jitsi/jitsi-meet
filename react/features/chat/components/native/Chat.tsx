@@ -61,9 +61,9 @@ class Chat extends Component<IProps> {
                 disableForcedKeyboardDismiss = { true }
 
                 /* eslint-disable react/jsx-no-bind */
-                footerComponent = { () => (
+                footerComponent = { () =>
                     <ChatInputBar onSend = { this._onSendMessage } />
-                )}
+                }
                 hasBottomTextInput = { true }
                 hasTabNavigator = { true }
                 style = { styles.chatContainer }>
