@@ -39,7 +39,6 @@ import java.util.Random;
 class RNOngoingNotification {
     private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
-    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
     static void createOngoingConferenceNotificationChannel(Context context) {
