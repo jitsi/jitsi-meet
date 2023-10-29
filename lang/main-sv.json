@@ -391,7 +391,7 @@
         "serviceUnavailable": "Tjänsten otillgänglig",
         "sessTerminated": "Konferensen avslutades",
         "sessionRestarted": "Samtal återstartat av bryggan",
-        "shareAudio": "Forstätt",
+        "shareAudio": "Fortsätt",
         "shareAudioTitle": "Hur man delar ljud",
         "shareAudioWarningD1": "Du måste avsluta din skärmdelning innan du kan dela ditt ljud",
         "shareAudioWarningD2": "Du måste starta om din skärmdelning och därefter klicka på \"ljuddelning\"",
@@ -427,13 +427,13 @@
         "user": "Användare",
         "userIdentifier": "Användar-ID",
         "userPassword": "Lösenord",
-        "verifyParticipantConfirm": "Dem matchar",
-        "verifyParticipantDismiss": "Dem matchar inte",
+        "verifyParticipantConfirm": "De matchar",
+        "verifyParticipantDismiss": "De matchar inte",
         "verifyParticipantQuestion": "EXPERIMENTELLT: Fråga deltagaren; {{participantName}} om han/hon kan se samma innehåll, i samma ordning.",
         "verifyParticipantTitle": "Användarverifikation",
         "videoLink": "Videolänk",
         "viewUpgradeOptions": "Se uppgraderings alternativ",
-        "viewUpgradeOptionsContent": "För att få obegränsad tillgång till premiumfunktioner som inspelning, transkriptioner, RTMP -streaming och mer måste du uppgradera din plan.",
+        "viewUpgradeOptionsContent": "För att få obegränsad tillgång till premiumfunktioner som inspelning, transkriptioner, RTMP-streaming och mer måste du uppgradera din plan.",
         "viewUpgradeOptionsTitle": "Du upptäckte en premiumfunktion!",
         "yourEntireScreen": "Helskärm"
     },
@@ -458,7 +458,7 @@
     },
     "filmstrip": {
         "accessibilityLabel": {
-            "heading": "Videomineatyrer"
+            "heading": "Videominiatyrer"
         }
     },
     "giphy": {
@@ -1278,7 +1278,7 @@
         "tileViewToggle": "Öppna eller stäng panelvyn",
         "toggleCamera": "Byta kamera",
         "unmute": "Slå på ljud",
-        "videoSettings": "Video inställningar",
+        "videoSettings": "Videoinställningar",
         "videomute": "Inaktivera kameran",
         "videounmute": "Aktivera kameran"
     },
@@ -1346,9 +1346,9 @@
     "videothumbnail": {
         "connectionInfo": "Anslutningsinformation",
         "domute": "Tysta",
-        "domuteOthers": "Inkativerad ljud för alla andra",
+        "domuteOthers": "Inaktivera ljud för alla andra",
         "domuteVideo": "Inaktivera kamera",
-        "domuteVideoOfOthers": "Inkativera kamera för alla andra",
+        "domuteVideoOfOthers": "Inaktivera kamera för alla andra",
         "flip": "Vänd",
         "grantModerator": "Godkänn moderator",
         "hideSelfView": "Dölj självvyn",
