@@ -2,7 +2,7 @@
  * Prefer keyboard handling of these elements over global shortcuts.
  * If a button is triggered using the Spacebar it should not trigger PTT.
  * If an input element is focused and M is pressed it should not mute audio.
- * If whiteboard (canvas) is active and focused, the keypress should be ignored. 
+ * If whiteboard (canvas) is active and focused, the keypress should be ignored.
  */
 const _elementsBlacklist = [
     'input',
