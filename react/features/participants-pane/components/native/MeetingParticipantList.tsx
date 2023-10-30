@@ -46,15 +46,15 @@ interface IProps {
 }
 
 const MeetingParticipantList = ({
-                                    currentRoom,
-                                    inviteOthersControl,
-                                    isAddPeopleFeatureEnabled,
-                                    participantsCount,
-                                    showInviteButton,
-                                    searchString,
-                                    setSearchString,
-                                    sortedParticipantIds = [],
-                                    visitorsCount
+    currentRoom,
+    inviteOthersControl,
+    isAddPeopleFeatureEnabled,
+    participantsCount,
+    showInviteButton,
+    searchString,
+    setSearchString,
+    sortedParticipantIds = [],
+    visitorsCount
 }: IProps) => {
     const { t } = useTranslation();
 
