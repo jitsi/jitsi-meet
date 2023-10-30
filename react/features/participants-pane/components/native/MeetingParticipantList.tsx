@@ -32,30 +32,29 @@ interface IProps {
         jid: string;
         name: string;
     };
-    inviteOthersControl?: {
-        color: string;
-        shareDialogVisible: boolean;
-    };
+    iconColor: string;
     isAddPeopleFeatureEnabled?: boolean | undefined;
+    isShareDialogVisible: boolean;
     participantsCount?: number;
     searchString: string;
     setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-    visitorsCount?: number;
+    visitorsCount?: number | undefined;
 }
 
 const MeetingParticipantList = ({
     currentRoom,
-    inviteOthersControl,
+    iconColor,
     isAddPeopleFeatureEnabled,
+    isShareDialogVisible,
     participantsCount,
     showInviteButton,
     searchString,
     setSearchString,
     sortedParticipantIds = [],
     visitorsCount
-}: IProps) => {
+}: IProps): any => {
     const { t } = useTranslation();
 
     const dispatch = useDispatch();
@@ -69,7 +68,6 @@ const MeetingParticipantList = ({
         ? `${currentRoom.name} (${participantsCount})`
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
-    const { color, shareDialogVisible } = inviteOthersControl;
     const visitorsLabelText = visitorsCount && visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
@@ -77,7 +75,7 @@ const MeetingParticipantList = ({
     return (
         <View style = { styles.meetingListContainer }>
             {
-                visitorsCount > 0
+                visitorsCount && visitorsCount > 0
                 && <Text style = { styles.visitorsLabel }>
                     { visitorsLabelText }
                 </Text>
@@ -90,12 +88,12 @@ const MeetingParticipantList = ({
                 showInviteButton
                 && <Button
                     accessibilityLabel = 'participantsPane.actions.invite'
-                    disabled = { shareDialogVisible }
+                    disabled = { isShareDialogVisible }
 
                     // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                     icon = { () => (
                         <Icon
-                            color = { color }
+                            color = { iconColor }
                             size = { 20 }
                             src = { IconAddUser } />
                     ) }
@@ -143,15 +141,18 @@ function _mapStateToProps(state: IReduxState) {
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
     const inviteOthersControl = getInviteOthersControl(state);
+    const { color, shareDialogVisible } = inviteOthersControl;
     const isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const participantsCount = sortedParticipantIds.length;
     const showInviteButton = shouldRenderInviteButton(state);
-    const visitorsCount = state['features/visitors'].count || 0;
+    const visitorsCount = state['features/visitors']?.count || 0;
 
     return {
         currentRoom,
+        iconColor: color,
         inviteOthersControl,
         isAddPeopleFeatureEnabled,
+        isShareDialogVisible: shareDialogVisible,
         participantsCount,
         showInviteButton,
         sortedParticipantIds,
