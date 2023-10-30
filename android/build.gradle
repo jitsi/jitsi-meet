@@ -7,12 +7,19 @@ import org.gradle.util.VersionNumber
 buildscript {
     repositories {
         google()
-        mavenCentral()
+        mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
     }
     dependencies {
-        classpath('com.android.tools.build:gradle')
-        classpath 'com.google.gms:google-services:4.4.0'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.google.gms:google-services:4.4.0")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
     }
 }
 
@@ -122,7 +129,7 @@ allprojects {
             project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
             task jitsiAndroidSourcesJar(type: Jar) {
-                classifier = 'sources'
+                archiveClassifier = 'sources'
                 from android.sourceSets.main.java.source
             }
 
