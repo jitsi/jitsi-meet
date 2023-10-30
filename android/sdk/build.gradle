@@ -55,7 +55,7 @@ dependencies {
     if (!rootProject.ext.libreBuild) {
         implementation project(':react-native-amplitude')
         implementation project(':react-native-giphy')
-        implementation(project(":react-native-google-signin")) {
+        implementation(project(':react-native-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
