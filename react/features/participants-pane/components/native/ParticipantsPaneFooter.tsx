@@ -11,6 +11,10 @@ import { IconDotsHorizontal, IconRingGroup } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
+import {
+    BREAKOUT_ROOMS_BUTTON_ENABLED
+} from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import {
     navigate
@@ -34,6 +38,9 @@ const ParticipantsPaneFooter = (): JSX.Element => {
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) =>
         state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported()
     );
+    const isBreakoutRoomsEnabled = useSelector((state: IReduxState) =>
+        getFeatureFlag(state, BREAKOUT_ROOMS_BUTTON_ENABLED, true)
+    );
     const openMoreMenu = useCallback(() => dispatch(openSheet(ContextMenuMore)), [ dispatch ]);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
@@ -44,6 +51,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
         <View style = { styles.participantsPaneFooterContainer as ViewStyle }>
             {
                 isBreakoutRoomsSupported
+                && isBreakoutRoomsEnabled
                 && <Button
                     accessibilityLabel = 'participantsPane.actions.breakoutRooms'
                     // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow

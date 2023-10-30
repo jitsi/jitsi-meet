@@ -128,6 +128,7 @@ export const RoomParticipantContextMenu = ({
                         size = { AVATAR_SIZE } />,
                     text: entity?.participantName
                 } ] } />}
+
             <ContextMenuItemGroup>
                 <div className = { styles.text }>
                     {t('breakoutRooms.actions.sendToBreakoutRoom')}
