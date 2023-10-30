@@ -139,7 +139,7 @@ function _mapStateToProps(state: IReduxState) {
         const participant = getParticipantById(state, id);
 
         return !isScreenShareParticipant(participant);
-    })
+    });
 
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
