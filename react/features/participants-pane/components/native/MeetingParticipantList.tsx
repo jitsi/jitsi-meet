@@ -33,8 +33,8 @@ interface IProps {
         name: string;
     };
     inviteOthersControl?: {
-        color: string | undefined;
-        shareDialogVisible: boolean | undefined;
+        color: string;
+        shareDialogVisible: boolean;
     };
     isAddPeopleFeatureEnabled?: boolean | undefined;
     participantsCount?: number;
@@ -42,7 +42,7 @@ interface IProps {
     setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-    visitorsCount?: number | undefined;
+    visitorsCount?: number;
 }
 
 const MeetingParticipantList = ({
@@ -70,7 +70,7 @@ const MeetingParticipantList = ({
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
     const { color, shareDialogVisible } = inviteOthersControl;
-    const visitorsLabelText = visitorsCount > 0
+    const visitorsLabelText = visitorsCount && visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
 
@@ -128,7 +128,6 @@ const MeetingParticipantList = ({
  * Maps (parts of) the redux state to the associated props for this component.
  *
  * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The own props of the component.
  * @private
  * @returns {IProps}
  */
