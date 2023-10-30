@@ -10,14 +10,18 @@ import {
     hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants/functions';
-import { FakeParticipant, IParticipant } from '../../../base/participants/types';
+import { FakeParticipant } from '../../../base/participants/types';
 import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks/functions.native';
 import { showConnectionStatus, showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
 import type { MediaState } from '../../constants';
-import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
+import {
+    getParticipantAudioMediaState,
+    getParticipantVideoMediaState,
+    participantMatchesSearch
+} from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -59,9 +63,9 @@ interface IProps {
     _localVideoOwner: boolean;
 
     /**
-     * The participant ID.
+     * Whether or not the participant name matches the search string.
      */
-    _participantID: string;
+    _matchesSearch: boolean;
 
     /**
      * True if the participant have raised hand.
@@ -79,9 +83,14 @@ interface IProps {
     dispatch: IStore['dispatch'];
 
     /**
-     * The participant.
+     * The participant ID.
      */
-    participant?: IParticipant;
+    participantID: string;
+
+    /**
+     * Name of the participant we search for.
+     */
+    searchString: string;
 }
 
 /**
@@ -110,17 +119,17 @@ class MeetingParticipantItem extends PureComponent<IProps> {
             _fakeParticipant,
             _local,
             _localVideoOwner,
-            _participantID,
-            dispatch
+            dispatch,
+            participantID,
         } = this.props;
 
         if (_fakeParticipant && _localVideoOwner) {
-            dispatch(showSharedVideoMenu(_participantID));
+            dispatch(showSharedVideoMenu(participantID));
         } else if (!_fakeParticipant) {
             if (_local) {
-                dispatch(showConnectionStatus(_participantID));
+                dispatch(showConnectionStatus(participantID));
             } else {
-                dispatch(showContextMenuDetails(_participantID));
+                dispatch(showContextMenuDetails(participantID));
             }
         } // else no-op
     }
@@ -138,10 +147,15 @@ class MeetingParticipantItem extends PureComponent<IProps> {
             _displayName,
             _isModerator,
             _local,
-            _participantID,
+            _matchesSearch,
             _raisedHand,
-            _videoMediaState
+            _videoMediaState,
+            participantID
         } = this.props;
+
+        if (!_matchesSearch) {
+            return null;
+        }
 
         return (
             <ParticipantItem
@@ -151,7 +165,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
                 isModerator = { _isModerator }
                 local = { _local }
                 onPress = { this._onPress }
-                participantID = { _participantID }
+                participantID = { participantID }
                 raisedHand = { _raisedHand }
                 videoMediaState = { _videoMediaState } />
         );
@@ -167,7 +181,8 @@ class MeetingParticipantItem extends PureComponent<IProps> {
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participant } = ownProps;
+    const { participantID, searchString } = ownProps;
+    const participant = getParticipantById(state, participantID)
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
@@ -177,19 +192,20 @@ function mapStateToProps(state: IReduxState, ownProps: any) {
     const { disableModeratorIndicator } = state['features/base/config'];
     const raisedHand = hasRaisedHand(participant?.local
         ? participant
-        : getParticipantById(state, participant?.id)
+        : getParticipantById(state, participantID)
     );
+    const _matchesSearch = participantMatchesSearch(participant, searchString);
 
     return {
         _audioMediaState: audioMediaState,
         _disableModeratorIndicator: disableModeratorIndicator,
-        _displayName: getParticipantDisplayName(state, participant?.id),
+        _displayName: getParticipantDisplayName(state, participantID),
         _fakeParticipant: participant?.fakeParticipant,
         _isAudioMuted,
         _isModerator: isParticipantModerator(participant),
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
-        _participantID: participant?.id,
+        _matchesSearch,
         _raisedHand: raisedHand,
         _videoMediaState: videoMediaState
     };

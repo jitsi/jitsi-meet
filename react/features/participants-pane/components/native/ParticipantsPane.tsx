@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -18,28 +18,18 @@ import styles from './styles';
  */
 const ParticipantsPane = () => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const keyExtractor
-        = useCallback((e: undefined, i: number) => i.toString(), []);
+    const [ searchString, setSearchString ] = useState('');
 
     return (
         <JitsiScreen
             footerComponent = { isLocalModerator ? ParticipantsPaneFooter : undefined }
             style = { styles.participantsPaneContainer }>
-
-            { /* Fixes warning regarding nested lists */ }
-            <FlatList
-
-                // eslint-disable-next-line react/jsx-no-bind
-                ListHeaderComponent = { () => (
-                    <>
-                        <LobbyParticipantList />
-                        <MeetingParticipantList />
-                    </>
-                ) }
-                data = { [] as ReadonlyArray<undefined> }
-                keyExtractor = { keyExtractor }
-                renderItem = { null }
-                windowSize = { 2 } />
+            <ScrollView>
+                <LobbyParticipantList />
+                <MeetingParticipantList
+                    searchString = { searchString }
+                    setSearchString = { setSearchString } />
+            </ScrollView>
         </JitsiScreen>
     );
 };
