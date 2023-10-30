@@ -79,7 +79,7 @@ const useStyles = makeStyles()(theme => {
             width: 6
         },
         track: {
-            background: theme.palette.ui02,
+            background: theme.palette.text03,
             borderRadius: Number(theme.shape.borderRadius) / 2,
             height
         },
