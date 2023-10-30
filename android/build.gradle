@@ -7,13 +7,7 @@ import org.gradle.util.VersionNumber
 buildscript {
     repositories {
         google()
-        mavenCentral {
-            // We don't want to fetch react-native from Maven Central as there are
-            // older versions over there.
-            content {
-                excludeGroup "com.facebook.react"
-            }
-        }
+        mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.3.1")
