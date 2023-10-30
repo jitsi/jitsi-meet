@@ -116,7 +116,7 @@ const MeetingParticipantItem = ({
                 dispatch(showContextMenuDetails(participantID));
             }
         } // else no-op
-    }, [ dispatch ])
+    }, [ dispatch ]);
 
     if (!_matchesSearch) {
         return null;
@@ -134,7 +134,7 @@ const MeetingParticipantItem = ({
             raisedHand = { _raisedHand }
             videoMediaState = { _videoMediaState } />
     );
-}
+};
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
