@@ -103,9 +103,7 @@ const MeetingParticipantItem = ({
     _videoMediaState,
     participantID
 }: IProps) => {
-
     const dispatch = useDispatch();
-
     const onPress = useCallback(() => {
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(participantID));
