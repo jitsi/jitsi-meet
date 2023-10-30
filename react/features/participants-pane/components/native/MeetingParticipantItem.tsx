@@ -120,7 +120,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
             _local,
             _localVideoOwner,
             dispatch,
-            participantID,
+            participantID
         } = this.props;
 
         if (_fakeParticipant && _localVideoOwner) {
@@ -182,7 +182,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
  */
 function mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, searchString } = ownProps;
-    const participant = getParticipantById(state, participantID)
+    const participant = getParticipantById(state, participantID);
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));

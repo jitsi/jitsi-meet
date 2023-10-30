@@ -45,16 +45,18 @@ interface IProps {
     visitorsCount?: number | undefined;
 }
 
-const MeetingParticipantList = ({
-     currentRoom,
-     inviteOthersControl,
-     isAddPeopleFeatureEnabled,
-     participantsCount,
-     showInviteButton,
-     searchString,
-     setSearchString,
-     sortedParticipantIds = [],
-     visitorsCount }: IProps) => {
+const MeetingParticipantList
+    = ({
+           currentRoom,
+           inviteOthersControl,
+           isAddPeopleFeatureEnabled,
+           participantsCount,
+           showInviteButton,
+           searchString,
+           setSearchString,
+           sortedParticipantIds = [],
+           visitorsCount
+    }: IProps) => {
     const { t } = useTranslation();
 
     const dispatch = useDispatch();
