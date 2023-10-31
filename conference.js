@@ -1127,8 +1127,7 @@ export default {
      *
      * @param {string} id participant's identifier(MUC nickname).
      *
-     * @returns {JitsiParticipant} participant instance for given id or
-     * null if not found.
+     * @returns {JitsiParticipant} participant instance for given id.
      */
     getParticipantById(id) {
         return room?.getParticipantById(id);
@@ -1140,7 +1139,7 @@ export default {
 
     /**
      * Will be filled with values only when config.debug is enabled.
-     * Its used by torture to check audio levels.
+     * It's used by torture to check audio levels.
      */
     audioLevelsMap: {},
 
