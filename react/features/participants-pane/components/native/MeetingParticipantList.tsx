@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TextStyle, View } from 'react-native';
+import { FlatList, Text, TextStyle, View } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -26,7 +26,6 @@ import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functio
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
-
 interface IProps {
     currentRoom?: {
         jid: string;
@@ -36,12 +35,11 @@ interface IProps {
     isAddPeopleFeatureEnabled?: boolean | undefined;
     isShareDialogVisible: boolean;
     participantsCount?: number;
-    searchString: string;
-    setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
     visitorsCount?: number | undefined;
 }
+
 
 const MeetingParticipantList = ({
     currentRoom,
@@ -50,20 +48,22 @@ const MeetingParticipantList = ({
     isShareDialogVisible,
     participantsCount,
     showInviteButton,
-    searchString,
-    setSearchString,
     sortedParticipantIds = [],
     visitorsCount
 }: IProps): any => {
     const { t } = useTranslation();
 
+    const [ searchString, setSearchString ] = useState('');
+
     const dispatch = useDispatch();
+
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
     }, [ dispatch ]);
     const onSearchStringChange = useCallback((text: string) =>
         setSearchString(text), []);
+
     const title = currentRoom?.name
         ? `${currentRoom.name} (${participantsCount})`
         : t('participantsPane.headings.participantsList',
@@ -71,6 +71,15 @@ const MeetingParticipantList = ({
     const visitorsLabelText = visitorsCount && visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
+
+    const keyExtractor
+        = useCallback((e: undefined, i: number) => i.toString(), []);
+    const renderParticipant = ({ item }: any) => (
+        <MeetingParticipantItem
+            key = { item }
+            participantID = { item }
+            searchString = { searchString } />
+    );
 
     return (
         <View style = { styles.meetingListContainer }>
@@ -110,14 +119,13 @@ const MeetingParticipantList = ({
                 onChange = { onSearchStringChange }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <>
-                { sortedParticipantIds.map((id: string) => (
-                    <MeetingParticipantItem
-                        key = { id }
-                        participantID = { id }
-                        searchString = { searchString } />
-                )) }
-            </>
+            <FlatList
+                data = { sortedParticipantIds as Array<any> }
+                keyExtractor = { keyExtractor }
+
+                /* eslint-disable react/jsx-no-bind */
+                renderItem = { renderParticipant }
+                windowSize = { 2 } />
         </View>
     );
 };

@@ -9,7 +9,7 @@ const participantListDescription = {
     fontSize: 15,
     fontWeight: 'bold',
     marginLeft: BaseTheme.spacing[2],
-    paddingVertical: BaseTheme.spacing[2],
+    marginVertical: BaseTheme.spacing[2],
     position: 'relative',
     width: '70%'
 };
@@ -275,13 +275,11 @@ export default {
     },
 
     inputContainer: {
-        marginLeft: BaseTheme.spacing[3],
-        marginRight: BaseTheme.spacing[3],
-        marginBottom: BaseTheme.spacing[4]
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3]
     },
 
     centerInput: {
-        paddingRight: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 
