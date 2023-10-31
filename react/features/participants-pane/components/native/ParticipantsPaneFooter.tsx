@@ -6,15 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { openDialog, openSheet } from '../../../base/dialog/actions';
+import {
+    BREAKOUT_ROOMS_BUTTON_ENABLED
+} from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconDotsHorizontal, IconRingGroup } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
-import {
-    BREAKOUT_ROOMS_BUTTON_ENABLED
-} from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import {
     navigate
