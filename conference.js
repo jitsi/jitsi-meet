@@ -1127,15 +1127,15 @@ export default {
      *
      * @param {string} id participant's identifier(MUC nickname).
      *
-     * @returns {JitsiParticipant|null} participant instance for given id or
+     * @returns {JitsiParticipant} participant instance for given id or
      * null if not found.
      */
     getParticipantById(id) {
-        return room ? room.getParticipantById(id) : null;
+        return room?.getParticipantById(id);
     },
 
     getMyUserId() {
-        return room && room.myUserId();
+        return room?.myUserId();
     },
 
     /**
