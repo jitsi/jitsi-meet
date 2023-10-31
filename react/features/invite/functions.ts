@@ -41,13 +41,15 @@ export const sharingFeatures = {
  *
  * @param {string} dialNumber - The dial number to check for validity.
  * @param {string} dialOutAuthUrl - The endpoint to use for checking validity.
+ * @param {string} region - The region we are connected to.
  * @returns {Promise} - The promise created by the request.
  */
 export function checkDialNumber(
         dialNumber: string,
-        dialOutAuthUrl: string
+        dialOutAuthUrl: string,
+        region: string
 ): Promise<{ allow?: boolean; country?: string; phone?: string; }> {
-    const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
+    const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}&region=${region}`;
 
     return new Promise((resolve, reject) =>
         fetch(fullUrl)
@@ -147,6 +149,11 @@ export type GetInviteResultsOptions = {
     peopleSearchUrl: string;
 
     /**
+     * The region we are connected to.
+     */
+    region: string;
+
+    /**
      * Whether or not to check sip invites.
      */
     sipInviteEnabled: boolean;
@@ -174,6 +181,7 @@ export function getInviteResultsForQuery(
         dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
+        region,
         sipInviteEnabled,
         jwt
     } = options;
@@ -217,7 +225,7 @@ export function getInviteResultsForQuery(
         // so ensure only digits get sent.
         numberToVerify = getDigitsOnly(numberToVerify);
 
-        phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl);
+        phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl, region);
     } else if (dialOutEnabled && !dialOutAuthUrl) {
         // fake having a country code to hide the country code reminder
         hasCountryCode = true;
