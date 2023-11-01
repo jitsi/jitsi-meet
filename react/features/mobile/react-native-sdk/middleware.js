@@ -8,7 +8,6 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference/actionTypes';
-import { getCurrentConferenceUrl } from '../../base/connection/functions';
 import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
