@@ -228,16 +228,17 @@ class LargeVideo extends Component<IProps> {
                       * another container for the background and the
                       * largeVideoWrapper in order to hide/show them.
                       */}
+                    { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
                     <div
                         id = 'largeVideoWrapper'
                         onTouchEnd = { this._onDoubleTap }
                         ref = { this._wrapperRef }
                         role = 'figure' >
-                        { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <video
+                        <video
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ /> }
+                            playsInline = { true } /* for Safari on iOS to work */ />
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
