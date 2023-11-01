@@ -1927,6 +1927,24 @@ class API {
     }
 
     /**
+     * CacDi new feature
+     * Notify external application (if API is enabled) that recording has started or stopped.
+     *
+     * @param {Blob} url - dataUrl of record
+     * @param {string} filename - record file name
+     * @param {string} error - Error type or null if success.
+     * @returns {void}
+     */
+    notifyRecordingDataOutput(url, filename, error) {
+        this._sendEvent({
+            name: 'recording-data-output',
+            url,
+            filename,
+            error
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the current recording link is
      * available.
      *

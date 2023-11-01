@@ -147,6 +147,7 @@ const events = {
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
+    'recording-data-output': 'recordingDataOutput',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',

@@ -15,6 +15,10 @@ interface ISelfRecording {
 }
 
 interface ILocalRecordingManager {
+
+    // CacDi new feature
+    _saveRecordPromise: () => Promise<any>;
+
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
     audioContext: AudioContext | undefined;
     audioDestination: MediaStreamAudioDestinationNode | undefined;
@@ -29,7 +33,7 @@ interface ILocalRecordingManager {
     saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: ISelfRecording;
     startLocalRecording: (store: IStore, onlySelf: boolean) => void;
-    stopLocalRecording: () => void;
+    stopLocalRecording: () => any;
     stream: MediaStream | undefined;
     totalSize: number;
 }
@@ -142,14 +146,33 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // @ts-ignore
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+
+        // const a = document.createElement('a');
 
         const extension = this.mediaType.slice(this.mediaType.indexOf('/') + 1, this.mediaType.indexOf(';'));
 
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `${filename}.${extension}`;
-        a.click();
+        // a.style.display = 'none';
+        // a.href = url;
+        // a.download = `${filename}.${extension}`;
+        // a.click();
+
+        // ===== CacDi version new feature =====
+        // return the blob and filename
+        return {
+            url,
+            filename: `${filename}.${extension}`
+        };
+    },
+
+    // CacDi new feature
+    _saveRecordPromise() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const result = this.saveRecording(this.recordingData, this.getFilename());
+
+                resolve(result);
+            }, 1000);
+        });
     },
 
     /**
@@ -164,8 +187,18 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.audioContext = undefined;
             this.audioDestination = undefined;
             this.totalSize = MAX_SIZE;
-            setTimeout(() => this.saveRecording(this.recordingData, this.getFilename()), 1000);
+            this._saveRecordPromise()
+            .then(result => {
+                console.log(result.filename);
+
+                return result;
+            });
         }
+
+        return {
+            url: null,
+            filename: ''
+        };
     },
 
     /**
