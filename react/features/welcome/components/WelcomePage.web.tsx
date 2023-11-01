@@ -259,7 +259,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             </div>
                         </div>
                         {this._titleHasNotAllowCharacter && (
-                            <div className = 'not-allow-title-character-div'>
+                            <div role = 'alert' className = 'not-allow-title-character-div'>
                                 <Icon src = { IconWarning } />
                                 <span className = 'not-allow-title-character-text'>
                                     {t('welcomepage.roomNameAllowedChars')}
