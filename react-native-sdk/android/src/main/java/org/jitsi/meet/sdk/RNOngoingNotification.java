@@ -39,6 +39,7 @@ import java.util.Random;
 class RNOngoingNotification {
     private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
+    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
     static void createOngoingConferenceNotificationChannel(Context context) {
@@ -61,6 +62,47 @@ class RNOngoingNotification {
             return;
         }
 
+        channel = new NotificationChannel("JitsiOngoingConferenceChannel", "ongoing_notification_channel_name", NotificationManager.IMPORTANCE_DEFAULT);
+        channel.enableLights(false);
+        channel.enableVibration(false);
+        channel.setShowBadge(false);
+
         notificationManager.createNotificationChannel(channel);
+    }
+
+    static Notification buildOngoingConferenceNotification(Context context) {
+        if (context == null) {
+            JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
+            return null;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "JitsiOngoingConferenceChannel");
+
+        Intent notificationIntent = new Intent(context, context.getClass());
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        if (startingTime == 0) {
+            startingTime = System.currentTimeMillis();
+        }
+
+        builder
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setContentTitle("ongoing_notification_title")
+            .setContentText("ongoing_notification_text")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .setWhen(startingTime)
+            .setUsesChronometer(true)
+            .setAutoCancel(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOnlyAlertOnce(true)
+            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
+
+        return builder.build();
+    }
+
+    static void resetStartingtime() {
+        startingTime = 0;
     }
 }
