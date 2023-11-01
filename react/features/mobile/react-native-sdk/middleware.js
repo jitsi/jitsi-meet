@@ -8,6 +8,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference/actionTypes';
+import { getCurrentConferenceUrl } from '../../base/connection/functions';
 import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
@@ -70,12 +71,13 @@ const { JMOngoingConference } = NativeModules;
 !externalAPIEnabled && StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, previousConference) => {
-        if (conference !== previousConference) {
-            JMOngoingConference.launchNotification();
+        if (!conference) {
+            JMOngoingConference.abort();
         } else if (conference && !previousConference) {
-            JMOngoingConference.launchNotification();
-        } else {
-            JMOngoingConference.abortNotification();
+            JMOngoingConference.launch();
+        } else if (conference !== previousConference) {
+            JMOngoingConference.abort();
+            JMOngoingConference.launch();
         }
     }
 );
