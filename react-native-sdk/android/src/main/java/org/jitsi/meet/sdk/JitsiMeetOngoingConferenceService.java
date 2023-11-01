@@ -40,18 +40,12 @@ import java.util.HashMap;
  */
 public class JitsiMeetOngoingConferenceService extends Service {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
-    private static final String EXTRA_DATA_KEY = "extraDataKey";
-    private static final String EXTRA_DATA_BUNDLE_KEY = "extraDataBundleKey";
 
+    public static void launch(Context context) {
 
-    public static void launch(Context context, HashMap<String, Object> extraData) {
-        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
+        JMOngoingConferenceModule.getInstance().create();
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-
-        Bundle extraDataBundle = new Bundle();
-        extraDataBundle.putSerializable(EXTRA_DATA_KEY, extraData);
-        intent.putExtra(EXTRA_DATA_BUNDLE_KEY, extraDataBundle);
 
         ComponentName componentName;
 
@@ -79,7 +73,38 @@ public class JitsiMeetOngoingConferenceService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Notification notification = JMOngoingConferenceModule.getInstance().build();
+
+        if (notification == null) {
+            stopSelf();
+            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
+        } else {
+            startForeground(RNOngoingNotification.NOTIFICATION_ID, notification);
+            JitsiMeetLogger.i(TAG + " Service started");
+        }
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Notification notification = JMOngoingConferenceModule.getInstance().build();
+
+        if (notification == null) {
+            stopSelf();
+            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
+        } else {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(RNOngoingNotification.NOTIFICATION_ID, notification);
+        }
+
+        return START_NOT_STICKY;
     }
 }
