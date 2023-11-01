@@ -70,12 +70,13 @@ body.welcome-page {
             text-align: $welcomePageHeaderTextAlign;
             border-radius: 5px;
             padding: 5px;
-            display: flex;
             .not-allow-title-character-text {
-                align-self: center;
+                float: right;
             };
             .jitsi-icon {
                 margin-right: 9px;
+                float: left;
+                line-height: 1.9;
 
                 svg {
                     fill:#f03e3e;
