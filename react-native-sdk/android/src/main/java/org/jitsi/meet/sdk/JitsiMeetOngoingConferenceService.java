@@ -107,4 +107,12 @@ public class JitsiMeetOngoingConferenceService extends Service {
 
         return START_NOT_STICKY;
     }
+
+    public static void onCurrentConferenceChanged(String conferenceUrl, Context context) {
+        if (conferenceUrl == null) {
+            abort(context);
+            RNOngoingNotification.resetStartingtime();
+            JitsiMeetLogger.i(TAG + "Service stopped");
+        }
+    }
 }

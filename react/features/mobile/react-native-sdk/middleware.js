@@ -75,7 +75,7 @@ const { JMOngoingConference } = NativeModules;
         } else if (conference && !previousConference) {
             JMOngoingConference.launch();
         } else if (conference !== previousConference) {
-            JMOngoingConference.abort();
+            JMOngoingConference.onCurrentConferenceChanged();
             JMOngoingConference.launch();
         }
     }

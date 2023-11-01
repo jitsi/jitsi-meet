@@ -54,6 +54,13 @@ class JMOngoingConferenceModule
         JitsiMeetOngoingConferenceService.abort(context);
     }
 
+    @ReactMethod
+    public void onCurrentConferenceChanged() {
+        Context context = getReactApplicationContext();
+
+        JitsiMeetOngoingConferenceService.onCurrentConferenceChanged(null, context);
+    }
+
     @NonNull
     @Override
     public String getName() {
