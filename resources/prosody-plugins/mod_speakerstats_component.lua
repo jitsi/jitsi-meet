@@ -117,7 +117,7 @@ function on_message(event)
         local from = event.stanza.attr.from;
 
         local occupant = room:get_occupant_by_real_jid(from);
-        if not occupant then
+        if not occupant or not room.speakerStats[occupant.jid] then
             module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
