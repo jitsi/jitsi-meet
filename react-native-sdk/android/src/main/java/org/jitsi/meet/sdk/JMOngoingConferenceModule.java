@@ -1,7 +1,7 @@
 package org.jitsi.meet.sdk;
 
+import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
@@ -17,21 +17,38 @@ class JMOngoingConferenceModule
 
     public static final String NAME = "JMOngoingConference";
 
+    private static JMOngoingConferenceModule jmOngoingConferenceModuleInstance;
+
     public JMOngoingConferenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        jmOngoingConferenceModuleInstance = this;
+    }
+
+    static JMOngoingConferenceModule getInstance() {
+        return jmOngoingConferenceModuleInstance;
+    }
+
+    Notification build() {
+        Context context = getReactApplicationContext().getCurrentActivity();
+
+        return RNOngoingNotification.buildOngoingConferenceNotification(context);
+    }
+
+    void create() {
+        Context context = getReactApplicationContext().getCurrentActivity();
+
+        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
     }
 
     @ReactMethod
-    public void launchNotification() {
+    public void launch() {
         Context context = getReactApplicationContext();
-        Intent screenShareIntent = new Intent(BroadcastEvent.Type.SCREEN_SHARE_TOGGLED.getAction());
-        BroadcastEvent screenShareEvent = new BroadcastEvent(screenShareIntent);
 
-        JitsiMeetOngoingConferenceService.launch(context, screenShareEvent.getData());
+        JitsiMeetOngoingConferenceService.launch(context);
     }
 
     @ReactMethod
-    public void abortNotification() {
+    public void abort() {
         Context context = getReactApplicationContext();
 
         JitsiMeetOngoingConferenceService.abort(context);
