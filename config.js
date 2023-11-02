@@ -218,6 +218,9 @@ var config = {
 
     // Video
 
+    // Sets the default camera facing mode.
+    // cameraFacingMode: 'user',
+
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     // resolution: 720,
 

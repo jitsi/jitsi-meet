@@ -35,6 +35,7 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksF,
+    getCameraFacingMode,
     getLocalTrack,
     getLocalTracks,
     getLocalVideoTrack,
@@ -140,6 +141,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
             getState
         };
         const promises = [];
+        const state = getState();
 
         // The following executes on React Native only at the time of this
         // writing. The effort to port Web's createInitialLocalTracks
@@ -153,7 +155,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
         // device separately.
         for (const device of devices) {
             if (getLocalTrack(
-                    getState()['features/base/tracks'],
+                state['features/base/tracks'],
                     device as MediaType,
                     /* includePending */ true)) {
                 throw new Error(`Local track for ${device} already exists`);
@@ -165,7 +167,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                         cameraDeviceId: options.cameraDeviceId,
                         devices: [ device ],
                         facingMode:
-                            options.facingMode || CAMERA_FACING_MODE.USER,
+                            options.facingMode || getCameraFacingMode(state),
                         micDeviceId: options.micDeviceId
                     },
                     store)

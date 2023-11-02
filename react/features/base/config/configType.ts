@@ -253,6 +253,7 @@ export interface IConfig {
     callStatsID?: string;
     callStatsSecret?: string;
     callUUID?: string;
+    cameraFacingMode?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
         chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
