@@ -180,25 +180,24 @@ const LocalRecordingManager: ILocalRecordingManager = {
      *
      * @returns {void}
      * */
-    stopLocalRecording() {
+    async stopLocalRecording() {
         if (this.recorder) {
             this.recorder.stop();
             this.recorder = undefined;
             this.audioContext = undefined;
             this.audioDestination = undefined;
             this.totalSize = MAX_SIZE;
-            this._saveRecordPromise()
-            .then(result => {
-                console.log(result.filename);
+            const result = await this._saveRecordPromise();
 
-                return result;
-            });
-        } else {
-            return {
-                url: null,
-                filename: ''
-            };
+            console.log(result.filename);
+
+            return result;
         }
+
+        return {
+            url: null,
+            filename: ''
+        };
     },
 
     /**

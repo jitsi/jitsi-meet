@@ -184,7 +184,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         const { localRecording } = getState()['features/base/config'];
 
         if (LocalRecordingManager.isRecordingLocally()) {
-            const { url, filename } = LocalRecordingManager.stopLocalRecording();
+            const { url, filename } = await LocalRecordingManager.stopLocalRecording();
             dispatch(updateLocalRecordingStatus(false));
             if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));

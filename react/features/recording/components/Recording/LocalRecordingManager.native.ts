@@ -30,7 +30,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
      *
      * @returns {void}
      * */
-    stopLocalRecording() { }, // eslint-disable-line @typescript-eslint/no-empty-function
+    async stopLocalRecording() { }, // eslint-disable-line @typescript-eslint/no-empty-function
 
     /**
      * Starts a local recording.
