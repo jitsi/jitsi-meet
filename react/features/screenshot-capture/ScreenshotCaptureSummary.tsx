@@ -12,7 +12,8 @@ import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import {
     CLEAR_TIMEOUT,
     POLL_INTERVAL,
-    SEND_CANVAS,
+    SCREENSHOT_QUEUE_LIMIT,
+    SEND_CANVAS_DIMENSIONS,
     SET_TIMEOUT,
     TIMEOUT_TICK
 } from './constants';
@@ -29,14 +30,10 @@ declare let ImageCapture: any;
  */
 export default class ScreenshotCaptureSummary {
     _state: IReduxState;
-    _currentCanvas: OffscreenCanvas;
-    _currentCanvasContext: OffscreenCanvasRenderingContext2D | null;
     _initializedRegion: boolean;
     _imageCapture: ImageCapture;
     _streamWorker: Worker;
-    _streamHeight: number;
-    _streamWidth: number;
-    _storedImageData: ImageData;
+    _queue: Blob[];
 
     /**
      * Initializes a new {@code ScreenshotCaptureEffect} instance.
@@ -56,6 +53,7 @@ export default class ScreenshotCaptureSummary {
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
+        this._queue = [];
     }
 
     /**
@@ -99,14 +97,11 @@ export default class ScreenshotCaptureSummary {
         if (videoType !== 'desktop') {
             return;
         }
-
-        this._streamHeight = height;
-        this._streamWidth = width;
-        this._currentCanvas = new OffscreenCanvas(width, height);
         this._streamWorker.postMessage({
-            id: SEND_CANVAS,
-            canvas: this._currentCanvas
-        }, [ this._currentCanvas ]);
+            id: SEND_CANVAS_DIMENSIONS,
+            width,
+            height
+        });
         this._imageCapture = new ImageCapture(track);
 
         if (!this._initializedRegion) {
@@ -170,17 +165,18 @@ export default class ScreenshotCaptureSummary {
      *
      * @private
      * @param {EventHandler} message - Message received from the Worker.
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
+    async _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
         const { id, imageBlob } = message.data;
 
-        if (id === TIMEOUT_TICK && imageBlob) {
+        console.log(this._queue);
+
+        if (id === TIMEOUT_TICK && imageBlob && this._queue.length < SCREENSHOT_QUEUE_LIMIT) {
             this._doProcessScreenshot(imageBlob);
         }
-        this.sendTimeout();
 
-
+        await this.sendTimeout();
     }
 
     /**
@@ -190,7 +186,8 @@ export default class ScreenshotCaptureSummary {
      * @param {Blob} imageBlob - The blob for the current screenshot.
      * @returns {Promise<void>}
      */
-    _doProcessScreenshot(imageBlob: Blob) {
+    async _doProcessScreenshot(imageBlob: Blob) {
+        this._queue.push(imageBlob);
         sendAnalytics(createScreensharingCaptureTakenEvent());
 
         const conference = getCurrentConference(this._state);
@@ -206,7 +203,7 @@ export default class ScreenshotCaptureSummary {
         participants.push(getLocalParticipant(this._state)?.id);
         remoteParticipants.forEach(p => participants.push(p.id));
 
-        processScreenshot(imageBlob, {
+        await processScreenshot(imageBlob, {
             jid,
             jwt,
             sessionId,
@@ -214,5 +211,10 @@ export default class ScreenshotCaptureSummary {
             meetingFqn,
             participants
         });
+        const index = this._queue.indexOf(imageBlob);
+
+        if (index > -1) {
+            this._queue.splice(index, 1);
+        }
     }
 }

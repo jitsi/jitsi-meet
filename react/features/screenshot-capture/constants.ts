@@ -39,4 +39,6 @@ export const CLEAR_TIMEOUT = 2;
  */
 export const TIMEOUT_TICK = 3;
 
-export const SEND_CANVAS = 0;
+export const SEND_CANVAS_DIMENSIONS = 0;
+
+export const SCREENSHOT_QUEUE_LIMIT = 3;

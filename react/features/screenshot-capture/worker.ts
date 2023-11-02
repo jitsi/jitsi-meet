@@ -3,7 +3,7 @@ import pixelmatch from 'pixelmatch';
 import {
     CLEAR_TIMEOUT,
     PERCENTAGE_LOWER_BOUND,
-    SEND_CANVAS,
+    SEND_CANVAS_DIMENSIONS,
     SET_TIMEOUT,
     TIMEOUT_TICK
 } from './constants';
@@ -86,16 +86,16 @@ function checkScreenshot(imageBitmap: ImageBitmap) {
 
 onmessage = function(request) {
     switch (request.data.id) {
-    case SEND_CANVAS: {
-        canvas = request.data.canvas;
+    case SEND_CANVAS_DIMENSIONS: {
+        const { width, height } = request.data;
+
+        canvas = new OffscreenCanvas(width, height);
         ctx = canvas.getContext('2d');
         break;
     }
     case SET_TIMEOUT: {
         timer = setTimeout(async () => {
             const imageBitmap = request.data.imageBitmap;
-
-            console.log('AOCO', imageBitmap);
 
             if (imageBitmap) {
                 checkScreenshot(imageBitmap);
