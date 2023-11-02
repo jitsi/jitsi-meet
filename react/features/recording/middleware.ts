@@ -184,14 +184,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         const { localRecording } = getState()['features/base/config'];
 
         if (LocalRecordingManager.isRecordingLocally()) {
-            const { url, filename } = await LocalRecordingManager.stopLocalRecording();
+            const { blob, filename } = await LocalRecordingManager.stopLocalRecording();
+
             dispatch(updateLocalRecordingStatus(false));
             if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
             if (typeof APP !== 'undefined') {
                 APP.API.notifyRecordingStatusChanged(false, 'local');
-                APP.API.notifyRecordingDataOutput(url, filename);
+                APP.API.notifyRecordingDataOutput(blob, filename);
             }
         }
         break;

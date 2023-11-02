@@ -145,8 +145,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
     async saveRecording(recordingData, filename) {
         // @ts-ignore
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
-        const url = URL.createObjectURL(blob);
 
+        // const url = URL.createObjectURL(blob);
         // const a = document.createElement('a');
 
         const extension = this.mediaType.slice(this.mediaType.indexOf('/') + 1, this.mediaType.indexOf(';'));
@@ -159,7 +159,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // ===== CacDi version new feature =====
         // return the blob and filename
         return {
-            url,
+            blob,
             filename: `${filename}.${extension}`
         };
     },
@@ -195,7 +195,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         }
 
         return {
-            url: null,
+            blob: null,
             filename: ''
         };
     },

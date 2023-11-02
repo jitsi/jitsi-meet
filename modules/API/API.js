@@ -1930,15 +1930,15 @@ class API {
      * CacDi new feature
      * Notify external application (if API is enabled) that recording has started or stopped.
      *
-     * @param {Blob} url - dataUrl of record
+     * @param {Blob} blob - blob of record
      * @param {string} filename - record file name
      * @param {string} error - Error type or null if success.
      * @returns {void}
      */
-    notifyRecordingDataOutput(url, filename, error) {
+    notifyRecordingDataOutput(blob, filename, error) {
         this._sendEvent({
             name: 'recording-data-output',
-            url,
+            blob,
             filename,
             error
         });
