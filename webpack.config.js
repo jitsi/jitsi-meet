@@ -393,7 +393,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024)
+            performance: getPerformanceHints(perfHintOptions, 4 * 1024)
         })
     ];
 };
