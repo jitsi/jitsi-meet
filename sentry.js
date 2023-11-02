@@ -29,7 +29,7 @@ export const initSentry = () => {
             integrations: [new Sentry.BrowserTracing()],
             environment: releaseStage,
             release: `jitsi-frontend@${version}`,
-            tracesSampleRate: 1,
+            tracesSampleRate: 0.1,
         });
 
         logger.info('Sentry has been initialized');
