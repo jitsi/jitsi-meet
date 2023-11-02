@@ -172,6 +172,10 @@ copyFolderRecursiveSync(
      `${androidTargetPath}/log`
 );
 copyFolderRecursiveSync(
+    `${androidMainSourcePath}/values`,
+    `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-hdpi`,
      `${androidMainTargetPath}`
 );
