@@ -12,6 +12,7 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
 
+import { getCameraFacingMode } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -82,6 +83,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
                     // Copy array to avoid mutations inside library.
                     devices: options.devices?.slice(0),
                     effects,
+                    facingMode: options.facingMode || getCameraFacingMode(state),
                     firefox_fake_device, // eslint-disable-line camelcase
                     firePermissionPromptIsShownEvent,
                     micDeviceId,

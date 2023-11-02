@@ -4,7 +4,7 @@ import {
 } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending } from '../media/actions';
-import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { IMediaState } from '../media/reducer';
 import { IGUMPendingState } from '../media/types';
 import {
@@ -446,4 +446,16 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
     const tracksLogMsg = trackStateStrings.length > 0 ? `\n${trackStateStrings.join('\n')}` : ' No tracks available!';
 
     logger.debug(`${logStringPrefix}${reason ? `(reason: ${reason})` : ''}:${tracksLogMsg}`);
+}
+
+/**
+ * Gets the default camera facing mode.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {string} - The camera facing mode.
+ */
+export function getCameraFacingMode(state: IReduxState) {
+    const configFacingMode = state['features/base/config'].cameraFacingMode;
+
+    return configFacingMode || CAMERA_FACING_MODE.USER;
 }

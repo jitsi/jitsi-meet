@@ -74,6 +74,7 @@ export default [
      */
     'callUUID',
 
+    'cameraFacingMode',
     'conferenceInfo',
     'channelLastN',
     'connectionIndicators',

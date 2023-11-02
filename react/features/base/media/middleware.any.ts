@@ -23,7 +23,12 @@ import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { getPropertyValue } from '../settings/functions.any';
 import { TRACK_ADDED } from '../tracks/actionTypes';
 import { destroyLocalTracks } from '../tracks/actions.any';
-import { isLocalTrackMuted, isLocalVideoTrackDesktop, setTrackMuted } from '../tracks/functions.any';
+import {
+    getCameraFacingMode,
+    isLocalTrackMuted,
+    isLocalVideoTrackDesktop,
+    setTrackMuted
+} from '../tracks/functions.any';
 import { ITrack } from '../tracks/types';
 
 import {
@@ -40,7 +45,6 @@ import {
     setVideoMuted
 } from './actions';
 import {
-    CAMERA_FACING_MODE,
     MEDIA_TYPE,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
@@ -233,7 +237,7 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
         // the user i.e. the state of base/media. Eventually, practice/reality i.e.
         // the state of base/tracks will or will not agree with the desires.
         dispatch(setAudioMuted(audioMuted));
-        dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+        dispatch(setCameraFacingMode(getCameraFacingMode(state)));
         dispatch(setVideoMuted(videoMuted));
     }
 
