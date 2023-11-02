@@ -17,6 +17,8 @@ import {
     TIMEOUT_TICK
 } from './constants';
 import logger from './logger';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
 import { processScreenshot } from './processScreenshot';
 
 declare let ImageCapture: any;

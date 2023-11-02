@@ -9,10 +9,10 @@ import {
 } from './constants';
 
 
-let timer;
-let canvas;
-let ctx;
-let storedImageData;
+let timer: ReturnType<typeof setTimeout>;
+let canvas: OffscreenCanvas;
+let ctx: OffscreenCanvasRenderingContext2D | null;
+let storedImageData: ImageData;
 
 /**
  * Sends Blob with the screenshot to main thread.
@@ -50,10 +50,16 @@ function sendEmpty() {
  * @returns {void}
  */
 function checkScreenshot(imageBitmap: ImageBitmap) {
-    ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx?.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
 
     imageBitmap.close();
+
+    if (!imageData) {
+        sendEmpty();
+
+        return;
+    }
 
     if (!storedImageData) {
         sendBlob(imageData);
