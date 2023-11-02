@@ -41,9 +41,9 @@ import java.util.HashMap;
 public class JitsiMeetOngoingConferenceService extends Service {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
 
-    public static void launch(Context context) {
+    public static void launch(Context context, Context activityContext) {
 
-        JMOngoingConferenceModule.getInstance().create();
+        RNOngoingNotification.createOngoingConferenceNotificationChannel(activityContext);
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
@@ -76,7 +76,7 @@ public class JitsiMeetOngoingConferenceService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Notification notification = JMOngoingConferenceModule.getInstance().build();
+        Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(this);
 
         if (notification == null) {
             stopSelf();
@@ -95,24 +95,6 @@ public class JitsiMeetOngoingConferenceService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification notification = JMOngoingConferenceModule.getInstance().build();
-
-        if (notification == null) {
-            stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
-        } else {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(RNOngoingNotification.NOTIFICATION_ID, notification);
-        }
-
         return START_NOT_STICKY;
-    }
-
-    public static void onCurrentConferenceChanged(String conferenceUrl, Context context) {
-        if (conferenceUrl == null) {
-            abort(context);
-            RNOngoingNotification.resetStartingtime();
-            JitsiMeetLogger.i(TAG + "Service stopped");
-        }
     }
 }

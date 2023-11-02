@@ -17,34 +17,16 @@ class JMOngoingConferenceModule
 
     public static final String NAME = "JMOngoingConference";
 
-    private static JMOngoingConferenceModule jmOngoingConferenceModuleInstance;
-
     public JMOngoingConferenceModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        jmOngoingConferenceModuleInstance = this;
-    }
-
-    static JMOngoingConferenceModule getInstance() {
-        return jmOngoingConferenceModuleInstance;
-    }
-
-    Notification build() {
-        Context context = getReactApplicationContext().getCurrentActivity();
-
-        return RNOngoingNotification.buildOngoingConferenceNotification(context);
-    }
-
-    void create() {
-        Context context = getReactApplicationContext().getCurrentActivity();
-
-        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
     }
 
     @ReactMethod
     public void launch() {
         Context context = getReactApplicationContext();
+        Context activityContext = getReactApplicationContext().getCurrentActivity();
 
-        JitsiMeetOngoingConferenceService.launch(context);
+        JitsiMeetOngoingConferenceService.launch(context, activityContext);
     }
 
     @ReactMethod
@@ -52,13 +34,6 @@ class JMOngoingConferenceModule
         Context context = getReactApplicationContext();
 
         JitsiMeetOngoingConferenceService.abort(context);
-    }
-
-    @ReactMethod
-    public void onCurrentConferenceChanged() {
-        Context context = getReactApplicationContext();
-
-        JitsiMeetOngoingConferenceService.onCurrentConferenceChanged(null, context);
     }
 
     @NonNull
