@@ -455,7 +455,5 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
  * @returns {string} - The camera facing mode.
  */
 export function getCameraFacingMode(state: IReduxState) {
-    const configFacingMode = state['features/base/config'].cameraFacingMode;
-
-    return configFacingMode || CAMERA_FACING_MODE.USER;
+    return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
 }
