@@ -1,4 +1,3 @@
-import resemble from 'resemblejs';
 import 'image-capture';
 import './createImageBitmap';
 
@@ -7,20 +6,18 @@ import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
-import { ITrack } from '../base/tracks/types';
+import { getBaseUrl } from '../base/util/helpers';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import {
-    CLEAR_INTERVAL,
-    INTERVAL_TIMEOUT,
-    PERCENTAGE_LOWER_BOUND,
+    CLEAR_TIMEOUT,
     POLL_INTERVAL,
-    SET_INTERVAL
+    SEND_CANVAS,
+    SET_TIMEOUT,
+    TIMEOUT_TICK
 } from './constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
+import logger from './logger';
 import { processScreenshot } from './processScreenshot';
-import { timerWorkerScript } from './worker';
 
 declare let ImageCapture: any;
 
@@ -30,14 +27,14 @@ declare let ImageCapture: any;
  */
 export default class ScreenshotCaptureSummary {
     _state: IReduxState;
-    _currentCanvas: HTMLCanvasElement;
-    _currentCanvasContext: CanvasRenderingContext2D | null;
+    _currentCanvas: OffscreenCanvas;
+    _currentCanvasContext: OffscreenCanvasRenderingContext2D | null;
     _initializedRegion: boolean;
-    _imageCapture: any;
+    _imageCapture: ImageCapture;
     _streamWorker: Worker;
-    _streamHeight: any;
-    _streamWidth: any;
-    _storedImageData?: ImageData;
+    _streamHeight: number;
+    _streamWidth: number;
+    _storedImageData: ImageData;
 
     /**
      * Initializes a new {@code ScreenshotCaptureEffect} instance.
@@ -46,13 +43,14 @@ export default class ScreenshotCaptureSummary {
      */
     constructor(state: IReduxState) {
         this._state = state;
-        this._currentCanvas = document.createElement('canvas');
-        this._currentCanvasContext = this._currentCanvas.getContext('2d');
 
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
         this._initScreenshotCapture = this._initScreenshotCapture.bind(this);
-        this._streamWorker = new Worker(timerWorkerScript, { name: 'Screenshot capture worker' });
+        const baseUrl = `${getBaseUrl()}libs/`;
+        const workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
+
+        this._streamWorker = new Worker(workerUrl, { name: 'Screenshot capture worker' });
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
@@ -88,26 +86,26 @@ export default class ScreenshotCaptureSummary {
     /**
      * Starts the screenshot capture event on a loop.
      *
-     * @param {Track} track - The track that contains the stream from which screenshots are to be sent.
+     * @param {any} jitsiTrack - The track that contains the stream from which screenshots are to be sent.
      * @returns {Promise} - Promise that resolves once effect has started or rejects if the
      * videoType parameter is not desktop.
      */
-    async start(track: ITrack) {
-        const { videoType } = track;
-        const stream = track.getOriginalStream();
+    async start(jitsiTrack: any) {
+        const { videoType, track } = jitsiTrack;
+        const { height, width } = track.getSettings();
 
         if (videoType !== 'desktop') {
             return;
         }
-        const desktopTrack = stream.getVideoTracks()[0];
-        const { height, width }
-            = desktopTrack.getSettings() ?? desktopTrack.getConstraints();
 
         this._streamHeight = height;
         this._streamWidth = width;
-        this._currentCanvas.height = parseInt(height, 10);
-        this._currentCanvas.width = parseInt(width, 10);
-        this._imageCapture = new ImageCapture(desktopTrack);
+        this._currentCanvas = new OffscreenCanvas(width, height);
+        this._streamWorker.postMessage({
+            id: SEND_CANVAS,
+            canvas: this._currentCanvas
+        }, [ this._currentCanvas ]);
+        this._imageCapture = new ImageCapture(track);
 
         if (!this._initializedRegion) {
             await this._initRegionSelection();
@@ -121,7 +119,35 @@ export default class ScreenshotCaptureSummary {
      * @returns {void}
      */
     stop() {
-        this._streamWorker.postMessage({ id: CLEAR_INTERVAL });
+        this._streamWorker.postMessage({ id: CLEAR_TIMEOUT });
+    }
+
+    /**
+     * Sends to worker the imageBitmap for the next timeout.
+     *
+     * @returns {void}
+     */
+    async sendTimeout() {
+        let imageBitmap: ImageBitmap | undefined;
+
+        if (!this._imageCapture.track || this._imageCapture.track.readyState !== 'live') {
+            logger.warn('Track is in invalid state');
+            this.stop();
+
+            return;
+        }
+
+        try {
+            imageBitmap = await this._imageCapture.grabFrame();
+        } catch (e) {
+            // ignore error
+        }
+
+        this._streamWorker.postMessage({
+            id: SET_TIMEOUT,
+            timeMs: POLL_INTERVAL,
+            imageBitmap
+        });
     }
 
     /**
@@ -133,17 +159,8 @@ export default class ScreenshotCaptureSummary {
      * @private
      * @returns {void}
      */
-    async _initScreenshotCapture() {
-        const imageBitmap = await this._imageCapture.grabFrame();
-
-        this._currentCanvasContext?.drawImage(imageBitmap, 0, 0, this._streamWidth, this._streamHeight);
-        const imageData = this._currentCanvasContext?.getImageData(0, 0, this._streamWidth, this._streamHeight);
-
-        this._storedImageData = imageData;
-        this._streamWorker.postMessage({
-            id: SET_INTERVAL,
-            timeMs: POLL_INTERVAL
-        });
+    _initScreenshotCapture() {
+        this.sendTimeout();
     }
 
     /**
@@ -153,18 +170,25 @@ export default class ScreenshotCaptureSummary {
      * @param {EventHandler} message - Message received from the Worker.
      * @returns {void}
      */
-    _handleWorkerAction(message: { data: { id: number; }; }) {
-        return message.data.id === INTERVAL_TIMEOUT && this._handleScreenshot();
+    _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
+        const { id, imageBlob } = message.data;
+
+        if (id === TIMEOUT_TICK && imageBlob) {
+            this._doProcessScreenshot(imageBlob);
+        }
+        this.sendTimeout();
+
+
     }
 
     /**
      * Method that processes the screenshot.
      *
      * @private
-     * @param {ImageData} imageData - The image data of the new screenshot.
-     * @returns {void}
+     * @param {Blob} imageBlob - The blob for the current screenshot.
+     * @returns {Promise<void>}
      */
-    _doProcessScreenshot(imageData?: ImageData) {
+    _doProcessScreenshot(imageBlob: Blob) {
         sendAnalytics(createScreensharingCaptureTakenEvent());
 
         const conference = getCurrentConference(this._state);
@@ -175,13 +199,12 @@ export default class ScreenshotCaptureSummary {
         const { jwt } = this._state['features/base/jwt'];
         const meetingFqn = extractFqnFromPath();
         const remoteParticipants = getRemoteParticipants(this._state);
-        const participants = [];
+        const participants: Array<string | undefined> = [];
 
         participants.push(getLocalParticipant(this._state)?.id);
         remoteParticipants.forEach(p => participants.push(p.id));
-        this._storedImageData = imageData;
 
-        processScreenshot(this._currentCanvas, {
+        processScreenshot(imageBlob, {
             jid,
             jwt,
             sessionId,
@@ -189,27 +212,5 @@ export default class ScreenshotCaptureSummary {
             meetingFqn,
             participants
         });
-    }
-
-    /**
-     * Screenshot handler.
-     *
-     * @private
-     * @returns {void}
-     */
-    async _handleScreenshot() {
-        const imageBitmap = await this._imageCapture.grabFrame();
-
-        this._currentCanvasContext?.drawImage(imageBitmap, 0, 0, this._streamWidth, this._streamHeight);
-        const imageData = this._currentCanvasContext?.getImageData(0, 0, this._streamWidth, this._streamHeight);
-
-        resemble(imageData ?? '')
-            .compareTo(this._storedImageData ?? '')
-            .setReturnEarlyThreshold(PERCENTAGE_LOWER_BOUND)
-            .onComplete(resultData => {
-                if (resultData.rawMisMatchPercentage > PERCENTAGE_LOWER_BOUND) {
-                    this._doProcessScreenshot(imageData);
-                }
-            });
     }
 }
