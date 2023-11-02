@@ -193,12 +193,12 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
                 return result;
             });
+        } else {
+            return {
+                url: null,
+                filename: ''
+            };
         }
-
-        return {
-            url: null,
-            filename: ''
-        };
     },
 
     /**
