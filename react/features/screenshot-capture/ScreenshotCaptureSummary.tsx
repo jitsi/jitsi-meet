@@ -122,7 +122,7 @@ export default class ScreenshotCaptureSummary {
     /**
      * Sends to worker the imageBitmap for the next timeout.
      *
-     * @returns {void}
+     * @returns {Promise<void>}
      */
     async sendTimeout() {
         let imageBitmap: ImageBitmap | undefined;
@@ -165,18 +165,15 @@ export default class ScreenshotCaptureSummary {
      *
      * @private
      * @param {EventHandler} message - Message received from the Worker.
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
+    _handleWorkerAction(message: { data: { id: number; imageBlob?: Blob; }; }) {
         const { id, imageBlob } = message.data;
 
-        console.log(this._queue);
-
+        this.sendTimeout();
         if (id === TIMEOUT_TICK && imageBlob && this._queue.length < SCREENSHOT_QUEUE_LIMIT) {
             this._doProcessScreenshot(imageBlob);
         }
-
-        await this.sendTimeout();
     }
 
     /**
@@ -184,9 +181,9 @@ export default class ScreenshotCaptureSummary {
      *
      * @private
      * @param {Blob} imageBlob - The blob for the current screenshot.
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    async _doProcessScreenshot(imageBlob: Blob) {
+    _doProcessScreenshot(imageBlob: Blob) {
         this._queue.push(imageBlob);
         sendAnalytics(createScreensharingCaptureTakenEvent());
 
@@ -203,18 +200,19 @@ export default class ScreenshotCaptureSummary {
         participants.push(getLocalParticipant(this._state)?.id);
         remoteParticipants.forEach(p => participants.push(p.id));
 
-        await processScreenshot(imageBlob, {
+        processScreenshot(imageBlob, {
             jid,
             jwt,
             sessionId,
             timestamp,
             meetingFqn,
             participants
-        });
-        const index = this._queue.indexOf(imageBlob);
+        }).then(() => {
+            const index = this._queue.indexOf(imageBlob);
 
-        if (index > -1) {
-            this._queue.splice(index, 1);
-        }
+            if (index > -1) {
+                this._queue.splice(index, 1);
+            }
+        });
     }
 }

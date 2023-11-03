@@ -1,12 +1,12 @@
 /**
  * Percent of pixels that signal if two images should be considered different.
  */
-export const PERCENTAGE_LOWER_BOUND = 1;
+export const PERCENTAGE_LOWER_BOUND = 0.8;
 
 /**
  * Number of milliseconds that represent how often screenshots should be taken.
  */
-export const POLL_INTERVAL = 1000;
+export const POLL_INTERVAL = 3000;
 
 /**
  * SET_TIMEOUT constant is used to set interval and it is set in
