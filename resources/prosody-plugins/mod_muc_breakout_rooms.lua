@@ -342,12 +342,11 @@ end
 function on_breakout_room_pre_create(event)
     local breakout_room = event.room;
     local main_room, main_room_jid = get_main_room(breakout_room.jid);
-    local name = main_room._data.breakout_rooms[breakout_room.jid];
 
     -- Only allow existent breakout rooms to be started.
     -- Authorisation of breakout rooms is done by their random uuid name
-    if main_room and main_room._data.breakout_rooms and name then
-        breakout_room:set_subject(breakout_room.jid, name);
+    if main_room and main_room._data.breakout_rooms and main_room._data.breakout_rooms[breakout_room.jid] then
+        breakout_room:set_subject(breakout_room.jid, main_room._data.breakout_rooms[breakout_room.jid]);
     else
         module:log('debug', 'Invalid breakout room %s will not be created.', breakout_room.jid);
         breakout_room:destroy(main_room_jid, 'Breakout room is invalid.');
