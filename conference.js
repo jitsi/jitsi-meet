@@ -1061,13 +1061,6 @@ export default {
         return room.getSpeakerStats();
     },
 
-    /**
-     * Returns the connection times stored in the library.
-     */
-    getConnectionTimes() {
-        return room.getConnectionTimes();
-    },
-
     // used by torture currently
     isJoined() {
         return room && room.isJoined();
@@ -2445,7 +2438,7 @@ export default {
      * @param {string} [hangupReason] the reason for leaving the meeting
      * requested
      */
-    async hangup(requestFeedback = false, hangupReason) {
+    hangup(requestFeedback = false, hangupReason) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2462,33 +2455,42 @@ export default {
 
         APP.UI.removeAllListeners();
 
-        let feedbackResult = {};
+        let feedbackResultPromise = Promise.resolve({});
 
         if (requestFeedback) {
-            try {
-                feedbackResult = await APP.store.dispatch(maybeOpenFeedbackDialog(room, hangupReason));
-            } catch (err) { // eslint-disable-line no-empty
+            const feedbackDialogClosed = (feedbackResult = {}) => {
+                if (!feedbackResult.wasDialogShown && hangupReason) {
+                    return APP.store.dispatch(
+                        openLeaveReasonDialog(hangupReason)).then(() => feedbackResult);
+                }
+
+                return Promise.resolve(feedbackResult);
+            };
+
+            feedbackResultPromise
+                = APP.store.dispatch(maybeOpenFeedbackDialog(room, hangupReason))
+                    .then(feedbackDialogClosed, feedbackDialogClosed);
+        }
+
+        const leavePromise = this.leaveRoom().catch(() => Promise.resolve());
+
+        Promise.allSettled([ feedbackResultPromise, leavePromise ]).then(([ feedback, _ ]) => {
+            this._room = undefined;
+            room = undefined;
+
+            /**
+             * Don't call {@code notifyReadyToClose} if the promotional page flag is set
+             * and let the page take care of sending the message, since there will be
+             * a redirect to the page anyway.
+             */
+            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+                APP.API.notifyReadyToClose();
             }
-        }
 
-        if (!feedbackResult.wasDialogShown && hangupReason) {
-            await APP.store.dispatch(openLeaveReasonDialog(hangupReason));
-        }
+            APP.store.dispatch(maybeRedirectToWelcomePage(feedback.value ?? {}));
+        });
 
-        await this.leaveRoom();
 
-        this._room = undefined;
-        room = undefined;
-
-        /**
-         * Don't call {@code notifyReadyToClose} if the promotional page flag is set
-         * and let the page take care of sending the message, since there will be
-         * a redirect to the page anyway.
-         */
-        if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
-            APP.API.notifyReadyToClose();
-        }
-        APP.store.dispatch(maybeRedirectToWelcomePage(feedbackResult));
     },
 
     /**
@@ -2498,7 +2500,7 @@ export default {
      * @param {string} reason - reason for leaving the room.
      * @returns {Promise}
      */
-    async leaveRoom(doDisconnect = true, reason = '') {
+    leaveRoom(doDisconnect = true, reason = '') {
         APP.store.dispatch(conferenceWillLeave(room));
 
         const maybeDisconnect = () => {
