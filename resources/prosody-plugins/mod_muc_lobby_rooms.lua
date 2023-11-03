@@ -165,6 +165,12 @@ function filter_stanza(stanza)
             -- allow messages to or from moderator
             local lobby_room_jid = jid_bare(stanza.attr.from);
             local lobby_room = lobby_muc_service.get_room_from_jid(lobby_room_jid);
+
+            if not lobby_room then
+                module:log('warn', 'No lobby room found %s', stanza.attr.from);
+                return nil;
+            end
+
             local is_to_moderator = lobby_room:get_affiliation(stanza.attr.to) == 'owner';
             local from_occupant = lobby_room:get_occupant_by_nick(stanza.attr.from);
 
