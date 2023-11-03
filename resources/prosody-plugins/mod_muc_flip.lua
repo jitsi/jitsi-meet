@@ -62,7 +62,7 @@ module:hook("muc-occupant-pre-join", function(event)
                     module:log("debug", "Bypass lobby invitee %s", occupant_jid)
                     occupant.role = "participant";
                     room:set_affiliation(true, jid_bare(occupant_jid), "member")
-                    room:save();
+                    room:save_occupant(occupant);
                 end
                 -- bypass password on the flip device
                 local join = stanza:get_child("x", MUC_NS);
@@ -136,7 +136,7 @@ module:hook("muc-occupant-joined", function(event)
         local kicked_participant_node_jid = jid.split(kicked_occupant.jid);
         module:log("info", "Kick participant jid %s nick %s from main room jid %s", kicked_occupant.jid, room._data.kicked_participant_nick, room.jid)
         room:set_role(true, room._data.kicked_participant_nick, 'none')
-        room:save()
+        room:save_occupant(occupant);
         -- Kick participant from the first device from the lobby room
         if room._data.lobbyroom then
             local lobby_room_jid = room._data.lobbyroom;

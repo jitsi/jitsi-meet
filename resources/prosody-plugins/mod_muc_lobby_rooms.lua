@@ -402,7 +402,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             if not affiliation or affiliation == 'none' or affiliation == 'member' then
                 occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
-                room:save();
+                    room:save_occupant(occupant);
 
                 return;
             end
