@@ -145,7 +145,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
     async saveRecording(recordingData, filename) {
         // @ts-ignore
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
-        const textContent = await blob.text();
+        const arrayBuffer = await blob.arrayBuffer();
+
+        console.log(this.mediaType);
 
         // const url = URL.createObjectURL(blob);
         // const a = document.createElement('a');
@@ -160,7 +162,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // ===== CacDi version new feature =====
         // return the blob and filename
         return {
-            blob: textContent,
+            blob: arrayBuffer,
             filename: `${filename}.${extension}`
         };
     },
