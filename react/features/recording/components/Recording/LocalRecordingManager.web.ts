@@ -17,6 +17,7 @@ interface ISelfRecording {
 interface ILocalRecordingManager {
 
     // CacDi new feature
+    _recordingBlobToBase64: (blob: Blob) => Promise<any>;
     _saveRecordPromise: () => Promise<any>;
 
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
@@ -145,7 +146,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
     async saveRecording(recordingData, filename) {
         // @ts-ignore
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
-        const arrayBuffer = await blob.arrayBuffer();
+        const base64Blob = await this._recordingBlobToBase64(blob);
 
         console.log(this.mediaType);
 
@@ -162,9 +163,21 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // ===== CacDi version new feature =====
         // return the blob and filename
         return {
-            blob: arrayBuffer,
+            blob: base64Blob,
             filename: `${filename}.${extension}`
         };
+    },
+
+    // CacDi new feature
+    _recordingBlobToBase64(blob) {
+        return new Promise(resolve => {
+            const reader = new FileReader();
+
+            reader.readAsDataURL(blob);
+            reader.onloadend = function() {
+                resolve(reader.result);
+            };
+        });
     },
 
     // CacDi new feature
