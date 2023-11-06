@@ -103,7 +103,7 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
         if (typeof APP === 'undefined') {
             const { conference } = action;
 
-            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
             locationURL = conference && conference[JITSI_CONFERENCE_URL_KEY];
         } else {
             locationURL = state['features/base/connection'].locationURL;
