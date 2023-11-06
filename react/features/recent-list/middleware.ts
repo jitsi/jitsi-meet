@@ -83,10 +83,11 @@ function _appWillMount({ dispatch, getState }: IStore, next: Function, action: A
  * @returns {*} The result returned by {@code next(action)}.
  */
 function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    const { doNotStoreRoom } = getState()['features/base/config'];
+    const state = getState();
+    const { doNotStoreRoom } = state['features/base/config'];
 
     if (!doNotStoreRoom && !inIframe()) {
-        let locationURL;
+        let mainLocationURL;
 
         /**
          * FIXME:
@@ -100,13 +101,16 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
          * JITSI_CONFERENCE_URL_KEY so we cannot call it and must use the other way.
          */
         if (typeof APP === 'undefined') {
-            locationURL = action.conference[JITSI_CONFERENCE_URL_KEY];
+            const { conference } = action;
+
+            mainLocationURL = conference && conference[JITSI_CONFERENCE_URL_KEY];
         } else {
-            locationURL = getState()['features/base/connection'].locationURL;
+            mainLocationURL = getState()['features/base/connection'].locationURL;
         }
         dispatch(
             _updateConferenceDuration(
-                locationURL));
+                mainLocationURL
+            ));
     }
 
     return next(action);
