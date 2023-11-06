@@ -2,6 +2,7 @@ import pixelmatch from 'pixelmatch';
 
 import {
     CLEAR_TIMEOUT,
+    MAX_FILE_SIZE,
     PERCENTAGE_LOWER_BOUND,
     SEND_CANVAS_DIMENSIONS,
     SET_TIMEOUT,
@@ -10,9 +11,11 @@ import {
 
 
 let timer: ReturnType<typeof setTimeout>;
+let height: number;
+let width: number;
 let canvas: OffscreenCanvas;
 let ctx: OffscreenCanvasRenderingContext2D | null;
-let storedImageData: ImageData;
+let storedImageData: ImageData | null;
 
 /**
  * Sends Blob with the screenshot to main thread.
@@ -21,7 +24,14 @@ let storedImageData: ImageData;
  * @returns {void}
  */
 async function sendBlob(imageData: ImageData) {
-    const imageBlob = await canvas.convertToBlob({ type: 'image/jpeg' });
+    let imageBlob = await canvas.convertToBlob({ type: 'image/jpeg' });
+
+    if (imageBlob.size > MAX_FILE_SIZE) {
+        const quality = Number((MAX_FILE_SIZE / imageBlob.size).toFixed(2)) * 0.92;
+
+        imageBlob = await canvas.convertToBlob({ type: 'image/jpeg',
+            quality });
+    }
 
     storedImageData = imageData;
 
@@ -50,8 +60,8 @@ function sendEmpty() {
  * @returns {void}
  */
 function checkScreenshot(imageBitmap: ImageBitmap) {
-    ctx?.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    ctx?.drawImage(imageBitmap, 0, 0, width, height);
+    const imageData = ctx?.getImageData(0, 0, width, height);
 
     imageBitmap.close();
 
@@ -67,12 +77,20 @@ function checkScreenshot(imageBitmap: ImageBitmap) {
         return;
     }
 
-    const numOfPixels = pixelmatch(
+    let numOfPixels = 0;
+
+    try {
+        numOfPixels = pixelmatch(
             imageData.data,
             storedImageData.data,
             null,
-            canvas.width,
-            canvas.height);
+            width,
+            height);
+    } catch {
+        sendEmpty();
+
+        return;
+    }
 
     const percent = numOfPixels / imageData.data.length * 100;
 
@@ -87,10 +105,12 @@ function checkScreenshot(imageBitmap: ImageBitmap) {
 onmessage = function(request) {
     switch (request.data.id) {
     case SEND_CANVAS_DIMENSIONS: {
-        const { width, height } = request.data;
-
+        width = request.data.width;
+        height = request.data.height;
         canvas = new OffscreenCanvas(width, height);
         ctx = canvas.getContext('2d');
+        storedImageData = null;
+        sendEmpty();
         break;
     }
     case SET_TIMEOUT: {

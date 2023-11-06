@@ -33,6 +33,7 @@ export default class ScreenshotCaptureSummary {
     _initializedRegion: boolean;
     _imageCapture: ImageCapture;
     _streamWorker: Worker;
+    _track: MediaStreamTrack;
     _queue: Blob[];
 
     /**
@@ -75,10 +76,15 @@ export default class ScreenshotCaptureSummary {
             ...jwt && { 'Authorization': `Bearer ${jwt}` }
         };
 
-        await fetch(`${_screenshotHistoryRegionUrl}/${sessionId}`, {
-            method: 'POST',
-            headers
-        });
+        try {
+            await fetch(`${_screenshotHistoryRegionUrl}/${sessionId}`, {
+                method: 'POST',
+                headers
+            });
+        } catch (err) {
+            logger.warn(`Could not create screenshot region: ${err}`);
+        }
+
 
         this._initializedRegion = true;
     }
@@ -91,17 +97,18 @@ export default class ScreenshotCaptureSummary {
      * videoType parameter is not desktop.
      */
     async start(jitsiTrack: any) {
+        if (!window.OffscreenCanvas) {
+            logger.warn('Can\'t start screenshot capture, OffscreenCanvas is not available');
+
+            return;
+        }
         const { videoType, track } = jitsiTrack;
-        const { height, width } = track.getSettings();
+
+        this._track = track;
 
         if (videoType !== 'desktop') {
             return;
         }
-        this._streamWorker.postMessage({
-            id: SEND_CANVAS_DIMENSIONS,
-            width,
-            height
-        });
         this._imageCapture = new ImageCapture(track);
 
         if (!this._initializedRegion) {
@@ -148,16 +155,19 @@ export default class ScreenshotCaptureSummary {
     }
 
     /**
-     * Method that is called as soon as the first frame of the video loads from stream.
-     * The method is used to store the {@code ImageData} object from the first frames
-     * in order to use it for future comparisons based on which we can process only certain
-     * screenshots.
+     * Initializes the capturing by sending the stream dimensions.
      *
      * @private
      * @returns {void}
      */
     _initScreenshotCapture() {
-        this.sendTimeout();
+        const { width, height } = this._track.getSettings();
+
+        this._streamWorker.postMessage({
+            id: SEND_CANVAS_DIMENSIONS,
+            width,
+            height
+        });
     }
 
     /**
