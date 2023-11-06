@@ -344,7 +344,6 @@ const ContextMenu = ({
 
         if (event.key === 'Escape') {
             // Close the menu
-            event.preventDefault();
             setIsHidden(true);
 
         } else if (event.key === 'ArrowUp') {
