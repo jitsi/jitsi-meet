@@ -11,6 +11,8 @@ prepare_react_native_project!
 
 install! 'cocoapods', :deterministic_uuids => false
 
+production = ENV["PRODUCTION"] == "1"
+
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
@@ -25,10 +27,11 @@ target 'JitsiMeetSDK' do
   # React Native and its dependencies
   #
 
-  $config = use_native_modules!
+  config = use_native_modules!
   flags = get_default_flags()
   use_react_native!(
-    :path => $config[:reactNativePath],
+    :path => config[:reactNativePath],
+    :production => production,
     :hermes_enabled => false,
     :fabric_enabled => false,
     # An absolute path to your application root.
@@ -59,8 +62,9 @@ target 'JitsiMeetSDKLite' do
     # React Native and its dependencies
     #
 
-    $config = use_native_modules!
+    config = use_native_modules!
     use_react_native!(
+      :path => config[:reactNativePath],
       :hermes_enabled => false,
       :fabric_enabled => false,
       # An absolute path to your application root.
@@ -74,12 +78,7 @@ target 'JitsiMeetSDKLite' do
 end
 
 post_install do |installer|
-  # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-  react_native_post_install(
-    installer,
-    $config[:reactNativePath],
-    :mac_catalyst_enabled => false
-  )
+  react_native_post_install(installer)
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402

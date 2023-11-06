@@ -49,9 +49,6 @@ build/
 .gradle
 local.properties
 *.iml
-.cxx/
-*.keystore
-!debug.keystore
 
 # node.js
 #
