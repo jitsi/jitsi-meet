@@ -87,7 +87,7 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
     const { doNotStoreRoom } = state['features/base/config'];
 
     if (!doNotStoreRoom && !inIframe()) {
-        let mainLocationURL;
+        let locationURL;
 
         /**
          * FIXME:
@@ -103,13 +103,14 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
         if (typeof APP === 'undefined') {
             const { conference } = action;
 
-            mainLocationURL = conference && conference[JITSI_CONFERENCE_URL_KEY];
+            // @ts-ignore
+            locationURL = conference && conference[JITSI_CONFERENCE_URL_KEY];
         } else {
-            mainLocationURL = getState()['features/base/connection'].locationURL;
+            locationURL = state['features/base/connection'].locationURL;
         }
         dispatch(
             _updateConferenceDuration(
-                mainLocationURL
+                locationURL
             ));
     }
 
