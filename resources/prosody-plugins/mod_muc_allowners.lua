@@ -136,7 +136,7 @@ function filter_admin_set_query(event)
     local _aff = item.attr.affiliation;
 
     -- if it is a moderated room we skip it
-    if is_moderated(room.jid) then
+    if room and is_moderated(room.jid) then
         return nil;
     end
 

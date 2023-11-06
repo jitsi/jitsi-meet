@@ -17,6 +17,7 @@ local starts_with = main_util.starts_with;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
+local inspect = require 'inspect';
 
 local nr_retries = 3;
 local ssl = require "ssl";
@@ -344,7 +345,11 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        auth_room = string.lower(auth_room);
+        if type(auth_room) == 'string' then
+            auth_room = string.lower(auth_room);
+        else
+            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+        end
     end
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for

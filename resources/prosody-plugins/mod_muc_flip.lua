@@ -62,7 +62,7 @@ module:hook("muc-occupant-pre-join", function(event)
                     module:log("debug", "Bypass lobby invitee %s", occupant_jid)
                     occupant.role = "participant";
                     room:set_affiliation(true, jid_bare(occupant_jid), "member")
-                    room:save();
+                    room:save_occupant(occupant);
                 end
                 -- bypass password on the flip device
                 local join = stanza:get_child("x", MUC_NS);
@@ -111,12 +111,19 @@ end)
 module:hook("muc-occupant-joined", function(event)
     local room, occupant = event.room, event.occupant;
     if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
-        return ;
+        return;
     end
 
     if room._data.flip_participant_nick and occupant.nick == room._data.flip_participant_nick then
         -- make joining participant from flip device have the same role and affiliation as for the previous device
         local kicked_occupant = room:get_occupant_by_nick(room._data.kicked_participant_nick);
+
+        if not kicked_occupant then
+            module:log("info", "Kick participant not found, nick %s from main room jid %s",
+                room._data.kicked_participant_nick, room.jid)
+            return;
+        end
+
         local initial_affiliation = room:get_affiliation(kicked_occupant.jid) or "member";
         module:log("debug", "Transfer affiliation %s to occupant jid %s", initial_affiliation, occupant.jid)
         room:set_affiliation(true, occupant.bare_jid, initial_affiliation)
@@ -129,7 +136,7 @@ module:hook("muc-occupant-joined", function(event)
         local kicked_participant_node_jid = jid.split(kicked_occupant.jid);
         module:log("info", "Kick participant jid %s nick %s from main room jid %s", kicked_occupant.jid, room._data.kicked_participant_nick, room.jid)
         room:set_role(true, room._data.kicked_participant_nick, 'none')
-        room:save()
+        room:save_occupant(occupant);
         -- Kick participant from the first device from the lobby room
         if room._data.lobbyroom then
             local lobby_room_jid = room._data.lobbyroom;

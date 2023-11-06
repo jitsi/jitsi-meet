@@ -35,15 +35,16 @@ end
 
 -- Searches all rooms in the main muc component that holds a breakout room
 -- caches it if found so we don't search it again
+-- we should not cache objects in _data as this is being serialized when calling room:save()
 local function get_main_room(breakout_room)
-    if breakout_room._data and breakout_room._data.main_room then
-        return breakout_room._data.main_room;
+    if breakout_room.main_room then
+        return breakout_room.main_room;
     end
 
     -- let's search all rooms to find the main room
     for room in main_muc_service.each_room() do
         if room._data and room._data.breakout_rooms_active and room._data.breakout_rooms[breakout_room.jid] then
-            breakout_room._data.main_room = room;
+            breakout_room.main_room = room;
             return room;
         end
     end
@@ -117,7 +118,7 @@ function on_message(event)
         local from = event.stanza.attr.from;
 
         local occupant = room:get_occupant_by_real_jid(from);
-        if not occupant then
+        if not occupant or not room.speakerStats[occupant.jid] then
             module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
