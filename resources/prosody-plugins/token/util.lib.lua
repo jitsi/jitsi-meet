@@ -345,7 +345,7 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        if type(value) == 'string' then
+        if type(auth_room) == 'string' then
             auth_room = string.lower(auth_room);
         else
             module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
