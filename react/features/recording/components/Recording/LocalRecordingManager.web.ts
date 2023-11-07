@@ -148,8 +148,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
         const base64Blob = await this._recordingBlobToBase64(blob);
 
-        console.log(this.mediaType);
-
         // const url = URL.createObjectURL(blob);
         // const a = document.createElement('a');
 
@@ -204,8 +202,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.audioDestination = undefined;
             this.totalSize = MAX_SIZE;
             const result = await this._saveRecordPromise();
-
-            console.log(result.filename);
 
             return result;
         }

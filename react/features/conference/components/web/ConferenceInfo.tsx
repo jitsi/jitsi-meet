@@ -19,9 +19,9 @@ import ConferenceInfoContainer from './ConferenceInfoContainer';
 import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import SpeakerStatsLabel from './SpeakerStatsLabel';
-import SubjectText from './SubjectText';
 import ToggleTopPanelLabel from './ToggleTopPanelLabel';
 
+// import SubjectText from './SubjectText';
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
@@ -54,10 +54,11 @@ const COMPONENTS: Array<{
         Component: HighlightButton,
         id: 'highlight-moment'
     },
-    {
-        Component: SubjectText,
-        id: 'subject'
-    },
+
+    // {
+    //     Component: SubjectText,
+    //     id: 'subject'
+    // },
     {
         Component: ConferenceTimer,
         id: 'conference-timer'
