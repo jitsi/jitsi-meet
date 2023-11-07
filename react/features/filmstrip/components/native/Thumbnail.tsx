@@ -42,6 +42,7 @@ import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 import styles, { AVATAR_SIZE } from './styles';
+import {shouldDisplayTileView} from "../../../video-layout/functions.any";
 
 /**
  * Thumbnail component's property types.
@@ -110,6 +111,8 @@ interface IProps {
      * Whether to show the moderator indicator or not.
      */
     _renderModeratorIndicator: boolean;
+
+    _shouldDisplayTileView: boolean;
 
     /**
      * The video track that will be displayed in the thumbnail.
@@ -206,13 +209,23 @@ class Thumbnail extends PureComponent<IProps> {
             _fakeParticipant,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
-            _renderModeratorIndicator: renderModeratorIndicator,
             _participantId: participantId,
             _pinned,
+            _renderModeratorIndicator: renderModeratorIndicator,
+            _shouldDisplayTileView,
             renderDisplayName,
             tileView
         } = this.props;
         const indicators = [];
+        let bottomIndicatorsContainerStyle;
+
+            if (_shouldDisplayTileView) {
+                bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
+            } else if (audioMuted || renderModeratorIndicator) {
+                bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
+            } else {
+                bottomIndicatorsContainerStyle = null;
+            }
 
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
@@ -230,7 +243,7 @@ class Thumbnail extends PureComponent<IProps> {
                 key = 'bottom-indicators'
                 style = { styles.thumbnailIndicatorContainer }>
                 <Container
-                    style = { styles.bottomIndicatorsContainer as StyleType }>
+                    style = { bottomIndicatorsContainerStyle as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
@@ -421,6 +434,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _shouldDisplayTileView: shouldDisplayTileView(state),
         _videoTrack: videoTrack
     };
 }
