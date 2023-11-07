@@ -100,7 +100,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     const onJoinLowBandwidth = useCallback(() => {
 
-        //Authentication navigation to the external url resets the state
+        // Authentication navigation to the external url resets the state
         if (isTokenAuthEnabled(config)) {
             dispatch(updateSettings({
                 startAudioOnly: true
