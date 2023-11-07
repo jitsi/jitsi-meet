@@ -153,10 +153,15 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 newTranscriptMessage.unstable = text;
             }
 
-            dispatch(
-                updateTranscriptMessage(
-                    transcriptMessageID,
-                    newTranscriptMessage));
+            dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
+
+            // Notify the external API too.
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyTranscriptionChunkReceived({
+                    messageID: transcriptMessageID,
+                    ...newTranscriptMessage
+                });
+            }
         }
     } catch (error) {
         logger.error('Error occurred while updating transcriptions\n', error);
