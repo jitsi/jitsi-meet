@@ -35,6 +35,11 @@ import { maybeRedirectToTokenAuthUrl } from './actions.any';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
+import {isTokenAuthEnabled} from "../authentication/functions.any";
+import {updateSettings} from "../base/settings/actions";
+import {
+    navigate
+} from "../mobile/navigation/components/conference/ConferenceNavigationContainerRef";
 
 export * from './actions.any';
 
@@ -155,6 +160,15 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setRoom(room));
 
         if (!room) {
+            const { startAudioOnly } = getState()['features/base/settings'];
+            const config = getState()['features/base/config'];
+
+            if (isTokenAuthEnabled(config) && startAudioOnly) {
+                dispatch(updateSettings({
+                    startAudioOnly: false
+                }));
+            }
+
             goBackToRoot(getState(), dispatch);
 
             return;

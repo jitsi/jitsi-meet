@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
+import { isTokenAuthEnabled } from '../../../authentication/functions.native';
 import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
@@ -51,6 +52,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const aspectRatio = useSelector(
         (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
     );
+    const config = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
     const isDisplayNameVisible
@@ -97,6 +99,14 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
 
     const onJoinLowBandwidth = useCallback(() => {
+
+        //Authentication navigation to the external url resets the state
+        if (isTokenAuthEnabled(config)) {
+            dispatch(updateSettings({
+                startAudioOnly: true
+            }));
+        }
+
         dispatch(setAudioOnly(true));
         maybeJoin();
     }, [ dispatch ]);
