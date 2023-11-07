@@ -1988,6 +1988,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the user received
+     * a transcription chunk.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyTranscriptionChunkReceived(data) {
+        this._sendEvent({
+            name: 'transcription-chunk-received',
+            data
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) whether the used browser is supported or not.
      *
      * @param {boolean} supported - If browser is supported or not.
