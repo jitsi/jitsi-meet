@@ -421,6 +421,7 @@
         "shareAudioWarningD2": "you need to restart your screen sharing and check the \"share audio\" option.",
         "shareAudioWarningH1": "If you want to share just audio:",
         "shareAudioWarningTitle": "You need to stop screen sharing before sharing audio",
+        "shareAudioAltText": "to share the desired content, navigate to \"Chrome Tab\", select the content, activate the \"share audio\" check mark and then click \"share\" button",
         "shareMediaWarningGenericH2": "If you want to share your screen and audio",
         "shareScreenWarningD1": "you need to stop audio sharing before sharing your screen.",
         "shareScreenWarningD2": "you need to stop audio sharing, start screen sharing and check the \"share audio\" option.",
