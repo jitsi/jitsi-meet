@@ -1,3 +1,4 @@
+import { isTokenAuthEnabled } from '../authentication/functions.native';
 import { setRoom } from '../base/conference/actions';
 import { getConferenceState } from '../base/conference/functions';
 import {
@@ -13,6 +14,7 @@ import {
 import { connect, disconnect, setLocationURL } from '../base/connection/actions.native';
 import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
+import { updateSettings } from '../base/settings/actions';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
 import { parseURLParams } from '../base/util/parseURLParams';
@@ -35,11 +37,6 @@ import { maybeRedirectToTokenAuthUrl } from './actions.any';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
 import logger from './logger';
 import { IReloadNowOptions, IStore } from './types';
-import {isTokenAuthEnabled} from "../authentication/functions.any";
-import {updateSettings} from "../base/settings/actions";
-import {
-    navigate
-} from "../mobile/navigation/components/conference/ConferenceNavigationContainerRef";
 
 export * from './actions.any';
 
@@ -161,7 +158,6 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         if (!room) {
             const { startAudioOnly } = getState()['features/base/settings'];
-            const config = getState()['features/base/config'];
 
             if (isTokenAuthEnabled(config) && startAudioOnly) {
                 dispatch(updateSettings({
