@@ -220,6 +220,7 @@ class Thumbnail extends PureComponent<IProps> {
         const indicators = [];
 
         let bottomIndicatorsContainerStyle;
+
         if (_shouldDisplayTileView) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
         } else if (audioMuted || renderModeratorIndicator) {
