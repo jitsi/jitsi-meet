@@ -73,6 +73,13 @@ cd ios && pod install && cd ..
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
   ```
+- In `android/app/src/main/AndroidManifest.xml`, under the `</application>` tag, include
+    ```xml
+   <service
+       android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
+       android:foregroundServiceType="mediaProjection" />
+    ```
+  This will take care of the screen share feature.
 
 If you want to test all the steps before applying them to your app, you can check our React Native SDK sample app here:
 https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
