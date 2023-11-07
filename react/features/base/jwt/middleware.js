@@ -50,7 +50,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _overwriteLocalParticipant(
+export function overwriteLocalParticipant(
         { dispatch, getState },
         { avatarURL, email, name, features }) {
     let localParticipant;
@@ -139,7 +139,7 @@ function _setJWT(store, next, action) {
                 action.jwt = jwt;
                 action.issuer = iss;
                 if (context) {
-                    const user = _user2participant(context.user || {});
+                    const user = user2participant(context.user || {});
 
                     action.callee = context.callee;
                     action.group = context.group;
@@ -147,7 +147,7 @@ function _setJWT(store, next, action) {
                     action.tenant = context.tenant || sub || undefined;
                     action.user = user;
 
-                    user && _overwriteLocalParticipant(
+                    user && overwriteLocalParticipant(
                         store, { ...user,
                             features: context.features });
                 }
@@ -167,7 +167,7 @@ function _setJWT(store, next, action) {
 }
 
 /**
- * Undoes/resets the values overwritten by {@link _overwriteLocalParticipant}
+ * Undoes/resets the values overwritten by {@link overwriteLocalParticipant}
  * by either clearing them or setting to default values. Only the values that
  * have not changed since the overwrite happened will be restored.
  *
@@ -176,7 +176,7 @@ function _setJWT(store, next, action) {
  *
  * @param {Store} store - The redux store.
  * @param {Object} localParticipant - The {@code Participant} structure used
- * previously to {@link _overwriteLocalParticipant}.
+ * previously to {@link overwriteLocalParticipant}.
  * @private
  * @returns {void}
  */
@@ -220,7 +220,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name }) {
+export function user2participant({ avatar, avatarUrl, email, id, name }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
