@@ -4,18 +4,15 @@ import {
     CLEAR_TIMEOUT,
     MAX_FILE_SIZE,
     PERCENTAGE_LOWER_BOUND,
-    SEND_CANVAS_DIMENSIONS,
     SET_TIMEOUT,
     TIMEOUT_TICK
 } from './constants';
 
 
 let timer: ReturnType<typeof setTimeout>;
-let height: number;
-let width: number;
-let canvas: OffscreenCanvas;
-let ctx: OffscreenCanvasRenderingContext2D | null;
-let storedImageData: ImageData | null;
+const canvas = new OffscreenCanvas(0, 0);
+const ctx = canvas.getContext('2d');
+let storedImageData: ImageData | undefined;
 
 /**
  * Sends Blob with the screenshot to main thread.
@@ -60,6 +57,16 @@ function sendEmpty() {
  * @returns {void}
  */
 function checkScreenshot(imageBitmap: ImageBitmap) {
+    const { height, width } = imageBitmap;
+
+    if (canvas.width !== width) {
+        canvas.width = width;
+    }
+
+    if (canvas.height !== height) {
+        canvas.height = height;
+    }
+
     ctx?.drawImage(imageBitmap, 0, 0, width, height);
     const imageData = ctx?.getImageData(0, 0, width, height);
 
@@ -71,7 +78,7 @@ function checkScreenshot(imageBitmap: ImageBitmap) {
         return;
     }
 
-    if (!storedImageData) {
+    if (!storedImageData || imageData.data.length !== storedImageData.data.length) {
         sendBlob(imageData);
 
         return;
@@ -99,20 +106,10 @@ function checkScreenshot(imageBitmap: ImageBitmap) {
     } else {
         sendEmpty();
     }
-
 }
 
 onmessage = function(request) {
     switch (request.data.id) {
-    case SEND_CANVAS_DIMENSIONS: {
-        width = request.data.width;
-        height = request.data.height;
-        canvas = new OffscreenCanvas(width, height);
-        ctx = canvas.getContext('2d');
-        storedImageData = null;
-        sendEmpty();
-        break;
-    }
     case SET_TIMEOUT: {
         timer = setTimeout(async () => {
             const imageBitmap = request.data.imageBitmap;

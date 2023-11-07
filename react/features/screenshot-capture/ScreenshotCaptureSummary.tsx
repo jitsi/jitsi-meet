@@ -1,4 +1,5 @@
 import 'image-capture';
+import JitsiTrack from 'lib-jitsi-meet/types/auto/modules/RTC/JitsiTrack';
 import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent } from '../analytics/AnalyticsEvents';
@@ -13,7 +14,6 @@ import {
     CLEAR_TIMEOUT,
     POLL_INTERVAL,
     SCREENSHOT_QUEUE_LIMIT,
-    SEND_CANVAS_DIMENSIONS,
     SET_TIMEOUT,
     TIMEOUT_TICK
 } from './constants';
@@ -33,7 +33,6 @@ export default class ScreenshotCaptureSummary {
     _initializedRegion: boolean;
     _imageCapture: ImageCapture;
     _streamWorker: Worker;
-    _track: MediaStreamTrack;
     _queue: Blob[];
 
     /**
@@ -46,7 +45,6 @@ export default class ScreenshotCaptureSummary {
 
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
-        this._initScreenshotCapture = this._initScreenshotCapture.bind(this);
         const baseUrl = `${getBaseUrl()}libs/`;
         const workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
 
@@ -83,6 +81,8 @@ export default class ScreenshotCaptureSummary {
             });
         } catch (err) {
             logger.warn(`Could not create screenshot region: ${err}`);
+
+            return;
         }
 
 
@@ -92,19 +92,17 @@ export default class ScreenshotCaptureSummary {
     /**
      * Starts the screenshot capture event on a loop.
      *
-     * @param {any} jitsiTrack - The track that contains the stream from which screenshots are to be sent.
+     * @param {JitsiTrack} jitsiTrack - The track that contains the stream from which screenshots are to be sent.
      * @returns {Promise} - Promise that resolves once effect has started or rejects if the
      * videoType parameter is not desktop.
      */
-    async start(jitsiTrack: any) {
+    async start(jitsiTrack: JitsiTrack) {
         if (!window.OffscreenCanvas) {
             logger.warn('Can\'t start screenshot capture, OffscreenCanvas is not available');
 
             return;
         }
         const { videoType, track } = jitsiTrack;
-
-        this._track = track;
 
         if (videoType !== 'desktop') {
             return;
@@ -114,7 +112,7 @@ export default class ScreenshotCaptureSummary {
         if (!this._initializedRegion) {
             await this._initRegionSelection();
         }
-        this._initScreenshotCapture();
+        this.sendTimeout();
     }
 
     /**
@@ -151,22 +149,6 @@ export default class ScreenshotCaptureSummary {
             id: SET_TIMEOUT,
             timeMs: POLL_INTERVAL,
             imageBitmap
-        });
-    }
-
-    /**
-     * Initializes the capturing by sending the stream dimensions.
-     *
-     * @private
-     * @returns {void}
-     */
-    _initScreenshotCapture() {
-        const { width, height } = this._track.getSettings();
-
-        this._streamWorker.postMessage({
-            id: SEND_CANVAS_DIMENSIONS,
-            width,
-            height
         });
     }
 
