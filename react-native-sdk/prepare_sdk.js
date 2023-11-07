@@ -6,7 +6,9 @@ const packageJSON = require('../package.json');
 const SDKPackageJSON = require('./package.json');
 
 const androidSourcePath = '../android/sdk/src/main/java/org/jitsi/meet/sdk';
+const androidMainSourcePath = '../android/sdk/src/main/res';
 const androidTargetPath = './android/src/main/java/org/jitsi/meet/sdk';
+const androidMainTargetPath = './android/src/main/res';
 const iosSrcPath = '../ios/sdk/src';
 const iosDestPath = './ios/src';
 
@@ -168,6 +170,30 @@ fs.copyFileSync(
 copyFolderRecursiveSync(
     `${androidSourcePath}/log`,
      `${androidTargetPath}/log`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/values`,
+    `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-hdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-mdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xhdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xxhdpi`,
+     `${androidMainTargetPath}`
+);
+copyFolderRecursiveSync(
+    `${androidMainSourcePath}/drawable-xxxhdpi`,
+     `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidSourcePath}/net`,

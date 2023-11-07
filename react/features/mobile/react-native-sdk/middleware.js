@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -8,6 +10,7 @@ import {
 } from '../../base/conference/actionTypes';
 import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
@@ -15,9 +18,12 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
+const { JMOngoingConference } = NativeModules;
+
 
 /**
- * Check if native modules are being used or not. If not then the init of middleware doesn't happen.
+ * Check if native modules are being used or not.
+ * If not, then the init of middleware doesn't happen.
  */
 !externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -56,5 +62,21 @@ const externalAPIEnabled = isExternalAPIAvailable();
     }
 
     return result;
-}
+});
+
+/**
+ * Check if native modules are being used or not.
+ */
+!externalAPIEnabled && StateListenerRegistry.register(
+    state => state['features/base/conference'].conference,
+    (conference, previousConference) => {
+        if (!conference) {
+            JMOngoingConference.abort();
+        } else if (conference && !previousConference) {
+            JMOngoingConference.launch();
+        } else if (conference !== previousConference) {
+            JMOngoingConference.abort();
+            JMOngoingConference.launch();
+        }
+    }
 );
