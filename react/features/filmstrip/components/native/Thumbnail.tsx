@@ -230,8 +230,7 @@ class Thumbnail extends PureComponent<IProps> {
                 key = 'bottom-indicators'
                 style = { styles.thumbnailIndicatorContainer }>
                 <Container
-                    style = { ((audioMuted || renderModeratorIndicator) && styles.bottomIndicatorsContainer
-                        ) as StyleType }>
+                    style = { styles.bottomIndicatorsContainer as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
