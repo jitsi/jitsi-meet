@@ -288,6 +288,6 @@ export default {
     visitorsLabel: {
         ...BaseTheme.typography.heading6,
         color: BaseTheme.palette.warning02,
-        marginLeft: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[2]
     }
 };
