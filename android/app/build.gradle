@@ -76,7 +76,8 @@ android {
 
 dependencies {
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation 'com.facebook.react:react-android'
     implementation 'androidx.appcompat:appcompat:1.5.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
