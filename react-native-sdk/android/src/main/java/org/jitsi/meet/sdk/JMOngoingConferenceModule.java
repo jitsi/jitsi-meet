@@ -24,7 +24,7 @@ class JMOngoingConferenceModule
     @ReactMethod
     public void launch() {
         Context context = getReactApplicationContext();
-        Context activityContext = getReactApplicationContext().getCurrentActivity();
+        Context activityContext = context.getCurrentActivity();
 
         JitsiMeetOngoingConferenceService.launch(context, activityContext);
     }
