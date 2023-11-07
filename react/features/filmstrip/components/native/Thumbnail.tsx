@@ -34,6 +34,7 @@ import {
     showSharedVideoMenu
 } from '../../../participants-pane/actions.native';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
+import { shouldDisplayTileView } from '../../../video-layout/functions.native';
 import { SQUARE_TILE_ASPECT_RATIO } from '../../constants';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -42,7 +43,7 @@ import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 import styles, { AVATAR_SIZE } from './styles';
-import {shouldDisplayTileView} from "../../../video-layout/functions.any";
+
 
 /**
  * Thumbnail component's property types.
@@ -217,15 +218,15 @@ class Thumbnail extends PureComponent<IProps> {
             tileView
         } = this.props;
         const indicators = [];
-        let bottomIndicatorsContainerStyle;
 
-            if (_shouldDisplayTileView) {
-                bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-            } else if (audioMuted || renderModeratorIndicator) {
-                bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-            } else {
-                bottomIndicatorsContainerStyle = null;
-            }
+        let bottomIndicatorsContainerStyle;
+        if (_shouldDisplayTileView) {
+            bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
+        } else if (audioMuted || renderModeratorIndicator) {
+            bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
+        } else {
+            bottomIndicatorsContainerStyle = null;
+        }
 
         if (!_fakeParticipant || _isVirtualScreenshare) {
             indicators.push(<View
@@ -241,7 +242,7 @@ class Thumbnail extends PureComponent<IProps> {
             </View>);
             indicators.push(<Container
                 key = 'bottom-indicators'
-                style = { styles.thumbnailIndicatorContainer }>
+                style = { styles.thumbnailIndicatorContainer as StyleType }>
                 <Container
                     style = { bottomIndicatorsContainerStyle as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
