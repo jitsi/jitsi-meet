@@ -3,7 +3,7 @@
 import { Component } from 'react';
 
 import { hideNotification } from '../actions';
-import { areThereNotifications } from '../functions';
+import { areThereNotifications } from '../functions.any';
 
 export type Props = {
 
