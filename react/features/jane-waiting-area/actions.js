@@ -222,8 +222,8 @@ export function setJaneAppointmentDetails(jitsiDetails: Object) {
         treatment_duration: jitsiDetails.treatment_duration
     };
 
-    window.APP.store.dispatch({
+    return {
         type: SET_JANE_APPOINTMENT_DETAILS,
         value: appointmentDetails
-    });
+    };
 }
