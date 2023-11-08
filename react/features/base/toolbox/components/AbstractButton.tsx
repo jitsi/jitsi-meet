@@ -54,6 +54,11 @@ export interface IProps extends WithTranslation {
     handleClick?: Function;
 
     /**
+     * Whether the button open a menu or not.
+     */
+    isMenuButton?: boolean;
+
+    /**
      * Notify mode for `toolbarButtonClicked` event -
      * whether to only notify or to also prevent button click routine.
      */
@@ -102,7 +107,7 @@ export const defaultDisabledButtonStyles = {
 /**
  * An abstract implementation of a button.
  */
-export default class AbstractButton<P extends IProps, S=any> extends Component<P, S> {
+export default class AbstractButton<P extends IProps, S = any> extends Component<P, S> {
     static defaultProps = {
         afterClick: undefined,
         disabledStyles: defaultDisabledButtonStyles,
@@ -354,7 +359,7 @@ export default class AbstractButton<P extends IProps, S=any> extends Component<P
 
         if (typeof APP !== 'undefined' && notifyMode) {
             APP.API.notifyToolbarButtonClicked(
-                    buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+                buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
         }
 
