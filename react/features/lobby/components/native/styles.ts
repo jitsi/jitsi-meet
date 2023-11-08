@@ -4,10 +4,7 @@ export default {
 
     lobbyChatWrapper: {
         backgroundColor: BaseTheme.palette.ui01,
-        alignItems: 'stretch',
-        flexDirection: 'column',
-        justifyItems: 'center',
-        height: '100%'
+        flex: 1
     },
 
     passwordJoinButtons: {

@@ -29,7 +29,10 @@ class LobbyChatScreen extends
         const { _lobbyChatMessages } = this.props;
 
         return (
-            <JitsiScreen style = { styles.lobbyChatWrapper }>
+            <JitsiScreen
+                hasBottomTextInput = { true }
+                hasExtraHeaderHeight = { true }
+                style = { styles.lobbyChatWrapper }>
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _lobbyChatMessages } />
                 <ChatInputBar onSend = { this._onSendMessage } />
