@@ -24,7 +24,7 @@ export * from './functions.any';
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
  * constructed.
  */
-export const getTokenAuthUrl = ( // eslint-disable-line max-params
+export const getTokenAuthUrl = (
         audioOnlyEnabled: boolean | undefined = false,
         config: IConfig,
         roomName: string | undefined,

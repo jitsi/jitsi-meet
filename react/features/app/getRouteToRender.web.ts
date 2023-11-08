@@ -56,7 +56,7 @@ function _getWebConferenceRoute(state: IReduxState) {
         const { locationURL = { href: '' } as URL } = state['features/base/connection'];
         const { tenant } = parseURIString(locationURL.href) || {};
 
-        return getTokenAuthUrl(config, room, tenant, false, locationURL)
+        return getTokenAuthUrl(false, config, room, tenant, false, locationURL)
             .then((url: string | undefined) => {
                 route.href = url;
 

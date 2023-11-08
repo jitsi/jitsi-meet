@@ -20,11 +20,12 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * @param {URL} locationURL - The location URL.
  * @returns {Object} The state object.
  */
-export const _getTokenAuthState = ( // eslint-disable-line max-params
+export const _getTokenAuthState = (
         audioOnlyEnabled: boolean | undefined = false,
         roomName: string | undefined,
         tenant: string | undefined,
         skipPrejoin: boolean | undefined = false,
+        // eslint-disable-next-line max-params
         locationURL: URL): object => {
     const state = {
         room: roomName,
