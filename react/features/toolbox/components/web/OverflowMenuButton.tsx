@@ -238,7 +238,6 @@ const OverflowMenuButton = ({
                 trigger = 'click'
                 visible = { isOpen }>
                 <OverflowToggleButton
-                    isMenuButton = { true }
                     isOpen = { isOpen }
                     onKeyDown = { onEscClick } />
             </Popover>

@@ -20,11 +20,6 @@ interface IProps extends AbstractToolboxItemProps {
     contextMenu?: boolean;
 
     /**
-     * Whether the button open a menu or not.
-     */
-    isMenuButton?: boolean;
-
-    /**
     * On key down handler.
     */
     onKeyDown: (e?: React.KeyboardEvent) => void;
@@ -72,7 +67,6 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         const {
             backgroundColor,
             contextMenu,
-            isMenuButton,
             disabled,
             elementAfter,
             icon,
@@ -83,9 +77,8 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
             toggled
         } = this.props;
         const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
-        const buttonAttribute = isMenuButton ? 'aria-expanded' : 'aria-pressed';
         const props = {
-            [buttonAttribute]: toggled,
+            'aria-pressed': toggled,
             'aria-disabled': disabled,
             'aria-label': this.accessibilityLabel,
             className: className + (disabled ? ' disabled' : ''),
