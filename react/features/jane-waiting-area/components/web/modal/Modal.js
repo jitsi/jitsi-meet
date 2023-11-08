@@ -237,7 +237,6 @@ class Modal extends Component<Props> {
     render() {
         const {
             participantType,
-            jwtPayload,
             localParticipantCanJoin,
             authState,
             t,

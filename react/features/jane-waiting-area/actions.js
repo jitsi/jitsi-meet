@@ -220,10 +220,10 @@ export function setJaneAppointmentDetails(jitsiDetails: Object) {
         practitioner_name: jitsiDetails.practitioner_name,
         treatment: jitsiDetails.treatment,
         treatment_duration: jitsiDetails.treatment_duration
-    }
+    };
 
     window.APP.store.dispatch({
         type: SET_JANE_APPOINTMENT_DETAILS,
         value: appointmentDetails
-    })
+    });
 }

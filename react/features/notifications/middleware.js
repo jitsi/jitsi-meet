@@ -12,6 +12,8 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
+import { openSettingsDialog, SETTINGS_TABS } from '../settings';
+
 import {
     clearNotifications,
     hideRaiseHandNotifications,

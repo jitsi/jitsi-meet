@@ -122,7 +122,7 @@ ReducerRegistry.register(
             return {
                 ...state,
                 janeAppointmentDetails: action.value
-            }
+            };
         }
 
         default:
