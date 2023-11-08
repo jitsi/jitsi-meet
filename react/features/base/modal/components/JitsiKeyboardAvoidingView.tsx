@@ -4,7 +4,8 @@ import {
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    StatusBar, ViewStyle
+    StatusBar,
+    ViewStyle
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
