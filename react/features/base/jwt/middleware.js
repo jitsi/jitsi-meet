@@ -47,12 +47,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} localParticipant - The {@code Participant} structure to
  * overwrite the local participant stored in the redux store base/participants
  * with.
- * @private
  * @returns {void}
  */
 export function overwriteLocalParticipant(
-        { dispatch, getState },
-        { avatarURL, email, name, features }) {
+        { dispatch, getState }: {dispatch: Function, getState: Function},
+        { avatarURL, email, name, features }: Object) {
     let localParticipant;
 
     if ((avatarURL || email || name)
@@ -212,7 +211,6 @@ function _undoOverwriteLocalParticipant(
  * structure stored in the redux state base/participants.
  *
  * @param {Object} user - The JWT {@code context.user} structure to convert.
- * @private
  * @returns {{
  *     avatarURL: ?string,
  *     email: ?string,
@@ -220,7 +218,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-export function user2participant({ avatar, avatarUrl, email, id, name }) {
+export function user2participant({ avatar, avatarUrl, email, id, name }: Object) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {

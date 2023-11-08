@@ -164,9 +164,8 @@ export function isJwtTokenExpired(jwt: string) {
     }
 }
 
-
 // eslint-disable-next-line require-jsdoc
-export function overwriteLocalParticipantWithJitsiDetails(jitsiDetails) {
+export function overwriteLocalParticipantWithJitsiDetails(jitsiDetails: Object) {
     const store = APP.store.getState();
     const { jwt } = store['features/base/jwt'];
     const { local } = store['features/base/participants'];
