@@ -65,7 +65,7 @@ class Chat extends Component<IProps> {
                     <ChatInputBar onSend = { this._onSendMessage } />
                 }
                 hasBottomTextInput = { true }
-                hasTabNavigator = { true }
+                hasExtraHeaderHeight = { true }
                 style = { styles.chatContainer }>
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _messages } />
