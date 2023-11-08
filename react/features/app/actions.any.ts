@@ -122,7 +122,7 @@ export function maybeRedirectToTokenAuthUrl(
         const room = state['features/base/conference'].room;
         const { tenant } = parseURIString(locationURL.href) || {};
 
-        getTokenAuthUrl((audioOnlyEnabled || startAudioOnly), config, room, tenant, true, locationURL)
+        getTokenAuthUrl(audioOnlyEnabled || startAudioOnly, config, room, tenant, true, locationURL)
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {
                     logger.warn('Cannot handle login, token service URL is not set');
