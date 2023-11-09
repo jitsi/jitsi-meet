@@ -23,7 +23,8 @@ import {
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
     ADD_CONNECTION_TO_JANE_WAITING_AREA,
     ENABLE_JANE_WAITING_AREA_PAGE,
-    SET_JANE_WAITING_AREA_AUTH_STATE
+    SET_JANE_WAITING_AREA_AUTH_STATE,
+    SET_JANE_APPOINTMENT_DETAILS
 } from './actionTypes';
 import {
     detectLegacyMobileApp,
@@ -209,5 +210,20 @@ export function setJaneWaitingAreaAuthState(value: string) {
     return {
         type: SET_JANE_WAITING_AREA_AUTH_STATE,
         value
+    };
+}
+
+export function setJaneAppointmentDetails(jitsiDetails: Object) {
+    const appointmentDetails = {
+        start_at: jitsiDetails.start_at,
+        end_at: jitsiDetails.end_at,
+        practitioner_name: jitsiDetails.practitioner_name,
+        treatment: jitsiDetails.treatment,
+        treatment_duration: jitsiDetails.treatment_duration
+    };
+
+    return {
+        type: SET_JANE_APPOINTMENT_DETAILS,
+        value: appointmentDetails
     };
 }

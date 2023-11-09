@@ -28,7 +28,8 @@ type Props = {
     participant: Object,
     authState: string,
     localParticipantCanJoin: boolean,
-    isMobile: boolean
+    isMobile: boolean,
+    janeAppointmentDetails: Object,
 };
 
 type DialogTitleProps = {
@@ -145,8 +146,8 @@ class Modal extends Component<Props> {
     }
 
     _getStartDate() {
-        const { jwtPayload } = this.props;
-        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
+        const { janeAppointmentDetails } = this.props;
+        const startAt = _.get(janeAppointmentDetails, 'start_at') ?? '';
 
         if (startAt) {
             return (<p>
@@ -160,10 +161,10 @@ class Modal extends Component<Props> {
     }
 
     _getStartTimeAndEndTime() {
-        const { jwtPayload } = this.props;
-        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
-        let endAt = _.get(jwtPayload, 'context.end_at') ?? '';
-        const treatmentDuration = Number(_.get(jwtPayload, 'context.treatment_duration'));
+        const { janeAppointmentDetails } = this.props;
+        const startAt = _.get(janeAppointmentDetails, 'start_at') ?? '';
+        let endAt = _.get(janeAppointmentDetails, 'end_at') ?? '';
+        const treatmentDuration = Number(_.get(janeAppointmentDetails, 'treatment_duration'));
 
         if (!startAt || !endAt) {
             return null;
@@ -183,10 +184,10 @@ class Modal extends Component<Props> {
     }
 
     _getDuration() {
-        const { jwtPayload, t } = this.props;
-        const startAt = _.get(jwtPayload, 'context.start_at');
-        const endAt = _.get(jwtPayload, 'context.end_at');
-        const treatmentDuration = _.get(jwtPayload, 'context.treatment_duration');
+        const { janeAppointmentDetails, t } = this.props;
+        const startAt = _.get(janeAppointmentDetails, 'start_at');
+        const endAt = _.get(janeAppointmentDetails, 'end_at');
+        const treatmentDuration = _.get(janeAppointmentDetails, 'treatment_duration');
         let duration;
 
         if (treatmentDuration) {
@@ -236,11 +237,11 @@ class Modal extends Component<Props> {
     render() {
         const {
             participantType,
-            jwtPayload,
             localParticipantCanJoin,
             authState,
             t,
-            isMobile
+            isMobile,
+            janeAppointmentDetails
         } = this.props;
         const { _admitClient } = this;
 
@@ -265,12 +266,12 @@ class Modal extends Component<Props> {
                     <div className = 'jane-waiting-area-modal-detail'>
                         <p>
                             {
-                                _.get(jwtPayload, 'context.treatment')
+                                _.get(janeAppointmentDetails, 'treatment')
                             }
                         </p>
                         <p>
                             {
-                                _.get(jwtPayload, 'context.practitioner_name')
+                                _.get(janeAppointmentDetails, 'practitioner_name')
                             }
                         </p>
                         {
@@ -312,7 +313,7 @@ class Modal extends Component<Props> {
 
 function mapStateToProps(state): Object {
     const { jwt } = state['features/base/jwt'];
-    const { authState } = state['features/jane-waiting-area'];
+    const { authState, janeAppointmentDetails } = state['features/jane-waiting-area'];
     const jwtPayload = (jwt && jwtDecode(jwt)) || null;
     const participantType = getLocalParticipantType(state);
     const localParticipantCanJoin = checkLocalParticipantCanJoin(state);
@@ -321,7 +322,8 @@ function mapStateToProps(state): Object {
         jwtPayload,
         participantType,
         authState,
-        localParticipantCanJoin
+        localParticipantCanJoin,
+        janeAppointmentDetails
     };
 }
 

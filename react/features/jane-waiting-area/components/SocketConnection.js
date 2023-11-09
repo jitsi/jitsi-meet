@@ -20,6 +20,7 @@ import { playSound as playSoundAction } from '../../base/sounds';
 import { sleep } from '../../base/util/helpers';
 import { showErrorNotification as showErrorNotificationAction } from '../../notifications';
 import {
+    setJaneAppointmentDetails as setJaneAppointmentDetailsAction,
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
     updateRemoteParticipantsStatusesFromSocket as updateRemoteParticipantsStatusesFromSocketAction
@@ -34,6 +35,10 @@ import {
 import {
     WAITING_AREA_NOTIFICATION_SOUND_ID
 } from '../sound';
+import {
+    overwriteLocalParticipantWithJitsiDetails,
+} from '../../base/jwt/functions';
+
 
 
 type Props = {
@@ -47,7 +52,8 @@ type Props = {
     setJaneWaitingAreaAuthState: Function,
     remoteParticipantsStatuses: any,
     showErrorNotification: Function,
-    redirectToWelcomePage: Function
+    redirectToWelcomePage: Function,
+    setJaneAppointmentDetails: Function
 };
 
 class SocketConnection extends Component<Props> {
@@ -179,12 +185,17 @@ class SocketConnection extends Component<Props> {
             isRNWebViewPage,
             updateRemoteParticipantsStatuses,
             setJaneWaitingAreaAuthState,
-            showErrorNotification } = this.props;
+            showErrorNotification,
+            setJaneAppointmentDetails } = this.props;
 
         try {
             // fetch data
             const response = await checkRoomStatus();
             const remoteParticipantsStatuses = getRemoteParticipantsStatuses(response.participant_statuses, participantType);
+            const jitsiDetails = response ? response.jitsi_details : {}
+            setJaneAppointmentDetails(jitsiDetails);
+
+            overwriteLocalParticipantWithJitsiDetails(jitsiDetails);
 
             // This action will update the remote participant states in reducer
             updateRemoteParticipantsStatuses(remoteParticipantsStatuses);
@@ -266,6 +277,9 @@ function mapDispatchToProps(dispatch) {
         },
         redirectToWelcomePage() {
             dispatch(redirectToStaticPage('/'));
+        },
+        setJaneAppointmentDetails(jitsiDetails) {
+            dispatch(setJaneAppointmentDetailsAction(jitsiDetails));
         }
     };
 }

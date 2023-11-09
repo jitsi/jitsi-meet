@@ -11,7 +11,8 @@ import {
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
     SET_JANE_WAITING_AREA_AUTH_STATE,
     ADD_CONNECTION_TO_JANE_WAITING_AREA,
-    ENABLE_JANE_WAITING_AREA_PAGE
+    ENABLE_JANE_WAITING_AREA_PAGE,
+    SET_JANE_APPOINTMENT_DETAILS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -31,7 +32,8 @@ const DEFAULT_STATE = {
     remoteParticipantsStatuses: [],
     authState: '',
     connection: undefined,
-    janeWaitingAreaEnabled: false
+    janeWaitingAreaEnabled: false,
+    janeAppointmentDetails: {}
 };
 
 /**
@@ -113,6 +115,13 @@ ReducerRegistry.register(
             return {
                 ...state,
                 connection: action.connection
+            };
+        }
+
+        case SET_JANE_APPOINTMENT_DETAILS: {
+            return {
+                ...state,
+                janeAppointmentDetails: action.value
             };
         }
 
