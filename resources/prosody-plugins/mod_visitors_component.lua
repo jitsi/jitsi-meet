@@ -232,21 +232,18 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     end);
 end);
 
--- enable only in case of auto-allow is enabled
-if auto_allow_promotion then
-    prosody.events.add_handler('pre-jitsi-authentication', function(session)
-        if not session.customusername or not session.jitsi_web_query_room then
-            return nil;
-        end
+prosody.events.add_handler('pre-jitsi-authentication', function(session)
+    if not session.customusername or not session.jitsi_web_query_room then
+        return nil;
+    end
 
-        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
-        if not room then
-            return nil;
-        end
+    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+    if not room then
+        return nil;
+    end
 
-        if visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][session.customusername] then
-            -- user was previously allowed to join, let him use the requested jid
-            return session.customusername;
-        end
-    end);
-end
+    if visitors_promotion_map[room.jid] and visitors_promotion_map[room.jid][session.customusername] then
+        -- user was previously allowed to join, let him use the requested jid
+        return session.customusername;
+    end
+end);
