@@ -419,6 +419,7 @@
         "sessTerminatedReason": "Die Konferenz wurde beendet",
         "sessionRestarted": "Konferenz neugestartet",
         "shareAudio": "Fortfahren",
+        "shareAudioAltText": "Um den gewünschten Inhalt zu teilen: Navigiere zu \"Browser tab\", wähle den Inhalt, aktiviere \"Audio teilen\" Kästchen Und klicke den “Teilen” schaltfläche",
         "shareAudioTitle": "Wie kann Audio geteilt werden",
         "shareAudioWarningD1": "müssen Sie Ihre Bildschirmfreigabe stoppen, bevor Sie Audio teilen können.",
         "shareAudioWarningD2": "müssen Sie Ihre Bildschirmfreigabe neustarten und die Option \"Audio freigeben\" auswählen.",

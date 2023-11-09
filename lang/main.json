@@ -421,6 +421,7 @@
         "sessTerminatedReason": "The meeting has been terminated",
         "sessionRestarted": "Call restarted because of a connection issue.",
         "shareAudio": "Continue",
+        "shareAudioAltText": "to share the desired content, navigate to \"Browser Tab\", select the content, activate the \"share audio\" check mark and then click \"share\" button",
         "shareAudioTitle": "How to share audio",
         "shareAudioWarningD1": "you need to stop screen sharing before sharing your audio.",
         "shareAudioWarningD2": "you need to restart your screen sharing and check the \"share audio\" option.",
