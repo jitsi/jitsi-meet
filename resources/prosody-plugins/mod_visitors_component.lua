@@ -46,11 +46,6 @@ local function respond_iq_result(origin, stanza)
 end
 
 local function request_promotion_received(room, from_jid, from_vnode)
-    if not visitors_promotion_map[room.jid] and auto_allow_promotion then
-        -- visitors is enabled
-        visitors_promotion_map[room.jid] = {};
-    end
-
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
         if auto_allow_promotion then
@@ -94,10 +89,24 @@ end
 
 local function connect_vnode_received(room, vnode)
     module:context(muc_domain_base):fire_event('jitsi-connect-vnode', { room = room; vnode = vnode; });
+
+    if not visitors_promotion_map[room.jid] then
+        -- visitors is enabled
+        visitors_promotion_map[room.jid] = {};
+        room._connected_vnodes = 0;
+    end
+
+    room._connected_vnodes = room._connected_vnodes + 1;
 end
 
 local function disconnect_vnode_received(room, vnode)
     module:context(muc_domain_base):fire_event('jitsi-disconnect-vnode', { room = room; vnode = vnode; });
+
+    room._connected_vnodes = room._connected_vnodes - 1;
+
+    if room._connected_vnodes == 0 then
+        visitors_promotion_map[room.jid] = nil;
+    end
 end
 
 -- listens for iq request for promotion and forward it to moderators in the meeting for approval
