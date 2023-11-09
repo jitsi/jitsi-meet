@@ -85,9 +85,11 @@ local function request_promotion_received(room, from_jid, from_vnode)
         end
 
         -- TODO send promotion request to all moderators
-        module:log('warn', 'Received promotion request from %s for room %s without active visitors', from, room.jid);
+
         return;
     end
+
+    module:log('warn', 'Received promotion request from %s for room %s without active visitors', from, room.jid);
 end
 
 local function connect_vnode_received(room, vnode)
