@@ -7,8 +7,10 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
+local json = require 'util.json';
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -45,7 +47,16 @@ local function respond_iq_result(origin, stanza)
     }));
 end
 
-local function request_promotion_received(room, from_jid, from_vnode)
+-- Sends a json-message to the destination jid
+-- @param to_jid the destination jid
+-- @param json_message the message content to send
+function send_json_message(to_jid, json_message)
+    local stanza = st.message({ from = module.host; to = to_jid; })
+         :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' }):text(json_message):up();
+    module:send(stanza);
+end
+
+local function request_promotion_received(room, from_jid, from_vnode, nick)
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
         if auto_allow_promotion then
@@ -77,11 +88,24 @@ local function request_promotion_received(room, from_jid, from_vnode)
                     username = username ,
                     allow = 'true' }):up());
             return true;
+        else
+            -- send promotion request to all moderators
+            local body_json = {};
+            body_json.type = 'visitors';
+            body_json.room = internal_room_jid_match_rewrite(room.jid);
+            body_json.action = 'promotion-request';
+            body_json.nick = nick;
+            body_json.from = from_jid;
+
+            -- let's send a notification to every moderator
+            for _, occupant in room:each_occupant() do
+                if occupant.role == 'moderator' then
+                    send_json_message(occupant.jid, json.encode(body_json));
+                end
+            end
+
+            return true;
         end
-
-        -- TODO send promotion request to all moderators
-
-        return;
     end
 
     module:log('warn', 'Received promotion request from %s for room %s without active visitors', from, room.jid);
@@ -151,7 +175,8 @@ local function stanza_handler(event)
     -- promotion request is coming from visitors and is a set and is over the s2s connection
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
-        processed = request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from);
+        local display_name = visitors_iq:get_child_text('nick', 'http://jabber.org/protocol/nick');
+        processed = request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from, display_name);
     end
 
     -- connect and disconnect are only received from jicofo
