@@ -1,5 +1,4 @@
 import 'image-capture';
-import JitsiTrack from 'lib-jitsi-meet/types/auto/modules/RTC/JitsiTrack';
 import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent } from '../analytics/AnalyticsEvents';
@@ -96,7 +95,7 @@ export default class ScreenshotCaptureSummary {
      * @returns {Promise} - Promise that resolves once effect has started or rejects if the
      * videoType parameter is not desktop.
      */
-    async start(jitsiTrack: JitsiTrack) {
+    async start(jitsiTrack: any) {
         if (!window.OffscreenCanvas) {
             logger.warn('Can\'t start screenshot capture, OffscreenCanvas is not available');
 
