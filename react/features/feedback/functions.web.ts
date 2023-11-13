@@ -65,6 +65,6 @@ export async function sendFeedbackToJaaSRequest(url: string | undefined, feedbac
 export function shouldSendJaaSFeedbackMetadata(state: IReduxState) {
     const { jaasFeedbackMetadataURL } = state['features/base/config'];
 
-    return isVpaasMeeting(state) && jaasFeedbackMetadataURL;
+    return Boolean(isVpaasMeeting(state) && jaasFeedbackMetadataURL);
 }
 
