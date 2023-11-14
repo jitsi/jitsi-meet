@@ -31,10 +31,11 @@ function _cryptoRandom() {
  * '{room}' - name of the conference room passed as <tt>roomName</tt>
  * argument to this method.
  *
+ * @param {boolean} audioOnlyEnabled - Join conference audio only.
  * @param {Object} config - Configuration state object from store. A URL pattern pointing to the login service.
  * @param {string} roomName - The name of the conference room for which the user will be authenticated.
  * @param {string} tenant - The name of the conference tenant.
- * @param {string} skipPrejoin - The name of the conference room for which the user will be authenticated.
+ * @param {boolean} skipPrejoin - Whether to skip pre-join page.
  * @param {URL} locationURL - The current location URL.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
@@ -42,6 +43,7 @@ function _cryptoRandom() {
  * constructed.
  */
 export const getTokenAuthUrl = (
+        audioOnlyEnabled: boolean | undefined = false,
         config: IConfig,
         roomName: string | undefined,
         tenant: string | undefined,
@@ -56,7 +58,7 @@ export const getTokenAuthUrl = (
     }
 
     if (url.indexOf('{state}')) {
-        const state = _getTokenAuthState(roomName, tenant, skipPrejoin, locationURL);
+        const state = _getTokenAuthState(audioOnlyEnabled, roomName, tenant, skipPrejoin, locationURL);
 
         if (browser.isElectron()) {
             // @ts-ignore
