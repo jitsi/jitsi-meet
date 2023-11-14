@@ -308,13 +308,6 @@ var config = {
     //      desktopSelfBrowserSurface: 'exclude'
     // },
 
-    // This option has been deprecated since it is no longer supported as per the w3c spec.
-    // https://w3c.github.io/mediacapture-screen-share/#dom-mediadevices-getdisplaymedia. If the user has not
-    // interacted with the webpage before the getDisplayMedia call, the promise will be rejected by the browser. This
-    // has already been implemented in Firefox and Safari and will be implemented in Chrome soon.
-    // https://bugs.chromium.org/p/chromium/issues/detail?id=1198918
-    // startScreenSharing: false,
-
     // Recording
 
     // DEPRECATED. Use recordingService.enabled instead.
