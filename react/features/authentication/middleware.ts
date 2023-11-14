@@ -13,7 +13,9 @@ import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { parseURIString } from '../base/util/uri';
 import { openLogoutDialog } from '../settings/actions';
 
@@ -258,6 +260,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -271,7 +275,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    getTokenAuthUrl(audioOnlyEnabled, config, room, tenant, true, locationURL)
+    getTokenAuthUrl(audioMuted, audioOnlyEnabled, config, room, tenant, true, locationURL, videoMuted)
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {
                 logger.warn('Cannot handle login, token service URL is not set');
