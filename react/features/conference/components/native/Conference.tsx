@@ -12,7 +12,7 @@ import {
 import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
-import { appNavigate } from '../../../app/actions';
+import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
 import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
@@ -41,15 +41,15 @@ import { navigate } from '../../../mobile/navigation/components/conference/Confe
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
-import { setToolboxVisible } from '../../../toolbox/actions';
+import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
-import { isToolboxVisible } from '../../../toolbox/functions';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
-import { isConnecting } from '../functions';
+import { isConnecting } from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -230,7 +230,9 @@ class Conference extends AbstractConference<IProps, State> {
      */
     componentDidUpdate(prevProps: IProps) {
         const {
-            _showLobby
+            _audioOnlyEnabled,
+            _showLobby,
+            _startCarMode
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
@@ -238,6 +240,10 @@ class Conference extends AbstractConference<IProps, State> {
         }
 
         if (prevProps._showLobby && !_showLobby) {
+            if (_audioOnlyEnabled && _startCarMode) {
+                return;
+            }
+
             navigate(screen.conference.main);
         }
     }

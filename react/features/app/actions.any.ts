@@ -104,6 +104,8 @@ export function maybeRedirectToTokenAuthUrl(
         dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
     const state = getState();
     const config = state['features/base/config'];
+    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const { startAudioOnly } = config;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
 
     if (!isTokenAuthEnabled(config)) {
@@ -120,7 +122,7 @@ export function maybeRedirectToTokenAuthUrl(
         const room = state['features/base/conference'].room;
         const { tenant } = parseURIString(locationURL.href) || {};
 
-        getTokenAuthUrl(config, room, tenant, true, locationURL)
+        getTokenAuthUrl(audioOnlyEnabled || startAudioOnly, config, room, tenant, true, locationURL)
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {
                     logger.warn('Cannot handle login, token service URL is not set');

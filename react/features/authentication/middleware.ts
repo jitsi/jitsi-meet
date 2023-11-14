@@ -257,6 +257,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
+    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -270,7 +271,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    getTokenAuthUrl(config, room, tenant, true, locationURL)
+    getTokenAuthUrl(audioOnlyEnabled, config, room, tenant, true, locationURL)
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {
                 logger.warn('Cannot handle login, token service URL is not set');
