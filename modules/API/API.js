@@ -574,6 +574,7 @@ function initCommands() {
         /**
          * Shows a custom in-meeting notification.
          *
+         * @param { Object } arg.actions - Optional actions to be displayed in the notification.
          * @param { string } arg.title - Notification title.
          * @param { string } arg.description - Notification description.
          * @param { string } arg.uid - Optional unique identifier for the notification.
@@ -584,6 +585,7 @@ function initCommands() {
          * @returns {void}
          */
         'show-notification': ({
+            actions = [],
             title,
             description,
             uid,
@@ -606,10 +608,12 @@ function initCommands() {
             }
 
             APP.store.dispatch(showNotification({
-                uid,
-                title,
+                appearance: type,
+                customActionHandler: actions.map(action => action.handler),
+                customActionNameKey: actions.map(action => action.label),
                 description,
-                appearance: type
+                title,
+                uid
             }, timeout));
         },
 
