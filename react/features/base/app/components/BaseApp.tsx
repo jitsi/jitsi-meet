@@ -1,28 +1,37 @@
 // @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
-import React, { Component, ComponentType, Fragment } from 'react';
-import { I18nextProvider } from 'react-i18next';
-import { Provider } from 'react-redux';
-import { compose, createStore } from 'redux';
-import Thunk from 'redux-thunk';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import _ from "lodash";
+import React, { Component, ComponentType, Fragment } from "react";
+import { I18nextProvider } from "react-i18next";
+import { Provider } from "react-redux";
+import { compose, createStore } from "redux";
+import Thunk from "redux-thunk";
 
-import { IStore } from '../../../app/types';
-import i18next from '../../i18n/i18next';
-import MiddlewareRegistry from '../../redux/MiddlewareRegistry';
-import PersistenceRegistry from '../../redux/PersistenceRegistry';
-import ReducerRegistry from '../../redux/ReducerRegistry';
-import StateListenerRegistry from '../../redux/StateListenerRegistry';
-import SoundCollection from '../../sounds/components/SoundCollection';
-import { createDeferred } from '../../util/helpers';
-import { appWillMount, appWillUnmount } from '../actions';
-import logger from '../logger';
-
+import { IStore } from "../../../app/types";
+import i18next from "../../i18n/i18next";
+import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
+import PersistenceRegistry from "../../redux/PersistenceRegistry";
+import ReducerRegistry from "../../redux/ReducerRegistry";
+import StateListenerRegistry from "../../redux/StateListenerRegistry";
+import SoundCollection from "../../sounds/components/SoundCollection";
+import { createDeferred } from "../../util/helpers";
+import { appWillMount, appWillUnmount } from "../actions";
+import logger from "../logger";
+import { RecoilRoot } from "recoil";
+import { BrowserRouter, Route } from "react-router-dom";
+import WelcomePageMain from "../../../../nxdf/components/welcome/WelcomePageMain";
+import ProfilePage from "../../../../nxdf/components/profile/ProfilePage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 /**
  * The type of the React {@code Component} state of {@link BaseApp}.
  */
-interface IState {
 
+declare global {
+    interface Window {
+        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
+    }
+}
+interface IState {
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
      */
@@ -61,7 +70,7 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         this.state = {
             route: {},
-            store: undefined
+            store: undefined,
         };
     }
 
@@ -69,7 +78,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * Initializes the app.
      *
      * @inheritdoc
-    */
+     */
     async componentDidMount() {
         /**
          * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
@@ -84,11 +93,14 @@ export default class BaseApp<P> extends Component<P, IState> {
         try {
             await this._initStorage();
 
-            const setStatePromise = new Promise(resolve => {
-                this.setState({
-                    // @ts-ignore
-                    store: this._createStore()
-                }, resolve);
+            const setStatePromise = new Promise((resolve) => {
+                this.setState(
+                    {
+                        // @ts-ignore
+                        store: this._createStore(),
+                    },
+                    resolve
+                );
             });
 
             await setStatePromise;
@@ -136,7 +148,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {Promise}
      */
     _initStorage(): Promise<any> {
-        const _initializing = jitsiLocalStorage.getItem('_initializing');
+        const _initializing = jitsiLocalStorage.getItem("_initializing");
 
         return _initializing || Promise.resolve();
     }
@@ -157,21 +169,52 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { route: { component, props }, store } = this.state;
+        const {
+            route: { component, props },
+            store,
+        } = this.state;
+        const client = new QueryClient();
 
         if (store) {
             return (
-                <I18nextProvider i18n = { i18next }>
-                    {/* @ts-ignore */}
-                    <Provider store = { store }>
-                        <Fragment>
-                            { this._createMainElement(component, props) }
-                            <SoundCollection />
-                            { this._createExtraElement() }
-                            { this._renderDialogContainer() }
-                        </Fragment>
-                    </Provider>
-                </I18nextProvider>
+                <RecoilRoot>
+                    <QueryClientProvider client={client}>
+                        <I18nextProvider i18n={i18next}>
+                            {/* @ts-ignore */}
+                            <Provider store={store}>
+                                <BrowserRouter>
+                                    <Fragment>
+                                        {this._createMainElement(
+                                            component,
+                                            props
+                                        )}
+                                        <SoundCollection />
+                                        {this._createExtraElement()}
+                                        {/* @ts-ignore */}
+                                        <Route
+                                            exact={true}
+                                            path="/"
+                                            render={(props) => (
+                                                // @ts-ignore
+                                                <WelcomePageMain {...props} />
+                                            )}
+                                        />
+                                        {/* @ts-ignore */}
+                                        <Route
+                                            exact={true}
+                                            path="/profile"
+                                            render={(props) => (
+                                                // @ts-ignore
+                                                <ProfilePage {...props} />
+                                            )}
+                                        />
+                                        {this._renderDialogContainer()}
+                                    </Fragment>
+                                </BrowserRouter>
+                            </Provider>
+                        </I18nextProvider>
+                    </QueryClientProvider>
+                </RecoilRoot>
             );
         }
 
@@ -225,8 +268,13 @@ export default class BaseApp<P> extends Component<P, IState> {
         const middleware = MiddlewareRegistry.applyMiddleware(Thunk);
 
         // @ts-ignore
-        const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-        const store = createStore(reducer, PersistenceRegistry.getPersistedState(), composeEnhancers(middleware));
+        const composeEnhancers =
+            window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+        const store = createStore(
+            reducer,
+            PersistenceRegistry.getPersistedState(),
+            composeEnhancers(middleware)
+        );
 
         // StateListenerRegistry
         StateListenerRegistry.subscribe(store);
@@ -235,7 +283,7 @@ export default class BaseApp<P> extends Component<P, IState> {
         // non-reactified parts of the code (conference.js for example).
         // Don't use in the react code!!!
         // FIXME: remove when the reactification is finished!
-        if (typeof APP !== 'undefined') {
+        if (typeof APP !== "undefined") {
             // @ts-ignore
             APP.store = store;
         }
@@ -270,7 +318,8 @@ export default class BaseApp<P> extends Component<P, IState> {
         // performed before setState completes, the app may not navigate to the
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
-        return new Promise(resolve => { // @ts-ignore
+        return new Promise((resolve) => {
+            // @ts-ignore
             this.setState({ route }, resolve);
         });
     }

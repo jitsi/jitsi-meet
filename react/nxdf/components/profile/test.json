@@ -1,0 +1,29 @@
+{
+    "name": "이름(900개 고정) #번호(1~900)",
+    "description": "작품설명(900개 다 달라도 됌.",
+    "image": "https://bps-w3b.s3.ap-northeast-1.amazonaws.com/번호(1~900).png",
+    "properties": {
+        "files": [
+            {
+                "uri": "https://bps-w3b.s3.ap-northeast-1.amazonaws.com/번호(1~900).png",
+                "type": "image/png"
+            },
+            {
+                "uri": "https://bps-w3b-pdf.s3.ap-northeast-1.amazonaws.com/The+secret+of+bamboo+EN.pdf",
+                "type": "web3book"
+            }
+        ],
+        "category": "Art"
+    },
+    "symbol": "BPS",
+    "attributes": [
+        {
+            "trait_type": "name",
+            "value": "책 이름"
+        },
+        {
+            "trait_type": "author",
+            "value": "작가명"
+        }
+    ]
+}
