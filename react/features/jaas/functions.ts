@@ -1,5 +1,5 @@
 import { IReduxState } from '../app/types';
-import { IConferenceState } from '../base/conference/reducer';
+import { IConferenceState, IJitsiConference } from '../base/conference/reducer';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -51,11 +51,11 @@ export function isVpaasMeeting(state: IReduxState) {
 /**
  * Sends a request for retrieving the conference creator's customer id.
  *
- * @param {IConferenceState} conference - The conference state.
+ * @param {IJitsiConference} conference - The conference state.
  * @param {IReduxState} state - The state of the app.
  * @returns {Object} - Object containing customerId field.
  */
-export async function sendGetCustomerIdRequest(conference: IConferenceState, state: IReduxState) {
+export async function sendGetCustomerIdRequest(conference: IJitsiConference, state: IReduxState) {
     const { jaasConferenceCreatorUrl } = state['features/base/config'];
 
     const roomJid = conference?.room?.roomjid;
