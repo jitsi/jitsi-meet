@@ -1,5 +1,5 @@
 import { IReduxState } from '../app/types';
-import { IConferenceState, IJitsiConference } from '../base/conference/reducer';
+import { IJitsiConference } from '../base/conference/reducer';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
