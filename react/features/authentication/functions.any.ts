@@ -13,29 +13,40 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
 /**
  * Returns the state that we can add as a parameter to the tokenAuthUrl.
  *
- * @param {boolean} audioMuted - Start conference with audio muted.
- * @param {boolean} audioOnlyEnabled - Join conference audio only.
+ * @param {URL} locationURL - The location URL.
+ * @param {Object} options: - Config options {
+ *     audioMuted: boolean | undefined
+ *     audioOnlyEnabled: boolean | undefined,
+ *     skipPrejoin: boolean | undefined,
+ *     videoMuted: boolean | undefined
+ * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
- * @param {boolean} skipPrejoin - Whether to skip pre-join page.
- * @param {URL} locationURL - The location URL.
- * @param {boolean} videoMuted - Start conference with video muted.
+ *
  * @returns {Object} The state object.
  */
 export const _getTokenAuthState = (
-        audioMuted: boolean | undefined = false,
-        audioOnlyEnabled: boolean | undefined = false,
-        roomName: string | undefined,
-        tenant: string | undefined,
-        skipPrejoin: boolean | undefined = false,
         locationURL: URL,
-        // eslint-disable-next-line max-params
-        videoMuted: boolean | undefined = false): object => {
+        options: {
+            audioMuted: boolean | undefined;
+            audioOnlyEnabled: boolean | undefined;
+            skipPrejoin: boolean | undefined;
+            videoMuted: boolean | undefined;
+        },
+        roomName: string | undefined,
+        tenant: string | undefined): object => {
     const state = {
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
         tenant
     };
+
+    const {
+        audioMuted = false,
+        audioOnlyEnabled = false,
+        skipPrejoin = false,
+        videoMuted = false
+    } = options;
 
     if (audioMuted) {
 
