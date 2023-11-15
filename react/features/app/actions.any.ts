@@ -128,14 +128,16 @@ export function maybeRedirectToTokenAuthUrl(
         const { tenant } = parseURIString(locationURL.href) || {};
 
         getTokenAuthUrl(
-            audioMuted,
-            audioOnlyEnabled || startAudioOnly,
             config,
-            room,
-            tenant,
-            true,
             locationURL,
-            videoMuted
+            {
+                audioMuted,
+                audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
+                skipPrejoin: true,
+                videoMuted
+            },
+            room,
+            tenant
         )
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {

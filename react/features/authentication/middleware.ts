@@ -275,7 +275,18 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    getTokenAuthUrl(audioMuted, audioOnlyEnabled, config, room, tenant, true, locationURL, videoMuted)
+    getTokenAuthUrl(
+        config,
+        locationURL,
+        {
+            audioMuted,
+            audioOnlyEnabled,
+            skipPrejoin: true,
+            videoMuted
+        },
+        room,
+        tenant
+    )
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {
                 logger.warn('Cannot handle login, token service URL is not set');

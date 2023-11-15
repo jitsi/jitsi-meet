@@ -57,7 +57,18 @@ function _getWebConferenceRoute(state: IReduxState) {
         const { tenant } = parseURIString(locationURL.href) || {};
         const { startAudioOnly } = config;
 
-        return getTokenAuthUrl(false, startAudioOnly, config, room, tenant, false, locationURL, false)
+        return getTokenAuthUrl(
+            config,
+            locationURL,
+            {
+                audioMuted: false,
+                audioOnlyEnabled: startAudioOnly,
+                skipPrejoin: false,
+                videoMuted: false
+            },
+            room,
+            tenant
+        )
             .then((url: string | undefined) => {
                 route.href = url;
 
