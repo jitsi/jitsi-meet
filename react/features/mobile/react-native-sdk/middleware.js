@@ -36,7 +36,7 @@ const { JMOngoingConference } = NativeModules;
         rnSdkHandlers?.onAudioMutedChanged && rnSdkHandlers?.onAudioMutedChanged(action.muted);
         break;
     case SET_VIDEO_MUTED:
-        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(action.muted);
+        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(Boolean(action.muted));
         break;
     case CONFERENCE_BLURRED:
         rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
