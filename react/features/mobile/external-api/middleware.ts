@@ -10,13 +10,15 @@ import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
+    AUDIO_MUTED_CHANGED,
     CONFERENCE_BLURRED,
     CONFERENCE_FAILED,
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    SET_ROOM
+    SET_ROOM,
+    VIDEO_MUTED_CHANGED
 } from '../../base/conference/actionTypes';
 import { JITSI_CONFERENCE_URL_KEY } from '../../base/conference/constants';
 import {
@@ -156,6 +158,16 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_BLURRED:
         sendEvent(store, CONFERENCE_BLURRED, {});
+        break;
+
+    case AUDIO_MUTED_CHANGED:
+        sendEvent(store, AUDIO_MUTED_CHANGED,
+        /* data */ { muted: action.muted });
+        break;
+
+    case VIDEO_MUTED_CHANGED:
+        sendEvent(store, VIDEO_MUTED_CHANGED,
+        /* data */ { muted: action.muted });
         break;
 
     case CONFERENCE_FOCUSED:

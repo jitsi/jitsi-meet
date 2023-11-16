@@ -2,11 +2,13 @@ import { NativeModules } from 'react-native';
 
 import { getAppProp } from '../../base/app/functions';
 import {
+    AUDIO_MUTED_CHANGED,
     CONFERENCE_BLURRED,
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    VIDEO_MUTED_CHANGED
 } from '../../base/conference/actionTypes';
 import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
@@ -31,6 +33,12 @@ const { JMOngoingConference } = NativeModules;
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case AUDIO_MUTED_CHANGED:
+        rnSdkHandlers?.onAudioMutedChanged && rnSdkHandlers?.onAudioMutedChanged(action.muted);
+        break;
+    case VIDEO_MUTED_CHANGED:
+        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(action.muted);
+        break;
     case CONFERENCE_BLURRED:
         rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
         break;
