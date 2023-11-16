@@ -45,8 +45,14 @@ export default class ScreenshotCaptureSummary {
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
         const baseUrl = `${getBaseUrl()}libs/`;
-        const workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
 
+        let workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
+
+        // @ts-ignore
+        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+
+        // @ts-ignore
+        workerUrl = window.URL.createObjectURL(workerBlob);
         this._streamWorker = new Worker(workerUrl, { name: 'Screenshot capture worker' });
         this._streamWorker.onmessage = this._handleWorkerAction;
 
