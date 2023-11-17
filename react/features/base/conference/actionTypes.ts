@@ -73,24 +73,6 @@ export const CONFERENCE_BLURRED = 'CONFERENCE_BLURRED';
 export const CONFERENCE_FOCUSED = 'CONFERENCE_FOCUSED';
 
 /**
- * The type of (redux) action which signals that the audio mute state is changed.
- * 
- * {
- *      type: AUDIO_MUTED_CHANGED,
- * }
- */
-export const AUDIO_MUTED_CHANGED = 'AUDIO_MUTED_CHANGED';
-
-/**
- * The type of (redux) action which signals that the video mute state is changed.
- * 
- * {
- *      type: VIDEO_MUTED_CHANGED,
- * }
- */
-export const VIDEO_MUTED_CHANGED = 'VIDEO_MUTED_CHANGED';
-
-/**
  * The type of (redux) action, which indicates conference local subject changes.
  *
  * {
