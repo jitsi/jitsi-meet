@@ -25,7 +25,7 @@ function updateDependencies() {
             updated = true;
         }
 
-        if (!semver.valid(packageJSON.dependencies[key])) {
+        if (!semver.valid(packageJSON.dependencies[key]) && key !== `react-native-orientation-locker`) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
@@ -45,6 +45,16 @@ function updateDependencies() {
             updated = true;
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
+        }
+
+        if (RNSDKpackageJSON.peerDependencies[key].includes(`react-native-orientation-locker`)) {
+            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            updated = true;
+
+            console.log(
+`A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
+This is now set on your end.`
+            );
         }
     }
 
