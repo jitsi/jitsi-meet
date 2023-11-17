@@ -444,6 +444,49 @@ var config = {
     //    // Provides a way to set the codec preference on desktop based endpoints.
     //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264' ],
     //
+    //    // Codec specific settings for scalability modes and max bitrates.
+    //    av1: {
+    //      maxBitratesVideo: {
+    //          low: 100000,
+    //          standard: 300000,
+    //          high: 1000000,
+    //          ssHigh: 2500000
+    //      },
+    //      scalabilityModeEnabled: true,
+    //      useSimulcast: false,
+    //      useKSVC: true
+    //    },
+    //    h264: {
+    //      maxBitratesVideo: {
+    //          low: 200000,
+    //          standard: 500000,
+    //          high: 1500000,
+    //          ssHigh: 2500000
+    //      },
+    //      scalabilityModeEnabled: true
+    //    },
+    //    vp8: {
+    //      maxBitratesVideo: {
+    //          low: 200000,
+    //          standard: 500000,
+    //          high: 1500000,
+    //          ssHigh: 2500000
+    //      },
+    //      scalabilityModeEnabled: false
+    //    },
+    //    vp9: {
+    //      maxBitratesVideo: {
+    //          low: 100000,
+    //          standard: 300000,
+    //          high: 1200000,
+    //          ssHigh: 2500000
+    //      },
+    //      scalabilityModeEnabled: true,
+    //      useSimulcast: false,
+    //      useKSVC: true
+    //    }
+    //
+    //    DEPRECATED! Use `codec specific settings` instead.
     //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
     //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
     //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
