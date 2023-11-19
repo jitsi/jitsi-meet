@@ -1,5 +1,4 @@
 import 'image-capture';
-import JitsiTrack from 'lib-jitsi-meet/types/auto/modules/RTC/JitsiTrack';
 import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent } from '../analytics/AnalyticsEvents';
@@ -46,8 +45,14 @@ export default class ScreenshotCaptureSummary {
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
         const baseUrl = `${getBaseUrl()}libs/`;
-        const workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
 
+        let workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
+
+        // @ts-ignore
+        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+
+        // @ts-ignore
+        workerUrl = window.URL.createObjectURL(workerBlob);
         this._streamWorker = new Worker(workerUrl, { name: 'Screenshot capture worker' });
         this._streamWorker.onmessage = this._handleWorkerAction;
 
@@ -96,7 +101,7 @@ export default class ScreenshotCaptureSummary {
      * @returns {Promise} - Promise that resolves once effect has started or rejects if the
      * videoType parameter is not desktop.
      */
-    async start(jitsiTrack: JitsiTrack) {
+    async start(jitsiTrack: any) {
         if (!window.OffscreenCanvas) {
             logger.warn('Can\'t start screenshot capture, OffscreenCanvas is not available');
 

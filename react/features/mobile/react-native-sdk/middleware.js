@@ -8,6 +8,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference/actionTypes';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
@@ -31,6 +32,12 @@ const { JMOngoingConference } = NativeModules;
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case SET_AUDIO_MUTED:
+        rnSdkHandlers?.onAudioMutedChanged && rnSdkHandlers?.onAudioMutedChanged(action.muted);
+        break;
+    case SET_VIDEO_MUTED:
+        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(Boolean(action.muted));
+        break;
     case CONFERENCE_BLURRED:
         rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
         break;

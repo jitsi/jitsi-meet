@@ -4,7 +4,6 @@ import { IStore } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
 import { openDialog } from '../base/dialog/actions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { isVpaasMeeting } from '../jaas/functions';
 
 import {
     CANCEL_FEEDBACK,
@@ -12,7 +11,7 @@ import {
     SUBMIT_FEEDBACK_SUCCESS
 } from './actionTypes';
 import FeedbackDialog from './components/FeedbackDialog.web';
-import { sendFeedbackToJaaSRequest } from './functions.web';
+import { sendFeedbackToJaaSRequest, shouldSendJaaSFeedbackMetadata } from './functions.web';
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -72,7 +71,9 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
                 showThankYou: true,
                 wasDialogShown: false
             });
-        } else if (conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
+        } else if (
+            (conference.isCallstatsEnabled() || shouldSendJaaSFeedbackMetadata(state))
+                && feedbackPercentage > Math.random() * 100) {
             return new Promise(resolve => {
                 dispatch(openFeedbackDialog(conference, title, () => {
                     const { submitted } = getState()['features/feedback'];
@@ -125,16 +126,15 @@ export function openFeedbackDialog(conference?: IJitsiConference, title?: string
  * @returns {Promise}
  */
 export function sendJaasFeedbackMetadata(conference: IJitsiConference, feedback: Object) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<any> => {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { jaasFeedbackMetadataURL } = state['features/base/config'];
 
-        const { jwt, user, tenant } = state['features/base/jwt'];
-
-        if (!isVpaasMeeting(state) || !jaasFeedbackMetadataURL) {
+        if (!shouldSendJaaSFeedbackMetadata(state)) {
             return Promise.resolve();
         }
 
+        const { jaasFeedbackMetadataURL } = state['features/base/config'];
+        const { jwt, user, tenant } = state['features/base/jwt'];
         const meetingFqn = extractFqnFromPath();
         const feedbackData = {
             ...feedback,
@@ -164,17 +164,39 @@ export function submitFeedback(
         score: number,
         message: string,
         conference: IJitsiConference) {
-    return (dispatch: IStore['dispatch']) =>
-        conference.sendFeedback(score, message)
-        .then(() => dispatch({ type: SUBMIT_FEEDBACK_SUCCESS }))
-        .then(() => dispatch(sendJaasFeedbackMetadata(conference, { score,
-            message }))
-        .catch(error => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const promises = [];
+
+        if (conference.isCallstatsEnabled()) {
+            promises.push(conference.sendFeedback(score, message));
+        }
+
+        if (shouldSendJaaSFeedbackMetadata(state)) {
+            promises.push(dispatch(sendJaasFeedbackMetadata(conference, {
+                score,
+                message
+            })));
+        }
+
+        return Promise.allSettled(promises)
+        .then(results => {
+            const rejected = results.find((result): result is PromiseRejectedResult => result?.status === 'rejected');
+
+            if (typeof rejected === 'undefined') {
+                dispatch({ type: SUBMIT_FEEDBACK_SUCCESS });
+
+                return Promise.resolve();
+            }
+
+            const error = rejected.reason;
+
             dispatch({
                 type: SUBMIT_FEEDBACK_ERROR,
                 error
             });
 
             return Promise.reject(error);
-        }));
+        });
+    };
 }

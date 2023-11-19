@@ -420,7 +420,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             'display-capture',
             'hid',
             'microphone',
-            'screen-wake-lock'
+            'screen-wake-lock',
+            'speaker-selection'
         ].join('; ');
         this._frame.name = frameName;
         this._frame.id = frameName;

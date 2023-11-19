@@ -68,7 +68,7 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
             dispatch(openDialog(LoginQuestionDialog, {
                 handler: () => {
                     // Give time for the dialog to close.
-                    setTimeout(() => redirect, 500);
+                    setTimeout(() => redirect(), 500);
                 }
             }));
         } else {

@@ -31,6 +31,6 @@ export function showSalesforceNotification() {
                 dispatch(openDialog(SalesforceLinkDialog));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }
