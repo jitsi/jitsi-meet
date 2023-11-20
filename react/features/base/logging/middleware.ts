@@ -106,7 +106,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
         logCollector.flush();
 
         // This event listener will flush the logs, before the statistics module
-        // (CallStats) is stopped.
+        // is stopped.
         //
         // NOTE The LogCollector is not stopped, because this event can be
         // triggered multiple times during single conference (whenever

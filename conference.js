@@ -1038,17 +1038,6 @@ export default {
     },
 
     /**
-     * Returns true if the callstats integration is enabled, otherwise returns
-     * false.
-     *
-     * @returns true if the callstats integration is enabled, otherwise returns
-     * false.
-     */
-    isCallstatsEnabled() {
-        return room && room.isCallstatsEnabled();
-    },
-
-    /**
      * Get speaker stats that track total dominant speaker time.
      *
      * @returns {object} A hash with keys being user ids and values being the
