@@ -49,7 +49,7 @@ function updateDependencies() {
         }
 
         if (!semver.valid(RNSDKpackageJSON.peerDependencies[key])
-            && RNSDKpackageJSON.peerDependencies[key].includes("github")
+            && RNSDKpackageJSON.peerDependencies[key].includes('github')
             && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
