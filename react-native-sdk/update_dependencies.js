@@ -25,7 +25,8 @@ function updateDependencies() {
             updated = true;
         }
 
-        if (!semver.valid(packageJSON.dependencies[key])) {
+        if (!semver.valid(packageJSON.dependencies[key])
+            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
@@ -45,6 +46,18 @@ function updateDependencies() {
             updated = true;
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
+        }
+
+        if (!semver.valid(RNSDKpackageJSON.peerDependencies[key])
+            && RNSDKpackageJSON.peerDependencies[key].includes('github')
+            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
+            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            updated = true;
+
+            console.log(
+`A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
+This is now set on your end.`
+            );
         }
     }
 
