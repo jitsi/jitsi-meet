@@ -247,7 +247,6 @@ export interface IConfig {
         collectIP?: boolean;
         collectLegacyStats?: boolean;
         disableBeforeUnloadHandler?: boolean;
-        disablePrecalltest?: boolean;
         siteID?: string;
     };
     callStatsID?: string;

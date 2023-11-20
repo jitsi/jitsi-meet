@@ -954,7 +954,6 @@ var config = {
     // callStatsConfigParams: {
     //     disableBeforeUnloadHandler: true, // disables callstats.js's window.onbeforeunload parameter.
     //     applicationVersion: "app_version", // Application version specified by the developer.
-    //     disablePrecalltest: true, // disables the pre-call test, it is enabled by default.
     //     siteID: "siteID", // The name/ID of the site/campus from where the call/pre-call test is made.
     //     additionalIDs: { // additionalIDs object, contains application related IDs.
     //         customerID: "Customer Identifier. Example, walmart.",
