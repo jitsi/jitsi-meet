@@ -3,7 +3,6 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
@@ -217,8 +216,8 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function mapStateToProps(state: IReduxState) {
-    const { connectionDetails, connectionType } = getConnectionData(state);
+function mapStateToProps() {
+    const { connectionDetails, connectionType } = getConnectionData();
 
     return {
         connectionDetails,
