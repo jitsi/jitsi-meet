@@ -23,6 +23,7 @@ export default [
     'avgRtpStatsN',
     'backgroundAlpha',
     'breakoutRooms',
+    'bridgeChannel',
     'buttonsWithNotifyClick',
 
     /**
