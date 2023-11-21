@@ -30,7 +30,7 @@ interface IProps {
     /**
      * Is the navigator part of Welcome page?
      */
-    isInWelcomePage?: boolean;
+    isInWelcomePage?: boolean | undefined;
 }
 
 
