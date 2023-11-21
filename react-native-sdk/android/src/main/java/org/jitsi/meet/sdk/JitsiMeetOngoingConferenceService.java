@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -41,9 +42,9 @@ import java.util.HashMap;
 public class JitsiMeetOngoingConferenceService extends Service {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
 
-    public static void launch(Context context, Context activityContext) {
+    public static void launch(Context context, Activity currentActivity) {
 
-        RNOngoingNotification.createOngoingConferenceNotificationChannel(activityContext);
+        RNOngoingNotification.createOngoingConferenceNotificationChannel(currentActivity);
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
