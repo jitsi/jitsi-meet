@@ -61,7 +61,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
-        "confirmAddLink": "Wilt u een Jitsi-link aan deze afspraak toevoegen?",
+        "confirmAddLink": "Wilt u een DE-link aan deze afspraak toevoegen?",
         "error": {
             "appConfiguration": "De agenda-integratie is niet juist ingesteld.",
             "generic": "Er is een fout opgetreden. Controleer uw agenda-instellingen of vernieuw de agenda.",
@@ -382,7 +382,7 @@
         "answer": "Beantwoorden",
         "audioCallTitle": "Inkomende oproep",
         "decline": "Negeren",
-        "productLabel": "vanuit Jitsi Meet",
+        "productLabel": "vanuit DE Meet",
         "videoCallTitle": "Inkomende video-oproep"
     },
     "info": {
@@ -599,7 +599,7 @@
         "newDeviceAction": "Gebruik",
         "newDeviceAudioTitle": "Nieuw audioapparaat gedetecteerd",
         "newDeviceCameraTitle": "Nieuwe camera gedetecteerd",
-        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van Jitsi Meet gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
+        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van DE Meet gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
         "oldElectronClientDescription2": "nieuwste versie",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "Wil deelnemen aan de vergadering",
@@ -1096,9 +1096,9 @@
         "go": "GAAN",
         "goSmall": "GAAN",
         "headerSubtitle": "Veilige vergaderingen van hoge kwaliteit",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informatie",
-        "jitsiOnMobile": "Jitsi op de mobiele telefoon - download onze apps en start overal een vergadering",
+        "DEOnMobile": "DE op de mobiele telefoon - download onze apps en start overal een vergadering",
         "join": "AANMAKEN / DEELNEMEN",
         "moderatedMessage": "Of <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">boek een vergadering URL</a> van tevoren waar u de enige moderator bent.",
         "privacy": "Privacy",

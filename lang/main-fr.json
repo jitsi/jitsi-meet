@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajouter un lien de conférence",
-        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement ?",
+        "confirmAddLink": "Voulez-vous ajouter un lien DE à cet événement ?",
         "error": {
             "appConfiguration": "L'intégration du calendrier n'est pas correctement configurée.",
             "generic": "Une erreur s'est produite. Veuillez vérifier les paramètres de votre calendrier ou tenter de l'actualiser.",
@@ -467,7 +467,7 @@
         "answer": "Répondre",
         "audioCallTitle": "Appel entrant",
         "decline": "Rejeter",
-        "productLabel": "via Jitsi Meet",
+        "productLabel": "via DE Meet",
         "videoCallTitle": "Appel vidéo entrant"
     },
     "info": {
@@ -523,7 +523,7 @@
         "searchPlaceholder": "Participant ou numéro de téléphone",
         "send": "Envoyer"
     },
-    "jitsiHome": "{{logo}} Logo, liens vers la page d'accueil",
+    "DEHome": "{{logo}} Logo, liens vers la page d'accueil",
     "keyboardShortcuts": {
         "focusLocal": "Épingler ma vidéo",
         "focusRemote": "Épingler la vidéo de quelqu'un d'autre",
@@ -719,7 +719,7 @@
         "noiseSuppressionFailedTitle": "Échec du démarrage de la suppression de bruit",
         "noiseSuppressionNoTrackDescription": "Veuillez activer votre microphone d'abord.",
         "noiseSuppressionStereoDescription": "La suppression de bruit d’une source stéréo n’est pas encore supportée.",
-        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Jitsi Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
+        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client DE Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
         "oldElectronClientDescription2": "dernière build",
         "oldElectronClientDescription3": " rapidement !",
         "participantWantsToJoin": "souhaite rejoindre la réunion",
@@ -1377,15 +1377,15 @@
         "go": "Créer",
         "goSmall": "Créer",
         "headerSubtitle": "Conférences sécurisées et de haute qualité",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Infos",
-        "jitsiOnMobile": "Jitsi sur mobile – télécharger notre application et démarrez des conférences de n'import où",
+        "DEOnMobile": "DE sur mobile – télécharger notre application et démarrez des conférences de n'import où",
         "join": "CRÉER / REJOINDRE",
         "logo": {
             "calendar": "Logo Calendar",
             "desktopPreviewThumbnail": "Miniature d'aperçu du bureau",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo DE meet",
             "microsoftLogo": "Logo Microsoft",
             "policyLogo": "Logo de la politique"
         },

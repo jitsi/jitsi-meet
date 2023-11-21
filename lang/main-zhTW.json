@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入 DE 連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤，請檢查行事曆設定，或是重新整理行事曆。",
@@ -451,7 +451,7 @@
         "token": "token",
         "tokenAuthFailed": "抱歉，您未被允許加入這個通話。",
         "tokenAuthFailedReason": {
-            "audInvalid": "無效的`aud`值，應為`jitsi`。",
+            "audInvalid": "無效的`aud`值，應為`DE`。",
             "contextNotFound": "`context` 未在負載中找到。",
             "expInvalid": "無效的`exp`值。",
             "featureInvalid": "無效的功能：{{feature}}，可能尚未實現。",
@@ -523,7 +523,7 @@
         "answer": "接通",
         "audioCallTitle": "來電",
         "decline": "拒接",
-        "productLabel": "來自 Jitsi Meet",
+        "productLabel": "來自 DE Meet",
         "videoCallTitle": "視訊來電"
     },
     "info": {
@@ -580,7 +580,7 @@
         "searchPlaceholder": "與會者或電話號碼",
         "send": "傳送"
     },
-    "jitsiHome": "{{logo}} 商標，首頁連結",
+    "DEHome": "{{logo}} 商標，首頁連結",
     "keyboardShortcuts": {
         "focusLocal": "聚焦於自己的影像",
         "focusRemote": "聚焦於另一人的影像",
@@ -733,7 +733,7 @@
         "dataChannelClosed": "視訊品質受限",
         "dataChannelClosedDescription": "橋接通道已斷開，視訊品質降至最低設定。",
         "disabledIframe": "嵌入僅供示範使用，此通話將於 {{timeout}} 分鐘後中斷連線。",
-        "disabledIframeSecondary": "內嵌 {{domain}} 僅為展示用途，此通話將在 {{timeout}} 分鐘後中斷連線。請使用在正式環境使用 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi 服務</a>來內嵌！",
+        "disabledIframeSecondary": "內嵌 {{domain}} 僅為展示用途，此通話將在 {{timeout}} 分鐘後中斷連線。請使用在正式環境使用 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>DE 服務</a>來內嵌！",
         "disconnected": "已經中斷連接",
         "displayNotifications": "顯示通知給",
         "dontRemindMe": "不要再提醒我",
@@ -781,7 +781,7 @@
         "noiseSuppressionDesktopAudioDescription": "分享電腦音訊時無法啟用雜訊抑制，請停用後重試。",
         "noiseSuppressionFailedTitle": "啟用雜訊抑制失敗",
         "noiseSuppressionStereoDescription": "目前不支援立體聲降噪功能。",
-        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 Jitsi Meet 用戶端，請盡快更新至我們的",
+        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 DE Meet 用戶端，請盡快更新至我們的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "希望加入會議",
@@ -1489,15 +1489,15 @@
         "go": "開始",
         "goSmall": "開始",
         "headerSubtitle": "安全且高品質的視訊會議",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "資訊",
-        "jitsiOnMobile": "Jitsi 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
+        "DEOnMobile": "DE 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
         "join": "建立/加入",
         "logo": {
             "calendar": "行事曆圖示",
             "desktopPreviewThumbnail": "桌面預覽縮圖",
             "googleLogo": "Google 圖示",
-            "logoDeepLinking": "Jitsi Meet 圖示",
+            "logoDeepLinking": "DE Meet 圖示",
             "microsoftLogo": "Microsoft 圖示",
             "policyLogo": "政策圖示"
         },

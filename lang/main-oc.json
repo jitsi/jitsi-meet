@@ -63,7 +63,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajustar un ligam de reünion",
-        "confirmAddLink": "Volètz ajustar un ligam Jitsi cap a aqueste eveniment ?",
+        "confirmAddLink": "Volètz ajustar un ligam DE cap a aqueste eveniment ?",
         "error": {
             "appConfiguration": "L’integracion del calendièr es pas corrèctament configurada.",
             "generic": "Una error s’es producha. Verificatz vòstres paramètres de calendièr o ensajatz de l’actualizar.",
@@ -414,7 +414,7 @@
         "answer": "Uèi",
         "audioCallTitle": "Sonada entranta",
         "decline": "Regetar",
-        "productLabel": "de Jitsi Meet estant",
+        "productLabel": "de DE Meet estant",
         "videoCallTitle": "Sonada vidèo entranta"
     },
     "info": {
@@ -468,7 +468,7 @@
         "searchPlaceholder": "Participant o numèro de telefòn",
         "send": "Mandar"
     },
-    "jitsiHome": "{{logo}} Logotipe, mena a la pagina d'acuèlh",
+    "DEHome": "{{logo}} Logotipe, mena a la pagina d'acuèlh",
     "keyboardShortcuts": {
         "focusLocal": "Centrar sus vòstra vidèo",
         "focusRemote": "Centrar sus la vidèo de qualqu'un mai",
@@ -640,7 +640,7 @@
         "newDeviceAction": "Utilizar",
         "newDeviceAudioTitle": "Nòu periferic àudio detectat",
         "newDeviceCameraTitle": "Nòva camèra detectada",
-        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client DE Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "oldElectronClientDescription2": "darrièra compilacion",
         "oldElectronClientDescription3": " ara !",
         "participantWantsToJoin": "Vòl rejónher la reünion",
@@ -1216,15 +1216,15 @@
         "go": "Crear",
         "goSmall": "Crear",
         "headerSubtitle": "Conferéncias securizadas e de Nauta qualitat",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Infor",
-        "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
+        "DEOnMobile": "DE sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
         "join": "CREAR / REJÓNHER",
         "logo": {
             "calendar": "Logotipe Calendar",
             "desktopPreviewThumbnail": "Vinheta d'apercebut del burèu",
             "googleLogo": "Logotipe Google",
-            "logoDeepLinking": "Logotipe Jitsi meet",
+            "logoDeepLinking": "Logotipe DE meet",
             "microsoftLogo": "Logotipe Microsoft",
             "policyLogo": "Logotipe de la politica"
         },

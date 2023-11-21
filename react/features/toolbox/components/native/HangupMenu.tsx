@@ -57,12 +57,12 @@ function HangupMenu() {
                     onClick = { handleEndConference }
                     style = { _styles.hangupButton }
                     type = { DESTRUCTIVE } /> }
-                <Button
+                {/* <Button
                     accessibilityLabel = 'toolbar.leaveConference'
                     labelKey = 'toolbar.leaveConference'
                     onClick = { handleLeaveConference }
                     style = { _styles.hangupButton }
-                    type = { SECONDARY } />
+                    type = { SECONDARY } />*/}
                 { inBreakoutRoom && <Button
                     accessibilityLabel = 'breakoutRooms.actions.leaveBreakoutRoom'
                     labelKey = 'breakoutRooms.actions.leaveBreakoutRoom'

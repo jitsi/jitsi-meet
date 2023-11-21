@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Afegeix un enllaç de reunió",
-        "confirmAddLink": "Voleu afegir un enllaç al Jitsi en aquest esdeveniment?",
+        "confirmAddLink": "Voleu afegir un enllaç al DE en aquest esdeveniment?",
         "error": {
             "appConfiguration": "La integració de l'agenda no està configurada correctament.",
             "generic": "S'ha produït un error. Comproveu la configuració de l'agenda o intenteu d'actualitzar-la.",
@@ -444,7 +444,7 @@
         "answer": "Resposta",
         "audioCallTitle": "Trucada entrant",
         "decline": "Rebutja",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de DE Meet",
         "videoCallTitle": "Videotrucada entrant"
     },
     "info": {
@@ -500,7 +500,7 @@
         "searchPlaceholder": "Participant o número de telèfon",
         "send": "Envia"
     },
-    "jitsiHome": "Logotip de {{logo}}, enllaça a la pàgina d'inici",
+    "DEHome": "Logotip de {{logo}}, enllaça a la pàgina d'inici",
     "keyboardShortcuts": {
         "focusLocal": "Focus al vostre vídeo",
         "focusRemote": "Focus en el vídeo d'una altra persona",
@@ -697,7 +697,7 @@
         "noiseSuppressionFailedTitle": "No s'ha pogut iniciar la supressió de soroll",
         "noiseSuppressionNoTrackDescription": "Abans, activeu el vostre micròfon.",
         "noiseSuppressionStereoDescription": "Ara per ara, no és possible la supressió de soroll d'àudio en estèreo",
-        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client Jitsi Meet, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
+        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client DE Meet, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
         "oldElectronClientDescription2": "última construcció",
         "oldElectronClientDescription3": "ara!",
         "participantWantsToJoin": "Vol unir-se a la reunió",
@@ -1341,15 +1341,15 @@
         "go": "SOM-HI",
         "goSmall": "SOM-HI",
         "headerSubtitle": "Reunions d'alta qualitat i segures",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informació de marcatge",
-        "jitsiOnMobile": "Jitsi al mòbil – baixeu les nostres aplicacions i comenceu una reunió des de qualsevol lloc",
+        "DEOnMobile": "DE al mòbil – baixeu les nostres aplicacions i comenceu una reunió des de qualsevol lloc",
         "join": "CREA / ENTRA",
         "logo": {
             "calendar": "Logotip del Calendari",
             "desktopPreviewThumbnail": "Miniatura de visualització prèvia de l'escriptori",
             "googleLogo": "Logotip de Google",
-            "logoDeepLinking": "Logotip de Jitsi Meet",
+            "logoDeepLinking": "Logotip de DE Meet",
             "microsoftLogo": "Logotip de Microsoft",
             "policyLogo": "Logotip de la política"
         },

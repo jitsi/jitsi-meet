@@ -77,7 +77,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "添加会议链接",
-        "confirmAddLink": "是否在此事件中添加Jitsi链接",
+        "confirmAddLink": "是否在此事件中添加DE链接",
         "error": {
             "appConfiguration": "日历整合没有正确配置。",
             "generic": "发生错误，请检查日历设置或尝试刷新日历。",
@@ -442,7 +442,7 @@
         "token": "token",
         "tokenAuthFailed": "抱歉，你无法加入此通话。",
         "tokenAuthFailedReason": {
-            "audInvalid": "无效的`aud`值，应为`jitsi`。",
+            "audInvalid": "无效的`aud`值，应为`DE`。",
             "contextNotFound": "载荷中缺少`context`对象。",
             "expInvalid": "`exp`值无效。",
             "featureInvalid": "无效的功能：{{feature}}，很可能尚未实现。",
@@ -510,7 +510,7 @@
         "answer": "接听",
         "audioCallTitle": "呼入通话",
         "decline": "拒听",
-        "productLabel": "来自 Jitsi Meet",
+        "productLabel": "来自 DE Meet",
         "videoCallTitle": "呼入视频通话"
     },
     "info": {
@@ -566,7 +566,7 @@
         "searchPlaceholder": "参会者或电话号码",
         "send": "发送"
     },
-    "jitsiHome": "{{logo}}的logo，跳转到主页",
+    "DEHome": "{{logo}}的logo，跳转到主页",
     "keyboardShortcuts": {
         "focusLocal": "聚焦自己的视频",
         "focusRemote": "聚焦他人的视频",
@@ -766,7 +766,7 @@
         "noiseSuppressionDesktopAudioDescription": "在共享桌面音频时无法启用降噪功能，请禁用并重试。",
         "noiseSuppressionFailedTitle": "无法启动降噪功能",
         "noiseSuppressionStereoDescription": "暂不支持立体声音频降噪。",
-        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Jitsi Meet客户端，请确保您更新到我们的",
+        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版DE Meet客户端，请确保您更新到我们的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "想要加入会议",
@@ -1469,15 +1469,15 @@
         "go": "开始",
         "goSmall": "开始",
         "headerSubtitle": "安全且高品质的会议",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "拨入信息",
-        "jitsiOnMobile": "手机版Jitsi – 下载我们的APP，随时随地开始会议",
+        "DEOnMobile": "手机版DE – 下载我们的APP，随时随地开始会议",
         "join": "创建/加入",
         "logo": {
             "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
             "googleLogo": "谷歌图标",
-            "logoDeepLinking": "Jitsi Meet图标",
+            "logoDeepLinking": "DE Meet图标",
             "microsoftLogo": "微软图标",
             "policyLogo": "政策图标"
         },

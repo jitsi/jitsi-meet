@@ -113,7 +113,8 @@ class SettingsView extends Component<IProps> {
                 style = { styles.settingsViewContainer }>
                 <ScrollView bounces = { scrollBounces }>
                     <View style = { styles.profileContainerWrapper }>
-                        <TouchableHighlight onPress = { this._onPressProfile }>
+                        {/*<TouchableHighlight onPress = { this._onPressProfile }>*/}
+                        <TouchableHighlight >
                             <View
                                 style = { styles.profileContainer as ViewStyle }>
                                 <Avatar
@@ -122,10 +123,10 @@ class SettingsView extends Component<IProps> {
                                 <Text style = { styles.displayName }>
                                     { _displayName }
                                 </Text>
-                                <Icon
+                                {/* <Icon
                                     size = { 24 }
                                     src = { IconArrowRight }
-                                    style = { styles.profileViewArrow } />
+                                    style = { styles.profileViewArrow } />*/}
                             </View>
                         </TouchableHighlight>
                     </View>
@@ -146,11 +147,11 @@ class SettingsView extends Component<IProps> {
                             <ModeratorSection />
                         </> }
                     {/* @ts-ignore */}
-                    <Divider style = { styles.fieldSeparator } />
-                    <AdvancedSection />
+                    {/* <Divider style = { styles.fieldSeparator } />
+                    <AdvancedSection />*/}
                     {/* @ts-ignore */}
-                    <Divider style = { styles.fieldSeparator } />
-                    <LinksSection />
+                    {/*<Divider style = { styles.fieldSeparator } />
+                    <LinksSection />*/}
                 </ScrollView>
             </JitsiScreen>
         );

@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pridať odkaz na konferenciu",
-        "confirmAddLink": "Chcete pridal Jitsi odkaz do tejto udalosti?",
+        "confirmAddLink": "Chcete pridal DE odkaz do tejto udalosti?",
         "error": {
             "appConfiguration": "Integrácia s kalendárom nie je správne nastavená.",
             "generic": "Stala sa chyba. Skontrolujte nastavenia kalendára a skúste obnoviť kalendár.",
@@ -528,7 +528,7 @@
         "newDeviceAction": "Použiť",
         "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
         "newDeviceCameraTitle": "Bola zistená nová kamera",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription1": "Používate starú verziu klienta DE Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
         "oldElectronClientDescription2": "najnovšiu verziu",
         "oldElectronClientDescription3": " teraz!",
         "passwordRemovedRemotely": "Iný účastník odstránil $t(lockRoomPassword)",

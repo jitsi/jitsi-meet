@@ -48,7 +48,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agregar un vínculo a la reunión",
-        "confirmAddLink": "¿Quiere añadir un enlace de Jitsi a este evento?",
+        "confirmAddLink": "¿Quiere añadir un enlace de DE a este evento?",
         "error": {
             "appConfiguration": "La integración del calendario no está configurada correctamente",
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe cargarlo nuevamente.",
@@ -412,7 +412,7 @@
         "answer": "Contestar",
         "audioCallTitle": "Llamada entrante",
         "decline": "Descartar",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de DE Meet",
         "videoCallTitle": "Videollamada"
     },
     "info": {
@@ -466,7 +466,7 @@
         "searchPlaceholder": "Participante o número de teléfono",
         "send": "Enviar"
     },
-    "jitsiHome": "{{logo}} Logotipo, enlaces a la página web",
+    "DEHome": "{{logo}} Logotipo, enlaces a la página web",
     "keyboardShortcuts": {
         "focusLocal": "Ver tu cámara",
         "focusRemote": "Ver la cámara de otras personas",
@@ -631,7 +631,7 @@
         "newDeviceAction": "Usar",
         "newDeviceAudioTitle": "Se detectó un dispositivo de audio nuevo",
         "newDeviceCameraTitle": "Se detectó una cámara nueva",
-        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de Jitsi Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
+        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de DE Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
         "oldElectronClientDescription2": "versión más reciente",
         "oldElectronClientDescription3": " YA!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) eliminada por otro participante",
@@ -1171,15 +1171,15 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniones seguras y de alta calidad",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Información",
-        "jitsiOnMobile": "Jitsi en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
+        "DEOnMobile": "DE en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
         "join": "CREAR / UNIRSE",
         "logo": {
             "calendar": "Logotipo del calendario",
             "desktopPreviewThumbnail": "Vista previa del escritorio en miniatura",
             "googleLogo": "Logotipo de Google",
-            "logoDeepLinking": "Logotipo de la reunión de Jitsi",
+            "logoDeepLinking": "Logotipo de la reunión de DE",
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de la política"
         },

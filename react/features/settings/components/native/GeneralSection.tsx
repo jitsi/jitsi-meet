@@ -33,13 +33,13 @@ const GeneralSection = () => {
     const { language = DEFAULT_LANGUAGE } = i18next;
 
     const onSelfViewToggled = useCallback((enabled?: boolean) =>
-        dispatch(updateSettings({ disableSelfView: enabled }))
-    , [ dispatch, updateSettings ]);
+            dispatch(updateSettings({ disableSelfView: enabled }))
+        , [ dispatch, updateSettings ]);
 
     const onShowPejoinToggled = useCallback((enabled?: boolean) => {
-        dispatch(updateSettings({ userSelectedSkipPrejoin: !enabled }));
-    }
-    , [ dispatch, updateSettings ]);
+            dispatch(updateSettings({ userSelectedSkipPrejoin: !enabled }));
+        }
+        , [ dispatch, updateSettings ]);
 
     const navigateToLanguageSelect = useCallback(() => {
         navigate(screen.settings.language);
@@ -63,7 +63,7 @@ const GeneralSection = () => {
                     onChange = { onShowPejoinToggled } />
             </FormRow>}
 
-            <FormRow label = 'settings.language'>
+            {/*<FormRow label = 'settings.language'>
                 <View style = { styles.languageButtonContainer as ViewStyle }>
                     <TouchableHighlight onPress = { navigateToLanguageSelect }>
                         <View style = { styles.languageButton as ViewStyle }>
@@ -75,7 +75,7 @@ const GeneralSection = () => {
                         </View>
                     </TouchableHighlight>
                 </View>
-            </FormRow>
+            </FormRow>*/}
         </FormSection>
     );
 };

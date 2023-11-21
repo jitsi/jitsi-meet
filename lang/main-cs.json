@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Přidejte odkaz na setkání",
-        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
+        "confirmAddLink": "Chcete k této události přidat odkaz DE?",
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nastavena.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",
@@ -442,7 +442,7 @@
         "answer": "Odpovědět",
         "audioCallTitle": "Příchozí hovor",
         "decline": "OK",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od DE Meet",
         "videoCallTitle": "Příchozí videohovor"
     },
     "info": {
@@ -496,7 +496,7 @@
         "searchPlaceholder": "Účastník nebo telefonní číslo",
         "send": "Odeslat"
     },
-    "jitsiHome": "{{logo} Logo, vede na  Homepage",
+    "DEHome": "{{logo} Logo, vede na  Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Vybrat váš obraz",
         "focusRemote": "Vybrat obraz jiného volajícího",
@@ -689,7 +689,7 @@
         "noiseSuppressionFailedTitle": "",
         "noiseSuppressionNoTrackDescription": "",
         "noiseSuppressionStereoDescription": "",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta DE Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
         "participantWantsToJoin": "",
@@ -1326,9 +1326,9 @@
         "go": "ZAČÍT",
         "goSmall": "ZAČÍT",
         "headerSubtitle": "Bezpečné a kvalitní setkávání",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informace o vytáčení",
-        "jitsiOnMobile": "Jitsi na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
+        "DEOnMobile": "DE na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
         "join": "VYTVOŘIT / PŘIPOJIT",
         "logo": {
             "calendar": "Logo kalendáře",

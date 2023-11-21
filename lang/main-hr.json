@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj poveznicu za sastanak",
-        "confirmAddLink": "Želiš li dodati Jitsi poveznicu ovom događaju?",
+        "confirmAddLink": "Želiš li dodati DE poveznicu ovom događaju?",
         "error": {
             "appConfiguration": "Integracija kalendara nije ispravno konfigurirana.",
             "generic": "Došlo je do greške. Provjeri postavke kalendara ili pokušaj aktualizirati kalendar.",
@@ -444,7 +444,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dolazni poziv",
         "decline": "Odbij",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od DE Meet",
         "videoCallTitle": "Dolazni videopoziv"
     },
     "info": {
@@ -500,7 +500,7 @@
         "searchPlaceholder": "Sudionik ili broj telefona",
         "send": "Pošalji"
     },
-    "jitsiHome": "{{logo}} Logotip, poveznice na početnu web stranicu",
+    "DEHome": "{{logo}} Logotip, poveznice na početnu web stranicu",
     "keyboardShortcuts": {
         "focusLocal": "Postavi fokus na tvoj video",
         "focusRemote": "Postavi fokus na video druge osobe",
@@ -695,7 +695,7 @@
         "noiseSuppressionFailedTitle": "Nauspjelo pokretanje suzbijanja šumova",
         "noiseSuppressionNoTrackDescription": "Najprije isključi zvuk tvog mikrofona.",
         "noiseSuppressionStereoDescription": "Suzbijanja šumova stereo zvuka trenutačno nije podržano.",
-        "oldElectronClientDescription1": "Čini se da koristiš staru verziju klijenta Jitsi Meet koja ima poznate sigurnosne probleme. Obavezno aktualiziraj na našu ",
+        "oldElectronClientDescription1": "Čini se da koristiš staru verziju klijenta DE Meet koja ima poznate sigurnosne probleme. Obavezno aktualiziraj na našu ",
         "oldElectronClientDescription2": "najnoviju verziju",
         "oldElectronClientDescription3": " sada!",
         "participantWantsToJoin": "Želi se pridružiti sastanku",
@@ -1338,15 +1338,15 @@
         "go": "KRENI",
         "goSmall": "KRENI",
         "headerSubtitle": "Sigurni sastanci viskoke kvalitete",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "informacije zvanih brojeva",
-        "jitsiOnMobile": "Jitsi na mobilnim uređajima – preuzmi naše aplikacije i započni sastanak od kuda god želiš",
+        "DEOnMobile": "DE na mobilnim uređajima – preuzmi naše aplikacije i započni sastanak od kuda god želiš",
         "join": "STVORI/PRIDRUŽI SE",
         "logo": {
             "calendar": "Logotip kalendara",
             "desktopPreviewThumbnail": "Minijatura pregleda radne površine",
             "googleLogo": "Google logotip",
-            "logoDeepLinking": "Jitsi meet logotip",
+            "logoDeepLinking": "DE meet logotip",
             "microsoftLogo": "Microsoft logotip",
             "policyLogo": "Logotip politike"
         },

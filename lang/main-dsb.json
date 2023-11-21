@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "link za konferencu pśidaś",
-        "confirmAddLink": "Cośo jitsi-link k tomu terminoju pśidaś?",
+        "confirmAddLink": "Cośo DE-link k tomu terminoju pśidaś?",
         "error": {
             "appConfiguration": "Integracija kalendarja njejo pšawje konfigurěrowana.",
             "generic": "Zmólenje. Pśespytujśo nastajenje kalendarja a wopytajśo se wótnowotki pśizjawiś",
@@ -446,7 +446,7 @@
         "answer": "wótegroniś",
         "audioCallTitle": "pśiźecy telefonat",
         "decline": "OK",
-        "productLabel": "wót Jitsi Meet",
+        "productLabel": "wót DE Meet",
         "videoCallTitle": "pśiźecy wideo-tefonat"
     },
     "info": {
@@ -502,7 +502,7 @@
         "searchPlaceholder": "wobźělnik abo telefonowy numer",
         "send": "wótpósłaś"
     },
-    "jitsiHome": "{{logo}} logo z linkom k homepage",
+    "DEHome": "{{logo}} logo z linkom k homepage",
     "keyboardShortcuts": {
         "focusLocal": "lokalny wideo fokusěrowaś",
         "focusRemote": "na wideo drugego wobźělnika fokusěrowaś",
@@ -698,7 +698,7 @@
         "noiseSuppressionFailedTitle": "Pódušenje šumjenja njejo mógło se startowaś.",
         "noiseSuppressionNoTrackDescription": "Aktiwěrujśo nejpjerwjej mikrofon.",
         "noiseSuppressionStereoDescription": "Funkcija pódušenja šumjenja njepódpěra tuchylu žeden stereo-zuk.",
-        "oldElectronClientDescription1": "Zda se, až wužywaśo staru wersiju jitsi-meet-clienta. Wóna ga ma znate słabosći. Togodla aktualizěrujśo ju na našu ",
+        "oldElectronClientDescription1": "Zda se, až wužywaśo staru wersiju DE-meet-clienta. Wóna ga ma znate słabosći. Togodla aktualizěrujśo ju na našu ",
         "oldElectronClientDescription2": "aktuelnu wersiju",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "co se wobźěliś na konferency",
@@ -1344,15 +1344,15 @@
         "go": "dalej",
         "goSmall": "dalej",
         "headerSubtitle": "Wěste a wusokokwalitatiwne konference",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "informacije",
-        "jitsiOnMobile": "Jitsi pśecej pódla – ześěńśo sebje našu aplikaciju a startujśo konference wšuźi, źož rowno sćo",
+        "DEOnMobile": "DE pśecej pódla – ześěńśo sebje našu aplikaciju a startujśo konference wšuźi, źož rowno sćo",
         "join": "ŽAŁOŽYŚ / PŚISTUPIŚ",
         "logo": {
             "calendar": "logo kalendarja",
             "desktopPreviewThumbnail": "naglěd desktopa ako miniatura",
             "googleLogo": "logo Google",
-            "logoDeepLinking": "logo Jitsi Meet",
+            "logoDeepLinking": "logo DE Meet",
             "microsoftLogo": "logo Microsoft",
             "policyLogo": "logo za směrnice"
         },

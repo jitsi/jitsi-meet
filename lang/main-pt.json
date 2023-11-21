@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
-        "confirmAddLink": "Gostaria de adicionar um link do Jitsi a esse evento?",
+        "confirmAddLink": "Gostaria de adicionar um link do DE a esse evento?",
         "error": {
             "appConfiguration": "A integração com calendário não está configurada adequadamente.",
             "generic": "Ocorreu um erro. Verifique as configurações de calendário ou tente atualizar o calendário.",
@@ -451,7 +451,7 @@
         "token": "token",
         "tokenAuthFailed": "Desculpe, não está autorizado a juntar-se a esta chamada.",
         "tokenAuthFailedReason": {
-            "audInvalid": "Valor `aud` inválido. Deveria ser `jitsi`.",
+            "audInvalid": "Valor `aud` inválido. Deveria ser `DE`.",
             "contextNotFound": "O objeto `context` está em falta na carga útil.",
             "expInvalid": "Valor `exp` inválido.",
             "featureInvalid": "Funcionalidade inválida: {{feature}}, muito provavelmente ainda não implementada.",
@@ -523,7 +523,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Recusar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do DE Meet",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -580,7 +580,7 @@
         "searchPlaceholder": "Participante ou nº de telefone",
         "send": "Enviar"
     },
-    "jitsiHome": "Logo de {{logo}}, redireciona para página inicial",
+    "DEHome": "Logo de {{logo}}, redireciona para página inicial",
     "keyboardShortcuts": {
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
@@ -733,7 +733,7 @@
         "dataChannelClosed": "Deficiência na qualidade do vídeo",
         "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
         "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
-        "disabledIframeSecondary": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Por favor, use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
+        "disabledIframeSecondary": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Por favor, use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>DE as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
         "dontRemindMe": "Não me lembre",
@@ -781,7 +781,7 @@
         "noiseSuppressionDesktopAudioDescription": "A supressão de ruído não pode ser ativada enquanto se partilha o áudio do ambiente de trabalho, por favor desative-o e tente novamente.",
         "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído",
         "noiseSuppressionStereoDescription": "A supressão do ruído de áudio estéreo não é atualmente suportada.",
-        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
+        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente DE Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
         "participantWantsToJoin": "Deseja juntar-se à reunião",
@@ -1489,15 +1489,15 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informações",
-        "jitsiOnMobile": "Jitsi em dispositivos móveis – descarregue as nossas aplicações e inicie uma reunião em qualquer lugar",
+        "DEOnMobile": "DE em dispositivos móveis – descarregue as nossas aplicações e inicie uma reunião em qualquer lugar",
         "join": "CRIAR / ENTRAR",
         "logo": {
             "calendar": "Logo do Calendário",
             "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
             "googleLogo": "Logo do Google",
-            "logoDeepLinking": "Logo do Jitsi Meet",
+            "logoDeepLinking": "Logo do DE Meet",
             "microsoftLogo": "Logo da Microsoft",
             "policyLogo": "Logo da Política de Privacidade"
         },

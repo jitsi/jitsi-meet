@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj povezavo na srečanje",
-        "confirmAddLink": "Ali želite dodati Jitsi povezavo za ta dogodek?",
+        "confirmAddLink": "Ali želite dodati DE povezavo za ta dogodek?",
         "error": {
             "appConfiguration": "Integracija koledarja ni pravilno nastavljena.",
             "generic": "Prišlo je do napake. Prosimo preverite nastavitve svojega koledarja ali poskusite koledar osvežiti.",
@@ -391,7 +391,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dohodni klic",
         "decline": "Zavrni",
-        "productLabel": "iz Jitsi Meet",
+        "productLabel": "iz DE Meet",
         "videoCallTitle": "Dohodni video klic"
     },
     "info": {
@@ -445,7 +445,7 @@
         "searchPlaceholder": "Udeleženec ali telefonska številka",
         "send": "Pošlji"
     },
-    "jitsiHome": "{{logo}} Logo, povezava do domače strani",
+    "DEHome": "{{logo}} Logo, povezava do domače strani",
     "keyboardShortcuts": {
         "focusLocal": "Fokus na vaš video",
         "focusRemote": "Fokus na video drugega udeleženca",
@@ -608,7 +608,7 @@
         "newDeviceAction": "Uporabi",
         "newDeviceAudioTitle": "Zaznana je bila nova zvočna naprava",
         "newDeviceCameraTitle": "Zaznana je bila nova kamera",
-        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije Jitsi Meet, ki ima varnostne ranljivosti. Prosimo, naložite si ",
+        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije DE Meet, ki ima varnostne ranljivosti. Prosimo, naložite si ",
         "oldElectronClientDescription2": "zadnjo verzijo.",
         "oldElectronClientDescription3": " zdaj!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) je odstranil drug udeleženec srečanja",
@@ -1142,15 +1142,15 @@
         "go": "POJDI",
         "goSmall": "POJDI",
         "headerSubtitle": "Varni in kvalitetni sestanki",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informacije",
-        "jitsiOnMobile": "Jitsi na telefonih – prenesi aplikacijo in začni sestanek od kjerkoli",
+        "DEOnMobile": "DE na telefonih – prenesi aplikacijo in začni sestanek od kjerkoli",
         "join": "PRIDRUŽI SE",
         "logo": {
             "calendar": "Logo koledarja",
             "desktopPreviewThumbnail": "Sličica deljenja zaslona",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "DE meet logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Logo politike"
         },

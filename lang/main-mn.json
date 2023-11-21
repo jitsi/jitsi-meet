@@ -525,7 +525,7 @@
         "searchPlaceholder": "Оролцогч эсвэл утасны дугаар",
         "send": "Илгээх"
     },
-    "jitsiHome": "{{logo}} Logo, links to  Homepage",
+    "DEHome": "{{logo}} Logo, links to  Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Өөрийн видеог үзэх",
         "focusRemote": "Өөр хүний видеог үзэх",
@@ -723,7 +723,7 @@
         "noiseSuppressionFailedTitle": "Чимээ намсгах амжилтгүй",
         "noiseSuppressionNoTrackDescription": "Эхлээд микрофоны дуугаа нээнэ үү.",
         "noiseSuppressionStereoDescription": "Одоогоор стерео дууны чимээг намсгах боломжгүй.",
-        "oldElectronClientDescription1": "Та Jitsi Meet-ийг хуучирсан хувибарыг ашиглаж байгаа тул аюулгүй байдлаа бүрэн хангаагүй байх эрсдэлтэй. Шинэ хувилбарыг татсан эсэхээ шалгаарай ",
+        "oldElectronClientDescription1": "Та DE Meet-ийг хуучирсан хувибарыг ашиглаж байгаа тул аюулгүй байдлаа бүрэн хангаагүй байх эрсдэлтэй. Шинэ хувилбарыг татсан эсэхээ шалгаарай ",
         "oldElectronClientDescription2": "сүүлийн хувилбар",
         "oldElectronClientDescription3": " яг одоо!",
         "participantWantsToJoin": "Уулзалтанд орохыг хүсч байна",
@@ -1407,15 +1407,15 @@
         "go": "OK",
         "goSmall": "OK",
         "headerSubtitle": "Найдвартай, чанартай цахим уулзалт",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Мэдээлэл",
-        "jitsiOnMobile": "Jitsi on mobile – бидний аппыг татаад уулзалтанд хаанаас ч оролцоорой.",
+        "DEOnMobile": "DE on mobile – бидний аппыг татаад уулзалтанд хаанаас ч оролцоорой.",
         "join": "ҮҮСГЭХ / НЭГДЭХ",
         "logo": {
             "calendar": "Хуанли лого",
             "desktopPreviewThumbnail": "Desktop preview thumbnail",
             "googleLogo": "Google лого",
-            "logoDeepLinking": "Jitsi meet лого",
+            "logoDeepLinking": "DE meet лого",
             "microsoftLogo": "Microsoft лого",
             "policyLogo": "Policy лого"
         },

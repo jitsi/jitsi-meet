@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Shtoni një lidhje takimi",
-        "confirmAddLink": "Doni të shtohet një lidhje Jitsi te kjo veprimtari?",
+        "confirmAddLink": "Doni të shtohet një lidhje DE te kjo veprimtari?",
         "error": {
             "appConfiguration": "Integrimi i kalendarëve s’është formësuar si duhet.",
             "generic": "Ndodhi një gabim. Ju lutemi, kontrolloni rregullimet për kalendarin tuaj, ose provoni të rifreskoni kalendarin.",
@@ -465,7 +465,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga DE Meet",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -521,7 +521,7 @@
         "searchPlaceholder": "Pjesëmarrës ose numër telefoni",
         "send": "Dërgoje"
     },
-    "jitsiHome": "Stemë {{logo}}, lidhje për te Faqja Hyrëse",
+    "DEHome": "Stemë {{logo}}, lidhje për te Faqja Hyrëse",
     "keyboardShortcuts": {
         "focusLocal": "Fokusi te videoja juaj",
         "focusRemote": "Fokusi te videoja e një personi tjetër",
@@ -717,7 +717,7 @@
         "noiseSuppressionFailedTitle": "S’u arrit të nisej mbytja e zhurmave",
         "noiseSuppressionNoTrackDescription": "Ju lutemi, së pari, çheshtoni mikrofonin tuaj.",
         "noiseSuppressionStereoDescription": "Aktualisht nuk mbulohet mbytje zhurmash audioje stereo.",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit DE Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!",
         "participantWantsToJoin": "Dëshiron të hyjë në takim",
@@ -1370,15 +1370,15 @@
         "go": "SHKO",
         "goSmall": "SHKO",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Hollësi për t’i rënë numrit",
-        "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
+        "DEOnMobile": "DE në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
         "join": "KRIJONI / MERRNI PJESË",
         "logo": {
             "calendar": "Stemë kalendari",
             "desktopPreviewThumbnail": "Miniaturë paraparjeje desktopi",
             "googleLogo": "Stemë Google-i",
-            "logoDeepLinking": "Stemë “Jitsi meet”",
+            "logoDeepLinking": "Stemë “DE meet”",
             "microsoftLogo": "Stemë Microsoft-i",
             "policyLogo": "Stemë Rregullash"
         },

@@ -654,9 +654,9 @@ export function getShareInfoText(state: IReduxState, inviteUrl: string, useHtml?
                         = `<a href="${dialInfoPageUrl}">${dialInfoPageUrl}</a>`;
                 }
 
-                infoText += i18next.t('share.dialInfoText', {
+               /* infoText += i18next.t('share.dialInfoText', {
                     defaultDialInNumber,
-                    dialInfoPageUrl });
+                    dialInfoPageUrl });*/
 
                 return infoText;
             });

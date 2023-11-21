@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligòngiu a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligòngiu de DE a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",
@@ -444,7 +444,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae DE Meet",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -500,7 +500,7 @@
         "searchPlaceholder": "Partetzipante o nùmeru de telèfonu",
         "send": "Imbia"
     },
-    "jitsiHome": "{{logo}} Logo, ligòngios a sa pàgina printzipale",
+    "DEHome": "{{logo}} Logo, ligòngios a sa pàgina printzipale",
     "keyboardShortcuts": {
         "focusLocal": "Ammustra su vìdeu tuo",
         "focusRemote": "Ammustra su vìdeu de s'àtera persone",
@@ -697,7 +697,7 @@
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura de abbolotu",
         "noiseSuppressionNoTrackDescription": "Ativa prima su telèfonu tuo.",
         "noiseSuppressionStereoDescription": "Sa limpiadura de abbolotu de àudio stereo no est suportada.",
-        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
+        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de DE Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
         "participantWantsToJoin": "Bolet intrare a sa riunione",
@@ -1345,15 +1345,15 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informatzione pro sa mutida",
-        "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
+        "DEOnMobile": "DE pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",
         "logo": {
             "calendar": "Icona de calendàriu",
             "desktopPreviewThumbnail": "Miniadura de previsualizatzione de iscrivania",
             "googleLogo": "Icona de Google",
-            "logoDeepLinking": "Icona de Jitsi meet",
+            "logoDeepLinking": "Icona de DE meet",
             "microsoftLogo": "Icona de Microsoft",
             "policyLogo": "Polìtica de iconas"
         },

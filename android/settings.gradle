@@ -1,4 +1,4 @@
-rootProject.name = 'jitsi-meet'
+rootProject.name = 'de-meet'
 
 include ':app', ':sdk'
 includeBuild('../node_modules/react-native-gradle-plugin')

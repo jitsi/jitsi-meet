@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "मीटिंगचा दुवा जोडा",
-        "confirmAddLink": "आपण या कार्यक्रमास एक Jitsi  दुवा जोडू इच्छिता?",
+        "confirmAddLink": "आपण या कार्यक्रमास एक DE  दुवा जोडू इच्छिता?",
         "error": {
             "appConfiguration": "कॅलेंडर समाकलन योग्यरित्या कॉन्फिगर केलेले नाही.",
             "generic": "त्रुटी आढळली आहे. कृपया आपल्या कॅलेंडर सेटिंग्ज तपासा किंवा कॅलेंडर रीफ्रेश करा.",
@@ -312,7 +312,7 @@
         "answer": "उत्तर",
         "audioCallTitle": " कॉल येत आहे",
         "decline": "काढून टाकणे",
-        "productLabel": "Jitsi Meet पासून",
+        "productLabel": "DE Meet पासून",
         "videoCallTitle": "येणारा व्हिडिओ कॉल"
     },
     "info": {

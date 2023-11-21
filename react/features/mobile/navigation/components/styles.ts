@@ -54,7 +54,8 @@ export const navigationStyles = {
 
     headerNavigationButtonIcon: {
         ...headerNavigationButton,
-        padding: BaseTheme.spacing[2]
+        padding: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[2]
     },
 
     headerNavigationButtonDisabled: {

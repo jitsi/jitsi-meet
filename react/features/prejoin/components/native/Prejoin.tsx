@@ -182,7 +182,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 {
                     showDisplayNameInput && <Input
                         customStyles = {{ input: styles.customInput }}
-                        disabled = { isDisplayNameReadonly }
+                        disabled = { true }
                         error = { showDisplayNameError }
                         onChange = { onChangeDisplayName }
                         placeholder = { t('dialog.enterDisplayName') }

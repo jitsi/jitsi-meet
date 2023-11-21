@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj odnośnik do spotkania",
-        "confirmAddLink": "Czy chcesz dodać odnośnik Jitsi do tego wydarzenia?",
+        "confirmAddLink": "Czy chcesz dodać odnośnik DE do tego wydarzenia?",
         "error": {
             "appConfiguration": "Integracja z kalendarzem nie jest skonfigurowana poprawnie.",
             "generic": "Wystąpił problem. Sprawdź ustawienia kalendarza lub spróbuj odświeżyć kalendarz.",
@@ -469,7 +469,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z DE Meet",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -525,7 +525,7 @@
         "searchPlaceholder": "Uczestnik lub numer telefonu",
         "send": "Wyślij"
     },
-    "jitsiHome": "{{logo}} Logo, link do strony głównej",
+    "DEHome": "{{logo}} Logo, link do strony głównej",
     "keyboardShortcuts": {
         "focusLocal": "Powiększ wideo",
         "focusRemote": "Skup na obrazie innej osoby",
@@ -724,7 +724,7 @@
         "noiseSuppressionFailedTitle": "Nie udało się uruchomić tłumienia szumów",
         "noiseSuppressionNoTrackDescription": "Najpierw wyłącz wyciszenie mikrofonu.",
         "noiseSuppressionStereoDescription": "Tłumienie szumów dźwięku stereo nie jest obecnie obsługiwane.",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta DE Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!",
         "participantWantsToJoin": "Chce dołączyć do spotkania",
@@ -1422,15 +1422,15 @@
         "go": "Dalej",
         "goSmall": "Dalej",
         "headerSubtitle": "Bezpieczne i wysokiej jakości spotkania",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Informacje",
-        "jitsiOnMobile": "Jitsi mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
+        "DEOnMobile": "DE mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
         "join": "Utwórz / Dołącz",
         "logo": {
             "calendar": "Logo kalendarza",
             "desktopPreviewThumbnail": "Miniatura podglądu pulpitu",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo DE meet",
             "microsoftLogo": "Logo Microsoftu",
             "policyLogo": "Logo polityki"
         },

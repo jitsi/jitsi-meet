@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Lägg till en möteslänk",
-        "confirmAddLink": "Vill du lägga till en Jitsi-länk i händelsen?",
+        "confirmAddLink": "Vill du lägga till en DE-länk i händelsen?",
         "error": {
             "appConfiguration": "Kalenderintegrationen är inte rätt inställd.",
             "generic": "Ett fel har inträffat. Kontrollera dina kalenderinställningar eller uppdatera kalendern.",
@@ -469,7 +469,7 @@
         "answer": "Svara",
         "audioCallTitle": "Inkommande samtal",
         "decline": "Avvisa",
-        "productLabel": "från Jitsi Meet",
+        "productLabel": "från DE Meet",
         "videoCallTitle": "Inkommande videosamtal"
     },
     "info": {
@@ -525,7 +525,7 @@
         "searchPlaceholder": "Deltagare eller telefonnummer",
         "send": "Skicka"
     },
-    "jitsiHome": "{{logo}} Logotyp, länkar till startsidan",
+    "DEHome": "{{logo}} Logotyp, länkar till startsidan",
     "keyboardShortcuts": {
         "focusLocal": "Sätt fokus på din videobild",
         "focusRemote": "Fokusera på någon annans video",
@@ -725,7 +725,7 @@
         "noiseSuppressionFailedTitle": "Det gick inte att starta brusreducering",
         "noiseSuppressionNoTrackDescription": "Slå på mikrofonen först.",
         "noiseSuppressionStereoDescription": "Brusreducering i stereoljud stöds för närvarande inte.",
-        "oldElectronClientDescription1": "Den version av Jitsi meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
+        "oldElectronClientDescription1": "Den version av DE meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
         "oldElectronClientDescription2": "senast build",
         "oldElectronClientDescription3": "nu!",
         "participantWantsToJoin": "Vill vara med på mötet",
@@ -1419,15 +1419,15 @@
         "go": "KÖR",
         "goSmall": "BÖRJA",
         "headerSubtitle": "Säkra möten med hög kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "DE Meet",
         "info": "Info",
-        "jitsiOnMobile": "Jitsi på mobilen - ladda ner våra appar och starta ett möte var som helst",
+        "DEOnMobile": "DE på mobilen - ladda ner våra appar och starta ett möte var som helst",
         "join": "Gå med",
         "logo": {
             "calendar": "Kalender logotyp",
             "desktopPreviewThumbnail": "Miniatyrbild av skrivbordsförhandsgranskning",
             "googleLogo": "Google logotyp",
-            "logoDeepLinking": "Jitsi logotyp",
+            "logoDeepLinking": "DE logotyp",
             "microsoftLogo": "Microsoft logotyp",
             "policyLogo": "Policy-logotyp"
         },

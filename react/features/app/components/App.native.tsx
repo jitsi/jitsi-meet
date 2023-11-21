@@ -7,7 +7,10 @@ import SplashScreen from 'react-native-splash-screen';
 import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import DialogContainer from '../../base/dialog/components/native/DialogContainer';
 import { updateFlags } from '../../base/flags/actions';
-import { CALL_INTEGRATION_ENABLED } from '../../base/flags/constants';
+import {
+    CALL_INTEGRATION_ENABLED,
+    INIT_LANGUAGE
+} from '../../base/flags/constants';
 import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actions';
 import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
 import { updateSettings } from '../../base/settings/actions';
@@ -20,6 +23,7 @@ import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
 // Register middlewares and reducers.
 import '../middlewares.native';
 import '../reducers.native';
+import i18next from "../../base/i18n/i18next";
 
 declare let __DEV__: any;
 
@@ -167,6 +171,9 @@ export class App extends AbstractApp<IProps> {
         // Update settings with feature-flag.
         if (typeof callIntegrationEnabled !== 'undefined') {
             dispatch?.(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+        }
+        if(typeof flags!=='undefined' && flags[INIT_LANGUAGE]!='undefined'){
+            i18next.changeLanguage(flags[INIT_LANGUAGE])
         }
     }
 
