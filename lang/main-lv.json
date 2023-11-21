@@ -418,7 +418,7 @@
         "sendPrivateMessageTitle": "Vēlaties nosūtīt privātu ziņu?",
         "serviceUnavailable": "Pakalpojums nav pieejams",
         "sessTerminated": "Zvans pārtraukts",
-        "sessTerminatedReason": "Sapulce ir pārtraukta",
+        "sessTerminatedReason": "Sapulce beidzās",
         "sessionRestarted": "Zvans tika pārstartēts savienojuma problēmas dēļ.",
         "shareAudio": "Turpināt",
         "shareAudioAltText": "lai kopīgotu vajadzīgo saturu, dodieties uz \"Pārlūka Cilnis\", atlasiet saturu, aktivizējiet atzīmi \"kopīgot audio\" un pēc tam noklikšķiniet uz pogas \"kopīgot\"",
