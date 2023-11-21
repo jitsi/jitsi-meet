@@ -1,5 +1,4 @@
 import React from 'react';
-import { WithTranslation } from 'react-i18next';
 import {
     ScrollView,
     Text,
