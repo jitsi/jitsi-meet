@@ -1,6 +1,6 @@
 package org.jitsi.meet.sdk;
 
-import android.app.Notification;
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -24,9 +24,9 @@ class JMOngoingConferenceModule
     @ReactMethod
     public void launch() {
         Context context = getReactApplicationContext();
-        Context activityContext = context.getCurrentActivity();
+        Activity currentActivity = getCurrentActivity();
 
-        JitsiMeetOngoingConferenceService.launch(context, activityContext);
+        JitsiMeetOngoingConferenceService.launch(context, currentActivity);
     }
 
     @ReactMethod
