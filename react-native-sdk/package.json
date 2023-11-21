@@ -1,6 +1,6 @@
 {
     "name": "@jitsi/react-native-sdk",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "React Native SDK for Jitsi Meet.",
     "main": "index.tsx",
     "license": "Apache-2.0",
@@ -73,7 +73,7 @@
         "react-native-pager-view": "6.2.0",
         "react-native-paper": "5.10.3",
         "react-native-performance": "5.0.0",
-        "react-native-orientation-locker": "https://github.com/jitsi/react-native-orientation-locker/releases/download/v1.5.0-jitsi1/react-native-orientation-locker-1.5.0.tgz",
+        "react-native-orientation-locker": "1.6.0",
         "react-native-safe-area-context": "4.7.1",
         "react-native-screens": "3.24.0",
         "react-native-sound": "0.11.2",
