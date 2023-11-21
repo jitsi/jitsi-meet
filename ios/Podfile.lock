@@ -373,7 +373,7 @@ PODS:
     - React
   - react-native-netinfo (11.1.0):
     - React-Core
-  - react-native-orientation-locker (1.5.0):
+  - react-native-orientation-locker (1.6.0):
     - React-Core
   - react-native-pager-view (6.2.0):
     - React-Core
@@ -752,7 +752,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 3aa5637c18834966e0c932de8ae1ae56fea20a97
-  react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
+  react-native-orientation-locker: 4409c5b12b65f942e75449872b4f078b6f27af81
   react-native-pager-view: 0ccb8bf60e2ebd38b1f3669fa3650ecce81db2df
   react-native-performance: 47ac22ebf2aa24f324a96a5825581f6ce18c09e8
   react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
