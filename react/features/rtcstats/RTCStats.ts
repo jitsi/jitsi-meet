@@ -70,6 +70,16 @@ class RTCStats {
     }
 
     /**
+     * Send identity data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} identityData - The object that holds the identity data.
+     * @returns {void}
+     */
+    sendIdentityData(identityData: Object) {
+        JitsiMeetJS.rtcstats.sendIdentityEntry(identityData);
+    }
+
+    /**
      * Send the timestamp of the start of the conference, the data will be processed by the rtcstats-server
      * and saved in the dump file.
      *
