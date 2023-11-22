@@ -56,7 +56,7 @@ const ConferenceSection = () => {
     }, [ dispatch, newServerURL ]);
 
     const processServerURL = useCallback(() => {
-        const normalizedURL = normalizeUserInputURL(newServerURL ?? '');
+        const normalizedURL = normalizeUserInputURL(newServerURL);
 
         onChangeServerURL(normalizedURL);
     }, [ newServerURL ]);
