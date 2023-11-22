@@ -38,7 +38,6 @@
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
-        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
     }];
 
   [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
@@ -126,7 +125,7 @@
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application
   supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return [[JitsiMeet sharedInstance] application:application 
+    return [[JitsiMeet sharedInstance] application:application
            supportedInterfaceOrientationsForWindow:window];
 }
 
