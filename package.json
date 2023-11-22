@@ -83,7 +83,6 @@
     "react-native": "0.69.12",
     "react-native-background-timer": "2.4.1",
     "react-native-calendar-events": "2.2.0",
-    "react-native-callstats": "3.73.22",
     "react-native-default-preference": "1.4.4",
     "react-native-device-info": "10.9.0",
     "react-native-dialog": "https://github.com/jitsi/react-native-dialog/releases/download/v9.2.2-jitsi.1/react-native-dialog-9.2.2.tgz",
