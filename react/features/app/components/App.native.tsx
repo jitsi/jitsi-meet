@@ -21,6 +21,7 @@ import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
 import '../middlewares.native';
 import '../reducers.native';
 
+
 declare let __DEV__: any;
 
 const { AppInfo } = NativeModules;
@@ -110,7 +111,7 @@ export class App extends AbstractApp<IProps> {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store ?? {};
-        const { flags = {} } = this.props;
+        const { flags = {}, url, userInfo } = this.props;
         let callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         // CallKit does not work on the simulator, make sure we disable it.
@@ -153,16 +154,18 @@ export class App extends AbstractApp<IProps> {
         await rootNavigationReady;
 
         // Update specified server URL.
-        if (typeof this.props.url !== 'undefined') {
+        if (typeof url !== 'undefined') {
+
             // @ts-ignore
-            const { serverURL } = this.props.url;
+            const { serverURL } = url;
 
             if (typeof serverURL !== 'undefined') {
                 dispatch?.(updateSettings({ serverURL }));
             }
         }
 
-        dispatch?.(updateSettings(this.props.userInfo || {}));
+        // @ts-ignore
+        dispatch?.(updateSettings(userInfo || {}));
 
         // Update settings with feature-flag.
         if (typeof callIntegrationEnabled !== 'undefined') {
