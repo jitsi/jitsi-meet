@@ -78,6 +78,7 @@ const ConferenceSection = () => {
                 editable = { serverURLChangeEnabled }
                 keyboardType = { 'url' }
                 label = { t('settingsView.serverURL') }
+                onBlur = { processServerURL }
                 onChange = { onChangeServerURL }
                 placeholder = { defaultServerURL }
                 textContentType = { 'URL' } // iOS only
