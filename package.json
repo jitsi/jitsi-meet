@@ -181,5 +181,5 @@
     "start": "make dev",
     "android": "react-native run-android"
   },
-  "webAppVersion": "23.11.1.1"
+  "webAppVersion": "23.11.1.2"
 }
