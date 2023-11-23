@@ -12,7 +12,6 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
-import { openSettingsDialog, SETTINGS_TABS } from '../settings';
 
 import {
     clearNotifications,
@@ -21,7 +20,8 @@ import {
     showParticipantJoinedNotification
 } from './actions';
 import { NOTIFICATION_TIMEOUT } from './constants';
-import { joinLeaveNotificationsDisabled } from './functions';
+import { showHideSelfViewNotification } from './functions';
+import { joinLeaveNotificationsDisabled } from './functions.any';
 
 declare var interfaceConfig: Object;
 
@@ -37,14 +37,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const { disableSelfView } = getState()['features/base/settings'];
 
-        if (disableSelfView) {
-            dispatch(showNotification({
-                titleKey: 'notify.selfViewTitle',
-                customActionNameKey: [ 'settings.title' ],
-                customActionHandler: () =>
-                    dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-            }, 5000));
+        if (navigator.product !== 'ReactNative') {
+            showHideSelfViewNotification(disableSelfView, dispatch);
         }
+
         break;
     }
     case PARTICIPANT_JOINED: {

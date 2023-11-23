@@ -20,6 +20,7 @@ import { playSound as playSoundAction } from '../../base/sounds';
 import { sleep } from '../../base/util/helpers';
 import { showErrorNotification as showErrorNotificationAction } from '../../notifications';
 import {
+    overwriteLocalParticipantWithJitsiDetails as overwriteLocalParticipantWithJitsiDetailsAction,
     setJaneAppointmentDetails as setJaneAppointmentDetailsAction,
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
@@ -35,9 +36,6 @@ import {
 import {
     WAITING_AREA_NOTIFICATION_SOUND_ID
 } from '../sound';
-import {
-    overwriteLocalParticipantWithJitsiDetails,
-} from '../../base/jwt/functions';
 
 
 
@@ -53,7 +51,8 @@ type Props = {
     remoteParticipantsStatuses: any,
     showErrorNotification: Function,
     redirectToWelcomePage: Function,
-    setJaneAppointmentDetails: Function
+    setJaneAppointmentDetails: Function,
+    overwriteLocalParticipantWithJitsiDetails: Function
 };
 
 class SocketConnection extends Component<Props> {
@@ -186,7 +185,8 @@ class SocketConnection extends Component<Props> {
             updateRemoteParticipantsStatuses,
             setJaneWaitingAreaAuthState,
             showErrorNotification,
-            setJaneAppointmentDetails } = this.props;
+            setJaneAppointmentDetails,
+            overwriteLocalParticipantWithJitsiDetails } = this.props;
 
         try {
             // fetch data
@@ -280,6 +280,9 @@ function mapDispatchToProps(dispatch) {
         },
         setJaneAppointmentDetails(jitsiDetails) {
             dispatch(setJaneAppointmentDetailsAction(jitsiDetails));
+        },
+        overwriteLocalParticipantWithJitsiDetails(jitsiDetails){
+            dispatch(overwriteLocalParticipantWithJitsiDetailsAction(jitsiDetails))
         }
     };
 }

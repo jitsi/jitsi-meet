@@ -1,6 +1,5 @@
 // @flow
 /* eslint-disable require-jsdoc*/
-import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 import {
     Animated,
@@ -210,13 +209,12 @@ class PreCallMessage extends Component<Props, State> {
 }
 
 function _mapStateToProps(state) {
-    const { jwt } = state['features/base/jwt'];
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
     const participantType = getLocalParticipantType(state);
-    const jwtPayload = jwt && jwtDecode(jwt);
     const isWaitingAreaPageEnabled = isJaneWaitingAreaEnabled(state);
-    const appointmentStartAt = _.get(jwtPayload, 'context.start_at') || '';
+    const { janeAppointmentDetails } = state['features/jane-waiting-area'];
+    const appointmentStartAt = _.get(janeAppointmentDetails, 'start_at') || '';
     const showPreCallMessage = shouldShowPreCallMessage(state);
 
     return {
