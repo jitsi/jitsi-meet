@@ -96,8 +96,7 @@ function _maybeUpdateDeviceId({ dispatch, getState }: IStore, track: ITrack) {
                 cameraDeviceId: track.jitsiTrack.getDeviceId()
             }));
             logger.info(`switched local video device to: ${deviceId}`);
-        }
-        if (track.mediaType === MEDIA_TYPE.AUDIO && micDeviceId !== deviceId) {
+        } else if (track.mediaType === MEDIA_TYPE.AUDIO && micDeviceId !== deviceId) {
             console.log('NEW MIC', deviceId);
             dispatch(updateSettings({
                 micDeviceId: track.jitsiTrack.getDeviceId()
