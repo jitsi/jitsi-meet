@@ -337,7 +337,7 @@
         "lockRoom": "Adicionar reunião $t(lockRoomPasswordUppercase)",
         "lockTitle": "Bloqueio falhou",
         "login": "Entrar",
-        "loginQuestion": "",
+        "loginQuestion": "Deseja iniciar a sessão e finalizar a conferência?",
         "logoutQuestion": "Deseja encerrar a sessão e finalizar a conferência?",
         "logoutTitle": "Encerrar sessão",
         "maxUsersLimitReached": "O limite para o número máximo de participantes foi atingido. A conferência está cheia. Entre em contato com o proprietário da reunião ou tente novamente mais tarde!",
