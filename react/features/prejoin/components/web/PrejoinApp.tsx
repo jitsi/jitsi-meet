@@ -8,6 +8,7 @@ import { createPrejoinTracks } from '../../../base/tracks/functions.web';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../../base/ui/components/web/DialogContainer';
+import { setupInitialDevices } from '../../../conference/actions.web';
 import { initPrejoin, makePrecallTest } from '../../actions.web';
 
 import PrejoinThirdParty from './PrejoinThirdParty';
@@ -59,6 +60,7 @@ export default class PrejoinApp extends BaseApp<Props> {
             startWithVideoMuted
         }));
 
+        await dispatch?.(setupInitialDevices());
         const { tryCreateLocalTracks, errors } = createPrejoinTracks();
 
         const tracks = await tryCreateLocalTracks;
