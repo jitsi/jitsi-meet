@@ -1,7 +1,6 @@
 import '../analytics/middleware';
 import '../authentication/middleware';
 import '../av-moderation/middleware';
-import '../base/app/middleware';
 import '../base/conference/middleware';
 import '../base/config/middleware';
 import '../base/jwt/middleware';
