@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { configureInitialDevices, getAvailableDevices, updateDeviceList } from '../base/devices/actions.web';
+import { configureInitialDevices, getAvailableDevices } from '../base/devices/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
