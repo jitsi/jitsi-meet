@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -41,19 +42,19 @@ class RNOngoingNotification {
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    static void createOngoingConferenceNotificationChannel(Context activityContext) {
+    static void createOngoingConferenceNotificationChannel(Activity currentActivity) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
 
-        if (activityContext == null) {
+        if (currentActivity == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;
         }
 
         NotificationManager notificationManager
-            = (NotificationManager) activityContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
             = notificationManager.getNotificationChannel("JitsiOngoingConferenceChannel");
@@ -62,7 +63,7 @@ class RNOngoingNotification {
             return;
         }
 
-        channel = new NotificationChannel("JitsiOngoingConferenceChannel", activityContext.getString(R.string.ongoing_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel("JitsiOngoingConferenceChannel", currentActivity.getString(R.string.ongoing_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);

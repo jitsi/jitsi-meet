@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Link da reunião: {{url}}"
+        },
         "add": "Convidar",
         "addContacts": "Convide seus contatos",
         "contacts": "contatos",
@@ -39,6 +42,18 @@
     "audioOnly": {
         "audioOnly": "Largura de banda baixa"
     },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "Ex. 10000000 para 10 Mbps",
+        "assumedBandwidthBpsWarning": "Valores mais altos podem causar erros de rede.",
+        "customValue": "valor personalizado",
+        "customValueEffect": "para definir o valor de bps real",
+        "leaveEmpty": "deixar vazio",
+        "leaveEmptyEffect": "para permitir que estimativas assumam",
+        "possibleValues": "Valores possíveis",
+        "setAssumedBandwidthBps": "Banda presumida (bps)",
+        "title": "Configurações de banda",
+        "zeroEffect": "para desabilitar o vídeo"
+    },
     "breakoutRooms": {
         "actions": {
             "add": "Adicionar sala de apoio",
@@ -48,15 +63,22 @@
             "leaveBreakoutRoom": "Sair da sala de apoio",
             "more": "Mais",
             "remove": "Remover",
+            "rename": "Renomear",
+            "renameBreakoutRoom": "Renomear sala de apoio",
             "sendToBreakoutRoom": "Enviar participante para:"
         },
+        "breakoutList": "Lista de apoio",
+        "buttonLabel": "Salas de apoio",
         "defaultName": "Sala de apoio #{{index}}",
+        "hideParticipantList": "Ocultar lista de participantes",
         "mainRoom": "Sala principal",
         "notifications": {
             "joined": "Entrando na sala de apoio \"{{name}}\"",
             "joinedMainRoom": "Entrando na sala principal",
             "joinedTitle": "Salas de apoio"
-        }
+        },
+        "showParticipantList": "Exibir lista de participantes",
+        "title": "Salas de apoio"
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
@@ -239,9 +261,12 @@
         "Share": "Compartilhar",
         "Submit": "Enviar",
         "WaitForHostMsg": "A conferência ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
+        "WaitingForHostButton": "Aguardar por anfitrião",
         "WaitingForHostTitle": "Esperando o anfitrião...",
         "Yes": "Sim",
         "accessibilityLabel": {
+            "Cancel": "Cancelar (fechar janela)",
+            "Ok": "OK (salvar e fechar janela)",
             "close": "Fechar janela",
             "liveStreaming": "Transmissão ao vivo",
             "sharingTabs": "Opções de compartilhamento"
@@ -250,6 +275,8 @@
         "addMeetingNote": "Adicionar uma anotação para esta reunião",
         "addOptionalNote": "Adicionar uma anotação (opcional):",
         "allow": "Permitir",
+        "allowToggleCameraDialog": "Você permite que {{initiatorName}} possa alternar entre suas câmeras?",
+        "allowToggleCameraTitle": "Permitir alternar câmera?",
         "alreadySharedVideoMsg": "Outro participante já está compartilhando um vídeo. Esta conferência permite apenas um vídeo compartilhado por vez.",
         "alreadySharedVideoTitle": "Somente um vídeo compartilhado é permitido por vez",
         "applicationWindow": "Janela de aplicativo",
@@ -310,6 +337,7 @@
         "lockRoom": "Adicionar reunião $t(lockRoomPasswordUppercase)",
         "lockTitle": "Bloqueio falhou",
         "login": "Entrar",
+        "loginQuestion": "Deseja iniciar a sessão e finalizar a conferência?",
         "logoutQuestion": "Deseja encerrar a sessão e finalizar a conferência?",
         "logoutTitle": "Encerrar sessão",
         "maxUsersLimitReached": "O limite para o número máximo de participantes foi atingido. A conferência está cheia. Entre em contato com o proprietário da reunião ou tente novamente mais tarde!",
@@ -353,8 +381,6 @@
         "permissionCameraRequiredError": "É necessário permitir acesso à câmera para participar de reuniões com vídeo. Ative a permissão nas configurações",
         "permissionErrorTitle": "Permissão necessária",
         "permissionMicRequiredError": "É necessário permitir acesso ao microfone para participar de reuniões com áudio. Ative a permissão nas configurações",
-        "popupError": "Seu navegador está bloqueando janelas popup deste site. Habilite os popups nas configurações de segurança no seu navegador e tente novamente.",
-        "popupErrorTitle": "Popup bloqueado",
         "readMore": "mais...",
         "recentlyUsedObjects": "Seus objetos usados recentemente",
         "recording": "Gravando",
@@ -371,6 +397,8 @@
         "removePassword": "Remover $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Deseja remover seu vídeo compartilhado?",
         "removeSharedVideoTitle": "Remover vídeo compartilhado",
+        "renameBreakoutRoomLabel": "Nome da sala",
+        "renameBreakoutRoomTitle": "Renomear sala de apoio",
         "reservationError": "Erro de sistema de reserva",
         "reservationErrorMsg": "Código do erro: {{code}}, mensagem: {{msg}}",
         "retry": "Tentar novamente",
@@ -389,9 +417,11 @@
         "sendPrivateMessageOk": "Enviar em privado",
         "sendPrivateMessageTitle": "Enviar em privado?",
         "serviceUnavailable": "Serviço indisponível",
-        "sessTerminated": "Chamada terminada",
-        "sessionRestarted": "Chamada reiniciada pelo bridge",
+        "sessTerminated": "Chamada encerrada",
+        "sessTerminatedReason": "A chamada foi encerrada",
+        "sessionRestarted": "Chamada reiniciada devido a um erro de conexão.",
         "shareAudio": "Continuar",
+        "shareAudioAltText": "para compartilhar o conteúdo desejado, acesse \"Aba de navegador\", selecione o conteúdo, ative a caixa de \"compartilhar áudio\" e então clique no botão \"compartilhar\"",
         "shareAudioTitle": "Como compartilhar áudio",
         "shareAudioWarningD1": "você precisa parar o compartilhamento de tela antes de compartilhar seu áudio.",
         "shareAudioWarningD2": "você precisa reiniciar o compartilhamento de tela e selecionar a opção \"compartilhar áudio\".",
@@ -421,7 +451,25 @@
         "thankYou": "Obrigado por usar o {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Desculpe, você não está autorizado a entrar nesta chamada.",
+        "tokenAuthFailedReason": {
+            "audInvalid": "Valor `aud` inválido. Deveria ser `jitsi`.",
+            "contextNotFound": "O objeto `context` está faltando na carga.",
+            "expInvalid": "Valor `exp`inválido.",
+            "featureInvalid": "Recurso inválido: {{feature}}, possivelmente ainda não implementado.",
+            "featureValueInvalid": "Valor inválido para recurso: {{feature}}.",
+            "featuresNotFound": "O objeto `features` está faltando na carga.",
+            "headerNotFound": "Cabeçalho está faltando.",
+            "issInvalid": "Valor `iss` inválido. Deveria ser `chat`.",
+            "kidMismatch": "Key ID (kid) não coincide com o sub.",
+            "kidNotFound": "Key ID (kid) faltando.",
+            "nbfFuture": "O valor `nbf` está no futuro.",
+            "nbfInvalid": "Valor `nbf` inválido.",
+            "payloadNotFound": "Carga faltando.",
+            "tokenExpired": "O token está expirado."
+        },
         "tokenAuthFailedTitle": "Falha de autenticação",
+        "tokenAuthFailedWithReasons": "Desculpe, você não pode ingressar nesta chamada. Razões possíveis: {{reason}}",
+        "tokenAuthUnsupported": "Token da URL não é suportada.",
         "transcribing": "Transcrevendo",
         "unlockRoom": "Remove a reunião $t(lockRoomPassword)",
         "user": "Usuário",
@@ -435,6 +483,10 @@
         "viewUpgradeOptions": "Ver opções de atualização",
         "viewUpgradeOptionsContent": "Para obter acesso ilimitado a recursos premium tais como gravação, transcrição, streaming RTMP e muito mais, você precisa atualizar seu plano.",
         "viewUpgradeOptionsTitle": "Você descobriu um recurso premium!",
+        "whiteboardLimitContent": "Desculpe, o limite de usuários de quadro-branco simultâneos foi atingido.",
+        "whiteboardLimitReference": "Para mais informações por favor visite",
+        "whiteboardLimitReferenceUrl": "nosso website",
+        "whiteboardLimitTitle": "Restrição no uso do quadro-branco",
         "yourEntireScreen": "Toda sua tela"
     },
     "documentSharing": {
@@ -447,6 +499,9 @@
         "title": "Reunião em formato compacto"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Sua escolha: {{rating}}"
+        },
         "average": "Média",
         "bad": "Ruim",
         "detailsLabel": "Nos conte mais sobre isso.",
@@ -507,6 +562,7 @@
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Você atingiu o limite do seu plano.",
         "sip": "endereço SIP",
+        "sipAudioOnly": "Endereço apenas para áudio SIP",
         "title": "Compartilhar",
         "tooltip": "Compartilhar link e discagem para esta reunião",
         "upgradeOptions": "Por favor, verifique as opções de upgrade em"
@@ -613,13 +669,13 @@
         "knockingParticipantList": "Remover lista de participantes",
         "lobbyChatStartedNotification": "{{moderator}} iniciou uma conversa na sala de espera com {{attendee}}",
         "lobbyChatStartedTitle": "{{moderator}} iniciou uma conversa na sala de espera com você.",
+        "lobbyClosed": "A sala de espera foi fechada.",
         "nameField": "Informe seu nome",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} foi rejeitado por {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} foi aceito por {{originParticipantName}}",
         "notificationLobbyDisabled": "Sala de espera foi desabilitada por {{originParticipantName}}",
         "notificationLobbyEnabled": "Sala de espera foi habilitada por {{originParticipantName}}",
         "notificationTitle": "Sala de espera",
-        "passwordField": "Informe a senha da conferência",
         "passwordJoinButton": "Solicitar",
         "reject": "Rejeitar",
         "rejectAll": "Rejeitar todos",
@@ -651,9 +707,11 @@
         "participant": "Participante",
         "participantStats": "Estatísticas dos Participantes",
         "selectTabTitle": "🎥 Por favor selecione esta aba para gravar",
-        "sessionToken": "Token de Sessão",
+        "sessionToken": "Token de sessão",
         "start": "Iniciar gravação",
-        "stop": "Parar a Gravação",
+        "stop": "Parar a gravação",
+        "stopping": "Parando a gravação",
+        "wait": "Por favor aguarde enquanto salvamos sua gravação",
         "yes": "Sim"
     },
     "lockRoomPassword": "senha",
@@ -676,6 +734,7 @@
         "dataChannelClosed": "Qualidade do vídeo prejudicada",
         "dataChannelClosedDescription": "O canal da ponte foi desconectado, assim a qualidade do vídeo foi limitada a sua configuração mais baixa.",
         "disabledIframe": "Incorporação destina-se apenas a fins de demonstração, assim esta chamada será desconectada em {{timeout}} minutos.",
+        "disabledIframeSecondary": "Incorporação de {{domain}} é apenas destinado para fins de demonstração, então esta chamada será desconectada em {{timeout}} minutos. Por favor use o <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Exibir notificações para",
         "dontRemindMe": "Não me lembrar",
@@ -722,7 +781,6 @@
         "newDeviceCameraTitle": "Nova câmera detectada",
         "noiseSuppressionDesktopAudioDescription": "A supressão de ruído não pode ser habilitada enquanto compartilha o áudio da área de trabalho. Por favor desabilite e tente novamente.",
         "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído",
-        "noiseSuppressionNoTrackDescription": "Por favor ative o microfone antes.",
         "noiseSuppressionStereoDescription": "Supressão de ruído de áudio estéreo não é suportado no momento.",
         "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Jitsi Meet que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
         "oldElectronClientDescription2": "última versão",
@@ -752,7 +810,9 @@
         "videoUnmuteBlockedDescription": "A liberação da câmera e compartilhamento de tela foram temporariamente bloqueados devido a limites do sistema.",
         "videoUnmuteBlockedTitle": "Câmera e compartilhamento de tela bloqueados!",
         "viewLobby": "Ver sala de espera",
-        "waitingParticipants": "{{waitingParticipants}} pessoas"
+        "waitingParticipants": "{{waitingParticipants}} pessoas",
+        "whiteboardLimitDescription": "Por favor, salve seu progresso pois o limite de usuários logo será atingido e o quadro-branco será fechado.",
+        "whiteboardLimitTitle": "Uso do quadro-branco"
     },
     "participantsPane": {
         "actions": {
@@ -761,6 +821,7 @@
             "askUnmute": "Pedir para ativar som",
             "audioModeration": "Reativarem seus sons",
             "blockEveryoneMicCamera": "Bloquear microfone e câmera de todos",
+            "breakoutRooms": "Salas de apoio",
             "invite": "Convidar alguém",
             "moreModerationActions": "Mais opções de moderação",
             "moreModerationControls": "Mais controles de moderação",
@@ -937,7 +998,7 @@
         "limitNotificationDescriptionNative": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Geramos um link para sua gravação.",
-        "live": "AOVIVO",
+        "live": "AO VIVO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Você precisará avisá-los que a reunião está sendo gravada.",
         "localRecordingNoVideo": "O vídeo não está sendo gravado",
         "localRecordingStartWarning": "Por favor, certifique-se de ter parado a gravação antes de sair da reunião para garantir que será salva.",
@@ -1037,6 +1098,7 @@
         "alertOk": "OK",
         "alertTitle": "Atenção",
         "alertURLText": "A URL digitada do servidor é inválida",
+        "apply": "Aplicar",
         "buildInfoSection": "Informações de compilação",
         "conferenceSection": "Conferência",
         "disableCallIntegration": "Desativar integração de chamada nativa",
@@ -1047,12 +1109,14 @@
         "displayNamePlaceholderText": "Ex: João Silva",
         "email": "Email",
         "emailPlaceholderText": "email@exemplo.com.br",
+        "gavatarMessage": "Se seu email está associado com uma conta Gravatar, o usaremos para exibir sua foto de perfil.",
         "goTo": "Ir para",
         "header": "Configurações",
         "help": "Ajuda",
         "links": "Links",
         "privacy": "Privacidade",
         "profileSection": "Perfil",
+        "sdkVersion": "Versão do SDK",
         "serverURL": "URL do servidor",
         "showAdvanced": "Mostrar configurações avançadas",
         "startCarModeInLowBandwidthMode": "Iniciar modo carro em modo de banda baixa",
@@ -1104,7 +1168,7 @@
             "audioOnly": "Alternar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
-            "breakoutRoom": "Entrar/sair da sala de apoio",
+            "breakoutRooms": "Entrar/sair da sala de apoio",
             "callQuality": "Gerenciar qualidade do vídeo",
             "carmode": "Modo carro",
             "cc": "Alternar legendas",
@@ -1132,7 +1196,7 @@
             "hangup": "Sair da chamada",
             "heading": "Barra de ferramentas",
             "help": "Ajuda",
-            "hideWhiteboard": "Ocultar quadro branco",
+            "hideWhiteboard": "Ocultar quadro-branco",
             "invite": "Convidar pessoas",
             "kick": "Remover participante",
             "laugh": "Risada",
@@ -1173,7 +1237,7 @@
             "sharedvideo": "Alternar compartilhamento de vídeo",
             "shortcuts": "Alternar atalhos",
             "show": "Mostrar no palco",
-            "showWhiteboard": "Exibir quadro branco",
+            "showWhiteboard": "Exibir quadro-branco",
             "silence": "Silenciar",
             "speakerStats": "Alternar estatísticas do apresentador",
             "stopScreenSharing": "Parar de compartilhar sua tela",
@@ -1218,7 +1282,7 @@
         "giphy": "Alternar menu do GIPHY",
         "hangup": "Sair",
         "help": "Ajuda",
-        "hideWhiteboard": "Ocultar quadro branco",
+        "hideWhiteboard": "Ocultar quadro-branco",
         "invite": "Convidar pessoas",
         "joinBreakoutRoom": "Ingressar na sala de apoio",
         "laugh": "Risada",
@@ -1266,7 +1330,7 @@
         "shareaudio": "Compartilhar áudio",
         "sharedvideo": "Compartilhar um vídeo",
         "shortcuts": "Ver atalhos",
-        "showWhiteboard": "Exibir quadro branco",
+        "showWhiteboard": "Exibir quadro-branco",
         "silence": "Silêncio",
         "speakerStats": "Estatísticas do Apresentador",
         "startScreenSharing": "Iniciar compart. de tela",
@@ -1371,6 +1435,10 @@
         "videomute": "O participante parou a câmera"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Fundo atual: {{background}}",
+            "selectBackground": "Selecionar um fundo"
+        },
         "addBackground": "Adicionar novo fundo",
         "apply": "Aplicar",
         "backgroundEffectError": "Falha ao aplicar efeito de fundo.",
@@ -1457,7 +1525,7 @@
     },
     "whiteboard": {
         "accessibilityLabel": {
-            "heading": "Quadro branco"
+            "heading": "Quadro-branco"
         }
     }
 }

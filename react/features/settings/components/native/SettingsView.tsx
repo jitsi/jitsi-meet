@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React from 'react';
 import {
     ScrollView,
     Text,
+    TextStyle,
     TouchableHighlight,
     View,
     ViewStyle
 } from 'react-native';
 import { Divider } from 'react-native-paper';
-import { connect } from 'react-redux';
+import { Edge } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowRight } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -30,148 +30,72 @@ import NotificationsSection from './NotificationsSection';
 import { AVATAR_SIZE } from './constants';
 import styles from './styles';
 
-/**
- * The type of the React {@code Component} props of
- * {@link SettingsView}.
- */
-interface IProps extends WithTranslation {
 
-    _displayName?: string;
+interface IProps {
 
-    /**
-     * The ID of the local participant.
-     */
-    _localParticipantId?: string;
-
-    /**
-     * Flag indicating whether the moderator settings are available.
-     */
-    _showModeratorSettings: boolean;
-
-    /**
-     * Whether {@link SettingsView} is visible.
-     *
-     * @protected
-     */
-    _visible?: boolean;
-
-    /**
-     * Redux store dispatch function.
-     */
-    dispatch: IStore['dispatch'];
-
-    /**
-     * Flag indicating whether the settings is launched inside welcome page.
-     */
-    isInWelcomePage?: boolean;
-
-    /**
-     * Default prop for navigating between screen components(React Navigation).
-     */
-    navigation?: Object;
+    isInWelcomePage?: boolean | undefined;
 }
 
-/**
- * The native container rendering the app settings page.
- */
-class SettingsView extends Component<IProps> {
+const SettingsView = ({ isInWelcomePage }: IProps) => {
+    const { displayName } = useSelector((state: IReduxState) => state['features/base/settings']);
+    const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
+    const showModeratorSettings = useSelector((state: IReduxState) => shouldShowModeratorSettings(state));
+    const { visible } = useSelector((state: IReduxState) => state['features/settings']);
 
-    /**
-     * Opens the profile settings screen.
-     *
-     * @returns {void}
-     */
-    _onPressProfile() {
-        navigate(screen.settings.profile);
+    const addBottomInset = !isInWelcomePage;
+    const localParticipantId = localParticipant?.id;
+    const scrollBounces = Boolean(isInWelcomePage);
+
+    if (visible !== undefined && !visible) {
+        return null;
     }
 
-    /**
-     * Implements React's {@link Component#render()}, renders the settings page.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const {
-            _displayName
-        } = this.props;
+    return (
+        <JitsiScreen
+            disableForcedKeyboardDismiss = { true }
+            safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
+            style = { styles.settingsViewContainer }>
+            <ScrollView bounces = { scrollBounces }>
+                <View style = { styles.profileContainerWrapper as ViewStyle }>
+                    <TouchableHighlight
 
-        const {
-            isInWelcomePage,
-            _showModeratorSettings
-        } = this.props;
+                        /* eslint-disable react/jsx-no-bind */
+                        onPress = { () => navigate(screen.settings.profile) }>
+                        <View
+                            style = { styles.profileContainer as ViewStyle }>
+                            <Avatar
+                                participantId = { localParticipantId }
+                                size = { AVATAR_SIZE } />
+                            <Text style = { styles.displayName as TextStyle }>
+                                { displayName }
+                            </Text>
+                            <Icon
+                                size = { 24 }
+                                src = { IconArrowRight }
+                                style = { styles.profileViewArrow } />
+                        </View>
+                    </TouchableHighlight>
+                </View>
+                <GeneralSection />
+                { isInWelcomePage && <>
+                    <Divider style = { styles.fieldSeparator as ViewStyle } />
+                    <ConferenceSection />
+                </> }
+                <Divider style = { styles.fieldSeparator as ViewStyle } />
+                <NotificationsSection />
 
-        const addBottomInset = !isInWelcomePage;
-        const scrollBounces = Boolean(isInWelcomePage);
-
-        return (
-            <JitsiScreen
-                disableForcedKeyboardDismiss = { true }
-
-                // @ts-ignore
-                safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) }
-                style = { styles.settingsViewContainer }>
-                <ScrollView bounces = { scrollBounces }>
-                    <View style = { styles.profileContainerWrapper }>
-                        <TouchableHighlight onPress = { this._onPressProfile }>
-                            <View
-                                style = { styles.profileContainer as ViewStyle }>
-                                <Avatar
-                                    participantId = { this.props._localParticipantId }
-                                    size = { AVATAR_SIZE } />
-                                <Text style = { styles.displayName }>
-                                    { _displayName }
-                                </Text>
-                                <Icon
-                                    size = { 24 }
-                                    src = { IconArrowRight }
-                                    style = { styles.profileViewArrow } />
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                    <GeneralSection />
-                    { isInWelcomePage && <>
-                        {/* @ts-ignore */}
-                        <Divider style = { styles.fieldSeparator } />
-                        <ConferenceSection />
+                { showModeratorSettings
+                    && <>
+                        <Divider style = { styles.fieldSeparator as ViewStyle } />
+                        <ModeratorSection />
                     </> }
-                    {/* @ts-ignore */}
-                    <Divider style = { styles.fieldSeparator } />
-                    <NotificationsSection />
+                <Divider style = { styles.fieldSeparator as ViewStyle } />
+                <AdvancedSection />
+                <Divider style = { styles.fieldSeparator as ViewStyle } />
+                <LinksSection />
+            </ScrollView>
+        </JitsiScreen>
+    );
+};
 
-                    { _showModeratorSettings
-                        && <>
-                            {/* @ts-ignore */}
-                            <Divider style = { styles.fieldSeparator } />
-                            <ModeratorSection />
-                        </> }
-                    {/* @ts-ignore */}
-                    <Divider style = { styles.fieldSeparator } />
-                    <AdvancedSection />
-                    {/* @ts-ignore */}
-                    <Divider style = { styles.fieldSeparator } />
-                    <LinksSection />
-                </ScrollView>
-            </JitsiScreen>
-        );
-    }
-}
-
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {IProps}
- */
-function _mapStateToProps(state: IReduxState) {
-    const localParticipant = getLocalParticipant(state);
-
-    return {
-        _localParticipantId: localParticipant?.id,
-        _displayName: state['features/base/settings'].displayName,
-        _visible: state['features/settings'].visible,
-        _showModeratorSettings: shouldShowModeratorSettings(state)
-    };
-}
-
-export default translate(connect(_mapStateToProps)(SettingsView));
+export default SettingsView;

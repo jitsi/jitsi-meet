@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { configureInitialDevices } from '../base/devices/actions.web';
+import { configureInitialDevices, getAvailableDevices } from '../base/devices/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
@@ -35,6 +35,18 @@ export function dismissCalendarNotification() {
 }
 
 /**
+ * Setups initial devices. Makes sure we populate availableDevices list before configuring.
+ *
+ * @returns {Promise<any>}
+ */
+export function setupInitialDevices() {
+    return async (dispatch: IStore['dispatch']) => {
+        await dispatch(getAvailableDevices());
+        await dispatch(configureInitialDevices());
+    };
+}
+
+/**
  * Init.
  *
  * @returns {Promise<JitsiConnection>}
@@ -45,7 +57,7 @@ export function init() {
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
-        return dispatch(configureInitialDevices()).then(
+        return dispatch(setupInitialDevices()).then(
             () => APP.conference.init({
                 roomName: room
             }).catch((error: Error) => {
