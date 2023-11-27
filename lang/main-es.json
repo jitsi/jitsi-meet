@@ -778,7 +778,7 @@
             "moreModerationControls": "Más controles de moderación",
             "moreParticipantOptions": "Más opciones de participantes",
             "mute": "Silenciar",
-            "muteAll": "Silenciar a todos los demás",
+            "muteAll": "Silenciar a todos",
             "muteEveryoneElse": "Silenciar al resto",
             "stopEveryonesVideo": "Detener el vídeo de todos",
             "stopVideo": "Detener el vídeo",
@@ -1361,7 +1361,7 @@
     "videothumbnail": {
         "connectionInfo": "Información de conexión",
         "domute": "Silenciar",
-        "domuteOthers": "Silenciar a todos",
+        "domuteOthers": "Silenciar a todos los demás",
         "domuteVideo": "Desactivar la cámara",
         "domuteVideoOfOthers": "Desactivar la cámara de todos los demás",
         "flip": "Voltear",
