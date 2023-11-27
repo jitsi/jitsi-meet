@@ -105,7 +105,7 @@
     "react-native-url-polyfill": "2.0.0",
     "react-native-video": "6.0.0-alpha.7",
     "react-native-watch-connectivity": "1.1.0",
-    "react-native-webrtc": "111.0.6",
+    "react-native-webrtc": "118.0.0",
     "react-native-webview": "13.5.1",
     "react-native-youtube-iframe": "2.3.0",
     "react-redux": "7.2.9",
