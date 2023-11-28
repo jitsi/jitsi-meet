@@ -38,7 +38,6 @@
         "react-emoji-render": "1.2.4",
         "react-i18next": "10.11.4",
         "react-linkify": "1.0.0-alpha",
-        "react-native-callstats": "3.73.22",
         "react-native-dialog": "https://github.com/jitsi/react-native-dialog/releases/download/v9.2.2-jitsi.1/react-native-dialog-9.2.2.tgz",
         "react-native-svg-transformer": "1.1.0",
         "react-native-tab-view": "3.5.2",

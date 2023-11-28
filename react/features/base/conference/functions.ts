@@ -246,8 +246,6 @@ export function getConferenceOptions(stateful: IStateful) {
         delete config.analytics?.scriptURLs;
         delete config.analytics?.amplitudeAPPKey;
         delete config.analytics?.googleAnalyticsTrackingId;
-        delete options.callStatsID;
-        delete options.callStatsSecret;
     }
 
     return options;

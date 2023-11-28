@@ -231,27 +231,6 @@ export interface IConfig {
     callDisplayName?: string;
     callFlowsEnabled?: boolean;
     callHandle?: string;
-    callStatsConfigParams?: {
-        additionalIDs?: {
-            customerID?: string;
-            fqExtensionID?: string;
-            meetingsName?: string;
-            pbxExtensionID?: string;
-            pbxID?: string;
-            productName?: string;
-            serverName?: string;
-            sessionID?: string;
-            tenantID?: string;
-        };
-        applicationVersion?: string;
-        collectIP?: boolean;
-        collectLegacyStats?: boolean;
-        disableBeforeUnloadHandler?: boolean;
-        disablePrecalltest?: boolean;
-        siteID?: string;
-    };
-    callStatsID?: string;
-    callStatsSecret?: string;
     callUUID?: string;
     cameraFacingMode?: string;
     channelLastN?: number;
@@ -581,7 +560,6 @@ export interface IConfig {
     subject?: string;
     testing?: {
         assumeBandwidth?: boolean;
-        callStatsThreshold?: number;
         disableE2EE?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;

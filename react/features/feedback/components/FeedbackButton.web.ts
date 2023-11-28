@@ -50,7 +50,7 @@ const mapStateToProps = (state: IReduxState) => {
 
     return {
         _conference: conference,
-        visible: conference?.isCallstatsEnabled() || shouldSendJaaSFeedbackMetadata(state)
+        visible: shouldSendJaaSFeedbackMetadata(state)
     };
 };
 

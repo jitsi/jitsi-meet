@@ -1,6 +1,6 @@
 /**
  * The type of redux action which stores the log collector that will be
- * submitting the logs to CallStats.
+ * submitting the logs to a service
  *
  * {
  *     type: SET_LOG_COLLECTOR,

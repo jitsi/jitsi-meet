@@ -73,7 +73,6 @@ export interface IJitsiConference {
     getSsrcByTrack: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
-    isCallstatsEnabled: Function;
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;

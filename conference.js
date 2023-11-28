@@ -154,7 +154,7 @@ import {
 import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
 import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin, makePrecallTest } from './react/features/prejoin/actions';
+import { initPrejoin } from './react/features/prejoin/actions';
 import { isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
@@ -718,8 +718,6 @@ export default {
         };
 
         if (isPrejoinPageVisible(state)) {
-            APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
-
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const localTracks = await tryCreateLocalTracks;
 
@@ -1037,17 +1035,6 @@ export default {
     get membersCount() {
         return room.getParticipants()
             .filter(p => !p.isHidden() || !(config.iAmRecorder && p.isHiddenFromRecorder())).length + 1;
-    },
-
-    /**
-     * Returns true if the callstats integration is enabled, otherwise returns
-     * false.
-     *
-     * @returns true if the callstats integration is enabled, otherwise returns
-     * false.
-     */
-    isCallstatsEnabled() {
-        return room && room.isCallstatsEnabled();
     },
 
     /**

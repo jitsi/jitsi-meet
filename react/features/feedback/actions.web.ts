@@ -71,8 +71,7 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
                 showThankYou: true,
                 wasDialogShown: false
             });
-        } else if (
-            (conference.isCallstatsEnabled() || shouldSendJaaSFeedbackMetadata(state))
+        } else if (shouldSendJaaSFeedbackMetadata(state)
                 && feedbackPercentage > Math.random() * 100) {
             return new Promise(resolve => {
                 dispatch(openFeedbackDialog(conference, title, () => {
@@ -167,10 +166,6 @@ export function submitFeedback(
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const promises = [];
-
-        if (conference.isCallstatsEnabled()) {
-            promises.push(conference.sendFeedback(score, message));
-        }
 
         if (shouldSendJaaSFeedbackMetadata(state)) {
             promises.push(dispatch(sendJaasFeedbackMetadata(conference, {
