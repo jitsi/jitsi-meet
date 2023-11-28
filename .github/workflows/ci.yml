@@ -74,3 +74,17 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+  debian-build:
+    name: Test Debian packages build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: make
+    - run: sudo apt-get install -y debhelper
+    - run: dpkg-buildpackage -A -rfakeroot -us -uc -d
+    - run: make source-package
