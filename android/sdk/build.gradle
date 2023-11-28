@@ -30,6 +30,7 @@ android {
             }
         }
     }
+    namespace 'org.jitsi.meet.sdk'
 }
 
 dependencies {
