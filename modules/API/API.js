@@ -244,8 +244,6 @@ function initCommands() {
             }
         },
         'pin-participant': (id, videoType) => {
-            logger.debug('Pin participant command received');
-
             const state = APP.store.getState();
 
             // if id not provided, unpin everybody.
@@ -303,7 +301,6 @@ function initCommands() {
             APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
         },
         'resize-large-video': (width, height) => {
-            logger.debug('Resize large video command received');
             sendAnalytics(createApiEvent('largevideo.resized'));
             APP.store.dispatch(resizeLargeVideo(width, height));
         },
@@ -324,7 +321,6 @@ function initCommands() {
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
         'set-follow-me': value => {
-            logger.debug('Set follow me command received');
 
             if (value) {
                 sendAnalytics(createApiEvent('follow.me.set'));
@@ -335,7 +331,6 @@ function initCommands() {
             APP.store.dispatch(setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
-            logger.debug('Set large video participant command received');
             const { getState, dispatch } = APP.store;
 
             if (!participantId) {
@@ -373,12 +368,10 @@ function initCommands() {
         },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
-            logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
-            logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
@@ -497,7 +490,6 @@ function initCommands() {
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
-            logger.debug('Send chat message command received');
             if (to) {
                 const participant = getParticipantById(APP.store.getState(), to);
 
@@ -515,7 +507,6 @@ function initCommands() {
             APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
-            logger.debug('Send endpoint message command received');
             try {
                 APP.conference.sendEndpointMessage(to, {
                     name: ENDPOINT_TEXT_MESSAGE_NAME,
@@ -538,25 +529,19 @@ function initCommands() {
             });
         },
         'overwrite-names': participantList => {
-            logger.debug('Overwrite names command received');
-
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
-            logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
-            logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-
         'start-share-video': url => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.start'));
             const id = extractYoutubeIdOrURL(url);
 
@@ -564,9 +549,7 @@ function initCommands() {
                 APP.store.dispatch(playSharedVideo(id));
             }
         },
-
         'stop-share-video': () => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
         },
@@ -846,10 +829,13 @@ function initCommands() {
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
+            logger.info(`API command received: ${name}`);
             commands[name](...data);
 
             return true;
         }
+
+        logger.warn(`Unknown API command received: ${name}`);
 
         return false;
     });
