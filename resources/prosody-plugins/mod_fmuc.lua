@@ -194,7 +194,7 @@ module:hook('muc-broadcast-presence', function (event)
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
-          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
+          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid, time = raiseHand }):up();
 
         local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
         if nick_element then

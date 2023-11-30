@@ -3,6 +3,7 @@ module:log('info', 'Starting visitors_component at %s', module.host);
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local util = module:require 'util';
+local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
@@ -34,6 +35,11 @@ end
 -- automatically allowed or allowed by a moderator
 local visitors_promotion_map = {};
 
+-- A map with key room jid. The content is a map with key jid from which the request is received
+-- and the value is a table that has the json message that needs to be sent to any future moderator that joins
+-- and the vnode from which the request is received and where the response will be sent
+local visitors_promotion_requests = {};
+
 local sent_iq_cache = require 'util.cache'.new(200);
 
 -- send iq result that the iq was received and will be processed
@@ -56,10 +62,11 @@ function send_json_message(to_jid, json_message)
     module:send(stanza);
 end
 
-local function request_promotion_received(room, from_jid, from_vnode, nick)
+local function request_promotion_received(room, from_jid, from_vnode, nick, time)
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
-        if auto_allow_promotion then
+        -- only for raise hand, ignore lowering the hand
+        if auto_allow_promotion and time and time > 0 then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
             local username = new_id():lower();
@@ -97,10 +104,30 @@ local function request_promotion_received(room, from_jid, from_vnode, nick)
             body_json.nick = nick;
             body_json.from = from_jid;
 
+            if time and time > 0 then
+                -- raise hand
+                body_json.on = true;
+            else
+                -- lower hand, we want to inform interested parties that
+                -- the visitor is no longer interested in joining the main call
+                body_json.on = false;
+            end
+
+            local msg_to_send = json.encode(body_json);
+            if visitors_promotion_requests[room.jid] then
+                visitors_promotion_requests[room.jid][from_jid] = {
+                    msg = msg_to_send;
+                    from = from_vnode;
+                };
+            else
+                module:log('warn', 'Received promotion request for room %s with visitors not enabled. %s',
+                    room.jid, msg_to_send);
+            end
+
             -- let's send a notification to every moderator
             for _, occupant in room:each_occupant() do
                 if occupant.role == 'moderator' then
-                    send_json_message(occupant.jid, json.encode(body_json));
+                    send_json_message(occupant.jid, msg_to_send);
                 end
             end
 
@@ -117,6 +144,7 @@ local function connect_vnode_received(room, vnode)
     if not visitors_promotion_map[room.jid] then
         -- visitors is enabled
         visitors_promotion_map[room.jid] = {};
+        visitors_promotion_requests[room.jid] = {};
         room._connected_vnodes = 0;
     end
 
@@ -130,6 +158,7 @@ local function disconnect_vnode_received(room, vnode)
 
     if room._connected_vnodes == 0 then
         visitors_promotion_map[room.jid] = nil;
+        visitors_promotion_requests[room.jid] = nil;
     end
 end
 
@@ -176,7 +205,8 @@ local function stanza_handler(event)
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
         local display_name = visitors_iq:get_child_text('nick', 'http://jabber.org/protocol/nick');
-        processed = request_promotion_received(room, request_promotion.attr.jid, stanza.attr.from, display_name);
+        processed = request_promotion_received(
+            room, request_promotion.attr.jid, stanza.attr.from, display_name, tonumber(request_promotion.attr.time));
     end
 
     -- connect and disconnect are only received from jicofo
@@ -254,8 +284,112 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
     host_module:hook('muc-room-destroyed', function (event)
         visitors_promotion_map[event.room.jid] = nil;
+        visitors_promotion_requests[event.room.jid] = nil;
+    end);
+
+    host_module:hook('muc-occupant-joined', function (event)
+        local room, occupant = event.room, event.occupant;
+
+        if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) or occupant.role ~= 'moderator' then -- luacheck: ignore
+            return;
+        end
+
+        for _,value in pairs(visitors_promotion_requests[event.room.jid]) do
+            send_json_message(occupant.jid, value.msg);
+        end
+    end);
+    host_module:hook('muc-set-affiliation', function (event)
+        -- the actor can be nil if is coming from allowners or similar module we want to skip it here
+        -- as we will handle it in occupant_joined
+        local actor, affiliation, jid, room = event.actor, event.affiliation, event.jid, event.room;
+
+        if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not affiliation == 'owner' -- luacheck: ignore
+            or not visitors_promotion_requests[event.room.jid] then
+            return;
+        end
+
+        -- event.jid is the bare jid of participant
+        for _, occupant in room:each_occupant() do
+            if occupant.bare_jid == event.jid then
+                for _,value in pairs(visitors_promotion_requests[event.room.jid]) do
+                    send_json_message(occupant.jid, value.msg);
+                end
+            end
+        end
+    end);
+    host_module:hook("message/bare", function(event)
+        local stanza = event.stanza;
+
+        if stanza.attr.type ~= "groupchat" then
+            return;
+        end
+        local json_data = stanza:get_child_text("json-message", "http://jitsi.org/jitmeet");
+        if json_data == nil then
+            return;
+        end
+        local data = json.decode(json_data);
+        if not data or data.type ~= "promotion-response" then
+            return;
+        end
+
+        local room = get_room_from_jid(event.stanza.attr.to);
+
+        local occupant_jid = event.stanza.attr.from;
+        local occupant = room:get_occupant_by_real_jid(occupant_jid);
+        if not occupant then
+            module:log("error", "Occupant %s was not found in room %s", occupant_jid, room.jid)
+            return
+        end
+        if occupant.role ~= 'moderator' then
+            module:log('error', 'Occupant %s sending response message but not moderator in room %s',
+                occupant_jid, room.jid);
+            return false;
+        end
+
+        -- let's forward to every moderator
+        for _, room_occupant in room:each_occupant() do
+            -- if moderator send the message
+            if room_occupant.role == 'moderator'  then
+                room:route_to_occupant(room_occupant, stanza);
+            end
+        end
+
+        -- lets reply to participant that requested promotion
+        local username = new_id():lower();
+        visitors_promotion_map[room.jid][username] = {
+            from = visitors_promotion_requests[room.jid][data.id].from;
+            jid = data.id;
+        };
+
+        local req_from = visitors_promotion_map[room.jid][username].from;
+        local req_jid = visitors_promotion_map[room.jid][username].jid;
+        local focus_occupant = get_focus_occupant(room);
+        local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
+
+        local iq_id = new_id();
+        sent_iq_cache:set(iq_id, socket.gettime());
+
+        module:send(st.iq({
+                type='set', to = req_from, from = module.host, id = iq_id })
+            :tag('visitors', {
+                xmlns='jitsi:visitors',
+                room = string.gsub(room.jid, muc_domain_base, req_from),
+                focusjid = focus_jid })
+             :tag('promotion-response', {
+                xmlns='jitsi:visitors',
+                jid = req_jid,
+                username = username ,
+                allow = data.approved and 'true' or 'false' }):up());
+
+        return false; -- halt processing
     end);
 end);
+
+if auto_allow_promotion then
+    process_host_module(function(host_module, host)
+        host_module:add_feature('visitors:auto_allow_promotion');
+    end);
+end
 
 prosody.events.add_handler('pre-jitsi-authentication', function(session)
     if not session.customusername or not session.jitsi_web_query_room then

@@ -26,7 +26,7 @@ import { RoomList } from '../breakout-rooms/components/web/RoomList';
 import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
-
+import Visitors from './Visitors';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -171,6 +171,8 @@ const ParticipantsPane = () => {
                     onClick = { onClosePane } />
             </div>
             <div className = { classes.container }>
+                <Visitors />
+                <br className = { classes.antiCollapse } />
                 <LobbyParticipants />
                 <br className = { classes.antiCollapse } />
                 <MeetingParticipants

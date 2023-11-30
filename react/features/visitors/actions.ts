@@ -1,4 +1,102 @@
-import { I_AM_VISITOR_MODE, UPDATE_VISITORS_COUNT } from './actionTypes';
+import { IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
+
+import {
+    I_AM_VISITOR_MODE,
+    UPDATE_VISITORS_COUNT,
+    VISITOR_PROMOTION_REQUEST,
+    VISITOR_PROMOTION_REQUEST_DENIED
+} from './actionTypes';
+import { IPromotionRequest } from './types';
+
+/**
+ * Action used to admit multiple participants in the conference.
+ *
+ * @param {Array<Object>} requests - A list of visitors requests.
+ * @returns {Function}
+ */
+export function admitMultiple(requests: Array<IPromotionRequest>): Function {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState);
+
+        requests.forEach(r => {
+            conference?.sendMessage({
+                type: 'promotion-response',
+                approved: true,
+                id: r.from
+            });
+        });
+    };
+}
+
+/**
+ * Approves the request of a visitor to join the main meeting.
+ *
+ * @param {IPromotionRequest} request - The request from the visitor.
+ * @returns {Function}
+ */
+export function approveRequest(request: IPromotionRequest): Function {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState);
+
+        conference?.sendMessage({
+            type: 'promotion-response',
+            approved: true,
+            id: request.from
+        });
+    };
+}
+
+/**
+ * Denies the request of a visitor to join the main meeting.
+ *
+ * @param {IPromotionRequest} request - The request from the visitor.
+ * @returns {Function}
+ */
+export function denyRequest(request: IPromotionRequest): Function {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState);
+
+        conference?.sendMessage({
+            type: 'promotion-response',
+            approved: false,
+            id: request.from
+        });
+
+        dispatch(clearPromotionRequest(request));
+    };
+}
+
+/**
+ * Removes a promotion request from the state.
+ *
+ * @param {IPromotionRequest} request - The request.
+ * @returns {{
+ *     type: VISITOR_PROMOTION_REQUEST_DENIED,
+ *     request: IPromotionRequest
+ * }}
+ */
+export function clearPromotionRequest(request: IPromotionRequest) {
+    return {
+        type: VISITOR_PROMOTION_REQUEST_DENIED,
+        request
+    };
+}
+
+/**
+ * Visitor has sent us a promotion request.
+ *
+ * @param {IPromotionRequest} request - The request.
+ * @returns {{
+ *     type: VISITOR_PROMOTION_REQUEST,
+ * }}
+ */
+export function promotionRequestReceived(request: IPromotionRequest) {
+    return {
+        type: VISITOR_PROMOTION_REQUEST,
+        request
+    };
+}
 
 /**
  * Sets Visitors mode on or off.
