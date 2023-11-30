@@ -246,8 +246,25 @@ function process_set_affiliation(event)
     end
 end
 
-process_host_module(main_muc_component_host, function(host_module, host)
-    main_muc_service = prosody.hosts[host].modules.muc;
+function process_main_muc_loaded(main_muc, host_module)
+    module:log('debug', 'Main muc loaded');
 
+    main_muc_service = main_muc;
+    module:log("info", "Hook to muc events on %s", main_muc_component_host);
     host_module:hook("muc-pre-set-affiliation", process_set_affiliation);
+end
+
+process_host_module(main_muc_component_host, function(host_module, host)
+    local muc_module = prosody.hosts[host].modules.muc;
+
+    if muc_module then
+        process_main_muc_loaded(muc_module, host_module);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_main_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+            end
+        end);
+    end
 end);
