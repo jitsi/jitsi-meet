@@ -9,6 +9,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local is_vpaas = util.is_vpaas;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'util.json';
@@ -40,7 +41,8 @@ local visitors_promotion_map = {};
 -- and the vnode from which the request is received and where the response will be sent
 local visitors_promotion_requests = {};
 
-local sent_iq_cache = require 'util.cache'.new(200);
+local cache = require 'util.cache';
+local sent_iq_cache = cache.new(200);
 
 -- send iq result that the iq was received and will be processed
 local function respond_iq_result(origin, stanza)
@@ -62,11 +64,14 @@ function send_json_message(to_jid, json_message)
     module:send(stanza);
 end
 
-local function request_promotion_received(room, from_jid, from_vnode, nick, time)
+local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, force_promote)
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
         -- only for raise hand, ignore lowering the hand
-        if auto_allow_promotion and time and time > 0 then
+        if time and time > 0 and (
+            auto_allow_promotion
+            or (user_id and user_id == room._data.moderator_id)
+            or force_promote == 'true') then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
             local username = new_id():lower();
@@ -145,20 +150,21 @@ local function connect_vnode_received(room, vnode)
         -- visitors is enabled
         visitors_promotion_map[room.jid] = {};
         visitors_promotion_requests[room.jid] = {};
-        room._connected_vnodes = 0;
+        room._connected_vnodes = cache.new(16); -- we up to 16 vnodes for this prosody
     end
 
-    room._connected_vnodes = room._connected_vnodes + 1;
+    room._connected_vnodes:set(vnode..'.meet.jitsi', 'connected');
 end
 
 local function disconnect_vnode_received(room, vnode)
     module:context(muc_domain_base):fire_event('jitsi-disconnect-vnode', { room = room; vnode = vnode; });
 
-    room._connected_vnodes = room._connected_vnodes - 1;
+    room._connected_vnodes:set(vnode..'.meet.jitsi', nil);
 
-    if room._connected_vnodes == 0 then
+    if room._connected_vnodes:count() == 0 then
         visitors_promotion_map[room.jid] = nil;
         visitors_promotion_requests[room.jid] = nil;
+        room._connected_vnodes = nil;
     end
 end
 
@@ -204,9 +210,28 @@ local function stanza_handler(event)
     -- promotion request is coming from visitors and is a set and is over the s2s connection
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
+        if not (room._connected_vnodes and room._connected_vnodes:get(stanza.attr.from)) then
+            module:log('warn', 'Received forged promotion-request: %s %s %s', stanza, inspect(room._connected_vnodes), room._connected_vnodes:get(stanza.attr.from));
+            return true; -- stop processing
+        end
+
+        local force_promote = request_promotion.attr.forcePromote;
+        if force_promote == 'true' and not is_vpaas(room.jid) then
+            module:log('warn', 'Received promotion request for non vpass room (%s) with forced promotion: ',
+                                room.jid, stanza);
+            return true; -- stop processing
+        end
+
         local display_name = visitors_iq:get_child_text('nick', 'http://jabber.org/protocol/nick');
         processed = request_promotion_received(
-            room, request_promotion.attr.jid, stanza.attr.from, display_name, tonumber(request_promotion.attr.time));
+            room,
+            request_promotion.attr.jid,
+            stanza.attr.from,
+            display_name,
+            tonumber(request_promotion.attr.time),
+            request_promotion.attr.userId,
+            force_promote
+        );
     end
 
     -- connect and disconnect are only received from jicofo
