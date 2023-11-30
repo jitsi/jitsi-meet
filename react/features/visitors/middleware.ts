@@ -6,6 +6,7 @@ import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { clearPromotionRequest, promotionRequestReceived, updateVisitorsCount } from './actions';
+import { getPromotionRequests } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
@@ -48,6 +49,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         conference.on(JitsiConferenceEvents.VISITORS_REJECTION, () => {
             dispatch(raiseHand(false));
         });
+
+        conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            (user: any, data: any) => {
+                if (data?.action === 'promotion-response' && data.approved) {
+                    const request = getPromotionRequests(getState())
+                        .find(r => r.from === data.id);
+
+                    request && dispatch(clearPromotionRequest(request));
+                }
+            });
 
         break;
     }

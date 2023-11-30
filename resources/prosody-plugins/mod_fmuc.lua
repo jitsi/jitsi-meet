@@ -468,6 +468,8 @@ local function iq_from_main_handler(event)
     }));
 
     if process_disconnect then
+        cancel_destroy_timer(room);
+
         local main_count, visitors_count = get_occupant_counts(room);
         module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
         room:destroy(nil, 'Conference ended.');

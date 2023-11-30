@@ -353,7 +353,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             return;
         end
         local data = json.decode(json_data);
-        if not data or data.type ~= "promotion-response" then
+        if not data or data.type ~= 'visitors' or data.action ~= "promotion-response" then
             return;
         end
 
@@ -371,11 +371,17 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             return false;
         end
 
-        -- let's forward to every moderator
+        -- let's forward to every moderator, this is so they now that this moderator
+        -- took action and they can update UI, as this msg was initially a group chat but we are
+        -- sending it now as provide chat, let's change the type
+        stanza.attr.type = 'chat'; -- it is safe as we are not using this stanza instance anymore
         for _, room_occupant in room:each_occupant() do
             -- if moderator send the message
-            if room_occupant.role == 'moderator'  then
-                room:route_to_occupant(room_occupant, stanza);
+            if room_occupant.role == 'moderator'
+                and room_occupant.jid ~= occupant.jid
+                and not is_admin(room_occupant.bare_jid) then
+                stanza.attr.to = room_occupant.nick;
+                room:route_stanza(stanza);
             end
         end
 

@@ -91,9 +91,13 @@ export default function Visitors() {
                         onClick = { admitAll }>{t('lobby.admitAll')}</div>
                 }
             </div>
-            <VisitorsItems
-                requests = { requests } />
+            {
+                visitorsCount > 0 && (
+                    <VisitorsItems
+                        requests = { requests } />)
+            }
         </>
     );
 }
+
 

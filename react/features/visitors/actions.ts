@@ -21,7 +21,8 @@ export function admitMultiple(requests: Array<IPromotionRequest>): Function {
 
         requests.forEach(r => {
             conference?.sendMessage({
-                type: 'promotion-response',
+                type: 'visitors',
+                action: 'promotion-response',
                 approved: true,
                 id: r.from
             });
@@ -40,10 +41,13 @@ export function approveRequest(request: IPromotionRequest): Function {
         const conference = getCurrentConference(getState);
 
         conference?.sendMessage({
-            type: 'promotion-response',
+            type: 'visitors',
+            action: 'promotion-response',
             approved: true,
             id: request.from
         });
+
+        dispatch(clearPromotionRequest(request));
     };
 }
 
@@ -58,7 +62,8 @@ export function denyRequest(request: IPromotionRequest): Function {
         const conference = getCurrentConference(getState);
 
         conference?.sendMessage({
-            type: 'promotion-response',
+            type: 'visitors',
+            action: 'promotion-response',
             approved: false,
             id: request.from
         });
