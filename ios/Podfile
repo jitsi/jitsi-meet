@@ -6,8 +6,6 @@ workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
 
-production = ENV["PRODUCTION"] == "1"
-
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
@@ -26,7 +24,6 @@ target 'JitsiMeetSDK' do
   flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
-    :production => production,
     :hermes_enabled => false,
     :fabric_enabled => false,
     # An absolute path to your application root.
@@ -56,24 +53,24 @@ target 'JitsiMeetSDKLite' do
 
     # React Native and its dependencies
     #
-  
+
     config = use_native_modules!
     use_react_native!(
-      :path => config["reactNativePath"],
+      :path => config[:reactNativePath],
       :hermes_enabled => false,
       :fabric_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )
-  
+
     # Native pod dependencies
     #
-  
+
     pod 'CocoaLumberjack', '3.7.2'
 end
 
 post_install do |installer|
-  react_native_post_install(installer)
+  react_native_post_install(installer, :mac_catalyst_enabled => false)
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402

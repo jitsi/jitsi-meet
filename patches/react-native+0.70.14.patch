@@ -2,7 +2,7 @@ diff --git a/node_modules/react-native/React/CoreModules/RCTTiming.mm b/node_mod
 index 13d0d57..00e5d4c 100644
 --- a/node_modules/react-native/React/CoreModules/RCTTiming.mm
 +++ b/node_modules/react-native/React/CoreModules/RCTTiming.mm
-@@ -127,7 +127,15 @@ - (void)setup
+@@ -127,7 +127,15 @@ RCT_EXPORT_MODULE()
  {
    _paused = YES;
    _timers = [NSMutableDictionary new];
@@ -19,7 +19,7 @@ index 13d0d57..00e5d4c 100644
  
    for (NSString *name in @[
           UIApplicationWillResignActiveNotification,
-@@ -146,6 +154,11 @@ - (void)setup
+@@ -146,6 +154,11 @@ RCT_EXPORT_MODULE()
                                                   name:name
                                                 object:nil];
    }
@@ -31,7 +31,7 @@ index 13d0d57..00e5d4c 100644
  }
  
  - (void)dealloc
-@@ -182,6 +195,16 @@ - (void)appDidMoveToForeground
+@@ -182,6 +195,16 @@ RCT_EXPORT_MODULE()
    [self startTimers];
  }
  
