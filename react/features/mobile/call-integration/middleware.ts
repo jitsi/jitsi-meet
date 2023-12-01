@@ -154,11 +154,10 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
     // prevented the user from joining a specific conference but the app may be
     // able to eventually join the conference.
     if (!action.error.recoverable) {
-        const { callUUID } = action.conference;
 
-        if (callUUID) {
+        if (action?.conference?.callUUID) {
             delete action.conference.callUUID;
-            CallIntegration.reportCallFailed(callUUID);
+            CallIntegration.reportCallFailed(action.conference.callUUIDID);
         }
     }
 
@@ -185,9 +184,9 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
         return result;
     }
 
-    const { callUUID } = action.conference;
+    if (action?.conference?.callUUID) {
+        const { callUUID } = action.conference;
 
-    if (callUUID) {
         CallIntegration.reportConnectedOutgoingCall(callUUID)
             .then(() => {
                 // iOS 13 doesn't like the mute state to be false before the call is started
@@ -230,11 +229,9 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
         return result;
     }
 
-    const { callUUID } = action.conference;
-
-    if (callUUID) {
+    if (action?.conference?.callUUID) {
         delete action.conference.callUUID;
-        CallIntegration.endCall(callUUID);
+        CallIntegration.endCall(action.conference.callUUID);
     }
 
     return result;
