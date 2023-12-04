@@ -23,7 +23,7 @@ import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
-import { isVpaasMeeting } from '../jaas/functions';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
