@@ -23,6 +23,7 @@ import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
+import { isVpaasMeeting } from '../jaas/functions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
@@ -306,7 +307,7 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
 
     // if there is token auth URL defined and local participant is using jwt
     // this means it is logged in when connection is established, so we can change the state
-    if (tokenAuthUrl) {
+    if (tokenAuthUrl && !isVpaasMeeting(getState())) {
         let email;
 
         if (getState()['features/base/jwt'].jwt) {
