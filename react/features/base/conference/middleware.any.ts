@@ -14,6 +14,7 @@ import { reloadNow } from '../../app/actions';
 import { IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { showErrorNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { hasDisplayName } from '../../prejoin/utils';
@@ -306,7 +307,7 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
 
     // if there is token auth URL defined and local participant is using jwt
     // this means it is logged in when connection is established, so we can change the state
-    if (tokenAuthUrl) {
+    if (tokenAuthUrl && !isVpaasMeeting(getState())) {
         let email;
 
         if (getState()['features/base/jwt'].jwt) {
