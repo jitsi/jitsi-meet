@@ -119,8 +119,11 @@ function ParticipantItem({
                             { local && ` (${t('chat.you')})` }
                         </Text>
                     </View>
-                    { isModerator && !disableModeratorIndicator
-                        && <Text style = { styles.moderatorLabel as StyleProp<TextStyle> }>{ t('videothumbnail.moderator') }</Text>
+                    {
+                        isModerator && !disableModeratorIndicator
+                        && <Text style = { styles.moderatorLabel as StyleProp<TextStyle> }>
+                            { t('videothumbnail.moderator') }
+                        </Text>
                     }
                 </View>
                 {

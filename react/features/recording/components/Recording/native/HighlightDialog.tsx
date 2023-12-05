@@ -24,7 +24,9 @@ const HighlightDialog = () => {
     return (
         <BottomSheet>
             <View style = { styles.highlightDialog as StyleProp<ViewStyle> }>
-                <Text style = { styles.highlightDialogHeading as StyleProp<TextStyle> }>{ `${t('recording.highlightMoment')}?` }</Text>
+                <Text style = { styles.highlightDialogHeading as StyleProp<TextStyle> }>
+                    { `${t('recording.highlightMoment')}?` }
+                </Text>
                 <Text style = { styles.highlightDialogText as StyleProp<TextStyle> }>
                     { t('recording.highlightMomentSucessDescription') }
                 </Text>
