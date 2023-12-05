@@ -416,12 +416,6 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     end);
 end);
 
-if auto_allow_promotion then
-    process_host_module(function(host_module, host)
-        host_module:add_feature('visitors:auto_allow_promotion');
-    end);
-end
-
 prosody.events.add_handler('pre-jitsi-authentication', function(session)
     if not session.customusername or not session.jitsi_web_query_room then
         return nil;
