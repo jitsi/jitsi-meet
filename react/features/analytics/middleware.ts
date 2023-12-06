@@ -5,6 +5,7 @@ import {
     SET_ROOM
 } from '../base/conference/actionTypes';
 import { SET_CONFIG } from '../base/config/actionTypes';
+import { analytics } from '../base/lib-jitsi-meet';
 import { SET_NETWORK_INFO } from '../base/net-info/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import {
@@ -16,6 +17,10 @@ import {
     getLocalAudioTrack,
     getLocalVideoTrack
 } from '../base/tracks/functions';
+import { SET_LOBBY_VISIBILITY } from '../lobby/actionTypes';
+import { getIsLobbyVisible } from '../lobby/functions';
+import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
+import { iAmVisitor } from '../visitors/functions';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
@@ -81,6 +86,18 @@ function calculateLocalTrackDuration(state: IReduxState) {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case I_AM_VISITOR_MODE: {
+        const oldIAmVisitor = iAmVisitor(store.getState());
+        const result = next(action);
+        const newIAmVisitor = iAmVisitor(store.getState());
+
+        analytics.addPermanentProperties({
+            isVisitor: newIAmVisitor,
+            isPromotedFromVisitor: oldIAmVisitor && !newIAmVisitor
+        });
+
+        return result;
+    }
     case SET_CONFIG:
         if (navigator.product === 'ReactNative') {
             // Resetting the analytics is currently not needed for web because
@@ -144,6 +161,14 @@ MiddlewareRegistry.register(store => next => action => {
         });
         break;
     }
+    case SET_LOBBY_VISIBILITY:
+        if (getIsLobbyVisible(store.getState())) {
+            analytics.addPermanentProperties({
+                wasLobbyVisible: true
+            });
+        }
+
+        break;
     case SET_NETWORK_INFO:
         sendAnalytics(
             createNetworkInfoEvent({

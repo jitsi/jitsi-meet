@@ -510,15 +510,18 @@ export function conferenceWillJoin(conference?: IJitsiConference) {
  *
  * @param {JitsiConference} conference - The JitsiConference instance which will
  * be left by the local participant.
+ * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
  * @returns {{
  *     type: CONFERENCE_LEFT,
- *     conference: JitsiConference
+ *     conference: JitsiConference,
+ *     isRedirect: boolean
  * }}
  */
-export function conferenceWillLeave(conference?: IJitsiConference) {
+export function conferenceWillLeave(conference?: IJitsiConference, isRedirect?: boolean) {
     return {
         type: CONFERENCE_WILL_LEAVE,
-        conference
+        conference,
+        isRedirect
     };
 }
 
@@ -1008,7 +1011,7 @@ export function redirect(vnode: string, focusJid: string, username: string) {
         }
 
         dispatch(overwriteConfig(newConfig)) // @ts-ignore
-            .then(() => dispatch(conferenceWillLeave(conference || joining)))
+            .then(() => dispatch(conferenceWillLeave(conference || joining, true)))
             .then(() => dispatch(disconnect()))
             .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
 
