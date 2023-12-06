@@ -1,5 +1,3 @@
-/* global APP */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -12,16 +10,6 @@ import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;
-
-/**
- * Renders the app when the DOM tree has been loaded.
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const now = window.performance.now();
-
-    APP.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
-});
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
@@ -41,6 +29,18 @@ if (OS === 'ios') {
 }
 
 const globalNS = getJitsiMeetGlobalNS();
+
+// Used for automated performance tests.
+globalNS.connectionTimes = {
+    'index.loaded': window.indexLoadedTime
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const now = window.performance.now();
+
+    globalNS.connectionTimes['document.ready'] = now;
+    logger.log('(TIME) document ready:\t', now);
+});
 
 globalNS.entryPoints = {
     APP: App,

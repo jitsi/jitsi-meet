@@ -18,7 +18,12 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
     case CONFERENCE_WILL_LEAVE: {
         return {
             ...state,
-            ...DEFAULT_STATE
+            ...DEFAULT_STATE,
+
+            // If the action was called because a visitor was promoted don't clear the iAmVisitor field. It will be set
+            // to false with the I_AM_VISITOR_MODE action and we will be able to distinguish leaving the conference use
+            // case and promoting a visitor use case.
+            iAmVisitor: action.isRedirect ? state.iAmVisitor : DEFAULT_STATE.iAmVisitor
         };
     }
     case UPDATE_VISITORS_COUNT: {

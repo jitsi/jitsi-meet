@@ -16,6 +16,7 @@ import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
 import { loadScript } from '../base/util/loadScript';
 import { parseURIString } from '../base/util/uri';
+import { isPrejoinPageVisible } from '../prejoin/functions';
 
 import AmplitudeHandler from './handlers/AmplitudeHandler';
 import MatomoHandler from './handlers/MatomoHandler';
@@ -180,8 +181,12 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
         externalApi?: boolean;
         group?: string;
         inIframe?: boolean;
+        isPromotedFromVisitor?: boolean;
+        isVisitor?: boolean;
         server?: string;
         tenant?: string;
+        wasLobbyVisible?: boolean;
+        wasPrejoinDisplayed?: boolean;
         websocket?: boolean;
     } & typeof deploymentInfo = {};
 
@@ -206,6 +211,15 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
+
+    permanentProperties.wasPrejoinDisplayed = isPrejoinPageVisible(state);
+
+    // Currently we don't know if there will be lobby. We will update it to true if we go through lobby.
+    permanentProperties.wasLobbyVisible = false;
+
+    // Setting visitor properties to false by default. We will update them later if it turns out we are visitor.
+    permanentProperties.isVisitor = false;
+    permanentProperties.isPromotedFromVisitor = false;
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
