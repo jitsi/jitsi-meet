@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
 
-apply plugin: 'com.facebook.react'
-
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
 if (googleServicesEnabled) {
@@ -94,9 +92,6 @@ dependencies {
     }
 
     implementation project(':sdk')
-
-    // The version of react-native is set by the React Native Gradle Plugin
-    implementation('com.facebook.react:react-android')
 }
 
 gradle.projectsEvaluated {
