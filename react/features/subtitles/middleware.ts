@@ -183,7 +183,7 @@ function _requestingSubtitlesChange({ getState }: IStore) {
     const { _language } = state['features/subtitles'];
     const { conference } = state['features/base/conference'];
 
-    const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
+    const requestingSubtitles = Boolean(_language);
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,

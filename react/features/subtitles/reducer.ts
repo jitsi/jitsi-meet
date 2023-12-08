@@ -11,7 +11,7 @@ import {
 const defaultState = {
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
-    _language: 'transcribing.subtitlesOff'
+    _language: null
 };
 
 interface ITranscriptMessage {
@@ -22,7 +22,7 @@ interface ITranscriptMessage {
 }
 
 export interface ISubtitlesState {
-    _language: string;
+    _language: string | null;
     _requestingSubtitles: boolean;
     _transcriptMessages: Map<string, ITranscriptMessage> | any;
 }
