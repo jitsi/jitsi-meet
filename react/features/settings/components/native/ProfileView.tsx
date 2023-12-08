@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View, ViewStyle } from 'react-native';
+import { Edge } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -39,6 +40,7 @@ const ProfileView = ({ isInWelcomePage }: {
         (state: IReduxState) => state['features/base/settings']
     );
     const participant = useSelector((state: IReduxState) => getLocalParticipant(state));
+    const { locationURL } = useSelector((state: IReduxState) => state['features/base/connection']);
 
     const [ displayName, setDisplayName ] = useState(reduxDisplayName);
     const [ email, setEmail ] = useState(reduxEmail);
@@ -103,7 +105,9 @@ const ProfileView = ({ isInWelcomePage }: {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft,
-            headerRight: !isInWelcomePage && headerRight
+            headerRight: !isInWelcomePage
+                && !locationURL?.hostname?.includes('8x8.vc')
+                && headerRight
         });
     }, [ navigation ]);
 
@@ -112,7 +116,7 @@ const ProfileView = ({ isInWelcomePage }: {
             disableForcedKeyboardDismiss = { true }
 
             // @ts-ignore
-            safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) }
+            safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
             style = { styles.settingsViewContainer }>
             <ScrollView
                 bounces = { isInWelcomePage }
