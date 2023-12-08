@@ -124,10 +124,10 @@
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
-    "@babel/core": "7.16.0",
+    "@babel/core": "7.21.5",
     "@babel/eslint-parser": "7.21.8",
-    "@babel/plugin-proposal-export-default-from": "7.16.0",
-    "@babel/preset-env": "7.16.0",
+    "@babel/plugin-proposal-export-default-from": "7.22.5",
+    "@babel/preset-env": "7.21.5",
     "@babel/preset-react": "7.16.0",
     "@jitsi/eslint-config": "4.1.5",
     "@types/amplitude-js": "8.16.2",
@@ -166,7 +166,7 @@
     "eslint-plugin-react-native": "4.0.0",
     "eslint-plugin-typescript-sort-keys": "2.3.0",
     "jetifier": "1.6.4",
-    "metro-react-native-babel-preset": "0.70.3",
+    "metro-react-native-babel-preset": "0.75.1",
     "patch-package": "6.4.7",
     "process": "0.11.10",
     "sass": "1.26.8",
