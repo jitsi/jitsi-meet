@@ -900,15 +900,20 @@ export function setObfuscatedRoom(obfuscatedRoom: string, obfuscatedRoomSource: 
  *
  * @param {(string|undefined)} room - The name of the room of the conference to
  * be joined.
+ * @param {boolean|undefined} willShowPrejoin - Whether the prejoin should be hidden or not.
+ * NOTE: This argument is used only for mobile currently!
+ *
  * @returns {{
  *     type: SET_ROOM,
- *     room: string
+ *     room: string,
+ *     willShowPrejoin: boolean
  * }}
  */
-export function setRoom(room?: string) {
+export function setRoom(room?: string, willShowPrejoin?: boolean) {
     return {
         type: SET_ROOM,
-        room
+        room,
+        willShowPrejoin
     };
 }
 

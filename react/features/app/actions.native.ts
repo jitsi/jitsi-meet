@@ -150,9 +150,20 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             return;
         }
 
+        let willShowPrejoin = false;
+        let willShowUnsafeRoomWarning = false;
+
+        if (!options.hidePrejoin && isPrejoinPageEnabled(getState()) && room) {
+            if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
+                willShowUnsafeRoomWarning = true;
+            } else {
+                willShowPrejoin = true;
+            }
+        }
+
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
-        dispatch(setRoom(room));
+        dispatch(setRoom(room, willShowPrejoin));
 
         if (!room) {
             goBackToRoot(getState(), dispatch);
@@ -163,12 +174,10 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(createDesiredLocalTracks());
         dispatch(clearNotifications());
 
-        if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
-            if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
-                navigateRoot(screen.unsafeRoomWarning);
-            } else {
-                navigateRoot(screen.preJoin);
-            }
+        if (willShowUnsafeRoomWarning) {
+            navigateRoot(screen.unsafeRoomWarning);
+        } else if (willShowPrejoin) {
+            navigateRoot(screen.preJoin);
         } else {
             dispatch(connect());
             navigateRoot(screen.conference.root);

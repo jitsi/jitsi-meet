@@ -159,9 +159,10 @@ export async function createHandlers({ getState }: IStore) {
  *
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @param {Array<Object>} handlers - The analytics handlers.
+ * @param {boolean|undefined} willShowPrejoin -
  * @returns {void}
  */
-export function initAnalytics(store: IStore, handlers: Array<Object>) {
+export function initAnalytics(store: IStore, handlers: Array<Object>, willShowPrejoin?: boolean) {
     const { getState, dispatch } = store;
 
     if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
@@ -212,7 +213,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
 
-    permanentProperties.wasPrejoinDisplayed = isPrejoinPageVisible(state);
+    permanentProperties.wasPrejoinDisplayed = willShowPrejoin ?? isPrejoinPageVisible(state);
 
     // Currently we don't know if there will be lobby. We will update it to true if we go through lobby.
     permanentProperties.wasLobbyVisible = false;

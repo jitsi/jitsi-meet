@@ -114,7 +114,7 @@ MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
 
         createHandlersPromise.then(handlers => {
-            initAnalytics(store, handlers);
+            initAnalytics(store, handlers, action.willShowPrejoin);
         });
 
         return result;
