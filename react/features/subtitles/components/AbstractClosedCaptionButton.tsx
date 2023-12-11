@@ -8,7 +8,7 @@ import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 
 export interface IAbstractProps extends AbstractButtonProps {
 
-    _language: string;
+    _language: string | null;
 
     /**
      * Whether the local participant is currently requesting subtitles.
