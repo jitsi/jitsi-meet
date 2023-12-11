@@ -379,9 +379,10 @@ function _registerForNativeEvents(store: IStore) {
         dispatch(sendMessage(message));
     });
 
-    eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED, ({ enabled }: any) => {
-        dispatch(setRequestingSubtitles(enabled));
-    });
+    eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED,
+        ({ enabled, displaySubtitles, language }: any) => {
+            dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
+        });
 
     eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA, () => {
         dispatch(toggleCameraFacingMode());

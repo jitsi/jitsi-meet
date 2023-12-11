@@ -55,12 +55,15 @@ MiddlewareRegistry.register(store => next => action => {
     case ENDPOINT_MESSAGE_RECEIVED:
         return _endpointMessageReceived(store, next, action);
 
-    case TOGGLE_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store);
+    case TOGGLE_REQUESTING_SUBTITLES: {
+        const state = store.getState()['features/subtitles'];
+        const toggledValue = !state._requestingSubtitles;
+
+        _requestingSubtitlesChange(store, toggledValue, state._language);
         break;
+    }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store);
-        _requestingSubtitlesSet(store, action.enabled);
+        _requestingSubtitlesChange(store, action.enabled, action.language);
         break;
     }
 
@@ -125,10 +128,10 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
             // We update the previous transcript message with the same
             // message ID or adds a new transcript message if it does not
             // exist in the map.
+            const existingMessage = state['features/subtitles']._transcriptMessages.get(transcriptMessageID);
             const newTranscriptMessage: any = {
-                ...state['features/subtitles']._transcriptMessages
-                        .get(transcriptMessageID)
-                    || { participantName }
+                participantName,
+                clearTimeOut: existingMessage?.clearTimeOut
             };
 
             _setClearerOnTranscriptMessage(dispatch,
@@ -144,7 +147,6 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 // stable field of the state and remove the previously
                 // unstable results
                 newTranscriptMessage.stable = text;
-                newTranscriptMessage.unstable = undefined;
 
             } else {
                 // Otherwise, this result has an unstable result, which we
@@ -157,9 +159,13 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
 
             // Notify the external API too.
             if (typeof APP !== 'undefined') {
+                const sanitizedTranscriptMessage = { ...newTranscriptMessage };
+
+                delete sanitizedTranscriptMessage.clearTimeOut;
+
                 APP.API.notifyTranscriptionChunkReceived({
                     messageID: transcriptMessageID,
-                    ...newTranscriptMessage
+                    ...sanitizedTranscriptMessage
                 });
             }
         }
@@ -175,43 +181,27 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
  * and Jigasi to decide whether the transcriber needs to be in the room.
  *
  * @param {Store} store - The redux store.
+ * @param {boolean} enabled - Whether subtitles should be enabled or not.
+ * @param {string} language - The language to use for translation.
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesChange({ getState }: IStore) {
-    const state = getState();
-    const { _language } = state['features/subtitles'];
-    const { conference } = state['features/base/conference'];
-
-    const requestingSubtitles = Boolean(_language);
-
-    conference?.setLocalParticipantProperty(
-        P_NAME_REQUESTING_TRANSCRIPTION,
-        requestingSubtitles);
-
-    if (requestingSubtitles) {
-        conference?.setLocalParticipantProperty(
-            P_NAME_TRANSLATION_LANGUAGE,
-            _language.replace('translation-languages:', ''));
-    }
-}
-
-/**
- * Set the local property 'requestingTranscription'. This will cause Jicofo
- * and Jigasi to decide whether the transcriber needs to be in the room.
- *
- * @param {Store} store - The redux store.
- * @param {boolean} enabled - The new state of the subtitles.
- * @private
- * @returns {void}
- */
-function _requestingSubtitlesSet({ getState }: IStore, enabled: boolean) {
+function _requestingSubtitlesChange(
+        { getState }: IStore,
+        enabled: boolean,
+        language?: string | null) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
+
+    if (enabled && language) {
+        conference?.setLocalParticipantProperty(
+            P_NAME_TRANSLATION_LANGUAGE,
+            language.replace('translation-languages:', ''));
+    }
 }
 
 /**

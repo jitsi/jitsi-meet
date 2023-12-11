@@ -1,4 +1,4 @@
-import React, { ComponentType, useCallback, useState } from 'react';
+import React, { ComponentType, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,7 +7,7 @@ import {
     TRANSLATION_LANGUAGES,
     TRANSLATION_LANGUAGES_HEAD
 } from '../../base/i18n/i18next';
-import { setRequestingSubtitles, updateTranslationLanguage } from '../actions.any';
+import { setRequestingSubtitles } from '../actions.any';
 
 
 export interface IAbstractLanguageSelectorDialogProps {
@@ -33,7 +33,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
     const noLanguageLabel = 'transcribing.subtitlesOff';
 
     const language = useSelector((state: IReduxState) => state['features/subtitles']._language);
-    const [ subtitles, setSubtitles ] = useState(language || noLanguageLabel);
+    const subtitles = language ?? noLanguageLabel;
 
     const transcription = useSelector((state: IReduxState) => state['features/base/config'].transcription);
     const translationLanguagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
@@ -60,10 +60,10 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
 
     const onLanguageSelected = useCallback((value: string) => {
         const selectedLanguage = value === noLanguageLabel ? null : value;
+        const enabled = Boolean(selectedLanguage);
+        const displaySubtitles = enabled;
 
-        setSubtitles(value);
-        dispatch(updateTranslationLanguage(selectedLanguage));
-        dispatch(setRequestingSubtitles(Boolean(selectedLanguage)));
+        dispatch(setRequestingSubtitles(enabled, displaySubtitles, selectedLanguage));
     }, [ language ]);
 
     return (
