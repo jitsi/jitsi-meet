@@ -157,8 +157,8 @@ function _mapStateToProps(state: IReduxState) {
     const { roomPasswordNumberOfDigits } = state['features/base/config'];
 
     return {
-        _password: state['features/base/conference'].password
-        _passwordNumberOfDigits: roomPasswordNumberOfDigits;
+        _password: state['features/base/conference'].password,
+        _passwordNumberOfDigits: roomPasswordNumberOfDigits
     };
 }
 
