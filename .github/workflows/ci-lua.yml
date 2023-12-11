@@ -17,7 +17,8 @@ jobs:
 
     - name: Check lua codes
       run: |
-        set -o pipefail && luacheck . | awk -F: '
+        set -o pipefail && luacheck . \
+        --exclude-files=resources/prosody-plugins/mod_firewall/mod_firewall.lua | awk -F: '
           {
             print $0
             printf "::warning file=%s,line=%s,col=%s::%s\n", $1, $2, $3, $4
