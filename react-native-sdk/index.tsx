@@ -16,6 +16,8 @@ import { View, ViewStyle } from 'react-native';
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
+import { getRoomsInfo } from './react/features/breakout-rooms/functions';
+import type { IRoomsInfo } from '../react/features/breakout-rooms/types';
 
 
 interface IEventListeners {
@@ -49,10 +51,17 @@ interface IAppProps {
     userInfo?: IUserInfo;
 }
 
+export interface JitsiRefProps {
+    close: Function;
+    setAudioMuted?: (muted: boolean) => void;
+    setVideoMuted?: (muted: boolean) => void;
+    getRoomsInfo?: () => IRoomsInfo;
+}
+
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
     const {
@@ -82,6 +91,11 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             const dispatch = app.current.state.store.dispatch;
 
             dispatch(setVideoMuted(muted));
+        },
+        getRoomsInfo: () => {
+            const state = app.current.state.store.getState();
+
+            return getRoomsInfo(state);
         }
     }));
 
