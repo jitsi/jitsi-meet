@@ -37,7 +37,7 @@ local tostring = tostring;
 -- required parameter for custom muc component prefix, defaults to "conference"
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
-local leaked_rooms_since_last_stat = 0;
+local leaked_rooms;
 
 --- handles request to get number of participants in all rooms
 -- @return GET response
@@ -48,6 +48,7 @@ function handle_get_room_census(event)
     end
 
     room_data = {}
+    leaked_rooms = 0;
     for room in host_session.modules.muc.each_room() do
         if not is_healthcheck_room(room.jid) then
             local occupants = room._occupants;
@@ -70,7 +71,7 @@ function handle_get_room_census(event)
             local leaked = false;
             if participant_count > 0 and missing_connections_count == participant_count then
                 leaked = true;
-                leaked_rooms_since_last_stat = leaked_rooms_since_last_stat + 1;
+                leaked_rooms = leaked_rooms + 1;
             end
 
             table.insert(room_data, {
@@ -101,6 +102,5 @@ end
 -- we calculate the stats on the configured interval (60 seconds by default)
 local measure_leaked_rooms = module:measure('leaked_rooms', 'amount');
 module:hook_global('stats-update', function ()
-    measure_leaked_rooms(leaked_rooms_since_last_stat);
-    leaked_rooms_since_last_stat = 0;
+    measure_leaked_rooms(leaked_rooms);
 end);
