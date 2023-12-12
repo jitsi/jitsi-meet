@@ -1,4 +1,4 @@
-import React, { ComponentType, useCallback, useEffect, useState } from 'react';
+import React, { ComponentType, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,12 +7,12 @@ import {
     TRANSLATION_LANGUAGES,
     TRANSLATION_LANGUAGES_HEAD
 } from '../../base/i18n/i18next';
-import { setRequestingSubtitles, updateTranslationLanguage } from '../actions.any';
+import { setRequestingSubtitles } from '../actions.any';
 
 
 export interface IAbstractLanguageSelectorDialogProps {
     dispatch: IStore['dispatch'];
-    language: string;
+    language: string | null;
     listItems: Array<any>;
     onLanguageSelected: (e: string) => void;
     subtitles: string;
@@ -30,10 +30,10 @@ export interface IAbstractLanguageSelectorDialogProps {
 const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLanguageSelectorDialogProps>) => () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const off = 'transcribing.subtitlesOff';
+    const noLanguageLabel = 'transcribing.subtitlesOff';
 
-    const [ subtitles, setSubtiles ] = useState(off);
     const language = useSelector((state: IReduxState) => state['features/subtitles']._language);
+    const subtitles = language ?? noLanguageLabel;
 
     const transcription = useSelector((state: IReduxState) => state['features/base/config'].transcription);
     const translationLanguagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
@@ -42,7 +42,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
     // The off and the head languages are always on the top of the list. But once you are selecting
     // a language from the translationLanguages, that language is moved under the fixedItems list,
     // until a new languages is selected. FixedItems keep their positions.
-    const fixedItems = [ off, ...languagesHead ];
+    const fixedItems = [ noLanguageLabel, ...languagesHead ];
     const translationLanguages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
     const languages = translationLanguages
         .map((lang: string) => `translation-languages:${lang}`)
@@ -58,14 +58,12 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
             };
         });
 
-    useEffect(() => {
-        language ? setSubtiles(language) : setSubtiles(off);
-    }, []);
+    const onLanguageSelected = useCallback((value: string) => {
+        const selectedLanguage = value === noLanguageLabel ? null : value;
+        const enabled = Boolean(selectedLanguage);
+        const displaySubtitles = enabled;
 
-    const onLanguageSelected = useCallback((e: string) => {
-        setSubtiles(e);
-        dispatch(updateTranslationLanguage(e));
-        dispatch(setRequestingSubtitles(e !== off));
+        dispatch(setRequestingSubtitles(enabled, displaySubtitles, selectedLanguage));
     }, [ language ]);
 
     return (
