@@ -28,6 +28,7 @@ interface IEventListeners {
     onConferenceWillJoin?: Function;
     onEnterPictureInPicture?: Function;
     onParticipantJoined?: Function;
+    onParticipantLeft?: ({ id }: { id: string }) => void;
     onReadyToClose?: Function;
 }
 
@@ -118,6 +119,7 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
                     onConferenceLeft: eventListeners?.onConferenceLeft,
                     onEnterPictureInPicture: eventListeners?.onEnterPictureInPicture,
                     onParticipantJoined: eventListeners?.onParticipantJoined,
+                    onParticipantLeft: eventListeners?.onParticipantLeft,
                     onReadyToClose: eventListeners?.onReadyToClose
                 },
                 'url': urlProps,
