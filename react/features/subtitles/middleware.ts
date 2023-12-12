@@ -94,23 +94,28 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
     }
 
     const state = getState();
-    const translationLanguage
+    const language
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
 
     try {
         const transcriptMessageID = json.message_id;
-        const participantName = json.participant.name;
+        const { name, id, avatar_url: avatarUrl } = json.participant;
+        const participant = {
+            avatarUrl,
+            id,
+            name
+        };
 
         if (json.type === JSON_TYPE_TRANSLATION_RESULT
-                && json.language === translationLanguage) {
+                && json.language === language) {
             // Displays final results in the target language if translation is
             // enabled.
 
             const newTranscriptMessage = {
                 clearTimeOut: undefined,
                 final: json.text,
-                participantName
+                participant
             };
 
             _setClearerOnTranscriptMessage(dispatch,
@@ -118,8 +123,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
             dispatch(updateTranscriptMessage(transcriptMessageID,
                 newTranscriptMessage));
 
-        } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && json.language.slice(0, 2) === translationLanguage) {
+        } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT && json.language.slice(0, 2) === language) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
@@ -130,8 +134,9 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
             // exist in the map.
             const existingMessage = state['features/subtitles']._transcriptMessages.get(transcriptMessageID);
             const newTranscriptMessage: any = {
-                participantName,
-                clearTimeOut: existingMessage?.clearTimeOut
+                clearTimeOut: existingMessage?.clearTimeOut,
+                language,
+                participant
             };
 
             _setClearerOnTranscriptMessage(dispatch,

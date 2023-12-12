@@ -100,7 +100,7 @@ function _constructTranscripts(state: IReduxState): Map<string, string> {
 
     for (const [ id, transcriptMessage ] of _transcriptMessages) {
         if (transcriptMessage) {
-            let text = `${transcriptMessage.participantName}: `;
+            let text = `${transcriptMessage.participant.name}: `;
 
             if (transcriptMessage.final) {
                 text += transcriptMessage.final;
