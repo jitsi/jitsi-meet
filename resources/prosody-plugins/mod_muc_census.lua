@@ -37,6 +37,8 @@ local tostring = tostring;
 -- required parameter for custom muc component prefix, defaults to "conference"
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
+local leaked_rooms;
+
 --- handles request to get number of participants in all rooms
 -- @return GET response
 function handle_get_room_census(event)
@@ -46,18 +48,37 @@ function handle_get_room_census(event)
     end
 
     room_data = {}
+    leaked_rooms = 0;
     for room in host_session.modules.muc.each_room() do
         if not is_healthcheck_room(room.jid) then
             local occupants = room._occupants;
+            local participant_count = 0;
+            local missing_connections_count = 0;
+
             if occupants then
-                participant_count = iterators.count(room:each_occupant()) - 1; -- subtract focus
-            else
-                participant_count = 0
+                for _, o in room:each_occupant() do
+                    participant_count = participant_count + 1;
+
+                    -- let's check whether that occupant has connection in the full_sessions of prosody
+                    -- attempt to detect leaked occupants/rooms.
+                    if prosody.full_sessions[o.jid] == nil then
+                        missing_connections_count = missing_connections_count + 1;
+                    end
+                end
+                participant_count = participant_count - 1; -- subtract focus
             end
+
+            local leaked = false;
+            if participant_count > 0 and missing_connections_count == participant_count then
+                leaked = true;
+                leaked_rooms = leaked_rooms + 1;
+            end
+
             table.insert(room_data, {
                 room_name = room.jid;
                 participants = participant_count;
                 created_time = room.created_timestamp;
+                leaked = leaked;
             });
         end
     end
@@ -77,3 +98,9 @@ function module.load()
                 };
         });
 end
+
+-- we calculate the stats on the configured interval (60 seconds by default)
+local measure_leaked_rooms = module:measure('leaked_rooms', 'amount');
+module:hook_global('stats-update', function ()
+    measure_leaked_rooms(leaked_rooms);
+end);
