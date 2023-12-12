@@ -41,14 +41,6 @@ export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 export const TRANSLATION_LANGUAGES: Array<string> = Object.keys(TRANSLATION_LANGUAGES_RESOURCES);
 
 /**
- * The available/supported translation languages head. (Languages displayed on the top ).
- *
- * @public
- * @type {Array<string>}
- */
-export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ 'en' ];
-
-/**
  * The default language.
  *
  * English is the default language.
@@ -57,6 +49,14 @@ export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ 'en' ];
  * @type {string} The default language.
  */
 export const DEFAULT_LANGUAGE = 'en';
+
+/**
+ * The available/supported translation languages head. (Languages displayed on the top ).
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ DEFAULT_LANGUAGE ];
 
 /**
  * The options to initialize i18next with.
