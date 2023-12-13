@@ -19,8 +19,8 @@ interface IProps {
 
 export const VisitorsItem = ({ request: r }: IProps) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(approveRequest(r)), [ dispatch ]);
-    const reject = useCallback(() => dispatch(denyRequest(r)), [ dispatch ]);
+    const admit = useCallback(() => dispatch(approveRequest(r)), [ dispatch, r ]);
+    const reject = useCallback(() => dispatch(denyRequest(r)), [ dispatch, r ]);
 
     return (
         <ParticipantItem

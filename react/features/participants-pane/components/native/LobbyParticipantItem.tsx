@@ -19,8 +19,8 @@ interface IProps {
 
 export const LobbyParticipantItem = ({ participant: p }: IProps) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true)), [ dispatch ]);
-    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false)), [ dispatch ]);
+    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true)), [ dispatch, p.id ]);
+    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false)), [ dispatch, p.id ]);
 
     return (
         <ParticipantItem
