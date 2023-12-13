@@ -33,8 +33,8 @@ export const VISITOR_PROMOTION_REQUEST = 'VISITOR_PROMOTION_REQUEST';
  * The type of (redux) action which indicates that a promotion response denied was received.
  *
  * {
- *     type: VISITOR_PROMOTION_REQUEST_DENIED,
+ *     type: CLEAR_VISITOR_PROMOTION_REQUEST,
  *     request: IPromotionRequest
  * }
  */
-export const VISITOR_PROMOTION_REQUEST_DENIED = 'VISITOR_PROMOTION_REQUEST_DENIED';
+export const CLEAR_VISITOR_PROMOTION_REQUEST = 'CLEAR_VISITOR_PROMOTION_REQUEST';

@@ -2,10 +2,10 @@ import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 
 import {
+    CLEAR_VISITOR_PROMOTION_REQUEST,
     I_AM_VISITOR_MODE,
     UPDATE_VISITORS_COUNT,
-    VISITOR_PROMOTION_REQUEST,
-    VISITOR_PROMOTION_REQUEST_DENIED
+    VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
 import { IPromotionRequest } from './types';
 
@@ -77,13 +77,13 @@ export function denyRequest(request: IPromotionRequest): Function {
  *
  * @param {IPromotionRequest} request - The request.
  * @returns {{
- *     type: VISITOR_PROMOTION_REQUEST_DENIED,
+ *     type: CLEAR_VISITOR_PROMOTION_REQUEST,
  *     request: IPromotionRequest
  * }}
  */
 export function clearPromotionRequest(request: IPromotionRequest) {
     return {
-        type: VISITOR_PROMOTION_REQUEST_DENIED,
+        type: CLEAR_VISITOR_PROMOTION_REQUEST,
         request
     };
 }
