@@ -64,7 +64,7 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {ReactNode}
  */
-export default function Visitors() {
+export default function VisitorsList() {
     const requests = useSelector(getPromotionRequests);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
