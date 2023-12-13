@@ -8,10 +8,13 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../visitors/actions';
 import { getPromotionRequests } from '../../../visitors/functions';
 
-import VisitorsItems from './VisitorsItems';
+import { VisitorsItem } from './VisitorsItem';
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            margin: `${theme.spacing(3)} 0`
+        },
         headingW: {
             color: theme.palette.warning02
         },
@@ -92,9 +95,17 @@ export default function Visitors() {
                         onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
-            <VisitorsItems requests = { requests } />
+            <div
+                className = { classes.container }
+                id = 'visitor-list'>
+                {
+                    requests.map(r => (
+                        <VisitorsItem
+                            key = { r.from }
+                            request = { r } />)
+                    )
+                }
+            </div>
         </>
     );
 }
-
-
