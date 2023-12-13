@@ -13,8 +13,14 @@ import { VisitorsItem } from './VisitorsItem';
 import styles from './styles';
 
 const VisitorsList = () => {
-    const dispatch = useDispatch();
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+
+    if (visitorsCount <= 0) {
+        return null;
+    }
+
+    const dispatch = useDispatch();
+
     const requests = useSelector(getPromotionRequests);
 
     const admitAll = useCallback(() => {
@@ -27,9 +33,6 @@ const VisitorsList = () => {
         title += t('participantsPane.headings.visitorRequests', { count: requests.length });
     }
 
-    if (visitorsCount <= 0) {
-        return null;
-    }
 
     return (
         <>

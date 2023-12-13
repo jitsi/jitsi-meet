@@ -47,15 +47,6 @@ export const VisitorsItem = ({
     const admit = useCallback(() => dispatch(approveRequest(r)), [ dispatch, r ]);
     const reject = useCallback(() => dispatch(denyRequest(r)), [ dispatch, r ]);
 
-    const renderAdmitButton = () => (
-        <Button
-            accessibilityLabel = { `${t('participantsPane.actions.admit')} ${r.nick}` }
-            className = { styles.button }
-            labelKey = { 'participantsPane.actions.admit' }
-            onClick = { admit }
-            size = 'small'
-            testId = { `admit-${from}` } />);
-
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.PERMANENT }
@@ -75,7 +66,13 @@ export const VisitorsItem = ({
                     size = 'small'
                     testId = { `reject-${r.from}` }
                     type = { BUTTON_TYPES.DESTRUCTIVE } />
-                {renderAdmitButton()}
+                <Button
+                    accessibilityLabel = { `${t('participantsPane.actions.admit')} ${r.nick}` }
+                    className = { styles.button }
+                    labelKey = { 'participantsPane.actions.admit' }
+                    onClick = { admit }
+                    size = 'small'
+                    testId = { `admit-${from}` } />
             </>
             }
         </ParticipantItem>
