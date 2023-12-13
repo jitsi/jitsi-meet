@@ -15,10 +15,6 @@ import styles from './styles';
 const VisitorsList = () => {
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
-    if (visitorsCount <= 0) {
-        return null;
-    }
-
     const dispatch = useDispatch();
 
     const requests = useSelector(getPromotionRequests);
@@ -27,12 +23,16 @@ const VisitorsList = () => {
         dispatch(admitMultiple(requests));
     }, [ dispatch, requests ]);
     const { t } = useTranslation();
+
+    if (visitorsCount <= 0) {
+        return null;
+    }
+
     let title = t('participantsPane.headings.visitors', { count: visitorsCount });
 
     if (requests.length > 0) {
         title += t('participantsPane.headings.visitorRequests', { count: requests.length });
     }
-
 
     return (
         <>

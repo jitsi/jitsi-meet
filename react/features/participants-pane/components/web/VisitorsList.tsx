@@ -68,10 +68,6 @@ export default function Visitors() {
     const requests = useSelector(getPromotionRequests);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
-    if (visitorsCount <= 0) {
-        return null;
-    }
-
     const { t } = useTranslation();
     const { classes, cx } = useStyles();
     const dispatch = useDispatch();
@@ -79,6 +75,10 @@ export default function Visitors() {
     const admitAll = useCallback(() => {
         dispatch(admitMultiple(requests));
     }, [ dispatch, requests ]);
+
+    if (visitorsCount <= 0) {
+        return null;
+    }
 
     return (
         <>
