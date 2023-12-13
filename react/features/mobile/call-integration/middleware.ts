@@ -273,7 +273,7 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
     }
 
     // When assigning the call UUID, do so in upper case, since iOS will return
-    // it upper cased.
+    // it upper-cased.
     conference.callUUID = (callUUID || uuidv4()).toUpperCase();
 
     CallIntegration.startCall(conference.callUUID, handle, hasVideo)
