@@ -557,8 +557,6 @@
         "youtubeTerms": "Podmínky používání YouTube"
     },
     "lobby": {
-        "admit": "",
-        "admitAll": "",
         "allow": "Povolit",
         "backToKnockModeButton": "Žádné heslo, místo toho požádat o přijetí",
         "chat": "",
@@ -593,7 +591,6 @@
         "notificationTitle": "Předsálí",
         "passwordField": "Zadejte heslo setkání",
         "passwordJoinButton": "Vstoupit",
-        "reject": "Odmítnout",
         "title": "Předsálí",
         "toggleLabel": "Zapnout předsálí"
     },
@@ -719,22 +716,7 @@
     },
     "participantsPane": {
         "actions": {
-            "allow": "",
-            "allowVideo": "",
-            "askUnmute": "",
-            "audioModeration": "",
-            "blockEveryoneMicCamera": "",
-            "invite": "",
-            "moreModerationActions": "",
-            "moreModerationControls": "",
-            "moreParticipantOptions": "",
-            "mute": "",
-            "muteAll": "",
-            "muteEveryoneElse": "",
-            "stopEveryonesVideo": "",
-            "stopVideo": "",
-            "unblockEveryoneMicCamera": "",
-            "videoModeration": ""
+            "reject": "Odmítnout"
         },
         "close": "",
         "header": "",

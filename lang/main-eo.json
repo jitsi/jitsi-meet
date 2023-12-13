@@ -561,8 +561,6 @@
         "youtubeTerms": "Uzkondiĉoj de YouTube"
     },
     "lobby": {
-        "admit": "Akcepti",
-        "admitAll": "Akcepti ĉion",
         "allow": "Permesi",
         "backToKnockModeButton": "Petu por aliĝi",
         "chat": "Babilejo",
@@ -597,8 +595,6 @@
         "notificationTitle": "Atendejo",
         "passwordField": "Entajpu pasvorton de la renkontiĝo",
         "passwordJoinButton": "Aliĝi",
-        "reject": "Malakceptu",
-        "rejectAll": "Malakceptu ĉion",
         "title": "Atendejo",
         "toggleLabel": "Ŝaltu atendejon"
     },
@@ -725,6 +721,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Akcepti",
+            "admitAll": "Akcepti ĉion",
             "allow": "Al la partoprenantoj permesi:",
             "allowVideo": "Permesi kameraon",
             "askUnmute": "Peti malsilentigi",
@@ -737,6 +735,7 @@
             "mute": "Silentigi",
             "muteAll": "Silentigi ĉiujn",
             "muteEveryoneElse": "Silentigi ĉiujn aliajn",
+            "reject": "Malakceptu",
             "stopEveryonesVideo": "Ĉesigu ĉies videaĵon",
             "stopVideo": "Ĉesigu la videaĵon",
             "unblockEveryoneMicCamera": "Malbloku ĉies mikrofonon kaj kameraon",

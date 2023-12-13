@@ -561,8 +561,6 @@
         "youtubeTerms": "Uvjeti YouTube usluge"
     },
     "lobby": {
-        "admit": "Prihvati",
-        "admitAll": "Prihvati sve",
         "allow": "Dopusti",
         "backToKnockModeButton": "Zatraži pridruživanje",
         "chat": "Chat",
@@ -597,8 +595,6 @@
         "notificationTitle": "Predvorje",
         "passwordField": "Upiši lozinku sastanka",
         "passwordJoinButton": "Pridruži se",
-        "reject": "Odbij",
-        "rejectAll": "Odbij sve",
         "title": "Predvorje",
         "toggleLabel": "Uključi predvorje"
     },
@@ -725,6 +721,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Prihvati",
+            "admitAll": "Prihvati sve",
             "allow": "Dozvoli sudionicima da:",
             "allowVideo": "Dozvole video",
             "askUnmute": "Zatraže isključivanje zvuka",
@@ -737,6 +735,7 @@
             "mute": "Isključe zvuk",
             "muteAll": "Isključe zvuk svih sudionika",
             "muteEveryoneElse": "Isključe zvuk svih drugih",
+            "reject": "Odbij",
             "stopEveryonesVideo": "Prekinu videa svih",
             "stopVideo": "Prekinu video",
             "unblockEveryoneMicCamera": "Deblokiraju mikrofone i kamere svih sudionika",

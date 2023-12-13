@@ -584,8 +584,6 @@
         "youtubeTerms": "Умови надання послуг YouTube"
     },
     "lobby": {
-        "admit": "Допустити",
-        "admitAll": "Допустити всіх",
         "backToKnockModeButton": "Запитати дозволу",
         "chat": "Чат",
         "dialogTitle": "Приймальна",
@@ -619,8 +617,6 @@
         "notificationTitle": "Приймальна",
         "passwordField": "Ввести пароль зустрічі",
         "passwordJoinButton": "Приєднатися",
-        "reject": "Відмовити",
-        "rejectAll": "Відмовити всім",
         "title": "Приймальна",
         "toggleLabel": "Увімкнути приймальну"
     },
@@ -753,6 +749,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Допустити",
+            "admitAll": "Допустити всіх",
             "allow": "Дозволити учасникам:",
             "allowVideo": "Розблокувати камеру",
             "askUnmute": "Надати слово",
@@ -765,6 +763,7 @@
             "mute": "Вимкнути мікрофон",
             "muteAll": "Вимкнути мікрофони всім",
             "muteEveryoneElse": "Вимкнути мікрофони всім іншим",
+            "reject": "Відмовити",
             "stopEveryonesVideo": "Вимкнути камери всім",
             "stopVideo": "Вимкнути камеру",
             "unblockEveryoneMicCamera": "Розблокувати всім мікрофон і камеру",

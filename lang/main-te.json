@@ -455,8 +455,6 @@
         "youtubeTerms": "యూట్యూబ్ సేవా నియమాలు"
     },
     "lobby": {
-        "admit": "అనుమతించు",
-        "allow": "అనుమతించు",
         "backToKnockModeButton": "సంకేతపదం లేదు, చేర్చుకోమని అడుగు",
         "dialogTitle": "Lobby mode",
         "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
@@ -485,7 +483,6 @@
         "notificationTitle": "Lobby",
         "passwordField": "సమావేశం సంకేతపదం ఇవ్వండి",
         "passwordJoinButton": "చేరు",
-        "reject": "నిరాకరించు",
         "title": "Lobby",
         "toggleLabel": "Enable lobby"
     },
@@ -566,8 +563,11 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "అనుమతించు",
+            "allow": "అనుమతించు",
             "invite": "ప్రజలను ఆహ్వానించు",
             "muteAll": "అందరినీ మౌనించు",
+            "reject": "నిరాకరించు",
             "stopVideo": "వీడియో ఆపివేయి"
         },
         "headings": {

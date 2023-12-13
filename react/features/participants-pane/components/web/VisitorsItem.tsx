@@ -49,9 +49,9 @@ export const VisitorsItem = ({
 
     const renderAdmitButton = () => (
         <Button
-            accessibilityLabel = { `${t('lobby.admit')} ${r.nick}` }
+            accessibilityLabel = { `${t('participantsPane.actions.admit')} ${r.nick}` }
             className = { styles.button }
-            labelKey = { 'lobby.admit' }
+            labelKey = { 'participantsPane.actions.admit' }
             onClick = { admit }
             size = 'small'
             testId = { `admit-${from}` } />);
@@ -68,9 +68,9 @@ export const VisitorsItem = ({
 
             {<>
                 <Button
-                    accessibilityLabel = { `${t('lobby.reject')} ${r.nick}` }
+                    accessibilityLabel = { `${t('participantsPane.actions.reject')} ${r.nick}` }
                     className = { styles.button }
-                    labelKey = { 'lobby.reject' }
+                    labelKey = { 'participantsPane.actions.reject' }
                     onClick = { reject }
                     size = 'small'
                     testId = { `reject-${r.from}` }

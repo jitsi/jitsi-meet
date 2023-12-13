@@ -525,8 +525,6 @@
         "youtubeTerms": "YouTube サービス利用規約"
     },
     "lobby": {
-        "admit": "許可",
-        "admitAll": "全員許可",
         "allow": "許可",
         "backToKnockModeButton": "参加を依頼",
         "dialogTitle": "ロビーモード",
@@ -557,8 +555,6 @@
         "notificationTitle": "ロビー",
         "passwordField": "ミーティングパスワードを入力してください",
         "passwordJoinButton": "参加",
-        "reject": "却下",
-        "rejectAll": "全員却下",
         "title": "ロビー",
         "toggleLabel": "ロビーを有効"
     },
@@ -671,6 +667,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "許可",
+            "admitAll": "全員許可",
             "allow": "参加者に次のことを許可:",
             "allowVideo": "ビデオを許可",
             "askUnmute": "ミュート解除を依頼",
@@ -683,6 +681,7 @@
             "mute": "ミュート",
             "muteAll": "全員をミュート",
             "muteEveryoneElse": "他のすべての人をミュート",
+            "reject": "却下",
             "stopEveryonesVideo": "全員のビデオを停止",
             "stopVideo": "ビデオを停止",
             "unblockEveryoneMicCamera": "全員のマイクとビデオのブロックを解除",

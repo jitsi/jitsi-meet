@@ -587,8 +587,6 @@
         "youtubeTerms": "Tjänstevillkor för YouTube"
     },
     "lobby": {
-        "admit": "Godkänn",
-        "admitAll": "Godkänn alla",
         "backToKnockModeButton": "Tillbaka till väntrum",
         "chat": "Chatt",
         "dialogTitle": "Väntrum",
@@ -622,8 +620,6 @@
         "notificationTitle": "Väntrum",
         "passwordField": "Ange möteslösenord",
         "passwordJoinButton": "Anslut",
-        "reject": "Avvisa",
-        "rejectAll": "Avvisa alla",
         "title": "Lobby",
         "toggleLabel": "Aktivera väntrum"
     },
@@ -757,6 +753,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Godkänn",
+            "admitAll": "Godkänn alla",
             "allow": "Låt deltagarna:",
             "allowVideo": "Tillåt kamera",
             "askUnmute": "Be om att aktivera ljud",
@@ -769,6 +767,7 @@
             "mute": "Stäng av ljud",
             "muteAll": "Stäng av allt ljud",
             "muteEveryoneElse": "Inaktivera ljud för alla deltagare",
+            "reject": "Avvisa",
             "stopEveryonesVideo": "Inaktivera allas video",
             "stopVideo": "Inaktivera video",
             "unblockEveryoneMicCamera": "Aktivera allas mikrofon och kamera",

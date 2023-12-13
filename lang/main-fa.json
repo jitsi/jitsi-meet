@@ -606,8 +606,6 @@
         "youtubeTerms": "شرایط خدمات یوتیوب"
     },
     "lobby": {
-        "admit": "پذیرفتن",
-        "admitAll": "پذیرفتن همه",
         "backToKnockModeButton": "درخواست برای پیوستن",
         "chat": "گپ",
         "dialogTitle": "حالت اتاق انتظار",
@@ -641,8 +639,6 @@
         "notificationTitle": "اتاق انتظار",
         "passwordField": "گذرواژهٔ جلسه را وارد کنید",
         "passwordJoinButton": "پیوستن",
-        "reject": "ردکردن",
-        "rejectAll": "ردکردن همه",
         "title": "اتاق انتظار",
         "toggleLabel": "فعال‌کردن اتاق انتظار"
     },
@@ -776,6 +772,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "پذیرفتن",
+            "admitAll": "پذیرفتن همه",
             "allow": "به حاضران اجازه دهید:",
             "allowVideo": "اجازهٔ ویدیو",
             "askUnmute": "درخواست وصل‌کردن صدا",
@@ -788,6 +786,7 @@
             "mute": "بی‌صداکردن",
             "muteAll": "بی‌صداکردن همه",
             "muteEveryoneElse": "بی‌صداکردن بقیه افراد",
+            "reject": "ردکردن",
             "stopEveryonesVideo": "توقف ویدیوی همه",
             "stopVideo": "توقف ویدیو",
             "unblockEveryoneMicCamera": "رفع مسدودی میکروفون و دوربین همه",

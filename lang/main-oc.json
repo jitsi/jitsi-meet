@@ -524,8 +524,6 @@
         "youtubeTerms": "Condicions d’utilizacion de YouTube"
     },
     "lobby": {
-        "admit": "Acceptar",
-        "admitAll": "Tot acceptar",
         "allow": "Autorizar",
         "backToKnockModeButton": "Cap de senhal, demandar a participar a la plaça",
         "dialogTitle": "Mòde sala d'espèra",
@@ -556,8 +554,6 @@
         "notificationTitle": "Sala d'espèra",
         "passwordField": "Picatz lo senhal de la conferéncia",
         "passwordJoinButton": "Rejónher",
-        "reject": "Regetar",
-        "rejectAll": "Tot regetar",
         "title": "Sala d'espèra",
         "toggleLabel": "Activar la sala d'espèra"
     },
@@ -670,6 +666,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Acceptar",
+            "admitAll": "Tot acceptar",
             "allow": "Permetre als convidats de :",
             "allowVideo": "Autorizar la vidèo",
             "askUnmute": "Demandar a restablir lo son",
@@ -682,6 +680,7 @@
             "mute": "Amudir",
             "muteAll": "Amudir tot lo monde",
             "muteEveryoneElse": "Amudir tot los demai",
+            "reject": "Regetar",
             "stopEveryonesVideo": "Arrestar la vidèo de tot lo monde",
             "stopVideo": "Arrestar la vidèo",
             "unblockEveryoneMicCamera": "Desblocar lo microfòn e la camèra de tot lo monde",

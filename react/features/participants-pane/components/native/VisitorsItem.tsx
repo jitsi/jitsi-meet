@@ -29,14 +29,14 @@ export const VisitorsItem = ({ request: r }: IProps) => {
             key = { r.from }
             participantID = { r.from } >
             <Button
-                accessibilityLabel = 'lobby.reject'
-                labelKey = 'lobby.reject'
+                accessibilityLabel = 'participantsPane.actions.reject'
+                labelKey = 'participantsPane.actions.reject'
                 onClick = { reject }
                 style = { styles.lobbyButtonReject }
                 type = { BUTTON_TYPES.DESTRUCTIVE } />
             <Button
-                accessibilityLabel = 'lobby.admit'
-                labelKey = 'lobby.admit'
+                accessibilityLabel = 'participantsPane.actions.admit'
+                labelKey = 'participantsPane.actions.admit'
                 onClick = { admit }
                 style = { styles.lobbyButtonAdmit }
                 type = { BUTTON_TYPES.PRIMARY } />

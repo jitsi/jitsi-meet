@@ -89,7 +89,7 @@ export default function Visitors() {
                     requests.length > 1
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('lobby.admitAll')}</div>
+                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
             <VisitorsItems requests = { requests } />

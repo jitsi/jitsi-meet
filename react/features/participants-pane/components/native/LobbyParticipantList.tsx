@@ -35,8 +35,8 @@ const LobbyParticipantList = () => {
                 {
                     participants.length > 1 && (
                         <Button
-                            accessibilityLabel = 'lobby.admitAll'
-                            labelKey = 'lobby.admitAll'
+                            accessibilityLabel = 'participantsPane.actions.admitAll'
+                            labelKey = 'participantsPane.actions.admitAll'
                             mode = { BUTTON_MODES.TEXT }
                             onClick = { admitAll }
                             type = { BUTTON_TYPES.PRIMARY } />
