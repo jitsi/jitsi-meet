@@ -1,4 +1,4 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
+# Resolve react_native_pods.rb with node to allow for hoisting.
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
@@ -8,7 +8,10 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '12.4'
 workspace 'jitsi-meet'
 
-prepare_react_native_project!
+# This does the same thing as prepare_react_native_project! but allows for parallel pod downloads (and installs?).
+# parallel_pod_download_thread_pool_size is used when downloading pods in parallel.
+install! 'cocoapods', :parallel_pod_downloads => true,
+:parallel_pod_download_thread_pool_size => 40, :deterministic_uuids => false
 
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
