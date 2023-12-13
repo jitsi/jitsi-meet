@@ -835,8 +835,6 @@ function initCommands() {
             return true;
         }
 
-        logger.warn(`Unknown API command received: ${name}`);
-
         return false;
     });
     transport.on('request', (request, callback) => {
