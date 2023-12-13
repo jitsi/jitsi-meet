@@ -28,7 +28,7 @@ const LobbyParticipantList = () => {
 
     return (
         <>
-            <View style = { styles.lobbyListDetails as ViewStyle } >
+            <View style = { styles.listDetails as ViewStyle } >
                 <Text style = { styles.lobbyListDescription as TextStyle }>
                     { title }
                 </Text>

@@ -164,12 +164,12 @@ export default {
         color: BaseTheme.palette.uiBackground
     },
 
-    lobbyButtonAdmit: {
+    buttonAdmit: {
         position: 'absolute',
         right: 16
     },
 
-    lobbyButtonReject: {
+    buttonReject: {
         position: 'absolute',
         right: 112
     },
@@ -178,7 +178,7 @@ export default {
         ...participantListDescription
     },
 
-    lobbyListDetails: {
+    listDetails: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
