@@ -93,11 +93,11 @@ export function toggleRequestingSubtitles() {
 export function setRequestingSubtitles(
         enabled: boolean,
         displaySubtitles = true,
-        language: string | null = DEFAULT_LANGUAGE) {
+        language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`) {
     return {
         type: SET_REQUESTING_SUBTITLES,
         displaySubtitles,
         enabled,
-        language: `translation-languages:${language}`
+        language
     };
 }
