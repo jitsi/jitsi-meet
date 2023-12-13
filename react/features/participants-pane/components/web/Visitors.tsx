@@ -65,6 +65,10 @@ export default function Visitors() {
     const requests = useSelector(getPromotionRequests);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
 
+    if (visitorsCount <= 0) {
+        return null;
+    }
+
     const { t } = useTranslation();
     const { classes, cx } = useStyles();
     const dispatch = useDispatch();
@@ -76,14 +80,11 @@ export default function Visitors() {
     return (
         <>
             <div className = { classes.headingContainer }>
-                {
-                    visitorsCount > 0 && (
-                        <div className = { cx(classes.heading, classes.headingW) }>
-                            { t('participantsPane.headings.visitors', { count: visitorsCount })}
-                            { requests.length > 0
-                                && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
-                        </div>)
-                }
+                <div className = { cx(classes.heading, classes.headingW) }>
+                    { t('participantsPane.headings.visitors', { count: visitorsCount })}
+                    { requests.length > 0
+                        && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
+                </div>
                 {
                     requests.length > 1
                     && <div
@@ -91,11 +92,7 @@ export default function Visitors() {
                         onClick = { admitAll }>{t('lobby.admitAll')}</div>
                 }
             </div>
-            {
-                visitorsCount > 0 && (
-                    <VisitorsItems
-                        requests = { requests } />)
-            }
+            <VisitorsItems requests = { requests } />
         </>
     );
 }
