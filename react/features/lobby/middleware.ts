@@ -207,7 +207,7 @@ function _handleLobbyNotification(store: IStore) {
         descriptionKey = 'notify.participantWantsToJoin';
         notificationTitle = firstParticipant.name;
         icon = NOTIFICATION_ICON.PARTICIPANT;
-        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+        customActionNameKey = [ 'participantsPane.actions.admit', 'participantsPane.actions.reject' ];
         customActionType = [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));

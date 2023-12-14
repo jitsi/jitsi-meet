@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
+import { approveRequest, denyRequest } from '../../../visitors/actions';
+import { IPromotionRequest } from '../../../visitors/types';
 
 import ParticipantItem from './ParticipantItem';
 import styles from './styles';
@@ -12,22 +12,23 @@ import styles from './styles';
 interface IProps {
 
     /**
-     * Participant reference.
+     * Promotion request reference.
      */
-    participant: IParticipant;
+    request: IPromotionRequest;
 }
 
-export const LobbyParticipantItem = ({ participant: p }: IProps) => {
+export const VisitorsItem = ({ request: r }: IProps) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true)), [ dispatch, p.id ]);
-    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false)), [ dispatch, p.id ]);
+    const admit = useCallback(() => dispatch(approveRequest(r)), [ dispatch, r ]);
+    const reject = useCallback(() => dispatch(denyRequest(r)), [ dispatch, r ]);
+    const { from, nick } = r;
 
     return (
         <ParticipantItem
-            displayName = { p.name ?? '' }
+            displayName = { nick ?? '' }
             isKnockingParticipant = { true }
-            key = { p.id }
-            participantID = { p.id } >
+            key = { from }
+            participantID = { from } >
             <Button
                 accessibilityLabel = 'participantsPane.actions.reject'
                 labelKey = 'participantsPane.actions.reject'

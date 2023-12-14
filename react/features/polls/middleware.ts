@@ -63,13 +63,23 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
             (user: any, data: any) => {
-                data.type === COMMAND_NEW_POLL ? data.senderId = user._id : data.voterId = user._id;
-                _handleReceivePollsMessage(data, dispatch);
+                const isNewPoll = data.type === COMMAND_NEW_POLL;
+
+                _handleReceivePollsMessage({
+                    ...data,
+                    senderId: isNewPoll ? user._id : undefined,
+                    voterId: isNewPoll ? undefined : user._id
+                }, dispatch);
             });
         conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
             (id: any, data: any) => {
-                data.type === COMMAND_NEW_POLL ? data.senderId = id : data.voterId = id;
-                _handleReceivePollsMessage(data, dispatch);
+                const isNewPoll = data.type === COMMAND_NEW_POLL;
+
+                _handleReceivePollsMessage({
+                    ...data,
+                    senderId: isNewPoll ? id : undefined,
+                    voterId: isNewPoll ? undefined : id
+                }, dispatch);
             });
 
         break;

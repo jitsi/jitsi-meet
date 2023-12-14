@@ -636,8 +636,6 @@
         "youtubeTerms": "YouTube-Nutzungsbedingungen"
     },
     "lobby": {
-        "admit": "Zulassen",
-        "admitAll": "Alle zulassen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
         "chat": "Chat",
         "dialogTitle": "Lobbymodus",
@@ -671,8 +669,6 @@
         "notificationLobbyEnabled": "{{originParticipantName}} hat die Lobby aktiviert",
         "notificationTitle": "Lobby",
         "passwordJoinButton": "Beitreten",
-        "reject": "Ablehnen",
-        "rejectAll": "Alle ablehnen",
         "title": "Lobby",
         "toggleLabel": "Lobby aktivieren"
     },
@@ -807,6 +803,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Zulassen",
+            "admitAll": "Alle zulassen",
             "allow": "Anwesenden erlauben:",
             "allowVideo": "Kamera einschalten",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
@@ -819,6 +817,7 @@
             "mute": "Stummschalten",
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
+            "reject": "Ablehnen",
             "stopEveryonesVideo": "Alle Kameras ausschalten",
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",

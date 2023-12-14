@@ -642,8 +642,6 @@
         "youtubeTerms": "Termos de serviços do YouTube"
     },
     "lobby": {
-        "admit": "Aceitar",
-        "admitAll": "Aceitar todos",
         "backToKnockModeButton": "Sem senha, peça para se juntar",
         "chat": "Chat",
         "dialogTitle": "Modo sala de espera",
@@ -677,8 +675,6 @@
         "notificationLobbyEnabled": "Sala de espera foi habilitada por {{originParticipantName}}",
         "notificationTitle": "Sala de espera",
         "passwordJoinButton": "Solicitar",
-        "reject": "Rejeitar",
-        "rejectAll": "Rejeitar todos",
         "title": "Sala de espera",
         "toggleLabel": "Habilitar sala de espera"
     },
@@ -816,6 +812,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Aceitar",
+            "admitAll": "Aceitar todos",
             "allow": "Permitir aos participantes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pedir para ativar som",
@@ -829,6 +827,7 @@
             "mute": "Silenciar",
             "muteAll": "Silenciar todos",
             "muteEveryoneElse": "Silenciar todos os demais",
+            "reject": "Rejeitar",
             "stopEveryonesVideo": "Parar vídeo de todos",
             "stopVideo": "Parar vídeo",
             "unblockEveryoneMicCamera": "Desbloquear microfone e câmera de todos",

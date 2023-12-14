@@ -557,8 +557,6 @@
         "youtubeTerms": "Условия использования YouTube"
     },
     "lobby": {
-        "admit": "Признать",
-        "admitAll": "Признать все",
         "backToKnockModeButton": "Попросить присоединиться",
         "chat": "Чат",
         "dialogTitle": "Режим лобби",
@@ -592,8 +590,6 @@
         "notificationTitle": "Лобби",
         "passwordField": "Введите пароль встречи",
         "passwordJoinButton": "Присоединиться",
-        "reject": "Отказать",
-        "rejectAll": "Отказать всем",
         "title": "Лобби",
         "toggleLabel": "Включить лобби"
     },
@@ -720,6 +716,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Признать",
+            "admitAll": "Признать все",
             "allow": "Разрешить",
             "allowVideo": "Разрешить видео",
             "askUnmute": "Попросить разрешение включить микрофон",
@@ -732,6 +730,7 @@
             "mute": "Выключить звук",
             "muteAll": "Выключить звук у всех",
             "muteEveryoneElse": "Выключить микрофон у остальных",
+            "reject": "Отказать",
             "stopEveryonesVideo": "Выключить у всех камеру",
             "stopVideo": "Остановить видео",
             "unblockEveryoneMicCamera": "Разблокировать у всех микрофон и камеру",

@@ -1,3 +1,4 @@
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
@@ -11,6 +12,16 @@ import { toState } from '../base/redux/functions';
  */
 export function getVisitorsShortText(visitorsCount: number) {
     return visitorsCount > 100 ? `${Math.round(visitorsCount / 100) / 10} K` : String(visitorsCount);
+}
+
+/**
+ * Selector to return a list of promotion requests from visitors.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Array<Object>}
+ */
+export function getPromotionRequests(state: IReduxState) {
+    return state['features/visitors'].promotionRequests;
 }
 
 /**

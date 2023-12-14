@@ -482,7 +482,6 @@
         "notificationTitle": "लॉबी",
         "passwordField": "मीटिंग पासवर्ड दर्ज करें",
         "passwordJoinButton": "Join",
-        "reject": "अस्वीकार",
         "title": "लॉबी",
         "toggleLabel": "लॉबी सक्षम करें"
     },
@@ -558,6 +557,11 @@
         "unmute": "अनम्यूट",
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "videoMutedRemotelyTitle": "आपका कैमरा {{participantDisplayName}}द्वारा अक्षम कर दिया गया है!"
+    },
+    "participantsPane": {
+        "actions": {
+            "reject": "अस्वीकार"
+        }
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "दूसरे प्रतिभागी द्वारा निर्धारित",

@@ -561,8 +561,6 @@
         "youtubeTerms": "YouTube hizmet şartları"
     },
     "lobby": {
-        "admit": "Kabul et",
-        "admitAll": "Hepsini kabul et",
         "allow": "İzin ver",
         "backToKnockModeButton": "Parola yok, bunun yerine katılmayı isteyin",
         "chat": "Sohbet et",
@@ -597,8 +595,6 @@
         "notificationTitle": "Lobi",
         "passwordField": "Toplantı parolasını giriniz",
         "passwordJoinButton": "Katıl",
-        "reject": "Reddet",
-        "rejectAll": "Hepsini reddet",
         "title": "Lobi",
         "toggleLabel": "Lobiyi etkinleştir"
     },
@@ -725,6 +721,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Kabul et",
+            "admitAll": "Hepsini kabul et",
             "allow": "Katılımcıların şunları yapmasına izin ver:",
             "allowVideo": "Video'ya izin ver",
             "askUnmute": "Sesi açmayı iste",
@@ -737,6 +735,7 @@
             "mute": "Sessize al",
             "muteAll": "Herkesi sessize al",
             "muteEveryoneElse": "Diğer herkesi sessize al",
+            "reject": "Reddet",
             "stopEveryonesVideo": "Herkesin videosunu durdur",
             "stopVideo": "Video'yu durdur",
             "unblockEveryoneMicCamera": "Herkesin mikrofonunun ve kamerasının engellemesini kaldır",

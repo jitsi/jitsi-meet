@@ -582,8 +582,6 @@
         "youtubeTerms": "Kushte shërbimi YouTube"
     },
     "lobby": {
-        "admit": "Pranoje",
-        "admitAll": "Pranoji të tërë",
         "backToKnockModeButton": "Kërkoji të marrë pjesë",
         "chat": "Fjalosje",
         "dialogTitle": "Mënyra holl",
@@ -617,8 +615,6 @@
         "notificationTitle": "Holl",
         "passwordField": "Jepni fjalëkalim takimi",
         "passwordJoinButton": "Hyni",
-        "reject": "Hidhe poshtë",
-        "rejectAll": "Hidhi poshtë të tërë",
         "title": "Holl",
         "toggleLabel": "Aktivizoni hollin"
     },
@@ -749,6 +745,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Pranoje",
+            "admitAll": "Pranoji të tërë",
             "allow": "Lejoju pjesëmarrësve të:",
             "allowVideo": "Çaktivizoni videon",
             "askUnmute": "Kërkoni heqje heshtimi",
@@ -761,6 +759,7 @@
             "mute": "Heshtoje",
             "muteAll": "Heshtoji të tërë",
             "muteEveryoneElse": "Heshto gjithkënd tjetër",
+            "reject": "Hidhe poshtë",
             "stopEveryonesVideo": "Ndal videon e gjithkujt",
             "stopVideo": "Ndale videon",
             "unblockEveryoneMicCamera": "Zhblloko mikrofonin dhe kamerën e gjithkujt",

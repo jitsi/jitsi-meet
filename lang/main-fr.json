@@ -584,8 +584,6 @@
         "youtubeTerms": "Conditions d'utilisation de YouTube"
     },
     "lobby": {
-        "admit": "Accepter",
-        "admitAll": "Tout accepter",
         "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
         "chat": "Chat",
         "dialogTitle": "Mode salle d'attente",
@@ -619,8 +617,6 @@
         "notificationTitle": "Salle d'attente",
         "passwordField": "Veuillez saisir le mot de passe de la réunion",
         "passwordJoinButton": "Rejoindre",
-        "reject": "Refuser",
-        "rejectAll": "Refuser tout",
         "title": "Salle d'attente",
         "toggleLabel": "Activer la salle d'attente"
     },
@@ -751,6 +747,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Accepter",
+            "admitAll": "Tout accepter",
             "allow": "Autoriser les participants à:",
             "allowVideo": "permettre la vidéo",
             "askUnmute": "Demander de réactiver le micro",
@@ -763,6 +761,7 @@
             "mute": "Couper le micro",
             "muteAll": "Couper le micro de tout le monde",
             "muteEveryoneElse": "Couper le micro de tous les autres",
+            "reject": "Refuser",
             "stopEveryonesVideo": "Couper toutes les caméras",
             "stopVideo": "Couper la vidéo",
             "unblockEveryoneMicCamera": "Débloquer tous les micros et caméras",

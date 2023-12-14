@@ -561,8 +561,6 @@
         "youtubeTerms": "Condizioni di utilizzo di YouTube"
     },
     "lobby": {
-        "admit": "Ammetti",
-        "admitAll": "Ammetti tutti",
         "allow": "Autorizza",
         "backToKnockModeButton": "Nessuna password, richiedi l'accesso",
         "chat": "Conversazione",
@@ -597,8 +595,6 @@
         "notificationTitle": "Sala d'attesa",
         "passwordField": "Inserisci la password della riunione",
         "passwordJoinButton": "Entra",
-        "reject": "Respingi",
-        "rejectAll": "Respingi tutti",
         "title": "Sala d'attesa",
         "toggleLabel": "Attiva sala d'attesa"
     },
@@ -725,6 +721,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Ammetti",
+            "admitAll": "Ammetti tutti",
             "allow": "Permetti ai partecipanti di:",
             "allowVideo": "Autorizza video",
             "askUnmute": "Chiedi di accendere microfono",
@@ -737,6 +735,7 @@
             "mute": "Silenzia",
             "muteAll": "Silenzia tutti",
             "muteEveryoneElse": "Silenzia tutti gli altri",
+            "reject": "Respingi",
             "stopEveryonesVideo": "Ferma il video di tutti",
             "stopVideo": "Ferma il video",
             "unblockEveryoneMicCamera": "Sblocca audio e video a tutti",

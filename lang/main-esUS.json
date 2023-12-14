@@ -521,8 +521,6 @@
         "youtubeTerms": "Términos de servicios de YouTube"
     },
     "lobby": {
-        "admit": "Admitir",
-        "admitAll": "Admitir todo",
         "allow": "permitir",
         "backToKnockModeButton": "No hay contraseña, pide permiso para entrar.",
         "dialogTitle": "Sala de espera",
@@ -553,8 +551,6 @@
         "notificationTitle": "Sala de espera",
         "passwordField": "Introduce la contraseña de la reunión",
         "passwordJoinButton": "Entrar",
-        "reject": "Rechazar",
-        "rejectAll": "Rechazar todo",
         "title": "Sala de espera",
         "toggleLabel": "Activar sala de espera"
     },
@@ -652,6 +648,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Admitir",
+            "admitAll": "Admitir todo",
             "allow": "Permitir a los asistentes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pida que le quiten el silencio",
@@ -661,6 +659,7 @@
             "mute": "Silenciar",
             "muteAll": "Silenciar a todos los demás",
             "muteEveryoneElse": "Silenciar al resto",
+            "reject": "Rechazar",
             "stopEveryonesVideo": "Detener el vídeo de todos",
             "stopVideo": "Detener el vídeo",
             "unblockEveryoneMicCamera": "Desbloquear el micrófono y la cámara de todos",
