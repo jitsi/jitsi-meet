@@ -9,12 +9,27 @@ import DialInSummaryApp from './features/invite/components/dial-in-summary/web/D
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 
 const logger = getLogger('index.web');
-const OS = Platform.OS;
+
+// Add global loggers.
+window.addEventListener('error', ev => {
+    logger.error(
+        `UnhandledError: ${ev.message}`,
+        `Script: ${ev.filename}`,
+        `Line: ${ev.lineno}`,
+        `Column: ${ev.colno}`,
+        'StackTrace: ', ev.error);
+});
+
+window.addEventListener('unhandledrejection', ev => {
+    logger.error(
+        `UnhandledPromiseRejection: ${ev.reason}`,
+        'Promise: ', ev.promise);
+});
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
 // to be rendered.
-if (OS === 'ios') {
+if (Platform.OS === 'ios') {
     window.addEventListener('pageshow', event => {
         // Detect pages loaded from the 'back-forward' cache
         // (https://webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/)
