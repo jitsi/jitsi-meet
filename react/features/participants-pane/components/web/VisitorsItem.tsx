@@ -40,7 +40,7 @@ const useStyles = makeStyles()(theme => {
 export const VisitorsItem = ({
     request: r
 }: IProps) => {
-    const { from } = r;
+    const { from, nick } = r;
     const { t } = useTranslation();
     const { classes: styles } = useStyles();
     const dispatch = useDispatch();
@@ -51,8 +51,8 @@ export const VisitorsItem = ({
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.PERMANENT }
             audioMediaState = { MEDIA_STATE.NONE }
-            displayName = { r.nick }
-            participantID = { r.from }
+            displayName = { nick }
+            participantID = { from }
             raisedHand = { true }
             videoMediaState = { MEDIA_STATE.NONE }
             youText = { t('chat.you') }>
@@ -61,15 +61,15 @@ export const VisitorsItem = ({
                 <Button
                     accessibilityLabel = { `${t('participantsPane.actions.reject')} ${r.nick}` }
                     className = { styles.button }
-                    labelKey = { 'participantsPane.actions.reject' }
+                    labelKey = 'participantsPane.actions.reject'
                     onClick = { reject }
                     size = 'small'
-                    testId = { `reject-${r.from}` }
+                    testId = { `reject-${from}` }
                     type = { BUTTON_TYPES.DESTRUCTIVE } />
                 <Button
                     accessibilityLabel = { `${t('participantsPane.actions.admit')} ${r.nick}` }
                     className = { styles.button }
-                    labelKey = { 'participantsPane.actions.admit' }
+                    labelKey = 'participantsPane.actions.admit'
                     onClick = { admit }
                     size = 'small'
                     testId = { `admit-${from}` } />

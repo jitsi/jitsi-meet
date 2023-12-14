@@ -21,13 +21,14 @@ export const VisitorsItem = ({ request: r }: IProps) => {
     const dispatch = useDispatch();
     const admit = useCallback(() => dispatch(approveRequest(r)), [ dispatch, r ]);
     const reject = useCallback(() => dispatch(denyRequest(r)), [ dispatch, r ]);
+    const { from, nick } = r;
 
     return (
         <ParticipantItem
-            displayName = { r.nick ?? '' }
+            displayName = { nick ?? '' }
             isKnockingParticipant = { true }
-            key = { r.from }
-            participantID = { r.from } >
+            key = { from }
+            participantID = { from } >
             <Button
                 accessibilityLabel = 'participantsPane.actions.reject'
                 labelKey = 'participantsPane.actions.reject'
