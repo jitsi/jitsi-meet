@@ -378,7 +378,7 @@ var config = {
     // DEPRECATED. Use transcription.preferredLanguage instead.
     // preferredTranscribeLanguage: 'en-US',
 
-    // DEPRECATED. Use transcription.autoCaptionOnRecord instead.
+    // DEPRECATED. Use transcription.autoTranscribeOnRecord instead.
     // autoCaptionOnRecord: false,
 
     // Transcription options.
@@ -410,8 +410,8 @@ var config = {
     //     // Disable start transcription for all participants.
     //     disableStartForAll: false,
 
-    //     // Enables automatic turning on captions when recording is started
-    //     autoCaptionOnRecord: false,
+    //     // Enables automatic turning on transcribing when recording is started
+    //     autoTranscribeOnRecord: false,
     // },
 
     // Misc
