@@ -17,13 +17,13 @@ window.addEventListener('error', ev => {
         `Script: ${ev.filename}`,
         `Line: ${ev.lineno}`,
         `Column: ${ev.colno}`,
-        'StackTrace: ', ev.error);
+        'StackTrace: ', ev.error?.stack);
 });
 
 window.addEventListener('unhandledrejection', ev => {
     logger.error(
         `UnhandledPromiseRejection: ${ev.reason}`,
-        'Promise: ', ev.promise);
+        'StackTrace: ', ev.reason?.stack);
 });
 
 // Workaround for the issue when returning to a page with the back button and
