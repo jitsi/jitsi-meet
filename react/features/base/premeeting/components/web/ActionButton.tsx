@@ -23,11 +23,6 @@ interface IProps {
     ariaLabel?: string;
 
     /**
-     * To give a aria-pressed to the icon.
-     */
-    ariaPressed?: boolean;
-
-    /**
      * Text of the button.
      */
     children: ReactNode;
@@ -179,7 +174,6 @@ function ActionButton({
     onOptionsClick,
     tabIndex,
     role,
-    ariaPressed,
     ariaLabel,
     ariaDropDownLabel
 }: IProps) {
@@ -223,7 +217,6 @@ function ActionButton({
                     aria-disabled = { disabled }
                     aria-haspopup = 'true'
                     aria-label = { ariaDropDownLabel }
-                    aria-pressed = { ariaPressed }
                     className = { classes.options }
                     data-testid = 'prejoin.joinOptions'
                     onClick = { disabled ? undefined : onOptionsClick }

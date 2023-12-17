@@ -41,8 +41,7 @@ const ToolbarButton = ({
     customClass,
     disabled = false,
     onClick,
-    icon,
-    toggled = false
+    icon
 }: IProps) => {
     const onKeyPress = useCallback(event => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -54,7 +53,6 @@ const ToolbarButton = ({
     return (<div
         aria-disabled = { disabled }
         aria-label = { accessibilityLabel }
-        aria-pressed = { toggled }
         className = { `toolbox-button ${disabled ? ' disabled' : ''}` }
         onClick = { disabled ? undefined : onClick }
         onKeyPress = { disabled ? undefined : onKeyPress }

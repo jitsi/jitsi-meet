@@ -432,8 +432,9 @@ const Prejoin = ({
                         visible = { showJoinByPhoneButtons }>
                         <ActionButton
                             OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
-                            ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
-                            ariaLabel = { t('prejoin.joinMeeting') }
+                            ariaDropDownLabel = { showJoinByPhoneButtons
+                                ? t('prejoin.joinWithoutAudioMenuClose') : t('prejoin.joinWithoutAudioMenuOpen') }
+                            ariaLabel = { t('prejoin.joinWithoutAudio') }
                             ariaPressed = { showJoinByPhoneButtons }
                             disabled = { joiningInProgress
                                 || (showUnsafeRoomWarning && !unsafeRoomConsent)
