@@ -37,6 +37,7 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         drawerMenuContainer: {
+            backgroundColor: 'rgba(0,0,0,0.6)',
             height: '100dvh',
             display: 'flex',
             alignItems: 'flex-end'
