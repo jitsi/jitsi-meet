@@ -219,7 +219,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         sendEvent(
             store,
             action.type,
-            participantToParticipantInfo(participant) /* data */
+            participantToParticipantInfo(store, participant) /* data */
         );
         break;
     }
@@ -343,10 +343,10 @@ function _registerForNativeEvents(store: IStore) {
         const remoteParticipants = getRemoteParticipants(store);
         const localParticipant = getLocalParticipant(store);
 
-        localParticipant && participantsInfo.push(participantToParticipantInfo(localParticipant));
+        localParticipant && participantsInfo.push(participantToParticipantInfo(store, localParticipant));
         remoteParticipants.forEach(participant => {
             if (!participant.fakeParticipant) {
-                participantsInfo.push(participantToParticipantInfo(participant));
+                participantsInfo.push(participantToParticipantInfo(store, participant));
             }
         });
 
