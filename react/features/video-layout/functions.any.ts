@@ -150,16 +150,6 @@ export function updateAutoPinnedParticipant(
 }
 
 /**
- * Selector for whether we are currently in tile view.
- *
- * @param {Object} state - The redux state.
- * @returns {boolean}
- */
-export function isLayoutTileView(state: IReduxState) {
-    return getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
-}
-
-/**
  * Returns the video quality for the given height.
  *
  * @param {number|undefined} height - Height of the video container.

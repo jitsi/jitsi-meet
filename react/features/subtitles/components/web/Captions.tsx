@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { isLayoutTileView } from '../../../video-layout/functions.web';
+import { shouldDisplayTileView } from '../../../video-layout/functions.web';
 import {
     AbstractCaptions,
     type IAbstractCaptionsProps,
@@ -74,7 +74,7 @@ class Captions extends AbstractCaptions<IProps> {
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
-    const isTileView = isLayoutTileView(state);
+    const isTileView = shouldDisplayTileView(state);
     const largeVideoParticipant = getLargeVideoParticipant(state);
     const localParticipant = getLocalParticipant(state);
 

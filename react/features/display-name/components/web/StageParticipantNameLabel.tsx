@@ -12,7 +12,7 @@ import {
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import { isLayoutTileView } from '../../../video-layout/functions.web';
+import { shouldDisplayTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
 
@@ -52,7 +52,7 @@ const StageParticipantNameLabel = () => {
     const localParticipant = useSelector(getLocalParticipant);
     const localId = localParticipant?.id;
 
-    const isTileView = useSelector(isLayoutTileView);
+    const isTileView = useSelector(shouldDisplayTileView);
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
     const showDisplayName = useSelector(isDisplayNameVisible);
 

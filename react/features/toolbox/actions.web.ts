@@ -1,7 +1,7 @@
 import { IStore } from '../app/types';
 import { overwriteConfig } from '../base/config/actions';
 import { isMobileBrowser } from '../base/environment/utils';
-import { isLayoutTileView } from '../video-layout/functions.any';
+import { shouldDisplayTileView } from '../video-layout/functions.any';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -85,7 +85,7 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const hoverSelector = isLayoutTileView(state)
+        const hoverSelector = shouldDisplayTileView(state)
             ? '.remotevideomenu:hover'
             : '.filmstrip:hover,.remotevideomenu:hover';
         const hoveredElem = document.querySelector(hoverSelector);

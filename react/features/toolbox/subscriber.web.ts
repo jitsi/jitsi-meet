@@ -4,10 +4,10 @@ import { IReduxState, IStore } from '../app/types';
 import { getParticipantCount } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { DEFAULT_MAX_COLUMNS } from '../filmstrip/constants';
-import { isLayoutTileView } from '../video-layout/functions.any';
+import { shouldDisplayTileView } from '../video-layout/functions.web';
 
 import { setShiftUp } from './actions.any';
-import { isAudioMuteButtonDisabled } from './functions.any';
+import { isAudioMuteButtonDisabled } from './functions.web';
 
 /**
  * Notifies when audio availability changes.
@@ -89,13 +89,13 @@ StateListenerRegistry.register(
             participantCount: getParticipantCount(state),
             clientHeight,
             clientWidth,
-            isTileView: isLayoutTileView(state)
+            isTileView: shouldDisplayTileView(state)
         };
     },
     /* listener */({ clientHeight, isTileView: previousIsTileView }, store) => {
         const state = store.getState();
 
-        if (!isLayoutTileView(state)) {
+        if (!shouldDisplayTileView(state)) {
             if (previousIsTileView) {
                 store.dispatch(setShiftUp(false));
             }
