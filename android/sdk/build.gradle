@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    api 'com.facebook.react:react-android:${rootProject.ext.rnVersion}'
+    api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
 
     //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'

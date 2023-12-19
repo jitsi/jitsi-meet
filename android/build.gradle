@@ -63,7 +63,7 @@ allprojects {
             eachDependency { DependencyResolveDetails details ->
                 if (details.requested.group == 'com.facebook.react') {
                     if (details.requested.name == 'react-native') {
-                        details.useTarget 'com.facebook.react:react-android:$rnVersion'
+                        details.useTarget "com.facebook.react:react-android:$rnVersion"
                     }
                     if (details.requested.name == 'react-android') {
                         details.useVersion rootProject.ext.rnVersion
