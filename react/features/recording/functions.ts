@@ -1,19 +1,36 @@
-import { IReduxState } from '../app/types';
+import i18next from 'i18next';
+
+import { IReduxState, IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
+import { getSoundFileSrc } from '../base/media/functions';
 import {
     getLocalParticipant,
     getRemoteParticipants,
     isLocalParticipantModerator
 } from '../base/participants/functions';
+import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
-import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
+import {
+    LIVE_STREAMING_OFF_SOUND_ID,
+    LIVE_STREAMING_ON_SOUND_ID,
+    RECORDING_OFF_SOUND_ID,
+    RECORDING_ON_SOUND_ID,
+    RECORDING_STATUS_PRIORITIES,
+    RECORDING_TYPES
+} from './constants';
 import logger from './logger';
+import {
+    LIVE_STREAMING_OFF_SOUND_FILE,
+    LIVE_STREAMING_ON_SOUND_FILE,
+    RECORDING_OFF_SOUND_FILE,
+    RECORDING_ON_SOUND_FILE
+} from './sounds';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -277,4 +294,48 @@ function isRemoteParticipantRecordingLocally(state: IReduxState) {
     }
 
     return false;
+}
+
+/**
+ * Unregisters the audio files based on locale.
+ *
+ * @param {Dispatch<any>} dispatch - The redux dispatch function.
+ * @returns {void}
+ */
+export function unregisterRecordingAudioFiles(dispatch: IStore['dispatch']) {
+    dispatch(unregisterSound(LIVE_STREAMING_OFF_SOUND_FILE));
+    dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_OFF_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_ON_SOUND_FILE));
+}
+
+/**
+ * Registers the audio files based on locale.
+ *
+ * @param {Dispatch<any>} dispatch - The redux dispatch function.
+ * @param {boolean|undefined} shouldUnregister - Whether the sounds should be unregistered.
+ * @returns {void}
+ */
+export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], shouldUnregister?: boolean) {
+    const language = i18next.language;
+
+    if (shouldUnregister) {
+        unregisterRecordingAudioFiles(dispatch);
+    }
+
+    dispatch(registerSound(
+        LIVE_STREAMING_OFF_SOUND_ID,
+        getSoundFileSrc(LIVE_STREAMING_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        LIVE_STREAMING_ON_SOUND_ID,
+        getSoundFileSrc(LIVE_STREAMING_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_OFF_SOUND_ID,
+        getSoundFileSrc(RECORDING_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_ON_SOUND_ID,
+        getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
 }

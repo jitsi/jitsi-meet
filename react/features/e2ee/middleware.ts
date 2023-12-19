@@ -1,4 +1,3 @@
-
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
@@ -14,16 +13,19 @@ import {
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { playSound } from '../base/sounds/actions';
 
 import { PARTICIPANT_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, toggleE2EE } from './actions';
 import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
-import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
+import {
+    isMaxModeReached,
+    isMaxModeThresholdReached,
+    registerE2eeAudioFiles,
+    unregisterE2eeAudioFiles
+} from './functions';
 import logger from './logger';
-import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
-
 
 /**
  * Middleware that captures actions related to E2EE.
@@ -36,18 +38,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        dispatch(registerSound(
-            E2EE_OFF_SOUND_ID,
-            E2EE_OFF_SOUND_FILE));
-
-        dispatch(registerSound(
-            E2EE_ON_SOUND_ID,
-            E2EE_ON_SOUND_FILE));
+        registerE2eeAudioFiles(dispatch);
         break;
 
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(E2EE_OFF_SOUND_ID));
-        dispatch(unregisterSound(E2EE_ON_SOUND_ID));
+        unregisterE2eeAudioFiles(dispatch);
         break;
 
     case CONFERENCE_JOINED:

@@ -39,6 +39,15 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
 };
 
 /**
+ * The languages supported for audio files.
+ */
+export enum AudioSupportedLanguage {
+    en = 'en',
+    fr = 'fr',
+    frCA = 'frCA'
+}
+
+/**
  * The types of authorities which may mute/unmute the local video.
  *
  * @enum {number}
