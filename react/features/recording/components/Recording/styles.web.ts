@@ -12,3 +12,5 @@ export const ICON_CLOUD = 'images/icon-cloud.png';
 export const ICON_INFO = 'images/icon-info.png';
 
 export const ICON_USERS = 'images/icon-users.png';
+
+export const ICON_OPTIONS = 'images/icon-info.png';
