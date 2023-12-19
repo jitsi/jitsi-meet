@@ -315,7 +315,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     host_module:hook('muc-occupant-joined', function (event)
         local room, occupant = event.room, event.occupant;
 
-        if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) or occupant.role ~= 'moderator' then -- luacheck: ignore
+        if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) or occupant.role ~= 'moderator' -- luacheck: ignore
+            or not visitors_promotion_requests[event.room.jid] then
             return;
         end
 
