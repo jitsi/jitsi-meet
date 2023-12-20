@@ -159,13 +159,13 @@ export async function createHandlers({ getState }: IStore) {
  *
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @param {Array<Object>} handlers - The analytics handlers.
- * @returns {void}
+ * @returns {boolean} - True if the analytics were successfully initialized and false otherwise.
  */
-export function initAnalytics(store: IStore, handlers: Array<Object>) {
+export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     const { getState, dispatch } = store;
 
     if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
-        return;
+        return false;
     }
 
     const state = getState();
@@ -232,7 +232,11 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
         }
     }
 
-    analytics.addPermanentProperties(permanentProperties);
+    analytics.addPermanentProperties({
+        ...permanentProperties,
+        ...getState()['features/analytics'].initialPermanentProperties
+    });
+
     analytics.setConferenceName(getAnalyticsRoomName(state, dispatch));
 
     // Set the handlers last, since this triggers emptying of the cache
@@ -249,6 +253,8 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
             }
         });
     }
+
+    return true;
 }
 
 /**
