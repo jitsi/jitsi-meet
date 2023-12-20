@@ -83,7 +83,7 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
             toggled
         } = this.props;
         const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
-        const buttonAttribute = isMenuButton ? 'aria-expanded' : '';
+        const buttonAttribute = isMenuButton ? 'aria-expanded' : 'aria-pressed';
         const props = {
             [buttonAttribute]: toggled,
             'aria-disabled': disabled,
