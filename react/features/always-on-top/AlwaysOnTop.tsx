@@ -57,14 +57,14 @@ export default class AlwaysOnTop extends Component<any, IState> {
         };
 
         // Bind event handlers so they are only bound once per instance.
-        this._avatarChangedListener = this._avatarChangedListener.bind(this);
-        this._displayNameChangedListener
-            = this._displayNameChangedListener.bind(this);
-        this._videoChangedListener
-            = this._videoChangedListener.bind(this);
-        this._mouseMove = this._mouseMove.bind(this);
-        this._onMouseOut = this._onMouseOut.bind(this);
-        this._onMouseOver = this._onMouseOver.bind(this);
+        // this._avatarChangedListener = this._avatarChangedListener.bind(this);
+        // this._displayNameChangedListener
+        //     = this._displayNameChangedListener.bind(this);
+        // this._videoChangedListener
+        //     = this._videoChangedListener.bind(this);
+        // this._mouseMove = this._mouseMove.bind(this);
+        // this._onMouseOut = this._onMouseOut.bind(this);
+        // this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -72,7 +72,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _avatarChangedListener({ avatarURL, id }: { avatarURL: string; id: string; }) {
+    _avatarChangedListener = ({ avatarURL, id }: { avatarURL: string; id: string; }) => {
         if (api._getOnStageParticipant() === id
                 && avatarURL !== this.state.avatarURL) {
             this.setState({ avatarURL });
@@ -84,8 +84,8 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _displayNameChangedListener({ displayname, formattedDisplayName, id }: { displayname: string;
-        formattedDisplayName: string; id: string; }) {
+    _displayNameChangedListener = ({ displayname, formattedDisplayName, id }: { displayname: string;
+        formattedDisplayName: string; id: string; }) => {
         if (api._getOnStageParticipant() === id
                 && (formattedDisplayName !== this.state.formattedDisplayName
                     || displayname !== this.state.displayName)) {
@@ -119,7 +119,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _videoChangedListener() {
+    _videoChangedListener = () => {
         const userID = api._getOnStageParticipant();
         const avatarURL = api.getAvatarURL(userID);
         const displayName = api.getDisplayName(userID);
@@ -140,7 +140,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _mouseMove() {
+    _mouseMove = () => {
         this.state.visible || this.setState({ visible: true });
     }
 
@@ -149,7 +149,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _onMouseOut() {
+    _onMouseOut = () => {
         this._hovered = false;
     }
 
@@ -158,7 +158,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
      *
      * @returns {void}
      */
-    _onMouseOver() {
+    _onMouseOver = () => {
         this._hovered = true;
     }
 
