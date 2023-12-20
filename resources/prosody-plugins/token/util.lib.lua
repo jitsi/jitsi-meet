@@ -121,6 +121,7 @@ function Util.new(module)
     if self.cacheKeysUrl then
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
                 self.cachedKeys = {};
