@@ -72,7 +72,7 @@ const useStyles = makeStyles<{ overflowDrawer: boolean; reactionsMenuHeight: num
 (_theme, { reactionsMenuHeight, overflowDrawer }) => {
     return {
         overflowMenuDrawer: {
-            overflow: 'hidden',
+            overflowY: 'scroll',
             height: `calc(${DRAWER_MAX_HEIGHT})`
         },
         contextMenu: {
@@ -92,8 +92,13 @@ const useStyles = makeStyles<{ overflowDrawer: boolean; reactionsMenuHeight: num
             overflowY: 'auto'
         },
         footer: {
-            position: 'relative',
-            bottom: 0
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0
+        },
+        reactionsPadding: {
+            height: `${reactionsMenuHeight}px`
         }
     };
 });
@@ -211,6 +216,7 @@ const OverflowMenuButton = ({
                             <>
                                 <div className = { classes.overflowMenuDrawer }>
                                     { overflowMenu }
+                                    <div className = { classes.reactionsPadding } />
                                 </div>
                             </>
                         </Drawer>
