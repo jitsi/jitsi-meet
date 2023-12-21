@@ -29,7 +29,7 @@ export default {
     bottomBar: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: BaseTheme.palette.ui01
     },
 
     clearButton: {

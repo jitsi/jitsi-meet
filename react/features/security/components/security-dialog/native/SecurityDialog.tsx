@@ -396,7 +396,7 @@ class SecurityDialog extends PureComponent<IProps, IState> {
 
         this.setState({
             lobbyEnabled: !lobbyEnabled
-        })
+        });
 
         dispatch(toggleLobbyMode(!lobbyEnabled));
     }
