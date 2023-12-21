@@ -3,7 +3,8 @@ import React, { ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
-    FlatList, SafeAreaView,
+    FlatList,
+    SafeAreaView,
     TouchableOpacity,
     View,
     ViewStyle
@@ -39,7 +40,6 @@ import AbstractAddPeopleDialog, {
 } from '../AbstractAddPeopleDialog';
 
 import styles, { AVATAR_SIZE } from './styles';
-import {SafeAreaProvider} from "react-native-safe-area-context";
 
 interface IProps extends AbstractProps, WithTranslation {
 
