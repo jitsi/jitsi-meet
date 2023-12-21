@@ -30,7 +30,7 @@ export default {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: BaseTheme.palette.ui01,
-        height: BaseTheme.spacing[10]
+        height: BaseTheme.spacing[13]
     },
 
     clearButton: {

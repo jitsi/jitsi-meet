@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
-    FlatList,
+    FlatList, SafeAreaView,
     TouchableOpacity,
     View,
     ViewStyle
@@ -39,6 +39,7 @@ import AbstractAddPeopleDialog, {
 } from '../AbstractAddPeopleDialog';
 
 import styles, { AVATAR_SIZE } from './styles';
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 interface IProps extends AbstractProps, WithTranslation {
 
@@ -497,7 +498,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      */
     _renderShareMeetingButton() {
         return (
-            <View
+            <SafeAreaView
                 style = { [
                     styles.bottomBar as ViewStyle,
                     this.state.bottomPadding ? styles.extraBarPadding : null
@@ -508,7 +509,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                         src = { IconShare }
                         style = { styles.shareIcon } />
                 </TouchableOpacity>
-            </View>
+            </SafeAreaView>
         );
     }
 
