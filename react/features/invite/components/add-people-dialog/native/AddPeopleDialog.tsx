@@ -200,6 +200,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
+                hasExtraHeaderHeight = { true }
                 style = { styles.addPeopleContainer }>
                 <Input
                     autoFocus = { false }
