@@ -928,7 +928,7 @@
         "joinWithoutAudio": "Entrar sem áudio",
         "keyboardShortcuts": "Ativar os atalhos de teclado",
         "linkCopied": "Link copiado para a área de transferência",
-        "lookGood": "O seu microfone funciona corretamente",
+        "lookGood": "Tudo está a funcionar corretamente",
         "or": "ou",
         "premeeting": "Pré-reunião",
         "proceedAnyway": "Continuar na mesma",
@@ -1167,7 +1167,7 @@
     "toolbar": {
         "Settings": "Definições",
         "accessibilityLabel": {
-            "Settings": "Mudar configurações",
+            "Settings": "Abrir definições",
             "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
