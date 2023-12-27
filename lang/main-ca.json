@@ -1036,6 +1036,7 @@
         "neutral": "Neutral",
         "sad": "Tristesa",
         "search": "Cerca",
+        "searchHint": "Cerca participants",
         "seconds": "{{count}}s",
         "speakerStats": "Estadístiques de l'interlocutor",
         "speakerTime": "Temps de l'interlocutor",

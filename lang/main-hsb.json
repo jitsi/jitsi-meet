@@ -1000,6 +1000,7 @@
         "neutral": "neutralny",
         "sad": "zrudny",
         "search": "pytać",
+        "searchHint": "přitomnych pytać",
         "seconds": "{{count}}s",
         "speakerStats": "statistika rěčnikow",
         "speakerTime": "čas rěčnikow",

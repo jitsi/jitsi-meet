@@ -854,6 +854,8 @@
         "hours": "{{count}}u",
         "minutes": "{{count}}m",
         "name": "Naam",
+        "search": "Zoeken",
+        "searchHint": "Zoek deelnemers",
         "seconds": "{{count}}s",
         "speakerStats": "Sprekerstatistieken",
         "speakerTime": "Sprekertijd"

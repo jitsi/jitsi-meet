@@ -553,6 +553,8 @@
         "hours": "{{count}} h",
         "minutes": "{{count}} min",
         "name": "Nom",
+        "search": "Recherche",
+        "searchHint": "Recherche des participants",
         "seconds": "{{count}} s",
         "speakerStats": "Statistiques d'intervenant",
         "speakerTime": "Temps d'intervention"

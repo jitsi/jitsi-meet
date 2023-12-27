@@ -1140,6 +1140,7 @@
         "neutral": "中立",
         "sad": "悲傷",
         "search": "搜尋",
+        "searchHint": "搜尋與會者",
         "seconds": "{{count}} 秒",
         "speakerStats": "發言統計",
         "speakerTime": "發言時間",

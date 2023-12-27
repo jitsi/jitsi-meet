@@ -1037,6 +1037,7 @@
         "neutral": "neutralny/neutralna",
         "sad": "tužny/tužna",
         "search": "pytaś",
+        "searchHint": "wobźělniki pytaś",
         "seconds": "{{count}} sek.",
         "speakerStats": "statistika powědarja",
         "speakerTime": "cas powědanja",

@@ -1033,6 +1033,7 @@
         "neutral": "Neutralan",
         "sad": "Žalostan",
         "search": "Traži",
+        "searchHint": "Traži sudionike",
         "seconds": "{{count}} s",
         "speakerStats": "Statistika govornika",
         "speakerTime": "Vrijeme govornika",

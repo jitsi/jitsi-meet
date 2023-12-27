@@ -572,6 +572,8 @@
         "minutes": "{{count}}m",
         "name": "Nimi",
         "seconds": "{{count}}s",
+        "search": "Otsi",
+        "searchHint": "Otsige osalejaid",
         "speakerStats": "Kõneleja andmed",
         "speakerTime": "Kõnelemise aeg"
     },

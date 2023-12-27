@@ -1089,6 +1089,7 @@
         "neutral": "Neutral",
         "sad": "Triste",
         "search": "Buscar",
+        "searchHint": "Buscar participantes",
         "seconds": "{{count}} s",
         "speakerStats": "Estadísticas de participantes",
         "speakerTime": "Tiempo hablado",

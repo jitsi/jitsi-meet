@@ -1145,6 +1145,7 @@
         "neutral": "Neutro",
         "sad": "Triste",
         "search": "Pesquisar",
+        "searchHint": "Pesquisar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas dos Participantes",
         "speakerTime": "Tempo do Participante",

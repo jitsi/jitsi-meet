@@ -873,7 +873,8 @@
         "hours": "{{count}} isragen",
         "minutes": "{{count}} n tesdidin",
         "name": "Isem",
-        "search": "Rechercher",
+        "search": "Nadi",
+        "searchHint": "Nadi imttekkiyen",
         "seconds": "{{count}} n tsinin",
         "speakerStats": "Addad n yimsiwel",
         "speakerTime": "Akud n yimsiwel"

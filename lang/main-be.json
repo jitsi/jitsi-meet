@@ -584,6 +584,8 @@
         "hours": "{{count}}г",
         "minutes": "{{count}}хв",
         "name": "Імя",
+        "search": "Пошук",
+        "searchHint": "Пошук удзельнікаў",
         "seconds": "{{count}} с",
         "speakerStats": "Статыстыка выступаў",
         "speakerTime": "Час выступленняў"

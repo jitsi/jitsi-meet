@@ -740,6 +740,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "नाम",
+        "search": "खोजें",
+        "searchHint": "प्रतिभागियों को खोजें",
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time"

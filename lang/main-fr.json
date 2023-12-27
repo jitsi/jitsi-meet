@@ -1064,6 +1064,7 @@
         "neutral": "Indifférent",
         "sad": "Triste",
         "search": "Recherche",
+        "searchHint": "Recherche des participants",
         "seconds": "{{count}}s",
         "speakerStats": "Statistiques de l'interlocuteur",
         "speakerTime": "Temps de l'interlocuteur",

@@ -615,6 +615,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "नाव",
+        "search": "शोधा",
+        "searchHint": "सहभागी शोधा",
         "seconds": "{{count}}s",
         "speakerStats": "स्पीकर आकडेवारी",
         "speakerTime": "स्पीकर वेळ"

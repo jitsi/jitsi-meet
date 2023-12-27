@@ -1077,6 +1077,7 @@
         "neutral": "Neutralny",
         "sad": "Smutny",
         "search": "Wyszukaj",
+        "searchHint": "Wyszukaj uczestników",
         "seconds": "{{count}} sek.",
         "speakerStats": "Statystyki mówców",
         "speakerTime": "Czas mówcy",
