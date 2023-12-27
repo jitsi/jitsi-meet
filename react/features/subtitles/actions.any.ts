@@ -1,10 +1,11 @@
+import { DEFAULT_LANGUAGE } from '../base/i18n/i18next';
+
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE,
-    UPDATE_TRANSLATION_LANGUAGE
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
 /**
@@ -80,29 +81,23 @@ export function toggleRequestingSubtitles() {
  * Signals that the local user has enabled or disabled the subtitles.
  *
  * @param {boolean} enabled - The new state of the subtitles.
+ * @param {boolean} displaySubtitles - Whether to display subtitles or not.
+ * @param {string} language - The language of the subtitles.
  * @returns {{
  *    type: SET_REQUESTING_SUBTITLES,
- *    enabled: boolean
+ *    enabled: boolean,
+ *    displaySubtitles: boolean,
+ *    language: string
  * }}
  */
-export function setRequestingSubtitles(enabled: boolean) {
+export function setRequestingSubtitles(
+        enabled: boolean,
+        displaySubtitles = true,
+        language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`) {
     return {
         type: SET_REQUESTING_SUBTITLES,
-        enabled
-    };
-}
-
-/**
- * Signals that the local user has selected language for the translation.
- *
- * @param {string} value - The selected language for translation.
- * @returns {{
- *      type: UPDATE_TRANSLATION_LANGUAGE
- * }}
- */
-export function updateTranslationLanguage(value: string) {
-    return {
-        type: UPDATE_TRANSLATION_LANGUAGE,
-        value
+        displaySubtitles,
+        enabled,
+        language
     };
 }

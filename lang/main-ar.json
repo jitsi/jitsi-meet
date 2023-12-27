@@ -557,8 +557,6 @@
         "youtubeTerms": "شروط خدمة يوتيوب"
     },
     "lobby": {
-        "admit": "سمح بالدخول",
-        "admitAll": "سمح للجميع بالدخول",
         "allow": "اسمح",
         "backToKnockModeButton": "لا يوجد كلمة مرور، اطلب الإذن بالدخول بدلًا من ذلك.",
         "chat": "دردشة",
@@ -593,8 +591,6 @@
         "notificationTitle": "غرفة الانتظار",
         "passwordField": "أدخل كلمة الدخول إلى المُلتقى",
         "passwordJoinButton": "انضم",
-        "reject": "رفض",
-        "rejectAll": "رفض الكل",
         "title": "غرفة الانتظار",
         "toggleLabel": "فعِّل غرفة الانتظار"
     },
@@ -720,6 +716,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "سمح بالدخول",
+            "admitAll": "سمح للجميع بالدخول",
             "allow": "السماح للحاضرين بـ:",
             "allowVideo": "السماح بالفيديو",
             "askUnmute": "اطلب إعادة الصوت",
@@ -732,6 +730,7 @@
             "mute": "كتم الصوت",
             "muteAll": "كتم الكل",
             "muteEveryoneElse": "كتم صوت  الآخرين",
+            "reject": "رفض",
             "stopEveryonesVideo": "أوقف فيديو الجميع",
             "stopVideo": "أوقف الفيديو",
             "unblockEveryoneMicCamera": "قم بإلغاء حظر ميكروفون وكاميرا الجميع",

@@ -10,7 +10,7 @@ import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
-import { toggleRequestingSubtitles } from '../../../subtitles/actions';
+import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
@@ -23,9 +23,9 @@ export interface IProps extends WithTranslation {
     _appKey: string;
 
     /**
-     * Requests subtitles when recording is turned on.
+     * Requests transcribing when recording is turned on.
      */
-    _autoCaptionOnRecord: boolean;
+    _autoTranscribeOnRecord: boolean;
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -115,6 +115,16 @@ interface IState {
     sharingEnabled: boolean;
 
     /**
+     * True if the user requested the service to record audio and video.
+     */
+    shouldRecordAudioAndVideo: boolean;
+
+    /**
+     * True if the user requested the service to record transcription.
+     */
+    shouldRecordTranscription: boolean;
+
+    /**
      * Number of MiB of available space in user's Dropbox account.
      */
     spaceLeft?: number;
@@ -144,6 +154,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
         this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
+        this._onTranscriptionChange = this._onTranscriptionChange.bind(this);
+        this._onRecordAudioAndVideoChange = this._onRecordAudioAndVideoChange.bind(this);
 
         let selectedRecordingService = '';
 
@@ -165,6 +177,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             isValidating: false,
             userName: undefined,
             sharingEnabled: true,
+            shouldRecordAudioAndVideo: true,
+            shouldRecordTranscription: true,
             spaceLeft: undefined,
             selectedRecordingService,
             localRecordingOnlySelf: false
@@ -242,6 +256,30 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
+     * Handles transcription switch change.
+     *
+     * @param {boolean} value - The new value.
+     * @returns {void}
+     */
+    _onTranscriptionChange(value: boolean) {
+        this.setState({
+            shouldRecordTranscription: value
+        });
+    }
+
+    /**
+     * Handles audio and video switch change.
+     *
+     * @param {boolean} value - The new value.
+     * @returns {void}
+     */
+    _onRecordAudioAndVideoChange(value: boolean) {
+        this.setState({
+            shouldRecordAudioAndVideo: value
+        });
+    }
+
+    /**
      * Validates the dropbox access token and fetches account information.
      *
      * @returns {void}
@@ -297,7 +335,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     _onSubmit() {
         const {
             _appKey,
-            _autoCaptionOnRecord,
+            _autoTranscribeOnRecord,
             _conference,
             _isDropboxEnabled,
             _rToken,
@@ -309,57 +347,59 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             type?: string;
         } = {};
 
-        switch (this.state.selectedRecordingService) {
-        case RECORDING_TYPES.DROPBOX: {
-            if (_isDropboxEnabled && _token) {
+        if (this.state.shouldRecordAudioAndVideo) {
+            switch (this.state.selectedRecordingService) {
+            case RECORDING_TYPES.DROPBOX: {
+                if (_isDropboxEnabled && _token) {
+                    appData = JSON.stringify({
+                        'file_recording_metadata': {
+                            'upload_credentials': {
+                                'service_name': RECORDING_TYPES.DROPBOX,
+                                'token': _token,
+                                'r_token': _rToken,
+                                'app_key': _appKey
+                            }
+                        }
+                    });
+                    attributes.type = RECORDING_TYPES.DROPBOX;
+                } else {
+                    dispatch(showErrorNotification({
+                        titleKey: 'dialog.noDropboxToken'
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+                    return;
+                }
+                break;
+            }
+            case RECORDING_TYPES.JITSI_REC_SERVICE: {
                 appData = JSON.stringify({
                     'file_recording_metadata': {
-                        'upload_credentials': {
-                            'service_name': RECORDING_TYPES.DROPBOX,
-                            'token': _token,
-                            'r_token': _rToken,
-                            'app_key': _appKey
-                        }
+                        'share': this.state.sharingEnabled
                     }
                 });
-                attributes.type = RECORDING_TYPES.DROPBOX;
-            } else {
-                dispatch(showErrorNotification({
-                    titleKey: 'dialog.noDropboxToken'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-
-                return;
+                attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
+                break;
             }
-            break;
-        }
-        case RECORDING_TYPES.JITSI_REC_SERVICE: {
-            appData = JSON.stringify({
-                'file_recording_metadata': {
-                    'share': this.state.sharingEnabled
-                }
+            case RECORDING_TYPES.LOCAL: {
+                dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
+
+                return true;
+            }
+            }
+
+            sendAnalytics(
+                createRecordingDialogEvent('start', 'confirm.button', attributes)
+            );
+
+            this._toggleScreenshotCapture();
+            _conference?.startRecording({
+                mode: JitsiRecordingConstants.mode.FILE,
+                appData
             });
-            attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
-            break;
-        }
-        case RECORDING_TYPES.LOCAL: {
-            dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
-
-            return true;
-        }
         }
 
-        sendAnalytics(
-            createRecordingDialogEvent('start', 'confirm.button', attributes)
-        );
-
-        this._toggleScreenshotCapture();
-        _conference?.startRecording({
-            mode: JitsiRecordingConstants.mode.FILE,
-            appData
-        });
-
-        if (_autoCaptionOnRecord) {
-            dispatch(toggleRequestingSubtitles());
+        if (_autoTranscribeOnRecord || this.state.shouldRecordTranscription) {
+            dispatch(setRequestingSubtitles(true, false));
         }
 
         return true;
@@ -392,7 +432,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
  * @private
  * @returns {{
  *     _appKey: string,
- *     _autoCaptionOnRecord: boolean,
+ *     _autoTranscribeOnRecord: boolean,
  *     _conference: JitsiConference,
  *     _fileRecordingsServiceEnabled: boolean,
  *     _fileRecordingsServiceSharingEnabled: boolean,
@@ -412,7 +452,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
 
     return {
         _appKey: dropbox.appKey ?? '',
-        _autoCaptionOnRecord: transcription?.autoCaptionOnRecord ?? false,
+        _autoTranscribeOnRecord: transcription?.autoTranscribeOnRecord ?? false,
         _conference: state['features/base/conference'].conference,
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,

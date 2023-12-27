@@ -561,8 +561,6 @@
         "youtubeTerms": "Cunditziones de servìtziu de YouTube"
     },
     "lobby": {
-        "admit": "Ammite",
-        "admitAll": "Ammite totu",
         "allow": "Permite",
         "backToKnockModeButton": "Pedi de intrare",
         "chat": "Tzarrada",
@@ -597,8 +595,6 @@
         "notificationTitle": "Aposentu de abetu",
         "passwordField": "Inserta sa crae de sa riunione",
         "passwordJoinButton": "Aderi",
-        "reject": "Refuda",
-        "rejectAll": "Refuda totu",
         "title": "Aposentu de abetu",
         "toggleLabel": "Ativa s'aposentu de abetu"
     },
@@ -727,6 +723,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Ammite",
+            "admitAll": "Ammite totu",
             "allow": "Permite a is partetzipantes:",
             "allowVideo": "Permite vìdeu",
             "askUnmute": "Pedi de ativare su micròfonu",
@@ -739,6 +737,7 @@
             "mute": "A sa muda",
             "muteAll": "Totu a sa muda",
             "muteEveryoneElse": "Pone totus a sa muda",
+            "reject": "Refuda",
             "stopEveryonesVideo": "Istuda su vìdeu de totu is partetzipantes",
             "stopVideo": "Firma su vìdeu",
             "unblockEveryoneMicCamera": "Isbloca su micròfonu e sa càmera de totu is partetzipantes",

@@ -1,7 +1,7 @@
 import Sound from 'react-native-sound';
 
 import logger from '../../logger';
-import AbstractAudio from '../AbstractAudio';
+import AbstractAudio, { IProps } from '../AbstractAudio';
 
 /**
  * The React Native/mobile {@link Component} which is similar to Web's
@@ -32,11 +32,24 @@ export default class Audio extends AbstractAudio {
     }
 
     /**
+     * Implements React's {@link Component#componentDidUpdate()}.
+     *
+     * @inheritdoc
+     */
+    async componentDidUpdate(prevProps: IProps): Promise<void> {
+        // source is different !! call didunmount and call didmount
+        if (prevProps.src !== this.props.src) {
+            await this.componentWillUnmount();
+            await this.componentDidMount();
+        }
+    }
+
+    /**
      * Will load the sound, after the component did mount.
      *
      * @returns {void}
      */
-    componentDidMount() {
+    async componentDidMount() {
         this._sound
             = this.props.src
                 ? new Sound(
@@ -50,7 +63,7 @@ export default class Audio extends AbstractAudio {
      *
      * @returns {void}
      */
-    componentWillUnmount() {
+    async componentWillUnmount() {
         if (this._sound) {
             this._sound.release();
             this._sound = null;

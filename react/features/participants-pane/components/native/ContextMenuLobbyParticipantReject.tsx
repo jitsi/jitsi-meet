@@ -58,7 +58,7 @@ const ContextMenuLobbyParticipantReject = ({ participant: p }: IProps) => {
                 <Icon
                     size = { 24 }
                     src = { IconCloseLarge } />
-                <Text style = { styles.contextMenuItemText }>{ t('lobby.reject') }</Text>
+                <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.reject') }</Text>
             </TouchableOpacity>
         </BottomSheet>
     );

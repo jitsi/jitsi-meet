@@ -627,8 +627,6 @@
         "youtubeTerms": "YouTube服务条款"
     },
     "lobby": {
-        "admit": "同意",
-        "admitAll": "同意全部",
         "backToKnockModeButton": "请求加入",
         "chat": "聊天",
         "dialogTitle": "大厅模式",
@@ -662,8 +660,6 @@
         "notificationTitle": "大厅",
         "passwordField": "输入会议密码",
         "passwordJoinButton": "加入",
-        "reject": "拒绝",
-        "rejectAll": "拒绝全部",
         "title": "大厅",
         "toggleLabel": "开启大厅模式"
     },
@@ -798,6 +794,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "同意",
+            "admitAll": "同意全部",
             "allow": "允许参会者：",
             "allowVideo": "允许视频",
             "askUnmute": "请求解除静音",
@@ -810,6 +808,7 @@
             "mute": "静音",
             "muteAll": "全体静音",
             "muteEveryoneElse": "全体静音",
+            "reject": "拒绝",
             "stopEveryonesVideo": "禁用所有人视频",
             "stopVideo": "禁用视频",
             "unblockEveryoneMicCamera": "允许所有人的麦克风和摄像头",

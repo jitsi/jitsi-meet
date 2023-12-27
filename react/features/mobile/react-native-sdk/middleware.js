@@ -9,7 +9,7 @@ import {
     CONFERENCE_WILL_JOIN
 } from '../../base/conference/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
@@ -61,6 +61,14 @@ const { JMOngoingConference } = NativeModules;
         const participantInfo = participantToParticipantInfo(participant);
 
         rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
+        break;
+    }
+    case PARTICIPANT_LEFT: {
+        const { participant } = action;
+
+        const { id } = participant ?? {};
+
+        rnSdkHandlers?.onParticipantLeft && rnSdkHandlers?.onParticipantLeft({ id });
         break;
     }
     case READY_TO_CLOSE:

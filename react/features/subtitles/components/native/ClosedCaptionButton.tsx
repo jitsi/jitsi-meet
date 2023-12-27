@@ -22,7 +22,7 @@ class ClosedCaptionButton
     icon = IconSubtitles;
     label = 'toolbar.startSubtitles';
     labelProps = {
-        language: this.props.t(this.props._language),
+        language: this.props.t(this.props._language ?? 'transcribing.subtitlesOff'),
         languages: this.props.t(this.props.languages ?? ''),
         languagesHead: this.props.t(this.props.languagesHead ?? '')
     };

@@ -24,16 +24,16 @@ export function useLobbyActions(participant?: IDrawerParticipant | null, closeDr
             e.stopPropagation();
             dispatch(approveKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
-        }, [ dispatch, closeDrawer ]),
+        }, [ dispatch, closeDrawer, participant?.participantID ]),
 
         useCallback(() => {
             dispatch(rejectKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
-        }, [ dispatch, closeDrawer ]),
+        }, [ dispatch, closeDrawer, participant?.participantID ]),
 
         useCallback(() => {
             dispatch(handleLobbyChatInitialized(participant?.participantID ?? ''));
-        }, [ dispatch ])
+        }, [ dispatch, participant?.participantID ])
     ];
 }
 

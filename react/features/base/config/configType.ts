@@ -583,7 +583,7 @@ export interface IConfig {
     transcribeWithAppLanguage?: boolean;
     transcribingEnabled?: boolean;
     transcription?: {
-        autoCaptionOnRecord?: boolean;
+        autoTranscribeOnRecord?: boolean;
         disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;

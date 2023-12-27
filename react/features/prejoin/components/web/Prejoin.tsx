@@ -189,7 +189,17 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text04,
             borderRadius: theme.shape.borderRadius,
             position: 'relative',
-            top: `-${theme.spacing(3)}`
+            top: `-${theme.spacing(3)}`,
+
+            '@media (max-width: 511px)': {
+                margin: '0 auto',
+                top: 0
+            },
+
+            '@media (max-width: 420px)': {
+                top: 0,
+                width: 'calc(100% - 32px)'
+            }
         }
     };
 });

@@ -586,8 +586,6 @@
         "youtubeTerms": "Warunki użytkowania YouTube"
     },
     "lobby": {
-        "admit": "Pozwól",
-        "admitAll": "Pozwól wszystkim",
         "backToKnockModeButton": "Brak hasła, poproś o dołączenie",
         "chat": "Chat",
         "dialogTitle": "Lobby",
@@ -621,8 +619,6 @@
         "notificationTitle": "Lobby",
         "passwordField": "Wprowadź hasło",
         "passwordJoinButton": "Dołącz",
-        "reject": "Odrzuć",
-        "rejectAll": "Odrzuć wszystkich",
         "title": "Lobby",
         "toggleLabel": "Włącz / Wyłącz lobby"
     },
@@ -756,6 +752,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Pozwól",
+            "admitAll": "Pozwól wszystkim",
             "allow": "Zezwól uczestnikom na:",
             "allowVideo": "Zezwól na wideo",
             "askUnmute": "Poproś o wyłączenie wyciszenia",
@@ -768,6 +766,7 @@
             "mute": "Wycisz",
             "muteAll": "Wycisz wszystkich",
             "muteEveryoneElse": "Wycisz pozostałych",
+            "reject": "Odrzuć",
             "stopEveryonesVideo": "Wyłącz wszystkie kamery",
             "stopVideo": "Wyłącz kamerę",
             "unblockEveryoneMicCamera": "Odblokuj wszystkim kamerę i mikrofon",

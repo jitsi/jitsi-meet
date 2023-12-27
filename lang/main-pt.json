@@ -421,6 +421,7 @@
         "sessTerminatedReason": "A reunião foi encerrada",
         "sessionRestarted": "Chamada reiniciada devido a um problema de ligação.",
         "shareAudio": "Continuar",
+        "shareAudioAltText": "Para partilhar o conteúdo pretendido, navegue até ao \"Separador do navegador\", seleccione o conteúdo, active a marca de verificação \"Partilhar áudio\" e, em seguida, clique no botão \"Partilhar\"",
         "shareAudioTitle": "Como partilhar áudio",
         "shareAudioWarningD1": "precisa de parar a partilha do ecrã antes de partilhar o seu áudio.",
         "shareAudioWarningD2": "precisa de reiniciar a sua partilha de ecrã e verificar a opção \"partilhar áudio\".",
@@ -641,8 +642,6 @@
         "youtubeTerms": "Termos de serviços do YouTube"
     },
     "lobby": {
-        "admit": "Aceitar",
-        "admitAll": "Aceitar todos",
         "backToKnockModeButton": "Peça para aderir",
         "chat": "Chat",
         "dialogTitle": "Modo sala de espera",
@@ -676,8 +675,6 @@
         "notificationLobbyEnabled": "A sala de espera foi activada por {{originParticipantName}}",
         "notificationTitle": "Sala de espera",
         "passwordJoinButton": "Solicitar",
-        "reject": "Rejeitar",
-        "rejectAll": "Rejeitar todos",
         "title": "Sala de espera",
         "toggleLabel": "Ativar sala de espera"
     },
@@ -815,6 +812,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Aceitar",
+            "admitAll": "Aceitar todos",
             "allow": "Permitir aos participantes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pedir para ligar o som",
@@ -828,6 +827,7 @@
             "mute": "Silenciar",
             "muteAll": "Silenciar todos",
             "muteEveryoneElse": "Silenciar todos os outros",
+            "reject": "Rejeitar",
             "stopEveryonesVideo": "Desligar a câmara de todos",
             "stopVideo": "Desligar a câmara",
             "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos",
@@ -837,6 +837,7 @@
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
+            "visitorRequests": " (pedidos {{count}})",
             "visitors": "Visitantes ({{count}})",
             "waitingLobby": "Aguardam na sala de espera ({{count}})"
         },
@@ -927,7 +928,7 @@
         "joinWithoutAudio": "Entrar sem áudio",
         "keyboardShortcuts": "Ativar os atalhos de teclado",
         "linkCopied": "Link copiado para a área de transferência",
-        "lookGood": "O seu microfone funciona corretamente",
+        "lookGood": "Tudo está a funcionar corretamente",
         "or": "ou",
         "premeeting": "Pré-reunião",
         "proceedAnyway": "Continuar na mesma",
@@ -1015,12 +1016,15 @@
         "onlyRecordSelf": "Gravar apenas as minhas transmissões áudio e vídeo",
         "pending": "Preparando para gravar a reunião...",
         "rec": "REC",
+        "recordAudioAndVideo": "Gravar áudio e vídeo",
+        "recordTranscription": "Gravar transcrições",
         "saveLocalRecording": "Guardar ficheiro de gravação localmente (Beta)",
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "As reuniões gravadas são automaticamente apagadas 24h após a hora de gravação.",
         "serviceName": "Serviço de gravação",
         "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
+        "showAdvancedOptions": "Opções avançadas",
         "signIn": "Entrar",
         "signOut": "Sair",
         "surfaceError": "Por favor, seleccione o separador actual.",
@@ -1163,7 +1167,7 @@
     "toolbar": {
         "Settings": "Definições",
         "accessibilityLabel": {
-            "Settings": "Mudar configurações",
+            "Settings": "Abrir definições",
             "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",

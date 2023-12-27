@@ -641,8 +641,6 @@
         "youtubeTerms": "YouTube 服務條款"
     },
     "lobby": {
-        "admit": "準許",
-        "admitAll": "準許所有人",
         "backToKnockModeButton": "請求加入",
         "chat": "聊天",
         "dialogTitle": "大廳模式",
@@ -676,8 +674,6 @@
         "notificationTitle": "大廳",
         "passwordField": "輸入會議密碼",
         "passwordJoinButton": "加入",
-        "reject": "拒絕",
-        "rejectAll": "拒絕所有人",
         "title": "大廳",
         "toggleLabel": "啟用大廳模式"
     },
@@ -815,6 +811,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "準許",
+            "admitAll": "準許所有人",
             "allow": "允許與會者能夠：",
             "allowVideo": "允許視訊",
             "askUnmute": "要求解除靜音",
@@ -828,6 +826,7 @@
             "mute": "靜音",
             "muteAll": "靜音所有人",
             "muteEveryoneElse": "靜音其他人",
+            "reject": "拒絕",
             "stopEveryonesVideo": "停用所有人的視訊",
             "stopVideo": "停用視訊",
             "unblockEveryoneMicCamera": "解除封鎖所有人的麥克風及網路攝影機",

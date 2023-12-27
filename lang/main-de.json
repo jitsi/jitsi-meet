@@ -636,8 +636,6 @@
         "youtubeTerms": "YouTube-Nutzungsbedingungen"
     },
     "lobby": {
-        "admit": "Zulassen",
-        "admitAll": "Alle zulassen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
         "chat": "Chat",
         "dialogTitle": "Lobbymodus",
@@ -671,8 +669,6 @@
         "notificationLobbyEnabled": "{{originParticipantName}} hat die Lobby aktiviert",
         "notificationTitle": "Lobby",
         "passwordJoinButton": "Beitreten",
-        "reject": "Ablehnen",
-        "rejectAll": "Alle ablehnen",
         "title": "Lobby",
         "toggleLabel": "Lobby aktivieren"
     },
@@ -807,6 +803,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Zulassen",
+            "admitAll": "Alle zulassen",
             "allow": "Anwesenden erlauben:",
             "allowVideo": "Kamera einschalten",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
@@ -819,6 +817,7 @@
             "mute": "Stummschalten",
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
+            "reject": "Ablehnen",
             "stopEveryonesVideo": "Alle Kameras ausschalten",
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
@@ -918,7 +917,7 @@
         "joinWithoutAudio": "Ohne Ton beitreten",
         "keyboardShortcuts": "Tastaturkurzbefehle aktivieren",
         "linkCopied": "Link in die Zwischenablage kopiert",
-        "lookGood": "Ihr Mikrofon scheint zu funktionieren.",
+        "lookGood": "Alles scheint zu funktionieren.",
         "or": "oder",
         "premeeting": "Vorschau",
         "proceedAnyway": "Trotzdem fortsetzen",
@@ -1154,7 +1153,7 @@
     "toolbar": {
         "Settings": "Einstellungen",
         "accessibilityLabel": {
-            "Settings": "Einstellungen ein-/ausschalten",
+            "Settings": "Einstellungen einschalten",
             "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
             "boo": "Buhen",
@@ -1200,7 +1199,7 @@
             "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
             "moreActionsMenu": "Menü „Weitere Einstellungen“",
             "moreOptions": "Menü „Weitere Optionen“",
-            "mute": "Mikrofon aktivieren / deaktivieren",
+            "mute": "Mikrofon deaktivieren",
             "muteEveryone": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
@@ -1238,7 +1237,7 @@
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
             "unmute": "Stummschaltung aufheben",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
-            "videomute": "„Video stummschalten“ ein-/ausschalten",
+            "videomute": "Kamera stoppen",
             "videomuteGUMPending": "Verbinde Ihre Kamera",
             "videounmute": "Kamera einschalten"
         },
@@ -1287,7 +1286,7 @@
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
-        "mute": "Stummschalten",
+        "mute": "Audio stummschalten",
         "muteEveryone": "Alle stummschalten",
         "muteEveryonesVideo": "Alle Kameras ausschalten",
         "muteGUMPending": "Verbinde Ihre Kamera",

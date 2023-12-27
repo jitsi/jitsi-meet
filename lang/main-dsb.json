@@ -563,8 +563,6 @@
         "youtubeTerms": "wužywaŕske wustawki za youtube"
     },
     "lobby": {
-        "admit": "pśizwóliś",
-        "admitAll": "wšyknym pśizwólenje daś",
         "backToKnockModeButton": "mimo kodowego słowa, město togo wó pśistup pšosyś",
         "chat": "chat",
         "dialogTitle": "lobbyjowy modus",
@@ -598,8 +596,6 @@
         "notificationTitle": "lobby",
         "passwordField": "kodowe słowo za konferencu zapódaś",
         "passwordJoinButton": "pśistupiś",
-        "reject": "wótpokazaś",
-        "rejectAll": "wšykne wótpokazaś",
         "title": "",
         "toggleLabel": "lobby aktiwěrowaś / deaktiwěrowaś"
     },
@@ -730,6 +726,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "pśizwóliś",
+            "admitAll": "wšyknym pśizwólenje daś",
             "allow": "wobźělnikam pšawo daś:",
             "allowVideo": "kameru aktiwěrowaś",
             "askUnmute": "pšosbu wó anulěrowanje wuśišenja stajiś",
@@ -742,6 +740,7 @@
             "mute": "wuśišyś",
             "muteAll": "wšyknych wuśišyś",
             "muteEveryoneElse": "wšykne druge wuśišyś",
+            "reject": "wótpokazaś",
             "stopEveryonesVideo": "wšykne kamery wušaltowaś",
             "stopVideo": "kameru wušaltowaś",
             "unblockEveryoneMicCamera": "blokěrowane kamery a mikrofon wšyknych zasej aktiwěrowaś",

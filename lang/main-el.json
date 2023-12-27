@@ -580,8 +580,6 @@
         "youtubeTerms": "Όροι υπηρεσιών YouTube"
     },
     "lobby": {
-        "admit": "Αποδοχή",
-        "admitAll": "Αποδοχή όλων",
         "backToKnockModeButton": "Αίτημα εισόδου",
         "chat": "Συνομιλία",
         "dialogTitle": "Λειτουργία υποδοχής",
@@ -615,8 +613,6 @@
         "notificationTitle": "Υποδοχή",
         "passwordField": "Εισάγετε τον κωδικό σύσκεψης",
         "passwordJoinButton": "Συμμετοχή",
-        "reject": "Απόρριψη",
-        "rejectAll": "Απόρριψη όλων",
         "title": "Υποδοχή",
         "toggleLabel": "Ενεργοποίηση υποδοχής"
     },
@@ -745,6 +741,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Αποδοχή",
+            "admitAll": "Αποδοχή όλων",
             "allow": "Επιτρέψτε στους συμμετέχοντες να:",
             "allowVideo": "Επιτρέψτε το βίντεο",
             "askUnmute": "Αίτηση για κατάργηση σίγησης",
@@ -757,6 +755,7 @@
             "mute": "Σίγηση",
             "muteAll": "Σίγηση όλων",
             "muteEveryoneElse": "Σίγηση όλων των άλλων",
+            "reject": "Απόρριψη",
             "stopEveryonesVideo": "Διακοπή όλων των βίντεο",
             "stopVideo": "Διακοπή του βίντεο",
             "unblockEveryoneMicCamera": "Επιτρέψτε τα μικρόφωνα και τις κάμερες όλων",

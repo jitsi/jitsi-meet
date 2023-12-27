@@ -486,8 +486,6 @@
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
     "lobby": {
-        "admit": "Toelaten",
-        "admitAll": "Allen toelaten",
         "allow": "Toestaan",
         "backToKnockModeButton": "Geen wachtwoord, vraag om deel te mogen nemen",
         "dialogTitle": "Lobby-modus",
@@ -519,8 +517,6 @@
         "notificationTitle": "Lobby",
         "passwordField": "Voer wachtwoord voor vergadering in",
         "passwordJoinButton": "Deelnemen",
-        "reject": "Afwijzen",
-        "rejectAll": "Allen afwijzen",
         "title": "Lobby",
         "toggleLabel": "Lobby inschakelen"
     },
@@ -624,6 +620,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Toelaten",
+            "admitAll": "Allen toelaten",
             "allow": "Sta deelnemers toe:",
             "allowVideo": "Video toestaan",
             "askUnmute": "Vragen om dempen op te heffen",
@@ -636,6 +634,7 @@
             "mute": "Dempen",
             "muteAll": "Allen dempen",
             "muteEveryoneElse": "Alle anderen dempen",
+            "reject": "Afwijzen",
             "stopEveryonesVideo": "Camera's van iedereen uitzetten",
             "stopVideo": "Camera uitzetten",
             "unblockEveryoneMicCamera": "Deblokkeer microfoon en camera van allen",

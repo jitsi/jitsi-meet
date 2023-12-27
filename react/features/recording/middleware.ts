@@ -15,9 +15,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
     playSound,
-    registerSound,
-    stopSound,
-    unregisterSound
+    stopSound
 } from '../base/sounds/actions';
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { showErrorNotification, showNotification } from '../notifications/actions';
@@ -44,15 +42,11 @@ import {
 } from './constants';
 import {
     getResourceId,
-    getSessionById
+    getSessionById,
+    registerRecordingAudioFiles,
+    unregisterRecordingAudioFiles
 } from './functions';
 import logger from './logger';
-import {
-    LIVE_STREAMING_OFF_SOUND_FILE,
-    LIVE_STREAMING_ON_SOUND_FILE,
-    RECORDING_OFF_SOUND_FILE,
-    RECORDING_ON_SOUND_FILE
-} from './sounds';
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -85,29 +79,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        dispatch(registerSound(
-            LIVE_STREAMING_OFF_SOUND_ID,
-            LIVE_STREAMING_OFF_SOUND_FILE));
-
-        dispatch(registerSound(
-            LIVE_STREAMING_ON_SOUND_ID,
-            LIVE_STREAMING_ON_SOUND_FILE));
-
-        dispatch(registerSound(
-            RECORDING_OFF_SOUND_ID,
-            RECORDING_OFF_SOUND_FILE));
-
-        dispatch(registerSound(
-            RECORDING_ON_SOUND_ID,
-            RECORDING_ON_SOUND_FILE));
+        registerRecordingAudioFiles(dispatch);
 
         break;
 
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(LIVE_STREAMING_OFF_SOUND_ID));
-        dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_ID));
-        dispatch(unregisterSound(RECORDING_OFF_SOUND_ID));
-        dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
+        unregisterRecordingAudioFiles(dispatch);
 
         break;
 

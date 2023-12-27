@@ -465,7 +465,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     if (oldValue.autoCaptionOnRecord !== undefined) {
         newValue.transcription = {
             ...newValue.transcription,
-            autoCaptionOnRecord: oldValue.autoCaptionOnRecord
+            autoTranscribeOnRecord: oldValue.autoCaptionOnRecord
         };
     }
 

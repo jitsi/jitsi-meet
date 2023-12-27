@@ -561,8 +561,6 @@
         "youtubeTerms": "Condicions de servei de YouTube"
     },
     "lobby": {
-        "admit": "Admet",
-        "admitAll": "Admet tothom",
         "allow": "Permet",
         "backToKnockModeButton": "Demaneu per a unir-vos",
         "chat": "Xat",
@@ -597,8 +595,6 @@
         "notificationTitle": "Sala d'espera",
         "passwordField": "Introduïu la contrasenya de la reunió",
         "passwordJoinButton": "Entra",
-        "reject": "Rebuja",
-        "rejectAll": "Rebutja-ho tot",
         "title": "Sala d'espera",
         "toggleLabel": "Activa la sala d'espera"
     },
@@ -727,6 +723,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Admet",
+            "admitAll": "Admet tothom",
             "allow": "Permet als assistents:",
             "allowVideo": "Permet el vídeo",
             "askUnmute": "Demanar l'activació el micròfon",
@@ -739,6 +737,7 @@
             "mute": "Silenciar",
             "muteAll": "Silencia tothom",
             "muteEveryoneElse": "Silenciar tothom",
+            "reject": "Rebuja",
             "stopEveryonesVideo": "Atura el vídeo a tothom",
             "stopVideo": "Atura el vídeo",
             "unblockEveryoneMicCamera": "Desbloquejar el micròfon i la càmera de tothom",

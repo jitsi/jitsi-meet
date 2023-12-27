@@ -642,8 +642,6 @@
         "youtubeTerms": "YouTube pakalpojumu sniegšanas noteikumi"
     },
     "lobby": {
-        "admit": "Apstiprināt",
-        "admitAll": "Apstiprināt visus",
         "backToKnockModeButton": "Pajautāt pievienoties",
         "chat": "Tērzēšana",
         "dialogTitle": "Vestibila režīms",
@@ -677,8 +675,6 @@
         "notificationLobbyEnabled": "Vestibilu iespējoja {{originParticipantName}}",
         "notificationTitle": "Vestibils",
         "passwordJoinButton": "Pievienoties",
-        "reject": "Noraidīt",
-        "rejectAll": "Noraidīt visus",
         "title": "Vestibils",
         "toggleLabel": "Iespējot vestibilu"
     },
@@ -816,6 +812,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Apstiprināt",
+            "admitAll": "Apstiprināt visus",
             "allow": "Atļaut dalībniekiem:",
             "allowVideo": "Atļaut video",
             "askUnmute": "Lūgt ieslēgt skaņu",
@@ -829,6 +827,7 @@
             "mute": "Apklusināt",
             "muteAll": "Apklusināt visus",
             "muteEveryoneElse": "Apklusināt pārējos",
+            "reject": "Noraidīt",
             "stopEveryonesVideo": "Izslēgt visiem video",
             "stopVideo": "Izslēgt video",
             "unblockEveryoneMicCamera": "Atbloķēt visiem mikrofonu un kameru",
