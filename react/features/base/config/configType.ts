@@ -362,7 +362,6 @@ export interface IConfig {
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;
-    enableLipSync?: boolean;
     enableLobbyChat?: boolean;
     enableNoAudioDetection?: boolean;
     enableNoisyMicDetection?: boolean;

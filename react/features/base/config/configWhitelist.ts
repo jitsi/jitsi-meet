@@ -138,7 +138,6 @@ export default [
     'enableEncodedTransformSupport',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
-    'enableLipSync',
     'enableLobbyChat',
     'enableOpusRed',
     'enableRemb',
