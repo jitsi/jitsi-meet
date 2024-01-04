@@ -562,17 +562,8 @@ var config = {
     //    appURL: 'https://unlimited.recordings.app.com/',
     // },
 
-    // Disables or enables RTX (RFC 4588) (defaults to false).
-    // disableRtx: false,
-
     // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'unload' event.
     // disableBeforeUnloadHandlers: true,
-
-    // Disables or enables TCC support in this client (default: enabled).
-    // enableTcc: true,
-
-    // Disables or enables REMB support in this client (default: enabled).
-    // enableRemb: true,
 
     // Enables ICE restart logic in LJM and displays the page reload overlay on
     // ICE failure. Current disabled by default because it's causing issues with
@@ -1527,7 +1518,10 @@ var config = {
      disableHPF
      disableLocalStats
      disableNS
+     disableRtx
+     enableRemb
      enableTalkWhileMuted
+     enableTcc
      forceTurnRelay
      hiddenDomain
      hiddenFromRecorderFeatureEnabled
