@@ -84,6 +84,9 @@ var config = {
         // issues related to insertable streams.
         // disableE2EE: false,
 
+        // Enables supports for AV1 codec.
+        // enableAv1: false,
+
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
 
