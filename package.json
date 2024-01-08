@@ -135,6 +135,7 @@
     "@types/dom-screen-wake-lock": "1.0.1",
     "@types/js-md5": "0.4.3",
     "@types/lodash": "4.14.182",
+    "@types/moment-duration-format": "2.2.6",
     "@types/offscreencanvas": "2019.7.2",
     "@types/pixelmatch": "5.2.5",
     "@types/punycode": "2.1.0",
