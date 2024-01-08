@@ -1078,6 +1078,7 @@
         "neutral": "Neutral",
         "sad": "Ledsen",
         "search": "Sök",
+        "searchHint": "Sök deltagare",
         "seconds": "{{count}} s",
         "speakerStats": "Talarstatistik",
         "speakerTime": "Talartid",

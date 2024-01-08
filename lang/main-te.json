@@ -752,6 +752,8 @@
         "hours": "{{count}}గం",
         "minutes": "{{count}}ని",
         "name": "పేరు",
+        "search": "శోధించు",
+        "searchHint": "శోధన పాల్గొనేవారు",
         "seconds": "{{count}}క్ష",
         "speakerStats": "మాట్లాడేవారి గణాంకాలు",
         "speakerTime": "మాట్లాడిన సమయం"

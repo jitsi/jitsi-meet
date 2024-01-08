@@ -128,6 +128,7 @@ function MeetingParticipants({
             </div>
             {showInviteButton && <InviteButton />}
             <Input
+                accessibilityLabel = { t('participantsPane.search') }
                 className = { styles.search }
                 clearable = { true }
                 id = 'participants-search-input'

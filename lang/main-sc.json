@@ -1036,6 +1036,7 @@
         "neutral": "Neutrale",
         "sad": "Tristu",
         "search": "Chirca",
+        "searchHint": "Chirca partetzipantes",
         "seconds": "{count} seg",
         "speakerStats": "Istatìsticas de partetzipante",
         "speakerTime": "Tempus de partetzipante",

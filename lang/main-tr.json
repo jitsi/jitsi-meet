@@ -1033,6 +1033,7 @@
         "neutral": "Nötr",
         "sad": "Üzgün",
         "search": "Ara",
+        "searchHint": "Katılımcıları ara",
         "seconds": "{{count}}sn",
         "speakerStats": "Konuşmacı İstatistikleri",
         "speakerTime": "Konuşmacı Süresi",

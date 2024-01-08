@@ -1033,6 +1033,7 @@
         "neutral": "Neutro",
         "sad": "Triste",
         "search": "Cerca",
+        "searchHint": "Cerca partecipanti",
         "seconds": "{{count}}s",
         "speakerStats": "Statistiche",
         "speakerTime": "Tempo",

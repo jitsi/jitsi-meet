@@ -897,6 +897,7 @@
         "minutes": "{{count}} min",
         "name": "Nombre",
         "search": "Buscar",
+        "searchHint": "Buscar participantes",
         "seconds": "{{count}} s",
         "speakerStats": "Estadísticas de participantes",
         "speakerTime": "Tiempo hablado"

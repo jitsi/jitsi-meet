@@ -576,6 +576,8 @@
         "hours": "{{count}} giờ",
         "minutes": "{{count}} phút",
         "name": "Tên",
+        "search": "Tìm kiếm",
+        "searchHint": "Tìm kiếm người tham gia",
         "seconds": "{{count}} giây",
         "speakerStats": "Thống kê về diễn giả",
         "speakerTime": "Thời gian của diễn giả"

@@ -1066,6 +1066,7 @@
         "neutral": "нормально",
         "sad": "сумую",
         "search": "Пошук",
+        "searchHint": "Пошук учасників",
         "seconds": "{{count}} с",
         "speakerStats": "Статистика спілкування",
         "speakerTime": "Час спілкування",

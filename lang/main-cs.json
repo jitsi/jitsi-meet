@@ -725,7 +725,7 @@
             "participantsList": "",
             "waitingLobby": ""
         },
-        "search": ""
+        "search": "Hledat účastníky"
     },
     "passwordDigitsOnly": "Až {{number}} číslic",
     "passwordSetRemotely": "nastaveno jiným účastníkem",
@@ -1008,7 +1008,8 @@
         "name": "Jméno",
         "neutral": "",
         "sad": "",
-        "search": "",
+        "search": "Prohledat",
+        "searchHint": "Hledat účastníky",
         "seconds": "{{count}} s",
         "speakerStats": "Statistika řečníků",
         "speakerTime": "Mluvil/a již",

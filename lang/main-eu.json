@@ -766,6 +766,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Izena",
+        "search": "Bilatu",
+        "searchHint": "Bilatu parte-hartzaileak",
         "seconds": "{{count}}s",
         "speakerStats": "Hizlariaren estatistikak",
         "speakerTime": "Hizlariaren denbora"

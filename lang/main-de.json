@@ -1131,6 +1131,7 @@
         "neutral": "Neutral",
         "sad": "Traurig",
         "search": "Suche",
+        "searchHint": "Suche Anwesende",
         "seconds": "{{count}} Sek.",
         "speakerStats": "Sprechstatistik",
         "speakerTime": "Sprechzeit",

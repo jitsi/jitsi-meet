@@ -935,6 +935,7 @@
         "neutral": "Neutre",
         "sad": "Trist",
         "search": "Recercar",
+        "searchHint": "Cercar participants",
         "seconds": "{{count}} segondas",
         "speakerStats": "Estatisticas orator",
         "speakerTime": "Temps de paraula",

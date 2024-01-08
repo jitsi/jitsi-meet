@@ -558,6 +558,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
+        "search": "Procurar",
+        "searchHint": "Procurar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas do falante",
         "speakerTime": "Tempo do falante"

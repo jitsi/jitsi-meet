@@ -1017,6 +1017,7 @@
         "neutral": "Нейтральный",
         "sad": "Грусный",
         "search": "Поиск",
+        "searchHint": "Поиск участников",
         "seconds": "{{count}}с",
         "speakerStats": "Статистика выступлений",
         "speakerTime": "Время выступлений",

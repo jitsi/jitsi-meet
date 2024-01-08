@@ -568,6 +568,8 @@
         "hours": "{{count}}t",
         "minutes": "{{count}}m",
         "name": "Navn",
+        "search": "Søg",
+        "searchHint": "Søg deltagere",
         "seconds": "{{count}}s",
         "speakerStats": "Deltagerstatistik",
         "speakerTime": "Taletid"

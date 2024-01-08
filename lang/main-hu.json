@@ -824,6 +824,7 @@
         "neutral": "Semleges",
         "sad": "Szomorú",
         "search": "Keresés",
+        "searchHint": "Résztvevők keresése",
         "seconds": "{{count}} mp",
         "speakerStats": "Beszélő statisztika",
         "speakerTime": "Beszélő ideje",

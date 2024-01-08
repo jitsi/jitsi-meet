@@ -952,6 +952,7 @@
         "neutral": "平静",
         "sad": "悲しい",
         "search": "検索",
+        "searchHint": "参加者を検索",
         "seconds": "{{count}} 秒",
         "speakerStats": "話者の統計",
         "speakerTime": "話した時間",

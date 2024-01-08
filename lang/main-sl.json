@@ -875,6 +875,7 @@
         "minutes": "{{count}}m",
         "name": "Ime",
         "search": "Iskanje",
+        "searchHint": "Iskanje udeležencev",
         "seconds": "{{count}}s",
         "speakerStats": "Statistika govorca",
         "speakerTime": "Čas govorjenja"

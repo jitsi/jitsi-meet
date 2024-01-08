@@ -1120,6 +1120,7 @@
         "neutral": "中立",
         "sad": "悲伤",
         "search": "搜索",
+        "searchHint": "搜索参会者",
         "seconds": "{{count}}秒",
         "speakerStats": "发言统计",
         "speakerTime": "发言时间",

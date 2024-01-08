@@ -1058,6 +1058,7 @@
         "neutral": "Asnjanës",
         "sad": "I trishtuar",
         "search": "Kërko",
+        "searchHint": "Kërkoni pjesëmarrësit",
         "seconds": "{{count}}s",
         "speakerStats": "Statistika Folësi",
         "speakerTime": "Kohë Folësi",

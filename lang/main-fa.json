@@ -1097,6 +1097,7 @@
         "neutral": "خنثی",
         "sad": "غمگین",
         "search": "جستجو",
+        "searchHint": "جستجوی شرکت‌کنندگان",
         "seconds": "{{count}} ثانیه",
         "speakerStats": "آمار شرکت‌کنندگان",
         "speakerTime": "مدت زمان گوینده",

@@ -1027,6 +1027,7 @@
         "neutral": "حيادي",
         "sad": "حزين",
         "search": "بحث",
+        "searchHint": "البحث عن المشاركين",
         "seconds": "{{count}}ثا",
         "speakerStats": "حالة المتحدث",
         "speakerTime": "وقت المتحدث",

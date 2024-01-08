@@ -1141,6 +1141,7 @@
         "neutral": "Neitrāls",
         "sad": "Bēdīgs",
         "search": "Meklēt",
+        "searchHint": "Meklēt dalībniekus",
         "seconds": "{{count}}s",
         "speakerStats": "Dalībnieka uzstāšanās statistika",
         "speakerTime": "Dalībnieka uzstāšanās laiks",
