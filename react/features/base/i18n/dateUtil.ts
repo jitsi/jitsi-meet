@@ -1,9 +1,9 @@
 import moment from 'moment';
+import momentDurationFormatSetup from 'moment-duration-format';
 
 import i18next from './i18next';
 
 // allows for moment durations to be formatted
-import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
 
 // MomentJS uses static language bundle loading, so in order to support dynamic
