@@ -374,23 +374,6 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         let oldParticipant = remote.get(id);
         let isLocalScreenShare = false;
 
-        if (oldParticipant?.sources?.size) {
-            const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
-            const newRemoteVideoSources = new Set(state.remoteVideoSources);
-
-            if (videoSources?.size) {
-                for (const source of videoSources.keys()) {
-                    newRemoteVideoSources.delete(source);
-                }
-            }
-            state.remoteVideoSources = newRemoteVideoSources;
-        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
-            const newRemoteVideoSources = new Set(state.remoteVideoSources);
-
-            newRemoteVideoSources.delete(id);
-            state.remoteVideoSources = newRemoteVideoSources;
-        }
-
         if (oldParticipant && oldParticipant.conference === conference) {
             remote.delete(id);
         } else if (local?.id === id) {
@@ -403,6 +386,26 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         } else {
             // no participant found
             return state;
+        }
+
+        if (oldParticipant?.sources?.size) {
+            const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
+
+            if (videoSources?.size) {
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.delete(source);
+                }
+
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
+        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+            if (newRemoteVideoSources.delete(id)) {
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
         }
 
         state.sortedRemoteParticipants.delete(id);
