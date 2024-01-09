@@ -1,5 +1,9 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
 platform :ios, '12.4'
 workspace 'jitsi-meet'
@@ -70,7 +74,11 @@ target 'JitsiMeetSDKLite' do
 end
 
 post_install do |installer|
-  react_native_post_install(installer, :mac_catalyst_enabled => false)
+  react_native_post_install(
+    installer,
+    use_native_modules![:reactNativePath],
+    :mac_catalyst_enabled => false
+  )
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402

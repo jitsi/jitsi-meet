@@ -280,6 +280,8 @@ class Filmstrip extends PureComponent<IProps> {
                 <FlatList
                     bounces = { false }
                     data = { participants }
+
+                    /* @ts-ignore */
                     getItemLayout = { this._getItemLayout }
                     horizontal = { isNarrowAspectRatio }
                     initialNumToRender = { initialNumToRender }

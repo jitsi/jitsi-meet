@@ -167,7 +167,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             <BrandingImageBackground />
             {
                 isFocused
-                && <View style = { largeVideoContainerStyles }>
+                && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
                     <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
                         <Text
                             numberOfLines = { 1 }

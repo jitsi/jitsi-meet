@@ -42,21 +42,16 @@ ext {
     libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
 
     googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
+
+    //React Native Version
+    rnVersion = "0.72.7"
 }
 
 allprojects {
     repositories {
-        // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
-        maven { url "$rootDir/../node_modules/react-native/android" }
         // Android JSC is installed from npm.
         maven { url("$rootDir/../node_modules/jsc-android/dist") }
-        mavenCentral {
-            // We don't want to fetch react-native from Maven Central as there are
-            // older versions over there.
-            content {
-                excludeGroup "com.facebook.react"
-            }
-        }
+        mavenCentral()
         google()
         maven { url 'https://www.jitpack.io' }
     }
@@ -66,11 +61,13 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group == 'com.facebook.react'
-                        && details.requested.name == 'react-native') {
-                    def file = new File("$rootDir/../node_modules/react-native/package.json")
-                    def version = new JsonSlurper().parseText(file.text).version
-                    details.useVersion version
+                if (details.requested.group == 'com.facebook.react') {
+                    if (details.requested.name == 'react-native') {
+                        details.useTarget "com.facebook.react:react-android:$rnVersion"
+                    }
+                    if (details.requested.name == 'react-android') {
+                        details.useVersion rootProject.ext.rnVersion
+                    }
                 }
             }
         }
