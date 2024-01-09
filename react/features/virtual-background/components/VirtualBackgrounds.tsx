@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
@@ -31,11 +30,6 @@ interface IProps extends WithTranslation {
      * The list of Images to choose from.
      */
     _images: Array<Image>;
-
-    /**
-    * Whether or not multi-stream send support is enabled.
-    */
-    _multiStreamModeEnabled: boolean;
 
     /**
      * If the upload button should be displayed or not.
@@ -503,8 +497,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages,
-        _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
+        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages
     };
 }
 

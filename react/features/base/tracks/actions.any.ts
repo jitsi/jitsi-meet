@@ -5,7 +5,6 @@ import { showErrorNotification, showNotification } from '../../notifications/act
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
@@ -59,8 +58,7 @@ export function addLocalTrack(newTrack: any) {
         }
 
         const setMuted = newTrack.isVideoTrack()
-            ? getMultipleVideoSendingSupportFeatureFlag(getState())
-            && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+            ? newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                 ? setScreenshareMuted
                 : setVideoMuted
             : setAudioMuted;
@@ -337,7 +335,7 @@ export function replaceLocalTrack(oldTrack: any, newTrack: any, conference?: IJi
  * @returns {Function}
  */
 function replaceStoredTracks(oldTrack: any, newTrack: any) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch']) => {
         // We call dispose after doing the replace because dispose will
         // try and do a new o/a after the track removes itself. Doing it
         // after means the JitsiLocalTrack.conference is already
@@ -353,8 +351,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
             // state. If this is not done, the current mute state of the app will be reflected on the track,
             // not vice-versa.
             const setMuted = newTrack.isVideoTrack()
-                ? getMultipleVideoSendingSupportFeatureFlag(getState())
-                    && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+                ? newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                     ? setScreenshareMuted
                     : setVideoMuted
                 : setAudioMuted;
@@ -388,8 +385,7 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_OWNER_CHANGED,
             (owner: string) => dispatch(trackOwnerChanged(track, owner)));
         const local = track.isLocal();
-        const isVirtualScreenshareParticipantCreated = !local || getMultipleVideoSendingSupportFeatureFlag(getState());
-        const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP && isVirtualScreenshareParticipantCreated
+        const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
