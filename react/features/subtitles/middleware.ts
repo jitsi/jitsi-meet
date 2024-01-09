@@ -141,6 +141,12 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
             return next(action);
         }
 
+        const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
+        if (json.is_interim && skipInterimTranscriptions) {
+            return next(action);
+        }
+
         // We update the previous transcript message with the same
         // message ID or adds a new transcript message if it does not
         // exist in the map.

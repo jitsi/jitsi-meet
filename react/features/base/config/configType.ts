@@ -563,6 +563,7 @@ export interface IConfig {
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
+        skipInterimTranscriptions?: boolean;
         testMode?: boolean;
     };
     tileView?: {
