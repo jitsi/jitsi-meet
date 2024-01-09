@@ -37,7 +37,7 @@ local tostring = tostring;
 -- required parameter for custom muc component prefix, defaults to "conference"
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
-local leaked_rooms;
+local leaked_rooms = 0;
 
 --- handles request to get number of participants in all rooms
 -- @return GET response
