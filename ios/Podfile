@@ -5,7 +5,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '12.4'
+platform :ios, '13.4'
 workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
