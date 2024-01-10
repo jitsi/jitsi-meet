@@ -1,8 +1,5 @@
 {
     "addPeople": {
-        "accessibilityLabel": {
-            "meetingLink": "Ссылка на встречу: {{url}}"
-        },
         "add": "Пригласить",
         "addContacts": "Пригласите других людей",
         "contacts": "контакты",
@@ -33,7 +30,6 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
-        "car": "",
         "headphones": "Наушники",
         "none": "Не обнаружены звуковые устройства",
         "phone": "Телефон",
@@ -41,18 +37,6 @@
     },
     "audioOnly": {
         "audioOnly": "Только звук"
-    },
-    "bandwidthSettings": {
-        "assumedBandwidthBps": "",
-        "assumedBandwidthBpsWarning": "",
-        "customValue": "",
-        "customValueEffect": "",
-        "leaveEmpty": "",
-        "leaveEmptyEffect": "",
-        "possibleValues": "",
-        "setAssumedBandwidthBps": "",
-        "title": "",
-        "zeroEffect": ""
     },
     "breakoutRooms": {
         "actions": {
@@ -63,22 +47,15 @@
             "leaveBreakoutRoom": "Покинуть сессионный зал",
             "more": "Больше",
             "remove": "Удалить",
-            "rename": "Переименовать",
-            "renameBreakoutRoom": "Переименовать сессионный зал",
             "sendToBreakoutRoom": "Отправить участника к:"
         },
-        "breakoutList": "Сессионные залы",
-        "buttonLabel": "Сессионные залы",
         "defaultName": "Сессионный зал #{{index}}",
-        "hideParticipantList": "Скрыть список участников",
         "mainRoom": "Главная комната",
         "notifications": {
             "joined": "Вход в сессионный зал \"{{name}}\"",
             "joinedMainRoom": "Вход в главную комнату",
             "joinedTitle": "Сессионные залы"
-        },
-        "showParticipantList": "Показать список участников",
-        "title": "Сессионные залы"
+        }
     },
     "calendarSync": {
         "addMeetingURL": "Добавить ссылку конференции",
@@ -169,7 +146,6 @@
         "bridgeCount": "Количество серверов: ",
         "codecs": "Кодеки (A/V): ",
         "connectedTo": "Подключен к:",
-        "e2eeVerified": "",
         "framerate": "Частота кадров:",
         "less": "Краткая информация",
         "localaddress": "Локальный адрес:",
@@ -178,7 +154,6 @@
         "localport_plural": "Локальные порты:",
         "maxEnabledResolution": "Максимальное разрешение",
         "more": "Подробная информация",
-        "no": "",
         "packetloss": "Потери пакетов:",
         "participant_id": "id участника:",
         "quality": {
@@ -197,8 +172,7 @@
         "status": "Связь:",
         "transport": "Транспорт:",
         "transport_plural": "Транспорты:",
-        "video_ssrc": "Видео SSRC:",
-        "yes": ""
+        "video_ssrc": "Видео SSRC:"
     },
     "dateUtils": {
         "earlier": "Ранее",
@@ -208,7 +182,6 @@
     "deepLinking": {
         "appNotInstalled": "Чтобы присоединиться к этой встрече на телефоне, нужно мобильное приложение {{app}}.",
         "description": "Ничего не случилось? Мы попытались запустить вашу встречу в настольном приложении {{app}}. Повторите попытку или запустите ее в веб-приложении {{app}}.",
-        "descriptionNew": "",
         "descriptionWithoutWeb": "Ничего не произошло? Мы попытались запустить вашу конференцию в настольном приложении {{app}}",
         "downloadApp": "Скачать приложение",
         "downloadMobileApp": "Скачать из App Store",
@@ -220,9 +193,7 @@
         "launchMeetingLabel": "Как вы хотите присоединиться к этой встрече?",
         "launchWebButton": "Запустить в браузере",
         "noMobileApp": "У вас нет приложения?",
-        "termsAndConditions": "",
         "title": "Запуск вашей встречи в {{app}}...",
-        "titleNew": "",
         "tryAgainButton": "Повторите в настольном приложении",
         "unsupportedBrowser": "Вы используете браузер, который мы не поддерживаем."
     },
@@ -235,19 +206,10 @@
         "microphonePermission": "Нет разрешения на доступ к микрофону"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "",
-            "connectedDevices": "",
-            "deleteDevice": "",
-            "pairDevice": ""
-        },
         "noPermission": "Нет доступа",
         "previewUnavailable": "Предпросмотр недоступен",
         "selectADevice": "Выбор устройства",
         "testAudio": "Протестировать звук"
-    },
-    "dialIn": {
-        "screenTitle": ""
     },
     "dialOut": {
         "statusMessage": "сейчас {{status}}"
@@ -261,22 +223,15 @@
         "Share": "Поделиться",
         "Submit": "ОК",
         "WaitForHostMsg": "Конференция еще не началась. Если вы организатор, пожалуйста, авторизируйтесь. В противном случае дождитесь организатора.",
-        "WaitingForHostButton": "",
         "WaitingForHostTitle": "Ждем организатора...",
         "Yes": "Да",
         "accessibilityLabel": {
-            "Cancel": "",
-            "Ok": "",
-            "close": "",
-            "liveStreaming": "Трансляция",
-            "sharingTabs": ""
+            "liveStreaming": "Трансляция"
         },
         "add": "Добавить",
         "addMeetingNote": "Добавить записку об этом митиге",
         "addOptionalNote": "Добавить записку (необязательно):",
         "allow": "Разрешить",
-        "allowToggleCameraDialog": "",
-        "allowToggleCameraTitle": "",
         "alreadySharedVideoMsg": "Другой участник уже поделился ссылкой на видео. Данная конференция позволяет одновременно делиться только одним видео.",
         "alreadySharedVideoTitle": "Допускается показ только одного видео",
         "applicationWindow": "Окно приложения",
@@ -337,7 +292,6 @@
         "lockRoom": "Добавить конференцию $t(lockRoomPasswordUppercase)",
         "lockTitle": "Блокировка не удалась",
         "login": "Войти",
-        "loginQuestion": "",
         "logoutQuestion": "Уверены, что хотите выйти и остановить встречу?",
         "logoutTitle": "Завершить сеанс",
         "maxUsersLimitReached": "Достигнут лимит на максимальное количество участников. Конференция переполнена. Пожалуйста, свяжитесь с организатором конференции или повторите попытку позже!",
@@ -381,6 +335,8 @@
         "permissionCameraRequiredError": "Для участия в конференциях с видео требуется разрешение камеры. Пожалуйста, предоставьте его в настройках",
         "permissionErrorTitle": "Требуется разрешение",
         "permissionMicRequiredError": "Для участия в конференциях со звуком требуется разрешение на использование микрофона. Пожалуйста, предоставьте его в настройках",
+        "popupError": "Ваш браузер блокирует всплывающие окна этого сайта. Пожалуйста, разрешите всплывающие окна в настройках безопасности браузера и попробуйте снова.",
+        "popupErrorTitle": "Заблокировано всплывающее окно",
         "readMore": "больше",
         "recentlyUsedObjects": "Ваши недавно использованные объекты",
         "recording": "Запись",
@@ -397,8 +353,6 @@
         "removePassword": "Убрать $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Уверены, что хотите убрать видео, которым поделились?",
         "removeSharedVideoTitle": "Убрать видео",
-        "renameBreakoutRoomLabel": "",
-        "renameBreakoutRoomTitle": "",
         "reservationError": "Ошибка системы резервирования",
         "reservationErrorMsg": "Код ошибки: {{code}}, сообщение: {{msg}}",
         "retry": "Повторить",
@@ -418,10 +372,8 @@
         "sendPrivateMessageTitle": "Отправить личное сообщение?",
         "serviceUnavailable": "Служба недоступна",
         "sessTerminated": "Связь прервана",
-        "sessTerminatedReason": "Встреча прервана",
         "sessionRestarted": "Вызов перезапущен из-за проблемы с подключением.",
         "shareAudio": "Продолжить",
-        "shareAudioAltText": "",
         "shareAudioTitle": "Как поделиться аудио",
         "shareAudioWarningD1": "вам нужно остановить совместное использование экрана, прежде чем делиться своим аудио.",
         "shareAudioWarningD2": "вам нужно перезапустить совместное использование экрана и установить флажок «поделиться аудио».",
@@ -451,42 +403,16 @@
         "thankYou": "Спасибо, что используете {{appName}}!",
         "token": "токен",
         "tokenAuthFailed": "Извините, вам не разрешено присоединиться к этому сеансу связи.",
-        "tokenAuthFailedReason": {
-            "audInvalid": "",
-            "contextNotFound": "",
-            "expInvalid": "",
-            "featureInvalid": "",
-            "featureValueInvalid": "",
-            "featuresNotFound": "",
-            "headerNotFound": "",
-            "issInvalid": "",
-            "kidMismatch": "",
-            "kidNotFound": "",
-            "nbfFuture": "",
-            "nbfInvalid": "",
-            "payloadNotFound": "",
-            "tokenExpired": ""
-        },
         "tokenAuthFailedTitle": "Ошибка аутентификации",
-        "tokenAuthFailedWithReasons": "",
-        "tokenAuthUnsupported": "",
         "transcribing": "Расшифровка",
         "unlockRoom": "Убрать $t(lockRoomPassword)",
         "user": "Пользователь",
         "userIdentifier": "Идентификатор пользователя",
         "userPassword": "пароль пользователя",
-        "verifyParticipantConfirm": "",
-        "verifyParticipantDismiss": "",
-        "verifyParticipantQuestion": "",
-        "verifyParticipantTitle": "",
         "videoLink": "Ссылка на видео",
         "viewUpgradeOptions": "Посмотреть варианты обновления",
         "viewUpgradeOptionsContent": "Чтобы получить неограниченный доступ к премиум-функциям, таким как запись, транскрипция, RTMP Streaming и т. д., вам необходимо обновить свой план.",
         "viewUpgradeOptionsTitle": "Вы обнаружили премиальную функцию!",
-        "whiteboardLimitContent": "",
-        "whiteboardLimitReference": "",
-        "whiteboardLimitReferenceUrl": "",
-        "whiteboardLimitTitle": "",
         "yourEntireScreen": "Весь экран"
     },
     "documentSharing": {
@@ -499,9 +425,6 @@
         "title": "Встроить эту встречу"
     },
     "feedback": {
-        "accessibilityLabel": {
-            "yourChoice": ""
-        },
         "average": "Средне",
         "bad": "Плохо",
         "detailsLabel": "Расскажите подробнее.",
@@ -510,11 +433,6 @@
         "star": "Звезда",
         "veryBad": "Очень плохо",
         "veryGood": "Очень хорошо"
-    },
-    "filmstrip": {
-        "accessibilityLabel": {
-            "heading": ""
-        }
     },
     "giphy": {
         "noResults": "Результатов поиска не найдено :(",
@@ -560,12 +478,9 @@
         "noRoom": "Для набора номера не было указано ни одной комнаты.",
         "numbers": "Номера для набора",
         "password": "$t(lockRoomPasswordUppercase):",
-        "reachedLimit": "",
         "sip": "SIP адрес",
-        "sipAudioOnly": "",
         "title": "Поделиться",
-        "tooltip": "Поделитесь ссылкой и номером для подключения к этой конференции",
-        "upgradeOptions": ""
+        "tooltip": "Поделитесь ссылкой и номером для подключения к этой конференции"
     },
     "inlineDialogFailure": {
         "msg": "Небольшая заминка.",
@@ -667,13 +582,13 @@
         "knockingParticipantList": "Список ожидающих участников",
         "lobbyChatStartedNotification": "{{moderator}} начал лобби чат с {{attendee}}",
         "lobbyChatStartedTitle": "{{moderator}} начал лобби чат с вами.",
-        "lobbyClosed": "",
         "nameField": "Введите ваше имя",
         "notificationLobbyAccessDenied": "{{originParticipantName}} запретил присоединиться {{targetParticipantName}}",
         "notificationLobbyAccessGranted": "{{originParticipantName}} разрешил присоединиться {{targetParticipantName}} ",
         "notificationLobbyDisabled": "Лобби отключено пользователем {{originParticipantName}}",
         "notificationLobbyEnabled": "Лобби включено пользователем {{originParticipantName}}",
         "notificationTitle": "Лобби",
+        "passwordField": "Введите пароль встречи",
         "passwordJoinButton": "Присоединиться",
         "title": "Лобби",
         "toggleLabel": "Включить лобби"
@@ -702,12 +617,9 @@
         "no": "Нет",
         "participant": "Участник",
         "participantStats": "Статистика участников",
-        "selectTabTitle": "",
         "sessionToken": "Токен сессии",
         "start": "Начать запись",
         "stop": "Остановить запись",
-        "stopping": "",
-        "wait": "",
         "yes": "Да"
     },
     "lockRoomPassword": "пароль",
@@ -727,13 +639,8 @@
         "connectedOneMember": "{{name}} присоединился к конференции",
         "connectedThreePlusMembers": "{{name}} и {{count}} других пользователей присоединились к конференции",
         "connectedTwoMembers": "{{first}} и {{second}} присоединились к конференции",
-        "dataChannelClosed": "",
-        "dataChannelClosedDescription": "",
-        "disabledIframe": "",
-        "disabledIframeSecondary": "",
         "disconnected": "соединение разорвано",
         "displayNotifications": "Отображение уведомлений для",
-        "dontRemindMe": "",
         "focus": "Фокус встречи",
         "focusFail": "{{component}} недоступен, повторите через {{ms}} с",
         "gifsMenu": "GIPHY",
@@ -777,6 +684,7 @@
         "newDeviceCameraTitle": "Обнаружена новая камера",
         "noiseSuppressionDesktopAudioDescription": "Шумоподавление не может быть включено при совместном использовании звука рабочего стола, пожалуйста, отключите его и повторите попытку.",
         "noiseSuppressionFailedTitle": "Не удалось запустить шумоподавление",
+        "noiseSuppressionNoTrackDescription": "Пожалуйста, сначала включите звук микрофона.",
         "noiseSuppressionStereoDescription": "Шумоподавление стереозвука в настоящее время не поддерживается.",
         "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента {{app}}, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
         "oldElectronClientDescription2": "последней версии",
@@ -792,8 +700,6 @@
         "reactionSoundsForAll": "Отключить звуки для всех",
         "screenShareNoAudio": "Флажок «Поделиться аудио» не был отмечен на экране выбора окна.",
         "screenShareNoAudioTitle": "Не удалось поделиться системным звуком!",
-        "screenSharingAudioOnlyDescription": "",
-        "screenSharingAudioOnlyTitle": "",
         "selfViewTitle": "Вы всегда можете скрыть собственное изображение в настройках.",
         "somebody": "Кто-то",
         "startSilentDescription": "Перезайдите в конференцию, чтобы включить звук",
@@ -806,9 +712,7 @@
         "videoUnmuteBlockedDescription": "Включение звука камеры и совместное использование рабочего стола временно заблокированы из-за системных ограничений.",
         "videoUnmuteBlockedTitle": "Включение камеры и общий доступ к рабочему столу заблокированы!",
         "viewLobby": "Смотреть лобби",
-        "waitingParticipants": "{{waitingParticipants}} люди",
-        "whiteboardLimitDescription": "",
-        "whiteboardLimitTitle": ""
+        "waitingParticipants": "{{waitingParticipants}} люди"
     },
     "participantsPane": {
         "actions": {
@@ -819,7 +723,6 @@
             "askUnmute": "Попросить разрешение включить микрофон",
             "audioModeration": "Разрешить выключить микрофон",
             "blockEveryoneMicCamera": "Заблокировать у всех микрофон и камеру",
-            "breakoutRooms": "",
             "invite": "Пригласить",
             "moreModerationActions": "Дополнительные параметры модерации",
             "moreModerationControls": "Дополнительные элементы управления модерацией",
@@ -837,8 +740,6 @@
         "headings": {
             "lobby": "Лобби ({{count}})",
             "participantsList": "Список участников ({{count}})",
-            "visitorRequests": "",
-            "visitors": "",
             "waitingLobby": "Ожидают в лобби ({{count}})"
         },
         "search": "Поиск участников",
@@ -846,7 +747,6 @@
     },
     "passwordDigitsOnly": "До {{number}} цифр",
     "passwordSetRemotely": "установлен другим участником",
-    "pinParticipant": "",
     "pinnedParticipant": "Участник запинен",
     "polls": {
         "answer": {
@@ -931,11 +831,9 @@
         "lookGood": "Кажется ваш микрофон работает правильно",
         "or": "или",
         "premeeting": "Перед подключением",
-        "proceedAnyway": "",
         "screenSharingError": "Ошибка показа экрана:",
         "showScreen": "Включить экран перед подключением",
         "startWithPhone": "Начать с телефонной связью",
-        "unsafeRoomConsent": "",
         "videoOnlyError": "Ошибка видео:",
         "videoTrackError": "Не удалось создать видео дорожку.",
         "viewAllNumbers": "посмотреть всех участников"
@@ -999,16 +897,7 @@
         "limitNotificationDescriptionWeb": "Из-за высокой нагрузки ваша запись будет ограничена {{limit}} мин. Для неограниченного количества записей попробуйте <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Мы создали ссылку на вашу запись.",
         "live": "В ЭФИРЕ",
-        "localRecordingNoNotificationWarning": "",
-        "localRecordingNoVideo": "",
-        "localRecordingStartWarning": "",
-        "localRecordingStartWarningTitle": "",
-        "localRecordingVideoStop": "",
-        "localRecordingVideoWarning": "",
-        "localRecordingWarning": "",
         "loggedIn": "Вошел как {{userName}}",
-        "noMicPermission": "",
-        "noStreams": "",
         "off": "Запись остановлена",
         "offBy": "{{name}} остановил запись",
         "on": "Запись началась",
@@ -1016,15 +905,12 @@
         "onlyRecordSelf": "Записать только мои аудио и видео потоки",
         "pending": "Подготовка записи конференции. . .",
         "rec": "ИДЕТ ЗАПИСЬ",
-        "recordAudioAndVideo": "",
-        "recordTranscription": "",
         "saveLocalRecording": "Сохранить файл записи локально (Beta)",
         "serviceDescription": "Ваша запись будет сохранена соответствующей службой",
         "serviceDescriptionCloud": "Облачная запись",
         "serviceDescriptionCloudInfo": "Сохранённые записи автоматически удаляются спуся 24 часа со старта.",
         "serviceName": "Служба записи",
         "sessionAlreadyActive": "Этот сеанс уже записывается или транслируется в прямом эфире.",
-        "showAdvancedOptions": "",
         "signIn": "Вход",
         "signOut": "Выход",
         "surfaceError": "Пожалуйста, выберите текущую вкладку.",
@@ -1033,21 +919,14 @@
         "unavailableTitle": "Запись невозможна",
         "uploadToCloud": "Загрузить в облако"
     },
-    "screenshareDisplayName": "",
     "sectionList": {
         "pullToRefresh": "Потяните для обновления"
     },
     "security": {
         "about": "Вы можете добавить к собранию $t(lockRoomPassword). Участникам необходимо будет предоставить $t(lockRoomPassword), прежде чем им будет разрешено присоединиться к собранию.",
         "aboutReadOnly": "Участники-модераторы могут добавить к собранию $t(lockRoomPassword). Участникам необходимо будет предоставить $t(lockRoomPassword), прежде чем им будет разрешено присоединиться к собранию.",
-        "insecureRoomNameWarningNative": "",
-        "insecureRoomNameWarningWeb": "",
-        "title": "Настройки безопасности",
-        "unsafeRoomActions": {
-            "meeting": "",
-            "prejoin": "",
-            "welcome": ""
-        }
+        "insecureRoomNameWarning": "Имя комнаты небезопасно. Нежелательные участники могут присоединиться к вашей конференции. Подумайте о том, чтобы защитить вашу встречу используя настройки безопасности.",
+        "title": "Настройки безопасности"
     },
     "settings": {
         "audio": "Звук",
@@ -1068,7 +947,6 @@
         "incomingMessage": "Входящее сообщение",
         "language": "Язык",
         "loggedIn": "Вошел как {{name}}",
-        "maxStageParticipants": "",
         "microphones": "Микрофоны",
         "moderator": "Модератор",
         "moderatorOptions": "Настройки модератора",
@@ -1101,7 +979,6 @@
         "alertOk": "OK",
         "alertTitle": "Внимание",
         "alertURLText": "Ошибка адреса сервера",
-        "apply": "",
         "buildInfoSection": "Информация о сборке",
         "conferenceSection": "Номера для набора",
         "disableCallIntegration": "Отключить встроенную интеграцию вызовов",
@@ -1109,17 +986,12 @@
         "disableCrashReportingWarning": "Вы действительно хотите отключить отчеты о сбоях? Настройка будет применена после перезапуска приложения.",
         "disableP2P": "Отключить режим Peer-To-Peer",
         "displayName": "Отображаемое имя",
-        "displayNamePlaceholderText": "",
         "email": "Email",
-        "emailPlaceholderText": "",
-        "gavatarMessage": "",
-        "goTo": "",
         "header": "Настройки",
         "help": "Помощь",
         "links": "Ссылки",
         "privacy": "Конфиденциальность",
         "profileSection": "Профиль",
-        "sdkVersion": "",
         "serverURL": "Адрес сервера",
         "showAdvanced": "Показать дополнительные настройки",
         "startCarModeInLowBandwidthMode": "Включать упрощенный режим на ограниченном канале",
@@ -1164,7 +1036,6 @@
     "termsView": {
         "title": "Условия"
     },
-    "toggleTopPanelLabel": "",
     "toolbar": {
         "Settings": "Настройки",
         "accessibilityLabel": {
@@ -1172,35 +1043,24 @@
             "audioOnly": "Вкл/Выкл только звук",
             "audioRoute": "Выбрать аудиоустройство",
             "boo": "Бу",
-            "breakoutRooms": "",
+            "breakoutRoom": "Войти/выйти из сессионного зала",
             "callQuality": "Качество связи",
             "carmode": "Упрощенный режим",
             "cc": "Вкл/Выкл субтитры",
             "chat": "Показать/скрыть окно чата",
             "clap": "Хлопок",
-            "closeChat": "",
-            "closeMoreActions": "",
-            "closeParticipantsPane": "",
             "collapse": "Крах",
             "document": "Закрыть общий документ",
-            "documentClose": "",
-            "documentOpen": "",
             "download": "Скачать приложение",
             "embedMeeting": "Встроить встречу",
             "endConference": "Завершить встречу для всех",
-            "enterFullScreen": "",
-            "enterTileView": "",
-            "exitFullScreen": "",
-            "exitTileView": "",
             "expand": "Расширять",
             "feedback": "Оставить отзыв",
             "fullScreen": "Полноэкранный/оконный режим",
             "giphy": "Показать GIPHY меню",
             "grantModerator": "Сделать модератором",
             "hangup": "Завершить звонок",
-            "heading": "",
             "help": "Справка",
-            "hideWhiteboard": "",
             "invite": "Пригласить",
             "kick": "Отключить участника",
             "laugh": "Смех",
@@ -1210,7 +1070,6 @@
             "lobbyButton": "Вкл/Выкл режим лобби",
             "localRecording": "Вкл/Выкл кнопки записи",
             "lockRoom": "Установить пароль",
-            "lowerHand": "",
             "moreActions": "Показать/скрыть меню доп. настроек",
             "moreActionsMenu": "Меню доп. настроек",
             "moreOptions": "Меню доп. настроек",
@@ -1219,15 +1078,12 @@
             "muteEveryoneElse": "Заглушить всех остальных",
             "muteEveryoneElsesVideoStream": "Остановить чужое видео",
             "muteEveryonesVideoStream": "Остановить видео для всех",
-            "muteGUMPending": "",
             "noiseSuppression": "Шумоподавление",
-            "openChat": "",
             "participants": "Участники",
             "pip": "Вкл/Выкл режим Картинка-в-картинке",
             "privateMessage": "Отправить личное сообщение",
             "profile": "Редактировать профиль",
             "raiseHand": "Поднять руку",
-            "reactions": "",
             "reactionsMenu": "Открыть/закрыть меню реакций",
             "recording": "Вкл/Выкл запись",
             "remoteMute": "Отключить участнику микрофон",
@@ -1241,20 +1097,15 @@
             "sharedvideo": "Вкл/Выкл Youtube - трансляцию",
             "shortcuts": "Вкл/Выкл значки",
             "show": "Показать крупным планом",
-            "showWhiteboard": "",
             "silence": "Тишина",
             "speakerStats": "Вкл/Выкл статистику",
-            "stopScreenSharing": "",
-            "stopSharedVideo": "",
             "surprised": "Удивлен",
             "tileView": "Вкл/Выкл плитку",
             "toggleCamera": "Переключить камеру",
             "toggleFilmstrip": "Включить диафильм",
-            "unmute": "",
             "videoblur": "Вкл/Выкл размытие фона",
             "videomute": "Вкл/Выкл видео",
-            "videomuteGUMPending": "",
-            "videounmute": ""
+            "whiteboard": "Показать / Скрыть интерактивную доску"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
         "audioOnlyOff": "Включить видео (стандартный режим)",
@@ -1267,7 +1118,6 @@
         "chat": "Чат",
         "clap": "Аплодисменты",
         "closeChat": "Закрыть чат",
-        "closeParticipantsPane": "",
         "closeReactionsMenu": "Закрыть меню реакций",
         "disableNoiseSuppression": "Выключить шумоподавление",
         "disableReactionSounds": "Выключить звуки реакций",
@@ -1304,7 +1154,6 @@
         "mute": "Микрофон (вкл./выкл.)",
         "muteEveryone": "Выкл. микрофон у всех",
         "muteEveryonesVideo": "Выкл. камеру у всех",
-        "muteGUMPending": "",
         "noAudioSignalDesc": "Если вы специально не отключали микрофон в системных настройках, подумайте о том, чтобы поменять его.",
         "noAudioSignalDescSuggestion": "Если вы специально не отключали микрофон в системных настройках, вы можете попробовать использовать следующее устройство:",
         "noAudioSignalDialInDesc": "Вы можете также дозвониться используя:",
@@ -1327,7 +1176,6 @@
         "reactionLike": "Отправить реакцию \"палец вверх\"",
         "reactionSilence": "Отправить реакцию тишины",
         "reactionSurprised": "Отправить удивленную реакцию",
-        "reactions": "",
         "security": "Настройки безопасности",
         "selectBackground": "Выбрать фоновое изображение",
         "shareRoom": "Отправить приглашение",
@@ -1347,11 +1195,8 @@
         "talkWhileMutedPopup": "Пытаетесь говорить? У вас отключен звук.",
         "tileViewToggle": "Вкл/выкл плитку",
         "toggleCamera": "Переключить камеру",
-        "unmute": "",
         "videoSettings": "Настройка видео",
-        "videomute": "Камера",
-        "videomuteGUMPending": "",
-        "videounmute": ""
+        "videomute": "Камера"
     },
     "transcribing": {
         "ccButtonTooltip": "Вкл. / Выкл. субтитры",
@@ -1361,15 +1206,10 @@
         "labelToolTip": "Создается транскрипция конференции.",
         "off": "Расшифровка остановлена",
         "pending": "Подготовка расшифровки конференции...",
-        "sourceLanguageDesc": "",
-        "sourceLanguageHere": "",
         "start": "Вкл/Выкл показ субтитров",
         "stop": "Вкл/Выкл показ субтитров",
-        "subtitles": "",
-        "subtitlesOff": "",
         "tr": "TR"
     },
-    "unpinParticipant": "",
     "userMedia": {
         "androidGrantPermissions": "Выберите <b><i>Разрешить</i></b>, когда браузер спросит о разрешениях.",
         "chromeGrantPermissions": "Выберите <b><i>Разрешить</i></b>, когда браузер спросит о разрешениях.",
@@ -1439,10 +1279,6 @@
         "videomute": "Участник выключил камеру"
     },
     "virtualBackground": {
-        "accessibilityLabel": {
-            "currentBackground": "",
-            "selectBackground": ""
-        },
         "addBackground": "Добавить фон",
         "apply": "Применять",
         "backgroundEffectError": "Не удалось применить фоновый эффект.",
@@ -1465,14 +1301,6 @@
         "uploadedImage": "Загруженное изображение {{index}}",
         "webAssemblyWarning": "WebAssembly не поддерживается",
         "webAssemblyWarningDescription": "WebAssembly отключен или не поддерживается этим браузером"
-    },
-    "visitors": {
-        "chatIndicator": "",
-        "labelTooltip": "",
-        "notification": {
-            "description": "",
-            "title": ""
-        }
     },
     "volumeSlider": "Ползунок громкости",
     "welcomepage": {
