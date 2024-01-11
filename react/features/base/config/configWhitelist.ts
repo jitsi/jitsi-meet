@@ -126,6 +126,7 @@ export default [
     'disableThirdPartyRequests',
     'disableTileView',
     'disableTileEnlargement',
+    'disableVirtualBackground',
     'displayJids',
     'doNotStoreRoom',
     'doNotFlipLocalVideo',
