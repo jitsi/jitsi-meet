@@ -72,9 +72,7 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
         case _POTENTIAL_TRANSCRIBER_JOINED:
             return {
                 ...state,
-                potentialTranscriberJIDs:
-                    [ action.transcriberJID ]
-                        .concat(state.potentialTranscriberJIDs)
+                potentialTranscriberJIDs: [ action.transcriberJID, ...state.potentialTranscriberJIDs ]
             };
         case SET_PENDING_TRANSCRIBING_NOTIFICATION_UID:
             return {
