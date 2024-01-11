@@ -12,7 +12,6 @@ import {
  *
  * @returns {{
  * isTranscribing: boolean,
- * isDialing: boolean,
  * transcriberJID: null,
  * potentialTranscriberJIDs: Array
  * }}
@@ -27,20 +26,6 @@ function _getInitialState() {
          * @type {boolean}
          */
         isTranscribing: false,
-
-        /**
-         * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successful joining or failure of joining.
-         *
-         * @type {boolean}
-         */
-        isDialing: false,
-
-        /**
-         * Indicates whether the transcribing feature is in the process of
-         * terminating; the transcriber has been told to leave.
-         */
-        isTerminating: false,
 
         /**
          * The JID of the active transcriber.
@@ -59,8 +44,6 @@ function _getInitialState() {
 }
 
 export interface ITranscribingState {
-    isDialing: boolean;
-    isTerminating: boolean;
     isTranscribing: boolean;
     pendingNotificationUid?: string;
     potentialTranscriberJIDs: string[];
@@ -77,13 +60,11 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
             return {
                 ...state,
                 isTranscribing: true,
-                isDialing: false,
                 transcriberJID: action.transcriberJID
             };
         case _TRANSCRIBER_LEFT:
             return {
                 ...state,
-                isTerminating: false,
                 isTranscribing: false,
                 transcriberJID: undefined,
                 potentialTranscriberJIDs: []
