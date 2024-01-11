@@ -1,7 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT
@@ -45,7 +44,6 @@ function _getInitialState() {
 
 export interface ITranscribingState {
     isTranscribing: boolean;
-    pendingNotificationUid?: string;
     potentialTranscriberJIDs: string[];
     transcriberJID?: string | null;
 }
@@ -73,11 +71,6 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
             return {
                 ...state,
                 potentialTranscriberJIDs: [ action.transcriberJID, ...state.potentialTranscriberJIDs ]
-            };
-        case SET_PENDING_TRANSCRIBING_NOTIFICATION_UID:
-            return {
-                ...state,
-                pendingNotificationUid: action.uid
             };
         default:
             return state;
