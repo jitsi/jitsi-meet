@@ -14,6 +14,7 @@ import {
 import {
     potentialTranscriberJoined,
     showPendingTranscribingNotification,
+    showStartedTranscribingNotification,
     showStoppedTranscribingNotification,
     transcriberJoined,
     transcriberLeft
@@ -37,6 +38,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case _TRANSCRIBER_JOINED: {
+        dispatch(showStartedTranscribingNotification());
+
         const state = getState();
         const { transcription } = state['features/base/config'];
         const { _requestingSubtitles } = state['features/subtitles'];

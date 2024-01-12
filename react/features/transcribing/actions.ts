@@ -73,6 +73,20 @@ export function showPendingTranscribingNotification() {
 }
 
 /**
+ * Signals that the started transcribing notification should be shown on the
+ * screen.
+ *
+ * @returns {showNotification}
+ */
+export function showStartedTranscribingNotification() {
+    return showNotification({
+        descriptionKey: 'transcribing.on',
+        titleKey: 'dialog.transcribing',
+        uid: TRANSCRIBING_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
+}
+
+/**
  * Signals that the stopped transcribing notification should be shown on the
  * screen.
  *
