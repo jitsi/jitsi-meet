@@ -1395,9 +1395,6 @@ var config = {
     // Only the default ones from will be available.
     // disableAddingBackgroundImages: false,
 
-    // Disables using screensharing as virtual background.
-    // disableScreensharingVirtualBackground: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
 
