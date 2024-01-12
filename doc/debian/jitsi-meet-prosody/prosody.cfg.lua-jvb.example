@@ -56,7 +56,6 @@ VirtualHost "jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
-        "pubsub";
         "ping"; -- Enable mod_ping
         "speakerstats";
         "external_services";
