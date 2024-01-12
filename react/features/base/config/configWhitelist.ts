@@ -116,7 +116,6 @@ export default [
     'disableRtx',
     'disableSelfView',
     'disableSelfViewSettings',
-    'disableScreensharingVirtualBackground',
     'disableShortcuts',
     'disableShowMoreStats',
     'disableRemoveRaisedHandOnFocus',
