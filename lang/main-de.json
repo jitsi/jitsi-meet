@@ -68,6 +68,7 @@
             "sendToBreakoutRoom": "Anwesende in Breakout-Raum verschieben:"
         },
         "breakoutList": "Breakout-Liste",
+        "buttonLabel": "Breakout-Räume",
         "defaultName": "Breakout-Raum #{{index}}",
         "hideParticipantList": "Teilnehmerliste ausblenden",
         "mainRoom": "Hauptraum",
@@ -76,7 +77,8 @@
             "joinedMainRoom": "Hauptraum betreten",
             "joinedTitle": "Breakout-Räume"
         },
-        "showParticipantList": "Teilnehmerliste anzeigen"
+        "showParticipantList": "Teilnehmerliste anzeigen",
+        "title": "Breakout-Räume"
     },
     "calendarSync": {
         "addMeetingURL": "Konferenzlink hinzufügen",
@@ -481,6 +483,10 @@
         "viewUpgradeOptions": "Upgradeoptionen anzeigen",
         "viewUpgradeOptionsContent": "Sie müssen Ihren Tarif erweitern, um Premium-Features wie Aufnahme, Transkription, RTMP-Streaming und mehr zu nutzen.",
         "viewUpgradeOptionsTitle": "Sie haben ein Premium-Feature entdeckt!",
+        "whiteboardLimitContent": "Die maximale Zahl an Nutzenden für das Whiteboard ist erreicht.",
+        "whiteboardLimitReference": "Für weitere Informationen besuchen Sie bitte",
+        "whiteboardLimitReferenceUrl": "unsere Webseite",
+        "whiteboardLimitTitle": "Whiteboard-Nutzung beschränkt",
         "yourEntireScreen": "Ganzer Bildschirm"
     },
     "documentSharing": {
@@ -724,6 +730,7 @@
         "dataChannelClosed": "Schlechte Videoqualität",
         "dataChannelClosedDescription": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher ist die Videoqulität auf die schlechteste Stufe limitiert.",
         "disabledIframe": "Die Einbettung ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
+        "disabledIframeSecondary": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "dontRemindMe": "Nicht erinnern",
@@ -799,7 +806,9 @@
         "videoUnmuteBlockedDescription": "Die Kamera und Bildschirmfreigabe kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden.",
         "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!",
         "viewLobby": "Lobby ansehen",
-        "waitingParticipants": "{{waitingParticipants}} Personen"
+        "waitingParticipants": "{{waitingParticipants}} Personen",
+        "whiteboardLimitDescription": "Bitte speichern Sie Ihre Inhalte, da das Nutzungslimit bald erreicht wird und dann Ihr Whiteboard geschlossen wird.",
+        "whiteboardLimitTitle": "Whiteboard-Nutzung"
     },
     "participantsPane": {
         "actions": {
@@ -810,6 +819,7 @@
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
             "audioModeration": "Für sich selbst die Stummschaltung aufzuheben",
             "blockEveryoneMicCamera": "Kamera und Mikrofon von allen sperren",
+            "breakoutRooms": "Breakout-Räume",
             "invite": "Person einladen",
             "moreModerationActions": "Weitere Moderationsoptionen",
             "moreModerationControls": "Weitere Moderationsoptionen",
@@ -827,6 +837,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Anwesende ({{count}})",
+            "visitorRequests": " (Anfragen {{count}})",
             "visitors": "Gäste ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
         },
@@ -1005,12 +1016,15 @@
         "onlyRecordSelf": "Nur eigenes Kamerabild und Ton aufzeichnen",
         "pending": "Aufzeichnung des Meetings wird vorbereitet…",
         "rec": "AUFZ",
+        "recordAudioAndVideo": "Kamera und Ton aufzeichnen",
+        "recordTranscription": "Transkription aufzeichnen",
         "saveLocalRecording": "Aufzeichnung lokal abspeichern",
         "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
         "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceDescriptionCloudInfo": "Aufzeichnungen werden 24 Stunden nach Aufzeichnungsende automatisch gelöscht.",
         "serviceName": "Aufnahmedienst",
         "sessionAlreadyActive": "Diese Konferenz wird bereits aufgezeichnet.",
+        "showAdvancedOptions": "Weitere Optionen",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
         "surfaceError": "Bitte das aktuelle Tab auswählen.",
@@ -1346,6 +1360,7 @@
         "failedToStart": "Transkribieren konnte nicht gestartet werden",
         "labelToolTip": "Das Meeting wird transkribiert",
         "off": "Transkribieren gestoppt",
+        "on": "Transkribieren gestartet",
         "pending": "Transkribieren des Meetings wird vorbereitet…",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
