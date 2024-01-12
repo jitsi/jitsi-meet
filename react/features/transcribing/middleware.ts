@@ -38,6 +38,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case _TRANSCRIBER_JOINED: {
+        notifyTranscribingStatusChanged(true);
         dispatch(showStartedTranscribingNotification());
 
         const state = getState();
@@ -50,6 +51,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case _TRANSCRIBER_LEFT: {
+        notifyTranscribingStatusChanged(false);
         dispatch(showStoppedTranscribingNotification());
 
         const state = getState();
@@ -83,7 +85,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
-
     case SET_REQUESTING_SUBTITLES:
         if (action.enabled && !isTranscribing) {
             dispatch(showPendingTranscribingNotification());
@@ -95,3 +96,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     return next(action);
 });
+
+/**
+ * Notify external application (if API is enabled) that transcribing has started or stopped.
+ *
+ * @param {boolean} on - True if transcribing is on, false otherwise.
+ * @returns {void}
+ */
+function notifyTranscribingStatusChanged(on: boolean) {
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyTranscribingStatusChanged(on);
+    }
+}

@@ -1976,6 +1976,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that transcribing has started or stopped.
+     *
+     * @param {boolean} on - True if transcribing is on, false otherwise.
+     * @returns {void}
+     */
+    notifyTranscribingStatusChanged(on) {
+        this._sendEvent({
+            name: 'transcribing-status-changed',
+            on
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the user received
      * a transcription chunk.
      *
