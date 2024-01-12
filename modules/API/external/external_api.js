@@ -160,6 +160,7 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
+    'transcribing-status-changed': 'transcribingStatusChanged',
     'transcription-chunk-received': 'transcriptionChunkReceived',
     'whiteboard-status-changed': 'whiteboardStatusChanged'
 };
