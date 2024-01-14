@@ -1,19 +1,22 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Ligilon al kunveno: {{url}}"
+        },
         "add": "Inviti",
         "addContacts": "Inviti viajn kontaktojn",
         "contacts": "kontaktoj",
         "copyInvite": "Kopii la invitligilon",
         "copyLink": "Kopii la kunsidligilon",
         "copyStream": "Kopii elsendfluan ligilon",
-        "countryNotSupported": "Ni ankoraŭ ne subtenas ĉi tiun landon.",
+        "countryNotSupported": "Ni ankoraŭ ne subtenas ĉi-tiun landon.",
         "countryReminder": "Ĉu vi vokas ekster Usonon? Certiĝu, ke vi komencas per la landokodo!",
         "defaultEmail": "Via defaŭlta retadreso",
         "disabled": "Vi ne povas inviti homojn.",
         "failedToAdd": "Malsukcesis aldono de membroj",
         "googleEmail": "Google-retadreso",
-        "inviteMoreHeader": "Vi estas la sola en la retkunsido",
-        "inviteMoreMailSubject": "Aliĝi al {{appName}}-retkunsido",
+        "inviteMoreHeader": "Vi estas la sola en la retkunveno",
+        "inviteMoreMailSubject": "Aliĝi al {{appName}}-retkunveno",
         "inviteMorePrompt": "Inviti pli da homoj",
         "linkCopied": "Ligilo kopiita al tondujo",
         "noResults": "Nenio trovita",
@@ -25,7 +28,7 @@
         "shareStream": "Konigi elsendfluan ligilon",
         "sipAddresses": "SIP-adresoj",
         "telephone": "Telefono: {{number}}",
-        "title": "Inviti homojn al ĉi tiu kunveno",
+        "title": "Inviti homojn al ĉi-tiu kunveno",
         "yahooEmail": "Yahoo-retadreso"
     },
     "audioDevices": {
@@ -39,28 +42,47 @@
     "audioOnly": {
         "audioOnly": "Malalta rapideco de retkonekto"
     },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "ekz. 10000000 for 10 Mbps",
+        "assumedBandwidthBpsWarning": "Pli altaj valoroj povas kaŭzi retajn problemojn.",
+        "customValue": "Elektita valoro",
+        "customValueEffect": "Elekti la bps valoro (bitoj po sekundo)",
+        "leaveEmpty": "lasu malplena",
+        "leaveEmptyEffect": "por ebligi taksojn",
+        "possibleValues": "Eblaj valoroj",
+        "setAssumedBandwidthBps": "Supozita kapacity (bps)",
+        "title": "Agordoj por kapacito",
+        "zeroEffect": "malebligi videon"
+    },
     "breakoutRooms": {
         "actions": {
             "add": "Aldoni aneksan ĉambron",
-            "autoAssign": "Asigni aŭtomate al aneksanaj ĉambroj",
+            "autoAssign": "Asigni aŭtomate al aneksaj ĉambroj",
             "close": "Fermi",
             "join": "Aliĝi",
             "leaveBreakoutRoom": "Eliri la aneksan ĉambron",
             "more": "Pli",
             "remove": "Forigi",
+            "rename": "Ŝanĝi nomon de ĉambro",
+            "renameBreakoutRoom": "Ŝanĝi nomon de aneksa ĉambro",
             "sendToBreakoutRoom": "Sendi la partoprenanton al:"
         },
+        "breakoutList": "Aneksa listo",
+        "buttonLabel": "Aneksaj ĉambroj",
         "defaultName": "Aneksa ĉambro #{{index}}",
+        "hideParticipantList": "Kaŝi liston de partoprenantoj",
         "mainRoom": "Ĉefĉambro",
         "notifications": {
             "joined": "Alirante al aneksa ĉambro \"{{name}}\"",
             "joinedMainRoom": "Alirante al ĉefĉambro",
             "joinedTitle": "Aneksaj ĉambroj"
-        }
+        },
+        "showParticipantList": "Montri liston de partoprenantoj",
+        "title": "Aneksaj Ĉambroj"
     },
     "calendarSync": {
         "addMeetingURL": "Aldoni ligilon al la kunveno",
-        "confirmAddLink": "Ĉu vi volas aldoni Jitsi-ligilon al ĉi tiu evento?",
+        "confirmAddLink": "Ĉu vi volas aldoni Jitsi-ligilon al ĉi-tiu evento?",
         "error": {
             "appConfiguration": "Kalendara integrigo ne estas ĝuste agordita.",
             "generic": "Okazis eraro. Bonvolu kontroli viajn kalendarajn agordojn aŭ provu aktualigi la kalendaron.",
@@ -147,6 +169,7 @@
         "bridgeCount": "Nombro de serviloj: ",
         "codecs": "Kodekoj (sono/video):",
         "connectedTo": "Konektita al:",
+        "e2eeVerified": "E2EE Aprobita:",
         "framerate": "Bildrapido:",
         "less": "Montri malpli",
         "localaddress": "Loka adreso:",
@@ -155,6 +178,7 @@
         "localport_plural": "Lokaj pordoj:",
         "maxEnabledResolution": "Maksimuma flukvanto",
         "more": "Montri pli",
+        "no": "ne",
         "packetloss": "Perdo de pakaĵoj:",
         "participant_id": "ID de partoprenanto",
         "quality": {
@@ -173,7 +197,8 @@
         "status": "Konekto:",
         "transport": "Transporto:",
         "transport_plural": "Transportoj:",
-        "video_ssrc": "Video-SSRC"
+        "video_ssrc": "Video-SSRC",
+        "yes": "jes"
     },
     "dateUtils": {
         "earlier": "Pli frue",
@@ -181,15 +206,23 @@
         "yesterday": "Hieraŭ"
     },
     "deepLinking": {
-        "appNotInstalled": "Vi bezonas la aplikaĵon {{app}} por aliĝi al ĉi tiu kunveno per via telefono.",
+        "appNotInstalled": "Vi bezonas la aplikaĵon {{app}} por aliĝi al ĉi-tiu kunveno per via telefono.",
         "description": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}. Provu denove aŭ lanĉu ĝin en la reta aplikaĵo {{web}}.",
+        "descriptionNew": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}. <br /><br /> Vi povas provi denove, au uzi la retejon.",
         "descriptionWithoutWeb": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}.",
         "downloadApp": "Elŝuti la aplikaĵon",
+        "downloadMobileApp": "Elŝuti el aplikaĵvendejo",
         "ifDoNotHaveApp": "Se vi ankoraŭ ne havas la aplikaĵon",
         "ifHaveApp": "Se vi jam havas la aplikaĵon",
-        "joinInApp": "Aliĝu al ĉi tiu kunsido per la aplikaĵo",
+        "joinInApp": "Aliĝu al ĉi-tiu kunveno per la aplikaĵo",
+        "joinInAppNew": "Aliĝu per la aplikaĵo",
+        "joinInBrowser": "Aliĝu per la retumilo",
+        "launchMeetingLabel": "Kiel vi volas aliĝu al ĉi-tiu kunveno?",
         "launchWebButton": "Lanĉi enrete",
-        "title": "Lanĉo de via kunveno en {{app}}…",
+        "noMobileApp": "Ĉu vi ne jam havas la aplikaĵon?",
+        "termsAndConditions": "Daŭrigante, vi konsentas kun niaj <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>kondiĉoj.</a>",
+        "title": "Enirante vian kunvenon per {{app}}…",
+        "titleNew": "Enirante vian kunvenon...",
         "tryAgainButton": "Provu denove per la komputila aplikaĵo",
         "unsupportedBrowser": "Ŝajnas ke vi uzas nesubtenitan retumilon"
     },
@@ -202,6 +235,12 @@
         "microphonePermission": "Eraro akirante permeson por mikrofono"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Voko kontrolo",
+            "connectedDevices": "Ligitaj aparatoj:",
+            "deleteDevice": "Forgesu aparaton",
+            "pairDevice": "Kuplu aparaton"
+        },
         "noPermission": "Permeso ne estis donita",
         "previewUnavailable": "Antaŭrigardo ne disponeblas",
         "selectADevice": "Elektu aparaton",
@@ -222,16 +261,23 @@
         "Share": "Kundividi",
         "Submit": "Sendi",
         "WaitForHostMsg": "La kunveno ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
+        "WaitingForHostButton": "Atendante la gastiganton",
         "WaitingForHostTitle": "Atendante la gastiganton…",
         "Yes": "Jes",
         "accessibilityLabel": {
-            "liveStreaming": "Tuja elsendfluo"
+            "Cancel": "Nuligi (forlasi dialogujon)",
+            "Ok": "Okej (konservi ŝanĝojn kaj forlasi dialogujon)",
+            "close": "Fermi dialogujon",
+            "liveStreaming": "Tuja elsendfluo",
+            "sharingTabs": "Kunhavaj Agordoj"
         },
         "add": "Aldoni",
-        "addMeetingNote": "Aldoni komenton pri tiu kunsido",
+        "addMeetingNote": "Aldoni komenton pri tiu kunveno",
         "addOptionalNote": "Aldoni komenton (fakultativa)",
         "allow": "Permesi",
-        "alreadySharedVideoMsg": "Alia partoprenanto jam kundividas videon. Ĉi tiu kunveno permesas nur unu kundividata video samtempe.",
+        "allowToggleCameraDialog": "Do you allow {{initiatorName}} to toggle your camera facing mode?",
+        "allowToggleCameraTitle": "Ĉu permesu baskuligi kameraon?",
+        "alreadySharedVideoMsg": "Alia partoprenanto jam kundividas videon. Ĉi-tiu kunveno permesas nur unu kundividata video samtempe.",
         "alreadySharedVideoTitle": "Nur unu video estas permesata samtempe.",
         "applicationWindow": "Programa fenestro",
         "authenticationRequired": "Bezonas aŭtentokontrolon",
@@ -263,9 +309,9 @@
         "e2eeDescription": "<p>Tutvoja ĉifrado estas nuntempe <strong>EKSPERIMENTA</strong>. Bonvolu vidi <a href='https://jitsi.org/blog/e2ee/' target='_blank'>ĉi tiun artikolon</a> por detaloj.</p><br/><p>Konsciu, ke ŝalti tutvojan ĉifradon efektive malebligos servilflankajn servojn kiel ekzemple: registradon, tujan elsendfluon kaj telefonan partoprenon. Konsciu ankaŭ, ke la kunveno funkcios nur por homoj, kiuj uzas retumilon subtenantan enmetatajn fluojn.</p>",
         "e2eeDisabledDueToMaxModeDescription": "Ne eblas ŝalti tutvoja ĉifrado pro granda kvanto da partoprenantoj en la prelego",
         "e2eeLabel": "Ŝlosilo",
-        "e2eeWarning": "<br /><p><strong>ATENTIGO:</strong> Ne ĉiuj partoprenantoj en ĉi tiu kunveno ŝajnas havi subtenon de tutvoja ĉifrado. Se vi ŝaltos ĝin, ili ne povos vidi aŭ aŭdi vin.</p>",
+        "e2eeWarning": "<br /><p><strong>ATENTIGO:</strong> Ne ĉiuj partoprenantoj en ĉi-tiu kunveno ŝajnas havi subtenon de tutvoja ĉifrado. Se vi ŝaltos ĝin, ili ne povos vidi aŭ aŭdi vin.</p>",
         "e2eeWillDisableDueToMaxModeDescription": "AVERTO: Tutvoja ĉifrado estos aŭtomate malŝaltita",
-        "embedMeeting": "Enkorpigi kunsidon",
+        "embedMeeting": "Enkorpigi kunveno",
         "enterDisplayName": "Bonvolu entajpi vian nomon ĉi-tie",
         "error": "Eraro",
         "gracefulShutdown": "Nia servo nun estas eksterreta pro prizorgado. Bonvolu reprovi poste.",
@@ -279,8 +325,8 @@
         "internalErrorTitle": "Interna eraro",
         "kickMessage": "Vi povas kontakti {{participantDisplayName}} por pli da detaloj.",
         "kickParticipantButton": "Forĵeti",
-        "kickParticipantDialog": "Ĉu vi certe volas forĵeti ĉi tiun partoprenanton?",
-        "kickParticipantTitle": "Forĵeti ĉi tiun partoprenanton?",
+        "kickParticipantDialog": "Ĉu vi certe volas forĵeti ĉi-tiun partoprenanton?",
+        "kickParticipantTitle": "Forĵeti ĉi-tiun partoprenanton?",
         "kickTitle": "Aj! {{participantDisplayName}} forĵetis vin el la kunveno",
         "linkMeeting": "Ligi la prelegon",
         "linkMeetingTitle": "Ligi la prelegon al Salesforce",
@@ -291,6 +337,7 @@
         "lockRoom": "Aldoni $t(lockRoomPasswordUppercase) al la kunveno.",
         "lockTitle": "Ŝloso malsukcesis",
         "login": "Ensaluti",
+        "loginQuestion": "Ĉi vi certe volas ensaluti kaj enrigi la kunvenon?",
         "logoutQuestion": "Ĉu vi certe volas adiaŭi kaj fini la kunvenon?",
         "logoutTitle": "Elsaluti",
         "maxUsersLimitReached": "Maksimuma nombro de partoprenantoj atingita. La kunveno estas plena. Bonvolu kontakti la posedanton de la kunveno aŭ reprovi poste!",
@@ -322,20 +369,18 @@
         "muteParticipantsVideoBody": "Vi ne povos ŝalti la kameraon denove, sed ili povos ŝalti ĝin mem iam ajn.",
         "muteParticipantsVideoBodyModerationOn": "Nek vi nek ili povos ŝalti la kameraon denove.",
         "muteParticipantsVideoButton": "Malŝaltu la kameraon",
-        "muteParticipantsVideoDialog": "Ĉu vi certe volas malŝalti la kameraon de tiu ĉi uzanto? Vi ne povos ŝalti ĝin denove, sed ili povos ŝalti ĝin mem iam ajn.",
-        "muteParticipantsVideoDialogModerationOn": "Ĉu vi certe volas malŝalti la kameraon de tiu ĉi uzanto? Nek vi nek ili povos ŝalti ĝin denove.",
-        "muteParticipantsVideoTitle": "Malŝaltu la kameraon de tiu ĉi uzanto?",
+        "muteParticipantsVideoDialog": "Ĉu vi certe volas malŝalti la kameraon de tiu-ĉi uzanto? Vi ne povos ŝalti ĝin denove, sed ili povos ŝalti ĝin mem iam ajn.",
+        "muteParticipantsVideoDialogModerationOn": "Ĉu vi certe volas malŝalti la kameraon de tiu-ĉi uzanto? Nek vi nek ili povos ŝalti ĝin denove.",
+        "muteParticipantsVideoTitle": "Malŝaltu la kameraon de tiu-ĉi uzanto?",
         "noDropboxToken": "Nevalidaj Dropbox-ĵetonoj",
         "password": "Pasvorto",
         "passwordLabel": "La kunvenon ŝlosis partoprenanto. Bonvolu entajpi $t(lockRoomPassword) por aliĝi.",
         "passwordNotSupported": "Agordo de kunvena pasvorto ne estas subtenata",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) ne subtenata",
         "passwordRequired": "$t(lockRoomPasswordUppercase) deviga",
-        "permissionCameraRequiredError": "Permeso uzi kameraon estas bezonata por partopreni prelegojn kun video. Bonvolu doni tiun ĉi permeson en Agordoj.",
+        "permissionCameraRequiredError": "Permeso uzi kameraon estas bezonata por partopreni prelegojn kun video. Bonvolu doni tiun-ĉi permeson en Agordoj.",
         "permissionErrorTitle": "Permeso deviga",
-        "permissionMicRequiredError": "Permeso uzi microfono estas bezonata por partopreni prelegojn kun aŭdaĵo. Bonvolu doni tiun ĉi permeson en Agordoj.",
-        "popupError": "Via foliumilo forbaras ŝprucfenestrojn de tiu ĉi retejo. Bonvolu permesi ŝprucfenestrojn en la prisekuraj agordoj de via fenestro kaj reprovi.",
-        "popupErrorTitle": "Ŝprucfenestro barita",
+        "permissionMicRequiredError": "Permeso uzi microfono estas bezonata por partopreni prelegojn kun aŭdaĵo. Bonvolu doni tiun-ĉi permeson en Agordoj.",
         "readMore": "Pli",
         "recentlyUsedObjects": "Viaj lastatempe uzitaj objektoj",
         "recording": "Registrado",
@@ -352,6 +397,8 @@
         "removePassword": "Forigi $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ĉu vi vere volas forigi vian kunhavatan videon?",
         "removeSharedVideoTitle": "Forigi kunhavatan videon",
+        "renameBreakoutRoomLabel": "Nomo de aneksa ĉambro",
+        "renameBreakoutRoomTitle": "Ŝanĝi nomon de aneksa ĉambro",
         "reservationError": "Rezervosistema eraro",
         "reservationErrorMsg": "Kodo de eraro: {{code}}, mesaĝo: {{msg}}",
         "retry": "Reprovi",
@@ -371,6 +418,7 @@
         "sendPrivateMessageTitle": "Sendi private?",
         "serviceUnavailable": "Servo ne disponeblas",
         "sessTerminated": "Voko finita",
+        "sessTerminatedReason": "La kunveno estas finigita",
         "sessionRestarted": "Voko restartigis pro problemo kun la konecto.",
         "shareAudio": "Daŭrigi",
         "shareAudioTitle": "Kiel kunhavigi sonon",
@@ -401,29 +449,58 @@
         "streamKey": "Ŝlosilo de tuja elsendfluo",
         "thankYou": "Dankon ke vi uzas {{appName}}!",
         "token": "ĵetono",
-        "tokenAuthFailed": "Pardonu, vi ne rajtas aliĝi al ĉi tiu voko.",
+        "tokenAuthFailed": "Pardonu, vi ne rajtas aliĝi al ĉi-tiu voko.",
+        "tokenAuthFailedReason": {
+            "audInvalid": "Nevalida `aud` valoro. Ĝi estu `jitsi`.",
+            "contextNotFound": "La `context` objekto mankas de la portaĵo.",
+            "expInvalid": "Nevalida `exp` valoro.",
+            "featureInvalid": "Nevalida funkcio: {{feature}}, plej verŝajne, ne jam realigita.",
+            "featureValueInvalid": "Nevalida valoro for funkcio: {{feature}}.",
+            "featuresNotFound": "La `features` objekto mankas de la portaĵo.",
+            "headerNotFound": "Mankante la kapon.",
+            "issInvalid": "Nevalida `iss` valoro. It should be `chat`.",
+            "kidMismatch": "Ŝlosila ID (kid) ne kongruas.",
+            "kidNotFound": "Mankanta Ŝlosila ID (kid).",
+            "nbfFuture": "La `nbf` valoro estas en la estonteco.",
+            "nbfInvalid": "Nevalida `nbf` valoro.",
+            "payloadNotFound": "Mankas la portaĵon.",
+            "tokenExpired": "Ĵetono eksvalidiĝis."
+        },
         "tokenAuthFailedTitle": "Aŭtentigo malsukcesis",
+        "tokenAuthFailedWithReasons": "Vi ne havas permeson aliĝi al ĉi-tiu kunveno. Eblaj kialoj: {{reason}}",
+        "tokenAuthUnsupported": "Ĵetona retejeo ne estas subtenata",
         "transcribing": "transskribado",
         "unlockRoom": "Forigi la $t(lockRoomPassword)n de la ĉambro",
         "user": "Uzanto",
         "userIdentifier": "Uzantidentigilo",
         "userPassword": "Uzantopasvorto",
+        "verifyParticipantConfirm": "Ili kongruas",
+        "verifyParticipantDismiss": "Ili ne kongruas",
+        "verifyParticipantQuestion": "EKSPERIMENTA: Demandu al {{participantName}} se ili vidas la saman enhavon, laŭ la sama ordo.",
+        "verifyParticipantTitle": "Identkontrolo",
         "videoLink": "Video-ligilo",
         "viewUpgradeOptions": "Montru opcioj por plibonigaj eldonoj",
         "viewUpgradeOptionsContent": "Se vi volas aliron al superaj funkcioj, kiel registrado, transskribo, RTMP vivelsendo & pli, vi plibonigu vian subskribon.",
         "viewUpgradeOptionsTitle": "Vi malkovris superan funkcion!",
+        "whiteboardLimitContent": "Bedaŭre, la limo de samtempaj blanktabulaj uzantoj estas atingita.",
+        "whiteboardLimitReference": "Por pli da informo, bonvole vizitu",
+        "whiteboardLimitReferenceUrl": "Nia retejo",
+        "whiteboardLimitTitle": "Blanktabula patroprenanta limo atingita",
         "yourEntireScreen": "Via tuta ekrano"
     },
     "documentSharing": {
         "title": "Kundividita dokumento"
     },
     "e2ee": {
-        "labelToolTip": "Ĉiuj partoprenantoj en ĉi tiu kunveno ŝaltis tutvojan ĉifradon"
+        "labelToolTip": "Ĉiuj partoprenantoj en ĉi-tiu kunveno ŝaltis tutvojan ĉifradon"
     },
     "embedMeeting": {
-        "title": "Enigi ĉi tiun renkontiĝon"
+        "title": "Enigi ĉi-tiun renkontiĝon"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Via takso"
+        },
         "average": "Mezbona",
         "bad": "Malbona",
         "detailsLabel": "Diru al ni pli pri ĝi.",
@@ -433,12 +510,14 @@
         "veryBad": "Tre malbona",
         "veryGood": "Tre bona"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Videaj bildetoj"
+        }
+    },
     "giphy": {
         "noResults": "Rezultoj ne trovitaj :(",
         "search": "Serĉi en GIPHY"
-    },
-    "helpView": {
-        "title": "Helpejo"
     },
     "incomingCall": {
         "answer": "Respondi",
@@ -461,14 +540,14 @@
         "dialInSummaryError": "Eraro dum venigo de telefonadaj informoj. Bonvolu reprovi poste.",
         "dialInTollFree": "Senkosta numero",
         "genericError": "Oj, io fuŝiĝis.",
-        "inviteLiveStream": "Por vidi la tujan elsendfluon, alklaku ĉi tiun ligilon: {{url}}",
+        "inviteLiveStream": "Por vidi la tujan elsendfluon, alklaku ĉi-tiun ligilon: {{url}}",
         "invitePhone": "Por aliĝi per telefono anstataŭe, tuŝu tion: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Ĉu vi serĉas alian telefonnumeron?\nVidi la telefonnumerojn de la kunveno: {{url}}\n\n\nSe vi vokas ankaŭ per ĉambra telefono, vi povas aliĝi sen sono: {{silentUrl}}",
         "inviteSipEndpoint": "Por aliĝi per la SIP adreso, entajpu tio: {{sipUri}}.",
-        "inviteTextiOSInviteUrl": "Alklaku tiu ĉi ligilon pour aliĝi: {{inviteUrl}}.",
-        "inviteTextiOSJoinSilent": "Se vi aliĝas per ĉambra telefono, uzu ĉi tiun ligon por aliĝi sen konektiĝi al audio:{{silentUrl}}.",
+        "inviteTextiOSInviteUrl": "Alklaku tiu-ĉi ligilon pour aliĝi: {{inviteUrl}}.",
+        "inviteTextiOSJoinSilent": "Se vi aliĝas per ĉambra telefono, uzu ĉi-tiun ligon por aliĝi sen konektiĝi al audio:{{silentUrl}}.",
         "inviteTextiOSPersonal": "{{name}} invitas vin al kunveno.",
-        "inviteTextiOSPhone": "Por aliĝi telefone, uzu ĉi tiun numeron: {{number}},,{{conferenceID}}#. Se vi serĉas alian numeron, jen la plena listo: {{didUrl}}.",
+        "inviteTextiOSPhone": "Por aliĝi telefone, uzu ĉi-tiun numeron: {{number}},,{{conferenceID}}#. Se vi serĉas alian numeron, jen la plena listo: {{didUrl}}.",
         "inviteURLFirstPartGeneral": "Vi estas invitita al kunveno.",
         "inviteURLFirstPartPersonal": "{{name}} invitas vin al kunveno.\n",
         "inviteURLSecondPart": "\nAliĝi al la kunveno:\n{{url}}\n",
@@ -482,8 +561,9 @@
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Vi atingis la limon de via subskribo.",
         "sip": "SIP-adreso",
+        "sipAudioOnly": "SIP nur-aŭdia adreso",
         "title": "Kundividi",
-        "tooltip": "Kundividi ligilon kaj telefonnumeron por ĉi tiu kunveno",
+        "tooltip": "Kundividi ligilon kaj telefonnumeron por ĉi-tiu kunveno",
         "upgradeOptions": "Bonvolu kontroli la ĝisdatigajn opciojn."
     },
     "inlineDialogFailure": {
@@ -549,7 +629,7 @@
         "onBy": "{{name}} komencis la tujan elsendfluon",
         "pending": "Startigo de tuja elsendfluo…",
         "serviceName": "Servoj de tuja elsendado",
-        "sessionAlreadyActive": "Oni jam registras aŭ vivelsendas ĉi tiun seancon.",
+        "sessionAlreadyActive": "Oni jam registras aŭ vivelsendas ĉi-tiun seancon.",
         "signIn": "Ensaluti kun Google",
         "signInCTA": "Ensalutu aŭ entajpu vian ŝlosilon tuja elsendado el YouTube.",
         "signOut": "Elsaluti",
@@ -561,7 +641,6 @@
         "youtubeTerms": "Uzkondiĉoj de YouTube"
     },
     "lobby": {
-        "allow": "Permesi",
         "backToKnockModeButton": "Petu por aliĝi",
         "chat": "Babilejo",
         "dialogTitle": "Atendeja reĝimo",
@@ -587,13 +666,13 @@
         "knockingParticipantList": "Listo de uzantoj, kiuj volas aliĝi",
         "lobbyChatStartedNotification": "{{moderator}} startis atendejan babilejon kun {{attendee}}.",
         "lobbyChatStartedTitle": "{{moderator}} startis atendejan babilejon kun vi.",
+        "lobbyClosed": "La atendeja babilejo estas fermita.",
         "nameField": "Entajpu vian nomon",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} estis malakceptita aliĝi de {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} estis akceptita aliĝi de {{originParticipantName}}",
         "notificationLobbyDisabled": "{{originParticipantName}} malŝaltis atendejon",
         "notificationLobbyEnabled": "{{originParticipantName}} ŝaltis atendejon",
         "notificationTitle": "Atendejo",
-        "passwordField": "Entajpu pasvorton de la renkontiĝo",
         "passwordJoinButton": "Aliĝi",
         "title": "Atendejo",
         "toggleLabel": "Ŝaltu atendejon"
@@ -622,10 +701,12 @@
         "no": "Ne",
         "participant": "Partoprenantoj",
         "participantStats": "Statistikoj pri la partoprenantoj",
-        "selectTabTitle": "🎥 Bonvolu elekti ĉi tiun langeton por registrado",
+        "selectTabTitle": "🎥 Bonvolu elekti ĉi-tiun langeton por registrado",
         "sessionToken": "Sesia ĵetono",
         "start": "Komenci registradon",
         "stop": "Fini registradon",
+        "stopping": "Finiganta registradon",
+        "wait": "Bonvole atendu dum la registro estas konservata",
         "yes": "Jes"
     },
     "lockRoomPassword": "Pasvorto",
@@ -645,8 +726,13 @@
         "connectedOneMember": "{{name}} aliĝis al la kunveno",
         "connectedThreePlusMembers": "{{name}} kaj {{count}} aliaj aliĝis al la kunveno",
         "connectedTwoMembers": "{{first}} kaj {{second}} aliĝis al la kunveno",
+        "dataChannelClosed": "Videa kvalito estas malboniĝita.",
+        "dataChannelClosedDescription": "La ponta kanalo estas malkonektita, do videa kvalito restas ĉe la plej malalta grado.",
+        "disabledIframe": "Enkorpigado estas nur por demonstri, do ĉi-tiu kunveno malkonektos post {{timeout}} minutoj.",
+        "disabledIframeSecondary": "Enkorpigado de {{domain}} estas nur por demonstri, do ĉi-tiu kunveno malkonektos post {{timeout}} minutoj.",
         "disconnected": "malkonektita",
         "displayNotifications": "Montru sciigojn por",
+        "dontRemindMe": "Ne sciigu min",
         "focus": "Kunvena atento",
         "focusFail": "{{component}} ne estas disponebla – reprovu post {{ms}} sekundoj",
         "gifsMenu": "GIPHY",
@@ -655,6 +741,7 @@
         "invitedOneMember": "{{name}} estis invitita",
         "invitedThreePlusMembers": "{{name}} kaj {{count}} aliaj estis invititaj",
         "invitedTwoMembers": "{{first}} kaj {{second}} estis invititaj",
+        "joinMeeting": "Aliĝi",
         "kickParticipant": "{{kicked}} estis forĵetita de {{kicker}}",
         "leftOneMember": "{{name}} foriris el la kunveno",
         "leftThreePlusMembers": "{{name}} kaj multaj aliaj foriris el la kunveno",
@@ -662,7 +749,7 @@
         "linkToSalesforce": "Ligilo al Salesforce",
         "linkToSalesforceDescription": "Vi povas ligi la kunvenan resumon al Salesforce objekto.",
         "linkToSalesforceError": "Malsukcesis ligi la kunvenon al Salesforces",
-        "linkToSalesforceKey": "Ligi ĉi tiun kunvenon",
+        "linkToSalesforceKey": "Ligi ĉi-tiun kunvenon",
         "linkToSalesforceProgress": "Ligante la kunvenon al Salesforce…",
         "linkToSalesforceSuccess": "La kunveno estas ligita al Salesforce.",
         "localRecordingStarted": "{{name}} startigis lokan registradon.",
@@ -689,7 +776,6 @@
         "newDeviceCameraTitle": "Nova kamerao detektita",
         "noiseSuppressionDesktopAudioDescription": "Neeblas aktivi la nuligon de bruo dum dividado de labortabla audio. Bonvolu malŝalti ĝin kaj provi denove. ",
         "noiseSuppressionFailedTitle": "Malsukcesis startigi la nuligon de bruo",
-        "noiseSuppressionNoTrackDescription": "Bonvolu unue malsilentigi vian mikrofonon.",
         "noiseSuppressionStereoDescription": "Forigo de bruo por stereosono ankoraŭ ne estas subtenata.",
         "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
         "oldElectronClientDescription2": "plej nova versio",
@@ -705,6 +791,8 @@
         "reactionSoundsForAll": "Malebligi sonojn por ĉiuj",
         "screenShareNoAudio": "La elektobutono “Kundividi sonon” ne estis elektita en la fenestro de elekto de ektrano.",
         "screenShareNoAudioTitle": "Ne eblis kunhavigi sisteman audio!",
+        "screenSharingAudioOnlyDescription": "Notu bonvole, ke kunhavi la ekranon uzas plie la kapaciton.",
+        "screenSharingAudioOnlyTitle": "\"Plej Alta Rendimento\"-reĝimo",
         "selfViewTitle": "Vi ĉiam povas malkaŝi la memvidon en agordoj",
         "somebody": "Iu",
         "startSilentDescription": "Aliĝu denove al la kunveno por ŝalti sonon",
@@ -717,7 +805,9 @@
         "videoUnmuteBlockedDescription": "Malsilentigo de la kamerao kaj funkciado de kunhava labortablo estis provizore blokitaj pro sistemaj limoj.",
         "videoUnmuteBlockedTitle": "Malsilentigo de la kamerao kaj kunhavigo de la ekrano estas blokitaj!",
         "viewLobby": "Vidu atendejon",
-        "waitingParticipants": "{{waitingParticipants}} homo(j)"
+        "waitingParticipants": "{{waitingParticipants}} homo(j)",
+        "whiteboardLimitDescription": "Bonvole konservu vian progreson, ĉar la uzantlimo baldaŭ estos atingita, kaj la blanktabulo fermiĝos.",
+        "whiteboardLimitTitle": "Blanktabula uzado"
     },
     "participantsPane": {
         "actions": {
@@ -728,6 +818,7 @@
             "askUnmute": "Peti malsilentigi",
             "audioModeration": "Malsilentigi sin mem",
             "blockEveryoneMicCamera": "Bloki la kameraon kaj la mikrofonon de ĉiuj",
+            "breakoutRooms": "Aneksaj ĉambroj",
             "invite": "Inviti iun",
             "moreModerationActions": "Pli da moderigaj opcioj",
             "moreModerationControls": "Pli da moderigaj regiloj",
@@ -745,6 +836,8 @@
         "headings": {
             "lobby": "Atendejo ({{count}})",
             "participantsList": "Partoprenantoj en la kunveno ({{count}})",
+            "visitorRequests": " (petoj {{count}})",
+            "visitors": "Vizitantaj {{count}}",
             "waitingLobby": "En la atendejo ({{count}})"
         },
         "search": "Serĉu partoprenantojn",
@@ -752,6 +845,7 @@
     },
     "passwordDigitsOnly": "Ĝis {{number}} ciferoj",
     "passwordSetRemotely": "agordita de alia partoprenanto",
+    "pinParticipant": "{{participantName}} - Pingli",
     "pinnedParticipant": "La partoprenanto estas fiksita",
     "polls": {
         "answer": {
@@ -789,7 +883,7 @@
         "audioOnlyError": "Eraro kun la aŭdaĵo:",
         "audioTrackError": "Ne eblis krei sontrakon.",
         "callMe": "Voku min.",
-        "callMeAtNumber": "Voku min al ĉi tiu numero:",
+        "callMeAtNumber": "Voku min al ĉi-tiu numero:",
         "calling": "Voko…",
         "configuringDevices": "Agordo de la aparatoj…",
         "connectedWithAudioQ": "Ĉu vi estas konektita kun aŭdaĵo?",
@@ -803,7 +897,7 @@
             "audioHighQuality": "Verŝajne via sono estos bonega.",
             "audioLowNoVideo": "Verŝajne via sono estos malbona kaj ne estos videaĵo.",
             "goodQuality": "Bonege! Via media kvalito estos tre bona.",
-            "noMediaConnectivity": "Ni ne sukcesis starigi aŭdvidan konekton por ĉi tiu testo. Tion kutime kaŭzas fajroŝirmilo aŭ NAT.",
+            "noMediaConnectivity": "Ni ne sukcesis starigi aŭdvidan konekton por ĉi-tiu testo. Tion kutime kaŭzas fajroŝirmilo aŭ NAT.",
             "noVideo": "Veŝajne via videaĵo estos malbonega.",
             "undetectable": "Se vi ankoraŭ ne povas voki per retumilo, ni rekomendas, ke vi certiĝu, ke viaj laŭtparoliloj, mikrofono kaj kamerao estas ĝuste agorditaj; ke vi donis rajtojn al via retumilo uzi viajn mikrofonon kaj kameraon; ke via retumilo estas ĝisdata. Se vi ankoraŭ ne povas voki, vi devus kontakti la programiston de la retejo.",
             "veryPoorConnection": "Verŝajne la kvalito de via voko estos malbonega.",
@@ -836,9 +930,11 @@
         "lookGood": "Via mikrofono funkcias ĝuste",
         "or": "Aŭ",
         "premeeting": "Antaŭkunveno",
+        "proceedAnyway": "Daŭrigi",
         "screenSharingError": "Eraro kun la ekrandividado:",
         "showScreen": "Ebligu antaŭkunvenon ekranon",
         "startWithPhone": "Komencu kun la telefona sono",
+        "unsafeRoomConsent": "Akceptu la riskojn, kaj daŭrigi",
         "videoOnlyError": "Eraro kun la videaĵo:",
         "videoTrackError": "Ne eblis krei videotrakon.",
         "viewAllNumbers": "Vidu ĉiujn numerojn"
@@ -857,9 +953,6 @@
         "rejected": "Malakceptita",
         "ringing": "Sonorado…"
     },
-    "privacyView": {
-        "title": "Privateco"
-    },
     "profile": {
         "avatar": "Profilbildo",
         "setDisplayNameLabel": "Agordi vian videblan nomon",
@@ -871,7 +964,7 @@
     "raisedHandsLabel": "Nombro da levitaj manoj",
     "record": {
         "already": {
-            "linked": "La kunveno jam estas ligita al tiu ĉi Salesforce-objekto."
+            "linked": "La kunveno jam estas ligita al tiu-ĉi Salesforce-objekto."
         },
         "type": {
             "account": "Konto",
@@ -913,6 +1006,7 @@
         "localRecordingVideoWarning": "Por registri vian videon, ŝaltu la kameraon antaŭ vi komencas la registradon.",
         "localRecordingWarning": "Certigu, ke vi elektas la nunan langeton por uzi la ĝustajn filmetojn kaj sonojn. La registrado estas nuntempe limigita al 1GB, kio estas proksimume 100 minutoj.",
         "loggedIn": "Ensalutinta kiel {{userName}}",
+        "noMicPermission": "Mikrofono ne povis esti uzata. Bonvole donu permeson uzi la mikrofonon.",
         "noStreams": "Neniu aŭdio aŭ videofluo detektita.",
         "off": "Registrado finita",
         "offBy": "{{name}} ĉesigis la registradon",
@@ -921,12 +1015,15 @@
         "onlyRecordSelf": "Registri nur miajn aŭd- kaj videofluojn",
         "pending": "Prepariĝo por registrado de la kunveno…",
         "rec": "REG",
+        "recordAudioAndVideo": "Konservu kaj aŭdion kaj videon",
+        "recordTranscription": "Konservu transskribon",
         "saveLocalRecording": "Konservu registraddosieron loke (Beta)",
         "serviceDescription": "Via registraĵo estos konservita de la registra servo",
         "serviceDescriptionCloud": "Nubo registrado",
         "serviceDescriptionCloudInfo": "Registritaj renkontiĝoj estas aŭtomate forigitaj 24h post sia tempo de registrado.",
         "serviceName": "Registra servo",
         "sessionAlreadyActive": "Ĉi tiu sesio jam estas registrita aŭ vivelsendita.",
+        "showAdvancedOptions": "Detalaj agordoj",
         "signIn": "Ensaluti",
         "signOut": "Elsaluti",
         "surfaceError": "Bonvolu elekti la nunan langeton.",
@@ -942,10 +1039,17 @@
     "security": {
         "about": "Vi povas aldoni $t(lockRoomPassword) al via renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
         "aboutReadOnly": "Moderaciuloj povas aldoni $t(lockRoomPassword) al la renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
-        "insecureRoomNameWarning": "La ĉambronomo estas nesekura. Nedezirataj partoprenantoj povas aliĝi al via prelego. Konsideru sekurigi vian renkontiĝon per la sekureca butono.",
-        "title": "Sekurecaj Opcioj"
+        "insecureRoomNameWarningNative": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon.",
+        "insecureRoomNameWarningWeb": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon. {{recommendAction}} Lerni pli pri sekuri vian kunvenon <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">ĉi-tie</a>.",
+        "title": "Sekurecaj Opcioj",
+        "unsafeRoomActions": {
+            "meeting": "Konsideru sekurigi vian kunvenon per la sekureca butono.",
+            "prejoin": "Konsideru uzi pli unikan kunvenan nomon.",
+            "welcome": "Konsideru uzi pli unikan kunvenan nomon, aŭ elekti unu el la sugestataj."
+        }
     },
     "settings": {
+        "audio": "Aŭdio",
         "buttonLabel": "Agordoj",
         "calendar": {
             "about": "La integrigo de kalendaro {{appName}} estas uzata por sekure aliri vian kalendaron, por ke ĝi povu legi planitajn eventojn.",
@@ -966,9 +1070,11 @@
         "maxStageParticipants": "Maksimuma nombro da partoprenantoj, kiuj povas esti alpinglitaj al la ĉefa scenejo (EXPERIMENTA)",
         "microphones": "Mikrofonoj",
         "moderator": "Kunvenestro",
+        "moderatorOptions": "Kunvenestaj agordoj",
         "more": "Pli",
         "name": "Nomo",
         "noDevice": "Neniu",
+        "notifications": "Sciigoj",
         "participantJoined": "Partoprenanto aliĝis",
         "participantKnocking": "Partoprenanto eniris atendejon",
         "participantLeft": "Partoprenanto foriris",
@@ -979,13 +1085,14 @@
         "selectCamera": "Kamerao",
         "selectMic": "Mikrofono",
         "selfView": "Memrigardo",
-        "sounds": "Sonoj",
+        "shortcuts": "Ŝparvojoj",
         "speakers": "Laŭparoliloj",
         "startAudioMuted": "Ĉiuj komenciĝas silentaj",
         "startReactionsMuted": "Silentigu la reagajn sonojn por ĉiujn",
         "startVideoMuted": "Ĉiuj komenciĝas kaŝitaj",
         "talkWhileMuted": "Parolu dum silentigita",
-        "title": "Agordoj"
+        "title": "Agordoj",
+        "video": "Video"
     },
     "settingsView": {
         "advanced": "Altnivela",
@@ -993,6 +1100,7 @@
         "alertOk": "Bone",
         "alertTitle": "Atentigo",
         "alertURLText": "La entajpita URL de servilo estas nevalida",
+        "apply": "Apliki",
         "buildInfoSection": "Informoj pri la versio",
         "conferenceSection": "Konferenco",
         "disableCallIntegration": "Malŝalti denaskan integrigon de vokoj",
@@ -1003,12 +1111,14 @@
         "displayNamePlaceholderText": "Eg: Petro Ekzemplulo",
         "email": "Retadreso",
         "emailPlaceholderText": "retadreso@ekzemplo.com",
+        "gavatarMessage": "La profilbildo de via Gravatar-konto estos uzata se via retadreso ligas al Gravatar-konto",
         "goTo": "Iru al",
         "header": "Agordoj",
         "help": "Helpo",
         "links": "Ligiloj",
         "privacy": "Privateco",
         "profileSection": "Profilo",
+        "sdkVersion": "SDK versio",
         "serverURL": "URL de servilo",
         "showAdvanced": "Montri altnivelajn agordojn",
         "startCarModeInLowBandwidthMode": "Komencu aŭtoreĝimon en malaltkapacita reĝimo",
@@ -1018,8 +1128,8 @@
         "version": "Versio"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nĈu vi volas simple voki per via telefono?\n\n{{defaultDialInNumber}}Alklaku ĉi tiun ligilon por vidi la telefonnumerojn por ĉi tiu kunveno\n{{dialInfoPageUrl}}",
-        "mainText": "Alklaku ĉi tiun ligilon por aliĝi al la kunveno:\n{{roomUrl}}"
+        "dialInfoText": "\n\n=====\n\nĈu vi volas simple voki per via telefono?\n\n{{defaultDialInNumber}}Alklaku ĉi-tiun ligilon por vidi la telefonnumerojn por ĉi-tiu kunveno\n{{dialInfoPageUrl}}",
+        "mainText": "Alklaku ĉi-tiun ligilon por aliĝi al la kunveno:\n{{roomUrl}}"
     },
     "speaker": "Laŭtparolilo",
     "speakerStats": {
@@ -1061,25 +1171,35 @@
             "audioOnly": "Baskuligi nur-sonan reĝimon",
             "audioRoute": "Elekti la sonaparaton",
             "boo": "Hui",
-            "breakoutRoom": "Eniru/Eliru ĉambreton",
+            "breakoutRooms": "Aneksaj ĉambroj",
             "callQuality": "Agordi vidkvaliton",
             "carmode": "Aŭta reĝimo",
             "cc": "Baskuligi subtekstojn",
             "chat": "Baskuligi tujmesaĝilan fenestron",
             "clap": "Aplaŭdi",
+            "closeChat": "Eliri babilejon",
+            "closeMoreActions": "Fermi agan dialogujon",
+            "closeParticipantsPane": "Fermi fenestro de partoprenantoj",
             "collapse": "Maletendi",
-            "dock": "Doku en ĉefa fenestro",
             "document": "Baskuligi kundividitan dokumenton",
+            "documentClose": "Fermi kunhavatan dokumenton",
+            "documentOpen": "Malfermi kunhavatan dokumenton",
             "download": "Elŝuti niajn aplikaĵojn",
             "embedMeeting": "Enkorpigita renkontiĝo",
             "endConference": "Finu kunvenon por ĉiuj",
+            "enterFullScreen": "Vidi per plena ekrano",
+            "enterTileView": "Vidi per kahela reĝimo",
+            "exitFullScreen": "Eliri de plena ekrano",
+            "exitTileView": "Eliri de kahela reĝimo",
             "expand": "Etendi",
             "feedback": "Lasi recenzon",
             "fullScreen": "Baskuligi tutekranan reĝimon",
             "giphy": "Baskuligi GIPHY menuon",
             "grantModerator": "Donu Rajtojn de Moderatoro",
             "hangup": "Forlasi la vokon",
+            "heading": "Ilobreto",
             "help": "Helpo",
+            "hideWhiteboard": "Kaŝi blanktabulon",
             "invite": "Inviti homojn",
             "kick": "Forĵeti partoprenanton",
             "laugh": "Ridi",
@@ -1089,6 +1209,7 @@
             "lobbyButton": "Ŝaltu/Malŝaltu atendejan reĝimon",
             "localRecording": "Baskuligi lokajn registrilojn",
             "lockRoom": "Baskuligi pasvorton por la kunveno",
+            "lowerHand": "Mallevi la manon",
             "moreActions": "Baskuligi la menuon kun pli da agoj",
             "moreActionsMenu": "Menuo kun pli da agoj",
             "moreOptions": "Montri pli da ebloj",
@@ -1097,12 +1218,15 @@
             "muteEveryoneElse": "Silentigu ĉiujn aliajn",
             "muteEveryoneElsesVideoStream": "Ĉesigu la videon de ĉiuj aliaj",
             "muteEveryonesVideoStream": "Ĉesigu ĉies videon",
+            "muteGUMPending": "Konektanta vian mikrofonon",
             "noiseSuppression": "Bruo nuligo",
+            "openChat": "Malfermi babilejon",
             "participants": "Partoprenantoj",
             "pip": "Baskuligi la reĝimon “bildo en bildo”",
             "privateMessage": "Sendi privatan mesaĝon",
             "profile": "Redakti vian profilon",
             "raiseHand": "Baskuligi manlevon",
+            "reactions": "Reagoj",
             "reactionsMenu": "Malfermu / Fermu reagojn menuon",
             "recording": "Baskuligi registradon",
             "remoteMute": "Silentigi partoprenanton",
@@ -1116,16 +1240,20 @@
             "sharedvideo": "Baskuligi kundividadon de videoj",
             "shortcuts": "Baskuligi fulmklavojn",
             "show": "Montri sur scenejo",
+            "showWhiteboard": "Montri blanktabulon",
             "silence": "Silento",
             "speakerStats": "Baskuligi statistikojn pri parolanto",
+            "stopScreenSharing": "Halti kunhavi vian ekranon",
+            "stopSharedVideo": "Halti kunhavi vian videon",
             "surprised": "Surprizita",
             "tileView": "Baskuligi kahelan vidon",
             "toggleCamera": "Baskuligi kameraon",
             "toggleFilmstrip": "Baskuligi filmbendon",
-            "undock": "Maldokiĝu en apartan fenestron",
+            "unmute": "Malsilentigi",
             "videoblur": "Baskuligi malnetigon de video",
             "videomute": "Silentigi/malsilentigi videon",
-            "whiteboard": "Montru / Kaŝu blanktabulon"
+            "videomuteGUMPending": "Konektanta vian kameraon",
+            "videounmute": "Ŝalti kameraon"
         },
         "addPeople": "Aldoni homojn al via voko",
         "audioOnlyOff": "Malŝalti malalt-trafikan reĝimon",
@@ -1138,15 +1266,16 @@
         "chat": "Malfermi / Fermi babilejon",
         "clap": "Aplaŭdi",
         "closeChat": "Malfermi babilejon",
+        "closeParticipantsPane": "Malfermu partoprenantan dialogujon",
         "closeReactionsMenu": "Fermu la menuon de reagoj",
         "disableNoiseSuppression": "Malŝaltu bruonuligon",
-        "disableReactionSounds": "Vi povas malŝalti reagsonojn por ĉi tiu renkontiĝo",
-        "dock": "Doku en ĉefa fenestro",
-        "documentClose": "Malfermi/Fermi komunan dokumenton",
-        "documentOpen": "Malfermi/Fermi komunan dokumenton",
+        "disableReactionSounds": "Vi povas malŝalti reagsonojn por ĉi-tiu renkontiĝo",
+        "documentClose": "Fermi komunan dokumenton",
+        "documentOpen": "Malfermi komunan dokumenton",
         "download": "Elŝuti niajn aplikaĵojn",
         "e2ee": "Tutvoja ĉifrado",
         "embedMeeting": "Enkorpigita renkontiĝo",
+        "enableNoiseSuppression": "Ebligi bruan redukton",
         "endConference": "Finu la renkontiĝon por ĉiuj",
         "enterFullScreen": "Vidi tutekrane",
         "enterTileView": "Vidi kahele",
@@ -1173,7 +1302,8 @@
         "moreOptions": "Pli da ebloj",
         "mute": "Silentigi/Malsilentigi",
         "muteEveryone": "Silentigi ĉiujn",
-        "muteEveryonesVideo": "Malŝalto ĉies kameraon",
+        "muteEveryonesVideo": "Malŝalti ĉies kameraon",
+        "muteGUMPending": "Liganta vian mikrofonon",
         "noAudioSignalDesc": "Se vi ne intence silentigis ĝin per viaj sistemaj agordoj aŭ fizike, konsideru transŝalti al alia aparato.",
         "noAudioSignalDescSuggestion": "Se vi ne intence silentigis ĝin per viaj sistemaj agordoj aŭ fizike, konsideru transŝalti al la proponata aparato.",
         "noAudioSignalDialInDesc": "Vi povas ankaŭ telefoni per:",
@@ -1196,6 +1326,7 @@
         "reactionLike": "Sendi reagon “ŝati”",
         "reactionSilence": "Sendi reagon “silento”",
         "reactionSurprised": "Sendi reagon “surprizita”",
+        "reactions": "Reagoj",
         "security": "Sekurecaj opcioj",
         "selectBackground": "Elekti fonon",
         "shareRoom": "Inviti iun",
@@ -1215,9 +1346,11 @@
         "talkWhileMutedPopup": "Ĉu vi provas paroli? Vi estas silentigita.",
         "tileViewToggle": "Baskuligi titolan vidon",
         "toggleCamera": "Baskuligi kameraon",
-        "undock": "Maldokiĝu en apartan fenestron",
+        "unmute": "Malsilentigi mikrofonon",
         "videoSettings": "Video-agordoj",
-        "videomute": "Ŝalti / Malŝalti kameraon"
+        "videomute": "Ŝalti / Malŝalti kameraon",
+        "videomuteGUMPending": "Konektanta via kamerao",
+        "videounmute": "Ŝalti kameraon"
     },
     "transcribing": {
         "ccButtonTooltip": "Komenci / Ĉesigi subtekstojn",
@@ -1235,6 +1368,7 @@
         "subtitlesOff": "Malŝaltitaj",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Malpingli",
     "userMedia": {
         "androidGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
         "chromeGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
@@ -1260,7 +1394,7 @@
     "videoStatus": {
         "adjustFor": "Ĝustigi por:",
         "audioOnly": "SON",
-        "audioOnlyExpanded": "Vi estas en malalt-trafika reĝimo. En ĉi tiu reĝimo vi ricevos nur sonon kaj kundividatajn ekranojn.",
+        "audioOnlyExpanded": "Vi estas en malalt-trafika reĝimo. En ĉi-tiu reĝimo vi ricevos nur sonon kaj kundividatajn ekranojn.",
         "bestPerformance": " Plej bona  rendimento",
         "callQuality": "Videa kvalito",
         "hd": "AD",
@@ -1273,9 +1407,11 @@
         "ldTooltip": "La video estas en malaltkvalita distingivo",
         "lowDefinition": "Malaltkvalita distingivo",
         "performanceSettings": "Agordoj de rendimento",
+        "recording": "Registranta",
         "sd": "ND",
         "sdTooltip": "La video estas en normalkvalita distingivo",
-        "standardDefinition": "Normalkvalita distingivo"
+        "standardDefinition": "Normalkvalita distingivo",
+        "streaming": "Elsendfluanta"
     },
     "videothumbnail": {
         "connectionInfo": "Informoj pri Konekto",
@@ -1287,6 +1423,7 @@
         "grantModerator": "Donu Rajtojn de Moderatoro",
         "hideSelfView": "Kaŝi memvidon",
         "kick": "Forĵeti",
+        "mirrorVideo": "Speguli mian videon",
         "moderator": "Kunvenestro",
         "mute": "Partoprenanto silentigita",
         "muted": "Silentigita",
@@ -1296,10 +1433,15 @@
         "show": "Montri sur scenejo",
         "showSelfView": "Montri memvidon",
         "unpinFromStage": "Malalpingli",
+        "verify": "Aprobi partoprenanton",
         "videoMuted": "Kamera malŝaltita",
         "videomute": "La partoprenanto malŝaltis la kameraon"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Nuna fono: {{background}}",
+            "selectBackground": "Elekti fonon"
+        },
         "addBackground": "Aldoni fonon",
         "apply": "Apliki",
         "backgroundEffectError": "Malsukcesis apliki fonan efikon.",
@@ -1321,9 +1463,17 @@
         "title": "Virtualaj fonoj",
         "uploadedImage": "Alŝutita bildo {{index}}",
         "webAssemblyWarning": "WebAssembly ne subtenata",
-        "webAssemblyWarningDescription": "WebAssembly malŝaltita aŭ ne subtenata de ĉi tiu retumilo"
+        "webAssemblyWarningDescription": "WebAssembly malŝaltita aŭ ne subtenata de ĉi-tiu retumilo"
     },
-    "volumeSlider": "",
+    "visitors": {
+        "chatIndicator": "(vizitanto)",
+        "labelTooltip": "Nombro da vizitantoj: {{count}}",
+        "notification": {
+            "description": "Levu la manon por partopreni",
+            "title": "Vi estas vizitanto en la kunveno"
+        }
+    },
+    "volumeSlider": "Laŭteca ŝovilo",
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Tuŝu por aliĝi",
@@ -1355,6 +1505,7 @@
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de regularo"
         },
+        "meetingsAccessibilityLabel": "Kunveno",
         "mobileDownLoadLinkAndroid": "Elŝutu apon por Android",
         "mobileDownLoadLinkFDroid": "Elŝutu apon por F-Droid",
         "mobileDownLoadLinkIos": "Elŝutu apon por iOS",
@@ -1363,6 +1514,7 @@
         "recentList": "Lastaj",
         "recentListDelete": "Forigi",
         "recentListEmpty": "Via listo de lastaj kunvenoj estas malplena. Babilu kun via teamo kaj vi trovos ĉi tie ĉiujn viajn lastajn kunvenojn.",
+        "recentMeetings": "Viaj lastatempaj kunvenoj",
         "reducedUIText": "Bonvenon all {{app}}!",
         "roomNameAllowedChars": "La nomo de la kunveno ne povas enhavi la jenajn signojn: ?, &, :, ', \", %, #.",
         "roomname": "Entajpu nomon de ĉambro",
@@ -1371,6 +1523,12 @@
         "settings": "Agordoj",
         "startMeeting": "Komenci renkontiĝon",
         "terms": "Uzkondiĉoj",
-        "title": "Sekuraj, multfunkciaj kaj plene senpagaj video-konferencoj"
+        "title": "Sekuraj, multfunkciaj kaj plene senpagaj video-konferencoj",
+        "upcomingMeetings": "Via estontecaj kunveno"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Blanktabulo"
+        }
     }
 }
