@@ -1,9 +1,3 @@
-import { showErrorNotification, showNotification } from '../notifications/actions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    TRANSCRIBING_NOTIFICATION_ID
-} from '../notifications/constants';
-
 import {
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
@@ -56,60 +50,4 @@ export function potentialTranscriberJoined(participantId: string) {
         type: _POTENTIAL_TRANSCRIBER_JOINED,
         transcriberJID: participantId
     };
-}
-
-/**
- * Signals that the pending transcribing notification should be shown on the
- * screen.
- *
- * @returns {showNotification}
- */
-export function showPendingTranscribingNotification() {
-    return showNotification({
-        descriptionKey: 'transcribing.pending',
-        titleKey: 'dialog.transcribing',
-        uid: TRANSCRIBING_NOTIFICATION_ID
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
-}
-
-/**
- * Signals that the started transcribing notification should be shown on the
- * screen.
- *
- * @returns {showNotification}
- */
-export function showStartedTranscribingNotification() {
-    return showNotification({
-        descriptionKey: 'transcribing.on',
-        titleKey: 'dialog.transcribing',
-        uid: TRANSCRIBING_NOTIFICATION_ID
-    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
-}
-
-/**
- * Signals that the stopped transcribing notification should be shown on the
- * screen.
- *
- * @returns {showNotification}
- */
-export function showStoppedTranscribingNotification() {
-    return showNotification({
-        descriptionKey: 'transcribing.off',
-        titleKey: 'dialog.transcribing',
-        uid: TRANSCRIBING_NOTIFICATION_ID
-    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
-}
-
-
-/**
- * Signals that the transcribing error notification should be shown.
- *
- * @returns {showErrorNotification}
- */
-export function showTranscribingError() {
-    return showErrorNotification({
-        descriptionKey: 'transcribing.error',
-        titleKey: 'transcribing.failedToStart',
-        uid: TRANSCRIBING_NOTIFICATION_ID
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }

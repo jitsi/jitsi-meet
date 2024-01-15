@@ -4,7 +4,6 @@ import {
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { SET_REQUESTING_SUBTITLES } from '../subtitles/actionTypes';
 import { toggleRequestingSubtitles } from '../subtitles/actions.any';
 
 import {
@@ -13,9 +12,6 @@ import {
 } from './actionTypes';
 import {
     potentialTranscriberJoined,
-    showPendingTranscribingNotification,
-    showStartedTranscribingNotification,
-    showStoppedTranscribingNotification,
     transcriberJoined,
     transcriberLeft
 } from './actions';
@@ -31,7 +27,6 @@ const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const {
-        isTranscribing,
         transcriberJID,
         potentialTranscriberJIDs
     } = getState()['features/transcribing'];
@@ -39,7 +34,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
     case _TRANSCRIBER_JOINED: {
         notifyTranscribingStatusChanged(true);
-        dispatch(showStartedTranscribingNotification());
 
         const state = getState();
         const { transcription } = state['features/base/config'];
@@ -52,7 +46,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case _TRANSCRIBER_LEFT: {
         notifyTranscribingStatusChanged(false);
-        dispatch(showStoppedTranscribingNotification());
 
         const state = getState();
         const { transcription } = state['features/base/config'];
@@ -85,12 +78,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
-    case SET_REQUESTING_SUBTITLES:
-        if (action.enabled && !isTranscribing) {
-            dispatch(showPendingTranscribingNotification());
-        }
-
-        break;
 
     }
 
