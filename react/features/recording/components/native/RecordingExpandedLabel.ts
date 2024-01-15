@@ -9,6 +9,11 @@ import { getSessionStatusToShow } from '../../functions';
 interface IProps extends AbstractProps {
 
     /**
+     * Whether this meeting is being transcribed.
+     */
+    _isTranscribing: boolean;
+
+    /**
      * The status of the highermost priority session.
      */
     _status?: string;
@@ -60,7 +65,13 @@ class RecordingExpandedLabel extends ExpandedLabel<IProps> {
             break;
         }
 
-        return t(`${prefix}.${postfix}`);
+        let content = t(`${prefix}.${postfix}`);
+
+        if (_status === JitsiRecordingConstants.status.ON && this.props._isTranscribing) {
+            content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+        }
+
+        return content;
     }
 }
 
@@ -79,6 +90,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {
+        _isTranscribing: state['features/transcribing'].isTranscribing,
         _status: getSessionStatusToShow(state, mode)
     };
 }
