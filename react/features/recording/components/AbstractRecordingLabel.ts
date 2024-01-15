@@ -21,7 +21,7 @@ interface IProps extends WithTranslation {
     _iAmRecorder: boolean;
 
     /**
-     * The status of the highermost priority session.
+     * The status of the higher priority session.
      */
     _status?: string;
 
@@ -56,8 +56,7 @@ const STALE_TIMEOUT = 10 * 1000;
 /**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel
-    extends Component<IProps, IState> {
+export default class AbstractRecordingLabel extends Component<IProps, IState> {
     _mounted: boolean;
 
     /**
@@ -125,24 +124,6 @@ export default class AbstractRecordingLabel
     }
 
     /**
-     * Returns the label key that this indicator should render.
-     *
-     * @protected
-     * @returns {?string}
-     */
-    _getLabelKey() {
-        switch (this.props.mode) {
-        case JitsiRecordingConstants.mode.STREAM:
-            return 'recording.live';
-        case JitsiRecordingConstants.mode.FILE:
-            return 'recording.rec';
-        default:
-            // Invalid mode is passed to the component.
-            return undefined;
-        }
-    }
-
-    /**
      * Renders the platform specific label component.
      *
      * @protected
@@ -169,8 +150,7 @@ export default class AbstractRecordingLabel
                     }
 
                     // Only if it's still OFF.
-                    if (this.props._status
-                            === JitsiRecordingConstants.status.OFF) {
+                    if (this.props._status === JitsiRecordingConstants.status.OFF) {
                         this.setState({
                             staleLabel: true
                         });
