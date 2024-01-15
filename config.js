@@ -1429,7 +1429,6 @@ var config = {
     //         'conference-timer',
     //         'participants-count',
     //         'e2ee',
-    //         'transcribing',
     //         'video-quality',
     //         'insecure-room',
     //         'highlight-moment',
