@@ -47,7 +47,12 @@ class RecordingLabel extends AbstractRecordingLabel {
         const { classes, mode, t } = this.props;
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
         const icon = isRecording ? IconRecord : IconSites;
-        const content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
+
+        let content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
+
+        if (this.props._isTranscribing) {
+            content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+        }
 
         return (
             <Tooltip
