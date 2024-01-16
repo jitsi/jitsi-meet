@@ -723,7 +723,7 @@ var config = {
     // Configs for prejoin page.
     // prejoinConfig: {
     //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    //     // This replaces `prejoinPageEnabled`.
+    //     // This replaces `prejoinPageEnabled`. Defaults to true.
     //     enabled: true,
     //     // Hides the participant name editing field in the prejoin screen.
     //     // If requireDisplayName is also set as true, a name should still be provided through

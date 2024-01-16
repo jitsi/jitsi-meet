@@ -11,6 +11,7 @@ import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { isPrejoinEnabledInConfig } from '../../../prejoin/functions';
 
 import FormRow from './FormRow';
 import FormSection from './FormSection';
@@ -27,8 +28,7 @@ const GeneralSection = () => {
 
     const showPrejoinPage = !userSelectedSkipPrejoin;
 
-    let showPrejoinSettings = useSelector(
-        (state: IReduxState) => state['features/base/config'].prejoinConfig?.enabled);
+    let showPrejoinSettings = useSelector(isPrejoinEnabledInConfig);
 
     const { language = DEFAULT_LANGUAGE } = i18next;
 

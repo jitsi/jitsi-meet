@@ -43,7 +43,11 @@ import {
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
-import { isPrejoinPageVisible, shouldAutoKnock } from '../prejoin/functions';
+import {
+    isPrejoinEnabledInConfig,
+    isPrejoinPageVisible,
+    shouldAutoKnock
+} from '../prejoin/functions';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -269,7 +273,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const { membersOnly } = state['features/base/conference'];
     const nonFirstFailure = Boolean(membersOnly);
     const { isDisplayNameRequiredError } = state['features/lobby'];
-    const { prejoinConfig } = state['features/base/config'];
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
@@ -284,7 +287,9 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         dispatch(openLobbyScreen());
 
         // if there was an error about display name and pre-join is not enabled
-        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled) || lobbyWaitingForHost) {
+        if (shouldAutoKnock(state)
+                || (isDisplayNameRequiredError && !isPrejoinEnabledInConfig(state))
+                || lobbyWaitingForHost) {
             dispatch(startKnocking());
         }
 
