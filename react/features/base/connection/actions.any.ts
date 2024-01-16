@@ -329,9 +329,11 @@ function _connectionWillConnect(connection: Object) {
 /**
  * Closes connection.
  *
+ * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
+ *
  * @returns {Function}
  */
-export function disconnect() {
+export function disconnect(isRedirect?: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 
@@ -348,7 +350,7 @@ export function disconnect() {
             // (and the respective Redux action) which is fired after the
             // conference has been left, notify the application about the
             // intention to leave the conference.
-            dispatch(conferenceWillLeave(conference_));
+            dispatch(conferenceWillLeave(conference_, isRedirect));
 
             promise
                 = conference_.leave()

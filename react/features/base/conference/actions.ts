@@ -1000,8 +1000,6 @@ export function setAssumedBandwidthBps(assumedBandwidthBps: number) {
  */
 export function redirect(vnode: string, focusJid: string, username: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { conference, joining } = getState()['features/base/conference'];
-        const currentConference = conference || joining;
         const newConfig = getVisitorOptions(getState, vnode, focusJid, username);
 
         if (!newConfig) {
@@ -1011,8 +1009,7 @@ export function redirect(vnode: string, focusJid: string, username: string) {
         }
 
         dispatch(overwriteConfig(newConfig)) // @ts-ignore
-            .then(() => currentConference && dispatch(conferenceWillLeave(currentConference, true)))
-            .then(() => dispatch(disconnect()))
+            .then(() => dispatch(disconnect(true)))
             .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
 
             // we do not clear local tracks on error, so we need to manually clear them
