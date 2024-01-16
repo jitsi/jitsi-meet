@@ -328,6 +328,7 @@ function _connectionWillConnect(connection: Object) {
 
 /**
  * Closes connection.
+ *
  * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
  *
  * @returns {Function}
