@@ -49,13 +49,18 @@
             "remove": "Удалить",
             "sendToBreakoutRoom": "Отправить участника к:"
         },
+        "breakoutList": "Сессионные залы",
+        "buttonLabel": "Сессионные залы",
         "defaultName": "Сессионный зал #{{index}}",
+        "hideParticipantList": "Скрыть список участников",
         "mainRoom": "Главная комната",
         "notifications": {
             "joined": "Вход в сессионный зал \"{{name}}\"",
             "joinedMainRoom": "Вход в главную комнату",
             "joinedTitle": "Сессионные залы"
-        }
+        },
+        "showParticipantList": "Показать участников",
+        "title": "Сессионные залы"
     },
     "calendarSync": {
         "addMeetingURL": "Добавить ссылку конференции",
@@ -372,6 +377,7 @@
         "sendPrivateMessageTitle": "Отправить личное сообщение?",
         "serviceUnavailable": "Служба недоступна",
         "sessTerminated": "Связь прервана",
+        "sessTerminatedReason": "Встреча прервана",
         "sessionRestarted": "Вызов перезапущен из-за проблемы с подключением.",
         "shareAudio": "Продолжить",
         "shareAudioTitle": "Как поделиться аудио",
