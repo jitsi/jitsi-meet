@@ -2471,9 +2471,10 @@ export default {
             }
         }
 
-        if (!feedbackResult.wasDialogShown && hangupReason) {
-            await APP.store.dispatch(openLeaveReasonDialog(hangupReason));
-        }
+        // CacDi modified: remove leave reason dialog
+        // if (!feedbackResult.wasDialogShown && hangupReason) {
+        //     await APP.store.dispatch(openLeaveReasonDialog(hangupReason));
+        // }
 
         await this.leaveRoom();
 
