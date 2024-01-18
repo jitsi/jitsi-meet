@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 import {
     MEDIA_TYPE,
     VIDEO_TYPE
@@ -11,7 +13,11 @@ import {
     toggleScreensharing
 } from './actions.native';
 
+
 import './middleware.any';
+
+const { JitsiMeetMediaProjectionModule } = NativeModules;
+
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -29,7 +35,9 @@ MiddlewareRegistry.register(store => next => action => {
         if (local && jitsiTrack.isMuted()
                 && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
+            JitsiMeetMediaProjectionModule.abort();
         }
+
         break;
     }
     }
