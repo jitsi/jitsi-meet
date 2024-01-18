@@ -827,7 +827,7 @@ SPEC CHECKSUMS:
   Amplitude: 834c7332dfb9640a751e21c13efb22a07c0c12d4
   amplitude-react-native: 0ed8cab759aafaa94961b82122bf56297da607ad
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
-  boost: a7c83b31436843459a1961bfd74b96033dc77234
+  boost: 7dcd2de282d72e344012f7d6564d024930a6a440
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: dc178b8748748c036ef9493a5d59d6d1f91a36ce
@@ -855,7 +855,7 @@ SPEC CHECKSUMS:
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
-  RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
+  RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: f30c3213569b1dc43659ecc549a6536e1e11139e
   RCTTypeSafety: e1ed3137728804fa98bce30b70e3da0b8e23054e
   React: 54070abee263d5773486987f1cf3a3616710ed52
