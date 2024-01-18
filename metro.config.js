@@ -1,4 +1,4 @@
-// Version-wise, react-native and @react-native/metro-config must be the same.
+/* eslint-disable */
 
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
