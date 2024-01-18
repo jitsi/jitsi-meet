@@ -107,7 +107,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             sendFaceExpressionToParticipants(conference, faceLandmarks);
         }
 
-        sendFaceExpressionToServer(conference, faceLandmarks);
+        // Disabling for now as there is no value of having the data in speakerstats at the server
+        // sendFaceExpressionToServer(conference, faceLandmarks);
 
         return next(action);
     }
