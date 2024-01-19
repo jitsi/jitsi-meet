@@ -73,7 +73,7 @@ class OngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(boolean isMuted) {
+    static Notification buildOngoingConferenceNotification(Boolean isMuted) {
         Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
@@ -92,7 +92,7 @@ class OngoingNotification {
         builder
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentTitle(context.getString(R.string.ongoing_notification_title))
-            .setContentText(context.getString(R.string.ongoing_notification_text))
+            .setContentText(isMuted != null ? context.getString(R.string.ongoing_notification_text) : context.getString(R.string.ongoing_notification_action_screenshare))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
@@ -102,6 +102,10 @@ class OngoingNotification {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
+
+        if (isMuted == null) {
+            return builder.build();
+        }
 
         NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, R.string.ongoing_notification_action_hang_up);
 
