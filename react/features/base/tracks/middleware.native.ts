@@ -11,9 +11,7 @@ import {
     toggleScreensharing
 } from './actions.native';
 
-
 import './middleware.any';
-
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -32,7 +30,6 @@ MiddlewareRegistry.register(store => next => action => {
                 && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
-
         break;
     }
     }
