@@ -1,5 +1,3 @@
-import { NativeModules } from 'react-native';
-
 import {
     MEDIA_TYPE,
     VIDEO_TYPE
@@ -15,8 +13,6 @@ import {
 
 
 import './middleware.any';
-
-const { JitsiMeetMediaProjectionModule } = NativeModules;
 
 
 /**
@@ -35,7 +31,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (local && jitsiTrack.isMuted()
                 && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
-            JitsiMeetMediaProjectionModule.abort();
         }
 
         break;

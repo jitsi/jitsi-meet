@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 import { IReduxState, IStore } from '../../app/types';
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
@@ -13,9 +13,6 @@ import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
-import {
-    VIDEO_TYPE
-} from "../../../../react-native-sdk/react/features/base/media/constants";
 
 const { JitsiMeetMediaProjectionModule } = NativeModules;
 
@@ -38,7 +35,10 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
 
             if (!isSharing) {
                 _startScreenSharing(dispatch, state);
+                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
             }
+
+            Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
         } else {
             dispatch(setScreenshareMuted(true));
             dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
@@ -70,7 +70,6 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
             dispatch(replaceLocalTrack(currentJitsiTrack, track));
         } else {
             dispatch(addLocalTrack(track));
-            JitsiMeetMediaProjectionModule.launch();
         }
 
         dispatch(setVideoMuted(true, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
