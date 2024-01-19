@@ -438,8 +438,8 @@ function is_vpaas(room)
     if not (tenant and conference_name) then
         return false;
     end
-    local vpaas_prefix, _ = tenant:match('^(vpaas%-magic%-cookie%-)(.*)$')
-    if vpaas_prefix ~= 'vpaas-magic-cookie-' then
+
+    if not starts_with(tenant, 'vpaas-magic-cookie-') then
         return false;
     end
 
