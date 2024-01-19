@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.jitsi.meet.sdk">
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -13,6 +12,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -48,6 +49,10 @@
 
         <service
             android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <service
+            android:name="org.jitsi.meet.sdk.JitsiMeetMediaProjectionService"
             android:foregroundServiceType="mediaProjection" />
 
         <provider
