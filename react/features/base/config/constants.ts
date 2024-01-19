@@ -1,3 +1,5 @@
+import { ToolbarButton } from './configType';
+
 /**
  * The prefix of the {@code localStorage} key into which {@link storeConfig}
  * stores and from which {@link restoreConfig} restores.
@@ -13,7 +15,7 @@ export const _CONFIG_STORE_PREFIX = 'config.js';
  * @protected
  * @type Array<string>
  */
-export const TOOLBAR_BUTTONS = [
+export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
     'chat',
     'closedcaptions',
@@ -64,7 +66,7 @@ export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-bac
 /**
  * The toolbar buttons to show when in visitors mode.
  */
-export const VISITORS_MODE_BUTTONS = [ 'hangup', 'tileview' ];
+export const VISITORS_MODE_BUTTONS = [ 'chat', 'hangup', 'raisehand', 'settings', 'tileview' ];
 
 /**
  * The set of feature flags.

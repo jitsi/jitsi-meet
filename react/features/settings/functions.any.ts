@@ -1,34 +1,19 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { isNameReadOnly } from '../base/config/functions';
+import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
-import {
-    getLocalParticipant,
-    isLocalParticipantModerator
-} from '../base/participants/functions';
+import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { getHideSelfView } from '../base/settings/functions';
+import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
-import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { iAmVisitor } from '../visitors/functions';
 
-import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
-
-/**
- * Used for web. Indicates if the setting section is enabled.
- *
- * @param {string} settingName - The name of the setting section as defined in
- * interface_config.js and SettingsMenu.js.
- * @returns {boolean} True to indicate that the given setting section
- * is enabled, false otherwise.
- */
-export function isSettingEnabled(settingName: string) {
-    return interfaceConfig.SETTINGS_SECTIONS.includes(settingName);
-}
+import { shouldShowModeratorSettings } from './functions';
 
 /**
  * Returns true if user is allowed to change Server URL.
@@ -39,9 +24,8 @@ export function isSettingEnabled(settingName: string) {
  */
 export function isServerURLChangeEnabled(stateful: IStateful) {
     const state = toState(stateful);
-    const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 
-    return flag;
+    return getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 }
 
 /**
@@ -60,8 +44,7 @@ export function normalizeUserInputURL(url: string) {
         const urlRegExp = new RegExp('^(\\w+://)?(.+)$');
         const urlComponents = urlRegExp.exec(url);
 
-        if (urlComponents && (!urlComponents[1]
-                || !urlComponents[1].startsWith('http'))) {
+        if (urlComponents && !urlComponents[1]?.startsWith('http')) {
             url = `https://${urlComponents[2]}`;
         }
 
@@ -86,7 +69,7 @@ export function normalizeUserInputURL(url: string) {
  * {@code getState} function to be used to retrieve the state.
  * @returns {Object} - The section of notifications to be configured.
  */
-export function getNotificationsMap(stateful: IStateful) {
+export function getNotificationsMap(stateful: IStateful): { [key: string]: boolean; } {
     const state = toState(stateful);
     const { notifications } = state['features/base/config'];
     const { userSelectedNotifications } = state['features/base/settings'];
@@ -115,28 +98,23 @@ export function getNotificationsMap(stateful: IStateful) {
  */
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
-    const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
+    const stageFilmstripEnabled = isStageFilmstripEnabled(state);
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
-    const enabledNotifications = getNotificationsMap(stateful);
-    const stageFilmstripEnabled = isStageFilmstripEnabled(state);
 
     // when self view is controlled by the config we hide the settings
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
-        currentFramerate: framerate,
         currentLanguage: language,
-        desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
+        iAmVisitor: iAmVisitor(state),
         languages: LANGUAGES,
+        maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         showLanguageSettings: configuredTabs.includes('language'),
-        enabledNotifications,
-        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
-        maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         stageFilmstripEnabled
     };
 }
@@ -175,21 +153,6 @@ export function getModeratorTabProps(stateful: IStateful) {
 }
 
 /**
- * Returns true if moderator tab in settings should be visible/accessible.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
- * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
- */
-export function shouldShowModeratorSettings(stateful: IStateful) {
-    const state = toState(stateful);
-    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
-    const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
-
-    return hasModeratorRights && !hideModeratorSettingsTab;
-}
-
-/**
  * Returns the properties for the "Profile" tab from settings dialog from Redux
  * state.
  *
@@ -205,16 +168,23 @@ export function getProfileTabProps(stateful: IStateful) {
         authLogin,
         conference
     } = state['features/base/conference'];
-    const { hideEmailInSettings } = state['features/base/config'];
+    const config = state['features/base/config'];
+    let { hideEmailInSettings } = config;
     const localParticipant = getLocalParticipant(state);
+
+    if (config.gravatar?.disabled
+        || (localParticipant?.avatarURL && localParticipant?.avatarURL.length > 0)) {
+        hideEmailInSettings = true;
+    }
 
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
         displayName: localParticipant?.name,
         email: localParticipant?.email,
-        readOnlyName: isNameReadOnly(state),
-        hideEmailInSettings
+        hideEmailInSettings,
+        id: localParticipant?.id,
+        readOnlyName: isNameReadOnly(state)
     };
 }
 
@@ -224,10 +194,11 @@ export function getProfileTabProps(stateful: IStateful) {
  *
  * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
+ * @param {boolean} showSoundsSettings - Whether to show the sound settings or not.
  * @returns {Object} - The properties for the "Sounds" tab from settings
  * dialog.
  */
-export function getSoundsTabProps(stateful: IStateful) {
+export function getNotificationsTabProps(stateful: IStateful, showSoundsSettings?: boolean) {
     const state = toState(stateful);
     const {
         soundsIncomingMessage,
@@ -239,9 +210,12 @@ export function getSoundsTabProps(stateful: IStateful) {
     } = state['features/base/settings'];
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
+    const enabledNotifications = getNotificationsMap(stateful);
 
     return {
         disabledSounds: state['features/base/config'].disabledSounds || [],
+        enabledNotifications,
+        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantKnocking,
@@ -249,7 +223,8 @@ export function getSoundsTabProps(stateful: IStateful) {
         soundsTalkWhileMuted,
         soundsReactions,
         enableReactions,
-        moderatorMutedSoundsReactions
+        moderatorMutedSoundsReactions,
+        showSoundsSettings
     };
 }
 

@@ -1,10 +1,11 @@
 import React, { ReactNode, useCallback, useContext, useEffect } from 'react';
-import FocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
 
@@ -135,9 +136,11 @@ export interface IProps {
     description?: string;
     disableBackdropClose?: boolean;
     disableEnter?: boolean;
+    disableEscape?: boolean;
     onClose?: () => void;
     size?: 'large' | 'medium';
     submit?: () => void;
+    testId?: string;
     title?: string;
     titleKey?: string;
 }
@@ -148,9 +151,11 @@ const BaseDialog = ({
     description,
     disableBackdropClose,
     disableEnter,
+    disableEscape,
     onClose,
     size = 'medium',
     submit,
+    testId,
     title,
     titleKey
 }: IProps) => {
@@ -163,37 +168,49 @@ const BaseDialog = ({
     }, [ disableBackdropClose, onClose ]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && !disableEscape) {
             onClose?.();
         }
         if (e.key === 'Enter' && !disableEnter) {
             submit?.();
         }
-    }, []);
+    }, [ disableEnter, onClose, submit ]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
 
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [ handleKeyDown ]);
 
     return (
-        <div className = { cx(classes.container, isUnmounting && 'unmount') }>
-            <div
-                className = { classes.backdrop }
-                onClick = { onBackdropClick } />
-            <FocusLock
+        <div
+            className = { cx(classes.container, isUnmounting && 'unmount') }
+            data-testid = { testId }>
+            <div className = { classes.backdrop } />
+            <FocusOn
                 className = { classes.focusLock }
-                returnFocus = { true }>
+                onClickOutside = { onBackdropClick }
+                returnFocus = {
+
+                    // If we return the focus to an element outside the viewport the page will scroll to
+                    // this element which in our case is undesirable and the element is outside of the
+                    // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+                    // when it is hidden the whole page will move up in order to show the toolbox. This is
+                    // usually followed up with displaying the toolbox (because now it is on focus) but
+                    // because of the animation the whole scenario looks like jumping large video.
+                    isElementInTheViewport
+                }>
                 <div
-                    aria-describedby = { description }
-                    aria-labelledby = { title ?? t(titleKey ?? '') }
+                    aria-description = { description }
+                    aria-label = { title ?? t(titleKey ?? '') }
                     aria-modal = { true }
                     className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
-                    role = 'dialog'>
+                    data-autofocus = { true }
+                    role = 'dialog'
+                    tabIndex = { -1 }>
                     {children}
                 </div>
-            </FocusLock>
+            </FocusOn>
         </div>
     );
 };

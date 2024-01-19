@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactRootView;
-import com.rnimmersive.RNImmersiveModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -158,6 +157,14 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Internal method which aborts running RN by passing empty props.
+     * This is only meant to be used from the enclosing Activity's onDestroy.
+     */
+    public void abort() {
+        setProps(new Bundle());
+    }
+
+    /**
      * Creates the {@code ReactRootView} for the given app name with the given
      * props. Once created it's set as the view of this {@code FrameLayout}.
      *
@@ -220,23 +227,5 @@ public class JitsiMeetView extends FrameLayout {
     protected void onDetachedFromWindow() {
         dispose();
         super.onDetachedFromWindow();
-    }
-
-    /**
-     * Called when the window containing this view gains or loses focus.
-     *
-     * @param hasFocus If the window of this view now has focus, {@code true};
-     * otherwise, {@code false}.
-     */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        // https://github.com/mockingbot/react-native-immersive#restore-immersive-state
-        RNImmersiveModule immersive = RNImmersiveModule.getInstance();
-
-        if (hasFocus && immersive != null) {
-            immersive.emitImmersiveStateChangeEvent();
-        }
     }
 }

@@ -70,7 +70,8 @@ var interfaceConfig = {
 
     ENABLE_DIAL_OUT: true,
 
-    ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
+    // DEPRECATED. Animation no longer supported.
+    // ENABLE_FEEDBACK_ANIMATION: false,
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
@@ -106,8 +107,8 @@ var interfaceConfig = {
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
-    // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
+    // chrome, chromium, electron, firefox , safari, webkit
+    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
 
     POLICY_LOGO: null,
     PROVIDER_NAME: 'Jitsi',

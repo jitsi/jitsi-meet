@@ -1,19 +1,14 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-// @ts-ignore
 import { appNavigate } from '../../../app/actions';
 import { IReduxState } from '../../../app/types';
-// @ts-ignore
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-// @ts-ignore
-import { endConference } from '../../../base/conference';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { endConference } from '../../../base/conference/actions';
 import { hideSheet } from '../../../base/dialog/actions';
-// @ts-ignore
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -29,7 +24,7 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
  */
 function HangupMenu() {
     const dispatch = useDispatch();
-    const _styles = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
+    const _styles: any = useSelector((state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox'));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerator = useSelector((state: IReduxState) =>
         getLocalParticipant(state)?.role === PARTICIPANT_ROLE.MODERATOR);
@@ -39,7 +34,6 @@ function HangupMenu() {
         dispatch(hideSheet());
         sendAnalytics(createToolbarEvent('endmeeting'));
         dispatch(endConference());
-        dispatch(appNavigate(undefined));
     }, [ hideSheet ]);
 
     const handleLeaveConference = useCallback(() => {

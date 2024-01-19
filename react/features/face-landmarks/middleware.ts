@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { IStore } from '../app/types';
 import {
     CONFERENCE_JOINED,
@@ -16,7 +18,7 @@ import { FACE_BOX_EVENT_TYPE } from './constants';
 import { sendFaceBoxToParticipants, sendFaceExpressionToParticipants, sendFaceExpressionToServer } from './functions';
 
 
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch, getState } = store;
     const { faceLandmarks: faceLandmarksConfig } = getState()['features/base/config'];
     const isEnabled = faceLandmarksConfig?.enableFaceCentering || faceLandmarksConfig?.enableFaceExpressionsDetection;

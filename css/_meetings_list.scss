@@ -82,6 +82,7 @@
         }
 
         .left-column {
+            order: -1;
             display: flex;
             flex-direction: column;
             flex-grow: 0;
@@ -92,6 +93,7 @@
         .right-column {
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
             flex-grow: 1;
             padding-left: 16px;
             padding-top: 13px;
@@ -99,11 +101,11 @@
         }
 
         .title {
-                font-size: 12px;
-                font-weight: 600;
-                line-height: 16px;
-                padding-bottom: 4px;
-            }
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 16px;
+            margin-bottom: 4px;
+        }
 
         .subtitle {
             color: #5E6D7A;
@@ -125,8 +127,7 @@
             cursor: pointer;
         }
 
-        &.with-click-handler:hover,
-        &.with-click-handler:focus {
+        &.with-click-handler:hover {
             background-color: #c7ddff;
         }
 

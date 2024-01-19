@@ -14,8 +14,6 @@ import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { setNoAudioSignalNotificationUid } from './actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';

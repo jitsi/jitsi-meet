@@ -18,3 +18,4 @@ export function isMobileBrowser() {
 export function isIosMobileBrowser() {
     return Platform.OS === 'ios';
 }
+

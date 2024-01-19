@@ -1,5 +1,16 @@
 
 /**
+ * The type of (redux) action to store the gum pending state for unmute and initial track creation.
+ *
+ * {
+ *     type: GUM_PENDING,
+ *     mediaTypes: Array<MediaType>,
+ *     status: IGUMPendingState
+ * }
+ */
+export const GUM_PENDING = 'GUM_PENDING';
+
+/**
  * The type of (redux) action to adjust the availability of the local audio.
  *
  * {

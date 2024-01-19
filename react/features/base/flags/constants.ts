@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Flag indicating if add-people functionality should be enabled.
  * Default: enabled (true).
@@ -24,6 +22,12 @@ export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
  * Default: enabled (true).
  */
 export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+
+/**
+ * Flag indicating that the Breakout Rooms button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const BREAKOUT_ROOMS_BUTTON_ENABLED = 'breakout-rooms.enabled';
 
 /**
  * Flag indicating if calendar integration should be enabled.
@@ -173,6 +177,12 @@ export const PIP_WHILE_SCREEN_SHARING_ENABLED = 'pip-while-screen-sharing.enable
 export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
 
 /**
+ * Flag indicating if the participant name editing field should be displayed on the prejoin page.
+ * Default: disabled (false).
+ */
+export const PREJOIN_PAGE_HIDE_DISPLAY_NAME = 'prejoinpage.hideDisplayName';
+
+/**
  * Flag indicating if raise hand feature should be enabled.
  * Default: enabled.
  */
@@ -238,6 +248,12 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
  * Default: enabled.
  */
 export const TOOLBOX_ENABLED = 'toolbox.enabled';
+
+/**
+ * Flag indicating if the unsafe room warning should be enabled.
+ * Default: disabled (false).
+ */
+export const UNSAFE_ROOM_WARNING = 'unsaferoomwarning.enabled';
 
 /**
  * Flag indicating if the video mute button should be displayed.

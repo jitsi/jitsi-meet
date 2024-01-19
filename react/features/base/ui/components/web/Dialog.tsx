@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { hideDialog } from '../../../dialog/actions';
 import { IconCloseLarge } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { operatesWithEnterKey } from '../../functions.web';
 
 import BaseDialog, { IProps as IBaseDialogProps } from './BaseDialog';
 import Button from './Button';
@@ -21,12 +22,6 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'space-between'
-        },
-
-        closeIcon: {
-            '&:focus': {
-                boxShadow: 'none'
-            }
         },
 
         title: {
@@ -97,10 +92,12 @@ const Dialog = ({
     disableBackdropClose,
     hideCloseButton,
     disableEnter,
+    disableEscape,
     ok = { translationKey: 'dialog.Ok' },
     onCancel,
     onSubmit,
     size,
+    testId,
     title,
     titleKey
 }: IDialogProps) => {
@@ -114,8 +111,13 @@ const Dialog = ({
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        !disableAutoHideOnSubmit && dispatch(hideDialog());
-        onSubmit?.();
+        if (onSubmit && (
+            (document.activeElement && !operatesWithEnterKey(document.activeElement))
+            || !document.activeElement
+        )) {
+            !disableAutoHideOnSubmit && dispatch(hideDialog());
+            onSubmit();
+        }
     }, [ onSubmit ]);
 
     return (
@@ -124,21 +126,22 @@ const Dialog = ({
             description = { description }
             disableBackdropClose = { disableBackdropClose }
             disableEnter = { disableEnter }
+            disableEscape = { disableEscape }
             onClose = { onClose }
             size = { size }
             submit = { submit }
+            testId = { testId }
             title = { title }
             titleKey = { titleKey }>
             <div className = { classes.header }>
-                <p
+                <h1
                     className = { classes.title }
                     id = 'dialog-title'>
                     {title ?? t(titleKey ?? '')}
-                </p>
+                </h1>
                 {!hideCloseButton && (
                     <ClickableIcon
-                        accessibilityLabel = { t('dialog.close') }
-                        className = { classes.closeIcon }
+                        accessibilityLabel = { t('dialog.accessibilityLabel.close') }
                         icon = { IconCloseLarge }
                         id = 'modal-header-close-button'
                         onClick = { onClose } />
@@ -167,8 +170,9 @@ const Dialog = ({
                     accessibilityLabel = { t(ok.translationKey ?? '') }
                     disabled = { ok.disabled }
                     id = 'modal-dialog-ok-button'
+                    isSubmit = { true }
                     labelKey = { ok.translationKey }
-                    onClick = { submit } />}
+                    { ...(!ok.disabled && { onClick: submit }) } />}
             </div>
         </BaseDialog>
     );

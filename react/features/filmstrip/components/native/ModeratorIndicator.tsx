@@ -1,11 +1,7 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 
-// @ts-ignore
-import { IconModerator } from '../../../base/icons';
-// @ts-ignore
-import { BaseIndicator } from '../../../base/react';
+import { IconModerator } from '../../../base/icons/svg';
+import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 
 /**
  * Thumbnail badge showing that the participant is a conference moderator.

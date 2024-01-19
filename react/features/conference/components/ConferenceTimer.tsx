@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-// @ts-ignore
-import { ConferenceTimerDisplay } from '..';
 import { getConferenceTimestamp } from '../../base/conference/functions';
 import { getLocalizedDurationFormatter } from '../../base/i18n/dateUtil';
+
+import { ConferenceTimerDisplay } from './index';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -22,7 +22,7 @@ export interface IDisplayProps {
     /**
      * Style to be applied to text (native only).
      */
-    textStyle: Object;
+    textStyle?: Object;
 
     /**
      * String to display as time.
@@ -82,6 +82,7 @@ const ConferenceTimer = ({ textStyle }: IProps) => {
     const stopTimer = useCallback(() => {
         if (interval.current) {
             clearInterval(interval.current);
+            interval.current = undefined;
         }
 
         setTimerValue(getLocalizedDurationFormatter(0));

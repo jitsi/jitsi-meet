@@ -210,6 +210,5 @@ function _getUserSelectedDeviceId(options: {
         return strippedDeviceLabel === strippedCandidateLabel;
     });
 
-    return foundMatchBasedOnLabel
-        ? foundMatchBasedOnLabel.deviceId : userSelectedDeviceId;
+    return foundMatchBasedOnLabel?.deviceId;
 }

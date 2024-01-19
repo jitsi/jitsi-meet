@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import { IMessage } from '../reducer';
+import { IMessage } from '../types';
 
 export interface IProps {
 

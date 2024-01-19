@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Action type to start search.
  *
@@ -32,7 +30,7 @@ export const UPDATE_STATS = 'UPDATE_STATS';
 /**
  * Action type to update the speaker stats order.
  * {
- *     type: UPDATE_SORTED_SPEAKER_STATS_IDS  
+ *     type: UPDATE_SORTED_SPEAKER_STATS_IDS
  * }
  */
 export const UPDATE_SORTED_SPEAKER_STATS_IDS = 'UPDATE_SORTED_SPEAKER_STATS_IDS'
@@ -58,7 +56,7 @@ export const RESET_SEARCH_CRITERIA = 'RESET_SEARCH_CRITERIA'
 /**
  * Action type to toggle the face expressions grid.
  * {
- *     type: TOGGLE_FACE_EXPRESSIONS  
+ *     type: TOGGLE_FACE_EXPRESSIONS
  * }
  */
 export const TOGGLE_FACE_EXPRESSIONS = 'SHOW_FACE_EXPRESSIONS';

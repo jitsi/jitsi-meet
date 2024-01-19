@@ -52,6 +52,7 @@ const useStyles = makeStyles()(theme => {
             width: '16px',
             height: '16px',
             position: 'absolute',
+            zIndex: 5,
             top: '4px',
             left: '4px',
             backgroundColor: theme.palette.ui10,
@@ -73,8 +74,38 @@ const useStyles = makeStyles()(theme => {
         },
 
         checkbox: {
-            height: 0,
-            width: 0
+            position: 'absolute',
+            zIndex: 10,
+            cursor: 'pointer',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+
+            '&.focus-visible + .toggle-checkbox-ring': {
+                outline: 0,
+                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+            }
+        },
+
+        checkboxRing: {
+            position: 'absolute',
+            pointerEvents: 'none',
+            zIndex: 6,
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '100%',
+            height: '100%',
+            borderRadius: '12px',
+
+            '&.is-mobile': {
+                borderRadius: '32px'
+            }
         }
     };
 });
@@ -88,7 +119,7 @@ const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
     }, []);
 
     return (
-        <label
+        <span
             className = { cx('toggle-container', styles.container, checked && styles.containerOn,
                 isMobile && 'is-mobile', disabled && 'disabled', className) }>
             <input
@@ -98,8 +129,9 @@ const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
                 className = { styles.checkbox }
                 disabled = { disabled }
                 onChange = { change } />
+            <div className = { cx('toggle-checkbox-ring', styles.checkboxRing, isMobile && 'is-mobile') } />
             <div className = { cx('toggle', styles.toggle, checked && styles.toggleOn, isMobile && 'is-mobile') } />
-        </label>
+        </span>
     );
 };
 

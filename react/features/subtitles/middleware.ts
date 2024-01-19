@@ -11,8 +11,7 @@ import {
 import {
     removeTranscriptMessage,
     updateTranscriptMessage
-} from './actions';
-import logger from './logger';
+} from './actions.any';
 
 /**
  * The type of json-message which indicates that json carries a
@@ -44,6 +43,12 @@ const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 const REMOVE_AFTER_MS = 3000;
 
 /**
+ * Stability factor for a trancription. We'll treat a transcript as stable
+ * beyond this value.
+ */
+const STABLE_TRANSCRIPTION_FACTOR = 0.85;
+
+/**
  * Middleware that catches actions related to transcript messages to be rendered
  * in {@link Captions}.
  *
@@ -55,12 +60,15 @@ MiddlewareRegistry.register(store => next => action => {
     case ENDPOINT_MESSAGE_RECEIVED:
         return _endpointMessageReceived(store, next, action);
 
-    case TOGGLE_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store);
+    case TOGGLE_REQUESTING_SUBTITLES: {
+        const state = store.getState()['features/subtitles'];
+        const toggledValue = !state._requestingSubtitles;
+
+        _requestingSubtitlesChange(store, toggledValue, state._language);
         break;
+    }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store);
-        _requestingSubtitlesSet(store, action.enabled);
+        _requestingSubtitlesChange(store, action.enabled, action.language);
         break;
     }
 
@@ -84,82 +92,90 @@ MiddlewareRegistry.register(store => next => action => {
 function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { json } = action;
 
-    if (!(json
-            && (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                || json.type === JSON_TYPE_TRANSLATION_RESULT))) {
+    if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
     }
 
     const state = getState();
-    const translationLanguage
+    const language
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const transcriptMessageID = json.message_id;
+    const { name, id, avatar_url: avatarUrl } = json.participant;
+    const participant = {
+        avatarUrl,
+        id,
+        name
+    };
 
-    try {
-        const transcriptMessageID = json.message_id;
-        const participantName = json.participant.name;
+    if (json.type === JSON_TYPE_TRANSLATION_RESULT && json.language === language) {
+        // Displays final results in the target language if translation is
+        // enabled.
 
-        if (json.type === JSON_TYPE_TRANSLATION_RESULT
-                && json.language === translationLanguage) {
-            // Displays final results in the target language if translation is
-            // enabled.
+        const newTranscriptMessage = {
+            clearTimeOut: undefined,
+            final: json.text,
+            participant
+        };
 
-            const newTranscriptMessage = {
-                clearTimeOut: undefined,
-                final: json.text,
-                participantName
-            };
+        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
+        dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
+    } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
+        // Displays interim and final results without any translation if
+        // translations are disabled.
 
-            _setClearerOnTranscriptMessage(dispatch,
-                transcriptMessageID, newTranscriptMessage);
-            dispatch(updateTranscriptMessage(transcriptMessageID,
-                newTranscriptMessage));
+        const { text } = json.transcript[0];
 
-        } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && json.language.slice(0, 2) === translationLanguage) {
-            // Displays interim and final results without any translation if
-            // translations are disabled.
-
-            const { text } = json.transcript[0];
-
-            // We update the previous transcript message with the same
-            // message ID or adds a new transcript message if it does not
-            // exist in the map.
-            const newTranscriptMessage: any = {
-                ...state['features/subtitles']._transcriptMessages
-                        .get(transcriptMessageID)
-                    || { participantName }
-            };
-
-            _setClearerOnTranscriptMessage(dispatch,
-                transcriptMessageID, newTranscriptMessage);
-
-            // If this is final result, update the state as a final result
-            // and start a count down to remove the subtitle from the state
-            if (!json.is_interim) {
-                newTranscriptMessage.final = text;
-
-            } else if (json.stability > 0.85) {
-                // If the message has a high stability, we can update the
-                // stable field of the state and remove the previously
-                // unstable results
-                newTranscriptMessage.stable = text;
-                newTranscriptMessage.unstable = undefined;
-
-            } else {
-                // Otherwise, this result has an unstable result, which we
-                // add to the state. The unstable result will be appended
-                // after the stable part.
-                newTranscriptMessage.unstable = text;
-            }
-
-            dispatch(
-                updateTranscriptMessage(
-                    transcriptMessageID,
-                    newTranscriptMessage));
+        // First, notify the external API, but only do so for final messages.
+        if (typeof APP !== 'undefined' && !json.is_interim) {
+            APP.API.notifyTranscriptionChunkReceived({
+                messageID: transcriptMessageID,
+                final: text,
+                language: json.language,
+                participant
+            });
         }
-    } catch (error) {
-        logger.error('Error occurred while updating transcriptions\n', error);
+
+        // If the suer is not requesting transcriptions just bail.
+        if (json.language.slice(0, 2) !== language) {
+            return next(action);
+        }
+
+        const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
+        if (json.is_interim && skipInterimTranscriptions) {
+            return next(action);
+        }
+
+        // We update the previous transcript message with the same
+        // message ID or adds a new transcript message if it does not
+        // exist in the map.
+        const existingMessage = state['features/subtitles']._transcriptMessages.get(transcriptMessageID);
+        const newTranscriptMessage: any = {
+            clearTimeOut: existingMessage?.clearTimeOut,
+            language,
+            participant
+        };
+
+        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
+
+        // If this is final result, update the state as a final result
+        // and start a count down to remove the subtitle from the state
+        if (!json.is_interim) {
+            newTranscriptMessage.final = text;
+        } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
+            // If the message has a high stability, we can update the
+            // stable field of the state and remove the previously
+            // unstable results
+            newTranscriptMessage.stable = text;
+        } else {
+            // Otherwise, this result has an unstable result, which we
+            // add to the state. The unstable result will be appended
+            // after the stable part.
+            newTranscriptMessage.unstable = text;
+        }
+
+        dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
     }
 
     return next(action);
@@ -170,43 +186,27 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
  * and Jigasi to decide whether the transcriber needs to be in the room.
  *
  * @param {Store} store - The redux store.
+ * @param {boolean} enabled - Whether subtitles should be enabled or not.
+ * @param {string} language - The language to use for translation.
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesChange({ getState }: IStore) {
-    const state = getState();
-    const { _language } = state['features/subtitles'];
-    const { conference } = state['features/base/conference'];
-
-    const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
-
-    conference?.setLocalParticipantProperty(
-        P_NAME_REQUESTING_TRANSCRIPTION,
-        requestingSubtitles);
-
-    if (requestingSubtitles) {
-        conference?.setLocalParticipantProperty(
-            P_NAME_TRANSLATION_LANGUAGE,
-            _language.replace('translation-languages:', ''));
-    }
-}
-
-/**
- * Set the local property 'requestingTranscription'. This will cause Jicofo
- * and Jigasi to decide whether the transcriber needs to be in the room.
- *
- * @param {Store} store - The redux store.
- * @param {boolean} enabled - The new state of the subtitles.
- * @private
- * @returns {void}
- */
-function _requestingSubtitlesSet({ getState }: IStore, enabled: boolean) {
+function _requestingSubtitlesChange(
+        { getState }: IStore,
+        enabled: boolean,
+        language?: string | null) {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
+
+    if (enabled && language) {
+        conference?.setLocalParticipantProperty(
+            P_NAME_TRANSLATION_LANGUAGE,
+            language.replace('translation-languages:', ''));
+    }
 }
 
 /**

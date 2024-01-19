@@ -613,8 +613,8 @@ export function getDisplayModeInput(props: any, state: { canPlayEventReceived: b
  * @param {string} thumbnailType - The current thumbnail type.
  * @returns {string}
  */
-export function getIndicatorsTooltipPosition(thumbnailType: string) {
-    return INDICATORS_TOOLTIP_POSITION[thumbnailType] || 'top';
+export function getIndicatorsTooltipPosition(thumbnailType?: string) {
+    return INDICATORS_TOOLTIP_POSITION[thumbnailType ?? ''] || 'top';
 }
 
 /**
@@ -761,6 +761,18 @@ export function isStageFilmstripEnabled(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
 
     return Boolean(!filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP);
+}
+
+/**
+ * Whether the vertical/horizontal filmstrip is disabled.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isFilmstripDisabled(state: IReduxState) {
+    const { filmstrip } = state['features/base/config'];
+
+    return Boolean(filmstrip?.disabled);
 }
 
 /**

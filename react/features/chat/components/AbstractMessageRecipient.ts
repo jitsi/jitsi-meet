@@ -1,10 +1,10 @@
 import { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants/functions';
-import { setLobbyChatActiveState } from '../actions.any';
-import { setPrivateMessageRecipient } from '../actions.web';
+import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../actions.any';
+
 
 export interface IProps extends WithTranslation {
 
@@ -37,8 +37,6 @@ export interface IProps extends WithTranslation {
       * Shows widget if it is necessary.
       */
     _visible: boolean;
-
-    classes?: any;
 }
 
 /**
@@ -54,7 +52,7 @@ export default class AbstractMessageRecipient<P extends IProps> extends PureComp
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {IProps}
  */
-export function _mapDispatchToProps(dispatch: Function) {
+export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         _onRemovePrivateMessageRecipient: () => {
             dispatch(setPrivateMessageRecipient());
@@ -69,9 +67,10 @@ export function _mapDispatchToProps(dispatch: Function) {
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {any} _ownProps - Components' own props.
  * @returns {IProps}
  */
-export function _mapStateToProps(state: IReduxState) {
+export function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { privateMessageRecipient, lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
 
     return {

@@ -5,14 +5,15 @@ import {
     notifyMicError
 } from '../../react/features/base/devices/actions.web';
 import {
+    flattenAvailableDevices,
     getAudioOutputDeviceId
 } from '../../react/features/base/devices/functions.web';
+import { updateSettings } from '../../react/features/base/settings/actions';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
-    getUserSelectedOutputDeviceId,
-    updateSettings
-} from '../../react/features/base/settings';
+    getUserSelectedOutputDeviceId
+} from '../../react/features/base/settings/functions';
 
 /**
  * Determines if currently selected audio output device should be changed after
@@ -186,7 +187,7 @@ export default {
      * @returns {boolean}
      */
     newDeviceListAddedLabelsOnly(oldDevices, newDevices) {
-        const oldDevicesFlattend = oldDevices.audioInput.concat(oldDevices.audioOutput).concat(oldDevices.videoInput);
+        const oldDevicesFlattend = flattenAvailableDevices(oldDevices);
 
         if (oldDevicesFlattend.length !== newDevices.length) {
             return false;

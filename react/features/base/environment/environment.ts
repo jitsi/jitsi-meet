@@ -7,10 +7,11 @@ const { browser } = JitsiMeetJS.util;
 
 const DEFAULT_OPTIMAL_BROWSERS = [
     'chrome',
+    'chromium',
     'electron',
     'firefox',
-    'nwjs',
-    'safari'
+    'safari',
+    'webkit'
 ];
 
 const DEFAULT_UNSUPPORTED_BROWSERS: string[] = [];
@@ -20,9 +21,8 @@ const browserNameToCheck = {
     chromium: browser.isChromiumBased.bind(browser),
     electron: browser.isElectron.bind(browser),
     firefox: browser.isFirefox.bind(browser),
-    nwjs: browser.isNWJS.bind(browser),
-    opera: browser.isOpera.bind(browser),
-    safari: browser.isSafari.bind(browser)
+    safari: browser.isSafari.bind(browser),
+    webkit: browser.isWebKitBased.bind(browser)
 };
 
 /**

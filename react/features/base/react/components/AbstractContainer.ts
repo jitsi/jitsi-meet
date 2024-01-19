@@ -1,11 +1,11 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ComponentType, ReactNode } from 'react';
 
-import { getFixedPlatformStyle } from '../../styles/functions';
+import { StyleType, getFixedPlatformStyle } from '../../styles/functions';
 
 /**
  * {@code AbstractContainer} Component's property types.
  */
-export type Props = {
+export interface IProps {
 
     /**
      * An optional accessibility label to apply to the container root.
@@ -20,12 +20,14 @@ export type Props = {
     /**
      * React Elements to display within the component.
      */
-    children: ReactNode;
+    children?: ReactNode;
 
     /**
      * Class names of the component (for web).
      */
     className?: string;
+
+    id?: string;
 
     /**
      * The event handler/listener to be invoked when this
@@ -36,11 +38,19 @@ export type Props = {
      */
     onClick?: Function;
 
+    onKeyDown?: Function;
+
+    onKeyPress?: Function;
+
+    role?: string;
+
     /**
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */
-    style?: Array<string | undefined> | Object;
+    style?: StyleType | StyleType[];
+
+    tabIndex?: number;
 
     /**
      * If this instance is to provide visual feedback when touched, then
@@ -48,7 +58,7 @@ export type Props = {
      * undefined and {@link onClick} is defined, {@code touchFeedback} is
      * considered defined as {@code true}.
      */
-    touchFeedback?: Function;
+    touchFeedback?: boolean;
 
     /**
      * Color to display when clicked.
@@ -61,7 +71,7 @@ export type Props = {
      * all.
      */
     visible?: boolean;
-};
+}
 
 /**
  * Abstract (base) class for container of React {@link Component} children with
@@ -69,7 +79,7 @@ export type Props = {
  *
  * @augments Component
  */
-export default class AbstractContainer<P extends Props> extends Component<P> {
+export default class AbstractContainer<P extends IProps> extends Component<P> {
     /**
      * Renders this {@code AbstractContainer} as a React {@code Component} of a
      * specific type.
@@ -82,7 +92,7 @@ export default class AbstractContainer<P extends Props> extends Component<P> {
      * @protected
      * @returns {ReactElement}
      */
-    _render(type: string, props?: P) {
+    _render(type: string | ComponentType<any>, props?: P) {
         const {
             children,
             style,
@@ -100,7 +110,6 @@ export default class AbstractContainer<P extends Props> extends Component<P> {
             ...filteredProps
         } = props || this.props;
 
-        // @ts-ignore
         const _style = getFixedPlatformStyle(style);
 
         return React.createElement(type, {

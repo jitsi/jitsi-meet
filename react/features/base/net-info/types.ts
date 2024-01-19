@@ -16,13 +16,13 @@ export type NetworkInfo = {
          * If {@link networkType} is {@link NetInfoStateType.cellular} then it may provide the info about the type of
          * cellular network.
          */
-        cellularGeneration?: NetInfoCellularGeneration;
+        cellularGeneration?: NetInfoCellularGeneration | null;
 
         /**
          * Indicates whether or not the connection is expensive.
          */
         isConnectionExpensive?: boolean;
-    };
+    } | null;
 
     /**
      * Tells whether or not the internet is reachable.

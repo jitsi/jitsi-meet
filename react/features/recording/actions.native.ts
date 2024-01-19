@@ -4,7 +4,6 @@ import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
-// @ts-ignore
 import HighlightDialog from './components/Recording/native/HighlightDialog';
 
 export * from './actions.any';

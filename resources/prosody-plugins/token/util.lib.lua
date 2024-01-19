@@ -13,8 +13,14 @@ local main_util = module:require "util";
 local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
+local starts_with = main_util.starts_with;
+local cjson_safe  = require 'cjson.safe'
+local timer = require "util.timer";
+local async = require "util.async";
+local inspect = require 'inspect';
 
 local nr_retries = 3;
+local ssl = require "ssl";
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
@@ -34,6 +40,9 @@ function Util.new(module)
     self.appId = module:get_option_string("app_id");
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
+    -- A URL that will return json file with a mapping between kids and public keys
+    -- If the response Cache-Control header we will respect it and refresh it
+    self.cacheKeysUrl = module:get_option_string("cache_keys_url");
     self.signatureAlgorithm = module:get_option_string("signature_algorithm");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
 
@@ -109,6 +118,35 @@ function Util.new(module)
         return nil;
     end
 
+    if self.cacheKeysUrl then
+        local update_keys_cache;
+        update_keys_cache = async.runner(function (name)
+            content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
+            if content ~= nil then
+                self.cachedKeys = {};
+                -- Let's convert any certificate to public key
+                for k, v in pairs(cjson_safe.decode(content)) do
+                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                        self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
+                    end
+                end
+
+                if cache_for then
+                    cache_for = tonumber(cache_for);
+                    -- let's schedule new update 60 seconds before the cache expiring
+                    if cache_for > 60 then
+                        cache_for = cache_for - 60;
+                    end
+                    timer.add_task(cache_for, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
+                end
+
+            end
+        end);
+        update_keys_cache:run("update_keys_cache");
+    end
+
     return self
 end
 
@@ -160,6 +198,7 @@ end
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
 -- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_room - the room details from the token
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
@@ -202,7 +241,13 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if alg.sub(alg,1,2) ~= "RS" then
             return false, "not-allowed", "'kid' claim only support with RS family";
         end
-        key = self:get_public_key(kid);
+
+        if self.cachedKeys and self.cachedKeys[kid] then
+            key = self.cachedKeys[kid];
+        else
+            key = self:get_public_key(kid);
+        end
+
         if key == nil then
             return false, "not-allowed", "could not obtain public key";
         end
@@ -254,7 +299,21 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
           end
+        elseif claims["user_id"] then
+          session.jitsi_meet_context_user = {};
+          session.jitsi_meet_context_user.id = claims["user_id"];
         end
+
+        -- fire event that token has been verified and pass the session and the decoded token
+        prosody.events.fire_event('jitsi-authentication-token-verified', {
+            session = session;
+            claims = claims;
+        });
+
+        if session.contextRequired and claims["context"] == nil then
+            return false, "not-allowed", 'jwt missing required context claim';
+        end
+
         return true;
     else
         return false, "not-allowed", msg;
@@ -287,7 +346,11 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        auth_room = string.lower(auth_room);
+        if type(auth_room) == 'string' then
+            auth_room = string.lower(auth_room);
+        else
+            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+        end
     end
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
@@ -335,7 +398,13 @@ function Util:verify_room(session, room_address)
         end
         module:log("debug", "room to check: %s", room_to_check)
         if not room_to_check then
-            return false
+            if not self.requireRoomClaim then
+                -- if we do not require to have the room claim, and it is missing
+                -- there is no point of continue and verifying the roomName and the tenant
+                return true;
+            end
+
+            return false;
         end
     end
 

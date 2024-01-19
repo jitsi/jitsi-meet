@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of redux action dispatched which represents that the background
  * effect is enabled or not.

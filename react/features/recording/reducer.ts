@@ -16,7 +16,7 @@ const DEFAULT_STATE = {
     sessionDatas: []
 };
 
-interface ISessionData {
+export interface ISessionData {
     error?: Error;
     id?: string;
     initiator?: { getId: Function; };

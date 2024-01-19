@@ -16,9 +16,13 @@ import {
 } from './actionTypes';
 import {
     areDeviceLabelsInitialized,
+    areDevicesDifferent,
+    filterIgnoredDevices,
+    flattenAvailableDevices,
     getDeviceIdByLabel,
     getDeviceLabelById,
     getDevicesFromURL,
+    logDevices,
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
@@ -39,7 +43,7 @@ const DEVICE_TYPE_TO_SETTINGS_KEYS = {
         userSelectedDeviceLabel: 'userSelectedAudioOutputDeviceLabel'
     },
     videoInput: {
-        currentDeviceId: 'audioOutputDeviceId',
+        currentDeviceId: 'cameraDeviceId',
         userSelectedDeviceId: 'userSelectedCameraDeviceId',
         userSelectedDeviceLabel: 'userSelectedCameraDeviceLabel'
     }
@@ -137,15 +141,21 @@ export function configureInitialDevices() {
  * @returns {Function}
  */
 export function getAvailableDevices() {
-    return (dispatch: IStore['dispatch']) => new Promise(resolve => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => new Promise(resolve => {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices((devices: any) => {
-                dispatch(updateDeviceList(devices));
+            mediaDevices.enumerateDevices((devices: MediaDeviceInfo[]) => {
+                const { filteredDevices, ignoredDevices } = filterIgnoredDevices(devices);
+                const oldDevices = flattenAvailableDevices(getState()['features/base/devices'].availableDevices);
 
-                resolve(devices);
+                if (areDevicesDifferent(oldDevices, filteredDevices)) {
+                    logDevices(ignoredDevices, 'Ignored devices on device list changed:');
+                    dispatch(updateDeviceList(filteredDevices));
+                }
+
+                resolve(filteredDevices);
             });
         } else {
             resolve([]);

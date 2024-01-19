@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Redux action type dispatched in order to toggle screenshot captures.
  *

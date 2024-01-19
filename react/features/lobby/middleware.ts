@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -28,7 +26,6 @@ import {
 } from '../base/sounds/actions';
 import { isTestModeEnabled } from '../base/testing/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-// @ts-ignore
 import { openChat } from '../chat/actions';
 import {
     handleLobbyChatInitialized,
@@ -44,7 +41,7 @@ import {
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
-import { shouldAutoKnock } from '../prejoin/functions';
+import { isPrejoinPageVisible, shouldAutoKnock } from '../prejoin/functions';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -210,7 +207,7 @@ function _handleLobbyNotification(store: IStore) {
         descriptionKey = 'notify.participantWantsToJoin';
         notificationTitle = firstParticipant.name;
         icon = NOTIFICATION_ICON.PARTICIPANT;
-        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+        customActionNameKey = [ 'participantsPane.actions.admit', 'participantsPane.actions.reject' ];
         customActionType = [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
@@ -228,8 +225,7 @@ function _handleLobbyNotification(store: IStore) {
             customActionType.splice(1, 0, BUTTON_TYPES.SECONDARY);
             customActionHandler.splice(1, 0, () => batch(() => {
                 dispatch(handleLobbyChatInitialized(firstParticipant.id));
-                // @ts-ignore
-                dispatch(openChat(disablePolls));
+                dispatch(openChat({}, disablePolls));
             }));
         }
     } else {
@@ -271,27 +267,44 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const state = getState();
     const { membersOnly } = state['features/base/conference'];
     const nonFirstFailure = Boolean(membersOnly);
+    const { isDisplayNameRequiredError } = state['features/lobby'];
+    const { prejoinConfig } = state['features/base/config'];
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
             error.recoverable = true;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [ _lobbyJid, lobbyWaitingForHost ] = error.params;
+
         const result = next(action);
 
         dispatch(openLobbyScreen());
 
-        if (shouldAutoKnock(state)) {
+        // if there was an error about display name and pre-join is not enabled
+        if (shouldAutoKnock(state) || (isDisplayNameRequiredError && !prejoinConfig?.enabled) || lobbyWaitingForHost) {
             dispatch(startKnocking());
         }
 
         // In case of wrong password we need to be in the right state if in the meantime someone allows us to join
         if (nonFirstFailure) {
-            // @ts-ignore
             dispatch(conferenceWillJoin(membersOnly));
         }
 
         dispatch(setPasswordJoinFailed(nonFirstFailure));
+
+        return result;
+    } else if (error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED) {
+        const [ isLobbyEnabled ] = error.params;
+
+        const result = next(action);
+
+        // if the error is due to required display name because lobby is enabled for the room
+        // if not showing the prejoin page then show lobby UI
+        if (isLobbyEnabled && !isPrejoinPageVisible(state)) {
+            dispatch(openLobbyScreen());
+        }
 
         return result;
     }

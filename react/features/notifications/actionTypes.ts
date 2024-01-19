@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of (redux) action which signals that all the stored notifications
  * need to be cleared.

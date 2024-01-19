@@ -11,8 +11,6 @@ import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
@@ -26,12 +24,12 @@ interface IProps {
     /**
      * Hide popover callback.
      */
-    hidePopover: Function;
+    hidePopover?: Function;
 
     /**
      * Class name for the status indicators container.
      */
-    indicatorsClassName: string;
+    indicatorsClassName?: string;
 
     /**
      * Whether or not the thumbnail is hovered.
@@ -41,7 +39,7 @@ interface IProps {
     /**
      * Whether or not the indicators are for the local participant.
      */
-    local: boolean;
+    local?: boolean;
 
     /**
      * Id of the participant for which the component is displayed.
@@ -51,12 +49,12 @@ interface IProps {
     /**
      * Whether popover is visible or not.
      */
-    popoverVisible: boolean;
+    popoverVisible?: boolean;
 
     /**
      * Show popover callback.
      */
-    showPopover: Function;
+    showPopover?: Function;
 
     /**
      * The type of thumbnail.

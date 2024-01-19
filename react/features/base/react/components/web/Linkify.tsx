@@ -1,6 +1,7 @@
-import punycode from 'punycode';
 import React, { Component, ReactNode } from 'react';
 import ReactLinkify from 'react-linkify';
+
+import { formatURLText } from '../../functions';
 
 interface IProps {
 
@@ -43,7 +44,7 @@ export default class Linkify extends Component<IProps> {
                 key = { key }
                 rel = 'noopener noreferrer'
                 target = '_blank'>
-                { punycode.toASCII(decoratedText) }
+                { formatURLText(decoratedText) }
             </a>
         );
     }

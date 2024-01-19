@@ -2,10 +2,8 @@ import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
-import { IMessage } from '../../reducer';
+import { IMessage } from '../../types';
 
 import ChatMessage from './ChatMessage';
 
@@ -27,7 +25,11 @@ const useStyles = makeStyles()(theme => {
         messageGroup: {
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: '100%'
+            maxWidth: '100%',
+
+            '&.remote': {
+                maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
+            }
         },
 
         groupContainer: {

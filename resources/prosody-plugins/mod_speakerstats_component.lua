@@ -35,15 +35,16 @@ end
 
 -- Searches all rooms in the main muc component that holds a breakout room
 -- caches it if found so we don't search it again
+-- we should not cache objects in _data as this is being serialized when calling room:save()
 local function get_main_room(breakout_room)
-    if breakout_room._data and breakout_room._data.main_room then
-        return breakout_room._data.main_room;
+    if breakout_room.main_room then
+        return breakout_room.main_room;
     end
 
     -- let's search all rooms to find the main room
     for room in main_muc_service.each_room() do
         if room._data and room._data.breakout_rooms_active and room._data.breakout_rooms[breakout_room.jid] then
-            breakout_room._data.main_room = room;
+            breakout_room.main_room = room;
             return room;
         end
     end
@@ -65,12 +66,12 @@ function on_message(event)
         local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
-            log("warn", "No room found %s", roomAddress);
+            module:log("warn", "No room found %s", roomAddress);
             return false;
         end
 
         if not room.speakerStats then
-            log("warn", "No speakerStats found for %s", roomAddress);
+            module:log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
 
@@ -79,7 +80,7 @@ function on_message(event)
 
         local occupant = room:get_occupant_by_real_jid(from);
         if not occupant then
-            log("warn", "No occupant %s found for %s", from, roomAddress);
+            module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
 
@@ -107,18 +108,18 @@ function on_message(event)
         local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
-            log("warn", "No room found %s", roomAddress);
+            module:log("warn", "No room found %s", roomAddress);
             return false;
         end
          if not room.speakerStats then
-            log("warn", "No speakerStats found for %s", roomAddress);
+            module:log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
         local from = event.stanza.attr.from;
 
         local occupant = room:get_occupant_by_real_jid(from);
-        if not occupant then
-            log("warn", "No occupant %s found for %s", from, roomAddress);
+        if not occupant or not room.speakerStats[occupant.jid] then
+            module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
         local faceLandmarks = room.speakerStats[occupant.jid].faceLandmarks;
@@ -154,7 +155,7 @@ end
 -- saves start time if it is new dominat speaker
 -- or calculates and accumulates time of speaking
 function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker, silence)
-    -- log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
+    -- module:log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
     local now = socket.gettime()*1000;
 

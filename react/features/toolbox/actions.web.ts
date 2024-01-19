@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { overwriteConfig } from '../base/config/actions';
 import { isMobileBrowser } from '../base/environment/utils';
+import { isLayoutTileView } from '../video-layout/functions.any';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -84,13 +85,16 @@ export function hideToolbox(force = false) {
 
         dispatch(clearToolboxTimeout());
 
-        const focusSelector = '.toolbox-content-items:focus-within,.filmstrip:focus-within,.remotevideomenu:hover';
+        const hoverSelector = isLayoutTileView(state)
+            ? '.remotevideomenu:hover'
+            : '.filmstrip:hover,.remotevideomenu:hover';
+        const hoveredElem = document.querySelector(hoverSelector);
 
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
                     || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
-                    || document.querySelector(focusSelector))) {
+                    || hoveredElem)) {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
@@ -196,7 +200,7 @@ export function clearToolboxTimeout() {
  *     visible: boolean
  * }}
  */
-export function setHangupMenuVisible(visible: boolean): Object {
+export function setHangupMenuVisible(visible: boolean) {
     return {
         type: SET_HANGUP_MENU_VISIBLE,
         visible
@@ -212,7 +216,7 @@ export function setHangupMenuVisible(visible: boolean): Object {
  *     visible: boolean
  * }}
  */
-export function setOverflowMenuVisible(visible: boolean): Object {
+export function setOverflowMenuVisible(visible: boolean) {
     return {
         type: SET_OVERFLOW_MENU_VISIBLE,
         visible
@@ -228,7 +232,7 @@ export function setOverflowMenuVisible(visible: boolean): Object {
  *     hovered: boolean
  * }}
  */
-export function setToolbarHovered(hovered: boolean): Object {
+export function setToolbarHovered(hovered: boolean) {
     return {
         type: SET_TOOLBAR_HOVERED,
         hovered
@@ -258,5 +262,19 @@ export function setToolboxTimeout(handler: Function, timeoutMS: number) {
             handler,
             timeoutMS
         });
+    };
+}
+
+/**
+     * Closes the overflow menu if opened.
+     *
+     * @private
+     * @returns {void}
+     */
+export function closeOverflowMenuIfOpen() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { overflowMenuVisible } = getState()['features/toolbox'];
+
+        overflowMenuVisible && dispatch(setOverflowMenuVisible(false));
     };
 }

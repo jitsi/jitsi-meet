@@ -1,10 +1,13 @@
 export const SETTINGS_TABS = {
+    AUDIO: 'audio_tab',
     CALENDAR: 'calendar_tab',
-    DEVICES: 'devices_tab',
     MORE: 'more_tab',
     MODERATOR: 'moderator-tab',
+    NOTIFICATIONS: 'notifications_tab',
     PROFILE: 'profile_tab',
-    SOUNDS: 'sounds_tab'
+    SHORTCUTS: 'shortcuts_tab',
+    VIDEO: 'video_tab',
+    VIRTUAL_BACKGROUND: 'virtual-background_tab'
 };
 
 /**

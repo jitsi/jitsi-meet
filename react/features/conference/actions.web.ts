@@ -1,34 +1,68 @@
 import { IStore } from '../app/types';
-import { getParticipantDisplayName } from '../base/participants/functions';
-import { showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
+import { configureInitialDevices, getAvailableDevices } from '../base/devices/actions.web';
+import { openDialog } from '../base/dialog/actions';
+import { getBackendSafeRoomName } from '../base/util/uri';
+
+import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
+import LeaveReasonDialog from './components/web/LeaveReasonDialog.web';
+import logger from './logger';
 
 /**
- * Notify that we've been kicked out of the conference.
+ * Opens {@code LeaveReasonDialog}.
  *
- * @param {JitsiParticipant} participant - The {@link JitsiParticipant}
- * instance which initiated the kick event.
- * @param {?Function} _ - Used only in native code.
- * @returns {Function}
+ * @param {string} [title] - The dialog title.
+ *
+ * @returns {Promise} Resolved when the dialog is closed.
  */
-export function notifyKickedOut(participant: any, _?: Function) {
+export function openLeaveReasonDialog(title?: string) {
+    return (dispatch: IStore['dispatch']): Promise<void> => new Promise(resolve => {
+        dispatch(openDialog(LeaveReasonDialog, {
+            onClose: resolve,
+            title
+        }));
+    });
+}
+
+/**
+ * Dismisses calendar notification about next or ongoing event.
+ *
+ * @returns {Object}
+ */
+export function dismissCalendarNotification() {
+    return {
+        type: DISMISS_CALENDAR_NOTIFICATION
+    };
+}
+
+/**
+ * Setups initial devices. Makes sure we populate availableDevices list before configuring.
+ *
+ * @returns {Promise<any>}
+ */
+export function setupInitialDevices() {
+    return async (dispatch: IStore['dispatch']) => {
+        await dispatch(getAvailableDevices());
+        await dispatch(configureInitialDevices());
+    };
+}
+
+/**
+ * Init.
+ *
+ * @returns {Promise<JitsiConnection>}
+ */
+export function init() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!participant || participant?.isReplaced()) {
-            return;
-        }
+        const room = getBackendSafeRoomName(getState()['features/base/conference'].room);
 
-        const args = {
-            participantDisplayName:
-                getParticipantDisplayName(getState, participant.getId())
-        };
-
-        dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.kickMessage',
-            descriptionArguments: args,
-            titleKey: 'dialog.kickTitle',
-            titleArguments: args
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        // XXX For web based version we use conference initialization logic
+        // from the old app (at the moment of writing).
+        return dispatch(setupInitialDevices()).then(
+            () => APP.conference.init({
+                roomName: room
+            }).catch((error: Error) => {
+                APP.API.notifyConferenceLeft(APP.conference.roomName);
+                logger.error(error);
+            }));
     };
 }

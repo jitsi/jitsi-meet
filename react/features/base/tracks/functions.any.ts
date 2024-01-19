@@ -1,9 +1,9 @@
-import { IReduxState } from '../../app/types';
-import {
-    getMultipleVideoSendingSupportFeatureFlag
-} from '../config/functions.any';
+import { IReduxState, IStore } from '../../app/types';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { gumPending } from '../media/actions';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { IMediaState } from '../media/reducer';
+import { IGUMPendingState } from '../media/types';
 import {
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
@@ -29,7 +29,8 @@ export const getTrackState = (state: IReduxState) => state['features/base/tracks
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is the media type muted for the participant.
  */
-export function isParticipantMediaMuted(participant: IParticipant, mediaType: MediaType, state: IReduxState) {
+export function isParticipantMediaMuted(participant: IParticipant | undefined,
+        mediaType: MediaType, state: IReduxState) {
     if (!participant) {
         return false;
     }
@@ -63,7 +64,7 @@ export function isParticipantAudioMuted(participant: IParticipant, state: IRedux
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is video muted for the participant.
  */
-export function isParticipantVideoMuted(participant: IParticipant, state: IReduxState) {
+export function isParticipantVideoMuted(participant: IParticipant | undefined, state: IReduxState) {
     return isParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO, state);
 }
 
@@ -221,6 +222,17 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
+ * Returns track for specified participant id.
+ *
+ * @param {ITrack[]} tracks - List of all tracks.
+ * @param {string} participantId - Participant ID.
+ * @returns {(Track[]|undefined)}
+ */
+export function getTrackByParticipantId(tracks: ITrack[], participantId: string) {
+    return tracks.filter(t => t.participantId === participantId);
+}
+
+/**
  * Returns screenshare track of given virtualScreenshareParticipantId.
  *
  * @param {ITrack[]} tracks - List of all tracks.
@@ -329,8 +341,7 @@ export function isLocalVideoTrackDesktop(state: IReduxState) {
  * @returns {boolean}
  */
 export function isRemoteTrackMuted(tracks: ITrack[], mediaType: MediaType, participantId: string) {
-    const track = getTrackByMediaTypeAndParticipant(
-        tracks, mediaType, participantId);
+    const track = getTrackByMediaTypeAndParticipant(tracks, mediaType, participantId);
 
     return !track || track.muted;
 }
@@ -350,28 +361,59 @@ export function isUserInteractionRequiredForUnmute(state: IReduxState) {
 }
 
 /**
+ * Sets the GUM pending state for the passed track operation (mute/unmute) and media type.
+ * NOTE: We need this only for web.
+ *
+ * @param {IGUMPendingState} status - The new GUM pending status.
+ * @param {MediaType} mediaType - The media type related to the operation (audio or video).
+ * @param {boolean} muted - True if the operation is mute and false for unmute.
+ * @param {Function} dispatch - The dispatch method.
+ * @returns {void}
+ */
+export function _setGUMPendingState(
+        status: IGUMPendingState,
+        mediaType: MediaType,
+        muted: boolean,
+        dispatch?: IStore['dispatch']) {
+    if (!muted && dispatch && typeof APP !== 'undefined') {
+        dispatch(gumPending([ mediaType ], status));
+    }
+}
+
+/**
  * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of the specified {@code track} is already in
  * accord with the specified {@code muted} value, then does nothing.
  *
  * @param {JitsiLocalTrack} track - The {@code JitsiLocalTrack} to mute or unmute.
  * @param {boolean} muted - If the specified {@code track} is to be muted, then {@code true}; otherwise, {@code false}.
  * @param {Object} state - The redux state.
+ * @param {Function} dispatch - The dispatch method.
  * @returns {Promise}
  */
-export function setTrackMuted(track: any, muted: boolean, state: IReduxState) {
+export function setTrackMuted(track: any, muted: boolean, state: IReduxState | IMediaState,
+        dispatch?: IStore['dispatch']) {
     muted = Boolean(muted); // eslint-disable-line no-param-reassign
 
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
-    if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
+    if (track.isMuted() === muted && track.getVideoType() !== VIDEO_TYPE.DESKTOP) {
         return Promise.resolve();
     }
 
     const f = muted ? 'mute' : 'unmute';
+    const mediaType = track.getType();
 
-    return track[f]().catch((error: Error) => {
+    _setGUMPendingState(IGUMPendingState.PENDING_UNMUTE, mediaType, muted, dispatch);
+
+    return track[f]().then((result: any) => {
+        _setGUMPendingState(IGUMPendingState.NONE, mediaType, muted, dispatch);
+
+        return result;
+    })
+    .catch((error: Error) => {
+        _setGUMPendingState(IGUMPendingState.NONE, mediaType, muted, dispatch);
+
         // Track might be already disposed so ignore such an error.
         if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
             logger.error(`set track ${f} failed`, error);
@@ -379,4 +421,35 @@ export function setTrackMuted(track: any, muted: boolean, state: IReduxState) {
             return Promise.reject(error);
         }
     });
+}
+
+/**
+ * Logs the current track state for a participant.
+ *
+ * @param {ITrack[]} tracksState - The tracks from redux.
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} reason - The reason for the track change.
+ * @returns {void}
+ */
+export function logTracksForParticipant(tracksState: ITrack[], participantId: string, reason?: string) {
+    if (!participantId) {
+        return;
+    }
+    const tracks = getTrackByParticipantId(tracksState, participantId);
+    const logStringPrefix = `Track state for participant ${participantId} changed`;
+    const trackStateStrings = tracks.map(t => `{type: ${t.mediaType}, videoType: ${t.videoType}, muted: ${
+        t.muted}, isReceivingData: ${t.isReceivingData}, jitsiTrack: ${t.jitsiTrack?.toString()}}`);
+    const tracksLogMsg = trackStateStrings.length > 0 ? `\n${trackStateStrings.join('\n')}` : ' No tracks available!';
+
+    logger.debug(`${logStringPrefix}${reason ? `(reason: ${reason})` : ''}:${tracksLogMsg}`);
+}
+
+/**
+ * Gets the default camera facing mode.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {string} - The camera facing mode.
+ */
+export function getCameraFacingMode(state: IReduxState) {
+    return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
 }

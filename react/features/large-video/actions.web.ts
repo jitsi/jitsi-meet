@@ -1,10 +1,10 @@
 // @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { IStore } from '../app/types';
-import { MEDIA_TYPE } from '../base/media/constants';
-import { getTrackByMediaTypeAndParticipant } from '../base/tracks/functions.web';
+import { getParticipantById } from '../base/participants/functions';
+import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 
-import { SET_SEE_WHAT_IS_BEING_SHARED, UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes';
+import { SET_SEE_WHAT_IS_BEING_SHARED } from './actionTypes';
 
 export * from './actions.any';
 
@@ -19,11 +19,12 @@ export function captureLargeVideoScreenshot() {
         const largeVideo = state['features/large-video'];
         const promise = Promise.resolve();
 
-        if (!largeVideo) {
+        if (!largeVideo?.participantId) {
             return promise;
         }
-        const tracks = state['features/base/tracks'];
-        const participantTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
+
+        const participant = getParticipantById(state, largeVideo.participantId);
+        const participantTrack = getVideoTrackByParticipant(state, participant);
 
         // Participants that join the call video muted do not have a jitsiTrack attached.
         if (!participantTrack?.jitsiTrack) {
@@ -81,22 +82,6 @@ export function resizeLargeVideo(width: number, height: number) {
             largeVideoContainer.updateContainerSize(width, height);
             largeVideoContainer.resize();
         }
-    };
-}
-
-/**
- * Updates the last media event received for the large video.
- *
- * @param {string} name - The current media event name for the video.
- * @returns {{
- *     type: UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
- *     name: string
- * }}
- */
-export function updateLastLargeVideoMediaEvent(name: String) {
-    return {
-        type: UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT,
-        name
     };
 }
 

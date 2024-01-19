@@ -14,7 +14,8 @@ const useStyles = makeStyles()(theme => {
             margin: '24px',
             padding: '16px',
             backgroundColor: theme.palette.ui02,
-            borderRadius: '8px'
+            borderRadius: '8px',
+            wordBreak: 'break-word'
         },
         header: {
             marginBottom: '24px'

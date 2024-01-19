@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Action type to signal the deletion of a list entry.
  *

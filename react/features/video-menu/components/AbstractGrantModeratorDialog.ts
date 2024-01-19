@@ -22,7 +22,7 @@ interface IProps extends WithTranslation {
     /**
      * The name of the remote participant to be granted moderator rights.
      */
-    participantName: string;
+    participantName?: string;
 }
 
 /**

@@ -1,14 +1,15 @@
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../../app/types';
-import ListItem from '../../../../../base/components/participants-pane-list/ListItem';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
+import ListItem from '../../../../../base/ui/components/web/ListItem';
+import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
 import { participantMatchesSearch } from '../../../../functions';
@@ -25,7 +26,7 @@ interface IProps {
     /**
      * React children.
      */
-    children: ReactElement;
+    children: React.ReactNode;
 
     /**
      * Is this item highlighted/raised.
@@ -47,6 +48,8 @@ interface IProps {
      */
     participantContextEntity?: {
         jid: string;
+        participantName: string;
+        room: IRoom;
     };
 
     /**
@@ -88,9 +91,8 @@ const useStyles = makeStyles()(theme => {
         roomName: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap', // @ts-ignore
-            ...withPixelLineHeight(theme.typography.labelButton),
-            padding: '12px 0'
+            whiteSpace: 'nowrap',
+            ...withPixelLineHeight(theme.typography.bodyLongBold)
         },
 
         arrowContainer: {
@@ -101,7 +103,8 @@ const useStyles = makeStyles()(theme => {
             marginRight: '16px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            border: 'none'
         }
     };
 });
@@ -131,11 +134,15 @@ export const CollapsibleRoom = ({
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const moderator = useSelector(isLocalParticipantModerator);
 
-    const arrow = (<div className = { styles.arrowContainer }>
+    const arrow = (<button
+        aria-label = { collapsed ? t('breakoutRooms.hideParticipantList', 'Hide participant list')
+            : t('breakoutRooms.showParticipantList', 'Show participant list')
+        }
+        className = { styles.arrowContainer }>
         <Icon
             size = { 14 }
             src = { collapsed ? IconArrowDown : IconArrowUp } />
-    </div>);
+    </button>);
 
     const roomName = (<span className = { styles.roomName }>
         {`${room.name || t('breakoutRooms.mainRoom')} (${Object.keys(room?.participants
@@ -153,6 +160,8 @@ export const CollapsibleRoom = ({
         <ListItem
             actions = { children }
             className = { cx(styles.container, 'breakout-room-container') }
+            defaultName = { `${room.name || t('breakoutRooms.mainRoom')} (${Object.keys(room?.participants
+                || {}).length})` }
             icon = { arrow }
             isHighlighted = { isHighlighted }
             onClick = { toggleCollapsed }

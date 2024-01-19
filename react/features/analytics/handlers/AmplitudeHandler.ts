@@ -15,13 +15,18 @@ export default class AmplitudeHandler extends AbstractHandler {
      * Creates new instance of the Amplitude analytics handler.
      *
      * @param {Object} options -
-     * @param {string} options.amplitudeAPPKey - The Amplitude app key required
-     * by the Amplitude API.
+     * @param {string} options.amplitudeAPPKey - The Amplitude app key required by the Amplitude API.
+     * @param {boolean} options.amplitudeIncludeUTM - Whether to include UTM parameters
+     * in the Amplitude events.
      */
     constructor(options: any) {
         super(options);
 
-        const { amplitudeAPPKey, user } = options;
+        const {
+            amplitudeAPPKey,
+            amplitudeIncludeUTM: includeUtm = true,
+            user
+        } = options;
 
         this._enabled = true;
 
@@ -31,7 +36,7 @@ export default class AmplitudeHandler extends AbstractHandler {
         };
 
         if (navigator.product === 'ReactNative') {
-            amplitude.getInstance().init(amplitudeAPPKey); // @ts-ignore
+            amplitude.getInstance().init(amplitudeAPPKey);
             fixDeviceID(amplitude.getInstance()).then(() => {
                 amplitude.getInstance().getDeviceId()
 
@@ -41,8 +46,10 @@ export default class AmplitudeHandler extends AbstractHandler {
                     });
             });
         } else {
-            const amplitudeOptions = {
+            const amplitudeOptions: any = {
                 includeReferrer: true,
+                includeUtm,
+                saveParamsReferrerOncePerSession: false,
                 onError
             };
 

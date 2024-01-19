@@ -1,6 +1,7 @@
 import { IReduxState } from '../app/types';
 import { FEATURES_TO_BUTTONS_MAPPING } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { IGUMPendingState } from '../base/media/types';
 
 /**
  * Indicates if the audio mute button is disabled or not.
@@ -9,10 +10,10 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
  * @returns {boolean}
  */
 export function isAudioMuteButtonDisabled(state: IReduxState) {
-    const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
+    const { available, muted, unmuteBlocked, gumPending } = state['features/base/media'].audio;
     const { startSilent } = state['features/base/config'];
 
-    return Boolean(!available || startSilent || (muted && unmuteBlocked));
+    return Boolean(!available || startSilent || (muted && unmuteBlocked) || gumPending !== IGUMPendingState.NONE);
 }
 
 /**

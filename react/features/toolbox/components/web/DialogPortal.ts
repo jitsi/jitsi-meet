@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { ZINDEX_DIALOG_PORTAL } from '../../constants';
 
-type Props = {
+interface IProps {
 
     /**
      * The component(s) to be displayed within the drawer portal.
@@ -22,6 +23,11 @@ type Props = {
     getRef?: Function;
 
     /**
+     * Function called when the portal target becomes actually visible.
+     */
+    onVisible?: Function;
+
+    /**
      * Function used to get the updated size info of the container on it's resize.
      */
     setSize?: Function;
@@ -30,7 +36,13 @@ type Props = {
      * Custom style to apply to the container div.
      */
     style?: any;
-};
+
+    /**
+     * The selector for the element we consider the content container.
+     * This is used to determine the correct size of the portal content.
+     */
+    targetSelector?: string;
+}
 
 /**
  * Component meant to render a drawer at the bottom of the screen,
@@ -38,7 +50,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function DialogPortal({ children, className, style, getRef, setSize }: Props) {
+function DialogPortal({ children, className, style, getRef, setSize, targetSelector, onVisible }: IProps) {
     const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
@@ -65,8 +77,9 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
     useEffect(() => {
         if (portalTarget && getRef) {
             getRef(portalTarget);
+            portalTarget.style.zIndex = `${ZINDEX_DIALOG_PORTAL}`;
         }
-    }, [ portalTarget ]);
+    }, [ portalTarget, getRef ]);
 
     useEffect(() => {
         const size = {
@@ -81,17 +94,20 @@ function DialogPortal({ children, className, style, getRef, setSize }: Props) {
                 clearTimeout(timerRef.current);
                 timerRef.current = window.setTimeout(() => {
                     portalTarget.style.visibility = 'visible';
+                    onVisible?.();
                 }, 100);
             }
         });
 
+        const target = targetSelector ? portalTarget.querySelector(targetSelector) : portalTarget;
+
         if (document.body) {
             document.body.appendChild(portalTarget);
-            observer.observe(portalTarget);
+            observer.observe(target ?? portalTarget);
         }
 
         return () => {
-            observer.unobserve(portalTarget);
+            observer.unobserve(target ?? portalTarget);
             if (document.body) {
                 document.body.removeChild(portalTarget);
             }

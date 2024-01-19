@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -7,9 +8,7 @@ import {
     getParticipantDisplayName,
     isScreenShareParticipant
 } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
 
-// @ts-ignore
 import styles from './styles';
 
 interface IProps {
@@ -50,10 +49,12 @@ class DisplayNameLabel extends React.Component<IProps> {
         }
 
         return (
-            <View style = { this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop }>
+            <View
+                style = { (this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop
+                    ) as ViewStyle }>
                 <Text
                     numberOfLines = { 1 }
-                    style = { styles.displayNameText }>
+                    style = { styles.displayNameText as TextStyle }>
                     { this.props._participantName }
                 </Text>
             </View>
@@ -73,8 +74,8 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _participantName: getParticipantDisplayName(state, ownProps.participantId ?? ''),
-        _render: participant && (!participant?.local || ownProps.contained)
-            && (!participant?.fakeParticipant || isScreenShareParticipant(participant))
+        _render: Boolean(participant && (!participant?.local || ownProps.contained)
+            && (!participant?.fakeParticipant || isScreenShareParticipant(participant)))
     };
 }
 

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { IStore } from '../app/types';
 import { updateConfig } from '../base/config/actions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { connect } from '../base/connection/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../base/media/constants';
@@ -16,8 +17,6 @@ import {
     getLocalVideoTrack
 } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
@@ -31,9 +30,7 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-    SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
@@ -213,9 +210,12 @@ export function initPrejoin(tracks: Object[], errors: Object) {
  *
  * @param {Object} options - The config options that override the default ones (if any).
  * @param {boolean} ignoreJoiningInProgress - If true we won't check the joiningInProgress flag.
+ * @param {string?} jid - The XMPP user's ID (e.g. {@code user@server.com}).
+ * @param {string?} password - The XMPP user's password.
  * @returns {Function}
  */
-export function joinConference(options?: Object, ignoreJoiningInProgress = false) {
+export function joinConference(options?: Object, ignoreJoiningInProgress = false,
+        jid?: string, password?: string) {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         if (!ignoreJoiningInProgress) {
             const state = getState();
@@ -228,33 +228,40 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
             dispatch(setJoiningInProgress(true));
         }
 
-        const state = getState();
-        let localTracks = getLocalTracks(state['features/base/tracks']);
-
         options && dispatch(updateConfig(options));
 
-        // Do not signal audio/video tracks if the user joins muted.
-        for (const track of localTracks) {
-            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-            // if the user joins audio and video muted.
-            if (track.muted
-                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-                try {
-                    await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-                } catch (error) {
-                    logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+        dispatch(connect(jid, password)).then(async () => {
+            // TODO keep this here till we move tracks and conference management from
+            // conference.js to react.
+            const state = getState();
+            let localTracks = getLocalTracks(state['features/base/tracks']);
+
+            // Do not signal audio/video tracks if the user joins muted.
+            for (const track of localTracks) {
+                // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted.
+                if (track.muted && !(browser.isWebKitBased() && track.jitsiTrack
+                        && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                    try {
+                        await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+                    } catch (error) {
+                        logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                    }
                 }
             }
-        }
 
-        // Re-fetch the local tracks after muted tracks have been removed above.
-        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
-        // anymore.
-        localTracks = getLocalTracks(getState()['features/base/tracks']);
+            // Re-fetch the local tracks after muted tracks have been removed above.
+            // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be
+            // used anymore.
+            localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+            const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
 
-        APP.conference.prejoinStart(jitsiTracks);
+            APP.conference.startConference(jitsiTracks).catch(logger.error);
+        })
+        .catch(() => {
+            // There is nothing to do here. This is handled and dispatched in base/connection/actions.
+        });
     };
 }
 
@@ -302,25 +309,6 @@ export function joinConferenceWithoutAudio() {
         dispatch(joinConference({
             startSilent: true
         }, true));
-    };
-}
-
-/**
- * Initializes the 'precallTest' and executes one test, storing the results.
- *
- * @param {Object} conferenceOptions - The conference options.
- * @returns {Function}
- */
-export function makePrecallTest(conferenceOptions: Object) {
-    return async function(dispatch: Function) {
-        try {
-            await JitsiMeetJS.precallTest.init(conferenceOptions);
-            const results = await JitsiMeetJS.precallTest.execute();
-
-            dispatch(setPrecallTestResults(results));
-        } catch (error) {
-            logger.debug('Failed to execute pre call test - ', error);
-        }
     };
 }
 
@@ -468,17 +456,6 @@ export function setDialOutCountry(value: Object) {
 }
 
 /**
- * Action used to set the stance of the display name.
- *
- * @returns {Object}
- */
-export function setPrejoinDisplayNameRequired() {
-    return {
-        type: SET_PREJOIN_DISPLAY_NAME_REQUIRED
-    };
-}
-
-/**
  * Action used to set the dial out number.
  *
  * @param {string} value - The dial out number.
@@ -514,19 +491,6 @@ export function setSkipPrejoinOnReload(value: boolean) {
 export function setJoinByPhoneDialogVisiblity(value: boolean) {
     return {
         type: SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-        value
-    };
-}
-
-/**
- * Action used to set data from precall test.
- *
- * @param {Object} value - The precall test results.
- * @returns {Object}
- */
-export function setPrecallTestResults(value: Object) {
-    return {
-        type: SET_PRECALL_TEST_RESULTS,
         value
     };
 }

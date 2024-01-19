@@ -29,7 +29,11 @@ export interface IInviteState {
     error?: {
         status: number;
     };
-    initialCalleeInfo?: Object;
+    initialCalleeInfo?: {
+        id: string;
+        name: string;
+        status: string;
+    };
     numbers?: string[];
     numbersEnabled: boolean;
     numbersFetched: boolean;

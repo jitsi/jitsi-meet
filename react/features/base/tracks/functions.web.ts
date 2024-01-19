@@ -1,14 +1,18 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 import { isMobileBrowser } from '../environment/utils';
-import JitsiMeetJS from '../lib-jitsi-meet';
-import { setAudioMuted } from '../media/actions';
+import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
+import { gumPending, setAudioMuted } from '../media/actions';
+import { MEDIA_TYPE } from '../media/constants';
+import { getStartWithAudioMuted } from '../media/functions';
+import { IGUMPendingState } from '../media/types';
 import { toState } from '../redux/functions';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
 
+import { getCameraFacingMode } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -79,6 +83,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
                     // Copy array to avoid mutations inside library.
                     devices: options.devices?.slice(0),
                     effects,
+                    facingMode: options.facingMode || getCameraFacingMode(state),
                     firefox_fake_device, // eslint-disable-line camelcase
                     firePermissionPromptIsShownEvent,
                     micDeviceId,
@@ -94,19 +99,25 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
 }
 
 /**
- * Returns an object containing a promise which resolves with the created tracks &
- * the errors resulting from that process.
+ * Returns an object containing a promise which resolves with the created tracks and the errors resulting from that
+ * process.
  *
- * @returns {Promise<JitsiLocalTrack>}
+ * @returns {Promise<JitsiLocalTrack[]>}
  *
  * @todo Refactor to not use APP.
  */
 export function createPrejoinTracks() {
     const errors: any = {};
-    const initialDevices = [ 'audio' ];
+    const initialDevices = [ MEDIA_TYPE.AUDIO ];
     const requestedAudio = true;
     let requestedVideo = false;
-    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const startWithAudioMuted = getStartWithAudioMuted(APP.store.getState());
+
+    // On Electron there is no permission prompt for granting permissions. That's why we don't need to
+    // spend much time displaying the overlay screen. If GUM is not resolved within 15 seconds it will
+    // probably never resolve.
+    const timeout = browser.isElectron() ? 15000 : 60000;
 
     // Always get a handle on the audio input device so that we have statistics even if the user joins the
     // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
@@ -117,66 +128,76 @@ export function createPrejoinTracks() {
     }
 
     if (!startWithVideoMuted && !startAudioOnly) {
-        initialDevices.push('video');
+        initialDevices.push(MEDIA_TYPE.VIDEO);
         requestedVideo = true;
     }
 
-    let tryCreateLocalTracks;
+    let tryCreateLocalTracks: any = Promise.resolve([]);
+    const { dispatch } = APP.store;
 
-    if (!requestedAudio && !requestedVideo) {
-        // Resolve with no tracks
-        tryCreateLocalTracks = Promise.resolve([]);
-    } else {
+    dispatch(gumPending(initialDevices, IGUMPendingState.PENDING_UNMUTE));
+
+    if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
             devices: initialDevices,
-            firePermissionPromptIsShownEvent: true
+            firePermissionPromptIsShownEvent: true,
+            timeout
         }, APP.store)
-                .catch((err: Error) => {
-                    if (requestedAudio && requestedVideo) {
+        .catch(async (err: Error) => {
+            if (err.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
+                errors.audioAndVideoError = err;
 
-                        // Try audio only...
-                        errors.audioAndVideoError = err;
+                return [];
+            }
 
-                        return (
-                            createLocalTracksF({
-                                devices: [ 'audio' ],
-                                firePermissionPromptIsShownEvent: true
-                            }));
-                    } else if (requestedAudio && !requestedVideo) {
-                        errors.audioOnlyError = err;
+            // Retry with separate gUM calls.
+            const gUMPromises: any = [];
+            const tracks: any = [];
 
-                        return [];
-                    } else if (requestedVideo && !requestedAudio) {
-                        errors.videoOnlyError = err;
+            if (requestedAudio) {
+                gUMPromises.push(createLocalTracksF({
+                    devices: [ MEDIA_TYPE.AUDIO ],
+                    firePermissionPromptIsShownEvent: true,
+                    timeout
+                }));
+            }
 
-                        return [];
+            if (requestedVideo) {
+                gUMPromises.push(createLocalTracksF({
+                    devices: [ MEDIA_TYPE.VIDEO ],
+                    firePermissionPromptIsShownEvent: true,
+                    timeout
+                }));
+            }
+
+            const results = await Promise.allSettled(gUMPromises);
+            let errorMsg;
+
+            results.forEach((result, idx) => {
+                if (result.status === 'fulfilled') {
+                    tracks.push(result.value[0]);
+                } else {
+                    errorMsg = result.reason;
+                    const isAudio = idx === 0;
+
+                    logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
+                    if (isAudio) {
+                        errors.audioOnlyError = errorMsg;
+                    } else {
+                        errors.videoOnlyError = errorMsg;
                     }
-                    logger.error('Should never happen');
-                })
-                .catch((err: Error) => {
-                    // Log this just in case...
-                    if (!requestedAudio) {
-                        logger.error('The impossible just happened', err);
-                    }
-                    errors.audioOnlyError = err;
+                }
+            });
 
-                    // Try video only...
-                    return requestedVideo
-                        ? createLocalTracksF({
-                            devices: [ 'video' ],
-                            firePermissionPromptIsShownEvent: true
-                        })
-                        : [];
-                })
-                .catch((err: Error) => {
-                    // Log this just in case...
-                    if (!requestedVideo) {
-                        logger.error('The impossible just happened', err);
-                    }
-                    errors.videoOnlyError = err;
+            if (errors.audioOnlyError && errors.videoOnlyError) {
+                errors.audioAndVideoError = errorMsg;
+            }
 
-                    return [];
-                });
+            return tracks;
+        })
+        .finally(() => {
+            dispatch(gumPending(initialDevices, IGUMPendingState.NONE));
+        });
     }
 
     return {

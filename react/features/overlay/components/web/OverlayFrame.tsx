@@ -1,14 +1,14 @@
-import React, { Component, ReactChildren } from 'react';
+import React, { Component, ReactNode } from 'react';
 
 /**
  * The type of the React {@code Component} props of {@link OverlayFrame}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children: ReactChildren;
+    children: ReactNode;
 
     /**
      * Indicates the css style of the overlay. If true, then lighter; darker,
@@ -19,13 +19,13 @@ type Props = {
     /**
      * The style property.
      */
-    style: Object;
-};
+    style?: Object;
+}
 
 /**
  * Implements a React {@link Component} for the frame of the overlays.
  */
-export default class OverlayFrame extends Component<Props> {
+export default class OverlayFrame extends Component<IProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

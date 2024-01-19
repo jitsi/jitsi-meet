@@ -466,7 +466,6 @@
         "notificationTitle": "Čakáreň",
         "passwordField": "Zadajte heslo do konferencie",
         "passwordJoinButton": "Vstúpiť",
-        "reject": "Odmietnuť",
         "title": "Čakáreň",
         "toggleLabel": "Zapnúť čakáreň"
     },
@@ -540,6 +539,11 @@
         "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plne podporovaných prehliadačov</a>.",
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
         "unmute": "Zapnúť mikrofón"
+    },
+    "participantsPane": {
+        "actions": {
+            "reject": "Odmietnuť"
+        }
     },
     "passwordDigitsOnly": "až {{number}} číslic",
     "passwordSetRemotely": "nastavené iným účastníkom",
@@ -694,6 +698,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Meno",
+        "search": "Hľadať",
+        "searchHint": "Vyhľadajte účastníkov",
         "seconds": "{{count}}s",
         "speakerStats": "Štatistiky rečníka",
         "speakerTime": "Čas rečníka"

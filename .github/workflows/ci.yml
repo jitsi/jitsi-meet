@@ -12,14 +12,24 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v41
+    - name: Get changed lang files
+      id: lang-files
+      run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
     - run: npm install
     - name: Check git status
       run: git status
     - name: Normalize lang files to ensure sorted
+      if: steps.lang-files.outputs.all
       run: npm run lang-sort
+    - name: Check lang files are formatted correctly
+      if: steps.lang-files.outputs.all
+      run: npm run lint:lang
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci
+    - run: npm run lint:ci && npm run tsc:ci
   linux-build:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
@@ -42,3 +52,39 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: make
+  android-build:
+    name: Build mobile bundle (Android)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
+  ios-build:
+    name: Build mobile bundle (iOS)
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+  debian-build:
+    name: Test Debian packages build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: make
+    - run: sudo apt-get install -y debhelper
+    - run: dpkg-buildpackage -A -rfakeroot -us -uc -d
+    - run: make source-package

@@ -1,10 +1,8 @@
-// @ts-ignore
+import { IStore } from '../app/types';
 import conferenceStyles from '../conference/components/native/styles';
 
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { styles } from './components';
+import styles from './components/native/styles';
 import { SQUARE_TILE_ASPECT_RATIO, TILE_MARGIN } from './constants';
 import { getColumnCount, getTileViewParticipantCount } from './functions.native';
 
@@ -18,13 +16,18 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function setTileViewDimensions() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const participantCount = getTileViewParticipantCount(state);
-        const { clientHeight: height, clientWidth: width, safeAreaInsets = {} } = state['features/base/responsive-ui'];
+        const { clientHeight: height, clientWidth: width, safeAreaInsets = {
+            left: undefined,
+            right: undefined,
+            top: undefined,
+            bottom: undefined
+        } } = state['features/base/responsive-ui'];
         const { left = 0, right = 0, top = 0, bottom = 0 } = safeAreaInsets;
         const columns = getColumnCount(state);
-        const rows = Math.ceil(participantCount / columns);
+        const rows = Math.ceil(participantCount / columns); // @ts-ignore
         const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
         const heightToUse = height - top - bottom - (2 * conferenceBorder);
         const widthToUse = width - (TILE_MARGIN * 2) - left - right - (2 * conferenceBorder);
@@ -58,4 +61,25 @@ export function setTileViewDimensions() {
             }
         });
     };
+}
+
+/**
+ * Add participant to the active participants list.
+ *
+ * @param {string} _participantId - The Id of the participant to be added.
+ * @param {boolean?} _pinned - Whether the participant is pinned or not.
+ * @returns {Object}
+ */
+export function addStageParticipant(_participantId: string, _pinned = false): any {
+    return {};
+}
+
+/**
+ * Remove participant from the active participants list.
+ *
+ * @param {string} _participantId - The Id of the participant to be removed.
+ * @returns {Object}
+ */
+export function removeStageParticipant(_participantId: string): any {
+    return {};
 }

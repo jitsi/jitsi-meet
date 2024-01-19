@@ -31,19 +31,19 @@ interface IProps extends WithTranslation {
  * The type of the React {@code Component} state of
  * {@link PasswordRequiredPrompt}.
  */
-type State = {
+interface IState {
 
     /**
      * The password entered by the local participant.
      */
     password?: string;
-};
+}
 
 /**
  * Implements a React Component which prompts the user when a password is
  * required to join a conference.
  */
-class PasswordRequiredPrompt extends Component<IProps, State> {
+class PasswordRequiredPrompt extends Component<IProps, IState> {
     state = {
         password: ''
     };
@@ -93,6 +93,7 @@ class PasswordRequiredPrompt extends Component<IProps, State> {
                 <Input
                     autoFocus = { true }
                     className = 'dialog-bottom-margin'
+                    id = 'required-password-input'
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }

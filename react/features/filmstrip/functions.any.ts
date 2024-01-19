@@ -1,4 +1,4 @@
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import {
     getActiveSpeakersToBeDisplayed,
     getVirtualScreenshareParticipantOwnerId
@@ -94,4 +94,16 @@ export function updateRemoteParticipantsOnLeave(store: IStore, participantId: st
 
     reorderedParticipants.delete(participantId)
         && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
+}
+
+/**
+ * Returns whether tileview is completely disabled.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} - Whether tileview is completely disabled.
+ */
+export function isTileViewModeDisabled(state: IReduxState) {
+    const { tileView = {} } = state['features/base/config'];
+
+    return tileView.disabled;
 }

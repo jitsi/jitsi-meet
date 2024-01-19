@@ -6,13 +6,13 @@ import { createLocalizedTime } from '../timeFunctions';
 /**
  * The type of the React {@code Component} props of {@link TimeElapsed}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The milliseconds to be converted into a human-readable format.
      */
     time: number;
-};
+}
 
 /**
  * React component for displaying total time elapsed. Converts a total count of
@@ -22,7 +22,7 @@ type Props = {
  * @augments Component
  */
 
-const TimeElapsed = ({ time }: Props) => {
+const TimeElapsed = ({ time }: IProps) => {
     const { t } = useTranslation();
     const timeElapsed = createLocalizedTime(time, t);
 

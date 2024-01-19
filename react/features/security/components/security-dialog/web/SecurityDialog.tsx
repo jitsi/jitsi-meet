@@ -1,19 +1,16 @@
-/* eslint-disable lines-around-comment */
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import { setPassword as setPass } from '../../../../base/conference/actions';
+import { IJitsiConference } from '../../../../base/conference/reducer';
 import { getSecurityUiConfig } from '../../../../base/config/functions.any';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
-import { connect } from '../../../../base/redux/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-// @ts-ignore
-import { E2EESection } from '../../../../e2ee/components';
-// @ts-ignore
-import { LobbySection } from '../../../../lobby';
+import E2EESection from '../../../../e2ee/components/E2EESection';
+import LobbySection from '../../../../lobby/components/web/LobbySection';
 
 import PasswordSection from './PasswordSection';
-/* eslint-enable lines-around-comment */
 
 export interface INotifyClick {
     key: string;
@@ -36,7 +33,7 @@ interface IProps {
      * The JitsiConference for which to display a lock state and change the
      * password.
      */
-    _conference: Object;
+    _conference?: IJitsiConference;
 
     /**
      * Whether to hide the lobby password section.
@@ -47,12 +44,12 @@ interface IProps {
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    _locked: string;
+    _locked?: string;
 
     /**
      * The current known password for the JitsiConference.
      */
-    _password: string;
+    _password?: string;
 
     /**
      * The number of digits to be used in the password.
@@ -152,7 +149,7 @@ function mapStateToProps(state: IReduxState) {
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
-        _buttonsWithNotifyClick: buttonsWithNotifyClick,
+        _buttonsWithNotifyClick: buttonsWithNotifyClick ?? [],
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _dialIn: state['features/invite'],

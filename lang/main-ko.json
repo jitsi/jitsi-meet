@@ -602,6 +602,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "이름",
+        "search": "검색",
+        "searchHint": "참가자 검색",
         "seconds": "{{count}}s",
         "speakerStats": "접속자 통계",
         "speakerTime": "접속자 오디오 사용 시간"

@@ -464,7 +464,6 @@
         "notificationTitle": "ലോബി",
         "passwordField": "മീറ്റിംഗ് പാസ്‌വേഡ് നൽകുക",
         "passwordJoinButton": "ചേരുക",
-        "reject": "നിരസിക്കുക",
         "title": "ലോബി",
         "toggleLabel": "ലോബി പ്രവർത്തനക്ഷമമാക്കുക"
     },
@@ -538,6 +537,11 @@
         "suboptimalBrowserWarning": "നിങ്ങളുടെ മീറ്റിംഗ് അനുഭവം ഇവിടെ മികച്ചതായിരിക്കില്ലെന്ന് ഞങ്ങൾ ഭയപ്പെടുന്നു. ഇത് മെച്ചപ്പെടുത്തുന്നതിനുള്ള വഴികൾ ഞങ്ങൾ തിരയുന്നു, പക്ഷേ അതുവരെ ദയവായി <a href='{{recommendedBrowserPageLink}}' target='_blank'>പൂർണ്ണമായി പിന്തുണയ്‌ക്കുന്ന ബ്രൗസറുകളിൽ</a> ഒന്ന് ഉപയോഗിക്കാൻ ശ്രമിക്കുക..",
         "suboptimalExperienceTitle": "ബ്രൗസർ മുന്നറിയിപ്പ്",
         "unmute": "അൺമ്യൂട്ട്"
+    },
+    "participantsPane": {
+        "actions": {
+            "reject": "നിരസിക്കുക"
+        }
     },
     "passwordDigitsOnly": "{{number}} അക്കങ്ങൾ വരെ",
     "passwordSetRemotely": "മറ്റൊരു പങ്കാളി സജ്ജമാക്കിയത്",
@@ -715,6 +719,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "പേര്",
+        "search": "തിരയുക",
+        "searchHint": "പങ്കെടുക്കുന്നവരെ തിരയുക",
         "seconds": "{{count}}s",
         "speakerStats": "സ്പീക്കർ സ്ഥിതിവിവരക്കണക്കുകൾ",
         "speakerTime": "സ്പീക്കർ സമയം"

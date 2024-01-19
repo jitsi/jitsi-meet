@@ -1,3 +1,5 @@
+import { AnyAction } from 'redux';
+
 import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -11,7 +13,6 @@ import {
     TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_UPDATED,
-    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_WILL_CREATE
 } from './actionTypes';
 import { ITrack } from './types';
@@ -31,7 +32,7 @@ import { ITrack } from './types';
  * @param {Participant} action.participant - Information about participant.
  * @returns {Track|undefined}
  */
-function track(state: ITrack, action: any) {
+function track(state: ITrack, action: AnyAction) {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
         if (state.participantId === action.oldValue) {
@@ -73,20 +74,7 @@ function track(state: ITrack, action: any) {
         }
         break;
     }
-    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT: {
-        const t = action.track;
 
-        if (state.jitsiTrack === t) {
-            if (state.lastMediaEvent !== action.name) {
-
-                return {
-                    ...state,
-                    lastMediaEvent: action.name
-                };
-            }
-        }
-        break;
-    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const t = action.track;
 
@@ -117,7 +105,6 @@ ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], acti
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_OWNER_CHANGED:
-    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
         return state.map((t: ITrack) => track(t, action));
     case TRACK_ADDED: {

@@ -350,7 +350,7 @@ export function createOfferAnswerFailedEvent() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createPageReloadScheduledEvent(reason: string, timeout: number, details: Object) {
+export function createPageReloadScheduledEvent(reason: string, timeout: number, details: Object = {}) {
     return {
         action: 'page.reload.scheduled',
         attributes: {
@@ -887,7 +887,7 @@ export function createVpaasConferenceJoinedEvent(tenant: string) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createWelcomePageEvent(action: string, actionSubject: string, attributes = {}) {
+export function createWelcomePageEvent(action: string, actionSubject?: string, attributes = {}) {
     return {
         action,
         actionSubject,
@@ -932,5 +932,29 @@ export function createBreakoutRoomsEvent(actionSubject: string) {
 export function createGifSentEvent() {
     return {
         action: 'gif.sent'
+    };
+}
+
+/**
+ * Creates an event which indicates the whiteboard was opened.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createOpenWhiteboardEvent() {
+    return {
+        action: 'whiteboard.open'
+    };
+}
+
+/**
+ * Creates an event which indicates the whiteboard limit was enforced.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRestrictWhiteboardEvent() {
+    return {
+        action: 'whiteboard.restrict'
     };
 }

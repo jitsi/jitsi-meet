@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -8,23 +6,20 @@ import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowLeft } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
-// @ts-ignore
 import { getCountryCodeFromPhone } from '../../../utils';
-// @ts-ignore
 import Label from '../Label';
-/* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
 
     /**
      * The number to call in order to join the conference.
      */
-    number: string;
+    number: string | null;
 
     /**
      * Handler used when clicking the back button.
      */
-    onBack: Function;
+    onBack: (e?: React.MouseEvent) => void;
 
     /**
      * Click handler for primary button.
@@ -44,7 +39,7 @@ interface IProps extends WithTranslation {
     /**
      * The passCode of the conference.
      */
-    passCode: string;
+    passCode?: string | number;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -68,10 +63,15 @@ const useStyles = makeStyles()(theme => {
                 lineHeight: '24px',
                 margin: theme.spacing(1),
                 padding: theme.spacing(2),
+                userSelect: 'text',
 
                 '& .prejoin-dialog-dialin-num-container': {
                     minHeight: '48px',
                     margin: `${theme.spacing(2)} 0`
+                },
+
+                '& span': {
+                    userSelect: 'text'
                 }
             },
 
@@ -113,7 +113,7 @@ function DialinDialog(props: IProps) {
     } = props;
     const { classes } = useStyles();
     const flagClassName = `prejoin-dialog-flag iti-flag ${getCountryCodeFromPhone(
-        number
+        number ?? ''
     )}`;
 
     return (

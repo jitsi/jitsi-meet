@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of (redux) action to update the dropbox access token.
  *

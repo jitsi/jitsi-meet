@@ -2,29 +2,18 @@ import debounce from 'lodash/debounce';
 
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
-import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import {
     SET_CAR_MODE,
-    SET_TILE_VIEW,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
-import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_KICKED,
-    PARTICIPANT_LEFT
-} from '../participants/actionTypes';
-import {
-    getParticipantById,
-    getParticipantCount
-} from '../participants/functions';
+import { getParticipantById } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
-import { limitLastN } from './functions';
 import logger from './logger';
 
 /**
@@ -48,8 +37,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
-    const { lastNLimits } = state['features/base/lastn'];
-    const participantCount = getParticipantCount(state);
     const { carMode } = state['features/video-layout'];
 
     // Select the (initial) lastN value based on the following preference order.
@@ -57,14 +44,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 2. The last-n value from 'channelLastN' if specified in config.js.
     // 3. -1 as the default value.
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
-
-    // Apply last N limit based on the # of participants and config settings.
-    // @ts-ignore
-    const limitedLastN = limitLastN(participantCount, lastNLimits);
-
-    if (limitedLastN !== undefined) {
-        lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
-    }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
@@ -88,7 +67,11 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
         lastNSelected = 1;
     }
 
-    dispatch(setLastN(lastNSelected));
+    const { lastN } = state['features/base/lastn'];
+
+    if (lastN !== lastNSelected) {
+        dispatch(setLastN(lastNSelected));
+    }
 }, 1000); /* Don't send this more often than once a second. */
 
 
@@ -98,14 +81,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_KICKED:
-    case PARTICIPANT_LEFT:
-    case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
     case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
-    case SET_TILE_VIEW:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         _updateLastN(store);
         break;

@@ -1,6 +1,7 @@
 import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
@@ -10,12 +11,12 @@ import { muteRemote } from '../actions';
  * The type of the React {@code Component} props of
  * {@link AbstractMuteRemoteParticipantsVideoDialog}.
  */
-export type Props = {
+export interface IProps extends WithTranslation {
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not video moderation is on.
@@ -26,19 +27,14 @@ export type Props = {
      * The ID of the remote participant to be muted.
      */
     participantID: string;
-
-    /**
-     * Function to translate i18n labels.
-     */
-    t: Function;
-};
+}
 
 /**
  * Abstract dialog to confirm a remote participant video ute action.
  *
  * @augments Component
  */
-export default class AbstractMuteRemoteParticipantsVideoDialog<P extends Props = Props, State=void>
+export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps = IProps, State=any>
     extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.

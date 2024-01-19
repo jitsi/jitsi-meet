@@ -27,6 +27,7 @@ static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
 static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
+static NSString * const toggleCameraAction = @"org.jitsi.meet.TOGGLE_CAMERA";
 
 @implementation ExternalAPI
 
@@ -50,7 +51,8 @@ RCT_EXPORT_MODULE();
         @"CLOSE_CHAT": closeChatAction,
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
         @"SET_VIDEO_MUTED" : setVideoMutedAction,
-        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction
+        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction,
+        @"TOGGLE_CAMERA": toggleCameraAction
     };
 };
 
@@ -75,7 +77,8 @@ RCT_EXPORT_MODULE();
               closeChatAction,
               sendChatMessageAction,
               setVideoMutedAction,
-              setClosedCaptionsEnabledAction
+              setClosedCaptionsEnabledAction,
+              toggleCameraAction
     ];
 }
 
@@ -171,6 +174,10 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     NSDictionary *data = @{ @"enabled": [NSNumber numberWithBool:enabled]};
 
     [self sendEventWithName:setClosedCaptionsEnabledAction body:data];
+}
+
+- (void)toggleCamera {
+    [self sendEventWithName:toggleCameraAction body:nil];
 }
 
 @end

@@ -3,9 +3,14 @@ import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
 import { setPrejoinPageVisibility } from '../../prejoin/actions';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { getJwtName } from '../jwt/functions';
+import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { TRACK_ADDED } from '../tracks/actionTypes';
+import { ITrack } from '../tracks/types';
 
 import { updateSettings } from './actions';
+import logger from './logger';
+
 
 import './middleware.any';
 
@@ -26,6 +31,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     case PREJOIN_INITIALIZED:
         _maybeUpdateDisplayName(store);
+        break;
+    case TRACK_ADDED:
+        _maybeUpdateDeviceId(store, action.track);
         break;
     }
 
@@ -65,6 +73,33 @@ function _maybeUpdateDisplayName({ dispatch, getState }: IStore) {
             dispatch(updateSettings({
                 displayName
             }));
+        }
+    }
+}
+
+/**
+ * Maybe update the camera or mic device id when local track is added or updated.
+ *
+ * @param {Store} store - The redux store.
+ * @param {ITrack} track - The potential local track.
+ * @private
+ * @returns {void}
+ */
+function _maybeUpdateDeviceId({ dispatch, getState }: IStore, track: ITrack) {
+    if (track.local) {
+        const { cameraDeviceId, micDeviceId } = getState()['features/base/settings'];
+        const deviceId = track.jitsiTrack.getDeviceId();
+
+        if (track.mediaType === MEDIA_TYPE.VIDEO && track.videoType === 'camera' && cameraDeviceId !== deviceId) {
+            dispatch(updateSettings({
+                cameraDeviceId: track.jitsiTrack.getDeviceId()
+            }));
+            logger.info(`switched local video device to: ${deviceId}`);
+        } else if (track.mediaType === MEDIA_TYPE.AUDIO && micDeviceId !== deviceId) {
+            dispatch(updateSettings({
+                micDeviceId: track.jitsiTrack.getDeviceId()
+            }));
+            logger.info(`switched local audio input device to: ${deviceId}`);
         }
     }
 }

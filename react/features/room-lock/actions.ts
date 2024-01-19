@@ -7,12 +7,9 @@ import { conferenceLeft, setPassword } from '../base/conference/actions';
 import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
 import { IJitsiConference } from '../base/conference/reducer';
 import { hideDialog, openDialog } from '../base/dialog/actions';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { SecurityDialog } from '../security/components/security-dialog';
 
-// @ts-ignore
-import { PasswordRequiredPrompt } from './components';
+import PasswordRequiredPrompt from './components/PasswordRequiredPrompt';
 
 /**
  * Cancels a prompt for a password to join a specific conference/room.
@@ -30,7 +27,6 @@ export function _cancelPasswordRequiredPrompt(conference: any) {
             // unload and clean of the connection.
             APP.API.notifyReadyToClose();
 
-            // @ts-ignore
             dispatch(maybeRedirectToWelcomePage());
 
             return;

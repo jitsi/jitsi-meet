@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { type Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../../app/types';
-import { connect } from '../../../redux/functions';
+import { IReduxState, IStore } from '../../../../app/types';
 import { ASPECT_RATIO_WIDE } from '../../../responsive-ui/constants';
 import { storeVideoTransform } from '../../actions';
 
-// @ts-ignore
 import styles from './styles';
 
 
@@ -62,7 +60,7 @@ type Transform = {
     translateY: number;
 };
 
-type Props = {
+interface IProps {
 
     /**
      * The current aspect ratio of the screen.
@@ -104,9 +102,9 @@ type Props = {
      * Style of the top level transformable view.
      */
     style: Object;
-};
+}
 
-type State = {
+interface IState {
 
     /**
      * The current (non-transformed) layout of the View.
@@ -117,21 +115,21 @@ type State = {
      * The current transform that is applied.
      */
     transform: Transform;
-};
+}
 
 /**
  * An container that captures gestures such as pinch&zoom, touch or move.
  */
-class VideoTransform extends Component<Props, State> {
+class VideoTransform extends Component<IProps, IState> {
     /**
      * The gesture handler object.
      */
-    gestureHandlers: Object;
+    gestureHandlers: any;
 
     /**
      * The initial distance of the fingers on pinch start.
      */
-    initialDistance: number;
+    initialDistance?: number;
 
     /**
      * The initial position of the finger on touch start.
@@ -156,7 +154,7 @@ class VideoTransform extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -199,7 +197,7 @@ class VideoTransform extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevProps.streamId !== this.props.streamId) {
             this._storeTransform(prevProps.streamId, prevState.transform);
             this._restoreTransform(this.props.streamId);
@@ -235,8 +233,6 @@ class VideoTransform extends Component<Props, State> {
                     videoTransformedViewContainerStyles,
                     style
                 ] }
-
-                // @ts-ignore
                 { ...this.gestureHandlers.panHandlers }>
                 <SafeAreaView
                     edges = { [ 'bottom', 'left' ] }
@@ -490,7 +486,7 @@ class VideoTransform extends Component<Props, State> {
      * @param {?Object | number} value - The value of the gesture, if any.
      * @returns {void}
      */
-    _onGesture(type: string, value: any) {
+    _onGesture(type: string, value?: any) {
         let transform;
 
         switch (type) {
@@ -601,7 +597,8 @@ class VideoTransform extends Component<Props, State> {
                 this._onGesture('scale', scale);
             }
         } else if (gestureState.numberActiveTouches === 1
-                && isNaN(this.initialDistance)
+                && (this.initialDistance === undefined
+                || isNaN(this.initialDistance))
                 && this._didMove(gestureState)) {
             // this is a move event
             const position = this._getTouchPosition(evt);
@@ -624,11 +621,9 @@ class VideoTransform extends Component<Props, State> {
      */
     _onPanResponderRelease() {
         if (this.lastTap && Date.now() - this.lastTap < TAP_TIMEOUT_MS) {
-            // @ts-ignore
             this._onGesture('press');
         }
 
-        // @ts-ignore
         delete this.initialDistance;
         this.initialPosition = {
             x: 0,
@@ -692,7 +687,7 @@ class VideoTransform extends Component<Props, State> {
  *     _onUnmount: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<any>) {
+function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         /**
          * Dispatches actions to store the last applied transform to a video.

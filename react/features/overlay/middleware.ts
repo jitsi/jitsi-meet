@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-
 import { IStore } from '../app/types';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
@@ -108,11 +106,8 @@ StateListenerRegistry.register(
                 ...error,
                 ...getErrorExtraInfo(state, error)
             });
-        }
-
-        if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
+        } else if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
             setTimeout(() => {
-                // @ts-ignore
                 store.dispatch(openPageReloadDialog());
             }, 500);
         }

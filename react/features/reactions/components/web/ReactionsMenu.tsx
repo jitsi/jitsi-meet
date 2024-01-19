@@ -1,31 +1,30 @@
-import { Theme } from '@mui/material';
-import { ClassNameMap, withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { createReactionMenuEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
 import { raiseHand } from '../../../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import GifsMenu from '../../../gifs/components/web/GifsMenu';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import GifsMenuButton from '../../../gifs/components/web/GifsMenuButton';
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
+import {
+    GIFS_MENU_HEIGHT_IN_OVERFLOW_MENU,
+    RAISE_HAND_ROW_HEIGHT, REACTIONS,
+    REACTIONS_MENU_HEIGHT_DRAWER,
+    REACTIONS_MENU_HEIGHT_IN_OVERFLOW_MENU
+} from '../../constants';
+import { IReactionsMenuParent } from '../../types';
 
-// @ts-ignore
 import ReactionButton from './ReactionButton';
 
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * Docks the toolbox.
@@ -43,11 +42,6 @@ interface IProps extends WithTranslation {
     _isGifMenuVisible: boolean;
 
     /**
-     * Whether or not it's a mobile browser.
-     */
-    _isMobile: boolean;
-
-    /**
      * The ID of the local participant.
      */
     _localParticipantID?: string;
@@ -58,175 +52,179 @@ interface IProps extends WithTranslation {
     _raisedHand: boolean;
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes: ClassNameMap<string>;
-
-    /**
      * The Redux Dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
-     * Whether or not it's displayed in the overflow menu.
+     * Indicates the parent of the reactions menu.
      */
-    overflowMenu?: boolean;
+    parent: IReactionsMenuParent;
+
+    /**
+     * Whether to show the raised hand button.
+     */
+    showRaisedHand?: boolean;
 }
 
-const styles = (theme: Theme) => {
+const useStyles = makeStyles<IProps>()((theme, props: IProps) => {
+    const { parent, showRaisedHand, _isGifMenuVisible } = props;
+    let reactionsMenuHeight = REACTIONS_MENU_HEIGHT_DRAWER;
+
+    if (parent === IReactionsMenuParent.OverflowDrawer || parent === IReactionsMenuParent.OverflowMenu) {
+        if (parent === IReactionsMenuParent.OverflowMenu) {
+            reactionsMenuHeight = REACTIONS_MENU_HEIGHT_IN_OVERFLOW_MENU;
+
+            if (_isGifMenuVisible) {
+                reactionsMenuHeight += GIFS_MENU_HEIGHT_IN_OVERFLOW_MENU;
+            }
+        }
+        if (!showRaisedHand) {
+            reactionsMenuHeight -= RAISE_HAND_ROW_HEIGHT;
+        }
+    }
+
     return {
+        reactionsMenuInOverflowMenu: {
+            '&.reactions-menu': {
+                '&.with-gif': {
+                    width: 'inherit'
+                },
+                '.reactions-row': {
+                    '.toolbox-icon': {
+                        width: '24px',
+                        height: '24px',
+
+                        'span.emoji': {
+                            width: '24px',
+                            height: '24px',
+                            lineHeight: '24px',
+                            fontSize: '16px'
+                        }
+                    }
+                },
+                '.raise-hand-row': {
+                    '.toolbox-icon': {
+                        height: '32px'
+                    }
+                }
+            }
+        },
         overflow: {
             width: 'auto',
             paddingBottom: 'max(env(safe-area-inset-bottom, 0), 16px)',
             backgroundColor: theme.palette.ui01,
             boxShadow: 'none',
             borderRadius: 0,
-            position: 'relative' as const,
-            boxSizing: 'border-box' as const,
-            height: `${REACTIONS_MENU_HEIGHT}px`
+            position: 'relative',
+            boxSizing: 'border-box',
+            height: `${reactionsMenuHeight}px`
         }
     };
+});
+
+const _getReactionButtons = (dispatch: IStore['dispatch'], t: Function) => {
+    let modifierKey = 'Alt';
+
+    if (window.navigator?.platform) {
+        if (window.navigator.platform.indexOf('Mac') !== -1) {
+            modifierKey = '⌥';
+        }
+    }
+
+    return Object.keys(REACTIONS).map(key => {
+        /**
+         * Sends reaction message.
+         *
+         * @returns {void}
+         */
+        function doSendReaction() {
+            dispatch(addReactionToBuffer(key));
+            sendAnalytics(createReactionMenuEvent(key));
+        }
+
+        return (<ReactionButton
+            accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
+            icon = { REACTIONS[key].emoji }
+            key = { key }
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick = { doSendReaction }
+            toggled = { false }
+            tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
+    });
 };
 
-/**
- * Implements the reactions menu.
- *
- * @returns {ReactElement}
- */
-class ReactionsMenu extends Component<IProps> {
-    /**
-     * Initializes a new {@code ReactionsMenu} instance.
-     *
-     * @param {IProps} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+const ReactionsMenu = (props: IProps) => {
+    const {
+        _dockToolbox,
+        _isGifEnabled,
+        _isGifMenuVisible,
+        _raisedHand,
+        dispatch,
+        parent,
+        showRaisedHand = false
+    } = props;
+    const isInOverflowMenu
+        = parent === IReactionsMenuParent.OverflowDrawer || parent === IReactionsMenuParent.OverflowMenu;
+    const { classes, cx } = useStyles(props);
+    const { t } = useTranslation();
 
-        this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
-        this._getReactionButtons = this._getReactionButtons.bind(this);
-    }
+    useEffect(() => {
+        _dockToolbox(true);
 
-    /**
-     * Implements React Component's componentDidMount.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this.props._dockToolbox(true);
-    }
+        return () => {
+            _dockToolbox(false);
+        };
+    }, []);
 
-    /**
-     * Implements React Component's componentWillUnmount.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this.props._dockToolbox(false);
-    }
+    const _doToggleRaiseHand = useCallback(() => {
+        dispatch(raiseHand(!_raisedHand));
+    }, [ _raisedHand ]);
 
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * raise hand.
-     *
-     * @returns {void}
-     */
-    _onToolbarToggleRaiseHand() {
-        const { dispatch, _raisedHand } = this.props;
-
+    const _onToolbarToggleRaiseHand = useCallback(() => {
         sendAnalytics(createToolbarEvent(
             'raise.hand',
             { enable: !_raisedHand }));
-        this._doToggleRaiseHand();
+        _doToggleRaiseHand();
         dispatch(toggleReactionsMenuVisibility());
+    }, [ _raisedHand ]);
+
+    const buttons = _getReactionButtons(dispatch, t);
+
+    if (_isGifEnabled) {
+        buttons.push(<GifsMenuButton parent = { parent } />);
     }
 
-    /**
-     * Dispatches an action to toggle the local participant's raised hand state.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleRaiseHand() {
-        const { _raisedHand } = this.props;
-
-        this.props.dispatch(raiseHand(!_raisedHand));
-    }
-
-    /**
-     * Returns the emoji reaction buttons.
-     *
-     * @returns {Array}
-     */
-    _getReactionButtons() {
-        const { t, dispatch } = this.props;
-        let modifierKey = 'Alt';
-
-        if (window.navigator?.platform) {
-            if (window.navigator.platform.indexOf('Mac') !== -1) {
-                modifierKey = '⌥';
-            }
-        }
-
-        return Object.keys(REACTIONS).map(key => {
-            /**
-             * Sends reaction message.
-             *
-             * @returns {void}
-             */
-            function doSendReaction() {
-                dispatch(addReactionToBuffer(key));
-                sendAnalytics(createReactionMenuEvent(key));
-            }
-
-            // @ts-ignore
-            return (<ReactionButton
-                accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
-                icon = { REACTIONS[key].emoji }
-                key = { key }
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick = { doSendReaction }
-                toggled = { false }
-                tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
-        });
-    }
-
-    /**
-     * Implements React's {@link Component#render}.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const { _raisedHand, t, overflowMenu, _isMobile, classes, _isGifMenuVisible, _isGifEnabled } = this.props;
-
-        return (
-            <div
-                className = { clsx('reactions-menu', _isGifEnabled && 'with-gif',
-                    overflowMenu && `overflow ${classes.overflow}`) }>
-                {_isGifEnabled && _isGifMenuVisible && <GifsMenu />}
-                <div className = 'reactions-row'>
-                    { this._getReactionButtons() }
-                    {_isGifEnabled && <GifsMenuButton />}
-                </div>
-                {_isMobile && (
-                    <div className = 'raise-hand-row'>
-                        {/* @ts-ignore */}
-                        <ReactionButton
-                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                            icon = '✋'
-                            key = 'raisehand'
-                            label = {
-                                `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)}
-                                ${overflowMenu ? '' : ' (R)'}`
-                            }
-                            onClick = { this._onToolbarToggleRaiseHand }
-                            toggled = { true } />
-                    </div>
-                )}
+    return (
+        <div
+            className = { cx('reactions-menu',
+                parent === IReactionsMenuParent.OverflowMenu && classes.reactionsMenuInOverflowMenu,
+                _isGifEnabled && 'with-gif',
+                isInOverflowMenu && `overflow ${classes.overflow}`) }>
+            {_isGifEnabled && _isGifMenuVisible
+                && <GifsMenu
+                    columns = { parent === IReactionsMenuParent.OverflowMenu ? 1 : undefined }
+                    parent = { parent } />}
+            <div className = 'reactions-row'>
+                { buttons }
             </div>
-        );
-    }
-}
+            {showRaisedHand && (
+                <div className = 'raise-hand-row'>
+                    <ReactionButton
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                        icon = '✋'
+                        key = 'raisehand'
+                        label = {
+                            `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)}
+                                ${isInOverflowMenu ? '' : ' (R)'}`
+                        }
+                        onClick = { _onToolbarToggleRaiseHand }
+                        toggled = { true } />
+                </div>
+            )}
+        </div>
+    );
+};
 
 /**
  * Function that maps parts of Redux state tree into component props.
@@ -236,11 +234,9 @@ class ReactionsMenu extends Component<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
-    const { isNarrowLayout } = state['features/base/responsive-ui'];
 
     return {
         _localParticipantID: localParticipant?.id,
-        _isMobile: isMobileBrowser() || isNarrowLayout,
         _isGifEnabled: isGifEnabled(state),
         _isGifMenuVisible: isGifsMenuOpen(state),
         _raisedHand: hasRaisedHand(localParticipant)
@@ -260,7 +256,4 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
     };
 }
 
-export default translate(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withStyles(styles)(ReactionsMenu)));
+export default connect(mapStateToProps, mapDispatchToProps)(ReactionsMenu);

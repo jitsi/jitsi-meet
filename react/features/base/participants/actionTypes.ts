@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Create an action for when dominant speaker changes.
  *
@@ -204,6 +202,14 @@ export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
  * }
  */
 export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
+
+/**
+ * Clear the raise hand queue.
+ * {
+ *     type: RAISE_HAND_CLEAR
+ * }
+ */
+export const RAISE_HAND_CLEAR = 'RAISE_HAND_CLEAR';
 
 /**
  * Updates participant in raise hand queue.

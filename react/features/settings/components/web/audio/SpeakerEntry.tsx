@@ -1,10 +1,10 @@
-import clsx from 'clsx';
 import React, { useRef } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { IconCheck } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
-import { BUTTON_TYPES } from '../../../../base/ui/constants.any';
+import { BUTTON_TYPES, TEXT_OVERFLOW_TYPES } from '../../../../base/ui/constants.any';
 import logger from '../../../logger';
 
 const TEST_SOUND_PATH = 'sounds/ring.mp3';
@@ -39,13 +39,46 @@ interface IProps {
      */
     length: number;
 
-    listHeaderId: string;
-
     /**
      * Click handler for the component.
      */
     onClick: Function;
 }
+
+const useStyles = makeStyles()(() => {
+    return {
+        container: {
+            position: 'relative',
+
+            [[ '&:hover', '&:focus', '&:focus-within' ] as any]: {
+                '& .entryText': {
+                    maxWidth: '178px',
+                    marginRight: 0
+                },
+
+                '& .testButton': {
+                    display: 'inline-block'
+                }
+            }
+        },
+
+        entryText: {
+            maxWidth: '238px',
+
+            '&.left-margin': {
+                marginLeft: '36px'
+            }
+        },
+
+        testButton: {
+            display: 'none',
+            padding: '4px 10px',
+            position: 'absolute',
+            right: '16px',
+            top: '6px'
+        }
+    };
+});
 
 /**
  * Implements a React {@link Component} which displays an audio
@@ -56,6 +89,7 @@ interface IProps {
  */
 const SpeakerEntry = (props: IProps) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { classes, cx } = useStyles();
 
     /**
      * Click handler for the entry.
@@ -75,7 +109,7 @@ const SpeakerEntry = (props: IProps) => {
      * @returns {void}
      */
     function _onKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ') {
+        if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             props.onClick(props.deviceId);
         }
@@ -91,7 +125,7 @@ const SpeakerEntry = (props: IProps) => {
     async function _onTestButtonClick(e: React.KeyboardEvent | React.MouseEvent) {
         e.stopPropagation();
 
-        try { // @ts-ignore
+        try {
             await audioRef.current?.setSinkId(props.deviceId);
             audioRef.current?.play();
         } catch (err) {
@@ -99,30 +133,28 @@ const SpeakerEntry = (props: IProps) => {
         }
     }
 
-    const { children, isSelected, index, deviceId, length, listHeaderId } = props;
-    const deviceTextId = `choose_speaker${deviceId}`;
-    const labelledby = `${listHeaderId} ${deviceTextId} `;
+    const { children, isSelected, index, length } = props;
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <li
             aria-checked = { isSelected }
-            aria-labelledby = { labelledby }
             aria-posinset = { index }
             aria-setsize = { length }
-            className = 'audio-preview-speaker'
+            className = { classes.container }
             onClick = { _onClick }
             onKeyPress = { _onKeyPress }
             role = 'radio'
             tabIndex = { 0 }>
             <ContextMenuItem
-                accessibilityLabel = ''
+                accessibilityLabel = { children }
                 icon = { isSelected ? IconCheck : undefined }
+                overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
                 text = { children }
-                textClassName = { clsx('audio-preview-entry-text', !isSelected && 'left-margin') }>
+                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') }>
                 <Button
-                    className = 'audio-preview-test-button'
+                    className = { cx(classes.testButton, 'testButton') }
                     label = 'Test'
                     onClick = { _onTestButtonClick }
                     onKeyPress = { _onTestButtonClick }

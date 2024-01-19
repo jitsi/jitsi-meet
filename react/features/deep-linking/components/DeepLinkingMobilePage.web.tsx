@@ -14,12 +14,9 @@ import { translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
-// @ts-ignore
 import DialInSummary from '../../invite/components/dial-in-summary/web/DialInSummary';
 import { openWebApp } from '../actions';
-// @ts-ignore
 import { _TNS } from '../constants';
-// @ts-ignore
 import { generateDeepLinkingURL } from '../functions';
 
 
@@ -33,7 +30,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         container: {
             background: '#1E1E1E',
             width: '100vw',
-            height: '100vh',
+            height: '100dvh',
             overflowX: 'hidden',
             overflowY: 'auto',
             justifyContent: 'center',
@@ -231,6 +228,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                 <DialInSummary
                     className = 'deep-linking-dial-in'
                     clickableNumbers = { true }
+                    hideError = { true }
                     room = { room }
                     url = { url } />
             </div>

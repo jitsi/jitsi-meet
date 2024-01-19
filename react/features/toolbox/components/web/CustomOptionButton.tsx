@@ -1,29 +1,25 @@
 import React from 'react';
 
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
+    backgroundColor?: string;
     icon: string;
+    id?: string;
     text: string;
-};
+}
 
 /**
  * Component that renders a custom toolbox button.
  *
  * @returns {Component}
  */
-class CustomOptionButton extends AbstractButton<Props, any, any> {
-    // @ts-ignore
+class CustomOptionButton extends AbstractButton<IProps> {
     iconSrc = this.props.icon;
-
-    // @ts-ignore
     id = this.props.id;
-
-    // @ts-ignore
     text = this.props.text;
+    backgroundColor = this.props.backgroundColor;
 
     accessibilityLabel = this.text;
 

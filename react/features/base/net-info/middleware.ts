@@ -14,7 +14,6 @@ import type { NetworkInfo } from './types';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 

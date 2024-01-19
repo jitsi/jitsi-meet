@@ -136,7 +136,6 @@ function getConfig(options = {}) {
 
                             }
                         ],
-                        require.resolve('@babel/preset-flow'),
                         require.resolve('@babel/preset-react')
                     ]
                 },
@@ -149,21 +148,6 @@ function getConfig(options = {}) {
                     'style-loader',
                     'css-loader'
                 ]
-            }, {
-                test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
-                        '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
-                    }
-                }
-            }, {
-                test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
-                    }
-                }
             }, {
                 test: /\.svg$/,
                 use: [ {
@@ -314,7 +298,7 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'alwaysontop': './react/features/always-on-top/index.js'
+                'alwaysontop': './react/features/always-on-top/index.tsx'
             },
             plugins: [
                 ...config.plugins,
@@ -355,7 +339,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 35 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 40 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -399,6 +383,17 @@ module.exports = (_env, argv) => {
 
                 globalObject: 'AudioWorkletGlobalScope'
             }
+        }),
+
+        Object.assign({}, config, {
+            entry: {
+                'screenshot-capture-worker': './react/features/screenshot-capture/worker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 4 * 1024)
         })
     ];
 };

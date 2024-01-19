@@ -1,22 +1,19 @@
-/* eslint-disable lines-around-comment */
+import { connect } from 'react-redux';
+
 import { IReduxState } from '../../../app/types';
 import { CAR_MODE_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconCar } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
-// @ts-ignore
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
 
 /**
  * Implements an {@link AbstractButton} to open the carmode.
  */
-class OpenCarmodeButton extends AbstractButton<AbstractButtonProps, any, any> {
+class OpenCarmodeButton extends AbstractButton<AbstractButtonProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.carmode';
     icon = IconCar;
     label = 'carmode.labels.buttonLabel';
@@ -48,5 +45,5 @@ function _mapStateToProps(state: IReduxState, ownProps: AbstractButtonProps): Ob
         visible
     };
 }
-// @ts-ignore
+
 export default translate(connect(_mapStateToProps)(OpenCarmodeButton));

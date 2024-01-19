@@ -2,16 +2,16 @@
 
 import Logger from '@jitsi/logger';
 
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media/constants';
 import {
     getParticipantById,
     getPinnedParticipant,
     isScreenShareParticipantById
-} from '../../../react/features/base/participants';
+} from '../../../react/features/base/participants/functions';
 import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
-} from '../../../react/features/base/tracks';
+} from '../../../react/features/base/tracks/functions.any';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -23,11 +23,8 @@ const VideoLayout = {
     /**
      * Handler for local flip X changed event.
      */
-    onLocalFlipXChanged() {
+    onLocalFlipXChanged(localFlipX) {
         if (largeVideo) {
-            const { store } = APP;
-            const { localFlipX } = store.getState()['features/base/settings'];
-
             largeVideo.onLocalFlipXChange(localFlipX);
         }
     },
@@ -136,12 +133,6 @@ const VideoLayout = {
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(false);
-        }
-    },
-
-    changeUserAvatar(id, avatarUrl) {
-        if (this.isCurrentlyOnLarge(id)) {
-            largeVideo.updateAvatar(avatarUrl);
         }
     },
 

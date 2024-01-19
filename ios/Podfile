@@ -1,7 +1,11 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-platform :ios, '12.0'
+platform :ios, '13.4'
 workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
@@ -21,8 +25,9 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
+  flags = get_default_flags()
   use_react_native!(
-    :path => config["reactNativePath"],
+    :path => config[:reactNativePath],
     :hermes_enabled => false,
     :fabric_enabled => false,
     # An absolute path to your application root.
@@ -42,7 +47,6 @@ target 'JitsiMeetSDK' do
 
   pod 'CocoaLumberjack', '3.7.2'
   pod 'ObjectiveDropboxOfficial', '6.2.3'
-  pod 'JitsiWebRTC', '~> 106.0.0'
 end
 
 target 'JitsiMeetSDKLite' do
@@ -53,24 +57,28 @@ target 'JitsiMeetSDKLite' do
 
     # React Native and its dependencies
     #
-  
+
     config = use_native_modules!
     use_react_native!(
-      :path => config["reactNativePath"],
+      :path => config[:reactNativePath],
       :hermes_enabled => false,
       :fabric_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )
-  
+
     # Native pod dependencies
     #
-  
+
     pod 'CocoaLumberjack', '3.7.2'
 end
 
 post_install do |installer|
-  react_native_post_install(installer)
+  react_native_post_install(
+    installer,
+    use_native_modules![:reactNativePath],
+    :mac_catalyst_enabled => false
+  )
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
@@ -81,7 +89,8 @@ post_install do |installer|
     end
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+      config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
   end
 end

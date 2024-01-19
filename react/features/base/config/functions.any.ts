@@ -1,12 +1,11 @@
 // @ts-ignore
-import Bourne from '@hapi/bourne';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { safeJsonParse } from '@jitsi/js-utils/json';
 import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
-import { browser } from '../lib-jitsi-meet';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -57,16 +56,6 @@ export function createFakeConfig(baseURL: string) {
  */
 export function getMeetingRegion(state: IReduxState) {
     return state['features/base/config']?.deploymentInfo?.region || '';
-}
-
-/**
- * Selector for determining if sending multiple stream support is enabled.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
-    return isUnifiedPlanEnabled(state);
 }
 
 /**
@@ -206,19 +195,6 @@ export function isDisplayNameVisible(state: IReduxState): boolean {
 }
 
 /**
- * Selector for determining if Unified plan support is enabled.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isUnifiedPlanEnabled(state: IReduxState): boolean {
-    const { enableUnifiedOnChrome = true } = state['features/base/config'];
-
-    return browser.supportsUnifiedPlan()
-        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
-}
-
-/**
  * Restores a Jitsi Meet config.js from {@code localStorage} if it was
  * previously downloaded from a specific {@code baseURL} and stored with
  * {@link storeConfig}.
@@ -235,7 +211,7 @@ export function restoreConfig(baseURL: string) {
 
     if (config) {
         try {
-            return Bourne.parse(config) || undefined;
+            return safeJsonParse(config) || undefined;
         } catch (e) {
             // Somehow incorrect data ended up in the storage. Clean it up.
             jitsiLocalStorage.removeItem(key);
@@ -244,8 +220,6 @@ export function restoreConfig(baseURL: string) {
 
     return undefined;
 }
-
-/* eslint-disable max-params */
 
 /**
  * Inspects the hash part of the location URI and overrides values specified

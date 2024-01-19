@@ -1,3 +1,9 @@
+import { createRestrictWhiteboardEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+
 import {
     RESET_WHITEBOARD,
     SETUP_WHITEBOARD,
@@ -49,4 +55,28 @@ export const setWhiteboardOpen = (isOpen: boolean): IWhiteboardAction => {
         type: SET_WHITEBOARD_OPEN,
         isOpen
     };
+};
+
+/**
+ * Shows a warning notification about the whiteboard user limit.
+ *
+ * @returns {Function}
+ */
+export const notifyWhiteboardLimit = () => (dispatch: IStore['dispatch']) => {
+    dispatch(showWarningNotification({
+        titleKey: 'notify.whiteboardLimitTitle',
+        descriptionKey: 'notify.whiteboardLimitDescription'
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+};
+
+/**
+ * Restricts the whiteboard usage.
+ *
+ * @param {boolean} shouldCloseWhiteboard - Whether to dismiss the whiteboard participant.
+ * @returns {Function}
+ */
+export const restrictWhiteboard = (shouldCloseWhiteboard = true) => (dispatch: IStore['dispatch']) => {
+    shouldCloseWhiteboard && dispatch(setWhiteboardOpen(false));
+    dispatch(resetWhiteboard());
+    sendAnalytics(createRestrictWhiteboardEvent());
 };

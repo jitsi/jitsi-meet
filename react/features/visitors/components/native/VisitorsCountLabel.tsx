@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { IconUsers } from '../../../base/icons/svg';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Label from '../../../base/label/components/native/Label';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { getVisitorsShortText, iAmVisitor } from '../../functions';
@@ -30,14 +28,14 @@ const VisitorsCountLabel = () => {
     const visitorsCount = useSelector((state: IReduxState) =>
         state['features/visitors'].count || 0);
 
-    return visitorsMode && (
+    return !visitorsMode && visitorsCount > 0 ? (
         <Label
             icon = { IconUsers }
             iconColor = { BaseTheme.palette.uiBackground }
             style = { styles.raisedHandsCountLabel }
             text = { `${getVisitorsShortText(visitorsCount)}` }
             textStyle = { styles.raisedHandsCountLabelText } />
-    );
+    ) : null;
 };
 
 export default VisitorsCountLabel;

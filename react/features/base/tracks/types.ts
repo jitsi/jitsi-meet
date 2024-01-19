@@ -44,9 +44,9 @@ export interface ITrackOptions {
  * any.
  */
 export interface ITrack {
+    getOriginalStream: Function;
     isReceivingData: boolean;
     jitsiTrack: any;
-    lastMediaEvent?: string;
     local: boolean;
     mediaType: MediaType;
     mirror: boolean;

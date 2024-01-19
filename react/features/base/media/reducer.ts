@@ -1,10 +1,11 @@
-import { combineReducers } from 'redux';
+import { AnyAction, combineReducers } from 'redux';
 
 import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { TRACK_REMOVED } from '../tracks/actionTypes';
 
 import {
+    GUM_PENDING,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
@@ -16,7 +17,8 @@ import {
     STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
-import { CAMERA_FACING_MODE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
+import { IGUMPendingState } from './types';
 
 /**
  * Media state object for local audio.
@@ -36,6 +38,7 @@ import { CAMERA_FACING_MODE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
  */
 export const _AUDIO_INITIAL_MEDIA_STATE = {
     available: true,
+    gumPending: IGUMPendingState.NONE,
     unmuteBlocked: false,
     muted: false
 };
@@ -49,13 +52,23 @@ export const _AUDIO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {AudioMediaState}
  */
-function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: any) {
+function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
     case SET_AUDIO_AVAILABLE:
         return {
             ...state,
             available: action.available
         };
+
+    case GUM_PENDING:
+        if (action.mediaTypes.includes(MEDIA_TYPE.AUDIO)) {
+            return {
+                ...state,
+                gumPending: action.status
+            };
+        }
+
+        return state;
 
     case SET_AUDIO_MUTED:
         return {
@@ -103,7 +116,7 @@ export const _SCREENSHARE_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {ScreenshareMediaState}
  */
-function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: any) {
+function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
     case SET_SCREENSHARE_MUTED:
         return {
@@ -141,6 +154,7 @@ function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STAT
  */
 export const _VIDEO_INITIAL_MEDIA_STATE = {
     available: true,
+    gumPending: IGUMPendingState.NONE,
     unmuteBlocked: false,
     facingMode: CAMERA_FACING_MODE.USER,
     muted: 0,
@@ -166,6 +180,16 @@ function _video(state: IVideoState = _VIDEO_INITIAL_MEDIA_STATE, action: any) {
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         return _clearAllVideoTransforms(state);
+
+    case GUM_PENDING:
+        if (action.mediaTypes.includes(MEDIA_TYPE.VIDEO)) {
+            return {
+                ...state,
+                gumPending: action.status
+            };
+        }
+
+        return state;
 
     case SET_CAMERA_FACING_MODE:
         return {
@@ -218,6 +242,7 @@ function _video(state: IVideoState = _VIDEO_INITIAL_MEDIA_STATE, action: any) {
 
 interface IAudioState {
     available: boolean;
+    gumPending: IGUMPendingState;
     muted: boolean;
     unmuteBlocked: boolean;
 }
@@ -231,6 +256,7 @@ interface IScreenshareState {
 interface IVideoState {
     available: boolean;
     facingMode: string;
+    gumPending: IGUMPendingState;
     muted: number;
     transforms: Object;
     unmuteBlocked: boolean;

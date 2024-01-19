@@ -1,6 +1,7 @@
 import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { IJitsiConference } from '../conference/reducer';
 import { set } from '../redux/functions';
 
 import {
@@ -21,6 +22,7 @@ import {
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
+    RAISE_HAND_CLEAR,
     RAISE_HAND_UPDATED,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL,
@@ -60,7 +62,7 @@ import { FakeParticipant, IJitsiParticipant, IParticipant } from './types';
  * }}
  */
 export function dominantSpeakerChanged(
-        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: any) {
+        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: IJitsiConference) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
@@ -386,7 +388,9 @@ export function hiddenParticipantLeft(id: string) {
  *     }
  * }}
  */
-export function participantLeft(id: string, conference: any, participantLeftProps: any = {}) {
+export function participantLeft(id: string, conference?: IJitsiConference, participantLeftProps: {
+    fakeParticipant?: string; isReplaced?: boolean;
+} = {}) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
@@ -516,7 +520,7 @@ export function participantMutedUs(participant: any, track: any) {
  * @param {JitsiConference} conference - The conference instance for which the participant is to be created.
  * @returns {Function}
  */
-export function createVirtualScreenshareParticipant(sourceName: string, local: boolean, conference: any) {
+export function createVirtualScreenshareParticipant(sourceName: string, local: boolean, conference?: IJitsiConference) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
@@ -623,6 +627,19 @@ export function raiseHand(enabled: boolean) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
         raisedHandTimestamp: enabled ? Date.now() : 0
+    };
+}
+
+/**
+ * Clear the raise hand queue.
+ *
+ * @returns {{
+*     type: RAISE_HAND_CLEAR
+* }}
+*/
+export function raiseHandClear() {
+    return {
+        type: RAISE_HAND_CLEAR
     };
 }
 

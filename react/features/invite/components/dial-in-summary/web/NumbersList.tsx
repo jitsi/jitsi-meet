@@ -1,12 +1,11 @@
-/* eslint-disable lines-around-comment */
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import React, { useCallback, useMemo } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
-import { Icon, IconSip } from '../../../../base/icons';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconSip } from '../../../../base/icons/svg';
 
 countries.registerLocale(en);
 
@@ -29,7 +28,7 @@ interface INormalizedNumber {
 }
 
 interface INumbersMapping {
-     [countryName: string]: Array<INormalizedNumber>;
+    [countryName: string]: Array<INormalizedNumber>;
 }
 
 interface IProps extends WithTranslation {
@@ -42,13 +41,13 @@ interface IProps extends WithTranslation {
     /**
      * The conference ID for dialing in.
      */
-    conferenceID: number;
+    conferenceID: number | null;
 
     /**
      * The phone numbers to display. Can be an array of number Objects or an
      * object with countries as keys and an array of numbers as values.
      */
-     numbers: INumbersMapping;
+    numbers: INumbersMapping | null;
 
 }
 
@@ -57,7 +56,7 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
         if (countryCode) {
             return (
                 <td className = 'flag-cell'>
-                    {countryCode === 'SIP'
+                    {countryCode === 'SIP' || countryCode === 'SIP_AUDIO_ONLY'
                         ? <Icon src = { IconSip } />
                         : <i className = { `flag iti-flag ${countryCode}` } />
                     }
@@ -130,6 +129,8 @@ const NumbersList: React.FC<IProps> = ({ t, conferenceID, clickableNumbers, numb
 
                     if (countryCode === 'SIP') {
                         countryName = t('info.sip');
+                    } else if (countryCode === 'SIP_AUDIO_ONLY') {
+                        countryName = t('info.sipAudioOnly');
                     } else {
                         countryName = t(`countries:countries.${countryCode}`);
 

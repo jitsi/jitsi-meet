@@ -20,7 +20,6 @@ export default {
      */
     TOGGLE_FULLSCREEN: 'UI.toogle_fullscreen',
     FULLSCREEN_TOGGLED: 'UI.fullscreen_toggled',
-    AUTH_CLICKED: 'UI.auth_clicked',
 
     /**
      * Notifies that the audio only mode was toggled.
@@ -41,7 +40,6 @@ export default {
     TOGGLE_FILMSTRIP: 'UI.toggle_filmstrip',
 
     HANGUP: 'UI.hangup',
-    LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
 

@@ -1,5 +1,6 @@
-// @ts-ignore
-import type { AudioElement } from '../media';
+import { AnyAction } from 'redux';
+
+import { AudioElement } from '../media/components/AbstractAudio';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { assign } from '../redux/functions';
 
@@ -25,7 +26,9 @@ export type Sound = {
     /**
      * This field is container for all optional parameters related to the sound.
      */
-    options?: Object;
+    options?: {
+        loop: boolean;
+    };
 
     /**
      * This field describes the source of the audio resource to be played. It
@@ -76,7 +79,7 @@ ReducerRegistry.register<ISoundsState>(
  * @private
  * @returns {Map<string, Sound>}
  */
-function _addOrRemoveAudioElement(state: ISoundsState, action: any) {
+function _addOrRemoveAudioElement(state: ISoundsState, action: AnyAction) {
     const isAddAction = action.type === _ADD_AUDIO_ELEMENT;
     const nextState = new Map(state);
     const { soundId } = action;
@@ -111,7 +114,7 @@ function _addOrRemoveAudioElement(state: ISoundsState, action: any) {
  * @private
  * @returns {Map<string, Sound>}
  */
-function _registerSound(state: ISoundsState, action: any) {
+function _registerSound(state: ISoundsState, action: AnyAction) {
     const nextState = new Map(state);
 
     nextState.set(action.soundId, {
@@ -132,7 +135,7 @@ function _registerSound(state: ISoundsState, action: any) {
  * @private
  * @returns {Map<string, Sound>}
  */
-function _unregisterSound(state: ISoundsState, action: any) {
+function _unregisterSound(state: ISoundsState, action: AnyAction) {
     const nextState = new Map(state);
 
     nextState.delete(action.soundId);

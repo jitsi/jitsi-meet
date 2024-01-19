@@ -1,11 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 
 import EndMeetingButton from './EndMeetingButton';
 import SoundDeviceButton from './SoundDeviceButton';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import styles from './styles';
 
 /**
@@ -19,7 +17,7 @@ const CarModeFooter = (): JSX.Element => {
     return (
         <View
             pointerEvents = 'box-none'
-            style = { styles.bottomContainer }>
+            style = { styles.bottomContainer as ViewStyle }>
             <Text style = { styles.videoStoppedLabel }>
                 { t('carmode.labels.videoStopped') }
             </Text>

@@ -6,11 +6,7 @@ import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 
 import { refreshCalendar } from './actions';
-import {
-    UpdateCalendarEventDialog
-
-    // @ts-ignore
-} from './components';
+import UpdateCalendarEventDialog from './components/UpdateCalendarEventDialog.native';
 import { addLinkToCalendarEntry } from './functions.native';
 
 export * from './actions.any';
@@ -42,8 +38,6 @@ export function updateCalendarEvent(eventId: string) {
         const roomName = generateRoomWithoutSeparator();
 
         addLinkToCalendarEntry(getState(), eventId, `${defaultUrl}/${roomName}`)
-
-        // @ts-ignore
         .finally(() => {
             dispatch(refreshCalendar(false, false));
         });

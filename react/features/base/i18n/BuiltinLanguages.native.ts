@@ -30,11 +30,6 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-de')
     },
 
-    // English (United Kingdom)
-    'enGB': {
-        main: require('../../../../lang/main-enGB')
-    },
-
     // Esperanto
     'eo': {
         main: require('../../../../lang/main-eo')
@@ -158,6 +153,11 @@ const _LANGUAGES = {
     // Turkish
     'tr': {
         main: require('../../../../lang/main-tr')
+    },
+
+    // Ukrainian
+    'uk': {
+        main: require('../../../../lang/main-uk')
     },
 
     // Vietnamese

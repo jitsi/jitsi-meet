@@ -1,6 +1,5 @@
-import type { Dispatch } from 'redux';
-
 import { appNavigate } from '../app/actions';
+import { IStore } from '../app/types';
 
 import { OPEN_DESKTOP_APP, OPEN_WEB_APP } from './actionTypes';
 
@@ -10,7 +9,7 @@ import { OPEN_DESKTOP_APP, OPEN_WEB_APP } from './actionTypes';
  * @returns {Function}
  */
 export function openWebApp() {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: IStore['dispatch']) => {
         // In order to go to the web app we need to skip the deep linking
         // interceptor. OPEN_WEB_APP action should set launchInWeb to true in
         // the redux store. After this when appNavigate() is called the

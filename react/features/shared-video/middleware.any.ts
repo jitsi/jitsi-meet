@@ -192,10 +192,10 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
  * @returns {void}
  */
 function sendShareVideoCommand({ id, status, conference, localParticipantId = '', time, muted, volume }: {
-    conference: IJitsiConference; id: string; localParticipantId?: string; muted: boolean;
+    conference?: IJitsiConference; id: string; localParticipantId?: string; muted: boolean;
     status: string; time: number; volume: number;
 }) {
-    conference.sendCommandOnce(SHARED_VIDEO, {
+    conference?.sendCommandOnce(SHARED_VIDEO, {
         value: id,
         attributes: {
             from: localParticipantId,

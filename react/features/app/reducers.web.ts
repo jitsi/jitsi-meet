@@ -1,9 +1,10 @@
-// @flow
-
 import '../base/devices/reducer';
+import '../base/premeeting/reducer';
+import '../base/tooltip/reducer';
 import '../e2ee/reducer';
 import '../face-landmarks/reducer';
 import '../feedback/reducer';
+import '../keyboard-shortcuts/reducer';
 import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../participants-pane/reducer';

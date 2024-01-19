@@ -7,25 +7,25 @@ import { isGifMessage } from '../../../../gifs/functions.web';
 
 import Linkify from './Linkify';
 
-type Props = {
+interface IProps {
 
     /**
      * The body of the message.
      */
     text: string;
-};
+}
 
 /**
  * Renders the content of a chat message.
  */
-class Message extends Component<Props> {
+class Message extends Component<IProps> {
     /**
      * Initializes a new {@code Message} instance.
      *
-     * @param {Props} props - The props of the component.
+     * @param {IProps} props - The props of the component.
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance

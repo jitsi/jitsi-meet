@@ -8,6 +8,14 @@ import { COLORS } from '../../constants';
 interface IProps {
 
     /**
+     * Optional label for screen reader users, invisible in the UI.
+     *
+     * Note: if the text prop is set, a screen reader will first announce
+     * the accessibilityText, then the text.
+     */
+    accessibilityText?: string;
+
+    /**
      * Own CSS class name.
      */
     className?: string;
@@ -82,6 +90,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 const Label = ({
+    accessibilityText,
     className,
     color,
     icon,
@@ -117,6 +126,7 @@ const Label = ({
                 color = { iconColor }
                 size = '16'
                 src = { icon } />}
+            {accessibilityText && <span className = 'sr-only'>{accessibilityText}</span>}
             {text && <span className = { icon && classes.withIcon }>{text}</span>}
         </div>
     );

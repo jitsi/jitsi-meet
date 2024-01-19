@@ -34,7 +34,7 @@ export default {
 
     buttonDisabled: {
         ...button,
-        backgroundColor: BaseTheme.palette.actionDisabled
+        backgroundColor: BaseTheme.palette.ui08
     },
 
     buttonLabelPrimary: {
@@ -65,7 +65,7 @@ export default {
     buttonLabelTertiary: {
         ...buttonLabel,
         color: BaseTheme.palette.text01,
-        margin: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[2],
         textAlign: 'center'
     },
 

@@ -51,6 +51,13 @@ module:hook("resource-bind", function (event)
     module:context(lobby_muc_component_config):fire_event('host-disco-info-node',
             {origin = session; reply = query; node = 'lobbyrooms';});
 
+    -- will add a rename feature for breakout rooms.
+    local breakout_rooms_muc_component_config = module:get_option_string('breakout_rooms_muc');
+    if breakout_rooms_muc_component_config then
+        module:context(breakout_rooms_muc_component_config):fire_event('host-disco-info-node',
+                {origin = session; reply = query; node = 'breakout_rooms';});
+    end
+
     local stanza = st.message({
             from = module.host;
             to = session.full_jid; });

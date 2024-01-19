@@ -30,5 +30,6 @@ static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 - (void)sendChatMessage:(NSString*)message :(NSString*)to ;
 - (void)sendSetVideoMuted:(BOOL)muted;
 - (void)sendSetClosedCaptionsEnabled:(BOOL)enabled;
+- (void)toggleCamera;
 
 @end

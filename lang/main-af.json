@@ -529,6 +529,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Naam",
+        "search": "Soek",
+        "searchHint": "Soek deelnemers",
         "seconds": "{{count}}s",
         "speakerStats": "Sprekerstatistiek",
         "speakerTime": "Sprekertyd"

@@ -26,8 +26,8 @@ import {
     UPGRADE_OPTIONS_TEXT
 } from './constants';
 import logger from './logger';
+import { IInvitee } from './types';
 
-declare let $: any;
 
 export const sharingFeatures = {
     email: 'email',
@@ -41,19 +41,26 @@ export const sharingFeatures = {
  *
  * @param {string} dialNumber - The dial number to check for validity.
  * @param {string} dialOutAuthUrl - The endpoint to use for checking validity.
+ * @param {string} region - The region we are connected to.
  * @returns {Promise} - The promise created by the request.
  */
 export function checkDialNumber(
         dialNumber: string,
-        dialOutAuthUrl: string
+        dialOutAuthUrl: string,
+        region: string
 ): Promise<{ allow?: boolean; country?: string; phone?: string; }> {
-    const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
+    const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}&region=${region}`;
 
-    return new Promise((resolve, reject) => {
-        $.getJSON(fullUrl)
-            .then(resolve)
-            .catch(reject);
-    });
+    return new Promise((resolve, reject) =>
+        fetch(fullUrl)
+            .then(res => {
+                if (res.ok) {
+                    resolve(res.json());
+                } else {
+                    reject(new Error('Request not successful!'));
+                }
+            })
+            .catch(reject));
 }
 
 /**
@@ -142,6 +149,11 @@ export type GetInviteResultsOptions = {
     peopleSearchUrl: string;
 
     /**
+     * The region we are connected to.
+     */
+    region: string;
+
+    /**
      * Whether or not to check sip invites.
      */
     sipInviteEnabled: boolean;
@@ -169,6 +181,7 @@ export function getInviteResultsForQuery(
         dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
+        region,
         sipInviteEnabled,
         jwt
     } = options;
@@ -212,7 +225,7 @@ export function getInviteResultsForQuery(
         // so ensure only digits get sent.
         numberToVerify = getDigitsOnly(numberToVerify);
 
-        phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl);
+        phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl, region);
     } else if (dialOutEnabled && !dialOutAuthUrl) {
         // fake having a country code to hide the country code reminder
         hasCountryCode = true;
@@ -379,7 +392,7 @@ export function getInviteText({
  * @returns {Object} An object with keys as user types and values as the number
  * of invites for that type.
  */
-export function getInviteTypeCounts(inviteItems: Array<{ type: string; }> = []) {
+export function getInviteTypeCounts(inviteItems: IInvitee[] = []) {
     const inviteTypeCounts: any = {};
 
     inviteItems.forEach(({ type }) => {
@@ -458,12 +471,14 @@ export function isDialOutEnabled(state: IReduxState): boolean {
  * Determines if inviting sip endpoints is enabled or not.
  *
  * @param {IReduxState} state - Current state.
- * @returns {boolean} Indication of whether dial out is currently enabled.
+ * @returns {boolean} Indication of whether sip invite is currently enabled.
  */
 export function isSipInviteEnabled(state: IReduxState): boolean {
     const { sipInviteUrl } = state['features/base/config'];
 
-    return isJwtFeatureEnabled(state, 'sip-outbound-call') && Boolean(sipInviteUrl);
+    return isLocalParticipantModerator(state)
+        && isJwtFeatureEnabled(state, 'sip-outbound-call')
+        && Boolean(sipInviteUrl);
 }
 
 /**

@@ -69,7 +69,7 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: theme.palette.action01Active
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 outline: 0,
                 boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
             },
@@ -154,7 +154,7 @@ const useStyles = makeStyles()(theme => {
             ...withPixelLineHeight(theme.typography.labelBold),
 
             '&.iconButton': {
-                padding: '6px'
+                padding: theme.spacing(1)
             }
         },
 

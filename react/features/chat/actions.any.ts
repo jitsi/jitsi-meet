@@ -153,7 +153,7 @@ export function onLobbyChatInitialized(lobbyChatInitializedInfo: { attendee: IPa
         const state = getState();
         const conference = getCurrentConference(state);
 
-        const lobbyLocalId = conference.myLobbyUserId();
+        const lobbyLocalId = conference?.myLobbyUserId();
 
         if (!lobbyLocalId) {
             return;

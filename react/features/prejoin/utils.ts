@@ -786,7 +786,7 @@ export function getCountryCodeFromPhone(phoneNumber: string): string {
  * @param {string} text - The text containing the dial code.
  * @returns {Object}
  */
-export function getCountryFromDialCodeText(text: string): Object {
+export function getCountryFromDialCodeText(text: string) {
     return (
         countriesByCodeMap[text.slice(0, 4)]
         || countriesByCodeMap[text.slice(0, 3)]
@@ -795,3 +795,11 @@ export function getCountryFromDialCodeText(text: string): Object {
         || null
     );
 }
+
+/**
+ * Returns whether the display name is present.
+ *
+ * @param {string} value - The display name.
+ * @returns {boolean}
+ */
+export const hasDisplayName = (value: string): boolean => Boolean(value) && value.trim() !== '';

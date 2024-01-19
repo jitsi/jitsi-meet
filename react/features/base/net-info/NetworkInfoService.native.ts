@@ -1,7 +1,7 @@
 import NetInfo from '@react-native-community/netinfo';
 import type { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 // eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import EventEmitter from 'events';
 
 import { ONLINE_STATE_CHANGED_EVENT } from './events';
@@ -15,7 +15,7 @@ export default class NetworkInfoService extends EventEmitter {
     /**
      * Stores the native subscription for future cleanup.
      */
-    _subscription: NetInfoSubscription;
+    _subscription?: NetInfoSubscription;
 
     /**
      * Converts library's structure to {@link NetworkInfo} used by jitsi-meet.
@@ -26,10 +26,8 @@ export default class NetworkInfoService extends EventEmitter {
      */
     static _convertNetInfoState(netInfoState: NetInfoState): NetworkInfo {
         return {
-            // @ts-ignore
-            isOnline: netInfoState.isInternetReachable,
+            isOnline: Boolean(netInfoState.isInternetReachable),
 
-            // @ts-ignore
             details: netInfoState.details,
             networkType: netInfoState.type
         };
@@ -51,8 +49,7 @@ export default class NetworkInfoService extends EventEmitter {
      */
     start() {
         this._subscription = NetInfo.addEventListener(netInfoState => {
-            // @ts-ignore
-            this.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
+            super.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
         });
     }
 
@@ -64,8 +61,6 @@ export default class NetworkInfoService extends EventEmitter {
     stop() {
         if (this._subscription) {
             this._subscription();
-
-            // @ts-ignore
             this._subscription = undefined;
         }
     }

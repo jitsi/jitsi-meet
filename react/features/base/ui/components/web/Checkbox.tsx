@@ -11,7 +11,7 @@ interface ICheckboxProps {
     /**
      * Whether the input is checked or not.
      */
-    checked: boolean;
+    checked?: boolean;
 
     /**
      * Class name for additional styles.
@@ -70,7 +70,7 @@ const useStyles = makeStyles()(theme => {
             '& input[type="checkbox"]': {
                 appearance: 'none',
                 backgroundColor: 'transparent',
-                margin: 0,
+                margin: '3px',
                 font: 'inherit',
                 color: theme.palette.icon03,
                 width: '18px',
@@ -156,8 +156,8 @@ const Checkbox = ({
     const isMobile = isMobileBrowser();
 
     return (
-        <div className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
-            <label className = { cx(styles.activeArea, isMobile && 'is-mobile', disabled && styles.disabled) }>
+        <label className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
+            <div className = { cx(styles.activeArea, isMobile && 'is-mobile', disabled && styles.disabled) }>
                 <input
                     checked = { checked }
                     disabled = { disabled }
@@ -165,13 +165,14 @@ const Checkbox = ({
                     onChange = { onChange }
                     type = 'checkbox' />
                 <Icon
+                    aria-hidden = { true }
                     className = 'checkmark'
                     color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
                     size = { 18 }
                     src = { IconCheck } />
-            </label>
-            <label>{label}</label>
-        </div>
+            </div>
+            <div>{label}</div>
+        </label>
     );
 };
 

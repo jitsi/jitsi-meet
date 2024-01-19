@@ -15,6 +15,7 @@ import {
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
+import { IMessage } from './types';
 
 const DEFAULT_STATE = {
     isOpen: false,
@@ -26,20 +27,6 @@ const DEFAULT_STATE = {
     lobbyMessageRecipient: undefined,
     isLobbyChatActive: false
 };
-
-export interface IMessage {
-    displayName: string;
-    error?: Object;
-    id: string;
-    isReaction: boolean;
-    lobbyChat: boolean;
-    message: string;
-    messageId: string;
-    messageType: string;
-    privateMessage: boolean;
-    recipient: string;
-    timestamp: number;
-}
 
 export interface IChatState {
     isLobbyChatActive: boolean;

@@ -1,10 +1,10 @@
 // eslint-disable-next-line lines-around-comment
 import React from 'react';
 
-// @ts-ignore
 import Avatar from '../../../base/avatar/components/Avatar';
 import StatelessAvatar from '../../../base/avatar/components/web/StatelessAvatar';
 import { getInitials } from '../../../base/avatar/functions';
+import { IconUser } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import { FaceLandmarks } from '../../../face-landmarks/types';
 
@@ -14,7 +14,7 @@ import Timeline from './Timeline';
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The name of the participant.
@@ -61,9 +61,9 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function;
-};
+}
 
-const SpeakerStatsItem = (props: Props) => {
+const SpeakerStatsItem = (props: IProps) => {
     const rowDisplayClass = `row item ${props.hasLeft ? 'has-left' : ''}`;
     const nameTimeClass = `name-time${
         props.showFaceExpressions ? ' expressions-on' : ''
@@ -79,13 +79,14 @@ const SpeakerStatsItem = (props: Props) => {
                             <StatelessAvatar
                                 className = 'userAvatar'
                                 color = { BaseTheme.palette.ui04 }
-                                initials = { getInitials(props.displayName) } />
+                                iconUser = { IconUser }
+                                initials = { getInitials(props.displayName) }
+                                size = { 32 } />
                         ) : (
                             <Avatar
-
-                                // @ts-ignore
                                 className = 'userAvatar'
-                                participantId = { props.participantId } />
+                                participantId = { props.participantId }
+                                size = { 32 } />
                         )
                     }
                 </div>

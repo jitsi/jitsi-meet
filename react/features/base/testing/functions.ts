@@ -1,4 +1,5 @@
 import { IReduxState, IStore } from '../../app/types';
+import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
 import { getTrackByMediaTypeAndParticipant, getVideoTrackByParticipant } from '../tracks/functions';
@@ -46,10 +47,8 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
     const largeVideoParticipantId = state['features/large-video'].participantId ?? '';
     const largeVideoParticipant = getParticipantById(state, largeVideoParticipantId ?? '');
     const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
-    const lastMediaEvent = state['features/large-video']?.lastMediaEvent;
 
-    return Boolean(videoTrack && !videoTrack.muted
-        && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough'));
+    return Boolean(videoTrack && !videoTrack.muted && isTrackStreamingStatusActive(videoTrack));
 }
 
 /**
@@ -63,8 +62,6 @@ export function isRemoteVideoReceived({ getState }: IStore, id: string): boolean
     const state = getState();
     const participant = getParticipantById(state, id);
     const videoTrack = getVideoTrackByParticipant(state, participant);
-    const lastMediaEvent = videoTrack?.lastMediaEvent;
 
-    return Boolean(videoTrack && !videoTrack.muted
-        && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough'));
+    return Boolean(videoTrack && !videoTrack.muted && isTrackStreamingStatusActive(videoTrack));
 }

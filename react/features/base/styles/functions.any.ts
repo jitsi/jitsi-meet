@@ -1,9 +1,5 @@
-import Platform from '../react/Platform';
-
-import { ColorPalette } from './components/styles/ColorPalette';
-
 declare type StyleSheet = {
-    [key: string]: string;
+    [key: string]: string | number | { [key: string]: string | number; };
 };
 
 export type StyleType = StyleSheet | Array<StyleSheet>;
@@ -46,7 +42,7 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * @param {Styletype} st - The complex style type.
  * @returns {Object}
  */
-export function styleTypeToObject(st: StyleType): { [key: string]: string | number; } {
+export function styleTypeToObject(st: StyleType | StyleType[]) {
     if (!st) {
         return {};
     }
@@ -119,28 +115,6 @@ export function createStyleSheet(
     }
 
     return combinedStyles;
-}
-
-/**
- * Works around a bug in react-native or react-native-webrtc on Android which
- * causes Views overlaying RTCView to be clipped. Even though we (may) display
- * multiple RTCViews, it is enough to apply the fix only to a View with a
- * bounding rectangle containing all RTCviews and their overlaying Views.
- *
- * @param {StyleSheet} styles - An object which represents a stylesheet.
- * @public
- * @returns {StyleSheet}
- */
-export function fixAndroidViewClipping<T extends StyleSheet>(styles: T): T {
-    if (Platform.OS === 'android') {
-        // @ts-ignore
-        styles.borderColor = ColorPalette.appBackground;
-
-        // @ts-ignore
-        styles.borderWidth = 1;
-    }
-
-    return styles;
 }
 
 /**

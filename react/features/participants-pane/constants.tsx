@@ -36,19 +36,23 @@ export const MEDIA_STATE: { [key: string]: MediaState; } = {
     NONE: 'None'
 };
 
-export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'None';
+export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'AllowVideo' | 'StopVideo' | 'None';
 
 /**
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {
+    ALLOW_VIDEO: QuickActionButtonType;
     ASK_TO_UNMUTE: QuickActionButtonType;
     MUTE: QuickActionButtonType;
     NONE: QuickActionButtonType;
+    STOP_VIDEO: QuickActionButtonType;
 } = {
+    ALLOW_VIDEO: 'AllowVideo',
     MUTE: 'Mute',
     ASK_TO_UNMUTE: 'AskToUnmute',
-    NONE: 'None'
+    NONE: 'None',
+    STOP_VIDEO: 'StopVideo'
 };
 
 /**

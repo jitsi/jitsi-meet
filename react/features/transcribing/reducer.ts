@@ -1,7 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT
@@ -12,7 +11,6 @@ import {
  *
  * @returns {{
  * isTranscribing: boolean,
- * isDialing: boolean,
  * transcriberJID: null,
  * potentialTranscriberJIDs: Array
  * }}
@@ -27,20 +25,6 @@ function _getInitialState() {
          * @type {boolean}
          */
         isTranscribing: false,
-
-        /**
-         * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successful joining or failure of joining.
-         *
-         * @type {boolean}
-         */
-        isDialing: false,
-
-        /**
-         * Indicates whether the transcribing feature is in the process of
-         * terminating; the transcriber has been told to leave.
-         */
-        isTerminating: false,
 
         /**
          * The JID of the active transcriber.
@@ -59,10 +43,7 @@ function _getInitialState() {
 }
 
 export interface ITranscribingState {
-    isDialing: boolean;
-    isTerminating: boolean;
     isTranscribing: boolean;
-    pendingNotificationUid?: string;
     potentialTranscriberJIDs: string[];
     transcriberJID?: string | null;
 }
@@ -77,13 +58,11 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
             return {
                 ...state,
                 isTranscribing: true,
-                isDialing: false,
                 transcriberJID: action.transcriberJID
             };
         case _TRANSCRIBER_LEFT:
             return {
                 ...state,
-                isTerminating: false,
                 isTranscribing: false,
                 transcriberJID: undefined,
                 potentialTranscriberJIDs: []
@@ -91,14 +70,7 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
         case _POTENTIAL_TRANSCRIBER_JOINED:
             return {
                 ...state,
-                potentialTranscriberJIDs:
-                    [ action.transcriberJID ]
-                        .concat(state.potentialTranscriberJIDs)
-            };
-        case SET_PENDING_TRANSCRIBING_NOTIFICATION_UID:
-            return {
-                ...state,
-                pendingNotificationUid: action.uid
+                potentialTranscriberJIDs: [ action.transcriberJID, ...state.potentialTranscriberJIDs ]
             };
         default:
             return state;

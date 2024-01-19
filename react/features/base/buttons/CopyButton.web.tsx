@@ -58,6 +58,14 @@ let mounted: boolean;
 interface IProps {
 
     /**
+     * The invisible text for screen readers.
+     *
+     * Intended to give the same info as `displayedText`, but can be customized to give more necessary context.
+     * If not given, `displayedText` will be used.
+     */
+    accessibilityText?: string;
+
+    /**
      * Css class to apply on container.
      */
     className?: string;
@@ -93,7 +101,15 @@ interface IProps {
  *
  * @returns {React$Element<any>}
  */
-function CopyButton({ className = '', displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: IProps) {
+function CopyButton({
+    accessibilityText,
+    className = '',
+    displayedText,
+    textToCopy,
+    textOnHover,
+    textOnCopySuccess,
+    id
+}: IProps) {
     const { classes, cx } = useStyles();
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
@@ -196,20 +212,33 @@ function CopyButton({ className = '', displayedText, textToCopy, textOnHover, te
     }
 
     return (
-        <div
-            aria-label = { textOnHover }
-            className = { cx(className, classes.copyButton, isClicked ? ' clicked' : '') }
-            id = { id }
-            onBlur = { onHoverOut }
-            onClick = { onClick }
-            onFocus = { onHoverIn }
-            onKeyPress = { onKeyPress }
-            onMouseOut = { onHoverOut }
-            onMouseOver = { onHoverIn }
-            role = 'button'
-            tabIndex = { 0 }>
-            { renderContent() }
-        </div>
+        <>
+            <div
+                aria-describedby = { displayedText === textOnHover
+                    ? undefined
+                    : `${id}-sr-text` }
+                aria-label = { displayedText === textOnHover ? accessibilityText : textOnHover }
+                className = { cx(className, classes.copyButton, isClicked ? ' clicked' : '') }
+                id = { id }
+                onBlur = { onHoverOut }
+                onClick = { onClick }
+                onFocus = { onHoverIn }
+                onKeyPress = { onKeyPress }
+                onMouseOut = { onHoverOut }
+                onMouseOver = { onHoverIn }
+                role = 'button'
+                tabIndex = { 0 }>
+                { renderContent() }
+            </div>
+
+            { displayedText !== textOnHover && (
+                <span
+                    className = 'sr-only'
+                    id = { `${id}-sr-text` }>
+                    { accessibilityText }
+                </span>
+            )}
+        </>
     );
 }
 

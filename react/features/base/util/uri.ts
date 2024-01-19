@@ -263,7 +263,6 @@ export function parseStandardURIString(str: string) {
             authority = authority.substring(userinfoEndIndex + 1);
         }
 
-        // @ts-ignore
         obj.host = authority;
 
         // port
@@ -560,7 +559,7 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     let { hash } = url;
 
-    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
+    for (const urlPrefix of [ 'config', 'iceServers', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
                 o[`${urlPrefix}Overwrite`]
@@ -629,6 +628,32 @@ export function appendURLParam(url: string, name: string, value: string) {
     const newUrl = new URL(url);
 
     newUrl.searchParams.append(name, value);
+
+    return newUrl.toString();
+}
+
+/**
+ * Adds new hash param to a url string.
+ * Checks whether to use '?' or '&' as a separator (checks for already existing params).
+ *
+ * @param {string} url - The url to modify.
+ * @param {string} name - The param name to add.
+ * @param {string} value - The value for the param.
+ *
+ * @returns {string} - The modified url.
+ */
+export function appendURLHashParam(url: string, name: string, value: string) {
+    const newUrl = new URL(url);
+    const dummyUrl = new URL('https://example.com');
+
+    // Copy current hash-parameters without the '#' as search-parameters.
+    dummyUrl.search = newUrl.hash.substring(1);
+
+    // Set or update value with the searchParams-API.
+    dummyUrl.searchParams.append(name, value);
+
+    // Write back as hash parameters.
+    newUrl.hash = dummyUrl.searchParams.toString();
 
     return newUrl.toString();
 }

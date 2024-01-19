@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import { shouldHideShareAudioHelper } from '../../../base/settings/functions.web';
 import { toggleScreensharing } from '../../../base/tracks/actions.web';
@@ -77,15 +77,16 @@ class ShareAudioDialog extends Component<IProps> {
 
         return (
             <Dialog
-                className = 'share-audio-dialog-container'
                 ok = {{ translationKey: 'dialog.shareAudio' }}
                 onSubmit = { this._onContinue }
                 size = 'large'
                 titleKey = { t('dialog.shareAudioTitle') }>
                 <div className = 'share-audio-dialog'>
                     <img
+                        alt = { t('dialog.shareAudioAltText') }
                         className = 'share-audio-animation'
-                        src = 'images/share-audio.gif' />
+                        src = 'images/share-audio.gif'
+                        tabIndex = { 0 } />
                     <Checkbox
                         checked = { this.props._shouldHideShareAudioHelper }
                         label = { t('dialog.hideShareAudioHelper') }
@@ -105,10 +106,10 @@ class ShareAudioDialog extends Component<IProps> {
  * @private
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState): Partial<IProps> {
+function _mapStateToProps(state: IReduxState) {
 
     return {
-        _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
+        _shouldHideShareAudioHelper: Boolean(shouldHideShareAudioHelper(state))
     };
 }
 

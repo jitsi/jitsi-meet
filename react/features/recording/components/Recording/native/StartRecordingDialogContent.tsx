@@ -1,35 +1,30 @@
-/* eslint-disable lines-around-comment  */
 import React from 'react';
 import { Image, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
-// @ts-ignore
-import { LoadingIndicator } from '../../../../base/react';
-import { connect } from '../../../../base/redux/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconArrowDown, IconArrowRight } from '../../../../base/icons/svg';
+import LoadingIndicator from '../../../../base/react/components/native/LoadingIndicator';
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { RECORDING_TYPES } from '../../../constants';
-// @ts-ignore
 import { getRecordingDurationEstimation } from '../../../functions';
-import AbstractStartRecordingDialogContent, {
-    IProps,
-    mapStateToProps
-} from '../AbstractStartRecordingDialogContent';
+import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
 import {
     DROPBOX_LOGO,
     ICON_CLOUD,
     ICON_INFO,
     ICON_USERS
-    // @ts-ignore
 } from '../styles.native';
 
 
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IProps> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     /**
      * Renders the component.
      *
@@ -45,7 +40,83 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                 { this._renderFileSharingContent() }
                 { this._renderUploadToTheCloudInfo() }
                 { this._renderIntegrationsContent() }
+                { this._renderAdvancedOptions() }
             </View>
+        );
+    }
+
+    /**
+     * Renders the save transcription switch.
+     *
+     * @returns {React$Component}
+     */
+    _renderAdvancedOptions() {
+        if (!this._canStartTranscribing()) {
+            return null;
+        }
+
+        const { showAdvancedOptions } = this.state;
+        const {
+            _dialogStyles,
+            _styles: styles,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription,
+            t
+        } = this.props;
+
+        return (
+            <>
+                <View
+                    style = { styles.header }>
+                    <Text
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.title
+                        }}>
+                        { t('recording.showAdvancedOptions') }
+                    </Text>
+                    <Icon
+                        ariaPressed = { showAdvancedOptions }
+                        onClick = { this._onToggleShowOptions }
+                        role = 'button'
+                        size = { 24 }
+                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight } />
+                </View>
+                {showAdvancedOptions && (
+                    <>
+                        <View
+                            key = 'transcriptionSetting'
+                            style = { styles.header }>
+                            <Text
+                                style = {{
+                                    ..._dialogStyles.text,
+                                    ...styles.title
+                                }}>
+                                { t('recording.recordTranscription') }
+                            </Text>
+                            <Switch
+                                checked = { shouldRecordTranscription }
+                                onChange = { this._onTranscriptionSwitchChange }
+                                style = { styles.switch } />
+                        </View>
+                        <View
+                            key = 'audioVideoSetting'
+                            style = { styles.header }>
+                            <Text
+                                style = {{
+                                    ..._dialogStyles.text,
+                                    ...styles.title
+                                }}>
+                                { t('recording.recordAudioAndVideo') }
+                            </Text>
+                            <Switch
+                                checked = { shouldRecordAudioAndVideo }
+                                onChange = { this._onRecordAudioAndVideoSwitchChange }
+                                style = { styles.switch } />
+                        </View>
+                    </>
+                )}
+            </>
         );
     }
 
@@ -61,6 +132,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             integrationsEnabled,
             isValidating,
             selectedRecordingService,
+            shouldRecordAudioAndVideo,
             t
         } = this.props;
 
@@ -73,7 +145,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                 ? (
                     <Switch
                         checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
-                        disabled = { isValidating }
+                        disabled = { isValidating || !shouldRecordAudioAndVideo }
                         onChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch } />
                 ) : null;
@@ -113,6 +185,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             isValidating,
             onSharingSettingChanged,
             sharingSetting,
+            shouldRecordAudioAndVideo,
             t
         } = this.props;
 
@@ -132,7 +205,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                 </Text>
                 <Switch
                     checked = { sharingSetting }
-                    disabled = { isValidating }
+                    disabled = { isValidating || !shouldRecordAudioAndVideo }
                     onChange = { onSharingSettingChanged }
                     style = { styles.switch } />
             </View>
@@ -184,7 +257,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
     _renderSpinner() {
         return (
             <LoadingIndicator
-                isCompleting = { false }
                 size = 'small' />
         );
     }
@@ -242,6 +314,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             isTokenValid,
             isValidating,
             selectedRecordingService,
+            shouldRecordAudioAndVideo,
             t
         } = this.props;
 
@@ -275,7 +348,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
             switchContent = (
                 <Switch
                     checked = { selectedRecordingService === RECORDING_TYPES.DROPBOX }
-                    disabled = { isValidating }
+                    disabled = { isValidating || !shouldRecordAudioAndVideo }
                     onChange = { this._onDropboxSwitchChange }
                     style = { styles.switch } />
             );

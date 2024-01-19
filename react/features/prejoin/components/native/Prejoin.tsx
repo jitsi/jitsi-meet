@@ -1,8 +1,5 @@
-/* eslint-disable lines-around-comment  */
-
 import { useIsFocused } from '@react-navigation/native';
-// @ts-ignore
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     BackHandler,
@@ -10,17 +7,21 @@ import {
     StyleProp,
     Text,
     TextStyle,
-    View
+    View,
+    ViewStyle
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
+import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
+import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
-// @ts-ignore
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -29,23 +30,18 @@ import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { BrandingImageBackground } from '../../../dynamic-branding/components/native';
-// @ts-ignore
+import { openDisplayNamePrompt } from '../../../display-name/actions';
+import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
-// @ts-ignore
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-// @ts-ignore
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
-// @ts-ignore
 import { screen } from '../../../mobile/navigation/routes';
-// @ts-ignore
-import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
-// @ts-ignore
-import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
+import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
+import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
+import { hasDisplayName } from '../../utils';
 
-// @ts-ignore
 import { preJoinStyles as styles } from './styles';
 
 
@@ -58,10 +54,21 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     );
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
+    const isDisplayNameVisible
+        = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
+    const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
+    const isDisplayNameMissing = useMemo(
+        () => !displayName && isDisplayNameMandatory, [ displayName, isDisplayNameMandatory ]);
+    const showDisplayNameError = useMemo(
+        () => !isDisplayNameReadonly && isDisplayNameMissing && isDisplayNameVisible,
+        [ isDisplayNameMissing, isDisplayNameReadonly, isDisplayNameVisible ]);
+    const showDisplayNameInput = useMemo(
+        () => isDisplayNameVisible && (displayName || !isDisplayNameReadonly),
+        [ displayName, isDisplayNameReadonly, isDisplayNameVisible ]);
     const [ isJoining, setIsJoining ]
         = useState(false);
     const onChangeDisplayName = useCallback(event => {
@@ -79,9 +86,20 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
+    const maybeJoin = useCallback(() => {
+        if (isDisplayNameMissing) {
+            dispatch(openDisplayNamePrompt({
+                onPostSubmit: onJoin,
+                validateInput: hasDisplayName
+            }));
+        } else {
+            onJoin();
+        }
+    }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
+
     const onJoinLowBandwidth = useCallback(() => {
         dispatch(setAudioOnly(true));
-        onJoin();
+        maybeJoin();
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
@@ -89,6 +107,20 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
         return true;
     }, [ dispatch ]);
+
+    const { PRIMARY, TERTIARY } = BUTTON_TYPES;
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', goBack);
+
+        dispatch(setPermanentProperty({
+            wasPrejoinDisplayed: true
+        }));
+
+        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
+
+    }, []); // dispatch is not in the dependancy list because we want the action to be dispatched only once when
+    // the component is mounted.
 
     const headerLeft = () => {
         if (Platform.OS === 'ios') {
@@ -105,16 +137,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 src = { IconCloseLarge } />
         );
     };
-
-    const { PRIMARY, TERTIARY } = BUTTON_TYPES;
-    const joinButtonDisabled = !displayName && isDisplayNameMandatory;
-
-    useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', goBack);
-
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
-
-    }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -145,7 +167,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             <BrandingImageBackground />
             {
                 isFocused
-                && <View style = { largeVideoContainerStyles }>
+                && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
                     <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
                         <Text
                             numberOfLines = { 1 }
@@ -153,38 +175,41 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                             { roomName }
                         </Text>
                     </View>
-                    {/* @ts-ignore */}
                     <LargeVideo />
                 </View>
             }
-            <View style = { contentContainerStyles }>
-                <View style = { styles.toolboxContainer }>
+            <View style = { contentContainerStyles as ViewStyle }>
+                <View style = { styles.toolboxContainer as ViewStyle }>
                     <AudioMuteButton
-                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
-                        // @ts-ignore
                         styles = { styles.buttonStylesBorderless } />
                 </View>
-                <Input
-                    // @ts-ignore
-                    customStyles = {{ input: styles.customInput }}
-                    onChange = { onChangeDisplayName }
-                    placeholder = { t('dialog.enterDisplayName') }
-                    value = { displayName } />
+                {
+                    showDisplayNameInput && <Input
+                        customStyles = {{ input: styles.customInput }}
+                        disabled = { isDisplayNameReadonly }
+                        error = { showDisplayNameError }
+                        onChange = { onChangeDisplayName }
+                        placeholder = { t('dialog.enterDisplayName') }
+                        value = { displayName } />
+                }
+                {showDisplayNameError && (
+                    <View style = { styles.errorContainer as StyleProp<TextStyle> }>
+                        <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
+                    </View>)}
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
-                    disabled = { joinButtonDisabled }
+                    disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeeting'
-                    // @ts-ignore
-                    onClick = { !isJoining && onJoin }
+                    onClick = { isJoining ? undefined : maybeJoin }
                     style = { styles.joinButton }
                     type = { PRIMARY } />
                 <Button
                     accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                    disabled = { joinButtonDisabled }
+                    disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                    onClick = { onJoinLowBandwidth }
+                    onClick = { isJoining ? undefined : onJoinLowBandwidth }
                     style = { styles.joinButton }
                     type = { TERTIARY } />
             </View>

@@ -4,7 +4,7 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantCount, getPinnedParticipant } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { isStageFilmstripAvailable, isTileViewModeDisabled } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 import { getReceiverVideoQualityLevel } from '../video-quality/functions';
@@ -60,6 +60,12 @@ export function getCurrentLayout(state: IReduxState) {
  * @returns {boolean} True if tile view should be displayed.
  */
 export function shouldDisplayTileView(state: IReduxState) {
+    const tileViewDisabled = isTileViewModeDisabled(state);
+
+    if (tileViewDisabled) {
+        return false;
+    }
+
     const { tileViewEnabled } = state['features/video-layout'] ?? {};
 
     if (tileViewEnabled !== undefined) {

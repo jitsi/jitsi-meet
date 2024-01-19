@@ -1,11 +1,8 @@
-// @flow
-
+/* global APP */
 import Logger from '@jitsi/logger';
 
-import {
-    createApiEvent,
-    sendAnalytics
-} from '../../react/features/analytics';
+import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../react/features/analytics/functions';
 import {
     approveParticipantAudio,
     approveParticipantVideo,
@@ -19,37 +16,42 @@ import {
 import { isEnabledFromState } from '../../react/features/av-moderation/functions';
 import {
     endConference,
-    getCurrentConference,
     sendTones,
+    setAssumedBandwidthBps,
     setFollowMe,
     setLocalSubject,
     setPassword,
     setSubject
-} from '../../react/features/base/conference';
-import { getWhitelistedJSON, overwriteConfig } from '../../react/features/base/config';
+} from '../../react/features/base/conference/actions';
+import { getCurrentConference, isP2pActive } from '../../react/features/base/conference/functions';
+import { overwriteConfig } from '../../react/features/base/config/actions';
+import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
-import { isSupportedBrowser } from '../../react/features/base/environment';
-import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
 import {
-    LOCAL_PARTICIPANT_DEFAULT_ID,
-    getLocalParticipant,
-    getParticipantById,
-    getScreenshareParticipantIds,
-    getVirtualScreenshareParticipantByOwnerId,
     grantModerator,
-    hasRaisedHand,
-    isLocalParticipantModerator,
-    isParticipantModerator,
     kickParticipant,
     overwriteParticipantsNames,
     pinParticipant,
     raiseHand
-} from '../../react/features/base/participants';
-import { updateSettings } from '../../react/features/base/settings';
+} from '../../react/features/base/participants/actions';
+import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    getScreenshareParticipantIds,
+    getVirtualScreenshareParticipantByOwnerId,
+    hasRaisedHand,
+    isLocalParticipantModerator,
+    isParticipantModerator
+} from '../../react/features/base/participants/functions';
+import { updateSettings } from '../../react/features/base/settings/actions';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
-import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+import { setCameraFacingMode } from '../../react/features/base/tracks/actions.web';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../react/features/base/tracks/constants';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,
@@ -68,8 +70,8 @@ import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
-import { appendSuffix } from '../../react/features/display-name';
-import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
+import { appendSuffix } from '../../react/features/display-name/functions';
+import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox/functions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import {
     addStageParticipant,
@@ -78,7 +80,7 @@ import {
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
-import { invite } from '../../react/features/invite';
+import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions.any';
@@ -88,39 +90,38 @@ import {
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
-import {
-    NOTIFICATION_TIMEOUT_TYPE,
-    NOTIFICATION_TYPE,
-    hideNotification,
-    showNotification
-} from '../../react/features/notifications';
+import { hideNotification, showNotification } from '../../react/features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording';
+import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
+import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
+import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
+import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
-import { setTileView, toggleTileView } from '../../react/features/video-layout';
+import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
-import { setVideoQuality } from '../../react/features/video-quality';
-import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';
+import { setVideoQuality } from '../../react/features/video-quality/actions';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
 import { getJitsiMeetTransport } from '../transport';
 
-import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
+import {
+    API_ID,
+    ENDPOINT_TEXT_MESSAGE_NAME
+} from './constants';
 
 const logger = Logger.getLogger(__filename);
-
-declare var APP: Object;
 
 /**
  * List of the available commands.
@@ -243,8 +244,6 @@ function initCommands() {
             }
         },
         'pin-participant': (id, videoType) => {
-            logger.debug('Pin participant command received');
-
             const state = APP.store.getState();
 
             // if id not provided, unpin everybody.
@@ -302,7 +301,6 @@ function initCommands() {
             APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
         },
         'resize-large-video': (width, height) => {
-            logger.debug('Resize large video command received');
             sendAnalytics(createApiEvent('largevideo.resized'));
             APP.store.dispatch(resizeLargeVideo(width, height));
         },
@@ -311,8 +309,18 @@ function initCommands() {
 
             APP.store.dispatch(sendTones(tones, duration, pause));
         },
+        'set-assumed-bandwidth-bps': value => {
+            logger.debug('Set assumed bandwidth bps command received', value);
+
+            if (typeof value !== 'number' || isNaN(value)) {
+                logger.error('Assumed bandwidth bps must be a number.');
+
+                return;
+            }
+
+            APP.store.dispatch(setAssumedBandwidthBps(value));
+        },
         'set-follow-me': value => {
-            logger.debug('Set follow me command received');
 
             if (value) {
                 sendAnalytics(createApiEvent('follow.me.set'));
@@ -323,16 +331,16 @@ function initCommands() {
             APP.store.dispatch(setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
-            logger.debug('Set large video participant command received');
+            const { getState, dispatch } = APP.store;
 
             if (!participantId) {
                 sendAnalytics(createApiEvent('largevideo.participant.set'));
-                APP.store.dispatch(selectParticipantInLargeVideo());
+                dispatch(selectParticipantInLargeVideo());
 
                 return;
             }
 
-            const state = APP.store.getState();
+            const state = getState();
             const participant = videoType === VIDEO_TYPE.DESKTOP
                 ? getVirtualScreenshareParticipantByOwnerId(state, participantId)
                 : getParticipantById(state, participantId);
@@ -343,8 +351,9 @@ function initCommands() {
                 return;
             }
 
+            dispatch(setTileView(false));
             sendAnalytics(createApiEvent('largevideo.participant.set'));
-            APP.store.dispatch(selectParticipantInLargeVideo(participant.id));
+            dispatch(selectParticipantInLargeVideo(participant.id));
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
@@ -359,12 +368,10 @@ function initCommands() {
         },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
-            logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
-            logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
@@ -381,12 +388,8 @@ function initCommands() {
             sendAnalytics(createApiEvent('film.strip.resize'));
             APP.store.dispatch(resizeFilmStrip(options.width));
         },
-        'toggle-camera': () => {
-            if (!isToggleCameraEnabled(APP.store.getState())) {
-                return;
-            }
-
-            APP.store.dispatch(toggleCamera());
+        'toggle-camera': facingMode => {
+            APP.store.dispatch(setCameraFacingMode(facingMode));
         },
         'toggle-camera-mirror': () => {
             const state = APP.store.getState();
@@ -463,8 +466,8 @@ function initCommands() {
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
-        'set-subtitles': enabled => {
-            APP.store.dispatch(setRequestingSubtitles(enabled));
+        'set-subtitles': (enabled, displaySubtitles, language) => {
+            APP.store.dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
@@ -487,7 +490,6 @@ function initCommands() {
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
-            logger.debug('Send chat message command received');
             if (to) {
                 const participant = getParticipantById(APP.store.getState(), to);
 
@@ -505,7 +507,6 @@ function initCommands() {
             APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
-            logger.debug('Send endpoint message command received');
             try {
                 APP.conference.sendEndpointMessage(to, {
                     name: ENDPOINT_TEXT_MESSAGE_NAME,
@@ -515,26 +516,32 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
-        'overwrite-names': participantList => {
-            logger.debug('Overwrite names command received');
+        'send-camera-facing-mode-message': (to, facingMode) => {
+            if (!to) {
+                logger.warn('Participant id not set');
 
+                return;
+            }
+
+            APP.conference.sendEndpointMessage(to, {
+                name: CAMERA_FACING_MODE_MESSAGE,
+                facingMode
+            });
+        },
+        'overwrite-names': participantList => {
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
-            logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
-            logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-
         'start-share-video': url => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.start'));
             const id = extractYoutubeIdOrURL(url);
 
@@ -542,9 +549,7 @@ function initCommands() {
                 APP.store.dispatch(playSharedVideo(id));
             }
         },
-
         'stop-share-video': () => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
         },
@@ -619,6 +624,7 @@ function initCommands() {
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
+         * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.
          * @returns {void}
          */
         'start-recording': ({
@@ -629,7 +635,8 @@ function initCommands() {
             rtmpStreamKey,
             rtmpBroadcastID,
             youtubeStreamKey,
-            youtubeBroadcastID
+            youtubeBroadcastID,
+            extraMetadata = {}
         }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
@@ -679,6 +686,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'upload_credentials': {
                                     'service_name': RECORDING_TYPES.DROPBOX,
                                     'token': dropboxToken
@@ -691,6 +699,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'share': shouldShare
                             }
                         })
@@ -798,7 +807,8 @@ function initCommands() {
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
+            APP.store.dispatch(toggleDialog(SettingsDialog, {
+                defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
             APP.store.dispatch(endConference());
@@ -812,10 +822,14 @@ function initCommands() {
             } else {
                 logger.error(' End Conference not supported');
             }
+        },
+        'toggle-whiteboard': () => {
+            APP.store.dispatch(toggleWhiteboard());
         }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
+            logger.info(`API command received: ${name}`);
             commands[name](...data);
 
             return true;
@@ -963,7 +977,17 @@ function initCommands() {
             callback(getRoomsInfo(APP.store.getState()));
             break;
         }
+        case 'get-p2p-status': {
+            callback(isP2pActive(APP.store.getState()));
+            break;
+        }
+        case '_new_electron_screensharing_supported': {
+            callback(true);
+            break;
+        }
         default:
+            callback({ error: new Error('UnknownRequestError') });
+
             return false;
         }
 
@@ -1009,7 +1033,7 @@ function toggleScreenSharing(enable) {
  * @param {MouseEvent} event - The mouse event to sanitize.
  * @returns {Object}
  */
-function sanitizeMouseEvent(event: MouseEvent) {
+function sanitizeMouseEvent(event) {
     const {
         clientX,
         clientY,
@@ -1047,7 +1071,7 @@ function sanitizeMouseEvent(event: MouseEvent) {
  * Jitsi Meet.
  */
 class API {
-    _enabled: boolean;
+    _enabled;
 
     /**
      * Initializes the API. Setups message event listeners that will receive
@@ -1071,7 +1095,11 @@ class API {
         this._enabled = true;
 
         initCommands();
+
         this.notifyBrowserSupport(isSupportedBrowser());
+
+        // Let the embedder know we are ready.
+        this._sendEvent({ name: 'ready' });
     }
 
     /**
@@ -1082,7 +1110,7 @@ class API {
      * otherwise.
      * @returns {void}
      */
-    notifyLargeVideoVisibilityChanged(isHidden: boolean) {
+    notifyLargeVideoVisibilityChanged(isHidden) {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
@@ -1096,7 +1124,7 @@ class API {
      * @param {Object} event - The message to pass onto spot.
      * @returns {void}
      */
-    sendProxyConnectionEvent(event: Object) {
+    sendProxyConnectionEvent(event) {
         this._sendEvent({
             name: 'proxy-connection-event',
             ...event
@@ -1109,9 +1137,13 @@ class API {
      * @param {Object} event - The event to be sent.
      * @returns {void}
      */
-    _sendEvent(event: Object = {}) {
+    _sendEvent(event = {}) {
         if (this._enabled) {
-            transport.sendEvent(event);
+            try {
+                transport.sendEvent(event);
+            } catch (error) {
+                logger.error('Failed to send and IFrame API event', error);
+            }
         }
     }
 
@@ -1122,7 +1154,7 @@ class API {
      * @param {boolean} isOpen - True if the chat panel is open.
      * @returns {void}
      */
-    notifyChatUpdated(unreadCount: number, isOpen: boolean) {
+    notifyChatUpdated(unreadCount, isOpen) {
         this._sendEvent({
             name: 'chat-updated',
             unreadCount,
@@ -1137,7 +1169,7 @@ class API {
      * @param {boolean} privateMessage - True if the message was a private message.
      * @returns {void}
      */
-    notifySendingChatMessage(message: string, privateMessage: boolean) {
+    notifySendingChatMessage(message, privateMessage) {
         this._sendEvent({
             name: 'outgoing-message',
             message,
@@ -1151,7 +1183,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseEnter(event: MouseEvent) {
+    notifyMouseEnter(event) {
         this._sendEvent({
             name: 'mouse-enter',
             event: sanitizeMouseEvent(event)
@@ -1164,7 +1196,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseLeave(event: MouseEvent) {
+    notifyMouseLeave(event) {
         this._sendEvent({
             name: 'mouse-leave',
             event: sanitizeMouseEvent(event)
@@ -1177,7 +1209,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseMove(event: MouseEvent) {
+    notifyMouseMove(event) {
         this._sendEvent({
             name: 'mouse-move',
             event: sanitizeMouseEvent(event)
@@ -1191,7 +1223,7 @@ class API {
      * @param {boolean} enabled - Whether or not the new moderation status is enabled.
      * @returns {void}
      */
-    notifyModerationChanged(mediaType: string, enabled: boolean) {
+    notifyModerationChanged(mediaType, enabled) {
         this._sendEvent({
             name: 'moderation-status-changed',
             mediaType,
@@ -1206,7 +1238,7 @@ class API {
      * @param {string} mediaType - Media type for which the participant was approved.
      * @returns {void}
      */
-    notifyParticipantApproved(participantId: string, mediaType: string) {
+    notifyParticipantApproved(participantId, mediaType) {
         this._sendEvent({
             name: 'moderation-participant-approved',
             id: participantId,
@@ -1221,7 +1253,7 @@ class API {
      * @param {string} mediaType - Media type for which the participant was rejected.
      * @returns {void}
      */
-    notifyParticipantRejected(participantId: string, mediaType: string) {
+    notifyParticipantRejected(participantId, mediaType) {
         this._sendEvent({
             name: 'moderation-participant-rejected',
             id: participantId,
@@ -1237,11 +1269,24 @@ class API {
      *
      * @returns {void}
      */
-    notifyNotificationTriggered(title: string, description: string) {
+    notifyNotificationTriggered(title, description) {
         this._sendEvent({
             description,
             name: 'notification-triggered',
             title
+        });
+    }
+
+    /**
+     * Notify request desktop sources.
+     *
+     * @param {Object} options - Object with the options for desktop sources.
+     * @returns {void}
+     */
+    requestDesktopSources(options) {
+        return transport.sendRequest({
+            name: '_request-desktop-sources',
+            options
         });
     }
 
@@ -1251,7 +1296,7 @@ class API {
      * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
      * @returns {void}
      */
-    notifyVideoQualityChanged(videoQuality: number) {
+    notifyVideoQualityChanged(videoQuality) {
         this._sendEvent({
             name: 'video-quality-changed',
             videoQuality
@@ -1266,9 +1311,7 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, privateMessage, ts }: {
-                body: *, id: string, nick: string, privateMessage: boolean, ts: *
-            } = {}) {
+            { body, id, nick, privateMessage, ts } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
         }
@@ -1291,7 +1334,7 @@ class API {
      * @param {Object} props - The display name of the user.
      * @returns {void}
      */
-    notifyUserJoined(id: string, props: Object) {
+    notifyUserJoined(id, props) {
         this._sendEvent({
             name: 'participant-joined',
             id,
@@ -1306,7 +1349,7 @@ class API {
      * @param {string} id - User id.
      * @returns {void}
      */
-    notifyUserLeft(id: string) {
+    notifyUserLeft(id) {
         this._sendEvent({
             name: 'participant-left',
             id
@@ -1321,7 +1364,7 @@ class API {
      * @param {string} role - The new user role.
      * @returns {void}
      */
-    notifyUserRoleChanged(id: string, role: string) {
+    notifyUserRoleChanged(id, role) {
         this._sendEvent({
             name: 'participant-role-changed',
             id,
@@ -1337,7 +1380,7 @@ class API {
      * @param {string} avatarURL - The new avatar URL of the participant.
      * @returns {void}
      */
-    notifyAvatarChanged(id: string, avatarURL: string) {
+    notifyAvatarChanged(id, avatarURL) {
         this._sendEvent({
             name: 'avatar-changed',
             avatarURL,
@@ -1352,7 +1395,7 @@ class API {
      * @param {Object} data - The event data.
      * @returns {void}
      */
-    notifyEndpointTextMessageReceived(data: Object) {
+    notifyEndpointTextMessageReceived(data) {
         this._sendEvent({
             name: 'endpoint-text-message-received',
             data
@@ -1366,7 +1409,7 @@ class API {
      * @param {string} faceExpression - Detected face expression.
      * @returns {void}
      */
-    notifyFaceLandmarkDetected(faceBox: Object, faceExpression: string) {
+    notifyFaceLandmarkDetected(faceBox, faceExpression) {
         this._sendEvent({
             name: 'face-landmark-detected',
             faceBox,
@@ -1380,7 +1423,7 @@ class API {
      * @param {Object} data - The event data.
      * @returns {void}
      */
-    notifySharingParticipantsChanged(data: Object) {
+    notifySharingParticipantsChanged(data) {
         this._sendEvent({
             name: 'content-sharing-participants-changed',
             data
@@ -1394,7 +1437,7 @@ class API {
      * @param {Object} devices - The new device list.
      * @returns {void}
      */
-    notifyDeviceListChanged(devices: Object) {
+    notifyDeviceListChanged(devices) {
         this._sendEvent({
             name: 'device-list-changed',
             devices
@@ -1412,8 +1455,8 @@ class API {
      * @returns {void}
      */
     notifyDisplayNameChanged(
-            id: string,
-            { displayName, formattedDisplayName }: Object) {
+            id,
+            { displayName, formattedDisplayName }) {
         this._sendEvent({
             name: 'display-name-change',
             displayname: displayName,
@@ -1431,8 +1474,8 @@ class API {
      * @returns {void}
      */
     notifyEmailChanged(
-            id: string,
-            { email }: Object) {
+            id,
+            { email }) {
         this._sendEvent({
             name: 'email-change',
             email,
@@ -1444,14 +1487,46 @@ class API {
      * Notify external application (if API is enabled) that the an error has been logged.
      *
      * @param {string} logLevel - The message log level.
-     * @param {Array} args - Array of strings composing the log message.
+     * @param {Array<string>} args - Array of strings composing the log message.
      * @returns {void}
      */
-    notifyLog(logLevel: string, args: Array<string>) {
+    notifyLog(logLevel, args = []) {
+        if (!Array.isArray(args)) {
+            logger.error('notifyLog received wrong argument types!');
+
+            return;
+        }
+
+        // Trying to convert arguments to strings. Otherwise in order to send the event the arguments will be formatted
+        // with JSON.stringify which can throw an error because of circular objects and we will lose the whole log.
+        const formattedArguments = [];
+
+        args.forEach(arg => {
+            let formattedArgument = '';
+
+            if (arg instanceof Error) {
+                formattedArgument += `${arg.toString()}: ${arg.stack}`;
+            } else if (typeof arg === 'object') {
+                // NOTE: The non-enumerable properties of the objects wouldn't be included in the string after
+                // JSON.strigify. For example Map instance will be translated to '{}'. So I think we have to eventually
+                // do something better for parsing the arguments. But since this option for strigify is part of the
+                // public interface and I think it could be useful in some cases I will it for now.
+                try {
+                    formattedArgument += JSON.stringify(arg);
+                } catch (error) {
+                    formattedArgument += arg;
+                }
+            } else {
+                formattedArgument += arg;
+            }
+
+            formattedArguments.push(formattedArgument);
+        });
+
         this._sendEvent({
             name: 'log',
             logLevel,
-            args
+            args: formattedArguments
         });
     }
 
@@ -1465,7 +1540,7 @@ class API {
      * user and the type of the room.
      * @returns {void}
      */
-    notifyConferenceJoined(roomName: string, id: string, props: Object) {
+    notifyConferenceJoined(roomName, id, props) {
         this._sendEvent({
             name: 'video-conference-joined',
             roomName,
@@ -1480,7 +1555,7 @@ class API {
      * @param {string} roomName - User id.
      * @returns {void}
      */
-    notifyConferenceLeft(roomName: string) {
+    notifyConferenceLeft(roomName) {
         this._sendEvent({
             name: 'video-conference-left',
             roomName
@@ -1495,7 +1570,7 @@ class API {
      *
      * @returns {void}
      */
-    notifyDataChannelClosed(code: number, reason: string) {
+    notifyDataChannelClosed(code, reason) {
         this._sendEvent({
             name: 'data-channel-closed',
             code,
@@ -1538,7 +1613,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyAudioMutedStatusChanged(muted: boolean) {
+    notifyAudioMutedStatusChanged(muted) {
         this._sendEvent({
             name: 'audio-mute-status-changed',
             muted
@@ -1552,7 +1627,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyVideoMutedStatusChanged(muted: boolean) {
+    notifyVideoMutedStatusChanged(muted) {
         this._sendEvent({
             name: 'video-mute-status-changed',
             muted
@@ -1566,7 +1641,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyAudioAvailabilityChanged(available: boolean) {
+    notifyAudioAvailabilityChanged(available) {
         audioAvailable = available;
         this._sendEvent({
             name: 'audio-availability-changed',
@@ -1581,7 +1656,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyVideoAvailabilityChanged(available: boolean) {
+    notifyVideoAvailabilityChanged(available) {
         videoAvailable = available;
         this._sendEvent({
             name: 'video-availability-changed',
@@ -1596,7 +1671,7 @@ class API {
      * @param {string} id - User id of the new on stage participant.
      * @returns {void}
      */
-    notifyOnStageParticipantChanged(id: string) {
+    notifyOnStageParticipantChanged(id) {
         this._sendEvent({
             name: 'on-stage-participant-changed',
             id
@@ -1610,7 +1685,7 @@ class API {
      * @param {boolean} isVisible - Whether the prejoin video is visible.
      * @returns {void}
      */
-    notifyPrejoinVideoVisibilityChanged(isVisible: boolean) {
+    notifyPrejoinVideoVisibilityChanged(isVisible) {
         this._sendEvent({
             name: 'on-prejoin-video-changed',
             isVisible
@@ -1644,7 +1719,7 @@ class API {
      * @param {string} message - Additional information about the error.
      * @returns {void}
      */
-    notifyOnCameraError(type: string, message: string) {
+    notifyOnCameraError(type, message) {
         this._sendEvent({
             name: 'camera-error',
             type,
@@ -1660,7 +1735,7 @@ class API {
      * @param {string} message - Additional information about the error.
      * @returns {void}
      */
-    notifyOnMicError(type: string, message: string) {
+    notifyOnMicError(type, message) {
         this._sendEvent({
             name: 'mic-error',
             type,
@@ -1676,7 +1751,7 @@ class API {
      * @param {string} error - A failure message, if any.
      * @returns {void}
      */
-    notifyFeedbackSubmitted(error: string) {
+    notifyFeedbackSubmitted(error) {
         this._sendEvent({
             name: 'feedback-submitted',
             error
@@ -1701,7 +1776,7 @@ class API {
      * be displayed or hidden.
      * @returns {void}
      */
-    notifyFilmstripDisplayChanged(visible: boolean) {
+    notifyFilmstripDisplayChanged(visible) {
         this._sendEvent({
             name: 'filmstrip-display-changed',
             visible
@@ -1718,7 +1793,7 @@ class API {
      * other participant.
      * @returns {void}
      */
-    notifyKickedOut(kicked: Object, kicker: Object) {
+    notifyKickedOut(kicked, kicker) {
         this._sendEvent({
             name: 'participant-kicked-out',
             kicked,
@@ -1747,7 +1822,7 @@ class API {
      * share is capturing.
      * @returns {void}
      */
-    notifyScreenSharingStatusChanged(on: boolean, details: Object) {
+    notifyScreenSharingStatusChanged(on, details) {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
             on,
@@ -1762,7 +1837,7 @@ class API {
      * @param {string} id - Id of the dominant participant.
      * @returns {void}
      */
-    notifyDominantSpeakerChanged(id: string) {
+    notifyDominantSpeakerChanged(id) {
         this._sendEvent({
             name: 'dominant-speaker-changed',
             id
@@ -1776,7 +1851,7 @@ class API {
      * @param {string} subject - Conference subject.
      * @returns {void}
      */
-    notifySubjectChanged(subject: string) {
+    notifySubjectChanged(subject) {
         this._sendEvent({
             name: 'subject-change',
             subject
@@ -1791,7 +1866,7 @@ class API {
      * otherwise.
      * @returns {void}
      */
-    notifyTileViewChanged(enabled: boolean) {
+    notifyTileViewChanged(enabled) {
         this._sendEvent({
             name: 'tile-view-changed',
             enabled
@@ -1804,7 +1879,7 @@ class API {
      * @param {string} localStorageContent - The new localStorageContent.
      * @returns {void}
      */
-    notifyLocalStorageChanged(localStorageContent: string) {
+    notifyLocalStorageChanged(localStorageContent) {
         this._sendEvent({
             name: 'local-storage-changed',
             localStorageContent
@@ -1818,7 +1893,7 @@ class API {
      * @param {boolean} handRaised - Whether user has raised hand.
      * @returns {void}
      */
-    notifyRaiseHandUpdated(id: string, handRaised: boolean) {
+    notifyRaiseHandUpdated(id, handRaised) {
         this._sendEvent({
             name: 'raise-hand-updated',
             handRaised,
@@ -1834,7 +1909,7 @@ class API {
      * @param {string} error - Error type or null if success.
      * @returns {void}
      */
-    notifyRecordingStatusChanged(on: boolean, mode: string, error?: string) {
+    notifyRecordingStatusChanged(on, mode, error) {
         this._sendEvent({
             name: 'recording-status-changed',
             on,
@@ -1851,7 +1926,7 @@ class API {
      * @param {number} ttl - The recording download link time to live.
      * @returns {void}
      */
-    notifyRecordingLinkAvailable(link: string, ttl: number) {
+    notifyRecordingLinkAvailable(link, ttl) {
         this._sendEvent({
             name: 'recording-link-available',
             link,
@@ -1865,7 +1940,7 @@ class API {
      * @param {Object} participant - Participant data such as id and name.
      * @returns {void}
      */
-    notifyKnockingParticipant(participant: Object) {
+    notifyKnockingParticipant(participant) {
         this._sendEvent({
             name: 'knocking-participant',
             participant
@@ -1878,7 +1953,7 @@ class API {
      * @param {Object} error - The error.
      * @returns {void}
      */
-    notifyError(error: Object) {
+    notifyError(error) {
         this._sendEvent({
             name: 'error-occurred',
             error
@@ -1892,11 +1967,38 @@ class API {
      * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
      * @returns {void}
      */
-    notifyToolbarButtonClicked(key: string, preventExecution: boolean) {
+    notifyToolbarButtonClicked(key, preventExecution) {
         this._sendEvent({
             name: 'toolbar-button-clicked',
             key,
             preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that transcribing has started or stopped.
+     *
+     * @param {boolean} on - True if transcribing is on, false otherwise.
+     * @returns {void}
+     */
+    notifyTranscribingStatusChanged(on) {
+        this._sendEvent({
+            name: 'transcribing-status-changed',
+            on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user received
+     * a transcription chunk.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyTranscriptionChunkReceived(data) {
+        this._sendEvent({
+            name: 'transcription-chunk-received',
+            data
         });
     }
 
@@ -1906,7 +2008,7 @@ class API {
      * @param {boolean} supported - If browser is supported or not.
      * @returns {void}
      */
-    notifyBrowserSupport(supported: boolean) {
+    notifyBrowserSupport(supported) {
         this._sendEvent({
             name: 'browser-support',
             supported
@@ -1982,14 +2084,73 @@ class API {
      * Notify external application ( if API is enabled) that a participant menu button was clicked.
      *
      * @param {string} key - The key of the participant menu button.
-     * @param {string} participantId - The ID of the participant for with the participant menu button was clicked.
+     * @param {string} participantId - The ID of the participant for whom the participant menu button was clicked.
+     * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
      * @returns {void}
      */
-    notifyParticipantMenuButtonClicked(key, participantId) {
+    notifyParticipantMenuButtonClicked(key, participantId, preventExecution) {
         this._sendEvent({
             name: 'participant-menu-button-clicked',
             key,
-            participantId
+            participantId,
+            preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) if whiteboard state is
+     * changed.
+     *
+     * @param {WhiteboardStatus} status - The new whiteboard status.
+     * @returns {void}
+     */
+    notifyWhiteboardStatusChanged(status) {
+        this._sendEvent({
+            name: 'whiteboard-status-changed',
+            status
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) if non participant message
+     * is received.
+     *
+     * @param {string} id - The resource id of the sender.
+     * @param {Object} json - The json carried by the message.
+     * @returns {void}
+     */
+    notifyNonParticipantMessageReceived(id, json) {
+        this._sendEvent({
+            name: 'non-participant-message-received',
+            id,
+            message: json
+        });
+    }
+
+
+    /**
+     * Notify the external application (if API is enabled) if the connection type changed.
+     *
+     * @param {boolean} isP2p - Whether the new connection is P2P.
+     * @returns {void}
+     */
+    notifyP2pStatusChanged(isP2p) {
+        this._sendEvent({
+            name: 'p2p-status-changed',
+            isP2p
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when the compute pressure changed.
+     *
+     * @param {Array} records - The new pressure records.
+     * @returns {void}
+     */
+    notifyComputePressureChanged(records) {
+        this._sendEvent({
+            name: 'compute-pressure-changed',
+            records
         });
     }
 

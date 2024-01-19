@@ -7,25 +7,24 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
-import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
-import { Avatar } from '../../../react/features/base/avatar';
+import { createScreenSharingIssueEvent } from '../../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../react/features/analytics/functions';
+import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import { i18next } from '../../../react/features/base/i18n';
+import i18next from '../../../react/features/base/i18n/i18next';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { VIDEO_TYPE } from '../../../react/features/base/media/constants';
 import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName,
     isLocalScreenshareParticipant,
     isScreenShareParticipant
-} from '../../../react/features/base/participants';
+} from '../../../react/features/base/participants/functions';
 import { getHideSelfView } from '../../../react/features/base/settings/functions.any';
-import {
-    getVideoTrackByParticipant,
-    trackStreamingStatusChanged
-} from '../../../react/features/base/tracks';
-import { CHAT_SIZE } from '../../../react/features/chat';
+import { trackStreamingStatusChanged } from '../../../react/features/base/tracks/actions.any';
+import { getVideoTrackByParticipant } from '../../../react/features/base/tracks/functions.any';
+import { CHAT_SIZE } from '../../../react/features/chat/constants';
 import {
     isTrackStreamingStatusActive,
     isTrackStreamingStatusInactive,
@@ -37,8 +36,8 @@ import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
-import { PresenceLabel } from '../../../react/features/presence-status';
-import { shouldDisplayTileView } from '../../../react/features/video-layout';
+import PresenceLabel from '../../../react/features/presence-status/components/PresenceLabel';
+import { shouldDisplayTileView } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
@@ -128,16 +127,12 @@ export default class LargeVideoManager {
          */
         this.videoTrack = undefined;
 
-        this.$container = $('#largeVideoContainer');
+        this.container = document.getElementById('largeVideoContainer');
 
-        this.$container.css({
-            display: 'inline-block'
-        });
+        this.container.style.display = 'inline-block';
 
-        this.$container.hover(
-            e => this.onHoverIn(e),
-            e => this.onHoverOut(e)
-        );
+        this.container.addEventListener('mouseenter', e => this.onHoverIn(e));
+        this.container.addEventListener('mouseleave', e => this.onHoverOut(e));
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoResolutionUpdate
@@ -172,7 +167,7 @@ export default class LargeVideoManager {
 
         ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
 
-        this.$container.css({ display: 'none' });
+        this.container.style.display = 'none';
     }
 
     /**
@@ -540,8 +535,8 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     updatePresenceLabel(id) {
-        const isConnectionMessageVisible
-            = $('#remoteConnectionMessage').is(':visible');
+        const isConnectionMessageVisible = getComputedStyle(
+            document.getElementById('remoteConnectionMessage')).display !== 'none';
 
         if (isConnectionMessageVisible) {
             this.removePresenceLabel();
@@ -549,9 +544,9 @@ export default class LargeVideoManager {
             return;
         }
 
-        const presenceLabelContainer = $('#remotePresenceMessage');
+        const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
-        if (presenceLabelContainer.length) {
+        if (presenceLabelContainer) {
             ReactDOM.render(
                 <Provider store = { APP.store }>
                     <I18nextProvider i18n = { i18next }>
@@ -560,7 +555,7 @@ export default class LargeVideoManager {
                             className = 'presence-label' />
                     </I18nextProvider>
                 </Provider>,
-                presenceLabelContainer.get(0));
+                presenceLabelContainer);
         }
     }
 
@@ -570,10 +565,10 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     removePresenceLabel() {
-        const presenceLabelContainer = $('#remotePresenceMessage');
+        const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
-        if (presenceLabelContainer.length) {
-            ReactDOM.unmountComponentAtNode(presenceLabelContainer.get(0));
+        if (presenceLabelContainer) {
+            ReactDOM.unmountComponentAtNode(presenceLabelContainer);
         }
     }
 
@@ -582,7 +577,11 @@ export default class LargeVideoManager {
      * @param {boolean} show
      */
     showWatermark(show) {
-        $('.watermark').css('visibility', show ? 'visible' : 'hidden');
+        const watermark = document.querySelectorAll('.watermark');
+
+        watermark.forEach(el => {
+            el.style.visibility = show ? 'visible' : 'hidden';
+        });
     }
 
     /**
@@ -607,9 +606,9 @@ export default class LargeVideoManager {
         }
 
         if (show) {
-            $('#remoteConnectionMessage').css({ display: 'block' });
+            document.getElementById('remoteConnectionMessage').style.display = 'block';
         } else {
-            $('#remoteConnectionMessage').hide();
+            document.getElementById('remoteConnectionMessage').style.display = 'none';
         }
     }
 

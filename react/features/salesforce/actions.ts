@@ -7,7 +7,6 @@ import {
     SALESFORCE_LINK_NOTIFICATION_ID
 } from '../notifications/constants';
 
-// @ts-ignore
 import { SalesforceLinkDialog } from './components';
 import { isSalesforceEnabled } from './functions';
 
@@ -32,6 +31,6 @@ export function showSalesforceNotification() {
                 dispatch(openDialog(SalesforceLinkDialog));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }

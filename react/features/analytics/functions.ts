@@ -16,6 +16,7 @@ import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
 import { loadScript } from '../base/util/loadScript';
 import { parseURIString } from '../base/util/uri';
+import { isPrejoinPageVisible } from '../prejoin/functions';
 
 import AmplitudeHandler from './handlers/AmplitudeHandler';
 import MatomoHandler from './handlers/MatomoHandler';
@@ -62,7 +63,7 @@ export function resetAnalytics() {
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export async function createHandlers({ getState }: { getState: Function; }) {
+export async function createHandlers({ getState }: IStore) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
 
     if (!isAnalyticsEnabled(getState)) {
@@ -82,6 +83,7 @@ export async function createHandlers({ getState }: { getState: Function; }) {
     } = config;
     const {
         amplitudeAPPKey,
+        amplitudeIncludeUTM,
         blackListedEvents,
         scriptURLs,
         googleAnalyticsTrackingId,
@@ -92,6 +94,7 @@ export async function createHandlers({ getState }: { getState: Function; }) {
     const { group, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
+        amplitudeIncludeUTM,
         blackListedEvents,
         envType: deploymentInfo?.envType || 'dev',
         googleAnalyticsTrackingId,
@@ -156,13 +159,13 @@ export async function createHandlers({ getState }: { getState: Function; }) {
  *
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @param {Array<Object>} handlers - The analytics handlers.
- * @returns {void}
+ * @returns {boolean} - True if the analytics were successfully initialized and false otherwise.
  */
-export function initAnalytics(store: IStore, handlers: Array<Object>) {
+export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     const { getState, dispatch } = store;
 
     if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
-        return;
+        return false;
     }
 
     const state = getState();
@@ -173,7 +176,19 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
     const { group, server } = state['features/base/jwt'];
     const { locationURL = { href: '' } } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
-    const permanentProperties: any = {};
+    const permanentProperties: {
+        appName?: string;
+        externalApi?: boolean;
+        group?: string;
+        inIframe?: boolean;
+        isPromotedFromVisitor?: boolean;
+        isVisitor?: boolean;
+        server?: string;
+        tenant?: string;
+        wasLobbyVisible?: boolean;
+        wasPrejoinDisplayed?: boolean;
+        websocket?: boolean;
+    } & typeof deploymentInfo = {};
 
     if (server) {
         permanentProperties.server = server;
@@ -197,23 +212,37 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
 
+    permanentProperties.wasPrejoinDisplayed = isPrejoinPageVisible(state);
+
+    // Currently we don't know if there will be lobby. We will update it to true if we go through lobby.
+    permanentProperties.wasLobbyVisible = false;
+
+    // Setting visitor properties to false by default. We will update them later if it turns out we are visitor.
+    permanentProperties.isVisitor = false;
+    permanentProperties.isPromotedFromVisitor = false;
+
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
     if (deploymentInfo) {
         for (const key in deploymentInfo) {
             if (deploymentInfo.hasOwnProperty(key)) {
-                permanentProperties[key] = deploymentInfo[key as keyof typeof deploymentInfo];
+                permanentProperties[key as keyof typeof deploymentInfo] = deploymentInfo[
+                    key as keyof typeof deploymentInfo];
             }
         }
     }
 
-    analytics.addPermanentProperties(permanentProperties);
+    analytics.addPermanentProperties({
+        ...permanentProperties,
+        ...getState()['features/analytics'].initialPermanentProperties
+    });
+
     analytics.setConferenceName(getAnalyticsRoomName(state, dispatch));
 
     // Set the handlers last, since this triggers emptying of the cache
     analytics.setAnalyticsHandlers(handlers);
 
-    if (!isMobileBrowser() && browser.isChrome()) {
+    if (!isMobileBrowser() && browser.isChromiumBased()) {
         const bannerCfg = state['features/base/config'].chromeExtensionBanner;
 
         checkChromeExtensionsInstalled(bannerCfg).then(extensionsInstalled => {
@@ -224,6 +253,8 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
             }
         });
     }
+
+    return true;
 }
 
 /**
@@ -235,8 +266,8 @@ export function initAnalytics(store: IStore, handlers: Array<Object>) {
  * @returns {Promise} Resolves with the handlers that have been successfully loaded and rejects if there are no handlers
  * loaded or the analytics is disabled.
  */
-function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object) {
-    const promises = [];
+function _loadHandlers(scriptURLs: string[] = [], handlerConstructorOptions: Object) {
+    const promises: Promise<{ error?: Error; type: string; url?: string; }>[] = [];
 
     for (const url of scriptURLs) {
         promises.push(
@@ -255,7 +286,7 @@ function _loadHandlers(scriptURLs: any[] = [], handlerConstructorOptions: Object
 
     return Promise.all(promises).then(values => {
         for (const el of values) {
-            if (el.type === 'error') { // @ts-ignore
+            if (el.type === 'error') {
                 logger.warn(`Failed to load ${el.url}: ${el.error}`);
             }
         }

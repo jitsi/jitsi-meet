@@ -25,7 +25,7 @@ function setCustomerDetails(details: Object) {
 export function getCustomerDetails() {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const state = getState();
-        const baseUrl = state['features/base/config'].jaasActuatorUrl || 'https://api-vo-pilot.jitsi.net/jaas-actuator';
+        const baseUrl = state['features/base/config'].jaasActuatorUrl ?? '';
         const appId = getVpaasTenant(state);
 
         const shouldSendRequest = Boolean(baseUrl && appId);

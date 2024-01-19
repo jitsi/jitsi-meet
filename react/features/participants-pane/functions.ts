@@ -6,6 +6,7 @@ import {
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import { INVITE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
@@ -20,6 +21,7 @@ import {
 import { IParticipant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
 import { normalizeAccents } from '../base/util/strings';
+import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../breakout-rooms/constants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
@@ -57,7 +59,8 @@ export function isForceMuted(participant: IParticipant | undefined, mediaType: M
  * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantAudioMediaState(participant: IParticipant, muted: Boolean, state: IReduxState) {
+export function getParticipantAudioMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     const dominantSpeaker = getDominantSpeakerParticipant(state);
 
     if (muted) {
@@ -83,7 +86,8 @@ export function getParticipantAudioMediaState(participant: IParticipant, muted: 
  * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantVideoMediaState(participant: IParticipant, muted: Boolean, state: IReduxState) {
+export function getParticipantVideoMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
@@ -131,14 +135,27 @@ export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(
  *
  * @param {IParticipant} participant - The participant.
  * @param {boolean} isAudioMuted - If audio is muted for the participant.
+ * @param {boolean} isVideoMuted - If audio is muted for the participant.
  * @param {IReduxState} state - The redux state.
  * @returns {string} - The type of the quick action button.
  */
-export function getQuickActionButtonType(participant: IParticipant, isAudioMuted: Boolean, state: IReduxState) {
+export function getQuickActionButtonType(
+        participant: IParticipant | undefined,
+        isAudioMuted: Boolean,
+        isVideoMuted: Boolean,
+        state: IReduxState) {
     // handled only by moderators
+    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+
     if (isLocalParticipantModerator(state)) {
         if (!isAudioMuted) {
             return QUICK_ACTION_BUTTON.MUTE;
+        }
+        if (!isVideoMuted) {
+            return QUICK_ACTION_BUTTON.STOP_VIDEO;
+        }
+        if (isVideoForceMuted) {
+            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
         }
         if (isSupported()(state)) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
@@ -219,8 +236,9 @@ export function getSortedParticipantIds(stateful: IStateful) {
  * @param {string} searchString - The participants search string.
  * @returns {boolean}
  */
-export function participantMatchesSearch(participant: { displayName: string; jid: string; name?: string; },
-        searchString: string) {
+export function participantMatchesSearch(participant: IParticipant | undefined
+    | { displayName?: string; name?: string; },
+searchString: string) {
     if (searchString === '') {
         return true;
     }
@@ -266,3 +284,28 @@ export const isMuteAllVisible = (state: IReduxState) => {
 
     return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator;
 };
+
+/**
+ * Returns true if renaming the currently joined breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if reanming the currently joined breakout room is allowed and false otherwise.
+ */
+export function isCurrentRoomRenamable(state: IReduxState) {
+    return isInBreakoutRoom(state) && isBreakoutRoomRenameAllowed(state);
+}
+
+/**
+ * Returns true if renaming a breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if renaming a breakout room is allowed and false otherwise.
+ */
+export function isBreakoutRoomRenameAllowed(state: IReduxState) {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const conference = getCurrentConference(state);
+    const isRenameBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
+
+    return isLocalModerator && isRenameBreakoutRoomsSupported;
+}

@@ -1,7 +1,8 @@
 import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
-import ReactFocusLock from 'react-focus-lock';
+import { FocusOn } from 'react-focus-on';
 import { makeStyles } from 'tss-react/mui';
 
+import { isElementInTheViewport } from '../../../base/ui/functions.web';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
 
 
@@ -35,10 +36,51 @@ interface IProps {
 
 const useStyles = makeStyles()(theme => {
     return {
+        drawerMenuContainer: {
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            height: '100dvh',
+            display: 'flex',
+            alignItems: 'flex-end'
+        },
+
         drawer: {
             backgroundColor: theme.palette.ui01,
             maxHeight: `calc(${DRAWER_MAX_HEIGHT})`,
-            borderRadius: '24px 24px 0 0'
+            borderRadius: '24px 24px 0 0',
+            overflowY: 'auto',
+            marginBottom: 'env(safe-area-inset-bottom, 0)',
+            width: '100%',
+
+            '& .overflow-menu': {
+                margin: 'auto',
+                fontSize: '1.2em',
+                listStyleType: 'none',
+                padding: 0,
+                height: 'calc(80vh - 144px - 64px)',
+                overflowY: 'auto',
+
+                '& .overflow-menu-item': {
+                    boxSizing: 'border-box',
+                    height: '48px',
+                    padding: '12px 16px',
+                    alignItems: 'center',
+                    color: theme.palette.text01,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    fontSize: '16px',
+
+                    '& div': {
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                    },
+
+                    '&.disabled': {
+                        cursor: 'initial',
+                        color: '#3b475c'
+                    }
+                }
+            }
         }
     };
 });
@@ -55,7 +97,7 @@ function Drawer({
     isOpen,
     onClose
 }: IProps) {
-    const { classes: styles } = useStyles();
+    const { classes, cx } = useStyles();
 
     /**
      * Handles clicks within the menu, preventing the propagation of the click event.
@@ -95,21 +137,32 @@ function Drawer({
     return (
         isOpen ? (
             <div
-                className = 'drawer-menu-container'
+                className = { classes.drawerMenuContainer }
                 onClick = { handleOutsideClick }
                 onKeyDown = { handleEscKey }>
                 <div
-                    className = { `drawer-menu ${styles.drawer} ${className}` }
+                    className = { cx(classes.drawer, className) }
                     onClick = { handleInsideClick }>
-                    <ReactFocusLock
-                        lockProps = {{
-                            role: 'dialog',
-                            'aria-modal': true,
-                            'aria-labelledby': `#${headingId}`
-                        }}
-                        returnFocus = { true }>
-                        {children}
-                    </ReactFocusLock>
+                    <FocusOn
+                        returnFocus = {
+
+                            // If we return the focus to an element outside the viewport the page will scroll to
+                            // this element which in our case is undesirable and the element is outside of the
+                            // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+                            // when it is hidden the whole page will move up in order to show the toolbox. This is
+                            // usually followed up with displaying the toolbox (because now it is on focus) but
+                            // because of the animation the whole scenario looks like jumping large video.
+                            isElementInTheViewport
+                        }>
+                        <div
+                            aria-labelledby = { headingId ? `#${headingId}` : undefined }
+                            aria-modal = { true }
+                            data-autofocus = { true }
+                            role = 'dialog'
+                            tabIndex = { -1 }>
+                            {children}
+                        </div>
+                    </FocusOn>
                 </div>
             </div>
         ) : null

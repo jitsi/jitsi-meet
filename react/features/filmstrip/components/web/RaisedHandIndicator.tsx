@@ -7,6 +7,7 @@ import { IconRaiseHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import BaseIndicator from '../../../base/react/components/web/BaseIndicator';
+import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
@@ -27,7 +28,7 @@ interface IProps {
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string;
+    tooltipPosition: TOOLTIP_POSITION;
 }
 
 const useStyles = makeStyles()(theme => {

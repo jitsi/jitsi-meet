@@ -1,3 +1,4 @@
+import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 import { StyleType } from '../styles/functions.any';
 
@@ -38,7 +39,7 @@ class ColorSchemeRegistry {
      * want to retrieve.
      * @returns {StyleType}
      */
-    get(stateful: Object | Function, componentName: string): StyleType {
+    get(stateful: IStateful, componentName: string): StyleType {
         let schemedStyle = this._schemedStyles.get(componentName);
 
         if (!schemedStyle) {
@@ -64,7 +65,7 @@ class ColorSchemeRegistry {
      * @param {StyleType} style - The style definition to register.
      * @returns {void}
      */
-    register(componentName: string, style: StyleType): void {
+    register(componentName: string, style: any): void {
         this._styleTemplates.set(componentName, style);
 
         // If this is a style overwrite, we need to delete the processed version
@@ -85,9 +86,9 @@ class ColorSchemeRegistry {
      * @returns {StyleType}
      */
     _applyColorScheme(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
-            style: StyleType): StyleType {
+            style: StyleType | null): StyleType {
         let schemedStyle: any;
 
         if (Array.isArray(style)) {
@@ -114,12 +115,11 @@ class ColorSchemeRegistry {
                     // The value is another style object, we apply the same
                     // transformation recursively.
                     schemedStyle[styleName]
-                        = this._applyColorScheme( // @ts-ignore
-                            stateful, componentName, styleValue);
+                        = this._applyColorScheme(
+                            stateful, componentName, styleValue as StyleType);
                 } else if (typeof styleValue === 'function') {
                     // The value is a function, which indicates that it's a
                     // dynamic, schemed color we need to resolve.
-                    // $FlowExpectedError
                     const value = styleValue();
 
                     schemedStyle[styleName]
@@ -144,18 +144,15 @@ class ColorSchemeRegistry {
      * @returns {string}
      */
     _getColor(
-            stateful: Object | Function,
+            stateful: IStateful,
             componentName: string,
             colorDefinition: string): string {
-        // @ts-ignore
         const colorScheme = toState(stateful)['features/base/color-scheme'] || {};
 
         return {
             ...defaultScheme._defaultTheme,
             ...colorScheme._defaultTheme,
-
-            // @ts-ignore
-            ...defaultScheme[componentName],
+            ...defaultScheme[componentName as keyof typeof defaultScheme],
             ...colorScheme[componentName]
         }[colorDefinition];
     }

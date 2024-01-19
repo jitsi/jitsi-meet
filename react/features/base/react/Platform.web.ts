@@ -1,6 +1,6 @@
 // @ts-ignore
 const { userAgent, maxTouchPoints, platform } = navigator;
-let OS;
+let OS = '';
 
 if (userAgent.match(/Android/i)) {
     OS = 'android';

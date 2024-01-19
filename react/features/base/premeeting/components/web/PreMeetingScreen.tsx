@@ -12,9 +12,8 @@ import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/funct
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import Preview from './Preview';
+import UnsafeRoomWarning from './UnsafeRoomWarning';
 
 interface IProps {
 
@@ -57,6 +56,11 @@ interface IProps {
      * Indicates whether the device status should be shown.
      */
     showDeviceStatus: boolean;
+
+    /**
+     * If should show unsafe room warning when joining.
+     */
+    showUnsafeRoomWarning?: boolean;
 
     /**
      * The 'Skip prejoin' button to be rendered (if any).
@@ -163,6 +167,7 @@ const PreMeetingScreen = ({
     children,
     className,
     showDeviceStatus,
+    showUnsafeRoomWarning,
     skipPrejoinButton,
     title,
     videoMuted,
@@ -193,6 +198,7 @@ const PreMeetingScreen = ({
                         {children}
                         {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
                         {skipPrejoinButton}
+                        {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                         {showDeviceStatus && <DeviceStatus />}
                     </div>
                 </div>

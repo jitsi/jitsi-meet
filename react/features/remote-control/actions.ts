@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import $ from 'jquery';
 import React from 'react';
 
@@ -26,9 +26,7 @@ import {
     SET_RECEIVER_TRANSPORT,
     SET_REQUESTED_PARTICIPANT
 } from './actionTypes';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { RemoteControlAuthorizationDialog } from './components';
+import RemoteControlAuthorizationDialog from './components/RemoteControlAuthorizationDialog';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
     EVENTS,
@@ -207,14 +205,12 @@ export function processPermissionRequestReply(participantId: string, event: any)
                 // the remote control permissions has been granted
                 // pin the controlled participant
                 const pinnedParticipant = getPinnedParticipant(state);
-                const virtualScreenshareParticipantId = getVirtualScreenshareParticipantByOwnerId(state, participantId);
+                const virtualScreenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participantId);
                 const pinnedId = pinnedParticipant?.id;
 
-                // @ts-ignore
-                if (virtualScreenshareParticipantId && pinnedId !== virtualScreenshareParticipantId) {
-                    // @ts-ignore
-                    dispatch(pinParticipant(virtualScreenshareParticipantId));
-                } else if (!virtualScreenshareParticipantId && pinnedId !== participantId) {
+                if (virtualScreenshareParticipant?.id && pinnedId !== virtualScreenshareParticipant?.id) {
+                    dispatch(pinParticipant(virtualScreenshareParticipant?.id));
+                } else if (!virtualScreenshareParticipant?.id && pinnedId !== participantId) {
                     dispatch(pinParticipant(participantId));
                 }
             }
@@ -233,7 +229,7 @@ export function processPermissionRequestReply(participantId: string, event: any)
  * @returns {void}
  */
 export function handleRemoteControlStoppedEvent(participantId: Object, event: { name: string; type: string; }) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { name, type } = event;
         const { controlled } = state['features/remote-control'].controller;
@@ -369,7 +365,7 @@ export function enableReceiver() {
  * @returns {Function}
  */
 export function disableReceiver() {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { enabled } = state['features/remote-control'].receiver;
 
@@ -409,7 +405,7 @@ export function disableReceiver() {
  * @returns {Function}
  */
 export function stopReceiver(dontNotifyLocalParty = false, dontNotifyRemoteParty = false) {
-    return (dispatch: Function, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { receiver } = state['features/remote-control'];
         const { controller, transport } = receiver;
@@ -431,7 +427,7 @@ export function stopReceiver(dontNotifyLocalParty = false, dontNotifyRemoteParty
             controller: undefined
         });
 
-        transport.sendEvent({
+        transport?.sendEvent({
             name: REMOTE_CONTROL_MESSAGE_NAME,
             type: EVENTS.stop
         });
@@ -480,7 +476,11 @@ export function endpointMessageReceived(participantId: string, message: {
                 if (type === EVENTS.stop) {
                     dispatch(stopReceiver(false, true));
                 } else { // forward the message
-                    transport?.sendEvent(message);
+                    try {
+                        transport?.sendEvent(message);
+                    } catch (error) {
+                        logger.error('Error while trying to execute remote control message', error);
+                    }
                 }
             } // else ignore
         } else {
@@ -563,7 +563,7 @@ export function grant(participantId: string) {
                 true,
                 false,
                 { desktopSharingSources: [ 'screen' ] }
-            )) // @ts-ignore
+            ))
             .then(() => dispatch(sendStartRequest()));
         }
 
@@ -702,9 +702,6 @@ export function resume() {
 
         logger.log('Resuming remote control controller.');
 
-        // FIXME: Once the keyboard shortcuts are using react/redux.
-        APP.keyboardshortcut.enable(false);
-
         area.mousemove((event: React.MouseEvent) => {
             dispatch(mouseMoved(event));
         });
@@ -750,9 +747,6 @@ export function pause() {
         }
 
         logger.log('Pausing remote control controller.');
-
-        // FIXME: Once the keyboard shortcuts are using react/redux.
-        APP.keyboardshortcut.enable(true);
 
         const area = getRemoteConrolEventCaptureArea();
 

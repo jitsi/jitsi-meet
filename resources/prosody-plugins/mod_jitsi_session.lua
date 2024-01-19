@@ -3,7 +3,6 @@
 module:set_global();
 
 local formdecode = require "util.http".formdecode;
-local urlencode = require "util.http".urlencode;
 
 -- Extract the following parameters from the URL and set them in the session:
 -- * previd: for session resumption
@@ -18,9 +17,12 @@ function init_session(event)
         -- the param is used to find resumed session and re-use anonymous(random) user id
         session.previd = query and params.previd or nil;
 
+        -- customusername can be used with combination with "pre-jitsi-authentication" event to pre-set a known jid to a session
+        session.customusername = query and params.customusername or nil;
+
         -- The room name and optional prefix from the web query
-        session.jitsi_web_query_room = urlencode(params.room);
-        session.jitsi_web_query_prefix = urlencode(params.prefix) or "";
+        session.jitsi_web_query_room = params.room;
+        session.jitsi_web_query_prefix = params.prefix or "";
     end
 end
 

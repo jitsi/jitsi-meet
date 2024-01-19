@@ -138,6 +138,11 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     [externalAPI sendSetClosedCaptionsEnabled:enabled];
 }
 
+- (void)toggleCamera {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleCamera];
+}
+
 #pragma mark Private methods
 
 - (void)registerObservers {

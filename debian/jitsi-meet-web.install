@@ -1,6 +1,5 @@
 interface_config.js		/usr/share/jitsi-meet/
 *.html					/usr/share/jitsi-meet/
-*.ico					/usr/share/jitsi-meet/
 libs					/usr/share/jitsi-meet/
 static                  /usr/share/jitsi-meet/
 css/all.css 			/usr/share/jitsi-meet/css/
@@ -12,3 +11,5 @@ resources/robots.txt	/usr/share/jitsi-meet/
 resources/*.sh			/usr/share/jitsi-meet/scripts/
 pwa-worker.js			/usr/share/jitsi-meet/
 manifest.json			/usr/share/jitsi-meet/
+doc/jaas/move-to-jaas.sh        /usr/share/jitsi-meet/scripts/
+doc/jaas/update-asap-daily.sh   /usr/share/jitsi-meet/scripts/

@@ -70,6 +70,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
     },
 
     get mediaType() {
+        if (this.selfRecording.on && !this.selfRecording.withVideo) {
+            return 'audio/webm;';
+        }
         if (!preferredMediaType) {
             preferredMediaType = getMimeType();
         }
@@ -138,9 +141,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
     async saveRecording(recordingData, filename) {
         // @ts-ignore
         const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
-
-        // @ts-ignore
-        const url = window.URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
 
         const extension = this.mediaType.slice(this.mediaType.indexOf('/') + 1, this.mediaType.indexOf(';'));
@@ -242,15 +243,13 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
             // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
-                // @ts-ignore
                 video: { displaySurface: 'browser',
                     frameRate: 30 },
-                audio: false,
+                audio: false, // @ts-ignore
                 preferCurrentTab: true
             });
             document.title = currentTitle;
 
-            // @ts-ignore
             const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
 
             if (!isBrowser || (supportsCaptureHandle // @ts-ignore

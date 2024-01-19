@@ -83,7 +83,8 @@ function NewMessagesButton({ onGoToFirstUnreadMessage, t }: INewMessagesButtonPr
                     src = { IconArrowDown } />
                 <div className = { styles.textContainer }> { t('chat.newMessages') }</div>
             </button>
-        </div>);
+        </div>
+    );
 }
 
 export default translate(NewMessagesButton);

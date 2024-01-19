@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Counts how many whole hours are included in the given time total.
  *

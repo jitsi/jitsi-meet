@@ -1,9 +1,10 @@
-import { IStore } from '../app/types';
-import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { showErrorNotification, showNotification } from '../notifications/actions';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    TRANSCRIBING_NOTIFICATION_ID
+} from '../notifications/constants';
 
 import {
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT
@@ -61,54 +62,28 @@ export function potentialTranscriberJoined(participantId: string) {
  * Signals that the pending transcribing notification should be shown on the
  * screen.
  *
- * @returns {Function}
+ * @returns {showNotification}
  */
 export function showPendingTranscribingNotification() {
-    return async (dispatch: IStore['dispatch']) => {
-        const notification = await dispatch(showNotification({
-            descriptionKey: 'transcribing.pending',
-            titleKey: 'dialog.transcribing'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-
-        if (notification) {
-            dispatch(setPendingTranscribingNotificationUid(notification.uid));
-        }
-    };
+    return showNotification({
+        descriptionKey: 'transcribing.pending',
+        titleKey: 'dialog.transcribing',
+        uid: TRANSCRIBING_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }
 
 /**
- * Sets UID of the the pending transcribing notification to use it when hiding
- * the notification is necessary, or unsets it when undefined (or no param) is
- * passed.
- *
- * @param {?number} uid - The UID of the notification.
- * @returns {{
- *     type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
- *     uid: number
- * }}
- */
-export function setPendingTranscribingNotificationUid(uid?: string) {
-    return {
-        type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
-        uid
-    };
-}
-
-/**
- * Signals that the pending transcribing notification should be removed from the
+ * Signals that the started transcribing notification should be shown on the
  * screen.
  *
- * @returns {Function}
+ * @returns {showNotification}
  */
-export function hidePendingTranscribingNotification() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { pendingNotificationUid } = getState()['features/transcribing'];
-
-        if (pendingNotificationUid) {
-            dispatch(hideNotification(pendingNotificationUid));
-            dispatch(setPendingTranscribingNotificationUid());
-        }
-    };
+export function showStartedTranscribingNotification() {
+    return showNotification({
+        descriptionKey: 'transcribing.on',
+        titleKey: 'dialog.transcribing',
+        uid: TRANSCRIBING_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
 /**
@@ -120,7 +95,8 @@ export function hidePendingTranscribingNotification() {
 export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
-        titleKey: 'dialog.transcribing'
+        titleKey: 'dialog.transcribing',
+        uid: TRANSCRIBING_NOTIFICATION_ID
     }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
@@ -133,6 +109,7 @@ export function showStoppedTranscribingNotification() {
 export function showTranscribingError() {
     return showErrorNotification({
         descriptionKey: 'transcribing.error',
-        titleKey: 'transcribing.failedToStart'
+        titleKey: 'transcribing.failedToStart',
+        uid: TRANSCRIBING_NOTIFICATION_ID
     }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }

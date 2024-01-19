@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of (redux) action to reset the breakout rooms data.
  */

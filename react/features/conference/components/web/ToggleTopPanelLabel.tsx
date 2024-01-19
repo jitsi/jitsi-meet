@@ -5,9 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { IconArrowDown } from '../../../base/icons/svg/index';
 import Label from '../../../base/label/components/web/Label';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../base/tooltip';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { setTopPanelVisible } from '../../../filmstrip/actions.web';
 
 const ToggleTopPanelLabel = () => {
@@ -18,13 +16,13 @@ const ToggleTopPanelLabel = () => {
         dispatch(setTopPanelVisible(true));
     }, []);
 
-    return topPanelHidden && (<Tooltip
+    return topPanelHidden ? (<Tooltip
         content = { t('toggleTopPanelLabel') }
         position = { 'bottom' }>
         <Label
             icon = { IconArrowDown }
             onClick = { onClick } />
-    </Tooltip>);
+    </Tooltip>) : null;
 };
 
 export default ToggleTopPanelLabel;

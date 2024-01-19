@@ -15,11 +15,15 @@ export type MediaType = 'audio' | 'video' | 'screenshare';
  *
  * @enum {string}
  */
-export const MEDIA_TYPE: { [key: string]: MediaType; } = {
-    AUDIO: 'audio',
-    SCREENSHARE: 'screenshare',
-    VIDEO: 'video'
-};
+export const MEDIA_TYPE: {
+    AUDIO: MediaType;
+    SCREENSHARE: MediaType;
+    VIDEO: MediaType;
+    } = {
+        AUDIO: 'audio',
+        SCREENSHARE: 'screenshare',
+        VIDEO: 'video'
+    };
 
 
 /* eslint-disable no-bitwise */
@@ -33,6 +37,15 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
     AUDIO_ONLY: 1 << 0,
     USER: 1 << 2
 };
+
+/**
+ * The languages supported for audio files.
+ */
+export enum AudioSupportedLanguage {
+    en = 'en',
+    fr = 'fr',
+    frCA = 'frCA'
+}
 
 /**
  * The types of authorities which may mute/unmute the local video.

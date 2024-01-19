@@ -3,11 +3,8 @@ import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 
-// @ts-ignore
 import SpeakerStatsItem from './SpeakerStatsItem';
 
 const useStyles = makeStyles()(theme => {
@@ -23,9 +20,7 @@ const useStyles = makeStyles()(theme => {
                     color: theme.palette.text03
                 },
                 '& .avatar': {
-                    width: '32px',
-                    marginRight: theme.spacing(3),
-                    height: theme.spacing(5)
+                    marginRight: theme.spacing(3)
                 },
                 '& .time': {
                     padding: '2px 4px',

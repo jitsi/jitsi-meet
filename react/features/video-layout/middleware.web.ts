@@ -1,6 +1,6 @@
 // @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-import { CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import { CONFERENCE_WILL_INIT, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_JOINED } from '../base/participants/actionTypes';
 import { getLocalParticipant } from '../base/participants/functions';
@@ -25,6 +25,11 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case CONFERENCE_WILL_INIT:
+        // Reset VideoLayout. It's destroyed on CONFERENCE_WILL_LEAVE so re-initialize it.
+        VideoLayout.initLargeVideo();
+        VideoLayout.resizeVideoArea();
+        break;
     case CONFERENCE_WILL_LEAVE:
         VideoLayout.reset();
         break;

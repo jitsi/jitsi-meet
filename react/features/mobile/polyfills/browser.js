@@ -288,13 +288,6 @@ function _visitNode(node, callback) {
     global.performance.now = performanceNow;
     global.PerformanceObserver = perf.PerformanceObserver;
 
-    // CallStats
-    //
-    // Required by:
-    // - lib-jitsi-meet
-    require('react-native-callstats/csio-polyfill');
-    global.callstats = require('react-native-callstats/callstats');
-
     // Timers
     //
     // React Native's timers won't run while the app is in the background, this

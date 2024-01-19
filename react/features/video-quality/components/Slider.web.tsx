@@ -51,8 +51,8 @@ const useStyles = makeStyles()(theme => {
         width: 24
     };
 
-    const focused = { // @ts-ignore
-        outline: `1px solid ${theme.palette.action03Focus}`
+    const focused = {
+        outline: `1px solid ${theme.palette.ui06}`
     };
 
     return {
@@ -79,7 +79,7 @@ const useStyles = makeStyles()(theme => {
             width: 6
         },
         track: {
-            background: theme.palette.ui02,
+            background: theme.palette.text03,
             borderRadius: Number(theme.shape.borderRadius) / 2,
             height
         },
@@ -94,7 +94,7 @@ const useStyles = makeStyles()(theme => {
                 top: 0,
                 width: '100%',
 
-                '&:focus': {
+                '&.focus-visible': {
                     // override global styles in order to use our own color
                     outline: 'none !important',
 
@@ -143,7 +143,9 @@ function Slider({ ariaLabel, max, min, onChange, step, value }: IProps) {
 
     return (
         <div className = { classes.sliderContainer }>
-            <ul className = { cx('empty-list', classes.knobContainer) }>
+            <ul
+                aria-hidden = { true }
+                className = { cx('empty-list', classes.knobContainer) }>
                 {knobs.map((_, i) => (
                     <li
                         className = { classes.knob }

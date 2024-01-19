@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { batch } from 'react-redux';
+import { AnyAction } from 'redux';
 
 // @ts-expect-error
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -429,11 +430,12 @@ StateListenerRegistry.register(
                 'e2ee.enabled': (participant: IJitsiParticipant, value: string) =>
                     _e2eeUpdated(store, conference, participant.getId(), value),
                 'features_e2ee': (participant: IJitsiParticipant, value: boolean) =>
-                    store.dispatch(participantUpdated({
-                        conference,
-                        id: participant.getId(),
-                        e2eeSupported: value
-                    })),
+                    getParticipantById(store.getState(), participant.getId())?.e2eeSupported !== value
+                        && store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            e2eeSupported: value
+                        })),
                 'features_jigasi': (participant: IJitsiParticipant, value: boolean) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -506,7 +508,12 @@ StateListenerRegistry.register(
 function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConference,
         participantId: string, newValue: string | boolean) {
     const e2eeEnabled = newValue === 'true';
-    const { e2ee = {} } = getState()['features/base/config'];
+    const state = getState();
+    const { e2ee = {} } = state['features/base/config'];
+
+    if (e2eeEnabled === getParticipantById(state, participantId)?.e2eeEnabled) {
+        return;
+    }
 
     dispatch(participantUpdated({
         conference,
@@ -537,16 +544,16 @@ function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConferen
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: any) {
+function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     const settings = getState()['features/base/settings'];
 
-    // @ts-ignore
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
-        name: settings.displayName
+        name: settings.displayName,
+        id: ''
     }));
 
     return result;
@@ -563,7 +570,7 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _localParticipantLeft({ dispatch }: IStore, next: Function, action: any) {
+function _localParticipantLeft({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     dispatch(localParticipantLeft());
@@ -580,7 +587,7 @@ function _localParticipantLeft({ dispatch }: IStore, next: Function, action: any
  * @private
  * @returns {void}
  */
-function _maybePlaySounds({ getState, dispatch }: IStore, action: any) {
+function _maybePlaySounds({ getState, dispatch }: IStore, action: AnyAction) {
     const state = getState();
     const { startAudioMuted } = state['features/base/config'];
     const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
@@ -625,7 +632,7 @@ function _maybePlaySounds({ getState, dispatch }: IStore, action: any) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _participantJoinedOrUpdated(store: IStore, next: Function, action: any) {
+function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyAction) {
     const { dispatch, getState } = store;
     const { overwrittenNameList } = store.getState()['features/base/participants'];
     const { participant: {
@@ -641,7 +648,6 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: any)
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
     if (typeof raisedHandTimestamp !== 'undefined') {
-
         if (local) {
             const { conference } = getState()['features/base/conference'];
             const rHand = parseInt(raisedHandTimestamp, 10);
@@ -689,14 +695,6 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: any)
                     dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
                 });
         }
-    }
-
-    // Notify external listeners of potential avatarURL changes.
-    if (typeof APP === 'object') {
-        const currentKnownId = local ? APP.conference.getMyUserId() : id;
-
-        // Force update of local video getting a new id.
-        APP.UI.refreshAvatarDisplay(currentKnownId);
     }
 
     return result;

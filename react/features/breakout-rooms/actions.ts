@@ -78,6 +78,25 @@ export function closeBreakoutRoom(roomId: string) {
 }
 
 /**
+ * Action to rename a breakout room.
+ *
+ * @param {string} breakoutRoomJid - The jid of the breakout room to rename.
+ * @param {string} name - New name / subject for the breakout room.
+ * @returns {Function}
+ */
+export function renameBreakoutRoom(breakoutRoomJid: string, name = '') {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const trimmedName = name.trim();
+
+        if (trimmedName.length !== 0) {
+            sendAnalytics(createBreakoutRoomsEvent('rename'));
+            getCurrentConference(getState)?.getBreakoutRooms()
+                ?.renameBreakoutRoom(breakoutRoomJid, trimmedName);
+        }
+    };
+}
+
+/**
  * Action to remove a breakout room.
  *
  * @param {string} breakoutRoomJid - The jid of the breakout room to remove.
@@ -207,7 +226,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(conferenceWillLeave(conference));
 
             try {
-                await conference.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
+                await conference?.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
 
@@ -266,7 +285,7 @@ export function moveToRoom(roomId?: string) {
  * @param {string} participantId - ID of the given participant.
  * @returns {string|undefined} - The participant connection JID if found.
  */
-function _findParticipantJid(getState: Function, participantId: string) {
+function _findParticipantJid(getState: IStore['getState'], participantId: string) {
     const conference = getCurrentConference(getState);
 
     if (!conference) {

@@ -6,12 +6,12 @@
         width: 100%;
         height: 100%;
         position: fixed;
-        z-index: $overlayZ;
-        background: $defaultBackground;
+        z-index: 1016;
+        background: #474747;
     }
 
     &__container-light {
-        @include transparentBg($defaultBackground, 0.7);
+        @include transparentBg(#474747, 0.7);
     }
 
     &__content {

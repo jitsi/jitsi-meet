@@ -1,10 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Switch from '../../../base/ui/components/web/Switch';
-import AbstractMuteEveryoneDialog, { type Props, abstractMapStateToProps }
+import AbstractMuteEveryoneDialog, { type IProps, abstractMapStateToProps }
     from '../AbstractMuteEveryoneDialog';
 
 /**
@@ -13,7 +13,7 @@ import AbstractMuteEveryoneDialog, { type Props, abstractMapStateToProps }
  *
  * @augments AbstractMuteEveryoneDialog
  */
-class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
+class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.

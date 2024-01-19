@@ -54,6 +54,25 @@ export const CONFERENCE_JOIN_IN_PROGRESS = 'CONFERENCE_JOIN_IN_PROGRESS';
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
 /**
+ * The type of (redux) action which signals that the conference is out of focus.
+ * For example, if the user navigates to the Chat screen.
+ * 
+ * {
+ *      type: CONFERENCE_BLURRED,
+ * }
+ */
+export const CONFERENCE_BLURRED = 'CONFERENCE_BLURRED';
+
+/**
+ * The type of (redux) action which signals that the conference is in focus.
+ * 
+ * {
+ *      type: CONFERENCE_FOCUSED,
+ * }
+ */
+export const CONFERENCE_FOCUSED = 'CONFERENCE_FOCUSED';
+
+/**
  * The type of (redux) action, which indicates conference local subject changes.
  *
  * {
@@ -105,6 +124,15 @@ export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
  * }
  */
 export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED'
+
+/**
+ * The type of (redux) action which signals that a conference will be initialized.
+ *
+ * {
+ *     type: CONFERENCE_WILL_INIT
+ * }
+ */
+export const CONFERENCE_WILL_INIT = 'CONFERENCE_WILL_INIT';
 
 /**
  * The type of (redux) action which signals that a specific conference will be
@@ -295,3 +323,13 @@ export const SET_ROOM = 'SET_ROOM';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+/**
+ * The type of (redux) action which updates the assumed bandwidth bps.
+ * 
+ * {
+ *      type: SET_ASSUMED_BANDWIDTH_BPS,
+ *      assumedBandwidthBps: number
+ * }
+ */
+export const SET_ASSUMED_BANDWIDTH_BPS = 'SET_ASSUMED_BANDWIDTH_BPS';

@@ -19,7 +19,7 @@ interface IProps extends WithTranslation {
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string;
+    locked?: string;
 
     /**
      * Callback to invoke when the local participant is submitting a password
@@ -30,7 +30,7 @@ interface IProps extends WithTranslation {
     /**
      * The current known password for the JitsiConference.
      */
-    password: string;
+    password?: string;
 
     /**
      * The number of digits to be used in the password.
@@ -140,22 +140,29 @@ class PasswordForm extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderPasswordField() {
-        if (this.props.editEnabled) {
-            let placeHolderText = this.props.t('dialog.password');
+        const {
+            editEnabled,
+            passwordNumberOfDigits,
+            t
+        } = this.props;
 
-            if (this.props.passwordNumberOfDigits) {
+        if (editEnabled) {
+            let placeHolderText = t('dialog.password');
+
+            if (passwordNumberOfDigits) {
                 placeHolderText = this.props.t('passwordDigitsOnly', {
-                    number: this.props.passwordNumberOfDigits });
+                    number: passwordNumberOfDigits });
             }
 
             return (
                 <div
                     className = 'info-password-form'>
                     <Input
-                        accessibilityLabel = { this.props.t('info.addPassword') }
+                        accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
                         id = 'info-password-input'
-                        maxLength = { this.props.passwordNumberOfDigits }
+                        maxLength = { passwordNumberOfDigits }
+                        mode = { passwordNumberOfDigits ? 'numeric' : undefined }
                         onChange = { this._onEnteredPasswordChange }
                         onKeyPress = { this._onKeyPress }
                         placeholder = { placeHolderText }

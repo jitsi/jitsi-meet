@@ -1,21 +1,16 @@
-/* eslint-disable lines-around-comment */
-
-// @ts-ignore
+// @ts-expect-error
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import type { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 import { appNavigate, reloadNow } from '../../../../app/actions.native';
-import { IReduxState } from '../../../../app/types';
+import { IReduxState, IStore } from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
-import { connect } from '../../../redux/functions';
 import { hideDialog } from '../../actions';
-// @ts-ignore
 import logger from '../../logger';
 
-// @ts-ignore
 import ConfirmDialog from './ConfirmDialog';
 
 
@@ -24,9 +19,9 @@ import ConfirmDialog from './ConfirmDialog';
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogProps extends WithTranslation {
-    dispatch: Dispatch<any>;
+    dispatch: IStore['dispatch'];
     isNetworkFailure: boolean;
-    reason: string;
+    reason?: string;
 }
 
 /**
@@ -43,9 +38,7 @@ interface IPageReloadDialogState {
  * Shows a warning message and counts down towards the re-load.
  */
 class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDialogState> {
-
-    // @ts-ignore
-    _interval: IntervalID;
+    _interval?: number;
     _timeoutSeconds: number;
 
     /**
@@ -109,7 +102,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     _onCancel() {
         const { dispatch } = this.props;
 
-        clearInterval(this._interval);
+        clearInterval(this._interval ?? 0);
         dispatch(appNavigate(undefined));
 
         return true;
@@ -149,7 +142,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     _onReloadNow() {
         const { dispatch } = this.props;
 
-        clearInterval(this._interval);
+        clearInterval(this._interval ?? 0);
         dispatch(reloadNow());
 
         return true;
@@ -204,11 +197,10 @@ function mapStateToProps(state: IReduxState) {
     const { fatalError } = state['features/overlay'];
 
     const fatalConnectionError
-        // @ts-ignore
         = connectionError && isFatalJitsiConnectionError(connectionError);
     const fatalConfigError = fatalError === configError;
 
-    const isNetworkFailure = fatalConfigError || fatalConnectionError;
+    const isNetworkFailure = Boolean(fatalConfigError || fatalConnectionError);
 
     let reason;
 

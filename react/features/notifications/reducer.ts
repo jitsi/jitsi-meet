@@ -22,6 +22,7 @@ interface INotification {
     component: Object;
     props: {
         appearance?: string;
+        descriptionArguments?: Object;
         descriptionKey?: string;
         titleKey: string;
     };

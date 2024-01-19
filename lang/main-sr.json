@@ -580,6 +580,8 @@
         "hours": "",
         "minutes": "",
         "name": "Имe",
+        "search": "Претрага",
+        "searchHint": "Учесници претраге",
         "seconds": "",
         "speakerStats": "Статистика говорника",
         "speakerTime": "Вријeмe говорника"

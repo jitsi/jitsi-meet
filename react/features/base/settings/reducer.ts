@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 

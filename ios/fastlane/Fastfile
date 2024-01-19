@@ -98,7 +98,6 @@ platform :ios do
       demo_account_required: false,
       distribute_external: true,
       groups: ENV["JITSI_BETA_TESTING_GROUPS"],
-      reject_build_waiting_for_review: true,
       uses_non_exempt_encryption: false
     )
 

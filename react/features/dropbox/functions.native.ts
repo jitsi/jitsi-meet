@@ -1,8 +1,6 @@
 import { NativeModules } from 'react-native';
 
 import { IReduxState } from '../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setPictureInPictureEnabled } from '../mobile/picture-in-picture/functions';
 
 const { Dropbox } = NativeModules;
@@ -28,9 +26,11 @@ export async function _authorizeDropbox(_appKey?: any, _redirectURI?: any): Prom
 /**
  * Gets a new access token based on the refresh token.
  *
+ * @param {string} _appKey - The dropbox appKey.
+ * @param {string} _rToken - The refresh token.
  * @returns {Promise}
  */
-export function getNewAccessToken() {
+export function getNewAccessToken(_appKey: string, _rToken: string) {
     return _authorizeDropbox();
 }
 
@@ -68,8 +68,7 @@ export function getSpaceUsage(token: string, _appKey?: any) {
  * @returns {boolean}
  */
 export function isEnabled(state: IReduxState) {
-    const { dropbox = {} } = state['features/base/config'];
+    const { dropbox = { appKey: undefined } } = state['features/base/config'];
 
-    // @ts-ignore
     return Boolean(Dropbox?.ENABLED && typeof dropbox.appKey === 'string');
 }

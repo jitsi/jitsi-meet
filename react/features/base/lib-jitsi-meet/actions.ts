@@ -1,10 +1,9 @@
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IStore } from '../../app/types';
 import { isOnline } from '../net-info/selectors';
 
-// @ts-ignore
 import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,
@@ -14,6 +13,7 @@ import {
     LIB_WILL_INIT
 } from './actionTypes';
 import { isAnalyticsEnabled } from './functions.any';
+import logger from './logger';
 
 /**
  * Disposes (of) lib-jitsi-meet.
@@ -56,6 +56,9 @@ export function initLib() {
             JitsiMeetJS.setNetworkInfo({
                 isOnline: isOnline(state)
             });
+
+            logger.info(`lib-jitsi-meet version:${JitsiMeetJS.version}`);
+
             dispatch({ type: LIB_DID_INIT });
         } catch (error: any) {
             dispatch(libInitError(error));

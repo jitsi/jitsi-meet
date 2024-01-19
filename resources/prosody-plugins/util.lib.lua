@@ -30,6 +30,9 @@ local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
 local internal_room_jid_cache = cache.new(1000);
 
+local moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
+local moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
+
 -- Utility function to split room JID to include room name and subdomain
 -- (e.g. from room1@conference.foo.example.com/res returns (room1, example.com, res, foo))
 local function room_jid_split_subdomain(room_jid)
@@ -236,9 +239,9 @@ function update_presence_identity(
         if creator_group then
             stanza:tag("creator_group"):text(creator_group):up();
         end
-        stanza:up();
     end
 
+    stanza:up(); -- Close identity tag
 end
 
 -- Utility function to check whether feature is present and enabled. Allow
@@ -246,9 +249,8 @@ end
 -- the token) and the value of the feature is true.
 -- If features is not present in the token we skip feature detection and allow
 -- everything.
-function is_feature_allowed(session, feature)
-    if (session.jitsi_meet_context_features == nil
-        or session.jitsi_meet_context_features[feature] == "true" or session.jitsi_meet_context_features[feature] == true) then
+function is_feature_allowed(features, ft)
+    if (features == nil or features[ft] == "true" or features[ft] == true) then
         return true;
     else
         return false;
@@ -291,7 +293,7 @@ end
 -- @returns result of the http call or nil if
 -- the external call failed after the last retry
 function http_get_with_retry(url, retry, auth_token)
-    local content, code;
+    local content, code, cache_for;
     local timeout_occurred;
     local wait, done = async.waiter();
     local request_headers = http_headers or {}
@@ -304,7 +306,17 @@ function http_get_with_retry(url, retry, auth_token)
             code = code_;
             if code == 200 or code == 204 then
                 module:log("debug", "External call was successful, content %s", content_);
-                content = content_
+                content = content_;
+
+                -- if there is cache-control header, let's return the max-age value
+                if response_ and response_.headers and response_.headers['cache-control'] then
+                    local vals = {};
+                    for k, v in response_.headers['cache-control']:gmatch('(%w+)=(%w+)') do
+                      vals[k] = v;
+                    end
+                    -- max-age=123 will be parsed by the regex ^ to age=123
+                    cache_for = vals.age;
+                end
             else
                 module:log("warn", "Error on GET request: Code %s, Content %s",
                     code_, content_);
@@ -351,7 +363,7 @@ function http_get_with_retry(url, retry, auth_token)
     timer.add_task(http_timeout, cancel);
     wait();
 
-    return content, code;
+    return content, code, cache_for;
 end
 
 -- Checks whether there is status in the <x node
@@ -372,10 +384,66 @@ function presence_check_status(muc_x, status)
     return false;
 end
 
+-- Retrieves the focus from the room and cache it in the room object
+-- @param room The room name for which to find the occupant
+local function get_focus_occupant(room)
+    return room:get_occupant_by_nick(room.jid..'/focus');
+end
+
+-- Checks whether the jid is moderated, the room name is in moderated_rooms
+-- or if the subdomain is in the moderated_subdomains
+-- @return returns on of the:
+--      -> false
+--      -> true, room_name, subdomain
+--      -> true, room_name, nil (if no subdomain is used for the room)
+function is_moderated(room_jid)
+    if moderated_subdomains:empty() and moderated_rooms:empty() then
+        return false;
+    end
+
+    local room_node = jid.node(room_jid);
+    -- parses bare room address, for multidomain expected format is:
+    -- [subdomain]roomName@conference.domain
+    local target_subdomain, target_room_name = extract_subdomain(room_node);
+    if target_subdomain then
+        if moderated_subdomains:contains(target_subdomain) then
+            return true, target_room_name, target_subdomain;
+        end
+    elseif moderated_rooms:contains(room_node) then
+        return true, room_node, nil;
+    end
+
+    return false;
+end
+
+-- check if the room tenant starts with
+-- vpaas-magic-cookie-
+function is_vpaas(room_jid)
+    local node, host = jid.split(room_jid);
+    if host ~= muc_domain or not node then
+        module:log('debug', 'Not the same host');
+        return false;
+    end
+    local tenant, conference_name = node:match('^%[([^%]]+)%](.+)$');
+    if not (tenant and conference_name) then
+        module:log('debug', 'Not a vpaas room %s', room_jid);
+        return false;
+    end
+    local vpaas_prefix, _ = tenant:match('^(vpaas%-magic%-cookie%-)(.*)$')
+    if vpaas_prefix ~= 'vpaas-magic-cookie-' then
+        module:log('debug', 'Not a vpaas room %s', room_jid);
+        return false
+    end
+    return true
+end
+
 return {
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
+    is_moderated = is_moderated;
+    is_vpaas = is_vpaas;
+    get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
     async_handler_wrapper = async_handler_wrapper;

@@ -1,4 +1,10 @@
-import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
+    SET_PASSWORD
+} from '../base/conference/actionTypes';
+import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -14,6 +20,7 @@ import {
 import { IKnockingParticipant } from './types';
 
 const DEFAULT_STATE = {
+    isDisplayNameRequiredError: false,
     knocking: false,
     knockingParticipants: [],
     lobbyEnabled: false,
@@ -22,6 +29,12 @@ const DEFAULT_STATE = {
 };
 
 export interface ILobbyState {
+
+    /**
+     * A conference error when we tried to join into a room with no display name
+     * when lobby is enabled in the room.
+     */
+    isDisplayNameRequiredError: boolean;
     knocking: boolean;
     knockingParticipants: IKnockingParticipant[];
     lobbyEnabled: boolean;
@@ -39,6 +52,16 @@ export interface ILobbyState {
  */
 ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, action): ILobbyState => {
     switch (action.type) {
+    case CONFERENCE_FAILED: {
+        if (action.error.name === JitsiConferenceErrors.DISPLAY_NAME_REQUIRED) {
+            return {
+                ...state,
+                isDisplayNameRequiredError: true
+            };
+        }
+
+        return state;
+    }
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
         return {
