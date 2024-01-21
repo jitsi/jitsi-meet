@@ -131,19 +131,23 @@ export interface IMobileDynamicLink {
 
 export interface IDeeplinkingPlatformConfig {
     appName: string;
+    appScheme: string;
 }
 
 export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
     appPackage?: string;
-    appScheme: string;
     downloadLink: string;
     dynamicLink?: IMobileDynamicLink;
     fDroidUrl?: string;
 }
 
+export interface IDeeplinkingDesktopConfig extends IDeeplinkingPlatformConfig {
+    enabled: boolean;
+}
+
 export interface IDeeplinkingConfig {
     android?: IDeeplinkingMobileConfig;
-    desktop?: IDeeplinkingPlatformConfig;
+    desktop?: IDeeplinkingDesktopConfig;
     disabled?: boolean;
     hideLogo?: boolean;
     ios?: IDeeplinkingMobileConfig;
