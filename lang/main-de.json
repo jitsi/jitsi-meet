@@ -223,7 +223,7 @@
         "termsAndConditions": "Indem Sie fortfahren, stimmen Sie underen<a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>Nutzungsbedingungen</a> zu.",
         "title": "Die Konferenz wird in {{app}} geöffnet …",
         "titleNew": "Konferenz starten ...",
-        "tryAgainButton": "Erneut mit der nativen Applikation versuchen",
+        "tryAgainButton": "Erneut versuchen",
         "unsupportedBrowser": "Sie verwenden einen Browser, der noch nicht unterstützt wird."
     },
     "defaultLink": "Bsp.: {{url}}",
