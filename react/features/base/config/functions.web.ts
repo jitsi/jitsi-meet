@@ -5,8 +5,8 @@ import { NOTIFY_CLICK_MODE } from '../../toolbox/constants';
 import {
     IConfig,
     IDeeplinkingConfig,
+    IDeeplinkingDesktopConfig,
     IDeeplinkingMobileConfig,
-    IDeeplinkingPlatformConfig,
     NotifyClickButton,
     ToolbarButton
 } from './configType';
@@ -95,12 +95,13 @@ export function areAudioLevelsEnabled(state: IReduxState): boolean {
  */
 export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
     const {
-        desktop = {} as IDeeplinkingPlatformConfig,
+        desktop = {} as IDeeplinkingDesktopConfig,
         android = {} as IDeeplinkingMobileConfig,
         ios = {} as IDeeplinkingMobileConfig
     } = deeplinking;
 
     desktop.appName = desktop.appName || 'Jitsi Meet';
+    desktop.appScheme = desktop.appScheme || 'jitsi-meet';
 
     ios.appName = ios.appName || 'Jitsi Meet';
     ios.appScheme = ios.appScheme || 'org.jitsi.meet';

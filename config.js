@@ -1197,9 +1197,11 @@ var config = {
     // https://firebase.google.com/docs/dynamic-links/create-manually
     // deeplinking: {
     //
-    //     // The desktop deeplinking config.
+    //     // The desktop deeplinking config, disabled by default.
     //     desktop: {
-    //         appName: 'Jitsi Meet'
+    //         appName: 'Jitsi Meet',
+    //         appScheme: 'jitsi-meet,
+    //         enabled: false
     //     },
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.

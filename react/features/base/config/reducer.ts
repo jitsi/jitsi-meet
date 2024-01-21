@@ -14,8 +14,8 @@ import {
 import {
     IConfig,
     IDeeplinkingConfig,
+    IDeeplinkingDesktopConfig,
     IDeeplinkingMobileConfig,
-    IDeeplinkingPlatformConfig,
     IMobileDynamicLink,
     ToolbarButton
 } from './configType';
@@ -295,7 +295,7 @@ function _translateInterfaceConfig(oldValue: IConfig) {
     } else {
         const disabled = Boolean(oldValue.disableDeepLinking);
         const deeplinking: IDeeplinkingConfig = {
-            desktop: {} as IDeeplinkingPlatformConfig,
+            desktop: {} as IDeeplinkingDesktopConfig,
             hideLogo: false,
             disabled,
             android: {} as IDeeplinkingMobileConfig,
