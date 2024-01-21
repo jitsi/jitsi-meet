@@ -1202,7 +1202,8 @@ var config = {
     //         appName: 'Jitsi Meet',
     //         appScheme: 'jitsi-meet,
     //         download: {
-    //             linux: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage',
+    //             linux:
+    //               'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage',
     //             macos: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg',
     //             windows: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe'
     //         },
