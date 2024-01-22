@@ -216,8 +216,8 @@ local function stanza_handler(event)
         end
 
         local force_promote = request_promotion.attr.forcePromote;
-        if force_promote == 'true' and not is_vpaas(room.jid) then
-            module:log('warn', 'Received promotion request for non vpass room (%s) with forced promotion: ',
+        if force_promote == 'true' and not is_vpaas(room) then
+            module:log('warn', 'Received promotion request for non vpaas room (%s) with forced promotion: ',
                                 room.jid, stanza);
             return true; -- stop processing
         end

@@ -416,25 +416,35 @@ function is_moderated(room_jid)
     return false;
 end
 
--- check if the room tenant starts with
--- vpaas-magic-cookie-
-function is_vpaas(room_jid)
-    local node, host = jid.split(room_jid);
+-- check if the room tenant starts with vpaas-magic-cookie-
+-- @param room the room to check
+function is_vpaas(room)
+    if not room then
+        return false;
+    end
+
+    -- stored check in room object if it exist
+    if room.is_vpaas ~= nil then
+        return room.is_vpaas;
+    end
+
+    room.is_vpaas = false;
+
+    local node, host = jid.split(room.jid);
     if host ~= muc_domain or not node then
-        module:log('debug', 'Not the same host');
         return false;
     end
     local tenant, conference_name = node:match('^%[([^%]]+)%](.+)$');
     if not (tenant and conference_name) then
-        module:log('debug', 'Not a vpaas room %s', room_jid);
         return false;
     end
-    local vpaas_prefix, _ = tenant:match('^(vpaas%-magic%-cookie%-)(.*)$')
-    if vpaas_prefix ~= 'vpaas-magic-cookie-' then
-        module:log('debug', 'Not a vpaas room %s', room_jid);
-        return false
+
+    if not starts_with(tenant, 'vpaas-magic-cookie-') then
+        return false;
     end
-    return true
+
+    room.is_vpaas = true;
+    return true;
 end
 
 return {

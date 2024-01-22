@@ -193,8 +193,8 @@ module:hook('muc-broadcast-presence', function (event)
         local session = sessions[occupant.jid];
         local identity = session and session.jitsi_meet_context_user;
 
-        if is_vpaas(room.jid) and identity then
-            -- in case of moderator in vpass meeting we want to do auto-promotion
+        if is_vpaas(room) and identity then
+            -- in case of moderator in vpaas meeting we want to do auto-promotion
             local is_vpaas_moderator = identity.moderator;
             if is_vpaas_moderator == 'true' or is_vpaas_moderator == true then
                 is_moderator = true;
