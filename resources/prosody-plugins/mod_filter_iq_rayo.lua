@@ -65,18 +65,22 @@ module:hook("pre-iq/full", function(event)
                 end
             end
 
+            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local is_session_allowed = is_feature_allowed(session.jitsi_meet_context_features, feature);
+
+            -- if current user is not allowed, but was granted moderation by a user
+            -- that is allowed by its features we want to allow it
+            local is_granting_session_allowed = false;
+            if (session.granted_jitsi_meet_context_features) then
+                is_granting_session_allowed = is_feature_allowed(session.granted_jitsi_meet_context_features, feature);
+            end
+
             if (token == nil
                 or roomName == nil
                 or not token_util:verify_room(session, room_jid_match_rewrite(roomName))
-                or not is_feature_allowed(session.jitsi_meet_context_features,
-                            (dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call')))
-                -- if current user is not allowed, but was granted moderation by a user
-                -- that is allowed by its features we want to allow it
-                and not is_feature_allowed(session.granted_jitsi_meet_context_features,
-                                                (dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call'))
+                or not (is_session_allowed or is_granting_session_allowed))
             then
-                module:log("warn",
-                    "Filtering stanza dial, stanza:%s", tostring(stanza));
+                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
                 return true;
             end
