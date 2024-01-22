@@ -91,6 +91,12 @@ export const HELP_BUTTON_ENABLED = 'help.enabled';
 export const INVITE_ENABLED = 'invite.enabled';
 
 /**
+ * Flag indicating if dial-in invite functionality should be enabled.
+ * Default: enabled (true).
+ */
+export const INVITE_DIAL_IN_ENABLED = 'invite-dial-in.enabled';
+
+/**
  * Flag indicating if recording should be enabled in iOS.
  * Default: disabled (false).
  */
