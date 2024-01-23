@@ -84,10 +84,11 @@ public class JitsiMeetMediaProjectionService extends Service {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            JitsiMeetLogger.w(TAG + "");
             startForeground(MediaProjectionNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+            JitsiMeetLogger.w(TAG + "Media projection service started.");
         } else {
             startForeground(MediaProjectionNotification.NOTIFICATION_ID, notification);
+            JitsiMeetLogger.w(TAG + "Media projection service started.");
         }
     }
 
