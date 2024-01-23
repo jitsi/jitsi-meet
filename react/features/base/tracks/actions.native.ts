@@ -37,12 +37,11 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
                 _startScreenSharing(dispatch, state);
                 Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
             }
-
-            Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
         } else {
             dispatch(setScreenshareMuted(true));
             dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
             setPictureInPictureEnabled(true);
+            Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
         }
     };
 }

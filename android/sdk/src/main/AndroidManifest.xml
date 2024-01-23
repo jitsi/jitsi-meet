@@ -49,10 +49,14 @@
 
         <service
             android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
+            android:enabled="true"
+            android:exported="true"
             android:foregroundServiceType="mediaPlayback" />
 
         <service
             android:name="org.jitsi.meet.sdk.JitsiMeetMediaProjectionService"
+            android:enabled="true"
+            android:exported="true"
             android:foregroundServiceType="mediaProjection" />
 
         <provider

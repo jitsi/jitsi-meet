@@ -17,7 +17,9 @@
 package org.jitsi.meet.sdk;
 
 
+import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,7 +42,8 @@ public class JitsiMeetMediaProjectionService extends Service {
     private static final String TAG = JitsiMeetMediaProjectionService.class.getSimpleName();
 
     public static void launch(Context context) {
-        OngoingNotification.createOngoingConferenceNotificationChannel();
+
+        NotificationUtils.createNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 
@@ -55,12 +58,12 @@ public class JitsiMeetMediaProjectionService extends Service {
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
+            JitsiMeetLogger.w(TAG + "Media projection service not started", e);
             return;
         }
 
         if (componentName == null) {
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
+            JitsiMeetLogger.w(TAG + "Media projection service not started");
         }
     }
 
@@ -73,17 +76,18 @@ public class JitsiMeetMediaProjectionService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Notification notification = OngoingNotification.buildOngoingConferenceNotification(null);
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
 
         if (notification == null) {
             stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
+            JitsiMeetLogger.w(TAG + "Couldn't start service, notification is null");
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+            JitsiMeetLogger.w(TAG + "");
+            startForeground(MediaProjectionNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
         } else {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
+            startForeground(MediaProjectionNotification.NOTIFICATION_ID, notification);
         }
     }
 
@@ -94,6 +98,16 @@ public class JitsiMeetMediaProjectionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
+
+        if (notification == null) {
+            stopSelf();
+            JitsiMeetLogger.w(TAG + "Couldn't start service, notification is null");
+        } else {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(MediaProjectionNotification.NOTIFICATION_ID, notification);
+        }
 
         return START_NOT_STICKY;
     }
