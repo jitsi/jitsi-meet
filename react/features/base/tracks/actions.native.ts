@@ -35,7 +35,6 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
 
             if (!isSharing) {
                 _startScreenSharing(dispatch, state);
-                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
             }
         } else {
             dispatch(setScreenshareMuted(true));
@@ -66,9 +65,9 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
         // The first time the user shares the screen we add the track and create the transceiver.
         // Afterwards, we just replace the old track, so the transceiver will be reused.
         if (currentJitsiTrack) {
-            dispatch(replaceLocalTrack(currentJitsiTrack, track));
+            await dispatch(replaceLocalTrack(currentJitsiTrack, track));
         } else {
-            dispatch(addLocalTrack(track));
+            dispatch(addLocalTrack(track)).then(() => Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch());
         }
 
         dispatch(setVideoMuted(true, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
