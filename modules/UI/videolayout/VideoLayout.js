@@ -154,6 +154,8 @@ const VideoLayout = {
 
     updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
+            logger.debug(`Ignoring large video update with user id ${id}: large video not initialized yet!`);
+
             return;
         }
         const currentContainer = largeVideo.getCurrentContainer();

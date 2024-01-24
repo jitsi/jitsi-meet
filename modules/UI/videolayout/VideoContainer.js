@@ -27,6 +27,13 @@ const FADE_DURATION_MS = 300;
 const logger = Logger.getLogger(__filename);
 
 /**
+ * List of container events that we are going to process for the large video.
+ *
+ * NOTE: Currently used only for logging for debug purposes.
+ */
+const containerEvents = [ 'abort', 'canplaythrough', 'ended', 'error', 'stalled', 'suspend', 'waiting' ];
+
+/**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method
  * ensures that whole video will be visible and can leave empty areas.
@@ -242,10 +249,17 @@ export class VideoContainer extends LargeContainer {
         this.wrapperParent = document.getElementById('largeVideoElementsContainer');
         this.avatarHeight = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect().height;
         this.video.onplaying = function(event) {
+            logger.debug('Large video is playing!');
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
         };
+
+        containerEvents.forEach(event => {
+            this.video.addEventListener(event, () => {
+                logger.debug(`${event} handler was called for the large video.`);
+            });
+        });
 
         /**
          * A Set of functions to invoke when the video element resizes.
@@ -489,6 +503,8 @@ export class VideoContainer extends LargeContainer {
     setStream(userID, stream, videoType) {
         this.userId = userID;
         if (this.stream === stream && !stream?.forceStreamToReattach) {
+            logger.debug(`SetStream on the large video for user ${userID} ignored: the stream is not changed!`);
+
             // Handles the use case for the remote participants when the
             // videoType is received with delay after turning on/off the
             // desktop sharing.
@@ -513,12 +529,15 @@ export class VideoContainer extends LargeContainer {
         this.videoType = videoType;
 
         if (!stream) {
+            logger.debug('SetStream on the large video is called without a stream argument!');
+
             return;
         }
 
         if (this.video) {
+            logger.debug(`Attaching a remote track to the large video for user ${userID}`);
             stream.attach(this.video).catch(error => {
-                logger.error(`Attaching the remote track ${stream} has failed with `, error);
+                logger.error(`Attaching the remote track ${stream} to large video has failed with `, error);
             });
 
             // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
@@ -529,6 +548,9 @@ export class VideoContainer extends LargeContainer {
 
             this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
             this._updateBackground();
+        } else {
+            logger.debug(`SetStream on the large video won't attach a track for ${
+                userID} because no large video element was found!`);
         }
     }
 
