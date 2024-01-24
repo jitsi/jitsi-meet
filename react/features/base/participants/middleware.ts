@@ -683,7 +683,7 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
 
     // Only run this if the config is populated, otherwise we preload external resources
     // even if disableThirdPartyRequests is set to true in config
-    if (Object.keys(getState()['features/base/config']).length) {
+    if (getState()['features/base/config']?.hosts) {
         const { disableThirdPartyRequests } = getState()['features/base/config'];
 
         if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
