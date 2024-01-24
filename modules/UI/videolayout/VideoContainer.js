@@ -255,6 +255,7 @@ export class VideoContainer extends LargeContainer {
         this._resizeListeners = new Set();
 
         this.video.onresize = this._onResize.bind(this);
+        this._play = this._play.bind(this);
     }
 
     /**
@@ -456,6 +457,30 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Plays the large video element.
+     *
+     * @param {number} retries - Number of retries to play the large video if play fails.
+     * @returns {void}
+     */
+    _play(retries = 0) {
+        this.video.play()
+            .then(() => {
+                logger.debug(`Successfully played large video after ${retries + 1} retries!`);
+            })
+            .catch(e => {
+                if (retries < 3) {
+                    logger.debug(`Error while trying to playing the large video. Will retry after 1s. Retries: ${
+                        retries}. Error: ${e}`);
+                    window.setTimeout(() => {
+                        this._play(retries + 1);
+                    }, 1000);
+                } else {
+                    logger.error(`Error while trying to playing the large video after 3 retries: ${e}`);
+                }
+            });
+    }
+
+    /**
      * Update video stream.
      * @param {string} userID
      * @param {JitsiTrack?} stream new stream
@@ -498,7 +523,7 @@ export class VideoContainer extends LargeContainer {
 
             // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
             // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
-            browser.isWebKitBased() && this.video.play();
+            browser.isWebKitBased() && this._play();
 
             const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
