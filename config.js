@@ -413,9 +413,6 @@ var config = {
     //     // ./src/react/features/transcribing/transcriber-langs.json.
     //     preferredLanguage: 'en-US',
 
-    //     // Disable start transcription for all participants.
-    //     disableStartForAll: false,
-
     //     // Enables automatic turning on transcribing when recording is started
     //     autoTranscribeOnRecord: false,
     // },

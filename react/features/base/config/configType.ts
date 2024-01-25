@@ -594,7 +594,6 @@ export interface IConfig {
     transcribingEnabled?: boolean;
     transcription?: {
         autoTranscribeOnRecord?: boolean;
-        disableStartForAll?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;
