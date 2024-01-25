@@ -117,7 +117,7 @@ export default class AbstractRecordingLabel extends Component<IProps, IState> {
      * @inheritdoc
      */
     render() {
-        return this.props._status && !this.state.staleLabel && !this.props._iAmRecorder
+        return (this.props._status || this.props._isTranscribing) && !this.state.staleLabel && !this.props._iAmRecorder
             ? this._renderLabel() : null;
     }
 

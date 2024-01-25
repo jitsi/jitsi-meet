@@ -38,20 +38,23 @@ class RecordingLabel extends AbstractRecordingLabel {
      * @inheritdoc
      */
     _renderLabel() {
-        if (this.props._status !== JitsiRecordingConstants.status.ON) {
-            // Since there are no expanded labels on web, we only render this
-            // label when the recording status is ON.
-            return null;
-        }
-
-        const { classes, mode, t } = this.props;
+        const { _isTranscribing, _status, classes, mode, t } = this.props;
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
-        const icon = isRecording ? IconRecord : IconSites;
+        const icon = isRecording || _isTranscribing ? IconRecord : IconSites;
+        let content;
 
-        let content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
+        if (_status === JitsiRecordingConstants.status.ON) {
+            content = t(isRecording || _isTranscribing ? 'videoStatus.recording' : 'videoStatus.streaming');
 
-        if (this.props._isTranscribing) {
-            content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+            if (_isTranscribing) {
+                content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+            }
+        } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+            return null;
+        } else if (_isTranscribing) {
+            content = t('transcribing.labelToolTip');
+        } else {
+            return null;
         }
 
         return (
