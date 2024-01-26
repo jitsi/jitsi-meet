@@ -145,10 +145,8 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
                 </div>
                 <div className = { styles.descriptionLabel }>
                     {
-                        t(`${_TNS}.noMobileApp`)
-                    }
-                </div>
-                <div className = { styles.descriptionLabel }>
+                        t(`${_TNS}.noDesktopApp`)
+                    } &nbsp;
                     <a href = { generateDownloadURL() }>
                         {
                             t(`${_TNS}.downloadApp`)

@@ -219,6 +219,7 @@
         "joinInBrowser": "Im Browser",
         "launchMeetingLabel": "Wie möchten Sie an der Konferenz teilnehmen?",
         "launchWebButton": "Im Web öffnen",
+        "noDesktopApp": "Sie haben die App noch nicht installiert?",
         "noMobileApp": "Sie haben die App noch nicht installiert?",
         "termsAndConditions": "Indem Sie fortfahren, stimmen Sie underen<a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>Nutzungsbedingungen</a> zu.",
         "title": "Die Konferenz wird in {{app}} geöffnet …",
