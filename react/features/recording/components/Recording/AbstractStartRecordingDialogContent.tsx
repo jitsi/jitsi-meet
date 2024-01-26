@@ -196,7 +196,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         this._onToggleShowOptions = this._onToggleShowOptions.bind(this);
 
         this.state = {
-            showAdvancedOptions: false
+            showAdvancedOptions: true
         };
     }
 
