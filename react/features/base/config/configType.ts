@@ -141,7 +141,14 @@ export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
     fDroidUrl?: string;
 }
 
+export interface IDesktopDownloadConfig {
+    linux?: string;
+    macos?: string;
+    windows?: string;
+}
+
 export interface IDeeplinkingDesktopConfig extends IDeeplinkingPlatformConfig {
+    download?: IDesktopDownloadConfig;
     enabled: boolean;
 }
 

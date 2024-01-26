@@ -219,6 +219,7 @@
         "joinInBrowser": "Join in browser",
         "launchMeetingLabel": "How do you want to join this meeting?",
         "launchWebButton": "Launch in web",
+        "noDesktopApp": "You don’t have the app?",
         "noMobileApp": "You don’t have the app?",
         "termsAndConditions": "By continuing you agree to our <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a>",
         "title": "Launching your meeting in {{app}}...",

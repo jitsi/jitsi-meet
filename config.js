@@ -1201,6 +1201,12 @@ var config = {
     //     desktop: {
     //         appName: 'Jitsi Meet',
     //         appScheme: 'jitsi-meet,
+    //         download: {
+    //             linux:
+    //               'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage',
+    //             macos: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg',
+    //             windows: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe'
+    //         },
     //         enabled: false
     //     },
     //     // If true, any checks to handoff to another application will be prevented

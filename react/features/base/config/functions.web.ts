@@ -102,6 +102,13 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
 
     desktop.appName = desktop.appName || 'Jitsi Meet';
     desktop.appScheme = desktop.appScheme || 'jitsi-meet';
+    desktop.download = desktop.download || {};
+    desktop.download.windows = desktop.download.windows
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe';
+    desktop.download.macos = desktop.download.macos
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg';
+    desktop.download.linux = desktop.download.linux
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage';
 
     ios.appName = ios.appName || 'Jitsi Meet';
     ios.appScheme = ios.appScheme || 'org.jitsi.meet';
