@@ -125,6 +125,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
  * }}
  */
 export function _mapStateToProps(state: IReduxState) {
+    const _isTranscribing = state['features/transcribing'].isTranscribing;
     const {
         disabled: _disabled,
         tooltip: _tooltip,
@@ -134,7 +135,7 @@ export function _mapStateToProps(state: IReduxState) {
     return {
         _disabled,
         _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
-            || LocalRecordingManager.isRecordingLocally(),
+            || LocalRecordingManager.isRecordingLocally() || _isTranscribing,
         _tooltip,
         visible
     };
