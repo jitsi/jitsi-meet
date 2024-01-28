@@ -66,7 +66,7 @@ const ConferenceID: React.FC<IProps> = ({ conferenceID, t }) => {
     return (
         <div className = { styles.container }>
             <div className = { styles.descriptionLabel }>
-                { t('info.dialInInstructions') }
+                { t('info.dialANumber') }
             </div>
             <div className = { styles.separator } />
             <div className = { styles.pinLabel }>

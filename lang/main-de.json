@@ -538,7 +538,6 @@
         "country": "Land",
         "dialANumber": "Um an der Konferenz teilzunehmen, müssen Sie eine dieser Nummern wählen und dann die PIN eingeben.",
         "dialInConferenceID": "PIN:",
-        "dialInInstructions": "Um an der Konferenz teilzunehmen, müssen Sie eine dieser Nummern wählen und dann die PIN eingeben",
         "dialInNotSupported": "Entschuldigung, leider wird das Einwählen derzeit nicht unterstützt.",
         "dialInNumber": "Einwählen:",
         "dialInSummaryError": "Fehler beim Abrufen der Einwahlinformationen. Versuchen Sie es später erneut.",
