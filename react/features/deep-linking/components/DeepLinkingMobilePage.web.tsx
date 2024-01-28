@@ -211,7 +211,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                 </a>
                 {isSupportedMobileBrowser() ? (
                     <div className = { styles.supportedBrowserContent }>
-                        <div className = { styles.labelOr }>OR</div>
+                        <div className = { styles.labelOr }>{ t(`${_TNS}.or`) }</div>
                         <a
                             className = { styles.linkWrapper }
                             onClick = { onLaunchWeb }
