@@ -94,11 +94,11 @@ export function areAudioLevelsEnabled(state: IReduxState): boolean {
  * @returns {void}
  */
 export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
-    const {
-        desktop = {} as IDeeplinkingDesktopConfig,
-        android = {} as IDeeplinkingMobileConfig,
-        ios = {} as IDeeplinkingMobileConfig
-    } = deeplinking;
+    deeplinking.desktop = deeplinking.desktop || {} as IDeeplinkingDesktopConfig;
+    deeplinking.android = deeplinking.android || {} as IDeeplinkingMobileConfig;
+    deeplinking.ios = deeplinking.ios || {} as IDeeplinkingMobileConfig;
+
+    const { android, desktop, ios } = deeplinking;
 
     desktop.appName = desktop.appName || 'Jitsi Meet';
     desktop.appScheme = desktop.appScheme || 'jitsi-meet';
