@@ -53,11 +53,9 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
     case VISITOR_PROMOTION_REQUEST: {
         const currentRequests = state.promotionRequests || [];
 
-        currentRequests.push(action.request);
-
         return {
             ...state,
-            promotionRequests: [ ...currentRequests ]
+            promotionRequests: [ ...currentRequests, action.request ]
         };
     }
     case CLEAR_VISITOR_PROMOTION_REQUEST: {
