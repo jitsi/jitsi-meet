@@ -60,7 +60,7 @@ export async function sendGetCustomerIdRequest(conference: IJitsiConference, sta
 
     const roomJid = conference?.room?.roomjid;
 
-    if (jaasConferenceCreatorUrl && roomJid) {
+    if (isVpaasMeeting(state) && jaasConferenceCreatorUrl && roomJid) {
         const fullUrl = `${jaasConferenceCreatorUrl}?conference=${encodeURIComponent(roomJid)}`;
         const response = await fetch(fullUrl);
         const responseBody = await response.json();
