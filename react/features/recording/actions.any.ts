@@ -1,7 +1,13 @@
 import { IStore } from '../app/types';
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
+import { openDialog } from '../base/dialog/actions';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
@@ -10,8 +16,9 @@ import {
     showNotification,
     showWarningNotification
 } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
+import { setRequestingSubtitles } from '../subtitles/actions.any';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -23,13 +30,18 @@ import {
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
+import { StartRecordingDialog } from './components/Recording';
+import { START_RECORDING_NOTIFICATION_ID } from './constants';
 import {
+    getRecordButtonProps,
     getRecordingLink,
     getResourceId,
+    isRecordingRunning,
     isSavingRecordingOnDropbox,
     sendMeetingHighlight
 } from './functions';
 import logger from './logger';
+
 
 /**
  * Clears the data of every recording sessions.
@@ -365,5 +377,64 @@ export function startLocalVideoRecording(onlySelf?: boolean) {
 export function stopLocalVideoRecording() {
     return {
         type: STOP_LOCAL_RECORDING
+    };
+}
+
+/**
+ * Displays the notification suggesting to start the recording.
+ *
+ * @returns {void}
+ */
+export function showStartRecordingNotification() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { recordings } = state['features/base/config'];
+        const { suggestRecording } = recordings || {};
+        const recordButtonProps = getRecordButtonProps(state);
+        const isAlreadyRecording = isRecordingRunning(state);
+
+        if (!suggestRecording
+            || isAlreadyRecording
+            || !recordButtonProps.visible
+            || recordButtonProps.disabled) {
+            return;
+        }
+
+        dispatch(showNotification({
+            titleKey: 'dialog.startRecording',
+            uid: START_RECORDING_NOTIFICATION_ID,
+            customActionNameKey: [ 'dialog.startRecording' ],
+            customActionHandler: [ () => {
+                const isModerator = isLocalParticipantModerator(state);
+                const { recordingService } = state['features/base/config'];
+
+                const canBypassDialog = isModerator
+                    && recordingService?.enabled
+                    && isJwtFeatureEnabled(state, 'recording', true);
+
+                if (canBypassDialog) {
+                    const options = {
+                        'file_recording_metadata': {
+                            share: true
+                        }
+                    };
+
+                    const { conference } = state['features/base/conference'];
+                    const { autoTranscribeOnRecord } = state['features/base/config'].transcription || {};
+
+                    conference?.startRecording({
+                        mode: JitsiRecordingConstants.mode.FILE,
+                        appData: JSON.stringify(options)
+                    });
+
+                    if (autoTranscribeOnRecord) {
+                        dispatch(setRequestingSubtitles(true, false));
+                    }
+                } else {
+                    dispatch(openDialog(StartRecordingDialog));
+                }
+            } ],
+            appearance: NOTIFICATION_TYPE.NORMAL
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }

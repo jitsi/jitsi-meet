@@ -159,6 +159,22 @@ export function supportsLocalRecording() {
 }
 
 /**
+ * Returns true if there is a recording session running.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingRunning(state: IReduxState) {
+    const { isTranscribing } = state['features/transcribing'];
+
+    return (
+        Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
+        || LocalRecordingManager.isRecordingLocally()
+        || isTranscribing
+    );
+}
+
+/**
  * Returns the recording button props.
  *
  * @param {Object} state - The redux state to search in.
