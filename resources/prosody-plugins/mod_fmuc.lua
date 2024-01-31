@@ -106,11 +106,6 @@ module:hook('muc-occupant-pre-leave', function (event)
             time = nil;
           }):up();
 
-        local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
-        if nick_element then
-            promotion_request:add_child(nick_element);
-        end
-
         module:send(promotion_request);
     end
 
