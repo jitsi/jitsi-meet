@@ -71,6 +71,46 @@ module:hook('muc-occupant-pre-join', function (event)
     end
 end, 3);
 
+-- if a visitor leaves we want to lower its hand if it was still raised before leaving
+-- this is to clear indication for promotion on moderators visitors list
+module:hook('muc-occupant-pre-leave', function (event)
+    local occupant = event.occupant;
+
+    ---- we are interested only of visitors presence
+    if occupant.role ~= 'visitor' then
+        return;
+    end
+
+    local room = event.room;
+
+    -- let's check if the visitor has a raised hand send a lower hand
+    -- to main prosody
+    local pr = occupant:get_presence();
+
+    local raiseHand = pr:get_child_text('jitsi_participant_raisedHand');
+
+    -- a promotion detected let's send it to main prosody
+    if raiseHand and #raiseHand > 0 then
+        local iq_id = new_id();
+        sent_iq_cache:set(iq_id, socket.gettime());
+        local promotion_request = st.iq({
+            type = 'set',
+            to = 'visitors.'..main_domain,
+            from = local_domain,
+            id = iq_id })
+          :tag('visitors', { xmlns = 'jitsi:visitors',
+                             room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
+          :tag('promotion-request', {
+            xmlns = 'jitsi:visitors',
+            jid = occupant.jid,
+            time = nil;
+          }):up();
+
+        module:send(promotion_request);
+    end
+
+end, 1); -- rate limit is 0
+
 -- Returns the main participants count and the visitors count
 local function get_occupant_counts(room)
     local main_count = 0;
