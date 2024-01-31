@@ -131,7 +131,7 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
 
             -- let's send a notification to every moderator
             for _, occupant in room:each_occupant() do
-                if occupant.role == 'moderator' then
+                if occupant.role == 'moderator' and not is_admin(occupant.bare_jid) then
                     send_json_message(occupant.jid, msg_to_send);
                 end
             end
@@ -217,9 +217,13 @@ local function stanza_handler(event)
 
         local force_promote = request_promotion.attr.forcePromote;
         if force_promote == 'true' and not is_vpaas(room) then
-            module:log('warn', 'Received promotion request for non vpaas room (%s) with forced promotion: ',
-                                room.jid, stanza);
-            return true; -- stop processing
+            -- allow force promote only in case there are no moderators in the room
+            for _, occupant in room:each_occupant() do
+                if occupant.role == 'moderator' and not is_admin(occupant.bare_jid) then
+                    force_promote = false;
+                    break;
+                end
+            end
         end
 
         local display_name = visitors_iq:get_child_text('nick', 'http://jabber.org/protocol/nick');
