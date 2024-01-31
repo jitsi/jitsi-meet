@@ -244,6 +244,12 @@ module:hook('muc-broadcast-presence', function (event)
             -- so we can be auto promoted
             if identity and identity.id then
                 user_id = session.jitsi_meet_context_user.id;
+
+                -- non-vpass and having a token in correct tenant is considered a moderator
+                if session.jitsi_meet_str_tenant
+                    and session.jitsi_web_query_prefix == string.lower(session.jitsi_meet_str_tenant) then
+                    is_moderator = true;
+                end
             end
         end
 
