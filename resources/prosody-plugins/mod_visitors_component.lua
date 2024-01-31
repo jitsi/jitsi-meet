@@ -412,8 +412,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 jid = req_jid,
                 username = username ,
                 allow = data.approved and 'true' or 'false' }):up());
-
-        return false; -- halt processing
+        return true; -- halt processing, but return true that we handled it
     end);
 end);
 
