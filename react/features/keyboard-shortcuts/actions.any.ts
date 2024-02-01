@@ -30,7 +30,7 @@ export const registerShortcut = (shortcut: IKeyboardShortcut): AnyAction => {
 */
 export const unregisterShortcut = (character: string, altKey = false): AnyAction => {
     return {
-        altKey,
+        alt: altKey,
         type: UNREGISTER_KEYBOARD_SHORTCUT,
         character
     };
