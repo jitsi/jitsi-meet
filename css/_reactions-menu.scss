@@ -104,7 +104,7 @@
 	}
 }
 
-.reactions-animations-container {
+.reactions-animations-overflow-container {
 	position: absolute;
 	width: 20%;
 	bottom: 0;
@@ -115,6 +115,13 @@
 .reactions-menu-popup-container {
 	display: inline-block;
 	position: relative;
+}
+
+.reactions-animations-container {
+	left: 50%;
+	bottom: 0px;
+	display: inline-block;
+	position: absolute;
 }
 
 $reactionCount: 20;
