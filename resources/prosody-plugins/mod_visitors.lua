@@ -318,7 +318,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             room:route_to_occupant(o, stanza);
         end
         -- let's add the message to the history of the room
-        host_module:fire_event("muc-add-history", { room = room; stanza = stanza; });
+        host_module:fire_event("muc-add-history", { room = room; stanza = stanza; from = from; visitor = true; });
 
         -- now we need to send to rest of visitor nodes
         local vnodes = visitors_nodes[room.jid].nodes;
