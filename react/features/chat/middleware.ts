@@ -29,7 +29,6 @@ import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
-import { endpointMessageReceived } from '../subtitles/actions.any';
 import { showToolbox } from '../toolbox/actions';
 
 
@@ -253,6 +252,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         }
     );
 
+    // TODO: clean this up, there should be a central place that dispatches this. -saghul
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
         (...args: any) => {
@@ -261,9 +261,6 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
             if (!isReactionsEnabled(state)) {
                 return;
             }
-
-            // @ts-ignore
-            store.dispatch(endpointMessageReceived(...args));
 
             if (args && args.length >= 2) {
                 const [ { _id }, eventData ] = args;
