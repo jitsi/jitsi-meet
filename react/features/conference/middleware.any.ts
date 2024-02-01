@@ -35,7 +35,7 @@ import {
     NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE
 } from '../notifications/constants';
-import { showStartRecordingNotification } from '../recording/actions.any';
+import { showStartRecordingNotification } from '../recording/actions';
 import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions.any';
 

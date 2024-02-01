@@ -1,6 +1,5 @@
 import { IStore } from '../app/types';
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
-import { openDialog } from '../base/dialog/actions';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import {
@@ -8,6 +7,7 @@ import {
     getParticipantDisplayName,
     isLocalParticipantModerator
 } from '../base/participants/functions';
+import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
@@ -30,7 +30,6 @@ import {
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
-import { StartRecordingDialog } from './components/Recording';
 import { START_RECORDING_NOTIFICATION_ID } from './constants';
 import {
     getRecordButtonProps,
@@ -385,9 +384,10 @@ export function stopLocalVideoRecording() {
 /**
  * Displays the notification suggesting to start the recording.
  *
+ * @param {Function} openRecordingDialog - The callback to open the recording dialog.
  * @returns {void}
  */
-export function showStartRecordingNotification() {
+export function showStartRecordingNotificationWithCallback(openRecordingDialog) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { recordings } = state['features/base/config'];
@@ -406,6 +406,7 @@ export function showStartRecordingNotification() {
             titleKey: 'notify.suggestRecordingTitle',
             descriptionKey: 'notify.suggestRecordingDescription',
             uid: START_RECORDING_NOTIFICATION_ID,
+            customActionType: [ BUTTON_TYPES.PRIMARY ],
             customActionNameKey: [ 'notify.suggestRecordingAction' ],
             customActionHandler: [ () => {
                 const isModerator = isLocalParticipantModerator(state);
@@ -434,7 +435,7 @@ export function showStartRecordingNotification() {
                         dispatch(setRequestingSubtitles(true, false));
                     }
                 } else {
-                    dispatch(openDialog(StartRecordingDialog));
+                    openRecordingDialog();
                 }
 
                 dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
