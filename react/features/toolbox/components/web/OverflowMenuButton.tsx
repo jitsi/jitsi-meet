@@ -220,7 +220,7 @@ const OverflowMenuButton = ({
                                 </div>
                             </>
                         </Drawer>
-                        {showReactionsMenu && <div className = 'reactions-animations-container'>
+                        {showReactionsMenu && <div className = 'reactions-animations-overflow-container'>
                             {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                                 index = { index }
                                 key = { uid }
