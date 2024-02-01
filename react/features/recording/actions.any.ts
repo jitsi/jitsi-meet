@@ -387,7 +387,7 @@ export function stopLocalVideoRecording() {
  * @param {Function} openRecordingDialog - The callback to open the recording dialog.
  * @returns {void}
  */
-export function showStartRecordingNotificationWithCallback(openRecordingDialog) {
+export function showStartRecordingNotificationWithCallback(openRecordingDialog: Function) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { recordings } = state['features/base/config'];
