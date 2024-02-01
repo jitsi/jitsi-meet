@@ -175,6 +175,30 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns whether the transcription should start automatically when recording starts.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function shouldAutoTranscribeOnRecord(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return transcription?.autoTranscribeOnRecord ?? true;
+}
+
+/**
+ * Returns whether the recording should be shared.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingSharingEnabled(state: IReduxState) {
+    const { recordingService } = state['features/base/config'];
+
+    return recordingService?.sharingEnabled ?? false;
+}
+
+/**
  * Returns the recording button props.
  *
  * @param {Object} state - The redux state to search in.

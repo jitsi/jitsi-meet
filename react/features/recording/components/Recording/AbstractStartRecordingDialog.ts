@@ -13,7 +13,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
-import { supportsLocalRecording } from '../../functions';
+import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
 export interface IProps extends WithTranslation {
 
@@ -444,7 +444,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
  */
 export function mapStateToProps(state: IReduxState, _ownProps: any) {
     const {
-        transcription,
         recordingService,
         dropbox = { appKey: undefined },
         localRecording
@@ -452,10 +451,10 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
 
     return {
         _appKey: dropbox.appKey ?? '',
-        _autoTranscribeOnRecord: transcription?.autoTranscribeOnRecord ?? false,
+        _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
         _conference: state['features/base/conference'].conference,
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
-        _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
+        _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',

@@ -37,8 +37,10 @@ import {
     getRecordingLink,
     getResourceId,
     isRecordingRunning,
+    isRecordingSharingEnabled,
     isSavingRecordingOnDropbox,
-    sendMeetingHighlight
+    sendMeetingHighlight,
+    shouldAutoTranscribeOnRecord
 } from './functions';
 import logger from './logger';
 
@@ -415,12 +417,12 @@ export function showStartRecordingNotification() {
                 if (canBypassDialog) {
                     const options = {
                         'file_recording_metadata': {
-                            share: true
+                            share: isRecordingSharingEnabled(state)
                         }
                     };
 
                     const { conference } = state['features/base/conference'];
-                    const { autoTranscribeOnRecord } = state['features/base/config'].transcription || {};
+                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
 
                     conference?.startRecording({
                         mode: JitsiRecordingConstants.mode.FILE,
