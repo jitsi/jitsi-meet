@@ -530,6 +530,9 @@ export interface IConfig {
         sharingEnabled?: boolean;
     };
     recordingSharingUrl?: string;
+    recordings?: {
+        suggestRecording?: boolean;
+    };
     remoteVideoMenu?: {
         disableGrantModerator?: boolean;
         disableKick?: boolean;
