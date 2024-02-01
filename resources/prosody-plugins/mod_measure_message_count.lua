@@ -158,7 +158,7 @@ module:hook("muc-occupant-left", function(event)
     local occupant, room = event.occupant, event.room;
     local session = event.origin;
 
-    if session.jitsi_meet_tenant_mismatch then
+    if session and session.jitsi_meet_tenant_mismatch then
         room.jitsi_meet_tenant_mismatch = true;
     end
 end);
