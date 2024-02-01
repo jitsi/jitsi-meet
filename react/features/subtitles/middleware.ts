@@ -100,6 +100,8 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
     const language
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;
     const participant = {
@@ -126,13 +128,23 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
 
         const { text } = json.transcript[0];
 
-        // First, notify the external API, but only do so for final messages.
-        if (typeof APP !== 'undefined' && !json.is_interim) {
+        // First, notify the external API.
+        if (typeof APP !== 'undefined' && !(json.is_interim && skipInterimTranscriptions)) {
+            const txt: any = {};
+
+            if (!json.is_interim) {
+                txt.final = text;
+            } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
+                txt.stable = text;
+            } else {
+                txt.unstable = text;
+            }
+
             APP.API.notifyTranscriptionChunkReceived({
                 messageID: transcriptMessageID,
-                final: text,
                 language: json.language,
-                participant
+                participant,
+                ...txt
             });
         }
 
@@ -140,8 +152,6 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         if (json.language.slice(0, 2) !== language) {
             return next(action);
         }
-
-        const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
 
         if (json.is_interim && skipInterimTranscriptions) {
             return next(action);
