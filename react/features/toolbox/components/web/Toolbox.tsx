@@ -16,7 +16,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
-import { isReactionsButtonEnabled, isReactionsEnabled } from '../../../reactions/functions.web';
+import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
 import {
     setHangupMenuVisible,
@@ -116,14 +116,14 @@ interface IProps extends WithTranslation {
     _reactionsButtonEnabled: boolean;
 
     /**
-     * Whether or not reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean;
-
-    /**
      * Whether the toolbox should be shifted up or not.
      */
     _shiftUp: boolean;
+
+    /**
+     * Whether any reactions buttons should be displayed or not.
+     */
+    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The enabled buttons.
@@ -185,8 +185,8 @@ const Toolbox = ({
     _overflowDrawer,
     _overflowMenuVisible,
     _reactionsButtonEnabled,
-    _reactionsEnabled,
     _shiftUp,
+    _shouldDisplayReactionsButtons,
     _toolbarButtons,
     _visible,
     dispatch,
@@ -362,10 +362,11 @@ const Toolbox = ({
 
         const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons();
         const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
-        const showReactionsInOverflowMenu
-            = (_reactionsEnabled && !_reactionsButtonEnabled
-                && (raiseHandInOverflowMenu || _isNarrowLayout || _isMobile))
-            || overflowMenuButtons.some(({ key }) => key === 'reactions');
+        const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
+            && (
+                (!_reactionsButtonEnabled && (raiseHandInOverflowMenu || _isNarrowLayout || _isMobile))
+                    || overflowMenuButtons.some(({ key }) => key === 'reactions')
+            );
         const showRaiseHandInReactionsMenu = showReactionsInOverflowMenu && raiseHandInOverflowMenu;
 
         return (
@@ -502,7 +503,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     } = state['features/toolbox'];
     const { clientWidth } = state['features/base/responsive-ui'];
     let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
-    const _reactionsEnabled = isReactionsEnabled(state);
 
     if (iAmVisitor(state)) {
         toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
@@ -523,8 +523,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _overflowMenuVisible: overflowMenuVisible,
         _overflowDrawer: overflowDrawer,
         _reactionsButtonEnabled: isReactionsButtonEnabled(state),
-        _reactionsEnabled,
         _shiftUp: state['features/toolbox'].shiftUp,
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _toolbarButtons: toolbarButtons,
         _visible: isToolboxVisible(state)
     };

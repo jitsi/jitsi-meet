@@ -12,7 +12,7 @@ import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
-import { isReactionsEnabled } from '../../../reactions/functions.any';
+import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
 import RecordButton from '../../../recording/components/Recording/native/RecordButton';
 import SecurityDialogButton
@@ -53,14 +53,14 @@ interface IProps {
     _isSpeakerStatsDisabled?: boolean;
 
     /**
-     * Whether or not the reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean;
-
-    /**
      * Whether the recoding button should be enabled or not.
-     */
-    _recordingEnabled: boolean;
+    */
+   _recordingEnabled: boolean;
+
+   /**
+    * Whether or not any reactions buttons should be displayed.
+    */
+   _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The width of the screen.
@@ -113,7 +113,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         const {
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
-            _reactionsEnabled,
+            _shouldDisplayReactionsButtons,
             _width,
             dispatch
         } = this.props;
@@ -141,12 +141,15 @@ class OverflowMenu extends PureComponent<IProps, IState> {
 
         return (
             <BottomSheet
-                renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
+                renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
+                {
+                    !_shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
+                        && <RaiseHandButton { ...buttonProps } />
+                }
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <SecurityDialogButton { ...buttonProps } />
@@ -206,7 +209,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
-        _reactionsEnabled: isReactionsEnabled(state),
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _width: state['features/base/responsive-ui'].clientWidth
     };
 }
