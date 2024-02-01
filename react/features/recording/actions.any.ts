@@ -403,9 +403,10 @@ export function showStartRecordingNotification() {
         }
 
         dispatch(showNotification({
-            titleKey: 'dialog.startRecording',
+            titleKey: 'notify.suggestRecordingTitle',
+            descriptionKey: 'notify.suggestRecordingDescription',
             uid: START_RECORDING_NOTIFICATION_ID,
-            customActionNameKey: [ 'dialog.startRecording' ],
+            customActionNameKey: [ 'notify.suggestRecordingAction' ],
             customActionHandler: [ () => {
                 const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
@@ -435,6 +436,8 @@ export function showStartRecordingNotification() {
                 } else {
                     dispatch(openDialog(StartRecordingDialog));
                 }
+
+                dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
