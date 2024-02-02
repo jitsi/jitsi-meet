@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
@@ -24,7 +24,7 @@ interface IProps extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Whether or not numbers should include links with the telephone protocol.
@@ -172,7 +172,8 @@ class DialInSummary extends Component<IProps, State> {
         let contents;
 
         const { conferenceID, error, loading, numbersEnabled } = this.state;
-        const { classes, hideError, showTitle, room, clickableNumbers, scrollable, t } = this.props;
+        const { hideError, showTitle, room, clickableNumbers, scrollable, t } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         if (loading) {
             contents = '';
@@ -309,4 +310,4 @@ class DialInSummary extends Component<IProps, State> {
     }
 }
 
-export default translate(withStyles(styles)(DialInSummary));
+export default translate(withStyles(DialInSummary, styles));

@@ -1,14 +1,24 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import Input from '../../../../base/ui/components/web/Input';
 import AbstractStreamKeyForm, {
-    IProps, _mapStateToProps
+    IProps as AbstractProps,
+    _mapStateToProps
 } from '../AbstractStreamKeyForm';
+
+interface IProps extends AbstractProps {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -46,7 +56,8 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { classes, t, value } = this.props;
+        const { t, value } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = 'stream-key-form'>
@@ -99,4 +110,4 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
     }
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(styles)(StreamKeyForm)));
+export default translate(connect(_mapStateToProps)(withStyles(StreamKeyForm, styles)));
