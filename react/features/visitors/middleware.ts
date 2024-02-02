@@ -13,7 +13,6 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     VISITORS_PROMOTION_NOTIFICATION_ID
 } from '../notifications/constants';
-
 import { open as openParticipantsPane } from '../participants-pane/actions';
 
 import {
