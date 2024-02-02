@@ -36,7 +36,7 @@ export function admitMultiple(requests: Array<IPromotionRequest>): Function {
  * @param {IPromotionRequest} request - The request from the visitor.
  * @returns {Function}
  */
-export function approveRequest(request: IPromotionRequest): Function {
+export function approveRequest(request: IPromotionRequest) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
@@ -57,7 +57,7 @@ export function approveRequest(request: IPromotionRequest): Function {
  * @param {IPromotionRequest} request - The request from the visitor.
  * @returns {Function}
  */
-export function denyRequest(request: IPromotionRequest): Function {
+export function denyRequest(request: IPromotionRequest) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 

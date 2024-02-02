@@ -1,11 +1,27 @@
+import i18n from 'i18next';
+import { batch } from 'react-redux';
+
+import { IStore } from '../app/types';
 import { CONFERENCE_JOINED, CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { BUTTON_TYPES } from '../base/ui/constants.any';
+import { hideNotification, showNotification } from '../notifications/actions';
+import {
+    NOTIFICATION_ICON,
+    NOTIFICATION_TIMEOUT_TYPE,
+    VISITORS_PROMOTION_NOTIFICATION_ID
+} from '../notifications/constants';
+import { open as openParticipantsPane } from '../participants-pane/actions';
 
-import { clearPromotionRequest, promotionRequestReceived, updateVisitorsCount } from './actions';
+import {
+    approveRequest,
+    clearPromotionRequest,
+    denyRequest,
+    promotionRequestReceived,
+    updateVisitorsCount
+} from './actions';
 import { getPromotionRequests } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
@@ -44,6 +60,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             } else {
                 dispatch(clearPromotionRequest(request));
             }
+            _handlePromotionNotification({
+                dispatch,
+                getState
+            });
         });
 
         conference.on(JitsiConferenceEvents.VISITORS_REJECTION, () => {
@@ -66,3 +86,67 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     return next(action);
 });
+
+/**
+ * Function to handle the promotion notification.
+ *
+ * @param {Object} store - The Redux store.
+ * @returns {void}
+ */
+function _handlePromotionNotification(
+        { dispatch, getState }: { dispatch: IStore['dispatch']; getState: IStore['getState']; }) {
+    const requests = getPromotionRequests(getState());
+
+    if (requests.length === 0) {
+        dispatch(hideNotification(VISITORS_PROMOTION_NOTIFICATION_ID));
+
+        return;
+    }
+
+    let notificationTitle;
+    let customActionNameKey;
+    let customActionHandler;
+    let customActionType;
+    let descriptionKey;
+    let icon;
+
+    if (requests.length === 1) {
+        const firstRequest = requests[0];
+
+        descriptionKey = 'notify.participantWantsToJoin';
+        notificationTitle = firstRequest.nick;
+        icon = NOTIFICATION_ICON.PARTICIPANT;
+        customActionNameKey = [ 'participantsPane.actions.admit', 'participantsPane.actions.reject' ];
+        customActionType = [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ];
+        customActionHandler = [ () => batch(() => {
+            dispatch(hideNotification(VISITORS_PROMOTION_NOTIFICATION_ID));
+            dispatch(approveRequest(firstRequest));
+        }),
+        () => batch(() => {
+            dispatch(hideNotification(VISITORS_PROMOTION_NOTIFICATION_ID));
+            dispatch(denyRequest(firstRequest));
+        }) ];
+    } else {
+        descriptionKey = 'notify.participantsWantToJoin';
+        notificationTitle = i18n.t('notify.waitingParticipants', {
+            waitingParticipants: requests.length
+        });
+        icon = NOTIFICATION_ICON.PARTICIPANTS;
+        customActionNameKey = [ 'notify.viewLobby' ];
+        customActionType = [ BUTTON_TYPES.PRIMARY ];
+        customActionHandler = [ () => batch(() => {
+            dispatch(hideNotification(VISITORS_PROMOTION_NOTIFICATION_ID));
+            dispatch(openParticipantsPane());
+        }) ];
+    }
+
+    dispatch(showNotification({
+        title: notificationTitle,
+        descriptionKey,
+        uid: VISITORS_PROMOTION_NOTIFICATION_ID,
+        customActionNameKey,
+        customActionType,
+        customActionHandler,
+        icon
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+}
