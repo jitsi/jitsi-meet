@@ -34,3 +34,14 @@ export function getPromotionRequests(state: IReduxState) {
 export function iAmVisitor(stateful: IStateful) {
     return toState(stateful)['features/visitors'].iAmVisitor;
 }
+
+/**
+ * Returns the number of visitors.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {number} - The number of visitors.
+ */
+export function getVisitorsCount(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].count ?? 0;
+}
