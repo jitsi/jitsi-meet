@@ -305,7 +305,7 @@ function http_get_with_retry(url, retry, auth_token)
         if timeout_occurred == nil then
             code = code_;
             if code == 200 or code == 204 then
-                module:log("debug", "External call was successful, content %s", content_);
+                -- module:log("debug", "External call was successful, content %s", content_);
                 content = content_;
 
                 -- if there is cache-control header, let's return the max-age value

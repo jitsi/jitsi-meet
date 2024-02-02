@@ -220,7 +220,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     local key;
     if session.public_key then
         -- We're using an public key stored in the session
-        module:log("debug","Public key was found on the session");
+        -- module:log("debug","Public key was found on the session");
         key = session.public_key;
     elseif self.asapKeyServer and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
@@ -398,7 +398,7 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        module:log("debug", "room to check: %s", room_to_check)
+        -- module:log("debug", "room to check: %s", room_to_check)
         if not room_to_check then
             if not self.requireRoomClaim then
                 -- if we do not require to have the room claim, and it is missing
