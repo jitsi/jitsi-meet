@@ -98,7 +98,7 @@ module:hook("pre-iq/full", function(event)
             -- now lets check any limits if configured
             if limit_outgoing_calls > 0 then
                 if not session.dial_out_throttle then
-                    module:log("debug", "Enabling dial-out throttle session=%s.", session);
+                    -- module:log("debug", "Enabling dial-out throttle session=%s.", session);
                     session.dial_out_throttle = new_throttle(limit_outgoing_calls, OUTGOING_CALLS_THROTTLE_INTERVAL);
                 end
 

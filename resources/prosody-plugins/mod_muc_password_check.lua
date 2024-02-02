@@ -129,7 +129,7 @@ function handle_validate_room_password (event)
         body = json.encode({ valid = (room:get_password() == passcode) })
     };
 
-    module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
+    -- module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
 
     return PUT_response;
 end
@@ -155,7 +155,7 @@ function handle_get_room_password (event)
         };
         body = json.encode(room_details);
     };
-    module:log("debug","Sending response for room password: %s", inspect(GET_response));
+    -- module:log("debug","Sending response for room password: %s", inspect(GET_response));
 
     return GET_response;
 end

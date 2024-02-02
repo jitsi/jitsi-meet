@@ -34,7 +34,7 @@ function proxy_listener.onconnect(conn)
 	session.version = 1;
 
 	session.sends2s = function (t)
-		log("debug", "sending (s2s over proxy): %s", (t.top_tag and t:top_tag()) or t:match("^[^>]*>?"));
+		-- log("debug", "sending (s2s over proxy): %s", (t.top_tag and t:top_tag()) or t:match("^[^>]*>?"));
 		if t.name then
 			t = filter("stanzas/out", t);
 		end
@@ -73,13 +73,13 @@ module:hook("route/remote", function(event)
 	local from_host, to_host, stanza = event.from_host, event.to_host, event.stanza;
 	local inject = injected and injected[to_host];
 	if not inject then return end
-	module:log("debug", "opening a new outgoing connection for this stanza");
+	-- module:log("debug", "opening a new outgoing connection for this stanza");
 	local host_session = new_outgoing(from_host, to_host);
 
 	-- Store in buffer
 	host_session.bounce_sendq = bounce_sendq;
 	host_session.sendq = { {tostring(stanza), stanza.attr.type ~= "error" and stanza.attr.type ~= "result" and st.reply(stanza)} };
-	host_session.log("debug", "stanza [%s] queued until connection complete", tostring(stanza.name));
+	-- host_session.log("debug", "stanza [%s] queued until connection complete", tostring(stanza.name));
 
 	local host, port = inject[1] or inject, tonumber(inject[2]) or 5269;
 
