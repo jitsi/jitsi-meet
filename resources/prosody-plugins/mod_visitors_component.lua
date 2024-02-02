@@ -10,6 +10,7 @@ local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_vpaas = util.is_vpaas;
+local is_sip_jibri_join = util.is_sip_jibri_join;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'util.json';
@@ -283,7 +284,11 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access
     -- check list of allowed jids for the room
     host_module:hook('muc-occupant-pre-join', function (event)
-        local room, stanza, origin = event.room, event.stanza, event.origin;
+        local room, stanza, occupant, origin = event.room, event.stanza, event.occupant, event.origin;
+
+        if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+            return;
+        end
 
         -- visitors were already in the room one way or another they have access
         -- skip password challenge
@@ -294,7 +299,10 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         end
 
         -- we skip any checks when auto-allow is enabled
-        if auto_allow_promotion then
+        if auto_allow_promotion
+            or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
+            or stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi')
+            or is_sip_jibri_join(stanza) then
             return;
         end
 
