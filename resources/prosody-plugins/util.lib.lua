@@ -26,6 +26,9 @@ local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
+local OUTBOUND_SIP_JIBRI_PREFIX = 'outbound-sip-jibri@';
+local INBOUND_SIP_JIBRI_PREFIX = 'inbound-sip-jibri@';
+
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
 local internal_room_jid_cache = cache.new(1000);
@@ -272,6 +275,9 @@ function extract_subdomain(room_node)
 end
 
 function starts_with(str, start)
+    if not str then
+        return false;
+    end
     return str:sub(1, #start) == start
 end
 
@@ -447,15 +453,57 @@ function is_vpaas(room)
     return true;
 end
 
+function get_sip_jibri_email_prefix(email)
+    if not email then
+        return nil;
+    elseif starts_with(email, INBOUND_SIP_JIBRI_PREFIX) then
+        return INBOUND_SIP_JIBRI_PREFIX;
+    elseif starts_with(email, OUTBOUND_SIP_JIBRI_PREFIX) then
+        return OUTBOUND_SIP_JIBRI_PREFIX;
+    else
+        return nil;
+    end
+end
+
+function is_sip_jibri_join(stanza)
+    if not stanza then
+        return false;
+    end
+
+    local features = stanza:get_child('features');
+    local email = stanza:get_child_text('email');
+
+    if not features or not email then
+        return false;
+    end
+
+    for i = 1, #features do
+        local feature = features[i];
+        if feature.attr and feature.attr.var and feature.attr.var == "http://jitsi.org/protocol/jibri" then
+            if get_sip_jibri_email_prefix(email) then
+                module:log("debug", "Occupant with email %s is a sip jibri ", email);
+                return true;
+            end
+        end
+    end
+
+    return false
+end
+
+
 return {
+    OUTBOUND_SIP_JIBRI_PREFIX = OUTBOUND_SIP_JIBRI_PREFIX;
+    INBOUND_SIP_JIBRI_PREFIX = INBOUND_SIP_JIBRI_PREFIX;
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
     is_moderated = is_moderated;
+    is_sip_jibri_join = is_sip_jibri_join;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
+    get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;
     room_jid_match_rewrite = room_jid_match_rewrite;
