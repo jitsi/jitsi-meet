@@ -22,6 +22,7 @@ import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { copyText } from '../../../../base/util/copyText.native';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
+import { isEnablingLobbyAllowed } from '../../../../lobby/functions';
 import {
     endRoomLockRequest,
     unlockRoom
@@ -49,6 +50,11 @@ interface IProps {
      * The JitsiConference which requires a password.
      */
     _conference?: IJitsiConference;
+
+    /**
+     * Whether enabling lobby is allowed or not.
+     */
+    _isEnablingLobbyAllowed: boolean;
 
     /**
      * Whether the local user is the moderator.
@@ -174,11 +180,12 @@ class SecurityDialog extends PureComponent<IProps, IState> {
      */
     _renderLobbyMode() {
         const {
+            _isEnablingLobbyAllowed,
             _lobbyModeSwitchVisible,
             t
         } = this.props;
 
-        if (!_lobbyModeSwitchVisible) {
+        if (!_lobbyModeSwitchVisible || !_isEnablingLobbyAllowed) {
             return null;
         }
 
@@ -509,6 +516,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _conference: conference,
+        _isEnablingLobbyAllowed: isEnablingLobbyAllowed(state),
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:
