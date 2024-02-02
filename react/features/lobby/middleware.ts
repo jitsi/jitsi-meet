@@ -31,6 +31,7 @@ import {
     handleLobbyChatInitialized,
     removeLobbyChatParticipant
 } from '../chat/actions.any';
+import { arePollsDisabled } from '../conference/functions.any';
 import { hideNotification, showNotification } from '../notifications/actions';
 import {
     LOBBY_NOTIFICATION_ID,
@@ -201,7 +202,6 @@ function _handleLobbyNotification(store: IStore) {
 
     if (knockingParticipants.length === 1) {
         const firstParticipant = knockingParticipants[0];
-        const { disablePolls } = getState()['features/base/config'];
         const showChat = showLobbyChatButton(firstParticipant)(getState());
 
         descriptionKey = 'notify.participantWantsToJoin';
@@ -225,7 +225,7 @@ function _handleLobbyNotification(store: IStore) {
             customActionType.splice(1, 0, BUTTON_TYPES.SECONDARY);
             customActionHandler.splice(1, 0, () => batch(() => {
                 dispatch(handleLobbyChatInitialized(firstParticipant.id));
-                dispatch(openChat({}, disablePolls));
+                dispatch(openChat({}, arePollsDisabled(getState())));
             }));
         }
     } else {
