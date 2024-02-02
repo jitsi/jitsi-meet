@@ -16,7 +16,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 // @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
-import { getDisablePolls } from '../../../../../conference/functions';
+import { arePollsDisabled } from '../../../../../conference/functions';
 // @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
@@ -81,7 +81,7 @@ const ConferenceStack = createStackNavigator();
 
 
 const ConferenceNavigationContainer = () => {
-    const isPollsDisabled = useSelector(getDisablePolls);
+    const isPollsDisabled = useSelector(arePollsDisabled);
     let ChatScreen;
     let chatScreenName;
     let chatTitleString;
