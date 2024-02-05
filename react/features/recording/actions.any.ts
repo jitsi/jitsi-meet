@@ -432,7 +432,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     });
 
                     if (autoTranscribeOnRecord) {
-                        dispatch(setRequestingSubtitles(true, false));
+                        dispatch(setRequestingSubtitles(true, false, null));
                     }
                 } else {
                     openRecordingDialog();
