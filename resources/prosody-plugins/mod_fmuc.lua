@@ -526,6 +526,8 @@ local function iq_from_main_handler(event)
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
+    local createdTimestamp = node.attr.createdTimestamp;
+    room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
 
     if node.attr.lobby == 'true' then
         room._main_room_lobby_enabled = true;

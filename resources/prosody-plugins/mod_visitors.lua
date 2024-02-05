@@ -67,7 +67,8 @@ local function send_visitors_iq(conference_service, room, type)
       :tag(type, { xmlns = 'jitsi:visitors',
         password = type ~= 'disconnect' and room:get_password() or '',
         lobby = room._data.lobbyroom and 'true' or 'false',
-        meetingId = room._data.meetingId
+        meetingId = room._data.meetingId,
+        createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
       }):up();
 
       module:send(connect_done);
