@@ -6,7 +6,8 @@ import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
-    CONFERENCE_JOINED
+    CONFERENCE_JOINED,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
 import { conferenceWillJoin } from '../base/conference/actions';
 import {
@@ -79,6 +80,13 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceFailed(store, next, action);
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+
+        _maybeSendLobbyNotification(participant, data, store);
+
+        break;
+    }
     case KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED: {
         // We need the full update result to be in the store already
         const result = next(action);
@@ -166,13 +174,6 @@ StateListenerRegistry.register(
                     dispatch(updateLobbyParticipantOnLeave(id));
                 });
             });
-
-            conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (origin: any, sender: any) =>
-                _maybeSendLobbyNotification(origin, sender, {
-                    dispatch,
-                    getState
-                })
-            );
         }
     }
 );
