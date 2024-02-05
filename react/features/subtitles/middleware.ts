@@ -1,10 +1,10 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
+import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
-    ENDPOINT_MESSAGE_RECEIVED,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
@@ -90,7 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    const { json } = action;
+    const { data: json } = action;
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
