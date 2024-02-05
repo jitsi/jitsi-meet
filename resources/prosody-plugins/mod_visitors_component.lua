@@ -11,6 +11,7 @@ local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_vpaas = util.is_vpaas;
 local is_sip_jibri_join = util.is_sip_jibri_join;
+local process_host_module = util.process_host_module;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'util.json';
@@ -261,24 +262,6 @@ local function stanza_handler(event)
 end
 
 module:hook('iq/host', stanza_handler, 10);
-
- --process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_module, host)
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access

@@ -19,6 +19,7 @@ local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local process_host_module = util.process_host_module;
 
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
 local FORM_KEY = 'muc#roominfo_jitsimetadata';
@@ -144,24 +145,6 @@ function on_message(event)
 end
 
 -- Module operations
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 -- handle messages to this component
 module:hook("message/host", on_message);

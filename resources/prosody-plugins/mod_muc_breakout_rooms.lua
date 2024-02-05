@@ -36,6 +36,7 @@ local uuid_gen = require 'util.uuid'.generate;
 local util = module:require 'util';
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
+local process_host_module = util.process_host_module;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- Available breakout room functionality
@@ -477,25 +478,6 @@ end
 
 
 -- Module operations
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
-
 
 -- operates on already loaded breakout rooms muc module
 function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)

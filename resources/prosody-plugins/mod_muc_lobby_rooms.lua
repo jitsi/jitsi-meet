@@ -46,6 +46,7 @@ local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -231,24 +232,6 @@ function destroy_lobby_room(room, newjid, message)
             lobby_room_obj:destroy(newjid, message);
         end
         room._data.lobbyroom = nil;
-    end
-end
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
     end
 end
 

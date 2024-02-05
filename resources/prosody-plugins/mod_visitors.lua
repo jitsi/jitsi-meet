@@ -13,6 +13,7 @@ local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -174,24 +175,6 @@ module:hook('presence/full', function(event)
         end
     end
 end, 900);
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(main_muc_component_config, function(host_module, host)
     -- detects presence change in a main participant and propagate it to the used visitor nodes
