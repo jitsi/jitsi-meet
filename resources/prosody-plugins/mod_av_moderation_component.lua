@@ -1,7 +1,9 @@
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
-local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
-local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local util = module:require 'util';
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local is_healthcheck_room = util.is_healthcheck_room;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local process_host_module = util.process_host_module;
 local array = require "util.array";
 local json = require 'util.json';
 local st = require 'util.stanza';
@@ -300,22 +302,8 @@ end
 -- we will receive messages from the clients
 module:hook('message/host', on_message);
 
--- executed on every host added internally in prosody, including components
-function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log('info','Hook to muc events on %s', host);
-
-        local muc_module = module:context(host);
-        muc_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
-        muc_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
-    end
-end
-
-if prosody.hosts[muc_component_host] == nil then
-    module:log('info', 'No muc component found, will listen for it: %s', muc_component_host);
-
-    -- when a host or component is added
-    prosody.events.add_handler('host-activated', process_host);
-else
-    process_host(muc_component_host);
-end
+process_host_module(muc_component_host, function(host_module, host)
+    module:log('info','Hook to muc events on %s', host);
+    host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
+    host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
+end);

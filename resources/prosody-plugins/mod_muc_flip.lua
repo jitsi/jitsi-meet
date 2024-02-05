@@ -5,6 +5,7 @@
 
 local oss_util = module:require "util";
 local is_healthcheck_room = oss_util.is_healthcheck_room;
+local process_host_module = oss_util.process_host_module;
 local um_is_admin = require "core.usermanager".is_admin;
 local inspect = require('inspect');
 local jid_bare = require "util.jid".bare;
@@ -186,24 +187,6 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     module:log('info', 'Lobby muc loaded');
     lobby_muc_service = lobby_muc;
     lobby_host = module:context(host_module);
-end
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
 end
 
 -- process or waits to process the lobby muc component
