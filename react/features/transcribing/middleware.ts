@@ -93,9 +93,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: IStore['getState'], on: boolean) {
     const state = getState();
     const { sessionDatas } = state['features/recording'];
-    const { status: statusConstants } = JitsiRecordingConstants;
+    const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
 
-    if (sessionDatas.some(sd => sd.mode !== statusConstants.OFF)) {
+    if (sessionDatas.some(sd => sd.mode === modeConstants.FILE && sd.status === statusConstants.ON)) {
         // If a recording is still ongoing, don't send any notification.
         return;
     }

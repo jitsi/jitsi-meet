@@ -175,6 +175,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case RECORDING_SESSION_UPDATED: {
+        const state = getState();
+
         // When in recorder mode no notifications are shown
         // or extra sounds are also not desired
         // but we want to indicate those in case of sip gateway
@@ -182,22 +184,22 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             iAmRecorder,
             iAmSipGateway,
             recordingLimit
-        } = getState()['features/base/config'];
+        } = state['features/base/config'];
+        const { isTranscribing } = state['features/transcribing'];
 
         if (iAmRecorder && !iAmSipGateway) {
             break;
         }
 
         const updatedSessionData
-            = getSessionById(getState(), action.sessionData.id);
+            = getSessionById(state, action.sessionData.id);
         const { initiator, mode = '', terminator } = updatedSessionData ?? {};
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData?.status === PENDING
-            && (!oldSessionData || oldSessionData.status !== PENDING)) {
+        if (updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING) {
             dispatch(showPendingRecordingNotification(mode));
             dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
-        } else if (updatedSessionData?.status !== PENDING) {
+        } else {
             dispatch(hidePendingRecordingNotification(mode));
 
             if (updatedSessionData?.status === ON) {
@@ -215,12 +217,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                         dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                     }
                 }
-                if (!oldSessionData || oldSessionData.status !== ON) {
+
+                if (oldSessionData?.status !== ON) {
                     sendAnalytics(createRecordingEvent('start', mode));
 
                     let soundID;
 
-                    if (mode === JitsiRecordingConstants.mode.FILE) {
+                    if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing) {
                         soundID = RECORDING_ON_SOUND_ID;
                     } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                         soundID = LIVE_STREAMING_ON_SOUND_ID;
@@ -234,12 +237,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                         APP.API.notifyRecordingStatusChanged(true, mode);
                     }
                 }
-            } else if (updatedSessionData?.status === OFF
-                && (!oldSessionData || oldSessionData.status !== OFF)) {
+            } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
                 if (terminator) {
                     dispatch(
                         showStoppedRecordingNotification(
-                            mode, getParticipantDisplayName(getState, getResourceId(terminator))));
+                            mode, getParticipantDisplayName(state, getResourceId(terminator))));
                 }
 
                 let duration = 0, soundOff, soundOn;
@@ -250,7 +252,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 }
                 sendAnalytics(createRecordingEvent('stop', mode, duration));
 
-                if (mode === JitsiRecordingConstants.mode.FILE) {
+                if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing) {
                     soundOff = RECORDING_OFF_SOUND_ID;
                     soundOn = RECORDING_ON_SOUND_ID;
                 } else if (mode === JitsiRecordingConstants.mode.STREAM) {
