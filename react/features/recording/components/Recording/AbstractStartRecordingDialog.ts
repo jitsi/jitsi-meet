@@ -178,7 +178,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             userName: undefined,
             sharingEnabled: true,
             shouldRecordAudioAndVideo: true,
-            shouldRecordTranscription: true,
+            shouldRecordTranscription: this.props._autoTranscribeOnRecord,
             spaceLeft: undefined,
             selectedRecordingService,
             localRecordingOnlySelf: false
@@ -335,7 +335,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     _onSubmit() {
         const {
             _appKey,
-            _autoTranscribeOnRecord,
             _conference,
             _isDropboxEnabled,
             _rToken,
@@ -398,8 +397,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             });
         }
 
-        if (_autoTranscribeOnRecord || this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, false));
+        if (this.state.shouldRecordTranscription) {
+            dispatch(setRequestingSubtitles(true, false, null));
         }
 
         return true;
