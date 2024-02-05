@@ -1,7 +1,6 @@
 import { IStore } from '../app/types';
-import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
@@ -59,36 +58,32 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_JOIN_IN_PROGRESS: {
-        const { conference } = action;
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+        const isNewPoll = data.type === COMMAND_NEW_POLL;
 
-        conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (user: any, data: any) => {
-                const isNewPoll = data.type === COMMAND_NEW_POLL;
-
-                _handleReceivePollsMessage({
-                    ...data,
-                    senderId: isNewPoll ? user._id : undefined,
-                    voterId: isNewPoll ? undefined : user._id
-                }, dispatch, getState);
-            });
-        conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
-            (id: any, data: any) => {
-                const isNewPoll = data.type === COMMAND_NEW_POLL;
-
-                _handleReceivePollsMessage({
-                    ...data,
-                    senderId: isNewPoll ? id : undefined,
-                    voterId: isNewPoll ? undefined : id
-                }, dispatch, getState);
-            });
+        _handleReceivePollsMessage({
+            ...data,
+            senderId: isNewPoll ? participant.getId() : undefined,
+            voterId: isNewPoll ? undefined : participant.getId()
+        }, dispatch, getState);
 
         break;
     }
 
-    // Middleware triggered when a poll is received
-    case RECEIVE_POLL: {
+    case NON_PARTICIPANT_MESSAGE_RECEIVED: {
+        const { id, data } = action;
+        const isNewPoll = data.type === COMMAND_NEW_POLL;
 
+        _handleReceivePollsMessage({
+            ...data,
+            senderId: isNewPoll ? id : undefined,
+            voterId: isNewPoll ? undefined : id
+        }, dispatch, getState);
+        break;
+    }
+
+    case RECEIVE_POLL: {
         const state = getState();
 
         if (arePollsDisabled(state)) {

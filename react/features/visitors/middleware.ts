@@ -2,7 +2,11 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { CONFERENCE_JOINED, CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_JOINED,
+    CONFERENCE_JOIN_IN_PROGRESS,
+    ENDPOINT_MESSAGE_RECEIVED
+} from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -70,16 +74,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             dispatch(raiseHand(false));
         });
 
-        conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (user: any, data: any) => {
-                if (data?.action === 'promotion-response' && data.approved) {
-                    const request = getPromotionRequests(getState())
-                        .find(r => r.from === data.id);
+        break;
+    }
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { data } = action;
 
-                    request && dispatch(clearPromotionRequest(request));
-                }
-            });
+        if (data?.action === 'promotion-response' && data.approved) {
+            const request = getPromotionRequests(getState())
+                .find(r => r.from === data.id);
 
+            request && dispatch(clearPromotionRequest(request));
+        }
         break;
     }
     }

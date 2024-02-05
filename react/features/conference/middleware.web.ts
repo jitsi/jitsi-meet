@@ -1,10 +1,7 @@
-
 import i18next from 'i18next';
 
-import { CONFERENCE_JOINED, KICKED_OUT } from '../base/conference/actionTypes';
-import { IJitsiConference } from '../base/conference/reducer';
+import { ENDPOINT_MESSAGE_RECEIVED, KICKED_OUT } from '../base/conference/actionTypes';
 import { hangup } from '../base/connection/actions.web';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { openAllowToggleCameraDialog, setCameraFacingMode } from '../base/tracks/actions.web';
@@ -14,8 +11,15 @@ import './middleware.any';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_JOINED: {
-        _addSetCameraFacingModeListener(action.conference);
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+
+        if (data?.name === CAMERA_FACING_MODE_MESSAGE) {
+            APP.store.dispatch(openAllowToggleCameraDialog(
+                /* onAllow */ () => APP.store.dispatch(setCameraFacingMode(data.facingMode)),
+                /* initiatorId */ participant.getId()
+            ));
+        }
         break;
     }
 
@@ -34,28 +38,3 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
-/**
- * Registers listener for {@link JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED} that
- * will perform various chat related activities.
- *
- * @param {IJitsiConference} conference - The conference.
- * @returns {void}
- */
-function _addSetCameraFacingModeListener(conference: IJitsiConference) {
-    conference.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-        (...args: any) => {
-            if (args && args.length >= 2) {
-                const [ sender, eventData ] = args;
-
-                if (eventData.name === CAMERA_FACING_MODE_MESSAGE) {
-                    APP.store.dispatch(openAllowToggleCameraDialog(
-                        /* onAllow */ () => APP.store.dispatch(setCameraFacingMode(eventData.facingMode)),
-                        /* initiatorId */ sender._id
-                    ));
-                }
-            }
-        }
-    );
-}
