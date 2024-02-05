@@ -1,7 +1,6 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
-import { endpointMessageReceived } from '../../subtitles/actions.any';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
@@ -48,6 +47,7 @@ import {
     DATA_CHANNEL_CLOSED,
     DATA_CHANNEL_OPENED,
     E2E_RTT_CHANGED,
+    ENDPOINT_MESSAGE_RECEIVED,
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     NON_PARTICIPANT_MESSAGE_RECEIVED,
@@ -627,6 +627,25 @@ export function dataChannelClosed(code: number, reason: string) {
         type: DATA_CHANNEL_CLOSED,
         code,
         reason
+    };
+}
+
+/**
+ * Signals that a participant sent an endpoint message on the data channel.
+ *
+ * @param {Object} participant - The participant details sending the message.
+ * @param {Object} data - The data carried by the endpoint message.
+ * @returns {{
+*      type: ENDPOINT_MESSAGE_RECEIVED,
+*      participant: Object,
+*      data: Object
+* }}
+*/
+export function endpointMessageReceived(participant: Object, data: Object) {
+    return {
+        type: ENDPOINT_MESSAGE_RECEIVED,
+        participant,
+        data
     };
 }
 
