@@ -5,7 +5,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
-import { setWhiteboardOpen } from '../../actions';
+import { setWhiteboardOpen } from '../../actions.any';
 import { isWhiteboardButtonVisible, isWhiteboardVisible } from '../../functions';
 
 interface IProps extends AbstractButtonProps {

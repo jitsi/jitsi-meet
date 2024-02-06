@@ -1,17 +1,13 @@
 import { generateCollaborationLinkData } from '@jitsi/excalidraw';
 import { AnyAction } from 'redux';
 
-import { createOpenWhiteboardEvent } from '../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
@@ -19,9 +15,7 @@ import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
 import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
 import {
     notifyWhiteboardLimit,
-    resetWhiteboard,
     restrictWhiteboard,
-    setWhiteboardOpen,
     setupWhiteboard
 } from './actions';
 import WhiteboardLimitDialog from './components/web/WhiteboardLimitDialog';
@@ -29,12 +23,13 @@ import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
-    isWhiteboardOpen,
     isWhiteboardPresent,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
 } from './functions';
 import { WhiteboardStatus } from './types';
+
+import './middleware.any';
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;
@@ -79,7 +74,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             dispatch(restrictWhiteboard(false));
             dispatch(openDialog(WhiteboardLimitDialog));
 
-            return;
+            return next(action);
         }
 
         if (!existingCollabDetails) {
@@ -99,14 +94,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             });
             raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 
-            return;
+            return next(action);
         }
 
         if (action.isOpen) {
             if (enforceUserLimit) {
                 dispatch(restrictWhiteboard());
 
-                return;
+                return next(action);
             }
 
             if (notifyUserLimit) {
@@ -118,10 +113,9 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             }
 
             focusWhiteboard(store);
-            sendAnalytics(createOpenWhiteboardEvent());
             raiseWhiteboardNotification(WhiteboardStatus.SHOWN);
 
-            return;
+            return next(action);
         }
 
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
@@ -151,50 +145,4 @@ function raiseWhiteboardNotification(status: WhiteboardStatus) {
         APP.API.notifyWhiteboardStatusChanged(status);
     }
 }
-
-/**
- * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. Disable the whiteboard if it's left open.
- */
-StateListenerRegistry.register(
-    state => getCurrentConference(state),
-    (conference, { dispatch }, previousConference): void => {
-        if (conference !== previousConference) {
-            dispatch(resetWhiteboard());
-        }
-        if (conference && !previousConference) {
-            conference.on(JitsiConferenceEvents.METADATA_UPDATED, (metadata: any) => {
-                if (metadata[WHITEBOARD_ID]) {
-                    dispatch(setupWhiteboard({
-                        collabDetails: metadata[WHITEBOARD_ID].collabDetails
-                    }));
-                    dispatch(setWhiteboardOpen(true));
-                }
-            });
-        }
-    });
-
-/**
- * Set up state change listener to limit whiteboard access.
- */
-StateListenerRegistry.register(
-    state => shouldEnforceUserLimit(state),
-    (enforceUserLimit, { dispatch, getState }): void => {
-        if (isWhiteboardOpen(getState()) && enforceUserLimit) {
-            dispatch(restrictWhiteboard());
-        }
-    }
-);
-
-/**
- * Set up state change listener to notify about whiteboard usage.
- */
-StateListenerRegistry.register(
-    state => shouldNotifyUserLimit(state),
-    (notifyUserLimit, { dispatch, getState }, prevNotifyUserLimit): void => {
-        if (isWhiteboardOpen(getState()) && notifyUserLimit && !prevNotifyUserLimit) {
-            dispatch(notifyWhiteboardLimit());
-        }
-    }
-);
 

@@ -1,31 +1,68 @@
 import { IStore } from '../app/types';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
-import { setWhiteboardOpen } from './actions';
-import { isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
-import { WhiteboardStatus } from './types';
-
+import {
+    RESET_WHITEBOARD,
+    SETUP_WHITEBOARD,
+    SET_WHITEBOARD_OPEN
+} from './actionTypes';
+import { IWhiteboardAction } from './reducer';
 
 /**
- * API to toggle the whiteboard.
+ * Configures the whiteboard collaboration details.
+ *
+ * @param {Object} payload - The whiteboard settings.
+ * @returns {{
+ *     type: SETUP_WHITEBOARD,
+ *     collabDetails: { roomId: string, roomKey: string }
+ * }}
+ */
+export const setupWhiteboard = ({ collabDetails }: {
+    collabDetails: { roomId: string; roomKey: string; };
+}): IWhiteboardAction => {
+    return {
+        type: SETUP_WHITEBOARD,
+        collabDetails
+    };
+};
+
+/**
+ * Cleans up the whiteboard collaboration settings.
+ * To be used only on native for cleanup in between conferences.
+ *
+ * @returns {{
+ *     type: RESET_WHITEBOARD
+ * }}
+ */
+export const resetWhiteboard = (): IWhiteboardAction => {
+    return { type: RESET_WHITEBOARD };
+};
+
+/**
+ * Sets the whiteboard visibility status.
+ *
+ * @param {boolean} isOpen - The whiteboard visibility flag.
+ * @returns {{
+ *      type: SET_WHITEBOARD_OPEN,
+ *      isOpen
+ * }}
+ */
+export const setWhiteboardOpen = (isOpen: boolean): IWhiteboardAction => {
+    return {
+        type: SET_WHITEBOARD_OPEN,
+        isOpen
+    };
+};
+
+/**
+ * Shows a warning notification about the whiteboard user limit.
  *
  * @returns {Function}
  */
-export function toggleWhiteboard() {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        const isAllowed = isWhiteboardAllowed(state);
-        const isOpen = isWhiteboardOpen(state);
-
-        if (isAllowed) {
-            if (isOpen && !isWhiteboardVisible(state)) {
-                dispatch(setWhiteboardOpen(true));
-            } else if (isOpen && isWhiteboardVisible(state)) {
-                dispatch(setWhiteboardOpen(false));
-            } else if (!isOpen) {
-                dispatch(setWhiteboardOpen(true));
-            }
-        } else if (typeof APP !== 'undefined') {
-            APP.API.notifyWhiteboardStatusChanged(WhiteboardStatus.FORBIDDEN);
-        }
-    };
-}
+export const notifyWhiteboardLimit = () => (dispatch: IStore['dispatch']) => {
+    dispatch(showWarningNotification({
+        titleKey: 'notify.whiteboardLimitTitle',
+        descriptionKey: 'notify.whiteboardLimitDescription'
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+};

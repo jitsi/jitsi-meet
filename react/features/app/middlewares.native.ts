@@ -13,5 +13,6 @@ import '../mobile/react-native-sdk/middleware';
 import '../mobile/watchos/middleware';
 import '../share-room/middleware';
 import '../shared-video/middleware';
+import '../whiteboard/middleware.native';
 
 import './middlewares.any';

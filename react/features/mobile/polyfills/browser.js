@@ -1,6 +1,7 @@
 import { DOMParser } from '@xmldom/xmldom';
 import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
+import { TextDecoder, TextEncoder } from 'text-encoding';
 
 import 'promise.allsettled/auto'; // Promise.allSettled.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
@@ -312,5 +313,8 @@ function _visitNode(node, callback) {
     if (typeof global.sessionStorage === 'undefined') {
         global.sessionStorage = new Storage();
     }
+
+    global.TextDecoder = TextDecoder;
+    global.TextEncoder = TextEncoder;
 
 })(global || window || this); // eslint-disable-line no-invalid-this

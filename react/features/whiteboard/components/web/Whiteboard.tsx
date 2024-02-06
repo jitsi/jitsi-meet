@@ -1,5 +1,6 @@
 import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
+import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -143,6 +144,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             collabServerUrl = { collabServerUrl }
                             excalidraw = {{
                                 isCollaborating: true,
+                                langCode: i18next.language,
 
                                 // @ts-ignore
                                 ref: excalidrawRef,
