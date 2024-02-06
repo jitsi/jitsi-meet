@@ -48,6 +48,7 @@
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
     "@xmldom/xmldom": "0.8.7",
+    "abab": "2.0.6",
     "amplitude-js": "8.2.1",
     "base64-js": "1.5.1",
     "bc-css-flags": "3.0.0",
