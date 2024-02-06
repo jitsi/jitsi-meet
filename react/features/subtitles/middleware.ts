@@ -148,8 +148,11 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
             });
         }
 
-        // If the suer is not requesting transcriptions just bail.
-        if (json.language.slice(0, 2) !== language) {
+        // If the user is not requesting transcriptions just bail.
+        // Regex to filter out all possible country codes after language code:
+        // this should catch all notations like 'en-GB' 'en_GB' and 'enGB'
+        // and be independent of the country code length
+        if (json.language.replace(/[-_A-Z].*/, '') !== language) {
             return next(action);
         }
 
