@@ -76,6 +76,7 @@ class DialInSummary extends PureComponent<IProps> {
             <JitsiScreen
                 style = { styles.backDrop }>
                 <WebView
+                    incognito = { true }
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }

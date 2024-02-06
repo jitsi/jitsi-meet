@@ -560,6 +560,7 @@
         "noNumbers": "No dial-in numbers.",
         "noPassword": "None",
         "noRoom": "No room was specified to dial-in into.",
+        "noWhiteboard": "Could not load the whiteboard.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "You have reached the limit of your plan.",
@@ -567,7 +568,8 @@
         "sipAudioOnly": "SIP audio only address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
-        "upgradeOptions": "Please check the upgrade options on"
+        "upgradeOptions": "Please check the upgrade options on",
+        "whiteboardError": "Error loading the whiteboard. Please try again later."
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
@@ -1530,6 +1532,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Whiteboard"
-        }
+        },
+        "screenTitle": "Whiteboard"
     }
 }

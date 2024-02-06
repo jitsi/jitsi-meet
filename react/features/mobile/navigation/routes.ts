@@ -22,7 +22,8 @@ export const screen = {
         security: 'Security Options',
         sharedDocument: 'Shared document',
         speakerStats: 'Speaker Stats',
-        subtitles: 'Subtitles'
+        subtitles: 'Subtitles',
+        whiteboard: 'Whiteboard'
     },
     connecting: 'Connecting',
     dialInSummary: 'Dial-In Info',
