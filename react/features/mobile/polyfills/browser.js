@@ -1,6 +1,6 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { Platform } from 'react-native';
 import { atob, btoa } from 'abab';
+import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 
@@ -322,7 +322,7 @@ function _visitNode(node, callback) {
     //
     // Required by:
     // - Strophe
-    if (typeof  global.atob === 'undefined') {
+    if (typeof global.atob === 'undefined') {
         global.atob = atob;
     }
 
@@ -330,7 +330,7 @@ function _visitNode(node, callback) {
     //
     // Required by:
     // - Strophe
-    if (typeof  global.btoa === 'undefined') {
+    if (typeof global.btoa === 'undefined') {
         global.btoa = btoa;
     }
 
