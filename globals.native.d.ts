@@ -19,6 +19,9 @@ interface IWindow {
     location: ILocation;
     PressureObserver?: any;
     PressureRecord?: any;
+    ReactNativeWebView?: any;
+    TextDecoder?: any;
+    TextEncoder?: any;
     self: any;
     top: any;
 
