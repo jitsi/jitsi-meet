@@ -507,6 +507,24 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end);
+
+    -- listen for admin set
+    for event_name, method in pairs {
+        -- Normal room interactions
+        ["iq-set/bare/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        -- Host room
+        ["iq-set/host/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+    } do
+        host_module:hook(event_name, function (event)
+            local origin, stanza = event.origin, event.stanza;
+            local room_jid = jid_bare(stanza.attr.to);
+            local room = get_room_from_jid(room_jid);
+
+            if room then
+                return handle_admin_query_set_command(room, origin, stanza);
+            end
+        end, 1) -- make sure we handle it before prosody that uses priority -2 for this
+    end
 end);
 
 function handle_create_lobby(event)
