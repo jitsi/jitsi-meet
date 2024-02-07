@@ -35,6 +35,12 @@ export default class AmplitudeHandler extends AbstractHandler {
             this._enabled = false;
         };
 
+        // Forces sending all events on exit (flushing) via sendBeacon
+        const onExitPage = () => {
+            // @ts-ignore
+            amplitude.getInstance().sendEvents();
+        };
+
         if (navigator.product === 'ReactNative') {
             amplitude.getInstance().init(amplitudeAPPKey);
             fixDeviceID(amplitude.getInstance()).then(() => {
@@ -50,7 +56,8 @@ export default class AmplitudeHandler extends AbstractHandler {
                 includeReferrer: true,
                 includeUtm,
                 saveParamsReferrerOncePerSession: false,
-                onError
+                onError,
+                onExitPage
             };
 
             // @ts-ignore

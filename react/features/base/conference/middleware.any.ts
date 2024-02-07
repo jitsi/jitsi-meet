@@ -6,6 +6,7 @@ import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
+    createNotAllowedErrorEvent,
     createOfferAnswerFailedEvent,
     createPinnedEvent
 } from '../../analytics/AnalyticsEvents';
@@ -195,6 +196,12 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
                 });
         }
 
+        break;
+    }
+    case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
+        const [ msg ] = error.params;
+
+        sendAnalytics(createNotAllowedErrorEvent(msg));
         break;
     }
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
