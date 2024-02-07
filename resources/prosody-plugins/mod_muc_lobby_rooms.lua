@@ -238,9 +238,18 @@ function destroy_lobby_room(room, newjid, message)
     end
 end
 
--- This is a copy of the function from prosody 12 (d7857ef7843a)
+-- handle multiple items at once
 function handle_admin_query_set_command(self, origin, stanza)
-    local item = stanza.tags[1].tags[1];
+    for i=1,#stanza.tags[1] do
+        if handle_admin_query_set_command_item(self, origin, stanza, stanza.tags[1].tags[i]) then
+            return true;
+        end
+    end
+    return true;
+end
+
+-- This is a copy of the function(handle_admin_query_set_command) from prosody 12 (d7857ef7843a)
+function handle_admin_query_set_command_item(self, origin, stanza, item)
     if not item then
         origin.send(st.error_reply(stanza, "cancel", "bad-request"));
         return true;
@@ -298,7 +307,6 @@ function handle_admin_query_set_command(self, origin, stanza)
     else
         origin.send(st.reply(stanza));
     end
-    return true;
 end
 
 -- operates on already loaded lobby muc module
