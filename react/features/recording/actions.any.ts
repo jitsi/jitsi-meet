@@ -26,6 +26,7 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_NOTIFICATION_SHOWN,
     SET_STREAM_KEY,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
@@ -54,6 +55,20 @@ import logger from './logger';
 export function clearRecordingSessions() {
     return {
         type: CLEAR_RECORDING_SESSIONS
+    };
+}
+
+
+/**
+ * Marks the start recording notification as shown.
+ *
+ * @returns {{
+ *      type: SET_START_RECORDING_NOTIFICATION_SHOWN
+ * }}
+ */
+export function setStartRecordingNotificationShown() {
+    return {
+        type: SET_START_RECORDING_NOTIFICATION_SHOWN
     };
 }
 
@@ -394,14 +409,17 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
         const isAlreadyRecording = isRecordingRunning(state);
+        const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
 
         if (!suggestRecording
             || isAlreadyRecording
             || !recordButtonProps.visible
-            || recordButtonProps.disabled) {
+            || recordButtonProps.disabled
+            || wasNotificationShown) {
             return;
         }
 
+        dispatch(setStartRecordingNotificationShown());
         dispatch(showNotification({
             titleKey: 'notify.suggestRecordingTitle',
             descriptionKey: 'notify.suggestRecordingDescription',

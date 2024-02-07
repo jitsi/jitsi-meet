@@ -201,6 +201,7 @@ export default [
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',
     'readOnlyName',
+    'recordings',
     'replaceParticipant',
     'resolution',
     'salesforceUrl',

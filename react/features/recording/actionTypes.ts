@@ -83,3 +83,12 @@ export const START_LOCAL_RECORDING = 'START_LOCAL_RECORDING';
  * }
  */
 export const STOP_LOCAL_RECORDING = 'STOP_LOCAL_RECORDING';
+
+/**
+ * Indicates that the start recording notification has been shown.
+ *
+ * {
+ *    type: SET_START_RECORDING_NOTIFICATION_SHOWN
+ * }
+ */
+export const SET_START_RECORDING_NOTIFICATION_SHOWN = 'SET_START_RECORDING_NOTIFICATION_SHOWN';

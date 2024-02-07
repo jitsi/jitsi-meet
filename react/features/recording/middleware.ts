@@ -9,8 +9,10 @@ import JitsiMeetJS, {
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
+import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { updateLocalRecordingStatus } from '../base/participants/actions';
-import { getParticipantDisplayName } from '../base/participants/functions';
+import { PARTICIPANT_ROLE } from '../base/participants/constants';
+import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
@@ -29,6 +31,7 @@ import {
     showRecordingError,
     showRecordingLimitNotification,
     showRecordingWarning,
+    showStartRecordingNotification,
     showStartedRecordingNotification,
     showStoppedRecordingNotification,
     updateRecordingSessionData
@@ -282,6 +285,21 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             LocalRecordingManager.addAudioTrackToLocalRecording(audioTrack);
         }
         break;
+    }
+    case PARTICIPANT_UPDATED: {
+        const { id, role } = action.participant;
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+
+        if (localParticipant?.id !== id) {
+            return next(action);
+        }
+
+        if (role === PARTICIPANT_ROLE.MODERATOR) {
+            dispatch(showStartRecordingNotification());
+        }
+
+        return next(action);
     }
     }
 
