@@ -6,6 +6,7 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_NOTIFICATION_SHOWN,
     SET_STREAM_KEY
 } from './actionTypes';
 
@@ -35,6 +36,7 @@ export interface IRecordingState {
     selectedRecordingService: string;
     sessionDatas: Array<ISessionData>;
     streamKey?: string;
+    wasStartRecordingSuggested?: boolean;
 }
 
 /**
@@ -92,6 +94,12 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 disableHighlightMeetingMoment: action.disabled
+            };
+
+        case SET_START_RECORDING_NOTIFICATION_SHOWN:
+            return {
+                ...state,
+                wasStartRecordingSuggested: true
             };
 
         default:
