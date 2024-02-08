@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { isTranscribing } from '../../transcribing/functions';
-import { getSessionStatusToShow } from '../functions';
+import { getSessionStatusToShow, isRecordingRunning } from '../functions';
 
 
 interface IProps extends WithTranslation {
@@ -13,6 +12,11 @@ interface IProps extends WithTranslation {
      * Whether this is the Jibri recorder participant.
      */
     _iAmRecorder: boolean;
+
+    /**
+     * Whether the recording is currently running.
+     */
+    _isRecordingRunning: boolean;
 
     /**
      * Whether this meeting is being transcribed.
@@ -47,78 +51,16 @@ interface IState {
 }
 
 /**
- * The timeout after a label is considered stale. See {@code _updateStaleStatus}
- * for more details.
- */
-const STALE_TIMEOUT = 10 * 1000;
-
-/**
  * Abstract class for the {@code RecordingLabel} component.
  */
 export default class AbstractRecordingLabel extends Component<IProps, IState> {
-    _mounted: boolean;
-
-    /**
-     * Implements {@code Component#getDerivedStateFromProps}.
-     *
-     * @inheritdoc
-     */
-    static getDerivedStateFromProps(props: IProps, prevState: IState) {
-        return {
-            staleLabel: props._status !== JitsiRecordingConstants.status.OFF
-                && prevState.staleLabel ? false : prevState.staleLabel
-        };
-    }
-
-    /**
-     * Initializes a new {@code AbstractRecordingLabel} component.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this.state = {
-            staleLabel: true
-        };
-
-        this._updateStaleStatus(undefined, props);
-    }
-
-    /**
-     * Implements React {@code Component}'s componentDidMount.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._mounted = true;
-    }
-
-    /**
-     * Implements React {@code Component}'s componentWillUnmount.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this._mounted = false;
-    }
-
-    /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps: IProps) {
-        this._updateStaleStatus(prevProps, this.props);
-    }
-
     /**
      * Implements React {@code Component}'s render.
      *
      * @inheritdoc
      */
     render() {
-        return (this.props._status || this.props._isTranscribing) && !this.state.staleLabel && !this.props._iAmRecorder
+        return this.props._isRecordingRunning && !this.props._iAmRecorder
             ? this._renderLabel() : null;
     }
 
@@ -130,33 +72,6 @@ export default class AbstractRecordingLabel extends Component<IProps, IState> {
      */
     _renderLabel(): React.ReactNode | null {
         return null;
-    }
-
-    /**
-     * Updates the stale status of the label on a prop change. A label is stale
-     * if it's in a {@code _status} that doesn't need to be rendered anymore.
-     *
-     * @param {IProps} oldProps - The previous props of the component.
-     * @param {IProps} newProps - The new props of the component.
-     * @returns {void}
-     */
-    _updateStaleStatus(oldProps: IProps | undefined, newProps: IProps) {
-        if (newProps._status === JitsiRecordingConstants.status.OFF) {
-            if (oldProps?._status !== JitsiRecordingConstants.status.OFF) {
-                setTimeout(() => {
-                    if (!this._mounted) {
-                        return;
-                    }
-
-                    // Only if it's still OFF.
-                    if (this.props._status === JitsiRecordingConstants.status.OFF) {
-                        this.setState({
-                            staleLabel: true
-                        });
-                    }
-                }, STALE_TIMEOUT);
-            }
-        }
     }
 }
 
@@ -175,6 +90,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {
+        _isRecordingRunning: isRecordingRunning(state),
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
         _isTranscribing: isTranscribing(state),
         _status: getSessionStatusToShow(state, mode)
