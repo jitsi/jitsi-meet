@@ -1,8 +1,8 @@
 import { createOpenWhiteboardEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
+import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
@@ -37,6 +37,19 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
 
         break;
     }
+
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+        if (metadata[WHITEBOARD_ID]) {
+            store.dispatch(setupWhiteboard({
+                collabDetails: metadata[WHITEBOARD_ID].collabDetails
+            }));
+            store.dispatch(setWhiteboardOpen(true));
+        }
+
+        break;
+    }
     }
 
     return next(action);
@@ -51,16 +64,6 @@ StateListenerRegistry.register(
     (conference, { dispatch }, previousConference): void => {
         if (conference !== previousConference) {
             dispatch(resetWhiteboard());
-        }
-        if (conference && !previousConference) {
-            conference.on(JitsiConferenceEvents.METADATA_UPDATED, (metadata: any) => {
-                if (metadata[WHITEBOARD_ID]) {
-                    dispatch(setupWhiteboard({
-                        collabDetails: metadata[WHITEBOARD_ID].collabDetails
-                    }));
-                    dispatch(setWhiteboardOpen(true));
-                }
-            });
         }
     });
 

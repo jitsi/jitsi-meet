@@ -345,3 +345,13 @@ export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
  * }
  */
 export const SET_ASSUMED_BANDWIDTH_BPS = 'SET_ASSUMED_BANDWIDTH_BPS';
+
+/**
+ * The type of (redux) action which updated the conference metadata.
+ *
+ * {
+ *     type: UPDATE_CONFERENCE_METADATA,
+ *     metadata: Object
+ * }
+ */
+export const UPDATE_CONFERENCE_METADATA = 'UPDATE_CONFERENCE_METADATA';
