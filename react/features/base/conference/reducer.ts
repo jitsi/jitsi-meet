@@ -27,7 +27,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -39,9 +40,22 @@ const DEFAULT_STATE = {
     leaving: undefined,
     locked: undefined,
     membersOnly: undefined,
+    metadata: undefined,
     password: undefined,
     passwordRequired: undefined
 };
+
+export interface IConferenceMetadata {
+    recording?: {
+        isTranscribingEnabled: boolean;
+    };
+    whiteboard?: {
+        collabDetails: {
+            roomId: string;
+            roomKey: string;
+        };
+    };
+}
 
 export interface IJitsiConference {
     addCommandListener: Function;
@@ -141,6 +155,7 @@ export interface IConferenceState {
     localSubject?: string;
     locked?: string;
     membersOnly?: IJitsiConference;
+    metadata?: IConferenceMetadata;
     obfuscatedRoom?: string;
     obfuscatedRoomSource?: string;
     p2p?: Object;
@@ -246,6 +261,12 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
                 ...state,
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
+            };
+
+        case UPDATE_CONFERENCE_METADATA:
+            return {
+                ...state,
+                metadata: action.metadata
             };
         }
 
