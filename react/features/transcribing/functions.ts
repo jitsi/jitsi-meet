@@ -2,6 +2,7 @@ import i18next from 'i18next';
 
 import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
@@ -63,9 +64,15 @@ export function isTranscribing(state: IReduxState) {
  */
 export function canAddTranscriber(state: IReduxState) {
     const { transcription } = state['features/base/config'];
+    const isJwtTranscribingEnabled = isJwtFeatureEnabled(state, 'transcription', isLocalParticipantModerator(state));
 
-    return Boolean(
-        transcription?.enabled
-        && isLocalParticipantModerator(state)
-    );
+    if (!transcription?.enabled) {
+        return false;
+    }
+
+    if (isJwtTranscribingEnabled) {
+        return true;
+    }
+
+    return false;
 }
