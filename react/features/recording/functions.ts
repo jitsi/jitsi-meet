@@ -184,6 +184,28 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if the participant can stop recording.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function canStopRecording(state: IReduxState) {
+    if (!isRecordingRunning(state)) {
+        return false;
+    }
+
+    if (LocalRecordingManager.isRecordingLocally()) {
+        return true;
+    }
+
+    if (isCloudRecordingRunning(state) || isTranscribing(state)) {
+        return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
+    }
+
+    return false;
+}
+
+/**
  * Returns whether the transcription should start automatically when recording starts.
  *
  * @param {Object} state - The redux state to search in.
