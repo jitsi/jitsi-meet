@@ -202,7 +202,9 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 {
                     showDisplayNameError && (
                         <View style = { styles.errorContainer as StyleProp<TextStyle> }>
-                            <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
+                            <Text style = { styles.error as StyleProp<TextStyle> }>
+                                { t('prejoin.errorMissingName') }
+                            </Text>
                         </View>
                     )
                 }
