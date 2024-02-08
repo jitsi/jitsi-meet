@@ -73,6 +73,10 @@ jobs:
         node-version: 16
         cache: 'npm'
     - run: npm install
+    - name: setup-cocoapods
+      uses: maxim-lobanov/setup-cocoapods@v1
+      with:
+        podfile-path: ios/Podfile.lock
     - name: Install Pods
       run: |
         pod --version
