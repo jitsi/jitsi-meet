@@ -159,6 +159,16 @@ export function supportsLocalRecording() {
 }
 
 /**
+ * Returns true if there is a cloud recording running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isCloudRecordingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
+}
+
+/**
  * Returns true if there is a recording session running.
  *
  * @param {Object} state - The redux state to search in.
@@ -168,7 +178,7 @@ export function isRecordingRunning(state: IReduxState) {
     const { isTranscribing } = state['features/transcribing'];
 
     return (
-        Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
+        isCloudRecordingRunning(state)
         || LocalRecordingManager.isRecordingLocally()
         || isTranscribing
     );
