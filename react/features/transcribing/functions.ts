@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
@@ -41,4 +42,14 @@ export function determineTranscriptionLanguage(config: IConfig) {
     logger.info(`Transcriber language set to ${safeBCP47Locale}`);
 
     return safeBCP47Locale;
+}
+
+/**
+ * Returns whether there is transcribing.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isTranscribing(state: IReduxState) {
+    return state['features/transcribing'].isTranscribing;
 }

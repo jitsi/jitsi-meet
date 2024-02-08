@@ -4,6 +4,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import ExpandedLabel, { IProps as AbstractProps } from '../../../base/label/components/native/ExpandedLabel';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isTranscribing } from '../../../transcribing/functions';
 import { getSessionStatusToShow } from '../../functions';
 
 interface IProps extends AbstractProps {
@@ -90,7 +91,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {
-        _isTranscribing: state['features/transcribing'].isTranscribing,
+        _isTranscribing: isTranscribing(state),
         _status: getSessionStatusToShow(state, mode)
     };
 }
