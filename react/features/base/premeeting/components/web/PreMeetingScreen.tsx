@@ -9,11 +9,14 @@ import Toolbox from '../../../../toolbox/components/web/Toolbox';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
+import { MEETING_NAME_ENABLED } from '../../../flags/constants';
+import { getFeatureFlag } from '../../../flags/functions';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
 import UnsafeRoomWarning from './UnsafeRoomWarning';
+
 
 interface IProps {
 
@@ -237,7 +240,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: (hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
+        _roomName: (getFeatureFlag(state, MEETING_NAME_ENABLED, false)
+        && hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
     };
 }
 
