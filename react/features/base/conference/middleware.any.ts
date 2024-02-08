@@ -26,7 +26,7 @@ import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
-import { JitsiConferenceErrors, JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
@@ -35,6 +35,7 @@ import {
     getPinnedParticipant
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
 import { getLocalTracks } from '../tracks/functions.any';
 
@@ -55,7 +56,8 @@ import {
     conferenceWillLeave,
     createConference,
     setLocalSubject,
-    setSubject
+    setSubject,
+    updateConferenceMetadata
 } from './actions';
 import { CONFERENCE_LEAVE_REASONS } from './constants';
 import {
@@ -66,6 +68,7 @@ import {
     restoreConferenceOptions
 } from './functions';
 import logger from './logger';
+import { IConferenceMetadata } from './reducer';
 
 /**
  * Handler for before unload event.
@@ -124,6 +127,24 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Set up state change listener to perform maintenance tasks when the conference
+ * is left or failed.
+ */
+StateListenerRegistry.register(
+    state => getCurrentConference(state),
+    (conference, { dispatch }, previousConference): void => {
+        if (conference && !previousConference) {
+            conference.on(JitsiConferenceEvents.METADATA_UPDATED, (metadata: IConferenceMetadata) => {
+                dispatch(updateConferenceMetadata(metadata));
+            });
+        }
+
+        if (conference !== previousConference) {
+            dispatch(updateConferenceMetadata(null));
+        }
+    });
 
 /**
  * Makes sure to leave a failed conference in order to release any allocated

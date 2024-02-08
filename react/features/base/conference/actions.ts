@@ -61,7 +61,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -79,7 +80,7 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
-import { IJitsiConference } from './reducer';
+import { IConferenceMetadata, IJitsiConference } from './reducer';
 
 /**
  * Adds conference (event) listeners.
@@ -275,6 +276,21 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         })));
 }
 
+/**
+ * Action for updating the conference metadata.
+ *
+ * @param {IConferenceMetadata} metadata - The metadata object.
+ * @returns {{
+ *    type: UPDATE_CONFERENCE_METADATA,
+ *    metadata: IConferenceMetadata
+ * }}
+ */
+export function updateConferenceMetadata(metadata: IConferenceMetadata | null) {
+    return {
+        type: UPDATE_CONFERENCE_METADATA,
+        metadata
+    };
+}
 
 /**
  * Create an action for when the end-to-end RTT against a specific remote participant has changed.
