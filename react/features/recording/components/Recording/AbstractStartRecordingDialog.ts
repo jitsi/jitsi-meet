@@ -12,7 +12,7 @@ import { showErrorNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
-import { RECORDING_TYPES } from '../../constants';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
 export interface IProps extends WithTranslation {
@@ -400,6 +400,10 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         if (this.state.shouldRecordTranscription) {
             dispatch(setRequestingSubtitles(true, false, null));
         }
+
+        _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+            isTranscribingEnabled: this.state.shouldRecordTranscription
+        });
 
         return true;
     }

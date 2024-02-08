@@ -130,7 +130,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. Disable the whiteboard if it's left open.
+ * is left or failed.
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
@@ -139,6 +139,10 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.METADATA_UPDATED, (metadata: IConferenceMetadata) => {
                 dispatch(updateConferenceMetadata(metadata));
             });
+        }
+
+        if (conference !== previousConference) {
+            dispatch(updateConferenceMetadata(null));
         }
     });
 

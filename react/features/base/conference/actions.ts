@@ -285,7 +285,7 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
  *    metadata: IConferenceMetadata
  * }}
  */
-export function updateConferenceMetadata(metadata: IConferenceMetadata) {
+export function updateConferenceMetadata(metadata: IConferenceMetadata | null) {
     return {
         type: UPDATE_CONFERENCE_METADATA,
         metadata

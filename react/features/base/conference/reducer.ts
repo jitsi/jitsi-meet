@@ -40,6 +40,7 @@ const DEFAULT_STATE = {
     leaving: undefined,
     locked: undefined,
     membersOnly: undefined,
+    metadata: undefined,
     password: undefined,
     passwordRequired: undefined
 };
@@ -265,11 +266,7 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
         case UPDATE_CONFERENCE_METADATA:
             return {
                 ...state,
-                metadata: {
-                    // tbd if we need a deep merge here
-                    ...state.metadata,
-                    ...action.metadata
-                }
+                metadata: action.metadata
             };
         }
 
