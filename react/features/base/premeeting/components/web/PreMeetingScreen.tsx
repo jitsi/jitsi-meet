@@ -16,7 +16,6 @@ import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
 import UnsafeRoomWarning from './UnsafeRoomWarning';
 
-
 interface IProps {
 
     /**
