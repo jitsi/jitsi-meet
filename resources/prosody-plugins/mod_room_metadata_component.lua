@@ -62,6 +62,11 @@ function broadcastMetadata(room)
     for _, occupant in room:each_occupant() do
         if jid_node(occupant.jid) ~= 'focus' then
             send_json_msg(occupant.jid, json_msg)
+        else
+            -- Jicofo reads room_metadata only from the MUC config form. Notify it that the form changed.
+            module:send(st.message({ type='groupchat', from=room.jid, to = occupant.jid })
+                :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+                :tag('status', { code='104' }));
         end
     end
 end
