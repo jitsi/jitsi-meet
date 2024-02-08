@@ -3,6 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { isTranscribing } from '../../transcribing/functions';
 import { getSessionStatusToShow } from '../functions';
 
 
@@ -175,7 +176,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     return {
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        _isTranscribing: state['features/transcribing'].isTranscribing,
+        _isTranscribing: isTranscribing(state),
         _status: getSessionStatusToShow(state, mode)
     };
 }

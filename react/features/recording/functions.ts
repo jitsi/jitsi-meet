@@ -14,6 +14,7 @@ import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { isTranscribing } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -175,12 +176,10 @@ export function isCloudRecordingRunning(state: IReduxState) {
  * @returns {boolean}
  */
 export function isRecordingRunning(state: IReduxState) {
-    const { isTranscribing } = state['features/transcribing'];
-
     return (
         isCloudRecordingRunning(state)
         || LocalRecordingManager.isRecordingLocally()
-        || isTranscribing
+        || isTranscribing(state)
     );
 }
 
