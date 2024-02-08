@@ -1,7 +1,10 @@
 import { IReduxState } from '../app/types';
 import { getRoomName } from '../base/conference/functions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions.any';
-import { UNSAFE_ROOM_WARNING } from '../base/flags/constants';
+import {
+    MEETING_NAME_ENABLED,
+    UNSAFE_ROOM_WARNING
+} from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media/functions';
 import { getLobbyConfig } from '../lobby/functions';
@@ -183,4 +186,15 @@ export function isUnsafeRoomWarningEnabled(state: IReduxState): boolean {
     const { enableInsecureRoomNameWarning = false } = state['features/base/config'];
 
     return getFeatureFlag(state, UNSAFE_ROOM_WARNING, enableInsecureRoomNameWarning);
+}
+
+/**
+ * Returns true if the room name is enabled.
+ *
+ * @param {IReduxState} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isRoomNameEnabled(state: IReduxState): boolean {
+    return getFeatureFlag(state, MEETING_NAME_ENABLED, true)
+        || !state['features/base/config'].hideConferenceSubject;
 }

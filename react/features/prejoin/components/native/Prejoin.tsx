@@ -19,10 +19,7 @@ import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
-import {
-    MEETING_NAME_ENABLED,
-    PREJOIN_PAGE_HIDE_DISPLAY_NAME
-} from '../../../base/flags/constants';
+import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -41,7 +38,7 @@ import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainer
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -61,8 +58,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
-    const roomNameEnabled = useSelector((state: IReduxState) => getFeatureFlag(state, MEETING_NAME_ENABLED, true)
-        && !state['features/base/config'].hideConferenceSubject);
+    const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -202,10 +198,12 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         placeholder = { t('dialog.enterDisplayName') }
                         value = { displayName } />
                 }
-                {showDisplayNameError && (
+                {
+                    showDisplayNameError && (
                     <View style = { styles.errorContainer as StyleProp<TextStyle> }>
                         <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
-                    </View>)}
+                    </View>)
+                }
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
                     disabled = { showDisplayNameError }

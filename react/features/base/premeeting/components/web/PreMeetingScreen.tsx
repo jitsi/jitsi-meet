@@ -240,8 +240,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: (getFeatureFlag(state, MEETING_NAME_ENABLED, false)
-        && hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
+        _roomName: (!getFeatureFlag(state, MEETING_NAME_ENABLED, true)
+        || hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
     };
 }
 
