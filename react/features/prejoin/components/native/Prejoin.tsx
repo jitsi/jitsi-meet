@@ -19,7 +19,10 @@ import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
-import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
+import {
+    MEETING_NAME_ENABLED,
+    PREJOIN_PAGE_HIDE_DISPLAY_NAME
+} from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -58,6 +61,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
+    const roomNameEnabled = useSelector((state: IReduxState) => getFeatureFlag(state, MEETING_NAME_ENABLED, true)
+        && !state['features/base/config'].hideConferenceSubject);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -168,13 +173,16 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             {
                 isFocused
                 && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
-                    <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                            { roomName }
-                        </Text>
-                    </View>
+                    {
+                        roomNameEnabled
+                        && <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                                { roomName }
+                            </Text>
+                        </View>
+                    }
                     <LargeVideo />
                 </View>
             }
