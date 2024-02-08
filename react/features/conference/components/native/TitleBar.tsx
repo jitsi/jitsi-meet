@@ -4,17 +4,19 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
-import { CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags/constants';
+import { CONFERENCE_TIMER_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import PictureInPictureButton from '../../../mobile/picture-in-picture/components/PictureInPictureButton';
 import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
+import { isRoomNameEnabled } from '../../../prejoin/functions';
 import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
 
 import Labels from './Labels';
 import styles from './styles';
+
 
 interface IProps {
 
@@ -35,9 +37,9 @@ interface IProps {
     _meetingName: string;
 
     /**
-     * Whether displaying the current meeting name is enabled or not.
+     * Whether displaying the current room name is enabled or not.
      */
-    _meetingNameEnabled: boolean;
+    _roomNameEnabled: boolean;
 
     /**
      * True if the navigation bar should be visible.
@@ -75,7 +77,7 @@ const TitleBar = (props: IProps) => {
                     </View>
                 }
                 {
-                    props._meetingNameEnabled
+                    props._roomNameEnabled
                     && <View style = { styles.roomNameView as ViewStyle }>
                         <Text
                             numberOfLines = { 1 }
@@ -107,15 +109,14 @@ const TitleBar = (props: IProps) => {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { hideConferenceTimer, hideConferenceSubject } = state['features/base/config'];
+    const { hideConferenceTimer } = state['features/base/config'];
     const startTimestamp = getConferenceTimestamp(state);
 
     return {
         _conferenceTimerEnabled:
             Boolean(getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !hideConferenceTimer && startTimestamp),
         _meetingName: getConferenceName(state),
-        _meetingNameEnabled:
-            getFeatureFlag(state, MEETING_NAME_ENABLED, true) && !hideConferenceSubject,
+        _roomNameEnabled: isRoomNameEnabled(state),
         _visible: isToolboxVisible(state)
     };
 }

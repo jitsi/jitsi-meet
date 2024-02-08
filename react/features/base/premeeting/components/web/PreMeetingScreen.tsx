@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
+import { isRoomNameEnabled } from '../../../../prejoin/functions';
 import Toolbox from '../../../../toolbox/components/web/Toolbox';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
@@ -219,7 +220,7 @@ const PreMeetingScreen = ({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
-    const { hiddenPremeetingButtons, hideConferenceSubject } = state['features/base/config'];
+    const { hiddenPremeetingButtons } = state['features/base/config'];
     const toolbarButtons = getToolbarButtons(state);
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
@@ -237,7 +238,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             ? premeetingButtons
             : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: (hideConferenceSubject ? undefined : getConferenceName(state)) ?? ''
+        _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : ''
     };
 }
 
