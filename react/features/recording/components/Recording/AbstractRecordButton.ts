@@ -6,7 +6,7 @@ import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { getRecordButtonProps, isRecordingRunning } from '../../functions';
+import { canStopRecording, getRecordButtonProps } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -131,7 +131,7 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         _disabled,
-        _isRecordingRunning: isRecordingRunning(state),
+        _isRecordingRunning: canStopRecording(state),
         _tooltip,
         visible
     };
