@@ -170,14 +170,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 isFocused
                 && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
                     {
-                        roomNameEnabled
-                        && <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                            <Text
-                                numberOfLines = { 1 }
-                                style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                                { roomName }
-                            </Text>
-                        </View>
+                        roomNameEnabled && (
+                            <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                                <Text
+                                    numberOfLines = { 1 }
+                                    style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                                    { roomName }
+                                </Text>
+                            </View>
+                        )
                     }
                     <LargeVideo />
                 </View>
@@ -200,9 +201,10 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 }
                 {
                     showDisplayNameError && (
-                    <View style = { styles.errorContainer as StyleProp<TextStyle> }>
-                        <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
-                    </View>)
+                        <View style = { styles.errorContainer as StyleProp<TextStyle> }>
+                            <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
+                        </View>
+                    )
                 }
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
