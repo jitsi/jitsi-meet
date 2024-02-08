@@ -9,7 +9,7 @@ import { _abstractMapStateToProps } from '../../../base/dialog/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
-import { canStartTranscribing } from '../../../subtitles/functions';
+import { canAddTranscriber } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
 
@@ -418,7 +418,7 @@ export function mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
-        _canStartTranscribing: canStartTranscribing(state),
+        _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _isModerator: isLocalParticipantModerator(state),
         _localRecordingAvailable,
