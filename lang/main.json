@@ -939,6 +939,7 @@
         "or": "or",
         "premeeting": "Pre meeting",
         "proceedAnyway": "Proceed anyway",
+        "recordingWarning": "This call might be recorded",
         "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",

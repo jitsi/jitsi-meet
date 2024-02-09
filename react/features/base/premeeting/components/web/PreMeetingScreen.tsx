@@ -14,6 +14,7 @@ import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
+import RecordingWarning from './RecordingWarning';
 import UnsafeRoomWarning from './UnsafeRoomWarning';
 
 interface IProps {
@@ -57,6 +58,11 @@ interface IProps {
      * Indicates whether the device status should be shown.
      */
     showDeviceStatus: boolean;
+
+    /**
+     * Indicates whether to display the recording warning.
+     */
+    showRecordingWarning?: boolean;
 
     /**
      * If should show unsafe room warning when joining.
@@ -168,6 +174,7 @@ const PreMeetingScreen = ({
     children,
     className,
     showDeviceStatus,
+    showRecordingWarning,
     showUnsafeRoomWarning,
     skipPrejoinButton,
     title,
@@ -199,6 +206,7 @@ const PreMeetingScreen = ({
                         {children}
                         {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
                         {skipPrejoinButton}
+                        {showRecordingWarning && <RecordingWarning />}
                         {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                         {showDeviceStatus && <DeviceStatus />}
                     </div>
