@@ -76,14 +76,16 @@ const useStyles = makeStyles<{ overflowDrawer: boolean; reactionsMenuHeight: num
             height: `calc(${DRAWER_MAX_HEIGHT})`
         },
         contextMenu: {
+
+
             position: 'relative' as const,
             right: 'auto',
             margin: 0,
             marginBottom: '8px',
-            maxHeight: overflowDrawer ? undefined : 'calc(100dvh - 100px)',
+            maxHeight: "60vh",
             paddingBottom: overflowDrawer ? undefined : 0,
             minWidth: '240px',
-            overflow: 'hidden'
+            overflow: "scroll",
         },
         content: {
             position: 'relative',
