@@ -531,6 +531,7 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        showPrejoinWarning?: boolean;
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {

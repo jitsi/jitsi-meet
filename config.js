@@ -329,6 +329,9 @@ var config = {
     //    // If true, shows a notification at the start of the meeting with a call to action button
     //    // to start recording (for users who can do so).
     //    // suggestRecording: true,
+    //    // If true, shows a warning label in the prejoin screen to point out the possibility that
+    //    // the call you're joining might be recorded.
+    //    // showPrejoinWarning: true,
     // },
 
     // recordingService: {

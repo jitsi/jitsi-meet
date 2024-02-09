@@ -42,6 +42,7 @@ import { isDisplayNameRequired } from '../../functions';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
+import RecordingWarning from './RecordingWarning';
 import { preJoinStyles as styles } from './styles';
 
 
@@ -58,6 +59,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
+    const showRecordingWarning
+        = useSelector((state: IReduxState) => state['features/base/config'].recordings?.showPrejoinWarning);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -168,12 +171,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             {
                 isFocused
                 && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
-                    <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                            { roomName }
-                        </Text>
+                    <View style = { styles.conferenceInfo as StyleProp<ViewStyle> }>
+                        <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                                { roomName }
+                            </Text>
+                        </View>
+                        {showRecordingWarning && <RecordingWarning />}
                     </View>
                     <LargeVideo />
                 </View>
