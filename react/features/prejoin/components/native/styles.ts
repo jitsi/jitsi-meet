@@ -106,17 +106,46 @@ export const preJoinStyles = {
         textAlign: 'center'
     },
 
-    displayRoomNameBackdrop: {
+    conferenceInfo: {
         alignSelf: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
-        borderRadius: BaseTheme.shape.borderRadius,
         marginTop: BaseTheme.spacing[3],
-        opacity: 0.7,
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1],
         position: 'absolute',
-        maxWidth: 243,
+        maxWidth: 273,
         zIndex: 1
+    },
+    displayRoomNameBackdrop: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        borderRadius: BaseTheme.shape.borderRadius,
+        opacity: 0.7,
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingVertical: BaseTheme.spacing[1]
+    },
+    recordingWarningContainer: {
+        backgroundColor: BaseTheme.palette.warning01,
+        borderRadius: BaseTheme.shape.borderRadius,
+        color: BaseTheme.palette.text04,
+        display: 'flex',
+        justifyContent: 'center',
+        lineHeight: 22,
+        marginBottom: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[1],
+        paddingBottom: BaseTheme.spacing[1],
+        paddingTop: BaseTheme.spacing[1],
+        width: 'auto'
+    },
+    recordingWarning: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingLeft: BaseTheme.spacing[2],
+        paddingRight: BaseTheme.spacing[2]
+    },
+    recordingWarningText: {
+        fontWeight: '600',
+        paddingLeft: BaseTheme.spacing[1]
     },
     unsafeRoomWarningContainer: {
         height: '100%',
