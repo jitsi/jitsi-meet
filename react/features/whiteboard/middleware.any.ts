@@ -41,7 +41,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
 
-        if (metadata[WHITEBOARD_ID]) {
+        if (metadata?.[WHITEBOARD_ID]) {
             store.dispatch(setupWhiteboard({
                 collabDetails: metadata[WHITEBOARD_ID].collabDetails
             }));
