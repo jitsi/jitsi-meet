@@ -100,7 +100,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
     const language
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
-    const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
 
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;
@@ -146,6 +146,22 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 participant,
                 ...txt
             });
+
+            // Dump transcript in a <transcript> element for debugging purposes.
+            if (!json.is_interim && dumpTranscript) {
+                try {
+                    let elem = document.body.getElementsByTagName('transcript')[0];
+
+                    if (!elem) {
+                        elem = document.createElement('transcript');
+                        document.body.appendChild(elem);
+                    }
+
+                    elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
+                } catch (_) {
+                    // Ignored.
+                }
+            }
         }
 
         // If the suer is not requesting transcriptions just bail.
