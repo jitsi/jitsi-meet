@@ -72,7 +72,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
-        const { id, data } = action;
+        const { id, json: data } = action;
         const isNewPoll = data.type === COMMAND_NEW_POLL;
 
         _handleReceivePollsMessage({
