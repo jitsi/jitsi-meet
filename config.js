@@ -103,6 +103,9 @@ var config = {
 
         // Experiment: Whether to skip interim transcriptions.
         // skipInterimTranscriptions: false,
+
+        // Dump transcripts to a <transcript> element for debugging.
+        // dumpTranscript: false,
     },
 
     // Disables moderator indicators.
