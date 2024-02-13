@@ -41,7 +41,6 @@ import java.util.Random;
 class OngoingNotification {
     private static final String TAG = OngoingNotification.class.getSimpleName();
 
-    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
     static void createOngoingConferenceNotificationChannel() {

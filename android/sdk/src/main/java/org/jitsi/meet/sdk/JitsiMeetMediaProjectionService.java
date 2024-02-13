@@ -39,6 +39,8 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 public class JitsiMeetMediaProjectionService extends Service {
     private static final String TAG = JitsiMeetMediaProjectionService.class.getSimpleName();
 
+    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
+
     public static void launch(Context context) {
         OngoingNotification.createOngoingConferenceNotificationChannel();
 
@@ -70,11 +72,6 @@ public class JitsiMeetMediaProjectionService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Notification notification = OngoingNotification.buildOngoingConferenceNotification(null);
@@ -87,9 +84,9 @@ public class JitsiMeetMediaProjectionService extends Service {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
         } else {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
         }
 
         return START_NOT_STICKY;

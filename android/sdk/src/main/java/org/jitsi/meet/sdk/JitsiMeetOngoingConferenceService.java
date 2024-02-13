@@ -52,8 +52,11 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     private boolean isAudioMuted;
 
+    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
+
+
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        OngoingNotification.createOngoingConferenceNotificationChannel();
+        createOngoingConferenceNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
@@ -96,9 +99,9 @@ public class JitsiMeetOngoingConferenceService extends Service
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(OngoingNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
             } else {
-                startForeground(OngoingNotification.NOTIFICATION_ID, notification);
+                startForeground(NOTIFICATION_ID, notification);
             }
         }
 
@@ -136,7 +139,7 @@ public class JitsiMeetOngoingConferenceService extends Service
                 JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
             } else {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(OngoingNotification.NOTIFICATION_ID, notification);
+                notificationManager.notify(NOTIFICATION_ID, notification);
             }
         }
 
@@ -172,7 +175,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCurrentConferenceChanged(String conferenceUrl) {
         if (conferenceUrl == null) {
             stopSelf();
-            OngoingNotification.resetStartingtime();
+            resetStartingtime();
             JitsiMeetLogger.i(TAG + "Service stopped");
         }
     }
@@ -222,7 +225,7 @@ public class JitsiMeetOngoingConferenceService extends Service
                 JitsiMeetLogger.w(TAG + " Couldn't update service, notification is null");
             } else {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(OngoingNotification.NOTIFICATION_ID, notification);
+                notificationManager.notify(NOTIFICATION_ID, notification);
 
                 JitsiMeetLogger.i(TAG + " audio muted changed");
             }
