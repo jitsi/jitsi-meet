@@ -33,6 +33,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
@@ -56,7 +57,7 @@ public class JitsiMeetOngoingConferenceService extends Service
 
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        createOngoingConferenceNotificationChannel();
+        OngoingNotification.createOngoingConferenceNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
@@ -175,7 +176,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCurrentConferenceChanged(String conferenceUrl) {
         if (conferenceUrl == null) {
             stopSelf();
-            resetStartingtime();
+            OngoingNotification.resetStartingtime();
             JitsiMeetLogger.i(TAG + "Service stopped");
         }
     }

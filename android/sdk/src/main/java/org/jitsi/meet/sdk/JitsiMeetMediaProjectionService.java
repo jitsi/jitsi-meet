@@ -28,6 +28,8 @@ import android.os.IBinder;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.Random;
+
 
 /**
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
@@ -69,6 +71,11 @@ public class JitsiMeetMediaProjectionService extends Service {
     public static void abort(Context context) {
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
         context.stopService(intent);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
