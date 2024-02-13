@@ -9,6 +9,7 @@ import {
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
+    SET_INITIAL_GUM_PROMISE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
@@ -90,6 +91,22 @@ export function setCameraFacingMode(cameraFacingMode: string) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
+    };
+}
+
+/**
+ * Sets the initial GUM promise.
+ *
+ * @param {Promise<Array<Object>> | undefined} promise - The promise.
+ * @returns {{
+ *     type: SET_INITIAL_GUM_PROMISE,
+ *     promise: Promise
+ * }}
+ */
+export function setInitialGUMPromise(promise?: Promise<Array<Object>>) {
+    return {
+        type: SET_INITIAL_GUM_PROMISE,
+        promise
     };
 }
 
