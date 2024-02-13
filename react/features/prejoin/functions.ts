@@ -43,6 +43,16 @@ export function isDisplayNameRequired(state: IReduxState): boolean {
 }
 
 /**
+ * Selector for determining if the prejoin page is enabled in config. Defaults to `true`.
+ *
+ * @param {IReduxState} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isPrejoinEnabledInConfig(state: IReduxState): boolean {
+    return state['features/base/config'].prejoinConfig?.enabled ?? true;
+}
+
+/**
  * Selector for determining if the prejoin display name field is visible.
  *
  * @param {IReduxState} state - The state of the app.
@@ -154,7 +164,7 @@ export function isJoinByPhoneDialogVisible(state: IReduxState): boolean {
  */
 export function isPrejoinPageVisible(state: IReduxState): boolean {
     return Boolean(navigator.product !== 'ReactNative'
-        && state['features/base/config'].prejoinConfig?.enabled
+        && isPrejoinEnabledInConfig(state)
         && state['features/prejoin']?.showPrejoin
         && !(state['features/base/config'].enableForcedReload && state['features/prejoin'].skipPrejoinOnReload));
 }
@@ -166,12 +176,11 @@ export function isPrejoinPageVisible(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function shouldAutoKnock(state: IReduxState): boolean {
-    const { iAmRecorder, iAmSipGateway, prejoinConfig } = state['features/base/config'];
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
     const { userSelectedSkipPrejoin } = state['features/base/settings'];
     const { autoKnock } = getLobbyConfig(state);
-    const isPrejoinEnabled = prejoinConfig?.enabled;
 
-    return Boolean(((isPrejoinEnabled && !userSelectedSkipPrejoin)
+    return Boolean(((isPrejoinEnabledInConfig(state) && !userSelectedSkipPrejoin)
             || autoKnock || (iAmRecorder && iAmSipGateway))
         && !state['features/lobby'].knocking);
 }
