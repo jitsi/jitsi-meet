@@ -18,7 +18,6 @@ package org.jitsi.meet.sdk;
 
 import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 
