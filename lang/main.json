@@ -939,7 +939,7 @@
         "or": "or",
         "premeeting": "Pre meeting",
         "proceedAnyway": "Proceed anyway",
-        "recordingWarning": "This call might be recorded",
+        "recordingWarning": "Other participants may be recording this call",
         "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
