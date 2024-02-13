@@ -1,7 +1,5 @@
 package org.jitsi.meet.sdk;
 
-import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
-
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,7 +8,14 @@ import android.os.Build;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class NotificationUtils {
+
+    static final String ONGOING_CONFERENCE_CHANNEL_ID = "JitsiOngoingConferenceChannel";
+
+    public static List<String> allIds = new ArrayList<String>() {{ add(ONGOING_CONFERENCE_CHANNEL_ID); }};
 
     private static final String TAG = NotificationUtils.class.getSimpleName();
 
