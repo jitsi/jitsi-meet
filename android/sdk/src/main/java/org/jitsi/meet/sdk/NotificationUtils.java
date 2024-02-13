@@ -13,7 +13,7 @@ class NotificationUtils {
 
     private static final String TAG = NotificationUtils.class.getSimpleName();
 
-    static void createNotificationChannel(String string) {
+    static void createNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
@@ -35,7 +35,7 @@ class NotificationUtils {
             return;
         }
 
-        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, context.getString(Integer.parseInt(string)), NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, context.getString(R.string.ongoing_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);

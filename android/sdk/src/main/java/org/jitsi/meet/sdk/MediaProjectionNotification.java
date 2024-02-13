@@ -32,7 +32,8 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 class MediaProjectionNotification {
     private static final String TAG = MediaProjectionNotification.class.getSimpleName();
 
-    static Notification buildMediaProjectionNotification(Context context) {
+    static Notification buildMediaProjectionNotification() {
+        Context context = ReactInstanceManagerHolder.getCurrentActivity();
 
         if (context == null) {
             JitsiMeetLogger.d(TAG, " Cannot create notification: no current context");

@@ -43,7 +43,7 @@ public class JitsiMeetMediaProjectionService extends Service {
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
     public static void launch(Context context) {
-        NotificationUtils.createNotificationChannel("");
+        NotificationUtils.createNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 
@@ -80,7 +80,7 @@ public class JitsiMeetMediaProjectionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification();
 
         if (notification == null) {
             stopSelf();
