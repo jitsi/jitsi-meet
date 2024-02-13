@@ -83,6 +83,7 @@ import {
     setAudioAvailable,
     setAudioMuted,
     setAudioUnmutePermissions,
+    setInitialGUMPromise,
     setVideoAvailable,
     setVideoMuted,
     setVideoUnmutePermissions
@@ -606,6 +607,7 @@ export default {
 
             return localTracks;
         };
+        const { dispatch } = APP.store;
 
         if (isPrejoinPageVisible(state)) {
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
@@ -616,9 +618,9 @@ export default {
             this._initDeviceList(true);
 
             if (isPrejoinPageVisible(state)) {
-                APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
 
-                return APP.store.dispatch(initPrejoin(localTracks, errors));
+                return dispatch(initPrejoin(localTracks, errors));
             }
 
             logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
@@ -633,23 +635,28 @@ export default {
         }
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+        const gumPromise = tryCreateLocalTracks.then(tr => {
+            APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
+
+            return tr;
+        }).then(tr => {
+            this._initDeviceList(true);
+
+            const filteredTracks = handleInitialTracks(initialOptions, tr);
+
+            setGUMPendingStateOnFailedTracks(filteredTracks, APP.store.dispatch);
+
+            return filteredTracks;
+        });
 
         return Promise.all([
-            tryCreateLocalTracks.then(tr => {
-                APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
-
-                return tr;
-            }).then(tr => {
-                this._initDeviceList(true);
-
-                const filteredTracks = handleInitialTracks(initialOptions, tr);
-
-                setGUMPendingStateOnFailedTracks(filteredTracks, APP.store.dispatch);
-
-                return filteredTracks;
-            }),
-            APP.store.dispatch(connect())
-        ]).then(([ tracks, _ ]) => {
+            gumPromise,
+            dispatch(connect())
+        ]).catch(e => {
+            dispatch(setInitialGUMPromise(gumPromise));
+            throw e;
+        })
+        .then(([ tracks, _ ]) => {
             this.startConference(tracks).catch(logger.error);
         });
     },
