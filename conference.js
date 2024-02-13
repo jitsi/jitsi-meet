@@ -91,7 +91,7 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from './react/features/base/media/actions';
-import { MEDIA_TYPE } from './react/features/base/media/constants';
+import { MEDIA_TYPE, VIDEO_TYPE } from './react/features/base/media/constants';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
@@ -405,7 +405,13 @@ function disconnect() {
  * @returns {void}
  */
 function setGUMPendingStateOnFailedTracks(tracks) {
-    const tracksTypes = tracks.map(track => track.getType());
+    const tracksTypes = tracks.map(track => {
+        if (track.getVideoType() === VIDEO_TYPE.DESKTOP) {
+            return MEDIA_TYPE.SCREENSHARE;
+        }
+
+        return track.getType();
+    });
     const nonPendingTracks = [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ].filter(type => !tracksTypes.includes(type));
 
     APP.store.dispatch(gumPending(nonPendingTracks, IGUMPendingState.NONE));
@@ -1255,7 +1261,24 @@ export default {
         room = APP.connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
 
         // Filter out the tracks that are muted (except on Safari).
-        const tracks = browser.isWebKitBased() ? localTracks : localTracks.filter(track => !track.isMuted());
+        let tracks = localTracks;
+
+        if (!browser.isWebKitBased()) {
+            const mutedTrackTypes = [];
+
+            tracks = localTracks.filter(track => {
+                if (!track.isMuted()) {
+                    return true;
+                }
+
+                if (track.getVideoType() !== VIDEO_TYPE.DESKTOP) {
+                    mutedTrackTypes.push(track.getType());
+                }
+
+                return false;
+            });
+            APP.store.dispatch(gumPending(mutedTrackTypes, IGUMPendingState.NONE));
+        }
 
         this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
