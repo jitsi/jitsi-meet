@@ -33,12 +33,12 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
         if (enabled) {
             const isSharing = isLocalVideoTrackDesktop(state);
 
-            if (!isSharing) {
-                _startScreenSharing(dispatch, state);
+            if (isSharing) {
+                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
+            } else {
                 Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
+                _startScreenSharing(dispatch, state);
             }
-
-            Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
         } else {
             dispatch(setScreenshareMuted(true));
             dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
