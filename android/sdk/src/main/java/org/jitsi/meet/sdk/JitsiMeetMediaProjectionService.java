@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
@@ -30,7 +31,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.Random;
 
-
 /**
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
  * responsible for presenting an ongoing notification when a conference is in progress.
@@ -43,8 +43,9 @@ public class JitsiMeetMediaProjectionService extends Service {
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    public static void launch(Context context) {
-        OngoingNotification.createOngoingConferenceNotificationChannel();
+    public static void launch(Context context, Activity currentActivity) {
+
+        NotificationUtils.createNotificationChannel(currentActivity);
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 
@@ -59,12 +60,12 @@ public class JitsiMeetMediaProjectionService extends Service {
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
+            JitsiMeetLogger.w(TAG + "Media projection service not started", e);
             return;
         }
 
         if (componentName == null) {
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
+            JitsiMeetLogger.w(TAG + "Media projection service not started");
         }
     }
 
@@ -81,7 +82,7 @@ public class JitsiMeetMediaProjectionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification notification = OngoingNotification.buildOngoingConferenceNotification(null);
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification();
 
         if (notification == null) {
             stopSelf();
