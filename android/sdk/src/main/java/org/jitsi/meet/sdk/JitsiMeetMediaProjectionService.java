@@ -70,14 +70,20 @@ public class JitsiMeetMediaProjectionService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
         Notification notification = OngoingNotification.buildOngoingConferenceNotification(null);
 
         if (notification == null) {
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
+
+            return START_NOT_STICKY;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -85,15 +91,6 @@ public class JitsiMeetMediaProjectionService extends Service {
         } else {
             startForeground(OngoingNotification.NOTIFICATION_ID, notification);
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
 
         return START_NOT_STICKY;
     }
