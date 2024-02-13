@@ -10,10 +10,10 @@ import { translate, translateToHTML } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import { joinConference } from '../../../prejoin/actions.web';
 import {
     authenticateAndUpgradeRole,
-    cancelLogin
+    cancelLogin,
+    sumbitConnectionCredentials
 } from '../../actions.web';
 
 /**
@@ -134,9 +134,7 @@ class LoginDialog extends Component<IProps, IState> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            // dispatch(connect(jid, password));
-            // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-            dispatch(joinConference(undefined, false, jid, password));
+            dispatch(sumbitConnectionCredentials(jid, password));
         }
     }
 
