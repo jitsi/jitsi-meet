@@ -82,7 +82,7 @@ public class JitsiMeetMediaProjectionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification();
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
 
         if (notification == null) {
             stopSelf();
