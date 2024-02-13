@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
@@ -42,8 +43,9 @@ public class JitsiMeetMediaProjectionService extends Service {
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    public static void launch(Context context) {
-        NotificationUtils.createNotificationChannel();
+    public static void launch(Context context, Activity currentActivity) {
+
+        NotificationUtils.createNotificationChannel(currentActivity);
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 

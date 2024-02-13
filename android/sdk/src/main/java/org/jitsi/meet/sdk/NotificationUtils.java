@@ -2,6 +2,7 @@ package org.jitsi.meet.sdk;
 
 import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -13,12 +14,11 @@ class NotificationUtils {
 
     private static final String TAG = NotificationUtils.class.getSimpleName();
 
-    static void createNotificationChannel() {
+    static void createNotificationChannel(Activity context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
 
-        Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;

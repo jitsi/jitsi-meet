@@ -38,8 +38,8 @@ class OngoingNotification {
 
     private static long startingTime = 0;
 
-    static Notification buildOngoingConferenceNotification(Boolean isMuted) {
-        Context context = ReactInstanceManagerHolder.getCurrentActivity();
+    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context) {
+
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
