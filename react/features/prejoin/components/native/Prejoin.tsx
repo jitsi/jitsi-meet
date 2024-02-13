@@ -42,7 +42,6 @@ import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
-import RecordingWarning from './RecordingWarning';
 import { preJoinStyles as styles } from './styles';
 
 
@@ -60,8 +59,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
-    const showRecordingWarning
-        = useSelector((state: IReduxState) => state['features/base/config'].recordings?.showPrejoinWarning);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -182,7 +179,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                                 </Text>
                             </View>
                         )}
-                        {showRecordingWarning && <RecordingWarning />}
                     </View>
                     <LargeVideo />
                 </View>
