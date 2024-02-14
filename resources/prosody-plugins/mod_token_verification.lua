@@ -10,6 +10,9 @@ local jid_bare = require 'util.jid'.bare;
 
 local DEBUG = false;
 
+local measure_success = module:measure('success', 'counter');
+local measure_fail = module:measure('fail', 'counter');
+
 local function is_admin(jid)
     return um_is_admin(jid, host);
 end
@@ -36,9 +39,9 @@ if token_util == nil then
 end
 
 module:log("debug",
-	"%s - starting MUC token verifier app_id: %s app_secret: %s allow empty: %s",
-	tostring(host), tostring(token_util.appId), tostring(token_util.appSecret),
-	tostring(token_util.allowEmptyToken));
+    "%s - starting MUC token verifier app_id: %s app_secret: %s allow empty: %s",
+    tostring(host), tostring(token_util.appId), tostring(token_util.appSecret),
+    tostring(token_util.allowEmptyToken));
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
 local require_token_for_moderation;
@@ -91,16 +94,20 @@ module:hook("muc-room-pre-create", function(event)
     local origin, stanza = event.origin, event.stanza;
     if DEBUG then module:log("debug", "pre create: %s %s", tostring(origin), tostring(stanza)); end
     if not verify_user(origin, stanza) then
+        measure_fail(1);
         return true; -- Returning any value other than nil will halt processing of the event
     end
+    measure_success(1);
 end, 99);
 
 module:hook("muc-occupant-pre-join", function(event)
     local origin, room, stanza = event.origin, event.room, event.stanza;
     if DEBUG then module:log("debug", "pre join: %s %s", tostring(room), tostring(stanza)); end
     if not verify_user(origin, stanza) then
+        measure_fail(1);
         return true; -- Returning any value other than nil will halt processing of the event
     end
+    measure_success(1);
 end, 99);
 
 for event_name, method in pairs {
