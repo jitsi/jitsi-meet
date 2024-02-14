@@ -175,19 +175,25 @@ end
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
     local content = self.cache:get(keyId);
+    local code;
     if content == nil then
         -- If the key is not found in the cache.
-        module:log("debug", "Cache miss for key: %s", keyId);
+        -- module:log("debug", "Cache miss for key: %s", keyId);
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
-        module:log("debug", "Fetching public key from: %s", keyurl);
-        content = http_get_with_retry(keyurl, nr_retries);
+        -- module:log("debug", "Fetching public key from: %s", keyurl);
+        content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
             self.cache:set(keyId, content);
+        else
+            if code == nil then
+                -- this is timout after nr_retries retries
+                module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
+            end
         end
         return content;
     else
         -- If the key is in the cache, use it.
-        module:log("debug", "Cache hit for key: %s", keyId);
+        -- module:log("debug", "Cache hit for key: %s", keyId);
         return content;
     end
 end
