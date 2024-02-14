@@ -30,8 +30,10 @@ interface IProps {
 
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const dispatch = useDispatch();
-    const isStreaming = useSelector((state: IReduxState) => Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)));
-    const openHighlightDialogCallback = useCallback(() => dispatch(openHighlightDialog()), [ dispatch ]);
+    const isStreaming = useSelector((state: IReduxState) =>
+        Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)));
+    const openHighlightDialogCallback = useCallback(() =>
+        dispatch(openHighlightDialog()), [ dispatch ]);
 
     return (
         <>
