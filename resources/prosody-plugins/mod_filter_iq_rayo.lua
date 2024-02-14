@@ -12,6 +12,8 @@ local jid_bare = require "util.jid".bare;
 
 local sessions = prosody.full_sessions;
 
+local measure_drop = module:measure('drop', 'counter');
+
 local main_muc_component_host = module:get_option_string('main_muc');
 if main_muc_component_host == nil then
     module:log('error', 'main_muc not configured. Cannot proceed.');
@@ -108,6 +110,7 @@ module:hook("pre-iq/full", function(event)
                 then
                     module:log("warn",
                         "Filtering stanza dial, stanza:%s, outgoing calls limit reached", tostring(stanza));
+                    measure_drop(1);
                     session.send(st.error_reply(stanza, "cancel", "resource-constraint"));
                     return true;
                 end
