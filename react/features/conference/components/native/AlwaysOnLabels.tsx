@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
 import RecordingLabel from '../../../recording/components/native/RecordingLabel';
+import { getActiveSession } from '../../../recording/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
@@ -28,7 +30,10 @@ interface IProps {
 
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const dispatch = useDispatch();
-    const openHighlightDialogCallback = useCallback(() => dispatch(openHighlightDialog()), [ dispatch ]);
+    const isStreaming = useSelector((state: IReduxState) =>
+        Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)));
+    const openHighlightDialogCallback = useCallback(() =>
+        dispatch(openHighlightDialog()), [ dispatch ]);
 
     return (<>
         <TouchableOpacity
@@ -36,11 +41,14 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
             onPress = { createOnPress(LABEL_ID_RECORDING) } >
             <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
         </TouchableOpacity>
-        <TouchableOpacity
-            hitSlop = { LabelHitSlop }
-            onPress = { createOnPress(LABEL_ID_STREAMING) } >
-            <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
-        </TouchableOpacity>
+        {
+            isStreaming
+            && <TouchableOpacity
+                hitSlop = { LabelHitSlop }
+                onPress = { createOnPress(LABEL_ID_STREAMING) } >
+                <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
+            </TouchableOpacity>
+        }
         <TouchableOpacity
             hitSlop = { LabelHitSlop }
             onPress = { openHighlightDialogCallback }>
