@@ -423,36 +423,37 @@ const Toolbox = ({
                         )}
 
                         {isToolbarButtonEnabled('hangup', _toolbarButtons) && (
-                            _endConferenceSupported
-                                ? <HangupMenuButton
-                                    ariaControls = 'hangup-menu'
-                                    isOpen = { _hangupMenuVisible }
-                                    key = 'hangup-menu'
-                                    notifyMode = { getButtonNotifyMode('hangup-menu', _buttonsWithNotifyClick) }
-                                    onVisibilityChange = { onSetHangupVisible }>
-                                    <ContextMenu
-                                        accessibilityLabel = { t(toolbarAccLabel) }
-                                        className = { classes.hangupMenu }
-                                        hidden = { false }
-                                        inDrawer = { _overflowDrawer }
-                                        onKeyDown = { onEscKey }>
-                                        <EndConferenceButton
-                                            buttonKey = 'end-meeting'
-                                            notifyMode = { getButtonNotifyMode(
-                                                'end-meeting',
-                                                _buttonsWithNotifyClick
-                                            ) } />
-                                        <LeaveConferenceButton
-                                            buttonKey = 'hangup'
-                                            notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) } />
-                                    </ContextMenu>
-                                </HangupMenuButton>
-                                : <HangupButton
-                                    buttonKey = 'hangup'
-                                    customClass = 'hangup-button'
-                                    key = 'hangup-button'
-                                    notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) }
-                                    visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
+                            // _endConferenceSupported
+                            //     ? <HangupMenuButton
+                            //         ariaControls = 'hangup-menu'
+                            //         isOpen = { _hangupMenuVisible }
+                            //         key = 'hangup-menu'
+                            //         notifyMode = { getButtonNotifyMode('hangup-menu', _buttonsWithNotifyClick) }
+                            //         onVisibilityChange = { onSetHangupVisible }>
+                            //         <ContextMenu
+                            //             accessibilityLabel = { t(toolbarAccLabel) }
+                            //             className = { classes.hangupMenu }
+                            //             hidden = { false }
+                            //             inDrawer = { _overflowDrawer }
+                            //             onKeyDown = { onEscKey }>
+                            //             <EndConferenceButton
+                            //                 buttonKey = 'end-meeting'
+                            //                 notifyMode = { getButtonNotifyMode(
+                            //                     'end-meeting',
+                            //                     _buttonsWithNotifyClick
+                            //                 ) } />
+                            //             <LeaveConferenceButton
+                            //                 buttonKey = 'hangup'
+                            //                 notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) } />
+                            //         </ContextMenu>
+                            //     </HangupMenuButton>
+                            //     :
+                            <HangupButton
+                                buttonKey = 'hangup'
+                                customClass = 'hangup-button'
+                                key = 'hangup-button'
+                                notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) }
+                                visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
                         )}
                     </div>
                 </div>
