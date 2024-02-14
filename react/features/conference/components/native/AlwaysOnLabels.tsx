@@ -35,38 +35,36 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
 
-    return (
-        <>
-            <TouchableOpacity
+    return (<>
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { createOnPress(LABEL_ID_RECORDING) } >
+            <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
+        </TouchableOpacity>
+        {
+            isStreaming
+            && <TouchableOpacity
                 hitSlop = { LabelHitSlop }
-                onPress = { createOnPress(LABEL_ID_RECORDING) } >
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
+                onPress = { createOnPress(LABEL_ID_STREAMING) } >
+                <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
             </TouchableOpacity>
-            {
-                isStreaming
-                && <TouchableOpacity
-                    hitSlop = { LabelHitSlop }
-                    onPress = { createOnPress(LABEL_ID_STREAMING) } >
-                    <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
-                </TouchableOpacity>
-            }
-            <TouchableOpacity
-                hitSlop = { LabelHitSlop }
-                onPress = { openHighlightDialogCallback }>
-                <HighlightButton />
-            </TouchableOpacity>
-            <TouchableOpacity
-                hitSlop = { LabelHitSlop }
-                onPress = { createOnPress(LABEL_ID_RAISED_HANDS_COUNT) } >
-                <RaisedHandsCountLabel />
-            </TouchableOpacity>
-            <TouchableOpacity
-                hitSlop = { LabelHitSlop }
-                onPress = { createOnPress(LABEL_ID_VISITORS_COUNT) } >
-                <VisitorsCountLabel />
-            </TouchableOpacity>
-        </>
-    );
+        }
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { openHighlightDialogCallback }>
+            <HighlightButton />
+        </TouchableOpacity>
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { createOnPress(LABEL_ID_RAISED_HANDS_COUNT) } >
+            <RaisedHandsCountLabel />
+        </TouchableOpacity>
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { createOnPress(LABEL_ID_VISITORS_COUNT) } >
+            <VisitorsCountLabel />
+        </TouchableOpacity>
+    </>);
 };
 
 export default AlwaysOnLabels;
