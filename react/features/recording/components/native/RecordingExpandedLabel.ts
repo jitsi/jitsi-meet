@@ -43,7 +43,7 @@ class RecordingExpandedLabel extends ExpandedLabel<IProps> {
      */
     _getLabel() {
         const { _status, mode, t } = this.props;
-        let postfix = 'recording', prefix = 'expandedOn'; // Default values.
+        let postfix = 'expandedOn', prefix = 'recording'; // Default values.
 
         switch (mode) {
         case JitsiRecordingConstants.mode.STREAM:
