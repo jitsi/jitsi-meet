@@ -37,16 +37,16 @@ local function load_config()
 	-- Max allowed message rate in events per second.
 	config.message_rate = module:get_option_number("rate_limit_message_rate", 3);
 
-	-- A list of jids for which sessions we ignore rate limiting
-	config.whitelist_jids = module:get_option_set("rate_limit_whitelist_jids", {});
+	-- A list of hosts for which sessions we ignore rate limiting
+	config.whitelist_hosts = module:get_option_set("rate_limit_whitelist_hosts", {});
 
 	local wl = "";
 	for ip in config.whitelist do wl = wl .. ip  .. "," end
-	local wl_jids = "";
-	for j in config.whitelist_jids do wl_jids = wl_jids .. j  .. "," end
+	local wl_hosts = "";
+	for j in config.whitelist_hosts do wl_hosts = wl_hosts .. j  .. "," end
 	module:log("info", "Loaded configuration: ");
-	module:log("info", "- session_rate=%s bytes/sec, timeout=%s sec, cache size=%s, whitelist=%s, whitelist_jids=%s",
-			config.session_rate, config.timeout, config.cache_size, wl, wl_jids);
+	module:log("info", "- session_rate=%s bytes/sec, timeout=%s sec, cache size=%s, whitelist=%s, whitelist_hosts=%s",
+			config.session_rate, config.timeout, config.cache_size, wl, wl_hosts);
 	module:log("info", "- login_rate=%s/sec, presence_rate=%s/sec, iq_rate=%s/sec, message_rate=%s/sec",
 			config.login_rate, config.presence_rate, config.iq_rate, config.message_rate);
 end
@@ -70,8 +70,8 @@ local function is_whitelisted(ip)
 	return false;
 end
 
-local function is_whitelisted_jid(jid)
-	return config.whitelist_jids:contains(jid);
+local function is_whitelisted_host(h)
+	return config.whitelist_hosts:contains(h);
 end
 
 -- Discover real remote IP of a session
@@ -179,7 +179,7 @@ local function filter_hook(session)
 	local request = get_request_from_conn(session.conn);
 	local ip = request and request.ip or session.ip;
 	module:log("debug", "New session from %s", ip);
-    if is_whitelisted(ip) or (session.username and is_whitelisted_jid(session.username..'@'..session.host)) then
+    if is_whitelisted(ip) or is_whitelisted_host(session.host) then
         return;
     end
 
