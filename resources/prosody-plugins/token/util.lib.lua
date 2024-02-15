@@ -14,6 +14,7 @@ local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 local starts_with = main_util.starts_with;
+local table_shallow_copy = main_util.table_shallow_copy;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
@@ -123,13 +124,21 @@ function Util.new(module)
         update_keys_cache = async.runner(function (name)
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
-                self.cachedKeys = {};
+                local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
                 for k, v in pairs(cjson_safe.decode(content)) do
                     if starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
+                        -- do not clean this key if it already exists
+                        keys_to_delete[k] = nil;
                     end
                 end
+                -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
+                timer.add_task(90*60, function ()
+                    for k, _ in pairs(keys_to_delete) do
+                        self.cachedKeys[k] = nil;
+                    end
+                end);
 
                 if cache_for then
                     cache_for = tonumber(cache_for);
@@ -140,8 +149,18 @@ function Util.new(module)
                     timer.add_task(cache_for, function ()
                         update_keys_cache:run("update_keys_cache");
                     end);
+                else
+                    -- no cache header let's consider updating in 6hours
+                    timer.add_task(6*60*60, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
                 end
-
+            else
+                module:log('warn', 'Failed to retrieve cached public keys code:%s', code);
+                -- failed let's retry in 30 seconds
+                timer.add_task(30, function ()
+                    update_keys_cache:run("update_keys_cache");
+                end);
             end
         end);
         update_keys_cache:run("update_keys_cache");

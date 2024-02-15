@@ -509,7 +509,13 @@ function process_host_module(name, callback)
     end
 end
 
-
+function table_shallow_copy(t)
+    local t2 = {}
+    for k, v in pairs(t) do
+        t2[k] = v
+    end
+    return t2
+end
 
 return {
     OUTBOUND_SIP_JIBRI_PREFIX = OUTBOUND_SIP_JIBRI_PREFIX;
@@ -534,4 +540,5 @@ return {
     http_get_with_retry = http_get_with_retry;
     ends_with = ends_with;
     starts_with = starts_with;
+    table_shallow_copy = table_shallow_copy;
 };
