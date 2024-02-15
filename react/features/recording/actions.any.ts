@@ -404,7 +404,7 @@ export function stopLocalVideoRecording() {
  */
 export function showStartRecordingNotificationWithCallback(openRecordingDialog: Function) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
+        let state = getState();
         const { recordings } = state['features/base/config'];
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
@@ -427,9 +427,9 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
             customActionType: [ BUTTON_TYPES.PRIMARY ],
             customActionNameKey: [ 'notify.suggestRecordingAction' ],
             customActionHandler: [ () => {
+                state = getState();
                 const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
-
                 const canBypassDialog = isModerator
                     && recordingService?.enabled
                     && isJwtFeatureEnabled(state, 'recording', true);
