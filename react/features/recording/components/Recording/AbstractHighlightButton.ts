@@ -4,13 +4,17 @@ import { WithTranslation } from 'react-i18next';
 import { IReduxState, IStore } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { hideNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../../notifications/constants';
+import { iAmVisitor } from '../../../visitors/functions';
 import { highlightMeetingMoment } from '../../actions.any';
 import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
-import { getActiveSession, getRecordButtonProps, isHighlightMeetingMomentDisabled } from '../../functions';
+import {
+    getRecordButtonProps,
+    isCloudRecordingRunning,
+    isHighlightMeetingMomentDisabled
+} from '../../functions';
 
 import { StartRecordingDialog } from './index';
 
@@ -102,17 +106,17 @@ export default class AbstractHighlightButton<P extends IProps, S={}> extends Com
  * }}
  */
 export function _abstractMapStateToProps(state: IReduxState) {
-    const isRecordingRunning = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
+    const isRecordingRunning = isCloudRecordingRunning(state);
     const isButtonDisabled = isHighlightMeetingMomentDisabled(state);
     const { webhookProxyUrl } = state['features/base/config'];
-
+    const _iAmVisitor = iAmVisitor(state);
     const {
         disabled: isRecordButtonDisabled,
         visible: isRecordButtonVisible
     } = getRecordButtonProps(state);
 
     const canStartRecording = isRecordButtonVisible && !isRecordButtonDisabled;
-    const _visible = Boolean((canStartRecording || isRecordingRunning) && Boolean(webhookProxyUrl));
+    const _visible = Boolean((canStartRecording || isRecordingRunning) && Boolean(webhookProxyUrl) && !_iAmVisitor);
 
     return {
         _disabled: !isRecordingRunning,

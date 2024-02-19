@@ -4,9 +4,15 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import ExpandedLabel, { IProps as AbstractProps } from '../../../base/label/components/native/ExpandedLabel';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isTranscribing } from '../../../transcribing/functions';
 import { getSessionStatusToShow } from '../../functions';
 
 interface IProps extends AbstractProps {
+
+    /**
+     * Whether this meeting is being transcribed.
+     */
+    _isTranscribing: boolean;
 
     /**
      * The status of the highermost priority session.
@@ -37,7 +43,7 @@ class RecordingExpandedLabel extends ExpandedLabel<IProps> {
      */
     _getLabel() {
         const { _status, mode, t } = this.props;
-        let postfix = 'recording', prefix = 'expandedOn'; // Default values.
+        let postfix = 'expandedOn', prefix = 'recording'; // Default values.
 
         switch (mode) {
         case JitsiRecordingConstants.mode.STREAM:
@@ -60,7 +66,13 @@ class RecordingExpandedLabel extends ExpandedLabel<IProps> {
             break;
         }
 
-        return t(`${prefix}.${postfix}`);
+        let content = t(`${prefix}.${postfix}`);
+
+        if (_status === JitsiRecordingConstants.status.ON && this.props._isTranscribing) {
+            content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+        }
+
+        return content;
     }
 }
 
@@ -79,6 +91,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
 
     return {
+        _isTranscribing: isTranscribing(state),
         _status: getSessionStatusToShow(state, mode)
     };
 }

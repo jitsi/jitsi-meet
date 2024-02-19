@@ -11,6 +11,7 @@ local jid = require 'util.jid';
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
+local process_host_module = util.process_host_module;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
@@ -93,24 +94,6 @@ module:hook('muc-occupant-pre-join', function (event)
         end
     end
 end);
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(lobby_muc_component_config, function(host_module, host)
     -- lobby muc component created

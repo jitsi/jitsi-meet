@@ -38,7 +38,7 @@ import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainer
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -58,6 +58,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
+    const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -168,12 +169,16 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             {
                 isFocused
                 && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
-                    <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                            { roomName }
-                        </Text>
+                    <View style = { styles.conferenceInfo as StyleProp<ViewStyle> }>
+                        {roomNameEnabled && (
+                            <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                                <Text
+                                    numberOfLines = { 1 }
+                                    style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                                    { roomName }
+                                </Text>
+                            </View>
+                        )}
                     </View>
                     <LargeVideo />
                 </View>
@@ -194,10 +199,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         placeholder = { t('dialog.enterDisplayName') }
                         value = { displayName } />
                 }
-                {showDisplayNameError && (
-                    <View style = { styles.errorContainer as StyleProp<TextStyle> }>
-                        <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
-                    </View>)}
+                {
+                    showDisplayNameError && (
+                        <View style = { styles.errorContainer as StyleProp<TextStyle> }>
+                            <Text style = { styles.error as StyleProp<TextStyle> }>
+                                { t('prejoin.errorMissingName') }
+                            </Text>
+                        </View>
+                    )
+                }
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
                     disabled = { showDisplayNameError }

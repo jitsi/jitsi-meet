@@ -27,6 +27,9 @@ module:depends("jitsi_session");
 
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
+local jid_prep = require "util.jid".prep;
+local jid_resource = require "util.jid".resource;
+local resourceprep = require "util.encodings".stringprep.resourceprep;
 local json = require 'util.json';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
@@ -46,6 +49,7 @@ local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -234,21 +238,74 @@ function destroy_lobby_room(room, newjid, message)
     end
 end
 
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
+-- handle multiple items at once
+function handle_admin_query_set_command(self, origin, stanza)
+    for i=1,#stanza.tags[1] do
+        if handle_admin_query_set_command_item(self, origin, stanza, stanza.tags[1].tags[i]) then
+            return true;
         end
     end
+    return true;
+end
 
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
+-- This is a copy of the function(handle_admin_query_set_command) from prosody 12 (d7857ef7843a)
+function handle_admin_query_set_command_item(self, origin, stanza, item)
+    if not item then
+        origin.send(st.error_reply(stanza, "cancel", "bad-request"));
+        return true;
+    end
+    if item.attr.jid then -- Validate provided JID
+        item.attr.jid = jid_prep(item.attr.jid);
+        if not item.attr.jid then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed"));
+            return true;
+        elseif jid_resource(item.attr.jid) then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed", "Bare JID expected, got full JID"));
+            return true;
+        end
+    end
+    if item.attr.nick then -- Validate provided nick
+        item.attr.nick = resourceprep(item.attr.nick);
+        if not item.attr.nick then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed", "invalid nickname"));
+            return true;
+        end
+    end
+    if not item.attr.jid and item.attr.nick then
+        -- COMPAT Workaround for Miranda sending 'nick' instead of 'jid' when changing affiliation
+        local occupant = self:get_occupant_by_nick(self.jid.."/"..item.attr.nick);
+        if occupant then item.attr.jid = occupant.bare_jid; end
+    elseif item.attr.role and not item.attr.nick and item.attr.jid then
+        -- Role changes should use nick, but we have a JID so pull the nick from that
+        local nick = self:get_occupant_jid(item.attr.jid);
+        if nick then item.attr.nick = jid_resource(nick); end
+    end
+    local actor = stanza.attr.from;
+    local reason = item:get_child_text("reason");
+    local success, errtype, err
+    if item.attr.affiliation and item.attr.jid and not item.attr.role then
+        local registration_data;
+        if item.attr.nick then
+            local room_nick = self.jid.."/"..item.attr.nick;
+            local existing_occupant = self:get_occupant_by_nick(room_nick);
+            if existing_occupant and existing_occupant.bare_jid ~= item.attr.jid then
+                module:log("debug", "Existing occupant for %s: %s does not match %s", room_nick, existing_occupant.bare_jid, item.attr.jid);
+                self:set_role(true, room_nick, nil, "This nickname is reserved");
+            end
+            module:log("debug", "Reserving %s for %s (%s)", item.attr.nick, item.attr.jid, item.attr.affiliation);
+            registration_data = { reserved_nickname = item.attr.nick };
+        end
+        success, errtype, err = self:set_affiliation(actor, item.attr.jid, item.attr.affiliation, reason, registration_data);
+    elseif item.attr.role and item.attr.nick and not item.attr.affiliation then
+        success, errtype, err = self:set_role(actor, self.jid.."/"..item.attr.nick, item.attr.role, reason);
     else
-        process_host(name);
+        success, errtype, err = nil, "cancel", "bad-request";
+    end
+    self:save(true);
+    if not success then
+        origin.send(st.error_reply(stanza, errtype, err));
+    else
+        origin.send(st.reply(stanza));
     end
 end
 
@@ -458,6 +515,24 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end);
+
+    -- listen for admin set
+    for event_name, method in pairs {
+        -- Normal room interactions
+        ["iq-set/bare/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        -- Host room
+        ["iq-set/host/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+    } do
+        host_module:hook(event_name, function (event)
+            local origin, stanza = event.origin, event.stanza;
+            local room_jid = jid_bare(stanza.attr.to);
+            local room = get_room_from_jid(room_jid);
+
+            if room then
+                return handle_admin_query_set_command(room, origin, stanza);
+            end
+        end, 1) -- make sure we handle it before prosody that uses priority -2 for this
+    end
 end);
 
 function handle_create_lobby(event)

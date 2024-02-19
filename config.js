@@ -85,7 +85,7 @@ var config = {
         // disableE2EE: false,
 
         // Enables supports for AV1 codec.
-        // enableAv1: false,
+        // enableAv1Support: false,
 
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
@@ -103,6 +103,9 @@ var config = {
 
         // Experiment: Whether to skip interim transcriptions.
         // skipInterimTranscriptions: false,
+
+        // Dump transcripts to a <transcript> element for debugging.
+        // dumpTranscript: false,
     },
 
     // Disables moderator indicators.
@@ -324,6 +327,16 @@ var config = {
     //          'https://jitsi-meet.example.com/subfolder/static/oauth.html',
     // },
 
+    // configuration for all things recording related. Existing settings will be migrated here in the future.
+    // recordings: {
+    //    // If true, shows a notification at the start of the meeting with a call to action button
+    //    // to start recording (for users who can do so).
+    //    // suggestRecording: true,
+    //    // If true, shows a warning label in the prejoin screen to point out the possibility that
+    //    // the call you're joining might be recorded.
+    //    // showPrejoinWarning: true,
+    // },
+
     // recordingService: {
     //     // When integrations like dropbox are enabled only that will be shown,
     //     // by enabling fileRecordingsServiceEnabled, we show both the integrations
@@ -412,9 +425,6 @@ var config = {
     //     // Available languages can be found in
     //     // ./src/react/features/transcribing/transcriber-langs.json.
     //     preferredLanguage: 'en-US',
-
-    //     // Disable start transcription for all participants.
-    //     disableStartForAll: false,
 
     //     // Enables automatic turning on transcribing when recording is started
     //     autoTranscribeOnRecord: false,
@@ -713,7 +723,7 @@ var config = {
     // Configs for prejoin page.
     // prejoinConfig: {
     //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    //     // This replaces `prejoinPageEnabled`.
+    //     // This replaces `prejoinPageEnabled`. Defaults to true.
     //     enabled: true,
     //     // Hides the participant name editing field in the prejoin screen.
     //     // If requireDisplayName is also set as true, a name should still be provided through
@@ -1197,9 +1207,17 @@ var config = {
     // https://firebase.google.com/docs/dynamic-links/create-manually
     // deeplinking: {
     //
-    //     // The desktop deeplinking config.
+    //     // The desktop deeplinking config, disabled by default.
     //     desktop: {
-    //         appName: 'Jitsi Meet'
+    //         appName: 'Jitsi Meet',
+    //         appScheme: 'jitsi-meet,
+    //         download: {
+    //             linux:
+    //               'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage',
+    //             macos: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg',
+    //             windows: 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe'
+    //         },
+    //         enabled: false
     //     },
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.
@@ -1421,7 +1439,6 @@ var config = {
     //         'conference-timer',
     //         'participants-count',
     //         'e2ee',
-    //         'transcribing',
     //         'video-quality',
     //         'insecure-room',
     //         'highlight-moment',

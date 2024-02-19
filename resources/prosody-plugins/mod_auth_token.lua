@@ -15,6 +15,12 @@ end
 
 module:depends("jitsi_session");
 
+local measure_pre_fetch_fail = module:measure('pre_fetch_fail', 'counter');
+local measure_verify_fail = module:measure('verify_fail', 'counter');
+local measure_success = module:measure('success', 'counter');
+local measure_ban = module:measure('ban', 'counter');
+local measure_post_auth_fail = module:measure('post_auth_fail', 'counter');
+
 -- define auth provider
 local provider = {};
 
@@ -74,6 +80,7 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
             session.auth_token = nil;
+            measure_pre_fetch_fail(1);
             return pre_event_result.res, pre_event_result.error, pre_event_result.reason;
         end
 
@@ -82,21 +89,21 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token err:%s, reason:%s", error, reason);
             session.auth_token = nil;
+            measure_verify_fail(1);
             return res, error, reason;
         end
 
         local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
         if shouldAllow == false then
             module:log("warn", "user is banned")
+            measure_ban(1);
             return false, "not-allowed", "user is banned";
         end
 
-        local customUsername
-            = prosody.events.fire_event("pre-jitsi-authentication", session);
-
-        if (customUsername) then
+        local customUsername = prosody.events.fire_event("pre-jitsi-authentication", session);
+        if customUsername then
             self.username = customUsername;
-        elseif (session.previd ~= nil) then
+        elseif session.previd ~= nil then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
@@ -112,9 +119,11 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
             session.auth_token = nil;
+            measure_post_auth_fail(1);
             return post_event_result.res, post_event_result.error, post_event_result.reason;
         end
 
+        measure_success(1);
         return res;
     end
 

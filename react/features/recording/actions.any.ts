@@ -1,7 +1,13 @@
 import { IStore } from '../app/types';
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
+import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
@@ -10,8 +16,9 @@ import {
     showNotification,
     showWarningNotification
 } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
+import { setRequestingSubtitles } from '../subtitles/actions.any';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -19,17 +26,24 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_NOTIFICATION_SHOWN,
     SET_STREAM_KEY,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
+import { START_RECORDING_NOTIFICATION_ID } from './constants';
 import {
+    getRecordButtonProps,
     getRecordingLink,
     getResourceId,
+    isRecordingRunning,
+    isRecordingSharingEnabled,
     isSavingRecordingOnDropbox,
-    sendMeetingHighlight
+    sendMeetingHighlight,
+    shouldAutoTranscribeOnRecord
 } from './functions';
 import logger from './logger';
+
 
 /**
  * Clears the data of every recording sessions.
@@ -41,6 +55,20 @@ import logger from './logger';
 export function clearRecordingSessions() {
     return {
         type: CLEAR_RECORDING_SESSIONS
+    };
+}
+
+
+/**
+ * Marks the start recording notification as shown.
+ *
+ * @returns {{
+ *      type: SET_START_RECORDING_NOTIFICATION_SHOWN
+ * }}
+ */
+export function setStartRecordingNotificationShown() {
+    return {
+        type: SET_START_RECORDING_NOTIFICATION_SHOWN
     };
 }
 
@@ -365,5 +393,72 @@ export function startLocalVideoRecording(onlySelf?: boolean) {
 export function stopLocalVideoRecording() {
     return {
         type: STOP_LOCAL_RECORDING
+    };
+}
+
+/**
+ * Displays the notification suggesting to start the recording.
+ *
+ * @param {Function} openRecordingDialog - The callback to open the recording dialog.
+ * @returns {void}
+ */
+export function showStartRecordingNotificationWithCallback(openRecordingDialog: Function) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        let state = getState();
+        const { recordings } = state['features/base/config'];
+        const { suggestRecording } = recordings || {};
+        const recordButtonProps = getRecordButtonProps(state);
+        const isAlreadyRecording = isRecordingRunning(state);
+        const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
+
+        if (!suggestRecording
+            || isAlreadyRecording
+            || !recordButtonProps.visible
+            || recordButtonProps.disabled
+            || wasNotificationShown) {
+            return;
+        }
+
+        dispatch(setStartRecordingNotificationShown());
+        dispatch(showNotification({
+            titleKey: 'notify.suggestRecordingTitle',
+            descriptionKey: 'notify.suggestRecordingDescription',
+            uid: START_RECORDING_NOTIFICATION_ID,
+            customActionType: [ BUTTON_TYPES.PRIMARY ],
+            customActionNameKey: [ 'notify.suggestRecordingAction' ],
+            customActionHandler: [ () => {
+                state = getState();
+                const isModerator = isLocalParticipantModerator(state);
+                const { recordingService } = state['features/base/config'];
+                const canBypassDialog = isModerator
+                    && recordingService?.enabled
+                    && isJwtFeatureEnabled(state, 'recording', true);
+
+                if (canBypassDialog) {
+                    const options = {
+                        'file_recording_metadata': {
+                            share: isRecordingSharingEnabled(state)
+                        }
+                    };
+
+                    const { conference } = state['features/base/conference'];
+                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
+
+                    conference?.startRecording({
+                        mode: JitsiRecordingConstants.mode.FILE,
+                        appData: JSON.stringify(options)
+                    });
+
+                    if (autoTranscribeOnRecord) {
+                        dispatch(setRequestingSubtitles(true, false, null));
+                    }
+                } else {
+                    openRecordingDialog();
+                }
+
+                dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
+            } ],
+            appearance: NOTIFICATION_TYPE.NORMAL
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }

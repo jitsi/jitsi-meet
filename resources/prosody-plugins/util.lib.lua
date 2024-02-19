@@ -26,6 +26,9 @@ local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
+local OUTBOUND_SIP_JIBRI_PREFIX = 'outbound-sip-jibri@';
+local INBOUND_SIP_JIBRI_PREFIX = 'inbound-sip-jibri@';
+
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
 local internal_room_jid_cache = cache.new(1000);
@@ -272,6 +275,9 @@ function extract_subdomain(room_node)
 end
 
 function starts_with(str, start)
+    if not str then
+        return false;
+    end
     return str:sub(1, #start) == start
 end
 
@@ -305,7 +311,7 @@ function http_get_with_retry(url, retry, auth_token)
         if timeout_occurred == nil then
             code = code_;
             if code == 200 or code == 204 then
-                module:log("debug", "External call was successful, content %s", content_);
+                -- module:log("debug", "External call was successful, content %s", content_);
                 content = content_;
 
                 -- if there is cache-control header, let's return the max-age value
@@ -416,38 +422,117 @@ function is_moderated(room_jid)
     return false;
 end
 
--- check if the room tenant starts with
--- vpaas-magic-cookie-
-function is_vpaas(room_jid)
-    local node, host = jid.split(room_jid);
+-- check if the room tenant starts with vpaas-magic-cookie-
+-- @param room the room to check
+function is_vpaas(room)
+    if not room then
+        return false;
+    end
+
+    -- stored check in room object if it exist
+    if room.is_vpaas ~= nil then
+        return room.is_vpaas;
+    end
+
+    room.is_vpaas = false;
+
+    local node, host = jid.split(room.jid);
     if host ~= muc_domain or not node then
-        module:log('debug', 'Not the same host');
         return false;
     end
     local tenant, conference_name = node:match('^%[([^%]]+)%](.+)$');
     if not (tenant and conference_name) then
-        module:log('debug', 'Not a vpaas room %s', room_jid);
         return false;
     end
-    local vpaas_prefix, _ = tenant:match('^(vpaas%-magic%-cookie%-)(.*)$')
-    if vpaas_prefix ~= 'vpaas-magic-cookie-' then
-        module:log('debug', 'Not a vpaas room %s', room_jid);
-        return false
+
+    if not starts_with(tenant, 'vpaas-magic-cookie-') then
+        return false;
     end
-    return true
+
+    room.is_vpaas = true;
+    return true;
+end
+
+function get_sip_jibri_email_prefix(email)
+    if not email then
+        return nil;
+    elseif starts_with(email, INBOUND_SIP_JIBRI_PREFIX) then
+        return INBOUND_SIP_JIBRI_PREFIX;
+    elseif starts_with(email, OUTBOUND_SIP_JIBRI_PREFIX) then
+        return OUTBOUND_SIP_JIBRI_PREFIX;
+    else
+        return nil;
+    end
+end
+
+function is_sip_jibri_join(stanza)
+    if not stanza then
+        return false;
+    end
+
+    local features = stanza:get_child('features');
+    local email = stanza:get_child_text('email');
+
+    if not features or not email then
+        return false;
+    end
+
+    for i = 1, #features do
+        local feature = features[i];
+        if feature.attr and feature.attr.var and feature.attr.var == "http://jitsi.org/protocol/jibri" then
+            if get_sip_jibri_email_prefix(email) then
+                module:log("debug", "Occupant with email %s is a sip jibri ", email);
+                return true;
+            end
+        end
+    end
+
+    return false
+end
+
+-- process a host module directly if loaded or hooks to wait for its load
+function process_host_module(name, callback)
+    local function process_host(host)
+
+        if host == name then
+            callback(module:context(host), host);
+        end
+    end
+
+    if prosody.hosts[name] == nil then
+        module:log('info', 'No host/component found, will wait for it: %s', name)
+
+        -- when a host or component is added
+        prosody.events.add_handler('host-activated', process_host);
+    else
+        process_host(name);
+    end
+end
+
+function table_shallow_copy(t)
+    local t2 = {}
+    for k, v in pairs(t) do
+        t2[k] = v
+    end
+    return t2
 end
 
 return {
+    OUTBOUND_SIP_JIBRI_PREFIX = OUTBOUND_SIP_JIBRI_PREFIX;
+    INBOUND_SIP_JIBRI_PREFIX = INBOUND_SIP_JIBRI_PREFIX;
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
     is_moderated = is_moderated;
+    is_sip_jibri_join = is_sip_jibri_join;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
+    get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;
+    process_host_module = process_host_module;
     room_jid_match_rewrite = room_jid_match_rewrite;
     room_jid_split_subdomain = room_jid_split_subdomain;
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
@@ -455,4 +540,5 @@ return {
     http_get_with_retry = http_get_with_retry;
     ends_with = ends_with;
     starts_with = starts_with;
+    table_shallow_copy = table_shallow_copy;
 };

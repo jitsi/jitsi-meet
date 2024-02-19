@@ -1,6 +1,9 @@
 import i18next from 'i18next';
 
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
 import logger from './logger';
@@ -41,4 +44,35 @@ export function determineTranscriptionLanguage(config: IConfig) {
     logger.info(`Transcriber language set to ${safeBCP47Locale}`);
 
     return safeBCP47Locale;
+}
+
+/**
+ * Returns whether there is transcribing.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isTranscribing(state: IReduxState) {
+    return state['features/transcribing'].isTranscribing;
+}
+
+/**
+ * Checks whether the participant can start the transcription.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if the participant can start the transcription.
+ */
+export function canAddTranscriber(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+    const isJwtTranscribingEnabled = isJwtFeatureEnabled(state, 'transcription', isLocalParticipantModerator(state));
+
+    if (!transcription?.enabled) {
+        return false;
+    }
+
+    if (isJwtTranscribingEnabled) {
+        return true;
+    }
+
+    return false;
 }

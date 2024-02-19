@@ -6,6 +6,7 @@ local json = require "util.json";
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
 local starts_with = util.starts_with;
+local process_host_module = util.process_host_module;
 local token_util = module:require "token/util".new(module);
 
 -- option to enable/disable room API token verifications
@@ -129,7 +130,7 @@ function handle_validate_room_password (event)
         body = json.encode({ valid = (room:get_password() == passcode) })
     };
 
-    module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
+    -- module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
 
     return PUT_response;
 end
@@ -155,27 +156,9 @@ function handle_get_room_password (event)
         };
         body = json.encode(room_details);
     };
-    module:log("debug","Sending response for room password: %s", inspect(GET_response));
+    -- module:log("debug","Sending response for room password: %s", inspect(GET_response));
 
     return GET_response;
-end
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
 end
 
 process_host_module(muc_domain_base, function(host_module, host)

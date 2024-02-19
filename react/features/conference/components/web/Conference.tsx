@@ -23,6 +23,7 @@ import { getOverlayToRender } from '../../../overlay/functions.web';
 import ParticipantsPane from '../../../participants-pane/components/web/ParticipantsPane';
 import Prejoin from '../../../prejoin/components/web/Prejoin';
 import { isPrejoinPageVisible } from '../../../prejoin/functions';
+import ReactionAnimations from '../../../reactions/components/web/ReactionsAnimations';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
@@ -260,6 +261,7 @@ class Conference extends AbstractConference<IProps, any> {
                     { _showLobby && <LobbyScreen />}
                 </div>
                 <ParticipantsPane />
+                <ReactionAnimations />
             </div>
         );
     }

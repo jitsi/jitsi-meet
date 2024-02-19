@@ -58,3 +58,7 @@ export const RECORDING_STATUS_PRIORITIES = [
     JitsiRecordingConstants.status.PENDING,
     JitsiRecordingConstants.status.ON
 ];
+
+export const START_RECORDING_NOTIFICATION_ID = 'START_RECORDING_NOTIFICATION_ID';
+
+export const RECORDING_METADATA_ID = 'recording';

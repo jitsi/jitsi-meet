@@ -1,11 +1,20 @@
+import { batch } from 'react-redux';
+
+import { IStore } from '../app/types';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import {
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { SET_REQUESTING_SUBTITLES } from '../subtitles/actionTypes';
-import { toggleRequestingSubtitles } from '../subtitles/actions.any';
+import { playSound } from '../base/sounds/actions';
+import { showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import {
+    RECORDING_OFF_SOUND_ID,
+    RECORDING_ON_SOUND_ID
+} from '../recording/constants';
 
 import {
     _TRANSCRIBER_JOINED,
@@ -13,9 +22,6 @@ import {
 } from './actionTypes';
 import {
     potentialTranscriberJoined,
-    showPendingTranscribingNotification,
-    showStartedTranscribingNotification,
-    showStoppedTranscribingNotification,
     transcriberJoined,
     transcriberLeft
 } from './actions';
@@ -31,38 +37,21 @@ const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const {
-        isTranscribing,
         transcriberJID,
         potentialTranscriberJIDs
     } = getState()['features/transcribing'];
 
     switch (action.type) {
-    case _TRANSCRIBER_JOINED: {
+    case _TRANSCRIBER_JOINED:
         notifyTranscribingStatusChanged(true);
-        dispatch(showStartedTranscribingNotification());
+        maybeEmitRecordingNotification(dispatch, getState, true);
 
-        const state = getState();
-        const { transcription } = state['features/base/config'];
-        const { _requestingSubtitles } = state['features/subtitles'];
-
-        if (!_requestingSubtitles && !transcription?.disableStartForAll) {
-            dispatch(toggleRequestingSubtitles());
-        }
         break;
-    }
-    case _TRANSCRIBER_LEFT: {
+    case _TRANSCRIBER_LEFT:
         notifyTranscribingStatusChanged(false);
-        dispatch(showStoppedTranscribingNotification());
+        maybeEmitRecordingNotification(dispatch, getState, false);
 
-        const state = getState();
-        const { transcription } = state['features/base/config'];
-        const { _requestingSubtitles } = state['features/subtitles'];
-
-        if (_requestingSubtitles && !transcription?.disableStartForAll) {
-            dispatch(toggleRequestingSubtitles());
-        }
         break;
-    }
     case HIDDEN_PARTICIPANT_JOINED:
         if (action.displayName === TRANSCRIBER_DISPLAY_NAME) {
             dispatch(transcriberJoined(action.id));
@@ -85,17 +74,40 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
-    case SET_REQUESTING_SUBTITLES:
-        if (action.enabled && !isTranscribing) {
-            dispatch(showPendingTranscribingNotification());
-        }
-
-        break;
 
     }
 
     return next(action);
 });
+
+/**
+ * Emit a recording started / stopped notification if the transcription started / stopped. Only
+ * if there is no recording in progress.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {Function} getState - The Redux state.
+ * @param {boolean} on - Whether the transcription is on or not.
+ *
+ * @returns {void}
+ */
+function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: IStore['getState'], on: boolean) {
+    const state = getState();
+    const { sessionDatas } = state['features/recording'];
+    const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
+
+    if (sessionDatas.some(sd => sd.mode === modeConstants.FILE && sd.status === statusConstants.ON)) {
+        // If a recording is still ongoing, don't send any notification.
+        return;
+    }
+
+    batch(() => {
+        dispatch(showNotification({
+            descriptionKey: on ? 'recording.on' : 'recording.off',
+            titleKey: 'dialog.recording'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        dispatch(playSound(on ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
+    });
+}
 
 /**
  * Notify external application (if API is enabled) that transcribing has started or stopped.

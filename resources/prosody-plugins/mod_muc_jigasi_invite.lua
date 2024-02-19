@@ -9,6 +9,7 @@ local st = require("util.stanza");
 local json = require "util.json";
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local process_host_module = util.process_host_module;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 
@@ -166,24 +167,6 @@ module:provides("http", {
         end;
     };
 });
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('info', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(muc_domain, function(_, host)
     local muc_module = prosody.hosts[host].modules.muc;

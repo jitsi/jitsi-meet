@@ -8,7 +8,7 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import Platform from '../../../base/react/Platform.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
-import { isReactionsEnabled } from '../../../reactions/functions.any';
+import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
@@ -38,9 +38,9 @@ interface IProps {
     _iAmVisitor: boolean;
 
     /**
-     * Whether or not the reactions feature is enabled.
+     * Whether or not any reactions buttons should be visible.
      */
-    _reactionsEnabled: boolean;
+    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -65,7 +65,7 @@ interface IProps {
  * @returns {React$Element}.
  */
 function Toolbox(props: IProps) {
-    const { _endConferenceSupported, _reactionsEnabled, _styles, _visible, _iAmVisitor, _width } = props;
+    const { _endConferenceSupported, _shouldDisplayReactionsButtons, _styles, _visible, _iAmVisitor, _width } = props;
 
     if (!_visible) {
         return null;
@@ -114,7 +114,7 @@ function Toolbox(props: IProps) {
                 }
                 {!_iAmVisitor && additionalButtons.has('screensharing')
                     && <ScreenSharingButton styles = { buttonStylesBorderless } />}
-                {additionalButtons.has('raisehand') && (_reactionsEnabled && !_iAmVisitor
+                {additionalButtons.has('raisehand') && (_shouldDisplayReactionsButtons
                     ? <ReactionsMenuButton
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />
@@ -155,7 +155,7 @@ function _mapStateToProps(state: IReduxState) {
         _visible: isToolboxVisible(state),
         _iAmVisitor: iAmVisitor(state),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: isReactionsEnabled(state)
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
     };
 }
 

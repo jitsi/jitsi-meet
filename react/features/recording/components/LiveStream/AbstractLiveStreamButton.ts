@@ -7,7 +7,7 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { getActiveSession } from '../../functions';
+import { getActiveSession, isCloudRecordingRunning } from '../../functions';
 
 import { getLiveStreaming } from './functions';
 
@@ -140,7 +140,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     }
 
     // disable the button if the recording is running.
-    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
+    if (visible && isCloudRecordingRunning(state)) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }

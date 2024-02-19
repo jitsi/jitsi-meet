@@ -13,6 +13,7 @@ local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -66,7 +67,8 @@ local function send_visitors_iq(conference_service, room, type)
       :tag(type, { xmlns = 'jitsi:visitors',
         password = type ~= 'disconnect' and room:get_password() or '',
         lobby = room._data.lobbyroom and 'true' or 'false',
-        meetingId = room._data.meetingId
+        meetingId = room._data.meetingId,
+        createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
       }):up();
 
       module:send(connect_done);
@@ -174,24 +176,6 @@ module:hook('presence/full', function(event)
         end
     end
 end, 900);
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(main_muc_component_config, function(host_module, host)
     -- detects presence change in a main participant and propagate it to the used visitor nodes
@@ -318,7 +302,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             room:route_to_occupant(o, stanza);
         end
         -- let's add the message to the history of the room
-        host_module:fire_event("muc-add-history", { room = room; stanza = stanza; });
+        host_module:fire_event("muc-add-history", { room = room; stanza = stanza; from = from; visitor = true; });
 
         -- now we need to send to rest of visitor nodes
         local vnodes = visitors_nodes[room.jid].nodes;

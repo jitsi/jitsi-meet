@@ -12,8 +12,8 @@ import { showErrorNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
-import { RECORDING_TYPES } from '../../constants';
-import { supportsLocalRecording } from '../../functions';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
+import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
 export interface IProps extends WithTranslation {
 
@@ -178,7 +178,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             userName: undefined,
             sharingEnabled: true,
             shouldRecordAudioAndVideo: true,
-            shouldRecordTranscription: true,
+            shouldRecordTranscription: this.props._autoTranscribeOnRecord,
             spaceLeft: undefined,
             selectedRecordingService,
             localRecordingOnlySelf: false
@@ -335,7 +335,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     _onSubmit() {
         const {
             _appKey,
-            _autoTranscribeOnRecord,
             _conference,
             _isDropboxEnabled,
             _rToken,
@@ -398,9 +397,14 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             });
         }
 
-        if (_autoTranscribeOnRecord || this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, false));
+        if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+                && this.state.shouldRecordTranscription) {
+            dispatch(setRequestingSubtitles(true, false, null));
         }
+
+        _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+            isTranscribingEnabled: this.state.shouldRecordTranscription
+        });
 
         return true;
     }
@@ -444,7 +448,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
  */
 export function mapStateToProps(state: IReduxState, _ownProps: any) {
     const {
-        transcription,
         recordingService,
         dropbox = { appKey: undefined },
         localRecording
@@ -452,10 +455,10 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
 
     return {
         _appKey: dropbox.appKey ?? '',
-        _autoTranscribeOnRecord: transcription?.autoTranscribeOnRecord ?? false,
+        _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
         _conference: state['features/base/conference'].conference,
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
-        _fileRecordingsServiceSharingEnabled: recordingService?.sharingEnabled ?? false,
+        _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',

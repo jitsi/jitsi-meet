@@ -16,6 +16,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
+    ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
 } from '../../base/conference/actionTypes';
 import { JITSI_CONFERENCE_URL_KEY } from '../../base/conference/constants';
@@ -178,6 +179,22 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
                 CONFERENCE_TERMINATED,
                 /* data */ {
                     url: _normalizeUrl(locationURL)
+                });
+        }
+
+        break;
+    }
+
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+
+        if (data?.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+            sendEvent(
+                store,
+                ENDPOINT_TEXT_MESSAGE_RECEIVED,
+                /* data */ {
+                    message: data.text,
+                    senderId: participant.getId()
                 });
         }
 
@@ -418,24 +435,6 @@ function _unregisterForNativeEvents() {
  */
 function _registerForEndpointTextMessages(store: IStore) {
     const conference = getCurrentConference(store.getState());
-
-    conference?.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-        (...args: any[]) => {
-            if (args && args.length >= 2) {
-                const [ sender, eventData ] = args;
-
-                if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
-                    sendEvent(
-                        store,
-                        ENDPOINT_TEXT_MESSAGE_RECEIVED,
-                        /* data */ {
-                            message: eventData.text,
-                            senderId: sender._id
-                        });
-                }
-            }
-        });
 
     conference?.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,

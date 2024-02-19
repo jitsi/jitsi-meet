@@ -1,6 +1,8 @@
-local get_room_from_jid = module:require "util".get_room_from_jid;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local util = module:require "util";
+local get_room_from_jid = util.get_room_from_jid;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local is_healthcheck_room = util.is_healthcheck_room;
+local process_host_module = util.process_host_module;
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
 local st = require "util.stanza";
@@ -335,24 +337,6 @@ function process_breakout_muc_loaded(breakout_muc, host_module)
     host_module:hook("muc-occupant-joined", occupant_joined, -1);
     host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
     host_module:hook("muc-room-destroyed", room_destroyed, -1);
-end
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
 end
 
 -- process or waits to process the conference muc component

@@ -56,6 +56,7 @@ class SharedDocument extends PureComponent<IProps> {
                 style = { styles.sharedDocContainer }>
                 <WebView
                     hideKeyboardAccessoryView = { true }
+                    incognito = { true }
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl ?? '' }}
                     startInLoadingState = { true }

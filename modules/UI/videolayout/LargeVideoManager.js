@@ -229,6 +229,9 @@ export default class LargeVideoManager {
 
         preUpdate.then(() => {
             const { id, stream, videoType, resolve } = this.newStreamData;
+
+            this.newStreamData = null;
+
             const state = APP.store.getState();
             const shouldHideSelfView = getHideSelfView(state);
             const localId = getLocalParticipant(state)?.id;
@@ -238,8 +241,6 @@ export default class LargeVideoManager {
             // (camera or desktop) is a completely different thing than
             // the video container type (Etherpad, SharedVideo, VideoContainer).
             const isVideoContainer = LargeVideoManager.isVideoContainer(videoType);
-
-            this.newStreamData = null;
 
             logger.debug(`Scheduled large video update for ${id}`);
             this.state = videoType;
@@ -287,10 +288,6 @@ export default class LargeVideoManager {
                     || streamingStatusActive
                 );
 
-            this.videoTrack?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP
-                && logger.debug(`Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted},`
-                + ` streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}`);
-
             const isAudioOnly = APP.conference.isAudioOnly();
 
             // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
@@ -302,6 +299,10 @@ export default class LargeVideoManager {
             const showAvatar
                 = isVideoContainer
                     && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || legacyScreenshare);
+
+            logger.debug(`scheduleLargeVideoUpdate: Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${
+                isVideoMuted}, streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${
+                isVideoRenderable}, showAvatar=${showAvatar}`);
 
             let promise;
 

@@ -1,7 +1,6 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
-import { endpointMessageReceived } from '../../subtitles/actions.any';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
@@ -48,6 +47,7 @@ import {
     DATA_CHANNEL_CLOSED,
     DATA_CHANNEL_OPENED,
     E2E_RTT_CHANGED,
+    ENDPOINT_MESSAGE_RECEIVED,
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     NON_PARTICIPANT_MESSAGE_RECEIVED,
@@ -61,7 +61,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -79,7 +80,7 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
-import { IJitsiConference } from './reducer';
+import { IConferenceMetadata, IJitsiConference } from './reducer';
 
 /**
  * Adds conference (event) listeners.
@@ -275,6 +276,21 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         })));
 }
 
+/**
+ * Action for updating the conference metadata.
+ *
+ * @param {IConferenceMetadata} metadata - The metadata object.
+ * @returns {{
+ *    type: UPDATE_CONFERENCE_METADATA,
+ *    metadata: IConferenceMetadata
+ * }}
+ */
+export function updateConferenceMetadata(metadata: IConferenceMetadata | null) {
+    return {
+        type: UPDATE_CONFERENCE_METADATA,
+        metadata
+    };
+}
 
 /**
  * Create an action for when the end-to-end RTT against a specific remote participant has changed.
@@ -627,6 +643,25 @@ export function dataChannelClosed(code: number, reason: string) {
         type: DATA_CHANNEL_CLOSED,
         code,
         reason
+    };
+}
+
+/**
+ * Signals that a participant sent an endpoint message on the data channel.
+ *
+ * @param {Object} participant - The participant details sending the message.
+ * @param {Object} data - The data carried by the endpoint message.
+ * @returns {{
+*      type: ENDPOINT_MESSAGE_RECEIVED,
+*      participant: Object,
+*      data: Object
+* }}
+*/
+export function endpointMessageReceived(participant: Object, data: Object) {
+    return {
+        type: ENDPOINT_MESSAGE_RECEIVED,
+        participant,
+        data
     };
 }
 

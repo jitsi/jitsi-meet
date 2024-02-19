@@ -14,6 +14,7 @@ import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { isTranscribing } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -156,6 +157,76 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
 export function supportsLocalRecording() {
     return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
         && navigator.product !== 'ReactNative';
+}
+
+/**
+ * Returns true if there is a cloud recording running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isCloudRecordingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
+}
+
+/**
+ * Returns true if there is a recording session running.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingRunning(state: IReduxState) {
+    return (
+        isCloudRecordingRunning(state)
+        || LocalRecordingManager.isRecordingLocally()
+        || isTranscribing(state)
+    );
+}
+
+/**
+ * Returns true if the participant can stop recording.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function canStopRecording(state: IReduxState) {
+    if (!isRecordingRunning(state)) {
+        return false;
+    }
+
+    if (LocalRecordingManager.isRecordingLocally()) {
+        return true;
+    }
+
+    if (isCloudRecordingRunning(state) || isTranscribing(state)) {
+        return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
+    }
+
+    return false;
+}
+
+/**
+ * Returns whether the transcription should start automatically when recording starts.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function shouldAutoTranscribeOnRecord(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return transcription?.autoTranscribeOnRecord ?? true;
+}
+
+/**
+ * Returns whether the recording should be shared.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingSharingEnabled(state: IReduxState) {
+    const { recordingService } = state['features/base/config'];
+
+    return recordingService?.sharingEnabled ?? false;
 }
 
 /**

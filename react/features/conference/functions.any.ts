@@ -1,5 +1,6 @@
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
+import { iAmVisitor } from '../visitors/functions';
 
 
 /**
@@ -14,4 +15,20 @@ export function shouldDisplayNotifications(stateful: IStateful) {
     const { calleeInfoVisible } = state['features/invite'];
 
     return !calleeInfoVisible;
+}
+
+
+/**
+ *
+ * Returns true if polls feature is disabled.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/config.
+ * @returns {boolean}.
+ */
+export function arePollsDisabled(stateful: IStateful) {
+    const state = toState(stateful);
+
+    return state['features/base/config']?.disablePolls || iAmVisitor(state);
 }

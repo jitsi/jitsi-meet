@@ -1,10 +1,10 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
+import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
-    ENDPOINT_MESSAGE_RECEIVED,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
@@ -90,7 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    const { json } = action;
+    const { data: json } = action;
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
@@ -100,6 +100,8 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
     const language
         = state['features/base/conference'].conference
             ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;
     const participant = {
@@ -126,22 +128,46 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
 
         const { text } = json.transcript[0];
 
-        // First, notify the external API, but only do so for final messages.
-        if (typeof APP !== 'undefined' && !json.is_interim) {
+        // First, notify the external API.
+        if (typeof APP !== 'undefined' && !(json.is_interim && skipInterimTranscriptions)) {
+            const txt: any = {};
+
+            if (!json.is_interim) {
+                txt.final = text;
+            } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
+                txt.stable = text;
+            } else {
+                txt.unstable = text;
+            }
+
             APP.API.notifyTranscriptionChunkReceived({
                 messageID: transcriptMessageID,
-                final: text,
                 language: json.language,
-                participant
+                participant,
+                ...txt
             });
+
+            // Dump transcript in a <transcript> element for debugging purposes.
+            if (!json.is_interim && dumpTranscript) {
+                try {
+                    let elem = document.body.getElementsByTagName('transcript')[0];
+
+                    if (!elem) {
+                        elem = document.createElement('transcript');
+                        document.body.appendChild(elem);
+                    }
+
+                    elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
+                } catch (_) {
+                    // Ignored.
+                }
+            }
         }
 
         // If the suer is not requesting transcriptions just bail.
         if (json.language.slice(0, 2) !== language) {
             return next(action);
         }
-
-        const { skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
 
         if (json.is_interim && skipInterimTranscriptions) {
             return next(action);

@@ -5,8 +5,8 @@ import { NOTIFY_CLICK_MODE } from '../../toolbox/constants';
 import {
     IConfig,
     IDeeplinkingConfig,
+    IDeeplinkingDesktopConfig,
     IDeeplinkingMobileConfig,
-    IDeeplinkingPlatformConfig,
     NotifyClickButton,
     ToolbarButton
 } from './configType';
@@ -94,13 +94,21 @@ export function areAudioLevelsEnabled(state: IReduxState): boolean {
  * @returns {void}
  */
 export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
-    const {
-        desktop = {} as IDeeplinkingPlatformConfig,
-        android = {} as IDeeplinkingMobileConfig,
-        ios = {} as IDeeplinkingMobileConfig
-    } = deeplinking;
+    deeplinking.desktop = deeplinking.desktop || {} as IDeeplinkingDesktopConfig;
+    deeplinking.android = deeplinking.android || {} as IDeeplinkingMobileConfig;
+    deeplinking.ios = deeplinking.ios || {} as IDeeplinkingMobileConfig;
+
+    const { android, desktop, ios } = deeplinking;
 
     desktop.appName = desktop.appName || 'Jitsi Meet';
+    desktop.appScheme = desktop.appScheme || 'jitsi-meet';
+    desktop.download = desktop.download || {};
+    desktop.download.windows = desktop.download.windows
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe';
+    desktop.download.macos = desktop.download.macos
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg';
+    desktop.download.linux = desktop.download.linux
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage';
 
     ios.appName = ios.appName || 'Jitsi Meet';
     ios.appScheme = ios.appScheme || 'org.jitsi.meet';

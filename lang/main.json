@@ -219,7 +219,9 @@
         "joinInBrowser": "Join in browser",
         "launchMeetingLabel": "How do you want to join this meeting?",
         "launchWebButton": "Launch in web",
+        "noDesktopApp": "You don’t have the app?",
         "noMobileApp": "You don’t have the app?",
+        "or": "OR",
         "termsAndConditions": "By continuing you agree to our <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a>",
         "title": "Launching your meeting in {{app}}...",
         "titleNew": "Launching your meeting ...",
@@ -558,6 +560,7 @@
         "noNumbers": "No dial-in numbers.",
         "noPassword": "None",
         "noRoom": "No room was specified to dial-in into.",
+        "noWhiteboard": "Could not load the whiteboard.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "You have reached the limit of your plan.",
@@ -565,7 +568,8 @@
         "sipAudioOnly": "SIP audio only address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
-        "upgradeOptions": "Please check the upgrade options on"
+        "upgradeOptions": "Please check the upgrade options on",
+        "whiteboardError": "Error loading the whiteboard. Please try again later."
     },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
@@ -615,7 +619,7 @@
         "errorAPI": "An error occurred while accessing your YouTube broadcasts. Please try logging in again.",
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
         "expandedOff": "The live streaming has stopped",
-        "expandedOn": "The meeting is currently being streamed to YouTube.",
+        "expandedOn": "The meeting is currently being live streamed",
         "expandedPending": "The live streaming is being started...",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
@@ -800,6 +804,9 @@
         "startSilentTitle": "You joined with no audio output!",
         "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
+        "suggestRecordingAction": "Start",
+        "suggestRecordingDescription": "Would you like to start a recording?",
+        "suggestRecordingTitle": "Record this meeting",
         "unmute": "Unmute",
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "videoMutedRemotelyTitle": "Your video has been turned off by {{participantDisplayName}}",
@@ -932,6 +939,7 @@
         "or": "or",
         "premeeting": "Pre meeting",
         "proceedAnyway": "Proceed anyway",
+        "recordingWarning": "Other participants may be recording this call",
         "screenSharingError": "Screen sharing error:",
         "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
@@ -985,7 +993,7 @@
         "error": "Recording failed. Please try again.",
         "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
-        "expandedOn": "The meeting is currently being recorded.",
+        "expandedOn": "The meeting is currently being recorded",
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share the recording link with the meeting participants",
@@ -1353,13 +1361,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
-        "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
         "failedToStart": "Transcribing failed to start",
         "labelToolTip": "The meeting is being transcribed",
-        "off": "Transcribing stopped",
-        "on": "Transcribing started",
-        "pending": "Preparing to transcribe the meeting...",
         "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
@@ -1529,6 +1533,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Whiteboard"
-        }
+        },
+        "screenTitle": "Whiteboard"
     }
 }

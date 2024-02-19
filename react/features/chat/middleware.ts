@@ -2,7 +2,7 @@ import { AnyAction } from 'redux';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { CONFERENCE_JOINED, ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { openDialog } from '../base/dialog/actions';
@@ -29,7 +29,6 @@ import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
-import { endpointMessageReceived } from '../subtitles/actions.any';
 import { showToolbox } from '../toolbox/actions';
 
 
@@ -93,14 +92,6 @@ MiddlewareRegistry.register(store => next => action => {
         _addChatMsgListener(action.conference, store);
         break;
 
-    case OPEN_CHAT:
-        unreadCount = 0;
-
-        if (typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, true);
-        }
-        break;
-
     case CLOSE_CHAT: {
         const isPollTabOpen = getState()['features/chat'].isPollsTabFocused;
 
@@ -115,6 +106,38 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const state = store.getState();
+
+        if (!isReactionsEnabled(state)) {
+            return;
+        }
+
+        const { participant, data } = action;
+
+        if (data?.name === ENDPOINT_REACTION_NAME) {
+            store.dispatch(pushReactions(data.reactions));
+
+            _handleReceivedMessage(store, {
+                id: participant.getId(),
+                message: getReactionMessageFromBuffer(data.reactions),
+                privateMessage: false,
+                lobbyChat: false,
+                timestamp: data.timestamp
+            }, false, true);
+        }
+
+        break;
+    }
+
+    case OPEN_CHAT:
+        unreadCount = 0;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, true);
+        }
+        break;
 
     case SET_IS_POLL_TAB_FOCUSED: {
         dispatch(resetNbUnreadPollsMessages());
@@ -252,35 +275,6 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
             });
         }
     );
-
-    conference.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-        (...args: any) => {
-            const state = store.getState();
-
-            if (!isReactionsEnabled(state)) {
-                return;
-            }
-
-            // @ts-ignore
-            store.dispatch(endpointMessageReceived(...args));
-
-            if (args && args.length >= 2) {
-                const [ { _id }, eventData ] = args;
-
-                if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    store.dispatch(pushReactions(eventData.reactions));
-
-                    _handleReceivedMessage(store, {
-                        id: _id,
-                        message: getReactionMessageFromBuffer(eventData.reactions),
-                        privateMessage: false,
-                        lobbyChat: false,
-                        timestamp: eventData.timestamp
-                    }, false, true);
-                }
-            }
-        });
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {

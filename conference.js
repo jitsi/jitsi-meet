@@ -38,6 +38,7 @@ import {
     dataChannelClosed,
     dataChannelOpened,
     e2eRttChanged,
+    endpointMessageReceived,
     kickedOut,
     lockStateChanged,
     nonParticipantMessageReceived,
@@ -162,7 +163,6 @@ import { isScreenAudioShared } from './react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
-import { endpointMessageReceived } from './react/features/subtitles/actions.any';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 import { iAmVisitor } from './react/features/visitors/functions';
@@ -1824,28 +1824,24 @@ export default {
 
         room.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (...args) => {
-                APP.store.dispatch(endpointMessageReceived(...args));
-                if (args && args.length >= 2) {
-                    const [ sender, eventData ] = args;
-
-                    if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
-                        APP.API.notifyEndpointTextMessageReceived({
-                            senderInfo: {
-                                jid: sender._jid,
-                                id: sender._id
-                            },
-                            eventData
-                        });
-                    }
+            (participant, data) => {
+                APP.store.dispatch(endpointMessageReceived(participant, data));
+                if (data?.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                    APP.API.notifyEndpointTextMessageReceived({
+                        senderInfo: {
+                            jid: participant.getJid(),
+                            id: participant.getId()
+                        },
+                        eventData: data
+                    });
                 }
             });
 
         room.on(
             JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
-            (...args) => {
-                APP.store.dispatch(nonParticipantMessageReceived(...args));
-                APP.API.notifyNonParticipantMessageReceived(...args);
+            (id, data) => {
+                APP.store.dispatch(nonParticipantMessageReceived(id, data));
+                APP.API.notifyNonParticipantMessageReceived(id, data);
             });
 
         room.on(

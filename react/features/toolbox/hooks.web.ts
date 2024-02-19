@@ -21,7 +21,7 @@ import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
 import { REACTIONS } from '../reactions/constants';
-import { isReactionsEnabled } from '../reactions/functions.any';
+import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
 import { startScreenShareFlow } from '../screen-share/actions.web';
 import { isScreenVideoShared } from '../screen-share/functions';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
@@ -36,6 +36,7 @@ import { isDesktopShareButtonDisabled } from './functions.web';
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
+    const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
     const _toolbarButtons = useSelector((state: IReduxState) => toolbarButtons || getToolbarButtons(state));
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const desktopSharingButtonDisabled = useSelector(isDesktopShareButtonDisabled);
@@ -44,7 +45,6 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const gifsEnabled = useSelector(isGifEnabled);
     const participantsPaneOpen = useSelector(getParticipantsPaneOpen);
     const raisedHand = useSelector((state: IReduxState) => hasRaisedHand(getLocalParticipant(state)));
-    const reactionsEnabled = useSelector(isReactionsEnabled);
     const screenSharing = useSelector(isScreenVideoShared);
     const tileViewEnabled = useSelector(shouldDisplayTileView);
 
@@ -253,7 +253,8 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
             }
         });
 
-        if (reactionsEnabled) {
+        // If the buttons for sending reactions are not displayed we should disable the shortcuts too.
+        if (_shouldDisplayReactionsButtons) {
             const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
                 const onShortcutSendReaction = () => {
                     dispatch(addReactionToBuffer(key));
@@ -299,13 +300,14 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
             [ 'A', 'C', 'D', 'P', 'R', 'S', 'W', 'T', 'G' ].forEach(letter =>
                 dispatch(unregisterShortcut(letter)));
 
-            if (reactionsEnabled) {
+            if (_shouldDisplayReactionsButtons) {
                 Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                     .forEach(letter =>
                         dispatch(unregisterShortcut(letter, true)));
             }
         };
     }, [
+        _shouldDisplayReactionsButtons,
         chatOpen,
         desktopSharingButtonDisabled,
         desktopSharingEnabled,

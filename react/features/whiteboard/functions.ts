@@ -5,10 +5,11 @@ import { IReduxState } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { IWhiteboardConfig } from '../base/config/configType';
 import { getRemoteParticipants, isLocalParticipantModerator } from '../base/participants/functions';
-import { appendURLParam } from '../base/util/uri';
+import { encodeToBase64URL } from '../base/util/httpUtils';
+import { appendURLHashParam, appendURLParam } from '../base/util/uri';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { MIN_USER_LIMIT, USER_LIMIT_THRESHOLD, WHITEBOARD_ID } from './constants';
+import { MIN_USER_LIMIT, USER_LIMIT_THRESHOLD, WHITEBOARD_ID, WHITEBOARD_PATH_NAME } from './constants';
 import { IWhiteboardState } from './reducer';
 
 const getWhiteboardState = (state: IReduxState): IWhiteboardState => state['features/whiteboard'];
@@ -156,3 +157,50 @@ export const shouldNotifyUserLimit = (state: IReduxState): boolean => {
 
     return participantCount + USER_LIMIT_THRESHOLD > userLimit;
 };
+
+/**
+ * Generates the URL for the static whiteboard page.
+ *
+ * @param {string} locationUrl - The window location href.
+ * @param {string} collabServerUrl - The whiteboard collaboration server url.
+ * @param {Object} collabDetails - The whiteboard collaboration details.
+ * @param {string} localParticipantName - The local participant name.
+ * @returns {string}
+ */
+export function getWhiteboardInfoForURIString(
+        locationUrl: any,
+        collabServerUrl: string,
+        collabDetails: { roomId: string; roomKey: string; },
+        localParticipantName: string
+): string | undefined {
+    if (!collabServerUrl || !locationUrl) {
+        return undefined;
+    }
+
+    let state = {};
+    let url = `${locationUrl.substring(0, locationUrl.lastIndexOf('/'))}/${WHITEBOARD_PATH_NAME}`;
+
+    if (collabDetails?.roomId) {
+        state = {
+            ...state,
+            roomId: collabDetails.roomId
+        };
+    }
+
+    if (collabDetails?.roomKey) {
+        state = {
+            ...state,
+            roomKey: collabDetails.roomKey
+        };
+    }
+
+    state = {
+        ...state,
+        collabServerUrl,
+        localParticipantName
+    };
+
+    url = appendURLHashParam(url, 'state', encodeToBase64URL(JSON.stringify(state)));
+
+    return url;
+}

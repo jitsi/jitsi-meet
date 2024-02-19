@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
@@ -28,6 +29,7 @@ import android.os.IBinder;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.Random;
 
 /**
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
@@ -39,8 +41,11 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 public class JitsiMeetMediaProjectionService extends Service {
     private static final String TAG = JitsiMeetMediaProjectionService.class.getSimpleName();
 
-    public static void launch(Context context) {
-        OngoingNotification.createOngoingConferenceNotificationChannel();
+    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
+
+    public static void launch(Context context, Activity currentActivity) {
+
+        NotificationUtils.createNotificationChannel(currentActivity);
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 
@@ -55,12 +60,12 @@ public class JitsiMeetMediaProjectionService extends Service {
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
+            JitsiMeetLogger.w(TAG + "Media projection service not started", e);
             return;
         }
 
         if (componentName == null) {
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
+            JitsiMeetLogger.w(TAG + "Media projection service not started");
         }
     }
 
@@ -70,30 +75,27 @@ public class JitsiMeetMediaProjectionService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Notification notification = OngoingNotification.buildOngoingConferenceNotification(null);
-
-        if (notification == null) {
-            stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
-        } else {
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
-        }
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
+
+        if (notification == null) {
+            stopSelf();
+            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
+
+            return START_NOT_STICKY;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+        } else {
+            startForeground(NOTIFICATION_ID, notification);
+        }
 
         return START_NOT_STICKY;
     }

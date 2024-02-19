@@ -35,6 +35,7 @@ import {
     NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE
 } from '../notifications/constants';
+import { showStartRecordingNotification } from '../recording/actions';
 import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions.any';
 
@@ -149,6 +150,8 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
     }
 
     dispatch(showSalesforceNotification());
+    dispatch(showStartRecordingNotification());
+
     _checkIframe(getState(), dispatch);
 }
 
