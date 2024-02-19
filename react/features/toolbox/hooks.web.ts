@@ -17,7 +17,10 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../participants-pane/actions.web';
-import { getParticipantsPaneOpen } from '../participants-pane/functions';
+import {
+    getParticipantsPaneOpen,
+    isParticipantsPaneEnabled
+} from '../participants-pane/functions';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
 import { REACTIONS } from '../reactions/constants';
@@ -36,6 +39,7 @@ import { isDesktopShareButtonDisabled } from './functions.web';
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
+    const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
     const _toolbarButtons = useSelector((state: IReduxState) => toolbarButtons || getToolbarButtons(state));
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
@@ -216,7 +220,7 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
                 exec: onToggleScreenshare,
                 helpDescription: 'keyboardShortcuts.toggleScreensharing'
             },
-            isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
+            _isParticipantsPaneEnabled && isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
                 character: 'P',
                 exec: onToggleParticipantsPane,
                 helpDescription: 'keyboardShortcuts.toggleParticipantsPane'

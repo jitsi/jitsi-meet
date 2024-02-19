@@ -503,6 +503,7 @@ export interface IConfig {
         preventExecution: boolean;
     }>;
     participantsPane?: {
+        enabled?: boolean;
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;
         hideMuteAllButton?: boolean;

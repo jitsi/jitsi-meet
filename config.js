@@ -1388,6 +1388,8 @@ var config = {
 
     // Options related to the participants pane.
     // participantsPane: {
+    //     // Enables feature
+    //     enabled: true,
     //     // Hides the moderator settings tab.
     //     hideModeratorSettingsTab: false,
     //     // Hides the more actions button.

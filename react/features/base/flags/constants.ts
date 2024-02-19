@@ -165,6 +165,12 @@ export const NOTIFICATIONS_ENABLED = 'notifications.enabled';
 export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
 
 /**
+ * Flag indicating if participants should be enabled.
+ * Default: enabled (true).
+ */
+export const PARTICIPANTS_ENABLED = 'participants.enabled';
+
+/**
  * Flag indicating if Picture-in-Picture should be enabled.
  * Default: auto-detected.
  */
