@@ -568,7 +568,7 @@
         "sipAudioOnly": "Adresë SIP vetëm për audio",
         "title": "Ndani me të tjerë",
         "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim",
-        "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te"
+        "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te",
         "whiteboardError": "Gabim në ngarkimin e tabelës. Ju lutemi, riprovoni më vonë."
     },
     "inlineDialogFailure": {
@@ -813,7 +813,7 @@
         "videoUnmuteBlockedDescription": "Heqja e heshtimit të kamerës dhe veprimi i tregimit të desktopit janë bllokuar përkohësisht për shkak kufizimesh të sistemit.",
         "videoUnmuteBlockedTitle": "Heqja e heshtimit të kamerës dhe tregimi i desktopit janë bllokuar!",
         "viewLobby": "Shihni hollin",
-        "waitingParticipants": "{{waitingParticipants}} vetë"
+        "waitingParticipants": "{{waitingParticipants}} vetë",
         "whiteboardLimitDescription": "Ju lutemi, ruani ç’keni bërë, ngaqë së shpejti do të mbërrihet në kufi përdoruesi dhe tabela do të mbyllet.",
         "whiteboardLimitTitle": "Përdorim tabele"
     },
@@ -1098,7 +1098,7 @@
         "startReactionsMuted": "Heshto tinguj reagimesh për këdo",
         "startVideoMuted": "Gjithkush fillon i fshehur",
         "talkWhileMuted": "Flisni, teksa jeni i heshtuar",
-        "title": "Rregullime"
+        "title": "Rregullime",
         "video": "Video"
     },
     "settingsView": {
