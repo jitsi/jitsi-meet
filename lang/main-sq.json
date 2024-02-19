@@ -219,7 +219,9 @@
         "joinInBrowser": "Hyni që nga shfletues",
         "launchMeetingLabel": "Si doni të hyhet në këtë takim?",
         "launchWebButton": "Nise në web",
+        "noDesktopApp": "S’e keni aplikacionin?",
         "noMobileApp": "S’e keni aplikacionin?",
+        "or": "OR",
         "termsAndConditions": "Duke vazhduar, pajtoheni me <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a> tona",
         "title": "Po niset takimi juaj në {{app}}…",
         "titleNew": "Po niset takimi juaj…",
@@ -558,6 +560,7 @@
         "noNumbers": "S’ka numra për përdorim.",
         "noPassword": "Asnjë",
         "noRoom": "S’u dha dhomë për të cilën të formësohet numri.",
+        "noWhiteboard": "S’u ngarkua dot tabela.",
         "numbers": "Numra Për T’u Përdorur",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "Keni mbërritur në kufijtë e planit tuaj.",
@@ -566,6 +569,7 @@
         "title": "Ndani me të tjerë",
         "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim",
         "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te"
+        "whiteboardError": "Gabim në ngarkimin e tabelës. Ju lutemi, riprovoni më vonë."
     },
     "inlineDialogFailure": {
         "msg": "Ngecëm pak.",
@@ -800,6 +804,9 @@
         "startSilentTitle": "Hytë pa zë në dalje!",
         "suboptimalBrowserWarning": "Kemi frikë se funksionimi i takimit për ju s’do të jetë kushedi këtu. Po kërkojmë rrugë për ta përmirësuar këtë punë, por deri atëherë, ju lutemi, provoni të përdorni një nga <a href='{{recommendedBrowserPageLink}}' target='_blank'>shfletuesit e mbuluar plotësisht</a>.",
         "suboptimalExperienceTitle": "Sinjalizim Mbi Shfletuesin",
+        "suggestRecordingAction": "Niseni",
+        "suggestRecordingDescription": "Do të donit të nisej nëj regjistrim?",
+        "suggestRecordingTitle": "Regjistroje këtë takim",
         "unmute": "Çheshtoje",
         "videoMutedRemotelyDescription": "Mundeni përherë ta rihapni.",
         "videoMutedRemotelyTitle": "Videoja juaj u mbyll nga {{moderator}}",
@@ -931,6 +938,7 @@
         "lookGood": "Gjithçka po punon si duhet",
         "or": "ose",
         "premeeting": "Para takimit",
+        "recordingWarning": "Këtë thirrje pjesëmarrës të tjerë mund ta regjistrojnë",
         "proceedAnyway": "Vazhdo, sido qoftë",
         "screenSharingError": "Gabim ndarjeje ekrani me të tjerë:",
         "showScreen": "Aktivizoni skenë para takimit",
@@ -1239,7 +1247,7 @@
             "sharedvideo": "Ndani video me të tjerë",
             "shortcuts": "Shfaq/Fshih shkurtore",
             "show": "Shfaqe në skenë",
-            "show": "Shfaqe në skenë",
+            "showWhiteboard": "Shfaq tabelë",
             "silence": "Heshtje",
             "speakerStats": "Shfaq/Fshih statistika folësi",
             "stopScreenSharing": "Ndalni tregimin e ekranit tuaj",
@@ -1353,13 +1361,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Ndali / Nisi titrat",
-        "error": "Transkriptimi dështoi. Ju lutemi, riprovoni.",
         "expandedLabel": "Transkriptimi aktualisht është aktiv",
         "failedToStart": "S’u arrit të nisej transkriptim",
         "labelToolTip": "Takimit po i bëhet transkriptim",
-        "off": "Transkriptimi u ndal",
-        "on": "Filloi transkriptimi",
-        "pending": "Po përgatitet të transkriptohet takimi…",
         "sourceLanguageDesc": "Aktualisht si gjuhë takimi është caktuar <b>{{sourceLanguage}}</b>. <br/> Mund ta ndryshoni që nga ",
         "sourceLanguageHere": "këtu",
         "start": "Fillo shfaqje titrash",
@@ -1529,6 +1533,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Tabelë shënimesh"
-        }
+        },
+        "screenTitle": "Tabelë shënimesh"
     }
 }
