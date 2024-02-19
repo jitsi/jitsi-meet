@@ -7,7 +7,7 @@ import {
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { INVITE_ENABLED } from '../base/flags/constants';
+import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
@@ -309,3 +309,17 @@ export function isBreakoutRoomRenameAllowed(state: IReduxState) {
 
     return isLocalModerator && isRenameBreakoutRoomsSupported;
 }
+
+/**
+ * Returns true if participants is enabled and false otherwise.
+ *
+ * @param {IStateful} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {boolean}
+ */
+export const isParticipantsPaneEnabled = (stateful: IStateful) => {
+    const state = toState(stateful);
+    const { enabled = true } = getParticipantsPaneConfig(state);
+
+    return Boolean(getFeatureFlag(state, PARTICIPANTS_ENABLED, true) && enabled);
+};
