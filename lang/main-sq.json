@@ -813,7 +813,7 @@
         "videoUnmuteBlockedDescription": "Heqja e heshtimit të kamerës dhe veprimi i tregimit të desktopit janë bllokuar përkohësisht për shkak kufizimesh të sistemit.",
         "videoUnmuteBlockedTitle": "Heqja e heshtimit të kamerës dhe tregimi i desktopit janë bllokuar!",
         "viewLobby": "Shihni hollin",
-        "waitingParticipants": "{{waitingParticipants}} vetë"
+        "waitingParticipants": "{{waitingParticipants}} vetë",
         "whiteboardLimitDescription": "Ju lutemi, ruani ç’keni bërë, ngaqë së shpejti do të mbërrihet në kufi përdoruesi dhe tabela do të mbyllet.",
         "whiteboardLimitTitle": "Përdorim tabele"
     },
