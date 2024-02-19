@@ -568,7 +568,7 @@
         "sipAudioOnly": "Adresë SIP vetëm për audio",
         "title": "Ndani me të tjerë",
         "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim",
-        "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te"
+        "upgradeOptions": "Ju lutemi, shihni mundësitë e përmirësimit, te",
         "whiteboardError": "Gabim në ngarkimin e tabelës. Ju lutemi, riprovoni më vonë."
     },
     "inlineDialogFailure": {
