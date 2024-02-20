@@ -938,8 +938,8 @@
         "lookGood": "Gjithçka po punon si duhet",
         "or": "ose",
         "premeeting": "Para takimit",
-        "recordingWarning": "Këtë thirrje pjesëmarrës të tjerë mund ta regjistrojnë",
         "proceedAnyway": "Vazhdo, sido qoftë",
+        "recordingWarning": "Këtë thirrje pjesëmarrës të tjerë mund ta regjistrojnë",
         "screenSharingError": "Gabim ndarjeje ekrani me të tjerë:",
         "showScreen": "Aktivizoni skenë para takimit",
         "startWithPhone": "Nise me audio telefoni",
@@ -1470,7 +1470,7 @@
         "webAssemblyWarningDescription": "WebAssembly e çaktivizuar ose e pambuluar nga ky shfletues"
     },
     "visitors": {
-        "chatIndicator": "(visitor)",
+        "chatIndicator": "(vizitor)",
         "labelTooltip": "Numër vizitorësh: {{count}}",
         "notification": {
             "description": "Që të merrni pjesë, ngrini dorën",
