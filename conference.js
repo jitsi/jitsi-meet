@@ -679,6 +679,8 @@ export default {
             startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
         };
 
+        logger.debug(`Executed conference.init with roomName: ${roomName}`);
+
         this.roomName = roomName;
 
         try {
