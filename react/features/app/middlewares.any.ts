@@ -3,6 +3,7 @@ import '../authentication/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';
 import '../base/config/middleware';
+import '../base/i18n/middleware';
 import '../base/jwt/middleware';
 import '../base/known-domains/middleware';
 import '../base/lastn/middleware';

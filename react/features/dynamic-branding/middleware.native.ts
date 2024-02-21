@@ -23,7 +23,8 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl,
             brandedIcons,
             didPageUrl,
-            inviteDomain
+            inviteDomain,
+            labels
         } = action.value;
 
         action.value = {
@@ -32,7 +33,8 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl,
             brandedIcons,
             didPageUrl,
-            inviteDomain
+            inviteDomain,
+            labels
         };
 
         // The backend may send an empty string, make sure we skip that.
