@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { isTranscribing } from '../../transcribing/functions';
-import { getSessionStatusToShow, isRecordingRunning } from '../functions';
+import { getActiveSession, getSessionStatusToShow, isRecordingRunning } from '../functions';
 
 
 interface IProps extends WithTranslation {
@@ -14,9 +15,9 @@ interface IProps extends WithTranslation {
     _iAmRecorder: boolean;
 
     /**
-     * Whether the recording is currently running.
+     * Whether the recording/livestreaming/transcriber is currently running.
      */
-    _isRecordingRunning: boolean;
+    _isRunning: boolean;
 
     /**
      * Whether this meeting is being transcribed.
@@ -40,28 +41,18 @@ interface IProps extends WithTranslation {
 }
 
 /**
- * State of the component.
- */
-interface IState {
-
-    /**
-     * True if the label status is stale, so it needs to be removed.
-     */
-    staleLabel: boolean;
-}
-
-/**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel extends Component<IProps, IState> {
+export default class AbstractRecordingLabel extends Component<IProps> {
     /**
      * Implements React {@code Component}'s render.
      *
      * @inheritdoc
      */
     render() {
-        return this.props._isRecordingRunning && !this.props._iAmRecorder
-            ? this._renderLabel() : null;
+        const { _iAmRecorder, _isRunning } = this.props;
+
+        return _isRunning && !_iAmRecorder ? this._renderLabel() : null;
     }
 
     /**
@@ -88,9 +79,12 @@ export default class AbstractRecordingLabel extends Component<IProps, IState> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
+    const isLiveStreaming = mode === JitsiRecordingConstants.mode.STREAM;
+    const isRunning = isLiveStreaming
+        ? Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) : isRecordingRunning(state);
 
     return {
-        _isRecordingRunning: isRecordingRunning(state),
+        _isRunning: isRunning,
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
         _isTranscribing: isTranscribing(state),
         _status: getSessionStatusToShow(state, mode)
