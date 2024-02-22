@@ -8,8 +8,15 @@ import { getReplaceParticipant } from '../config/functions';
 import { connect, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
-import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../media/actions';
+import {
+    gumPending,
+    setAudioMuted,
+    setAudioUnmutePermissions,
+    setVideoMuted,
+    setVideoUnmutePermissions
+} from '../media/actions';
 import { MEDIA_TYPE } from '../media/constants';
+import { IGUMPendingState } from '../media/types';
 import {
     dominantSpeakerChanged,
     participantKicked,
@@ -1052,6 +1059,11 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => dispatch(conferenceWillInit()))
             .then(() => dispatch(connect()))
             .then(() => {
+
+                // Clear the gum pending state in case we have set it to pending since we are starting the
+                // conference without tracks.
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+
                 // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
                 if (typeof APP !== 'undefined') {
                     APP.conference.startConference([]);
