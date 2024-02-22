@@ -165,7 +165,6 @@ import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/Au
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
-import { iAmVisitor } from './react/features/visitors/functions';
 import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
@@ -705,10 +704,6 @@ export default {
         const handleInitialTracks = (options, tracks) => {
             let localTracks = tracks;
 
-            // No local tracks are added when user joins as a visitor.
-            if (iAmVisitor(state)) {
-                return [];
-            }
             if (options.startWithAudioMuted || room?.isStartAudioMuted()) {
                 // Always add the track on Safari because of a known issue where audio playout doesn't happen
                 // if the user joins audio and video muted, i.e., if there is no local media capture.
