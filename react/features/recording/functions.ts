@@ -179,8 +179,17 @@ export function isRecordingRunning(state: IReduxState) {
     return (
         isCloudRecordingRunning(state)
         || LocalRecordingManager.isRecordingLocally()
-        || isTranscribing(state)
     );
+}
+
+/**
+ * Returns true if there is a recording or transcribing session running.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingOrTranscribingRunning(state: IReduxState) {
+    return isRecordingRunning(state) || isTranscribing(state);
 }
 
 /**
@@ -190,7 +199,7 @@ export function isRecordingRunning(state: IReduxState) {
  * @returns {boolean}
  */
 export function canStopRecording(state: IReduxState) {
-    if (!isRecordingRunning(state)) {
+    if (!isRecordingOrTranscribingRunning(state)) {
         return false;
     }
 

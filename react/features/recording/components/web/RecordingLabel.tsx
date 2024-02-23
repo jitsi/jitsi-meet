@@ -40,11 +40,11 @@ class RecordingLabel extends AbstractRecordingLabel {
     _renderLabel() {
         const { _isTranscribing, _status, classes, mode, t } = this.props;
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
-        const icon = isRecording || _isTranscribing ? IconRecord : IconSites;
+        const icon = isRecording ? IconRecord : IconSites;
         let content;
 
         if (_status === JitsiRecordingConstants.status.ON) {
-            content = t(isRecording || _isTranscribing ? 'videoStatus.recording' : 'videoStatus.streaming');
+            content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
 
             if (_isTranscribing) {
                 content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
