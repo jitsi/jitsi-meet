@@ -650,7 +650,7 @@ var config = {
     //     // Whether to disable welcome page. In case it's disabled a random room
     //     // will be joined when no room is specified.
     //     disabled: false,
-    //     // If set,landing page will redirect to this URL.
+    //     // If set, landing page will redirect to this URL.
     //     customUrl: ''
     // },
 
