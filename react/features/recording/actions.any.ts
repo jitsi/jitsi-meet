@@ -36,7 +36,7 @@ import {
     getRecordButtonProps,
     getRecordingLink,
     getResourceId,
-    isRecordingRunning,
+    isRecordingOrTranscribingRunning,
     isRecordingSharingEnabled,
     isSavingRecordingOnDropbox,
     sendMeetingHighlight,
@@ -408,7 +408,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
         const { recordings } = state['features/base/config'];
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
-        const isAlreadyRecording = isRecordingRunning(state);
+        const isAlreadyRecording = isRecordingOrTranscribingRunning(state);
         const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
 
         if (!suggestRecording

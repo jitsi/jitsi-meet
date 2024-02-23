@@ -14,15 +14,16 @@ interface IProps extends WithTranslation {
      */
     _iAmRecorder: boolean;
 
-    /**
-     * Whether the recording/livestreaming/transcriber is currently running.
-     */
-    _isRunning: boolean;
 
     /**
      * Whether this meeting is being transcribed.
-     */
-    _isTranscribing: boolean;
+    */
+   _isTranscribing: boolean;
+
+   /**
+    * Whether the recording/livestreaming/transcriber is currently running.
+    */
+   _isVisible: boolean;
 
     /**
      * The status of the higher priority session.
@@ -50,9 +51,9 @@ export default class AbstractRecordingLabel extends Component<IProps> {
      * @inheritdoc
      */
     render() {
-        const { _iAmRecorder, _isRunning } = this.props;
+        const { _iAmRecorder, _isVisible } = this.props;
 
-        return _isRunning && !_iAmRecorder ? this._renderLabel() : null;
+        return _isVisible && !_iAmRecorder ? this._renderLabel() : null;
     }
 
     /**
@@ -79,14 +80,17 @@ export default class AbstractRecordingLabel extends Component<IProps> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
-    const isLiveStreaming = mode === JitsiRecordingConstants.mode.STREAM;
-    const isRunning = isLiveStreaming
-        ? Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) : isRecordingRunning(state);
+    const isLiveStreamingLabel = mode === JitsiRecordingConstants.mode.STREAM;
+    const _isTranscribing = isTranscribing(state);
+    const isLivestreamingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+    const _isVisible = isLiveStreamingLabel
+        ? isLivestreamingRunning // this is the livestreaming label
+        : isRecordingRunning(state) || (_isTranscribing && !isLivestreamingRunning); // this is the recording label
 
     return {
-        _isRunning: isRunning,
+        _isVisible,
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        _isTranscribing: isTranscribing(state),
+        _isTranscribing,
         _status: getSessionStatusToShow(state, mode)
     };
 }
