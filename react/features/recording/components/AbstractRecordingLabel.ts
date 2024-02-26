@@ -6,8 +6,7 @@ import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { isTranscribing } from '../../transcribing/functions';
 import { getActiveSession, getSessionStatusToShow, isRecordingRunning } from '../functions';
 
-
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Whether this is the Jibri recorder participant.
@@ -31,11 +30,6 @@ interface IProps extends WithTranslation {
     _status?: string;
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes?: { [ key: string]: string; };
-
-    /**
      * The recording mode this indicator should display.
      */
     mode: string;
@@ -44,7 +38,7 @@ interface IProps extends WithTranslation {
 /**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel extends Component<IProps> {
+export default class AbstractRecordingLabel<P extends IProps = IProps> extends Component<P> {
     /**
      * Implements React {@code Component}'s render.
      *

@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
@@ -17,7 +17,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * If set hides the reactions moderation setting.
@@ -150,7 +150,6 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      */
     render() {
         const {
-            classes,
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
@@ -159,6 +158,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             startReactionsMuted,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div
@@ -198,4 +198,4 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(ModeratorTab));
+export default withStyles(translate(ModeratorTab), styles);

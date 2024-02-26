@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { createProfilePanelButtonEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -34,7 +34,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Invoked to change the configured calendar integration.
@@ -156,7 +156,6 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     render() {
         const {
             authEnabled,
-            classes,
             displayName,
             email,
             hideEmailInSettings,
@@ -164,6 +163,7 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
             readOnlyName,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = { classes.container } >
@@ -226,9 +226,9 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     _renderAuth() {
         const {
             authLogin,
-            classes,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div>
@@ -249,4 +249,4 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(connect()(ProfileTab)));
+export default withStyles(translate(connect()(ProfileTab)), styles);

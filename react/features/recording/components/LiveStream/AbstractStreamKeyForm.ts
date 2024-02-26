@@ -38,8 +38,6 @@ export interface IProps extends WithTranslation {
      */
     _liveStreaming: LiveStreamingProps;
 
-    classes?: any;
-
     /**
      * Callback invoked when the entered stream key has changed.
      */

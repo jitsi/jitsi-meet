@@ -1,6 +1,6 @@
-import { ClassNameMap, withStyles } from '@mui/styles';
 import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -37,9 +37,9 @@ export interface IProps extends AbstractVideoMuteButtonProps {
     _gumPending: IGUMPendingState;
 
     /**
-     * The @mui/styles classes.
+     * An object containing the CSS classes.
      */
-    classes: ClassNameMap<string>;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 }
 
 /**
@@ -145,7 +145,8 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {ReactElement | null}
      */
     _getElementAfter(): ReactElement | null {
-        const { _gumPending, classes } = this.props;
+        const { _gumPending } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return _gumPending === IGUMPendingState.NONE ? null
             : (
@@ -199,4 +200,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(VideoMuteButton)));
+export default withStyles(translate(connect(_mapStateToProps)(VideoMuteButton)), styles);
