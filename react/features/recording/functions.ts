@@ -14,7 +14,7 @@ import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { isTranscribing } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -183,23 +183,13 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
- * Returns true if there is a recording or transcribing session running.
- *
- * @param {Object} state - The redux state to search in.
- * @returns {boolean}
- */
-export function isRecordingOrTranscribingRunning(state: IReduxState) {
-    return isRecordingRunning(state) || isTranscribing(state);
-}
-
-/**
  * Returns true if the participant can stop recording.
  *
  * @param {Object} state - The redux state to search in.
  * @returns {boolean}
  */
 export function canStopRecording(state: IReduxState) {
-    if (!isRecordingOrTranscribingRunning(state)) {
+    if (!isRecordingRunning(state) && !isRecorderTranscriptionsRunning(state)) {
         return false;
     }
 
@@ -207,7 +197,7 @@ export function canStopRecording(state: IReduxState) {
         return true;
     }
 
-    if (isCloudRecordingRunning(state) || isTranscribing(state)) {
+    if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
         return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
     }
 
