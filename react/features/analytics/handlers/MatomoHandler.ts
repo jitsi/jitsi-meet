@@ -13,7 +13,7 @@ export default class MatomoHandler extends AbstractHandler {
     /**
      * Creates new instance of the Matomo handler.
      *
-     * @param {Object} options -
+     * @param {Object} options - The matomo options.
      * @param {string} options.matomoEndpoint - The Matomo endpoint.
      * @param {string} options.matomoSiteID   - The site ID.
      */
@@ -39,7 +39,7 @@ export default class MatomoHandler extends AbstractHandler {
     /**
      * Initializes the _paq object.
      *
-     * @param {Object} options -
+     * @param {Object} options - The matomo options.
      * @param {string} options.matomoEndpoint - The Matomo endpoint.
      * @param {string} options.matomoSiteID   - The site ID.
      * @returns {void}

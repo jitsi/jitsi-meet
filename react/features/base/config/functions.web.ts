@@ -66,8 +66,7 @@ export function getWebHIDFeatureConfig(state: IReduxState): boolean {
 /**
  * Checks if the specified button is enabled.
  *
- * @param {string} buttonName - The name of the button.
- * {@link interfaceConfig}.
+ * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
  * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
  * @returns {boolean} - True if the button is enabled and false otherwise.
  */

@@ -14,7 +14,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
     /**
      * Creates new instance of the GA analytics handler.
      *
-     * @param {Object} options -
+     * @param {Object} options - The Google Analytics options.
      * @param {string} options.googleAnalyticsTrackingId - The GA track id
      * required by the GA API.
      */
@@ -34,7 +34,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
     /**
      * Initializes the ga object.
      *
-     * @param {Object} options -
+     * @param {Object} options - The Google Analytics options.
      * @param {string} options.googleAnalyticsTrackingId - The GA track id
      * required by the GA API.
      * @returns {void}
