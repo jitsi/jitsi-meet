@@ -261,6 +261,35 @@ local function stanza_handler(event)
     return processed;
 end
 
+local function process_promotion_response(room, id, approved)
+    -- lets reply to participant that requested promotion
+    local username = new_id():lower();
+    visitors_promotion_map[room.jid][username] = {
+        from = visitors_promotion_requests[room.jid][id].from;
+        jid = id;
+    };
+
+    local req_from = visitors_promotion_map[room.jid][username].from;
+    local req_jid = visitors_promotion_map[room.jid][username].jid;
+    local focus_occupant = get_focus_occupant(room);
+    local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
+
+    local iq_id = new_id();
+    sent_iq_cache:set(iq_id, socket.gettime());
+
+    module:send(st.iq({
+            type='set', to = req_from, from = module.host, id = iq_id })
+        :tag('visitors', {
+            xmlns='jitsi:visitors',
+            room = string.gsub(room.jid, muc_domain_base, req_from),
+            focusjid = focus_jid })
+         :tag('promotion-response', {
+            xmlns='jitsi:visitors',
+            jid = req_jid,
+            username = username,
+            allow = approved }):up());
+end
+
 module:hook('iq/host', stanza_handler, 10);
 
 process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_module, host)
@@ -381,32 +410,15 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             end
         end
 
-        -- lets reply to participant that requested promotion
-        local username = new_id():lower();
-        visitors_promotion_map[room.jid][username] = {
-            from = visitors_promotion_requests[room.jid][data.id].from;
-            jid = data.id;
-        };
+        if data.id then
+            process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+        else
+            -- we are in the case with admit all, we need to read data.ids
+            for i in pairs(data.ids) do
+                process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+            end
+        end
 
-        local req_from = visitors_promotion_map[room.jid][username].from;
-        local req_jid = visitors_promotion_map[room.jid][username].jid;
-        local focus_occupant = get_focus_occupant(room);
-        local focus_jid = focus_occupant and focus_occupant.bare_jid or nil;
-
-        local iq_id = new_id();
-        sent_iq_cache:set(iq_id, socket.gettime());
-
-        module:send(st.iq({
-                type='set', to = req_from, from = module.host, id = iq_id })
-            :tag('visitors', {
-                xmlns='jitsi:visitors',
-                room = string.gsub(room.jid, muc_domain_base, req_from),
-                focusjid = focus_jid })
-             :tag('promotion-response', {
-                xmlns='jitsi:visitors',
-                jid = req_jid,
-                username = username ,
-                allow = data.approved and 'true' or 'false' }):up());
         return true; -- halt processing, but return true that we handled it
     end);
 end);
