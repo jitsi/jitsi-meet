@@ -109,7 +109,7 @@ class HideSelfViewVideoButton extends PureComponent<IProps> {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code FlipLocalVideoButton}'s props.
+ * Maps (parts of) the Redux state to the associated {@code HideSelfViewVideoButton}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private

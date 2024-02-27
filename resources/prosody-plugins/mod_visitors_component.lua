@@ -379,7 +379,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             return;
         end
         local data = json.decode(json_data);
-        if not data or data.type ~= 'visitors' or data.action ~= "promotion-response" then
+        if not data or data.type ~= 'visitors'
+            or (data.action ~= "promotion-response" and data.action ~= "demote-request") then
             return;
         end
 
@@ -397,12 +398,37 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             return false;
         end
 
-        if data.id then
-            process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+        if data.action == "demote-request" then
+            if occupant.nick ~= room.jid..'/'..data.actor then
+                module:log('error', 'Bad actor in demote request %s', stanza);
+                event.origin.send(st.error_reply(stanza, "cancel", "bad-request"));
+                return true;
+            end
+
+            -- when demoting we want to send message to the demoted participant and to moderators
+            local target_jid = room.jid..'/'..data.id;
+            stanza.attr.type = 'chat'; -- it is safe as we are not using this stanza instance anymore
+            stanza.attr.from = module.host;
+
+            for _, room_occupant in room:each_occupant() do
+                -- do not send it to jicofo or back to the sender
+                if room_occupant.jid ~= occupant.jid and not is_admin(room_occupant.bare_jid) then
+                    if room_occupant.role == 'moderator'
+                        or room_occupant.nick == target_jid then
+                        stanza.attr.to = room_occupant.jid;
+                        room:route_stanza(stanza);
+                    end
+                end
+            end
+
         else
-            -- we are in the case with admit all, we need to read data.ids
-            for i in pairs(data.ids) do
+            if data.id then
                 process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+            else
+                -- we are in the case with admit all, we need to read data.ids
+                for i in pairs(data.ids) do
+                    process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+                end
             end
         end
 

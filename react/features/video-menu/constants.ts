@@ -20,6 +20,7 @@ export const PARTICIPANT_MENU_BUTTONS = {
     ALLOW_VIDEO: 'allow-video',
     ASK_UNMUTE: 'ask-unmute',
     CONN_STATUS: 'conn-status',
+    DEMOTE: 'demote',
     FLIP_LOCAL_VIDEO: 'flip-local-video',
     GRANT_MODERATOR: 'grant-moderator',
     HIDE_SELF_VIEW: 'hide-self-view',
