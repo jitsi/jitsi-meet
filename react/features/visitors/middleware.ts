@@ -137,7 +137,7 @@ function _handlePromotionNotification(
             waitingParticipants: requests.length
         });
         icon = NOTIFICATION_ICON.PARTICIPANTS;
-        customActionNameKey = [ 'notify.viewLobby' ];
+        customActionNameKey = [ 'notify.viewVisitors' ];
         customActionType = [ BUTTON_TYPES.PRIMARY ];
         customActionHandler = [ () => batch(() => {
             dispatch(hideNotification(VISITORS_PROMOTION_NOTIFICATION_ID));
