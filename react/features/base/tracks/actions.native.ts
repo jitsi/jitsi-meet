@@ -4,9 +4,9 @@ import { IReduxState, IStore } from '../../app/types';
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import JitsiMeetJS from '../lib-jitsi-meet';
 import { PIP_WHILE_SCREEN_SHARING_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
+import JitsiMeetJS from '../lib-jitsi-meet';
 import {
     setScreenshareMuted,
     setVideoMuted
