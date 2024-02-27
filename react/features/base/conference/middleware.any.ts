@@ -400,7 +400,7 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
                 descriptionKey: errors ? 'dialog.tokenAuthFailedWithReasons' : 'dialog.tokenAuthFailed',
                 descriptionArguments: { reason: errors },
                 titleKey: 'dialog.tokenAuthFailedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
     }
 
