@@ -3,8 +3,12 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
-import { isTranscribing } from '../../transcribing/functions';
-import { getActiveSession, getSessionStatusToShow, isRecordingRunning } from '../functions';
+import { isRecorderTranscriptionsRunning } from '../../transcribing/functions';
+import {
+    getActiveSession,
+    getSessionStatusToShow,
+    isRecordingRunning
+} from '../functions';
 
 
 interface IProps extends WithTranslation {
@@ -81,11 +85,11 @@ export default class AbstractRecordingLabel extends Component<IProps> {
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
     const isLiveStreamingLabel = mode === JitsiRecordingConstants.mode.STREAM;
-    const _isTranscribing = isTranscribing(state);
+    const _isTranscribing = isRecorderTranscriptionsRunning(state);
     const isLivestreamingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
     const _isVisible = isLiveStreamingLabel
         ? isLivestreamingRunning // this is the livestreaming label
-        : isRecordingRunning(state) || (_isTranscribing && !isLivestreamingRunning); // this is the recording label
+        : isRecordingRunning(state) || _isTranscribing; // this is the recording label
 
     return {
         _isVisible,

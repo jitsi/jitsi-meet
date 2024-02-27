@@ -19,6 +19,7 @@ import {
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 import { setRequestingSubtitles } from '../subtitles/actions.any';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -36,7 +37,7 @@ import {
     getRecordButtonProps,
     getRecordingLink,
     getResourceId,
-    isRecordingOrTranscribingRunning,
+    isRecordingRunning,
     isRecordingSharingEnabled,
     isSavingRecordingOnDropbox,
     sendMeetingHighlight,
@@ -408,7 +409,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
         const { recordings } = state['features/base/config'];
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
-        const isAlreadyRecording = isRecordingOrTranscribingRunning(state);
+        const isAlreadyRecording = isRecordingRunning(state) || isRecorderTranscriptionsRunning(state);
         const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
 
         if (!suggestRecording

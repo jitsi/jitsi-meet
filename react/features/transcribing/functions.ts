@@ -57,6 +57,19 @@ export function isTranscribing(state: IReduxState) {
 }
 
 /**
+ * Returns true if there is a recorder transcription session running.
+ * NOTE: If only the subtitles are running this function will return false.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecorderTranscriptionsRunning(state: IReduxState) {
+    const { metadata } = state['features/base/conference'];
+
+    return isTranscribing(state) && Boolean(metadata?.recording?.isTranscribingEnabled);
+}
+
+/**
  * Checks whether the participant can start the transcription.
  *
  * @param {IReduxState} state - The redux state.
