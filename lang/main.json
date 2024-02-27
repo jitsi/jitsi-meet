@@ -305,6 +305,8 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
+        "demoteParticipantDialog": "Are you sure you want to move this participant to visitor?",
+        "demoteParticipantTitle": "Move to visitor",
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
         "done": "Done",
@@ -1420,6 +1422,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
+        "demote": "Move to visitor",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "domuteVideo": "Disable camera",
@@ -1474,6 +1477,7 @@
         "chatIndicator": "(visitor)",
         "labelTooltip": "Number of visitors: {{count}}",
         "notification": {
+            "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
             "description": "To participate raise your hand",
             "title": "You are a visitor in the meeting"
         }

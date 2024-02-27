@@ -7,8 +7,11 @@ import {
     CONFERENCE_JOIN_IN_PROGRESS,
     ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
+import { connect, setPreferVisitor } from '../base/connection/actions';
+import { disconnect } from '../base/connection/actions.any';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
+import { getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { hideNotification, showNotification } from '../notifications/actions';
@@ -17,6 +20,7 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     VISITORS_PROMOTION_NOTIFICATION_ID
 } from '../notifications/constants';
+import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 
 import {
@@ -24,9 +28,11 @@ import {
     clearPromotionRequest,
     denyRequest,
     promotionRequestReceived,
+    setVisitorDemoteActor,
     updateVisitorsCount
 } from './actions';
 import { getPromotionRequests } from './functions';
+import logger from './logger';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
@@ -46,28 +52,62 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         if (getState()['features/visitors'].iAmVisitor) {
-            dispatch(showNotification({
+            const { demoteActorDisplayName } = getState()['features/visitors'];
+
+            dispatch(setVisitorDemoteActor(undefined));
+
+            const notificationParams: INotificationProps = {
                 titleKey: 'visitors.notification.title',
                 descriptionKey: 'visitors.notification.description'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            };
+
+            if (demoteActorDisplayName) {
+                notificationParams.descriptionKey = 'visitors.notification.demoteDescription';
+                notificationParams.descriptionArguments = {
+                    actor: demoteActorDisplayName
+                };
+            }
+
+            // check for demote actor and update notification
+            dispatch(showNotification(notificationParams, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
 
         conference.on(JitsiConferenceEvents.VISITORS_MESSAGE, (
-                msg: { from: string; nick: string; on: boolean; }) => {
-            const request = {
-                from: msg.from,
-                nick: msg.nick
-            };
+                msg: { action: string; actor: string; from: string; nick: string; on: boolean; }) => {
 
-            if (msg.on) {
-                dispatch(promotionRequestReceived(request));
+            if (msg.action === 'demote-request') {
+                // we need it before the disconnect
+                const participantById = getParticipantById(getState, msg.actor);
+
+                // handle demote
+                dispatch(disconnect(true))
+                    .then(() => dispatch(setPreferVisitor(true)))
+                    .then(() => {
+                        // we need to set the name so we can use it later in the notification
+                        if (participantById) {
+                            dispatch(setVisitorDemoteActor(participantById.name));
+                        }
+
+                        return dispatch(connect());
+                    });
+            } else if (msg.action === 'promotion-request') {
+                const request = {
+                    from: msg.from,
+                    nick: msg.nick
+                };
+
+                if (msg.on) {
+                    dispatch(promotionRequestReceived(request));
+                } else {
+                    dispatch(clearPromotionRequest(request));
+                }
+                _handlePromotionNotification({
+                    dispatch,
+                    getState
+                });
             } else {
-                dispatch(clearPromotionRequest(request));
+                logger.error('Unknown action:', msg.action);
             }
-            _handlePromotionNotification({
-                dispatch,
-                getState
-            });
         });
 
         conference.on(JitsiConferenceEvents.VISITORS_REJECTION, () => {

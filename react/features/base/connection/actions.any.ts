@@ -16,7 +16,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    SET_PREFER_VISITOR
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
@@ -177,6 +178,22 @@ export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
         locationURL
+    };
+}
+
+/**
+ * To change prefer visitor in the store. Used later to decide what to request from jicofo on connection.
+ *
+ * @param {boolean} preferVisitor - The value to set.
+ * @returns {{
+ *     type: SET_PREFER_VISITOR,
+ *     preferVisitor: boolean
+ * }}
+ */
+export function setPreferVisitor(preferVisitor: boolean) {
+    return {
+        type: SET_PREFER_VISITOR,
+        preferVisitor
     };
 }
 
