@@ -53,6 +53,16 @@ export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
 export const SET_LOCATION_URL = 'SET_LOCATION_URL';
 
 /**
+ * The type of (redux) action which sets the preferVisitor in store.
+ *
+ * {
+ *     type: SET_PREFER_VISITOR,
+ *     preferVisitor: ?boolean
+ * }
+ */
+export const SET_PREFER_VISITOR = 'SET_PREFER_VISITOR';
+
+/**
  * The type of (redux) action which tells whether connection info should be displayed
  * on context menu.
  *

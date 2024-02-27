@@ -31,6 +31,7 @@ import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 import AskToUnmuteButton from './AskToUnmuteButton';
 import ConnectionStatusButton from './ConnectionStatusButton';
 import CustomOptionButton from './CustomOptionButton';
+import DemoteToVisitorButton from './DemoteToVisitorButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
@@ -141,7 +142,7 @@ const ParticipantContextMenu = ({
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
-    const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
+    const { disableDemote, disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
@@ -243,6 +244,10 @@ const ParticipantContextMenu = ({
 
         if (!disableGrantModerator && !isBreakoutRoom) {
             buttons2.push(<GrantModeratorButton { ...getButtonProps(BUTTONS.GRANT_MODERATOR) } />);
+        }
+
+        if (!disableDemote && _isModerator) {
+            buttons2.push(<DemoteToVisitorButton { ...getButtonProps(BUTTONS.DEMOTE) } />);
         }
 
         if (!disableKick) {

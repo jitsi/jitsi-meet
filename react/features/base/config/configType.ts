@@ -500,6 +500,7 @@ export interface IConfig {
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {
+        disableDemote?: boolean;
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;

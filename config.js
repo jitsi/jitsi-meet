@@ -1300,6 +1300,8 @@ var config = {
     // remoteVideoMenu: {
     //     // Whether the remote video context menu to be rendered or not.
     //     disabled: true,
+    //     // If set to true the 'Switch to visitor' button will be disabled.
+    //     disableDemote: true,
     //     // If set to true the 'Kick out' button will be disabled.
     //     disableKick: true,
     //     // If set to true the 'Grant moderator' button will be disabled.
