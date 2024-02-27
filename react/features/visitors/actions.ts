@@ -19,13 +19,11 @@ export function admitMultiple(requests: Array<IPromotionRequest>): Function {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        requests.forEach(r => {
-            conference?.sendMessage({
-                type: 'visitors',
-                action: 'promotion-response',
-                approved: true,
-                id: r.from
-            });
+        conference?.sendMessage({
+            type: 'visitors',
+            action: 'promotion-response',
+            approved: true,
+            ids: requests.map(r => r.from)
         });
     };
 }
