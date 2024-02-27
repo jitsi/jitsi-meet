@@ -140,9 +140,8 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
             }
         }
     }
-    if ((!Array.isArray(recordingSessions) || recordingSessions.length === 0)
-        && mode === JitsiRecordingConstants.mode.FILE
-        && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+    if (!status && mode === JitsiRecordingConstants.mode.FILE
+            && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
 
@@ -349,7 +348,7 @@ export async function sendMeetingHighlight(state: IReduxState) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-function isRemoteParticipantRecordingLocally(state: IReduxState) {
+export function isRemoteParticipantRecordingLocally(state: IReduxState) {
     const participants = getRemoteParticipants(state);
 
     // eslint-disable-next-line prefer-const
