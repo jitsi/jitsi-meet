@@ -145,7 +145,7 @@ export function setColorAlpha(color: string, opacity: number) {
 /**
  * Gets the hexa rgb values for a shorthand css color.
  *
- * @param {string} color -
+ * @param {string} color - The shorthand css color.
  * @returns {Array<number>} - Array containing parsed r, g, b values of the color.
  */
 function parseShorthandColor(color: string) {

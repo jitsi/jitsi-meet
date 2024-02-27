@@ -62,7 +62,7 @@ interface IProps {
  * Implements the conference Toolbox on React Native.
  *
  * @param {Object} props - The props of the component.
- * @returns {React$Element}.
+ * @returns {React$Element}
  */
 function Toolbox(props: IProps) {
     const { _endConferenceSupported, _shouldDisplayReactionsButtons, _styles, _visible, _iAmVisitor, _width } = props;

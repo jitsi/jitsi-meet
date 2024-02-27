@@ -14,7 +14,7 @@ export default class AmplitudeHandler extends AbstractHandler {
     /**
      * Creates new instance of the Amplitude analytics handler.
      *
-     * @param {Object} options -
+     * @param {Object} options - The amplitude options.
      * @param {string} options.amplitudeAPPKey - The Amplitude app key required by the Amplitude API.
      * @param {boolean} options.amplitudeIncludeUTM - Whether to include UTM parameters
      * in the Amplitude events.
