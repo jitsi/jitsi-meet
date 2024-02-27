@@ -22,7 +22,7 @@ import {
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isTranscribing } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
@@ -226,7 +226,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
 
                     let soundID;
 
-                    if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing(state)) {
+                    if (mode === JitsiRecordingConstants.mode.FILE && !isRecorderTranscriptionsRunning(state)) {
                         soundID = RECORDING_ON_SOUND_ID;
                     } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                         soundID = LIVE_STREAMING_ON_SOUND_ID;
@@ -255,7 +255,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 }
                 sendAnalytics(createRecordingEvent('stop', mode, duration));
 
-                if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing(state)) {
+                if (mode === JitsiRecordingConstants.mode.FILE && !isRecorderTranscriptionsRunning(state)) {
                     soundOff = RECORDING_OFF_SOUND_ID;
                     soundOn = RECORDING_ON_SOUND_ID;
                 } else if (mode === JitsiRecordingConstants.mode.STREAM) {
