@@ -15,6 +15,7 @@ local process_host_module = util.process_host_module;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'util.json';
+local inspect = require 'inspect';
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
