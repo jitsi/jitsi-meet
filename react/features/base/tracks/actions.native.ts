@@ -4,6 +4,8 @@ import { IReduxState, IStore } from '../../app/types';
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { PIP_WHILE_SCREEN_SHARING_ENABLED } from '../flags/constants';
+import { getFeatureFlag } from '../flags/functions';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import {
     setScreenshareMuted,
@@ -56,7 +58,11 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
  * @returns {void}
  */
 async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxState) {
-    setPictureInPictureEnabled(false);
+    const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
+
+    if (!pipWhileScreenSharingEnabled) {
+        setPictureInPictureEnabled(false);
+    }
 
     try {
         const tracks: any[] = await JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] });
