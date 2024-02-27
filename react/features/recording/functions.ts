@@ -189,10 +189,6 @@ export function isRecordingRunning(state: IReduxState) {
  * @returns {boolean}
  */
 export function canStopRecording(state: IReduxState) {
-    if (!isRecordingRunning(state) && !isRecorderTranscriptionsRunning(state)) {
-        return false;
-    }
-
     if (LocalRecordingManager.isRecordingLocally()) {
         return true;
     }
