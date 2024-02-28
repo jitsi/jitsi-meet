@@ -21,11 +21,11 @@ export type LiveStreaming = {
 };
 
 export type LiveStreamingProps = {
-    dataPrivacyURL: string;
+    dataPrivacyURL?: string;
     enabled: boolean;
-    helpURL: string;
+    helpURL?: string;
     streamLinkRegexp: RegExp;
-    termsURL: string;
+    termsURL?: string;
 };
 
 /**
