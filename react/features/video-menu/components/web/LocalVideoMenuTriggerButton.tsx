@@ -150,6 +150,7 @@ const LocalVideoMenuTriggerButton = ({
     const { classes } = useStyles();
     const { t } = useTranslation();
     const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
+    const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
 
     const notifyClick = useCallback(
         (buttonKey: string) => {
@@ -214,7 +215,7 @@ const LocalVideoMenuTriggerButton = ({
                             participantID = { _localParticipantId } />
                     }
                     {
-                        _showDemote && <DemoteToVisitorButton
+                        _showDemote && visitorsSupported && <DemoteToVisitorButton
                             className = { _overflowDrawer ? classes.flipText : '' }
                             noIcon = { true }
                             // eslint-disable-next-line react/jsx-no-bind

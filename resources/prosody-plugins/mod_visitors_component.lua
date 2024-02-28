@@ -31,6 +31,10 @@ local ignore_list = module:context(muc_domain_base):get_option_set('visitors_ign
 
 local auto_allow_promotion = module:get_option_boolean('auto_allow_visitor_promotion', false);
 
+-- whether to always advertise that visitors feature is enabled for rooms
+-- can be set to off and being controlled by another module, turning it on and off for rooms
+local always_visitors_enabled = module:get_option_boolean('always_visitors_enabled', true);
+
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end
@@ -434,6 +438,22 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
 
         return true; -- halt processing, but return true that we handled it
     end);
+
+    if always_visitors_enabled then
+        local visitorsEnabledField = {
+            name = "muc#roominfo_visitorsEnabled";
+            type = "boolean";
+            label = "Whether visitors are enabled.";
+            value = 1;
+        };
+        -- Append "visitors enabled" to the MUC config form.
+        host_module:context(host):hook("muc-disco#info", function(event)
+            table.insert(event.form, visitorsEnabledField);
+        end);
+        host_module:context(host):hook("muc-config-form", function(event)
+            table.insert(event.form, visitorsEnabledField);
+        end);
+    end
 end);
 
 prosody.events.add_handler('pre-jitsi-authentication', function(session)
