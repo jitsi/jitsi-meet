@@ -12,6 +12,7 @@ import {
     getParticipantDisplayName
 } from '../../../base/participants/functions';
 import { ILocalParticipant } from '../../../base/participants/types';
+import DemoteToVisitorButton from '../../../toolbox/components/native/DemoteToVisitorButton';
 import ToggleSelfViewButton from '../../../toolbox/components/native/ToggleSelfViewButton';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
@@ -78,6 +79,7 @@ class LocalVideoMenu extends PureComponent<IProps> {
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
+                <DemoteToVisitorButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
             </BottomSheet>
         );

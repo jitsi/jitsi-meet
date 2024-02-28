@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
 import { translate } from '../../../base/i18n/functions';
-import Dialog from '../../../base/ui/components/web/Dialog';
 import AbstractDemoteToVisitorDialog from '../AbstractDemoteToVisitorDialog';
 
 /**
- * Dialog to confirm a remote participant demote action.
+ * Dialog to confirm a remote participant demote to visitor action.
  */
 class DemoteToVisitorDialog extends AbstractDemoteToVisitorDialog {
     /**
@@ -17,14 +17,13 @@ class DemoteToVisitorDialog extends AbstractDemoteToVisitorDialog {
      */
     render() {
         return (
-            <Dialog
-                ok = {{ translationKey: 'dialog.demoteParticipantButton' }}
+            <ConfirmDialog
+                cancelLabel = 'dialog.Cancel'
+                confirmLabel = 'dialog.confirm'
+                descriptionKey = 'dialog.demoteParticipantDialog'
+                isConfirmDestructive = { true }
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.demoteParticipantTitle'>
-                <div>
-                    { this.props.t('dialog.demoteParticipantDialog') }
-                </div>
-            </Dialog>
+                title = 'dialog.demoteParticipantTitle' />
         );
     }
 }
