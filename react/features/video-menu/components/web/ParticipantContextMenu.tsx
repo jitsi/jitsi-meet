@@ -142,6 +142,7 @@ const ParticipantContextMenu = ({
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
+    const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
     const { disableDemote, disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
@@ -246,7 +247,7 @@ const ParticipantContextMenu = ({
             buttons2.push(<GrantModeratorButton { ...getButtonProps(BUTTONS.GRANT_MODERATOR) } />);
         }
 
-        if (!disableDemote && _isModerator) {
+        if (!disableDemote && visitorsSupported && _isModerator) {
             buttons2.push(<DemoteToVisitorButton { ...getButtonProps(BUTTONS.DEMOTE) } />);
         }
 

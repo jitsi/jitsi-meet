@@ -29,6 +29,7 @@ import {
     denyRequest,
     promotionRequestReceived,
     setVisitorDemoteActor,
+    setVisitorsSupported,
     updateVisitorsCount
 } from './actions';
 import { getPromotionRequests } from './functions';
@@ -70,6 +71,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             // check for demote actor and update notification
             dispatch(showNotification(notificationParams, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        } else {
+            dispatch(setVisitorsSupported(conference.isVisitorsSupported()));
+            conference.on(JitsiConferenceEvents.VISITORS_SUPPORTED_CHANGED, (value: boolean) => {
+                dispatch(setVisitorsSupported(value));
+            });
         }
 
         conference.on(JitsiConferenceEvents.VISITORS_MESSAGE, (
