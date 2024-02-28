@@ -11,6 +11,7 @@ import {
 } from '../../react/features/base/conference/actions';
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util/helpers';
+import { sanitizeUrl } from '../../react/features/base/util/uri';
 import { setDocumentUrl } from '../../react/features/etherpad/actions';
 import { setFilmstripVisible } from '../../react/features/filmstrip/actions.any';
 import {
@@ -135,14 +136,16 @@ UI.unbindEvents = () => {
  * @param {string} name etherpad id
  */
 UI.initEtherpad = name => {
-    if (etherpadManager || !config.etherpad_base || !name) {
+    const etherpadBaseUrl = sanitizeUrl(config.etherpad_base);
+
+    if (etherpadManager || !etherpadBaseUrl || !name) {
         return;
     }
     logger.log('Etherpad is enabled');
 
     etherpadManager = new EtherpadManager(eventEmitter);
 
-    const url = new URL(name, config.etherpad_base);
+    const url = new URL(name, etherpadBaseUrl);
 
     APP.store.dispatch(setDocumentUrl(url.toString()));
 

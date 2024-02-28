@@ -17,6 +17,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
+    "@braintree/sanitize-url": "7.0.0",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@giphy/js-fetch-api": "4.7.1",

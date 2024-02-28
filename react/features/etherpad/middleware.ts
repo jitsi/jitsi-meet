@@ -4,6 +4,7 @@ import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { sanitizeUrl } from '../base/util/uri';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 import { setDocumentUrl } from './actions';
@@ -27,9 +28,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             ({ value }: { value: string; }) => {
                 let url;
                 const { etherpad_base: etherpadBase } = getState()['features/base/config'];
+                const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
-                if (etherpadBase) {
-                    url = new URL(value, etherpadBase).toString();
+                if (etherpadBaseUrl) {
+                    url = new URL(value, etherpadBaseUrl.toString()).toString();
                 }
 
                 dispatch(setDocumentUrl(url));
