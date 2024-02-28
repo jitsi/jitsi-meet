@@ -7,10 +7,8 @@ import {
     IDeeplinkingConfig,
     IDeeplinkingDesktopConfig,
     IDeeplinkingMobileConfig,
-    NotifyClickButton,
-    ToolbarButton
+    NotifyClickButton
 } from './configType';
-import { TOOLBAR_BUTTONS } from './constants';
 
 export * from './functions.any';
 
@@ -35,25 +33,6 @@ export function getReplaceParticipant(state: IReduxState): string | undefined {
 }
 
 /**
- * Returns the list of enabled toolbar buttons.
- *
- * @param {Object} state - The redux state.
- * @returns {Array<string>} - The list of enabled toolbar buttons.
- */
-export function getToolbarButtons(state: IReduxState): Array<string> {
-    const { toolbarButtons, customToolbarButtons } = state['features/base/config'];
-    const customButtons = customToolbarButtons?.map(({ id }) => id);
-
-    const buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
-
-    if (customButtons) {
-        buttons.push(...customButtons as ToolbarButton[]);
-    }
-
-    return buttons;
-}
-
-/**
  * Returns the configuration value of web-hid feature.
  *
  * @param {Object} state - The state of the app.
@@ -71,7 +50,7 @@ export function getWebHIDFeatureConfig(state: IReduxState): boolean {
  * @returns {boolean} - True if the button is enabled and false otherwise.
  */
 export function isToolbarButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
-    const buttons = Array.isArray(state) ? state : getToolbarButtons(state);
+    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
 
     return buttons.includes(buttonName);
 }

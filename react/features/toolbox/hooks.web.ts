@@ -4,7 +4,7 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
-import { getToolbarButtons, isToolbarButtonEnabled } from '../base/config/functions.web';
+import { isToolbarButtonEnabled } from '../base/config/functions.web';
 import { toggleDialog } from '../base/dialog/actions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
@@ -41,7 +41,8 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
-    const _toolbarButtons = useSelector((state: IReduxState) => toolbarButtons || getToolbarButtons(state));
+    const _toolbarButtons = useSelector(
+        (state: IReduxState) => toolbarButtons || state['features/toolbox'].toolbarButtons);
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const desktopSharingButtonDisabled = useSelector(isDesktopShareButtonDisabled);
     const desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();

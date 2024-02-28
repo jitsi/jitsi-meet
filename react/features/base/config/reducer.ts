@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
+import { TOOLBAR_BUTTONS } from '../../toolbox/constants';
+import { ToolbarButton } from '../../toolbox/types';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
@@ -16,10 +18,8 @@ import {
     IDeeplinkingConfig,
     IDeeplinkingDesktopConfig,
     IDeeplinkingMobileConfig,
-    IMobileDynamicLink,
-    ToolbarButton
+    IMobileDynamicLink
 } from './configType';
-import { TOOLBAR_BUTTONS } from './constants';
 import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
 /**

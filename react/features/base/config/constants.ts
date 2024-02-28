@@ -1,5 +1,3 @@
-import { ToolbarButton } from './configType';
-
 /**
  * The prefix of the {@code localStorage} key into which {@link storeConfig}
  * stores and from which {@link restoreConfig} restores.
@@ -8,50 +6,6 @@ import { ToolbarButton } from './configType';
  * @type string
  */
 export const _CONFIG_STORE_PREFIX = 'config.js';
-
-/**
- * The list of all possible UI buttons.
- *
- * @protected
- * @type Array<string>
- */
-export const TOOLBAR_BUTTONS: ToolbarButton[] = [
-    'camera',
-    'chat',
-    'closedcaptions',
-    'desktop',
-    'download',
-    'embedmeeting',
-    'etherpad',
-    'feedback',
-    'filmstrip',
-    'fullscreen',
-    'hangup',
-    'help',
-    'highlight',
-    'invite',
-    'linktosalesforce',
-    'livestreaming',
-    'microphone',
-    'mute-everyone',
-    'mute-video-everyone',
-    'participants-pane',
-    'profile',
-    'raisehand',
-    'recording',
-    'security',
-    'select-background',
-    'settings',
-    'shareaudio',
-    'noisesuppression',
-    'sharedvideo',
-    'shortcuts',
-    'stats',
-    'tileview',
-    'toggle-camera',
-    'videoquality',
-    'whiteboard'
-];
 
 /**
  * The toolbar buttons to show on premeeting screens.

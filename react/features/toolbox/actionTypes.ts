@@ -54,6 +54,17 @@ export const SET_OVERFLOW_DRAWER = 'SET_OVERFLOW_DRAWER';
  */
 export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
 
+
+/**
+ * The type of the action which sets enabled toolbar buttons.
+ *
+ * {
+ *     type: SET_TOOLBAR_BUTTONS,
+ *     toolbarButtons: Array<string>
+ * }
+ */
+export const SET_TOOLBAR_BUTTONS = 'SET_TOOLBAR_BUTTONS';
+
 /**
  * The type of the action which sets the indicator which determines whether a
  * fToolbar in the Toolbox is hovered.

@@ -9,7 +9,6 @@ import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
 import {
     getButtonNotifyMode,
     getButtonsWithNotifyClick,
-    getToolbarButtons,
     isToolbarButtonEnabled
 } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -502,7 +501,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         overflowDrawer
     } = state['features/toolbox'];
     const { clientWidth } = state['features/base/responsive-ui'];
-    let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
+    let toolbarButtons = ownProps.toolbarButtons || state['features/toolbox'].toolbarButtons;
 
     if (iAmVisitor(state)) {
         toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
