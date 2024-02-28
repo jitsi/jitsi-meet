@@ -1,5 +1,4 @@
 import { IReduxState } from '../app/types';
-import { getToolbarButtons } from '../base/config/functions.web';
 import { hasAvailableDevices } from '../base/devices/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
@@ -65,9 +64,9 @@ export function getToolboxHeight() {
  * is enabled, false - otherwise.
  */
 export function isButtonEnabled(name: string, state: IReduxState) {
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
 
-    return toolbarButtons.indexOf(name) !== -1;
+    return toolbarButtons?.indexOf(name) !== -1;
 }
 
 /**

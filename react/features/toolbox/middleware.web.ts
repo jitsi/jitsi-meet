@@ -1,12 +1,16 @@
 import { AnyAction } from 'redux';
 
+import { IReduxState } from '../app/types';
+import { OVERWRITE_CONFIG, SET_CONFIG, UPDATE_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_FULL_SCREEN,
+    SET_TOOLBAR_BUTTONS,
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
+import { TOOLBAR_BUTTONS } from './constants';
 
 import './subscriber.web';
 
@@ -24,6 +28,19 @@ MiddlewareRegistry.register(store => next => action => {
 
         clearTimeout(timeoutID ?? undefined);
         break;
+    }
+    case UPDATE_CONFIG:
+    case OVERWRITE_CONFIG:
+    case SET_CONFIG: {
+        const result = next(action);
+        const toolbarButtons = _getToolbarButtons(store.getState());
+
+        store.dispatch({
+            type: SET_TOOLBAR_BUTTONS,
+            toolbarButtons
+        });
+
+        return result;
     }
 
     case SET_FULL_SCREEN:
@@ -84,4 +101,23 @@ function _setFullScreen(next: Function, action: AnyAction) {
     }
 
     return result;
+}
+
+/**
+ * Returns the list of enabled toolbar buttons.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array<string>} - The list of enabled toolbar buttons.
+ */
+function _getToolbarButtons(state: IReduxState): Array<string> {
+    const { toolbarButtons, customToolbarButtons } = state['features/base/config'];
+    const customButtons = customToolbarButtons?.map(({ id }) => id);
+
+    const buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+
+    if (customButtons) {
+        return [ ...buttons, ...customButtons ];
+    }
+
+    return buttons;
 }

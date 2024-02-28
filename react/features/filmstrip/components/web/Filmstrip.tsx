@@ -9,7 +9,6 @@ import { withStyles } from 'tss-react/mui';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -884,11 +883,11 @@ class Filmstrip extends PureComponent <IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
     const { iAmRecorder } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
-    const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
+    const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);

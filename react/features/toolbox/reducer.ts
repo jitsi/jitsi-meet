@@ -7,6 +7,7 @@ import {
     SET_HANGUP_MENU_VISIBLE,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
+    SET_TOOLBAR_BUTTONS,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_SHIFT_UP,
@@ -69,6 +70,13 @@ const INITIAL_STATE = {
      */
     timeoutID: null,
 
+    /**
+     * The list of enabled toolbar buttons.
+     *
+     * @type {Array<string>}
+     */
+    toolbarButtons: [],
+
 
     /**
      * The indicator that determines whether the Toolbox is visible.
@@ -87,6 +95,7 @@ export interface IToolboxState {
     overflowMenuVisible: boolean;
     shiftUp: boolean;
     timeoutID?: number | null;
+    toolbarButtons: Array<string>;
     visible: boolean;
 }
 
@@ -122,6 +131,12 @@ ReducerRegistry.register<IToolboxState>(
             return {
                 ...state,
                 overflowMenuVisible: action.visible
+            };
+
+        case SET_TOOLBAR_BUTTONS:
+            return {
+                ...state,
+                toolbarButtons: action.toolbarButtons
             };
 
         case SET_TOOLBAR_HOVERED:

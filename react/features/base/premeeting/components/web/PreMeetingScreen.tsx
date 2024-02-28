@@ -9,7 +9,7 @@ import { isRoomNameEnabled } from '../../../../prejoin/functions';
 import Toolbox from '../../../../toolbox/components/web/Toolbox';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
-import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
+import { isToolbarButtonEnabled } from '../../../config/functions.web';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
@@ -229,7 +229,7 @@ const PreMeetingScreen = ({
  */
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state['features/base/config'];
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
         : PREMEETING_BUTTONS).filter((b: any) => !(hiddenPremeetingButtons || []).includes(b));

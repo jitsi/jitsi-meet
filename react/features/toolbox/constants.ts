@@ -1,3 +1,5 @@
+import { ToolbarButton } from './types';
+
 /**
  * Thresholds for displaying toolbox buttons.
  */
@@ -50,3 +52,49 @@ export const ZINDEX_DIALOG_PORTAL = 302;
  * Color for spinner displayed in the toolbar.
  */
 export const SPINNER_COLOR = '#929292';
+
+
+/**
+ * The list of all possible UI buttons.
+ *
+ * @protected
+ * @type Array<string>
+ */
+export const TOOLBAR_BUTTONS: ToolbarButton[] = [
+    'camera',
+    'chat',
+    'closedcaptions',
+    'desktop',
+    'download',
+    'embedmeeting',
+    'etherpad',
+    'feedback',
+    'filmstrip',
+    'fullscreen',
+    'hangup',
+    'help',
+    'highlight',
+    'invite',
+    'linktosalesforce',
+    'livestreaming',
+    'microphone',
+    'mute-everyone',
+    'mute-video-everyone',
+    'participants-pane',
+    'profile',
+    'raisehand',
+    'recording',
+    'security',
+    'select-background',
+    'settings',
+    'shareaudio',
+    'noisesuppression',
+    'sharedvideo',
+    'shortcuts',
+    'stats',
+    'tileview',
+    'toggle-camera',
+    'videoquality',
+    'whiteboard'
+];
+
