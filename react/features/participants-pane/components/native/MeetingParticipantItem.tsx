@@ -15,7 +15,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks/functions.native';
-import { showConnectionStatus, showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
+import { showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
 import type { MediaState } from '../../constants';
 import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
 
@@ -117,11 +117,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantID));
         } else if (!_fakeParticipant) {
-            if (_local) {
-                dispatch(showConnectionStatus(_participantID));
-            } else {
-                dispatch(showContextMenuDetails(_participantID));
-            }
+            dispatch(showContextMenuDetails(_participantID, _local));
         } // else no-op
     }
 
