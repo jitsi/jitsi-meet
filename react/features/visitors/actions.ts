@@ -8,6 +8,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import {
     CLEAR_VISITOR_PROMOTION_REQUEST,
     I_AM_VISITOR_MODE,
+    SET_VISITORS_SUPPORTED,
     SET_VISITOR_DEMOTE_ACTOR,
     UPDATE_VISITORS_COUNT,
     VISITOR_PROMOTION_REQUEST
@@ -161,6 +162,21 @@ export function setVisitorDemoteActor(displayName: string | undefined) {
     return {
         type: SET_VISITOR_DEMOTE_ACTOR,
         displayName
+    };
+}
+
+/**
+ * Visitors count has been updated.
+ *
+ * @param {boolean} value - The new value whether visitors are supported.
+ * @returns {{
+ *     type: SET_VISITORS_SUPPORTED,
+ * }}
+ */
+export function setVisitorsSupported(value: boolean) {
+    return {
+        type: SET_VISITORS_SUPPORTED,
+        value
     };
 }
 
