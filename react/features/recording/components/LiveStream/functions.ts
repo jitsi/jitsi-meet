@@ -1,4 +1,5 @@
 import { IReduxState } from '../../../app/types';
+import { sanitizeUrl } from '../../../base/util/uri';
 
 import {
     FOUR_GROUPS_DASH_SEPARATED,
@@ -15,15 +16,13 @@ import {
  */
 export function getLiveStreaming(state: IReduxState) {
     const { liveStreaming = {} } = state['features/base/config'];
-
-    const regexp = liveStreaming.validatorRegExpString
-        && new RegExp(liveStreaming.validatorRegExpString);
+    const regexp = liveStreaming.validatorRegExpString && new RegExp(liveStreaming.validatorRegExpString);
 
     return {
         enabled: Boolean(liveStreaming.enabled),
-        helpURL: liveStreaming.helpLink || JITSI_LIVE_STREAMING_HELP_LINK,
-        termsURL: liveStreaming.termsLink || YOUTUBE_TERMS_URL,
-        dataPrivacyURL: liveStreaming.dataPrivacyLink || GOOGLE_PRIVACY_POLICY,
+        helpURL: sanitizeUrl(liveStreaming.helpLink || JITSI_LIVE_STREAMING_HELP_LINK)?.toString(),
+        termsURL: sanitizeUrl(liveStreaming.termsLink || YOUTUBE_TERMS_URL)?.toString(),
+        dataPrivacyURL: sanitizeUrl(liveStreaming.dataPrivacyLink || GOOGLE_PRIVACY_POLICY)?.toString(),
         streamLinkRegexp: regexp || FOUR_GROUPS_DASH_SEPARATED
     };
 }

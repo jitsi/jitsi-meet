@@ -107,7 +107,11 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {void}
      */
     _onOpenGooglePrivacyPolicy() {
-        Linking.openURL(this.props._liveStreaming.dataPrivacyURL);
+        const url = this.props._liveStreaming.dataPrivacyURL;
+
+        if (typeof url === 'string') {
+            Linking.openURL(url);
+        }
     }
 
     /**
@@ -118,10 +122,10 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {void}
      */
     _onOpenHelp() {
-        const helpURL = this.props._liveStreaming.helpURL;
+        const url = this.props._liveStreaming.helpURL;
 
-        if (typeof helpURL === 'string') {
-            Linking.openURL(helpURL);
+        if (typeof url === 'string') {
+            Linking.openURL(url);
         }
     }
 
@@ -132,7 +136,11 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @returns {void}
      */
     _onOpenYoutubeTerms() {
-        Linking.openURL(this.props._liveStreaming.termsURL);
+        const url = this.props._liveStreaming.termsURL;
+
+        if (typeof url === 'string') {
+            Linking.openURL(url);
+        }
     }
 }
 
