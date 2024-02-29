@@ -96,7 +96,7 @@ local function limit_bytes_in(bytes, session)
 	if sess_throttle then
 		-- if the limit timeout has elapsed let's stop the throttle
 		if not sess_throttle.start or gettime() - sess_throttle.start > config.timeout then
-			module:log("info", "Stop throttling session=%s, ip=%s.", session, session.ip);
+			module:log("info", "Stop throttling session=%s, ip=%s.", session.id, session.ip);
 			session.jitsi_throttle = nil;
 			return bytes;
 		end
@@ -123,12 +123,25 @@ local function limit_bytes_in(bytes, session)
 end
 
 -- Throttles reading from the connection of a specific session.
-local function throttle_session(session, rate)
-	if not session.jitsi_throttle then
+local function throttle_session(session, rate, timeout)
+    if not session.jitsi_throttle then
         if (session.conn and session.conn.setlimit) then
-            -- TODO: we don't have a mechanism to unthrottle a session in this case.
-		    module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s.", rate, session.id, session.ip);
+            module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s.", rate, session.id, session.ip);
             session.conn:setlimit(rate);
+            if timeout then
+                if session.jitsi_throttle_timer then
+                    -- if there was a timer stop it as we will schedule a new one
+                    session.jitsi_throttle_timer:stop();
+                    session.jitsi_throttle_timer = nil;
+                end
+                session.jitsi_throttle_timer = module:add_timer(timeout, function()
+                    if session.conn then
+                        module:log("info", "Stop throttling session=%s, ip=%s.", session.id, session.ip);
+                        session.conn:setlimit(0);
+                    end
+                    session.jitsi_throttle_timer = nil;
+                end);
+            end
         else
 		    module:log("info", "Enabling throttle (%s bytes/s) via filter, session=%s, ip=%s.", rate, session.id, session.ip);
 		    session.jitsi_throttle = new_throttle(rate, 2);
@@ -149,7 +162,7 @@ function filter_stanza(stanza, session)
 		local ok, _, _ = rate:poll(1, true);
 		if not ok then
 			module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
-			throttle_session(session, config.session_rate);
+			throttle_session(session, config.session_rate, config.timeout);
 		end
 	end
 
@@ -168,7 +181,6 @@ local function on_login(session, ip)
 	if not ok then
 		module:log("info", "Join rate exceeded for %s, limiting.", ip);
 		limit_ip(ip);
-		throttle_session(session, config.ip_rate);
 	end
 end
 
@@ -197,12 +209,12 @@ local function filter_hook(session)
 	if oldt then
 		local newt = gettime();
 		local elapsed = newt - oldt;
-		if elapsed < 5 then
-			module:log("info", "IP address %s was limitted %s seconds ago, refreshing.", ip, elapsed);
-			limited_ips:set(ip, newt);
-			throttle_session(session, config.ip_rate);
-		elseif elapsed < config.timeout then
-			throttle_session(session, config.ip_rate);
+        if elapsed < config.timeout then
+            if elapsed < 5 then
+                module:log("info", "IP address %s was limitted %s seconds ago, refreshing.", ip, elapsed);
+                limited_ips:set(ip, newt);
+            end
+            throttle_session(session, config.ip_rate);
         else
             module:log("info", "Removing the limit for %s", ip);
             limited_ips:set(ip, nil);
