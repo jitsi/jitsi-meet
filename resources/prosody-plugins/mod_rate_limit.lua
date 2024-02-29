@@ -22,7 +22,9 @@ local function load_config()
 	-- Max allowed login rate in events per second.
 	config.login_rate = module:get_option_number("rate_limit_login_rate", 3);
 	-- The rate to which sessions from IPs exceeding the join rate will be limited, in bytes per second.
-	config.session_rate = module:get_option_number("rate_limit_session_rate", 2000);
+	config.ip_rate = module:get_option_number("rate_limit_ip_rate", 2000);
+	-- The rate to which sessions exceeding the stanza(iq, presence, message) rate will be limited, in bytes per second.
+	config.session_rate = module:get_option_number("rate_limit_session_rate", 1000);
 	-- The time in seconds, after which the limit for an IP address is lifted.
 	config.timeout = module:get_option_number("rate_limit_timeout", 60);
 	-- List of regular expressions for IP addresses that are not limited by this module.
@@ -45,8 +47,8 @@ local function load_config()
 	local wl_hosts = "";
 	for j in config.whitelist_hosts do wl_hosts = wl_hosts .. j  .. "," end
 	module:log("info", "Loaded configuration: ");
-	module:log("info", "- session_rate=%s bytes/sec, timeout=%s sec, cache size=%s, whitelist=%s, whitelist_hosts=%s",
-			config.session_rate, config.timeout, config.cache_size, wl, wl_hosts);
+	module:log("info", "- ip_rate=%s bytes/sec, session_rate=%s bytes/sec, timeout=%s sec, cache size=%s, whitelist=%s, whitelist_hosts=%s",
+            config.ip_rate, config.session_rate, config.timeout, config.cache_size, wl, wl_hosts);
 	module:log("info", "- login_rate=%s/sec, presence_rate=%s/sec, iq_rate=%s/sec, message_rate=%s/sec",
 			config.login_rate, config.presence_rate, config.iq_rate, config.message_rate);
 end
@@ -121,15 +123,15 @@ local function limit_bytes_in(bytes, session)
 end
 
 -- Throttles reading from the connection of a specific session.
-local function throttle_session(session)
+local function throttle_session(session, rate)
 	if not session.jitsi_throttle then
         if (session.conn and session.conn.setlimit) then
             -- TODO: we don't have a mechanism to unthrottle a session in this case.
-		    module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s.", config.session_rate, session.id, session.ip);
-            session.conn:setlimit(config.session_rate);
+		    module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s.", rate, session.id, session.ip);
+            session.conn:setlimit(rate);
         else
-		    module:log("info", "Enabling throttle (%s bytes/s) via filter, session=%s, ip=%s.", config.session_rate, session.id, session.ip);
-		    session.jitsi_throttle = new_throttle(config.session_rate, 2);
+		    module:log("info", "Enabling throttle (%s bytes/s) via filter, session=%s, ip=%s.", rate, session.id, session.ip);
+		    session.jitsi_throttle = new_throttle(rate, 2);
 		    filters.add_filter(session, "bytes/in", limit_bytes_in, 1000);
 		    -- throttle.start used for stop throttling after the timeout
 		    session.jitsi_throttle.start = gettime();
@@ -147,7 +149,7 @@ function filter_stanza(stanza, session)
 		local ok, _, _ = rate:poll(1, true);
 		if not ok then
 			module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
-			throttle_session(session);
+			throttle_session(session, config.session_rate);
 		end
 	end
 
@@ -166,7 +168,7 @@ local function on_login(session, ip)
 	if not ok then
 		module:log("info", "Join rate exceeded for %s, limiting.", ip);
 		limit_ip(ip);
-		throttle_session(session);
+		throttle_session(session, config.ip_rate);
 	end
 end
 
@@ -198,9 +200,9 @@ local function filter_hook(session)
 		if elapsed < 5 then
 			module:log("info", "IP address %s was limitted %s seconds ago, refreshing.", ip, elapsed);
 			limited_ips:set(ip, newt);
-			throttle_session(session);
+			throttle_session(session, config.ip_rate);
 		elseif elapsed < config.timeout then
-			throttle_session(session);
+			throttle_session(session, config.ip_rate);
         else
             module:log("info", "Removing the limit for %s", ip);
             limited_ips:set(ip, nil);
