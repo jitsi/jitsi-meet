@@ -133,7 +133,7 @@ dependencies {
 
 if (isNewArchitectureEnabled()) {
   react {
-    jsRootDir = file("../src/")
+    jsRootDir = file("../")
     libraryName = "JitsiMeetReactNative"
     codegenJavaPackageName = "org.jitsi.meet.sdk"
   }
