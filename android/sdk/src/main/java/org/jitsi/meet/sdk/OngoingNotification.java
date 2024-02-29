@@ -29,8 +29,6 @@ import android.content.Intent;
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 
-
-
 import android.os.Build;
 
 
@@ -45,10 +43,6 @@ class OngoingNotification {
     private static long startingTime = 0;
 
     static final String ONGOING_CONFERENCE_CHANNEL_ID = "JitsiOngoingConferenceChannel";
-
-    public static List<String> allIds = new ArrayList<String>() {{ add(ONGOING_CONFERENCE_CHANNEL_ID); }};
-
-    private static final String TAG = OngoingNotification.class.getSimpleName();
 
     static void createNotificationChannel(Activity context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
