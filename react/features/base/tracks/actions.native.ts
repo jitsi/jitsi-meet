@@ -1,5 +1,3 @@
-import { NativeModules, Platform } from 'react-native';
-
 import { IReduxState, IStore } from '../../app/types';
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { showNotification } from '../../notifications/actions';
@@ -16,7 +14,6 @@ import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
 
-const { JitsiMeetMediaProjectionModule } = NativeModules;
 
 export * from './actions.any';
 
@@ -35,10 +32,7 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
         if (enabled) {
             const isSharing = isLocalVideoTrackDesktop(state);
 
-            if (isSharing) {
-                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
-            } else {
-                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
+            if (!isSharing) {
                 _startScreenSharing(dispatch, state);
             }
         } else {

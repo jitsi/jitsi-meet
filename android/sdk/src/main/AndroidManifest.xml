@@ -12,7 +12,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <uses-feature
@@ -50,10 +49,6 @@
         <service
             android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
             android:foregroundServiceType="mediaPlayback" />
-
-        <service
-            android:name="org.jitsi.meet.sdk.JitsiMeetMediaProjectionService"
-            android:foregroundServiceType="mediaProjection" />
 
         <provider
             android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
