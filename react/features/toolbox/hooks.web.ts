@@ -4,7 +4,6 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
-import { isToolbarButtonEnabled } from '../base/config/functions.web';
 import { toggleDialog } from '../base/dialog/actions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
@@ -34,7 +33,7 @@ import { shouldDisplayTileView } from '../video-layout/functions.any';
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 
 import { setFullScreen } from './actions.web';
-import { isDesktopShareButtonDisabled } from './functions.web';
+import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
@@ -206,42 +205,42 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
 
     useEffect(() => {
         const KEYBOARD_SHORTCUTS = [
-            isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
+            isButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
                 exec: onToggleVideoQuality,
                 helpDescription: 'toolbar.callQuality'
             },
-            isToolbarButtonEnabled('chat', _toolbarButtons) && {
+            isButtonEnabled('chat', _toolbarButtons) && {
                 character: 'C',
                 exec: onToggleChat,
                 helpDescription: 'keyboardShortcuts.toggleChat'
             },
-            isToolbarButtonEnabled('desktop', _toolbarButtons) && {
+            isButtonEnabled('desktop', _toolbarButtons) && {
                 character: 'D',
                 exec: onToggleScreenshare,
                 helpDescription: 'keyboardShortcuts.toggleScreensharing'
             },
-            _isParticipantsPaneEnabled && isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
+            _isParticipantsPaneEnabled && isButtonEnabled('participants-pane', _toolbarButtons) && {
                 character: 'P',
                 exec: onToggleParticipantsPane,
                 helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
             },
-            isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
+            isButtonEnabled('raisehand', _toolbarButtons) && {
                 character: 'R',
                 exec: onToggleRaiseHand,
                 helpDescription: 'keyboardShortcuts.raiseHand'
             },
-            isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
+            isButtonEnabled('fullscreen', _toolbarButtons) && {
                 character: 'S',
                 exec: onToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
             },
-            isToolbarButtonEnabled('tileview', _toolbarButtons) && {
+            isButtonEnabled('tileview', _toolbarButtons) && {
                 character: 'W',
                 exec: onToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
             },
-            !_isSpeakerStatsDisabled && isToolbarButtonEnabled('stats', _toolbarButtons) && {
+            !_isSpeakerStatsDisabled && isButtonEnabled('stats', _toolbarButtons) && {
                 character: 'T',
                 exec: onSpeakerStats,
                 helpDescription: 'keyboardShortcuts.showSpeakerStats'

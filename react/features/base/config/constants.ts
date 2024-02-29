@@ -18,11 +18,6 @@ export const PREMEETING_BUTTONS = [ 'microphone', 'camera', 'select-background',
 export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-background' ];
 
 /**
- * The toolbar buttons to show when in visitors mode.
- */
-export const VISITORS_MODE_BUTTONS = [ 'chat', 'hangup', 'raisehand', 'settings', 'tileview' ];
-
-/**
  * The set of feature flags.
  *
  * @enum {string}

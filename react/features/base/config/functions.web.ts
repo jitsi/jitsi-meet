@@ -43,19 +43,6 @@ export function getWebHIDFeatureConfig(state: IReduxState): boolean {
 }
 
 /**
- * Checks if the specified button is enabled.
- *
- * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
- * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
- * @returns {boolean} - True if the button is enabled and false otherwise.
- */
-export function isToolbarButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
-    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
-
-    return buttons.includes(buttonName);
-}
-
-/**
  * Returns whether audio level measurement is enabled or not.
  *
  * @param {Object} state - The state of the app.

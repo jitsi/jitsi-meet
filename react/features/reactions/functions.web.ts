@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 
-import { shouldDisplayReactionsButtons } from './functions.any';
+import { isReactionsEnabled } from './functions.any';
 
 export * from './functions.any';
 
@@ -23,5 +23,5 @@ export function getReactionsMenuVisibility(state: IReduxState): boolean {
 export function isReactionsButtonEnabled(state: IReduxState) {
     const { toolbarButtons } = state['features/toolbox'];
 
-    return Boolean(toolbarButtons?.includes('reactions')) && shouldDisplayReactionsButtons(state);
+    return Boolean(toolbarButtons?.includes('reactions')) && isReactionsEnabled(state);
 }

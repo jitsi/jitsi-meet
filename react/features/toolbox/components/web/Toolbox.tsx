@@ -5,18 +5,12 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { NotifyClickButton } from '../../../base/config/configType';
-import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
-import {
-    getButtonNotifyMode,
-    getButtonsWithNotifyClick,
-    isToolbarButtonEnabled
-} from '../../../base/config/functions.web';
+import { getButtonNotifyMode, getButtonsWithNotifyClick } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
-import { iAmVisitor } from '../../../visitors/functions';
 import {
     setHangupMenuVisible,
     setOverflowMenuVisible,
@@ -27,6 +21,7 @@ import { NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 import {
     getAllToolboxButtons,
     getJwtDisabledButtons,
+    isButtonEnabled,
     isToolboxVisible
 } from '../../functions.web';
 import { useKeyboardShortcuts } from '../../hooks.web';
@@ -288,7 +283,7 @@ const Toolbox = ({
         const buttons = getAllToolboxButtons(_customToolbarButtons);
 
         setButtonsNotifyClickMode(buttons);
-        const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
+        const isHangupVisible = isButtonEnabled('hangup', _toolbarButtons);
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
 
@@ -299,7 +294,7 @@ const Toolbox = ({
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButtons.includes(key)
-            && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
+            && (isButtonEnabled(key, _toolbarButtons) || isButtonEnabled(alias, _toolbarButtons))
         );
 
         let sliceIndex = _overflowDrawer || _reactionsButtonEnabled ? order.length + 2 : order.length + 1;
@@ -422,7 +417,7 @@ const Toolbox = ({
                                 showReactionsMenu = { showReactionsInOverflowMenu } />
                         )}
 
-                        {isToolbarButtonEnabled('hangup', _toolbarButtons) && (
+                        {isButtonEnabled('hangup', _toolbarButtons) && (
                             _endConferenceSupported
                                 ? <HangupMenuButton
                                     ariaControls = 'hangup-menu'
@@ -452,7 +447,7 @@ const Toolbox = ({
                                     customClass = 'hangup-button'
                                     key = 'hangup-button'
                                     notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) }
-                                    visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
+                                    visible = { isButtonEnabled('hangup', _toolbarButtons) } />
                         )}
                     </div>
                 </div>
@@ -501,11 +496,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         overflowDrawer
     } = state['features/toolbox'];
     const { clientWidth } = state['features/base/responsive-ui'];
-    let toolbarButtons = ownProps.toolbarButtons || state['features/toolbox'].toolbarButtons;
-
-    if (iAmVisitor(state)) {
-        toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
-    }
+    const toolbarButtons = ownProps.toolbarButtons || state['features/toolbox'].toolbarButtons;
 
     return {
         _buttonsWithNotifyClick: getButtonsWithNotifyClick(state),
