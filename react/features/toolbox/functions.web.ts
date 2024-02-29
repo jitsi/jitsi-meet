@@ -55,18 +55,16 @@ export function getToolboxHeight() {
 }
 
 /**
- * Indicates if a toolbar button is enabled.
+ * Checks if the specified button is enabled.
  *
- * @param {string} name - The name of the setting section as defined in
- * interface_config.js.
- * @param {IReduxState} state - The redux state.
- * @returns {boolean|undefined} - True to indicate that the given toolbar button
- * is enabled, false - otherwise.
+ * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
+ * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
+ * @returns {boolean} - True if the button is enabled and false otherwise.
  */
-export function isButtonEnabled(name: string, state: IReduxState) {
-    const { toolbarButtons } = state['features/toolbox'];
+export function isButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
+    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
 
-    return toolbarButtons?.indexOf(name) !== -1;
+    return buttons.includes(buttonName);
 }
 
 /**

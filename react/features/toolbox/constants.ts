@@ -98,3 +98,16 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'whiteboard'
 ];
 
+/**
+ * The toolbar buttons to show when in visitors mode.
+ */
+export const VISITORS_MODE_BUTTONS: ToolbarButton[] = [
+    'chat',
+    'hangup',
+    'raisehand',
+    'settings',
+    'tileview',
+    'fullscreen',
+    'stats',
+    'videoquality'
+];

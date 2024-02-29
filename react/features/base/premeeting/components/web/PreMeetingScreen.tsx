@@ -7,9 +7,9 @@ import { IReduxState } from '../../../../app/types';
 import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
 import { isRoomNameEnabled } from '../../../../prejoin/functions';
 import Toolbox from '../../../../toolbox/components/web/Toolbox';
+import { isButtonEnabled } from '../../../../toolbox/functions.web';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
-import { isToolbarButtonEnabled } from '../../../config/functions.web';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
@@ -244,7 +244,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         // toolbarButtons config overwrite.
         _buttons: hiddenPremeetingButtons
             ? premeetingButtons
-            : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
+            : premeetingButtons.filter(b => isButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
         _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : ''
     };
