@@ -1,7 +1,5 @@
 package org.jitsi.meet.sdk;
 
-import android.app.Activity;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 
@@ -23,17 +21,12 @@ class JitsiMeetMediaProjectionModule
 
     @ReactMethod
     public void launch() {
-        Context context = getReactApplicationContext();
-        Activity currentActivity = getCurrentActivity();
-
-        JitsiMeetMediaProjectionService.launch(context, currentActivity);
+        JitsiMeetMediaProjectionService.launch(getCurrentActivity());
     }
 
     @ReactMethod
     public void abort() {
-        Context context = getReactApplicationContext();
-
-        JitsiMeetMediaProjectionService.abort(context);
+        JitsiMeetMediaProjectionService.abort(getCurrentActivity());
     }
 
     @NonNull

@@ -43,9 +43,9 @@ public class JitsiMeetMediaProjectionService extends Service {
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    public static void launch(Context context, Activity currentActivity) {
+    public static void launch(Context context) {
 
-        NotificationUtils.createNotificationChannel(currentActivity);
+        NotificationUtils.createNotificationChannel((Activity) context);
 
         Intent intent = new Intent(context, JitsiMeetMediaProjectionService.class);
 
@@ -83,13 +83,6 @@ public class JitsiMeetMediaProjectionService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Notification notification = MediaProjectionNotification.buildMediaProjectionNotification(this);
-
-        if (notification == null) {
-            stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
-
-            return START_NOT_STICKY;
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
