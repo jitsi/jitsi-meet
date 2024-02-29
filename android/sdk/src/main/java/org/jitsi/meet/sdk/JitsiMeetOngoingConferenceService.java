@@ -58,8 +58,8 @@ public class JitsiMeetOngoingConferenceService extends Service
 
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        
-        NotificationUtils.createNotificationChannel((Activity) context);
+
+        OngoingNotification.createNotificationChannel((Activity) context);
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
