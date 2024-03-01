@@ -116,9 +116,7 @@ export function admitMultiple(participants: Array<IKnockingParticipant>) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        participants.forEach(p => {
-            conference?.lobbyApproveAccess(p.id);
-        });
+        conference?.lobbyApproveAccess(participants.map(p => p.id));
     };
 }
 
