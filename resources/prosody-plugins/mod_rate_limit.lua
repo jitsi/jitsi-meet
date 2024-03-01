@@ -35,7 +35,7 @@ local function load_config()
 	-- Max allowed presence rate in events per second.
 	config.presence_rate = module:get_option_number("rate_limit_presence_rate", 4);
 	-- Max allowed iq rate in events per second.
-	config.iq_rate = module:get_option_number("rate_limit_iq_rate", 10);
+	config.iq_rate = module:get_option_number("rate_limit_iq_rate", 15);
 	-- Max allowed message rate in events per second.
 	config.message_rate = module:get_option_number("rate_limit_message_rate", 3);
 
