@@ -126,7 +126,9 @@ end
 local function throttle_session(session, rate, timeout)
     if not session.jitsi_throttle then
         if (session.conn and session.conn.setlimit) then
-            module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s.", rate, session.id, session.ip);
+            session.jitsi_throttle_counter = session.jitsi_throttle_counter + 1;
+            module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s, counter=%s.",
+                rate, session.id, session.ip, session.jitsi_throttle_counter);
             session.conn:setlimit(rate);
             if timeout then
                 if session.jitsi_throttle_timer then
@@ -200,6 +202,7 @@ local function filter_hook(session)
 	on_login(session, ip);
 
 	-- creates the stanzas rates
+	session.jitsi_throttle_counter = 0;
 	session.presence_rate = new_throttle(config.presence_rate, 2);
 	session.iq_rate = new_throttle(config.iq_rate, 2);
 	session.message_rate = new_throttle(config.message_rate, 2);
