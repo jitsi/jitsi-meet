@@ -214,7 +214,7 @@ local function filter_hook(session)
 		local elapsed = newt - oldt;
         if elapsed < config.timeout then
             if elapsed < 5 then
-                module:log("info", "IP address %s was limitted %s seconds ago, refreshing.", ip, elapsed);
+                module:log("info", "IP address %s was limited %s seconds ago, refreshing.", ip, elapsed);
                 limited_ips:set(ip, newt);
             end
             throttle_session(session, config.ip_rate);
