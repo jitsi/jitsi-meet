@@ -238,16 +238,6 @@ function destroy_lobby_room(room, newjid, message)
     end
 end
 
--- handle multiple items at once
-function handle_admin_query_set_command(self, origin, stanza)
-    for i=1,#stanza.tags[1] do
-        if handle_admin_query_set_command_item(self, origin, stanza, stanza.tags[1].tags[i]) then
-            return true;
-        end
-    end
-    return true;
-end
-
 -- This is a copy of the function(handle_admin_query_set_command) from prosody 12 (d7857ef7843a)
 function handle_admin_query_set_command_item(self, origin, stanza, item)
     if not item then
@@ -308,6 +298,58 @@ function handle_admin_query_set_command_item(self, origin, stanza, item)
         origin.send(st.reply(stanza));
     end
 end
+
+-- this is extracted from prosody to handle multiple invites
+function handle_mediated_invite(room, origin, stanza, payload, host_module)
+    local invitee = jid_prep(payload.attr.to);
+    if not invitee then
+        origin.send(st.error_reply(stanza, "cancel", "jid-malformed"));
+        return true;
+    elseif host_module:fire_event("muc-pre-invite", {room = room, origin = origin, stanza = stanza}) then
+        return true;
+    end
+    local invite = muc_util.filter_muc_x(st.clone(stanza));
+    invite.attr.from = room.jid;
+    invite.attr.to = invitee;
+    invite:tag('x', {xmlns='http://jabber.org/protocol/muc#user'})
+            :tag('invite', {from = stanza.attr.from;})
+                :tag('reason'):text(payload:get_child_text("reason")):up()
+            :up()
+        :up();
+    if not host_module:fire_event("muc-invite", {room = room, stanza = invite, origin = origin, incoming = stanza}) then
+        room:route_stanza(invite);
+    end
+    return true;
+end
+
+local prosody_overrides = {
+    -- handle multiple items at once
+    handle_admin_query_set_command = function(self, origin, stanza)
+        for i=1,#stanza.tags[1] do
+            if handle_admin_query_set_command_item(self, origin, stanza, stanza.tags[1].tags[i]) then
+                return true;
+            end
+        end
+        return true;
+    end,
+    -- this is extracted from prosody to handle multiple invites
+    handle_message_to_room = function(room, origin, stanza, host_module)
+        local type = stanza.attr.type;
+        if type == nil or type == "normal" then
+            local x = stanza:get_child("x", "http://jabber.org/protocol/muc#user");
+            if x then
+                local handled = false;
+                for _, payload in pairs(x.tags) do -- for payload in x:children() do
+                    if payload ~= nil and payload.name == "invite" and payload.attr.to then
+                        handled = true;
+                        handle_mediated_invite(room, origin, stanza, payload, host_module)
+                    end
+                end
+                return handled;
+            end
+        end
+    end
+};
 
 -- operates on already loaded lobby muc module
 function process_lobby_muc_loaded(lobby_muc, host_module)
@@ -520,8 +562,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
     for event_name, method in pairs {
         -- Normal room interactions
         ["iq-set/bare/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        ["message/bare"] = "handle_message_to_room" ;
         -- Host room
         ["iq-set/host/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        ["message/host"] = "handle_message_to_room" ;
     } do
         host_module:hook(event_name, function (event)
             local origin, stanza = event.origin, event.stanza;
@@ -529,7 +573,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             local room = get_room_from_jid(room_jid);
 
             if room then
-                return handle_admin_query_set_command(room, origin, stanza);
+                return prosody_overrides[method](room, origin, stanza, host_module);
             end
         end, 1) -- make sure we handle it before prosody that uses priority -2 for this
     end
