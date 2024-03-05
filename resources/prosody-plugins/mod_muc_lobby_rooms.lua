@@ -339,7 +339,7 @@ local prosody_overrides = {
             local x = stanza:get_child("x", "http://jabber.org/protocol/muc#user");
             if x then
                 local handled = false;
-                for _, payload in pairs(x.tags) do -- for payload in x:children() do
+                for _, payload in pairs(x.tags) do
                     if payload ~= nil and payload.name == "invite" and payload.attr.to then
                         handled = true;
                         handle_mediated_invite(room, origin, stanza, payload, host_module)

@@ -11,7 +11,7 @@ import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
-import { getParticipantById } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { hideNotification, showNotification } from '../notifications/actions';
@@ -79,23 +79,26 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         conference.on(JitsiConferenceEvents.VISITORS_MESSAGE, (
-                msg: { action: string; actor: string; from: string; nick: string; on: boolean; }) => {
+                msg: { action: string; actor: string; from: string; id: string; nick: string; on: boolean; }) => {
 
             if (msg.action === 'demote-request') {
                 // we need it before the disconnect
                 const participantById = getParticipantById(getState, msg.actor);
+                const localParticipant = getLocalParticipant(getState);
 
-                // handle demote
-                dispatch(disconnect(true))
-                    .then(() => dispatch(setPreferVisitor(true)))
-                    .then(() => {
-                        // we need to set the name so we can use it later in the notification
-                        if (participantById) {
-                            dispatch(setVisitorDemoteActor(participantById.name));
-                        }
+                if (localParticipant && localParticipant.id === msg.id) {
+                    // handle demote
+                    dispatch(disconnect(true))
+                        .then(() => dispatch(setPreferVisitor(true)))
+                        .then(() => {
+                            // we need to set the name, so we can use it later in the notification
+                            if (participantById) {
+                                dispatch(setVisitorDemoteActor(participantById.name));
+                            }
 
-                        return dispatch(connect());
-                    });
+                            return dispatch(connect());
+                        });
+                }
             } else if (msg.action === 'promotion-request') {
                 const request = {
                     from: msg.from,
