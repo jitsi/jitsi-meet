@@ -253,12 +253,12 @@ export function getRecordButtonProps(state: IReduxState) {
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
-    const recordingEnabled = recordingService?.enabled || localRecordingEnabled || dropboxEnabled;
+    const recordingEnabled = recordingService?.enabled || dropboxEnabled;
 
-    if (isModerator) {
+    if (localRecordingEnabled) {
+        visible = true;
+    } else if (isModerator) {
         visible = recordingEnabled ? isJwtFeatureEnabled(state, 'recording', true) : false;
-    } else {
-        visible = navigator.product !== 'ReactNative' && localRecordingEnabled;
     }
 
     // disable the button if the livestreaming is running.
