@@ -1,6 +1,6 @@
 {
     "name": "@jitsi/react-native-sdk",
-    "version": "0.0.0",
+    "version": "2.0.0",
     "description": "React Native SDK for Jitsi Meet.",
     "main": "index.tsx",
     "license": "Apache-2.0",
@@ -28,7 +28,7 @@
         "i18next-http-backend": "^2.2.1",
         "js-sha512": "0.8.0",
         "jwt-decode": "2.2.0",
-        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1789.0.0+a8f8666b/lib-jitsi-meet.tgz",
+        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1784.0.0+639ad566/lib-jitsi-meet.tgz",
         "lodash": "4.17.21",
         "moment": "2.29.4",
         "moment-duration-format": "2.2.2",
