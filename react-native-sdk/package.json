@@ -29,7 +29,7 @@
         "js-sha512": "0.0.0",
         "jwt-decode": "0.0.0",
         "lib-jitsi-meet": "0.0.0",
-        "lodash": "0.0.0",
+        "lodash": "4.17.21",
         "moment": "0.0.0",
         "moment-duration-format": "0.0.0",
         "optional-require": "0.0.0",
