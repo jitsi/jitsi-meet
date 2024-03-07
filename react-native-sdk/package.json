@@ -19,7 +19,7 @@
         "@react-navigation/material-top-tabs": "0.0.0",
         "@react-navigation/native": "0.0.0",
         "@react-navigation/stack": "0.0.0",
-        "@xmldom/xmldom": "0.0.0",
+        "@xmldom/xmldom": "0.7.7",
         "base64-js": "0.0.0",
         "grapheme-splitter": "0.0.0",
         "i18n-iso-countries": "0.0.0",
