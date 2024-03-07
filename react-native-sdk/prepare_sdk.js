@@ -64,7 +64,9 @@ function mergeDependencyVersions() {
     // Updates SDK dependencies to match project dependencies.
     for (const key in SDKPackageJSON.dependencies) {
         if (SDKPackageJSON.dependencies.hasOwnProperty(key)) {
-            SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
+            if (key !== 'moment') {
+                SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
+            }
         }
     }
 
