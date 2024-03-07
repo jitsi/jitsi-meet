@@ -23,7 +23,7 @@
         "base64-js": "0.0.0",
         "grapheme-splitter": "0.0.0",
         "i18n-iso-countries": "0.0.0",
-        "i18next": "0.0.0",
+        "i18next": "1.10.3",
         "js-md5": "0.0.0",
         "i18next-http-backend": "0.0.0",
         "js-sha512": "0.0.0",
