@@ -79,6 +79,11 @@ function mergeDependencyVersions() {
         }
     }
 
+    // Updates SDK overrides dependencies.
+    for (const key in packageJSON.overrides) {
+        SDKPackageJSON.overrides[key] = packageJSON.overrides[key];
+    }
+
     const data = JSON.stringify(SDKPackageJSON, null, 4);
 
     fs.writeFileSync('package.json', data);
