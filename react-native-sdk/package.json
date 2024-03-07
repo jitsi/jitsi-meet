@@ -30,7 +30,7 @@
         "jwt-decode": "0.0.0",
         "lib-jitsi-meet": "0.0.0",
         "lodash": "0.0.0",
-        "moment": "0.0.0",
+        "moment": "2.29.4",
         "moment-duration-format": "0.0.0",
         "optional-require": "0.0.0",
         "promise.allsettled": "0.0.0",
