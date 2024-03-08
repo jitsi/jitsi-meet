@@ -21,11 +21,6 @@ export interface INotifyClick {
 interface IProps {
 
     /**
-     * Toolbar buttons which have their click exposed through the API.
-     */
-    _buttonsWithNotifyClick: Array<string | INotifyClick>;
-
-    /**
      * Whether or not the current user can modify the current password.
      */
     _canEditPassword: boolean;
@@ -79,7 +74,6 @@ interface IProps {
  * @returns {React$Element<any>}
  */
 function SecurityDialog({
-    _buttonsWithNotifyClick,
     _canEditPassword,
     _conference,
     _disableLobbyPassword,
@@ -112,7 +106,6 @@ function SecurityDialog({
                         <>
                             { _isEnablingLobbyAllowed && <div className = 'separator-line' /> }
                             <PasswordSection
-                                buttonsWithNotifyClick = { _buttonsWithNotifyClick }
                                 canEditPassword = { _canEditPassword }
                                 conference = { _conference }
                                 locked = { _locked }
@@ -151,17 +144,13 @@ function mapStateToProps(state: IReduxState) {
         locked,
         password
     } = state['features/base/conference'];
-    const {
-        roomPasswordNumberOfDigits,
-        buttonsWithNotifyClick
-    } = state['features/base/config'];
+    const { roomPasswordNumberOfDigits } = state['features/base/config'];
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const _isEnablingLobbyAllowed = isEnablingLobbyAllowed(state);
 
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
-        _buttonsWithNotifyClick: buttonsWithNotifyClick ?? [],
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _dialIn: state['features/invite'],

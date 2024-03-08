@@ -7,7 +7,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconMicSlash } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import MuteEveryoneDialog from './MuteEveryoneDialog';

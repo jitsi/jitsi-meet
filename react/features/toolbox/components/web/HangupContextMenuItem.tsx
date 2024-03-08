@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import Button from '../../../base/ui/components/web/Button';
-import { NOTIFY_CLICK_MODE } from '../../constants';
+import { NOTIFY_CLICK_MODE } from '../../types';
 
 
 /**

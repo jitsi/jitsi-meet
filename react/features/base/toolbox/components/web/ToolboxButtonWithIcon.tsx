@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../../toolbox/types';
 import Icon from '../../../icons/components/Icon';
 import Tooltip from '../../../tooltip/components/Tooltip';
 

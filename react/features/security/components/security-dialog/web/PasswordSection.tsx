@@ -1,24 +1,20 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
 import { copyText } from '../../../../base/util/copyText.web';
 import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
-import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../../toolbox/types';
 
 import PasswordForm from './PasswordForm';
-import { INotifyClick } from './SecurityDialog';
 
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
 interface IProps extends WithTranslation {
-
-    /**
-     * Toolbar buttons which have their click exposed through the API.
-     */
-    buttonsWithNotifyClick: Array<string | INotifyClick>;
 
     /**
      * Whether or not the current user can modify the current password.
@@ -69,7 +65,6 @@ interface IProps extends WithTranslation {
  * @returns {React$Element<any>}
  */
 function PasswordSection({
-    buttonsWithNotifyClick,
     canEditPassword,
     conference,
     locked,
@@ -82,6 +77,8 @@ function PasswordSection({
 
     const formRef = useRef<HTMLDivElement>(null);
     const [ passwordVisible, setPasswordVisible ] = useState(false);
+    const buttonsWithNotifyClick = useSelector(
+        (state: IReduxState) => state['features/toolbox'].buttonsWithNotifyClick);
 
     /**
      * Callback invoked to set a password on the current JitsiConference.
@@ -106,24 +103,16 @@ function PasswordSection({
      * @private
      * @returns {void}
      */
-    function onTogglePasswordEditState() {
-        if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.length) {
+    const onTogglePasswordEditState = useCallback(() => {
+        if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.size) {
             setPasswordEditEnabled(!passwordEditEnabled);
 
             return;
         }
 
-        let notifyMode;
-        const notify = buttonsWithNotifyClick.find(
-            (btn: string | INotifyClick) =>
-                (typeof btn === 'string' && btn === KEY)
-                || (typeof btn === 'object' && btn.key === KEY)
-        );
+        const notifyMode = buttonsWithNotifyClick?.get(KEY);
 
-        if (notify) {
-            notifyMode = typeof notify === 'string' || notify.preventExecution
-                ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-                : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+        if (notifyMode) {
             APP.API.notifyToolbarButtonClicked(
                 KEY, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
@@ -132,7 +121,7 @@ function PasswordSection({
         if (notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
             setPasswordEditEnabled(!passwordEditEnabled);
         }
-    }
+    }, [ buttonsWithNotifyClick, setPasswordEditEnabled, passwordEditEnabled ]);
 
     /**
      * Method to remotely submit the password from outside of the password form.

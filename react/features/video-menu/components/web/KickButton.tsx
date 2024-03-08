@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconUserDeleted } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import KickRemoteParticipantDialog from './KickRemoteParticipantDialog';
