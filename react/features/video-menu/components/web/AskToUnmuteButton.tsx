@@ -6,7 +6,7 @@ import { approveParticipantAudio, approveParticipantVideo } from '../../../av-mo
 import { IconMic, IconVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE, MediaType } from '../../../base/media/constants';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 interface IProps extends IButtonProps {

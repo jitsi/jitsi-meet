@@ -44,3 +44,8 @@ export type ToolbarButton = 'camera' |
     'videoquality' |
     'whiteboard' |
     '__end';
+
+export enum NOTIFY_CLICK_MODE {
+    ONLY_NOTIFY = 'ONLY_NOTIFY',
+    PREVENT_AND_NOTIFY = 'PREVENT_AND_NOTIFY'
+}

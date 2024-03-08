@@ -1,13 +1,11 @@
 import { IReduxState } from '../../app/types';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
-import { NOTIFY_CLICK_MODE } from '../../toolbox/constants';
 
 import {
     IConfig,
     IDeeplinkingConfig,
     IDeeplinkingDesktopConfig,
-    IDeeplinkingMobileConfig,
-    NotifyClickButton
+    IDeeplinkingMobileConfig
 } from './configType';
 
 export * from './functions.any';
@@ -99,93 +97,3 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
         android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
     }
 }
-
-/**
- * Common logic to gather buttons that have to notify the api when clicked.
- *
- * @param {Array} buttonsWithNotifyClick - The array of systme buttons that need to notify the api.
- * @param {Array} customButtons - The custom buttons.
- * @returns {Array}
- */
-const buildButtonsArray = (
-        buttonsWithNotifyClick?: NotifyClickButton[],
-        customButtons?: {
-            icon: string;
-            id: string;
-            text: string;
-        }[]
-): NotifyClickButton[] => {
-    const customButtonsWithNotifyClick = customButtons?.map(({ id }) => {
-        return {
-            key: id,
-            preventExecution: false
-        };
-    });
-
-    const buttons = Array.isArray(buttonsWithNotifyClick)
-        ? buttonsWithNotifyClick as NotifyClickButton[]
-        : [];
-
-    if (customButtonsWithNotifyClick) {
-        buttons.push(...customButtonsWithNotifyClick);
-    }
-
-    return buttons;
-};
-
-/**
- * Returns the list of toolbar buttons that have to notify the api when clicked.
- *
- * @param {Object} state - The redux state.
- * @returns {Array} - The list of buttons.
- */
-export function getButtonsWithNotifyClick(
-        state: IReduxState
-): NotifyClickButton[] {
-    const { buttonsWithNotifyClick, customToolbarButtons } = state['features/base/config'];
-
-    return buildButtonsArray(
-        buttonsWithNotifyClick,
-        customToolbarButtons
-    );
-}
-
-/**
- * Returns the list of participant menu buttons that have that notify the api when clicked.
- *
- * @param {Object} state - The redux state.
- * @returns {Array} - The list of participant menu buttons.
- */
-export function getParticipantMenuButtonsWithNotifyClick(
-        state: IReduxState
-): NotifyClickButton[] {
-    const { participantMenuButtonsWithNotifyClick, customParticipantMenuButtons } = state['features/base/config'];
-
-    return buildButtonsArray(
-        participantMenuButtonsWithNotifyClick,
-        customParticipantMenuButtons
-    );
-}
-
-/**
- * Returns the notify mode for the specified button.
- *
- * @param {string} buttonKey - The button key.
- * @param {Array} buttonsWithNotifyClick - The buttons with notify click.
- * @returns {string|undefined}
- */
-export const getButtonNotifyMode = (
-        buttonKey: string,
-        buttonsWithNotifyClick?: NotifyClickButton[]
-): string | undefined => {
-    const notify = buttonsWithNotifyClick?.find(
-        (btn: NotifyClickButton) =>
-            (typeof btn === 'string' && btn === buttonKey) || (typeof btn === 'object' && btn.key === buttonKey)
-    );
-
-    if (notify) {
-        return typeof notify === 'string' || notify.preventExecution
-            ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-            : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
-    }
-};

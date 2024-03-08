@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState, IStore } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { getButtonNotifyMode, getParticipantMenuButtonsWithNotifyClick } from '../../../base/config/functions.web';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
@@ -23,8 +22,8 @@ import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { QUICK_ACTION_BUTTON } from '../../../participants-pane/constants';
 import { getQuickActionButtonType, isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control/actions';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
+import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../toolbox/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { iAmVisitor } from '../../../visitors/functions';
 import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 
@@ -169,7 +168,7 @@ const ParticipantContextMenu = ({
 
     const notifyClick = useCallback(
         (buttonKey: string) => {
-            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+            const notifyMode = buttonsWithNotifyClick?.get(buttonKey);
 
             if (!notifyMode) {
                 return;
@@ -180,7 +179,7 @@ const ParticipantContextMenu = ({
                 _getCurrentParticipantId(),
                 notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
-        }, [ buttonsWithNotifyClick, getButtonNotifyMode, _getCurrentParticipantId ]);
+        }, [ buttonsWithNotifyClick, _getCurrentParticipantId ]);
 
     const onBreakoutRoomButtonClick = useCallback(() => {
         onSelect(true);
@@ -202,9 +201,8 @@ const ParticipantContextMenu = ({
         && !isNaN(_volume);
 
     const getButtonProps = useCallback((key: string) => {
-        const notifyMode = getButtonNotifyMode(key, buttonsWithNotifyClick);
-        const shouldNotifyClick = notifyMode !== NOTIFY_CLICK_MODE.ONLY_NOTIFY
-            || notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY;
+        const notifyMode = buttonsWithNotifyClick?.get(key);
+        const shouldNotifyClick = typeof notifyMode !== 'undefined';
 
         return {
             key,
@@ -212,7 +210,7 @@ const ParticipantContextMenu = ({
             notifyClick: shouldNotifyClick ? () => notifyClick(key) : undefined,
             participantID: _getCurrentParticipantId()
         };
-    }, [ _getCurrentParticipantId, buttonsWithNotifyClick, getButtonNotifyMode, notifyClick ]);
+    }, [ _getCurrentParticipantId, buttonsWithNotifyClick, notifyClick ]);
 
     if (_isModerator) {
         if (isModerationSupported) {

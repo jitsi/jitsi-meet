@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { GestureResponderEvent } from 'react-native';
 
 import { IStore } from '../../../app/types';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { combineStyles } from '../../styles/functions.any';
 
 import { Styles } from './AbstractToolboxItem';
