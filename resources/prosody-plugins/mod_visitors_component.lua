@@ -95,11 +95,15 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             local iq_id = new_id();
             sent_iq_cache:set(iq_id, socket.gettime());
 
+            local node, host = jid.split(room.jid);
+            local visitorHost = string.gsub(host, muc_domain_base, req_from);
+            local visitorRoom = jid.join(node, visitorHost);
+
             module:send(st.iq({
                     type='set', to = req_from, from = module.host, id = iq_id })
                 :tag('visitors', {
                     xmlns='jitsi:visitors',
-                    room = string.gsub(room.jid, muc_domain_base, req_from),
+                    room = visitorRoom,
                     focusjid = focus_jid })
                  :tag('promotion-response', {
                     xmlns='jitsi:visitors',
@@ -282,11 +286,15 @@ local function process_promotion_response(room, id, approved)
     local iq_id = new_id();
     sent_iq_cache:set(iq_id, socket.gettime());
 
+    local node, host = jid.split(room.jid);
+    local visitorHost = string.gsub(host, muc_domain_base, req_from);
+    local visitorRoom = jid.join(node, visitorHost);
+
     module:send(st.iq({
             type='set', to = req_from, from = module.host, id = iq_id })
         :tag('visitors', {
             xmlns='jitsi:visitors',
-            room = string.gsub(room.jid, muc_domain_base, req_from),
+            room = visitorRoom,
             focusjid = focus_jid })
          :tag('promotion-response', {
             xmlns='jitsi:visitors',
