@@ -329,6 +329,8 @@ var config = {
 
     // configuration for all things recording related. Existing settings will be migrated here in the future.
     // recordings: {
+    //    // IF true (default) recording audio and video is selected by default in the recording dialog.
+    //    // recordAudioAndVideo: true,
     //    // If true, shows a notification at the start of the meeting with a call to action button
     //    // to start recording (for users who can do so).
     //    // suggestRecording: true,
