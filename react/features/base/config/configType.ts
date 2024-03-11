@@ -496,6 +496,7 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        recordAudioAndVideo?: boolean;
         showPrejoinWarning?: boolean;
         suggestRecording?: boolean;
     };

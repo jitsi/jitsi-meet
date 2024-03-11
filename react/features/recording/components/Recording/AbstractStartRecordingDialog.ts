@@ -65,6 +65,11 @@ export interface IProps extends WithTranslation {
     _rToken: string;
 
     /**
+     * Whether the record audio / video option is enabled by default.
+     */
+    _recordAudioAndVideo: boolean;
+
+    /**
      * Whether or not the local participant is screensharing.
      */
     _screensharing: boolean;
@@ -187,7 +192,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             isValidating: false,
             userName: undefined,
             sharingEnabled: true,
-            shouldRecordAudioAndVideo: true,
+            shouldRecordAudioAndVideo: this.props._recordAudioAndVideo,
             shouldRecordTranscription: this.props._autoTranscribeOnRecord,
             spaceLeft: undefined,
             selectedRecordingService,
@@ -452,7 +457,8 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
     const {
         recordingService,
         dropbox = { appKey: undefined },
-        localRecording
+        localRecording,
+        recordings = { recordAudioAndVideo: true }
     } = state['features/base/config'];
     const {
         _displaySubtitles,
@@ -469,6 +475,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',
+        _recordAudioAndVideo: recordings?.recordAudioAndVideo ?? true,
         _subtitlesLanguage,
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token ?? ''
