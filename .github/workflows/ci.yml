@@ -75,7 +75,8 @@ jobs:
     - run: npm install
     - name: setup Xcode
       run: |
-        sudo xcode-select -p /Applications/Xcode_15.2.app/Contents/Developer
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
       uses: maxim-lobanov/setup-cocoapods@v1
