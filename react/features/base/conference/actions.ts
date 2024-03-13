@@ -4,7 +4,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
-import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from '../config/functions';
+import { getReplaceParticipant } from '../config/functions';
 import { connect, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
@@ -177,16 +177,14 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
             dispatch(setAudioMuted(audioMuted));
             dispatch(setVideoMuted(videoMuted));
 
-            if (getSsrcRewritingFeatureFlag(state)) {
-                // Remove the tracks from peerconnection as well.
-                for (const track of localTracks) {
-                    const trackType = track.jitsiTrack.getType();
+            // Remove the tracks from peerconnection as well.
+            for (const track of localTracks) {
+                const trackType = track.jitsiTrack.getType();
 
-                    // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
-                    if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
-                            || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
-                        dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
-                    }
+                // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
+                if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
+                        || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
+                    dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
             }
         });

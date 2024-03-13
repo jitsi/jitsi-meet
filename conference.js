@@ -56,7 +56,7 @@ import {
     getConferenceOptions,
     sendLocalParticipant
 } from './react/features/base/conference/functions';
-import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from './react/features/base/config/functions';
+import { getReplaceParticipant } from './react/features/base/config/functions';
 import { connect } from './react/features/base/connection/actions.web';
 import {
     checkAndNotifyForNewDevice,
@@ -1970,17 +1970,15 @@ export default {
             APP.store.dispatch(setAudioMuted(audioMuted));
             APP.store.dispatch(setVideoMuted(videoMuted));
 
-            if (!getSsrcRewritingFeatureFlag(APP.store.getState())) {
-                // Remove the tracks from the peerconnection if ssrc-rewriting is not enabled.
-                for (const track of localTracks) {
-                    // Always add the track on Safari because of a known issue where audio playout doesn't happen
-                    // if the user joins audio and video muted, i.e., if there is no local media capture.
-                    if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO && !browser.isWebKitBased()) {
-                        promises.push(this.useAudioStream(null));
-                    }
-                    if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
-                        promises.push(this.useVideoStream(null));
-                    }
+            // Remove the tracks from the peerconnection.
+            for (const track of localTracks) {
+                // Always add the track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted, i.e., if there is no local media capture.
+                if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO && !browser.isWebKitBased()) {
+                    promises.push(this.useAudioStream(null));
+                }
+                if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
+                    promises.push(this.useVideoStream(null));
                 }
             }
 
