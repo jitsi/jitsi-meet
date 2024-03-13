@@ -305,6 +305,8 @@
         "contactSupport": "Sazinieties ar atbalsta dienestu",
         "copied": "Nokopēts",
         "copy": "Kopēt",
+        "demoteParticipantDialog": "Vai tiešām vēlaties pārveidot šo dalībnieku par apmeklētāju?",
+        "demoteParticipantTitle": "Pārveidot par apmeklētāju",
         "dismiss": "Noraidīt",
         "displayNameRequired": "Sveiki! Kā jūs sauc?",
         "done": "Darīts",
@@ -450,7 +452,7 @@
         "stopRecordingWarning": "Tiešām vēlaties beigt ierakstu?",
         "stopStreamingWarning": "Tiešām vēlaties beigt tiešraidi?",
         "streamKey": "Tiešraides atslēga",
-        "thankYou": "Paldies, ka izmantojat {{appName}}!",
+        "thankYou": "Paldies, ka izmantojāt {{appName}}!",
         "token": "tokens",
         "tokenAuthFailed": "Atvainojiet, jums nav atļauts pievienoties šim zvanam.",
         "tokenAuthFailedReason": {
@@ -560,6 +562,7 @@
         "noNumbers": "Nav iezvana #.",
         "noPassword": "bez paroles",
         "noRoom": "Iezvana numuram nav piesaistīta neviena sapulces telpa.",
+        "noWhiteboard": "Nevarēja ielādēt tāfeli.",
         "numbers": "Iezvana numuri",
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Jūs esat sasniedzis sava plāna limitu.",
@@ -567,7 +570,8 @@
         "sipAudioOnly": "Tikai SIP audio adrese",
         "title": "Kopīgot",
         "tooltip": "Kopīgot šīs sapulces saiti un iezvana # informāciju",
-        "upgradeOptions": "Lūdzu, pārbaudiet jaunināšanas opcijas"
+        "upgradeOptions": "Lūdzu, ieslēdziet jaunināšanas iespējas",
+        "whiteboardError": "Kļūda ielādējot tāfeli. Lūdzu, mēģiniet vēlreiz."
     },
     "inlineDialogFailure": {
         "msg": "Neliels misēklis.",
@@ -802,12 +806,16 @@
         "startSilentTitle": "Jūs esiet nedzirdams!",
         "suboptimalBrowserWarning": "Diemžēl jūsu pārlūks pilnībā neatbalsta šo virtuālo sapulču sistēmu. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot <a href='{{recommendedBrowserPageLink}}' target='_blank'> šos pārlūkus</a>.",
         "suboptimalExperienceTitle": "Diemžēl jūsu pārlūks, iespējams, var pienācīgi nestrādāt ar {{appName}}. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot kādu no <a href='{{recommendedBrowserPageLink}} 'target='_blank'>pilnībā atbalstītajiem pārlūkiem</a>.",
+        "suggestRecordingAction": "Sākt",
+        "suggestRecordingDescription": "Vai vēlaties sākt ierakstīšanu?",
+        "suggestRecordingTitle": "Ierakstīt sanāksmi",
         "unmute": "Ieslēgt mikrofonu",
         "videoMutedRemotelyDescription": "Jūs vienmēr varat to atkal ieslēgt.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} izslēdza jūsu video",
         "videoUnmuteBlockedDescription": "Kameras ieslēgšanas un darbvirsmas koplietošanas darbība ir īslaicīgi bloķēta sistēmas ierobežojumu dēļ.",
         "videoUnmuteBlockedTitle": "Kameras ieslēgšana un darbvirsmas koplietošana ir bloķēta!",
         "viewLobby": "Skatīt vestibilu",
+        "viewVisitors": "Skatīt apmeklētājus",
         "waitingParticipants": "{{waitingParticipants}} personas",
         "whiteboardLimitDescription": "Lūdzu, saglabājiet savu progresu, jo drīz tiks sasniegts lietotāju limits un tāfele tiks aizvērta.",
         "whiteboardLimitTitle": "Tāfeles lietošana"
@@ -934,6 +942,7 @@
         "or": "vai",
         "premeeting": "Pirms sapulces",
         "proceedAnyway": "Tik un tā turpināt",
+        "recordingWarning": "Citi dalībnieki var ierakstīt šo zvanu",
         "screenSharingError": "Ekrāna koplietošanas kļūda:",
         "showScreen": "Iespējot ekrānu pirms sapulces",
         "startWithPhone": "Sākt ar tālruņa audio",
@@ -1391,7 +1400,7 @@
     },
     "videoStatus": {
         "adjustFor": "Pielāgot:",
-        "audioOnly": "Tikai skaņu",
+        "audioOnly": "Tikai skaņa",
         "audioOnlyExpanded": "Kanāla/trafika taupīšanas režīms. Šajā režīmā pieejami tikai audio un ekrāna kopīgošana",
         "bestPerformance": "Labākais sniegums",
         "callQuality": "Video kvalitāte",
@@ -1413,6 +1422,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Informācija par savienojumu",
+        "demote": "Pārveidot par apmeklētāju",
         "domute": "Izlsēgt skaņu",
         "domuteOthers": "Izslēgt skaņu visiem pārējiem",
         "domuteVideo": "Izslēgt kameru",
@@ -1467,7 +1477,8 @@
         "chatIndicator": "(apmeklētājs)",
         "labelTooltip": "Apmeklētāju skaits: {{count}}",
         "notification": {
-            "description": "Lai piedalītos, pacel roku",
+            "demoteDescription": "{{actor}} pārveidoja par apmeklētāju, paceliet roku, lai piedalītos",
+            "description": "Paceliet roku, lai piedalītos",
             "title": "Jūs esat sapulces apmeklētājs"
         }
     },
@@ -1527,6 +1538,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Tāfele"
-        }
+        },
+        "screenTitle": "Tāfele"
     }
 }
