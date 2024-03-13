@@ -118,7 +118,7 @@ function PasswordSection({
             );
         }
 
-        if (notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
+        if (!notifyMode || notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
             setPasswordEditEnabled(!passwordEditEnabled);
         }
     }, [ buttonsWithNotifyClick, setPasswordEditEnabled, passwordEditEnabled ]);
