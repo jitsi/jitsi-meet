@@ -219,7 +219,9 @@
         "joinInBrowser": "Entrar pelo navegador de Internet",
         "launchMeetingLabel": "Como deseja entrar nesta reunião?",
         "launchWebButton": "Iniciar pelo navegador de Internet",
+        "noDesktopApp": "Não tem a aplicação?",
         "noMobileApp": "Não tem a aplicação?",
+        "or": "OU",
         "termsAndConditions": "Ao continuar, concorda com os nossos <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>termos & condições.</a>",
         "title": "Iniciando a sua reunião na {{app}}...",
         "titleNew": "Iniciando a sua reunião ...",
@@ -303,6 +305,8 @@
         "contactSupport": "Contacte o suporte",
         "copied": "Copiado",
         "copy": "Cópia",
+        "demoteParticipantDialog": "Tem a certeza de que pretende passar este participante para visitante?",
+        "demoteParticipantTitle": "Passar a visitante",
         "dismiss": "Dispensar",
         "displayNameRequired": "Olá! Qual é o seu nome?",
         "done": "Feito",
@@ -558,6 +562,7 @@
         "noNumbers": "Sem números de telefone.",
         "noPassword": "Nenhum",
         "noRoom": "Não foi especificado nenhuma sala para ligar.",
+        "noWhiteboard": "Não foi possível carregar o quadro branco.",
         "numbers": "Números para entrar por chamada telefónica",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "atingiu o limite do seu plano.",
@@ -565,7 +570,8 @@
         "sipAudioOnly": "Endereço SIP só de áudio",
         "title": "Partilhar",
         "tooltip": "Partilhar link e acesso telefónico para esta reunião",
-        "upgradeOptions": "Por favor, verifique as opções de atualização em"
+        "upgradeOptions": "Por favor, verifique as opções de atualização em",
+        "whiteboardError": "Erro ao carregar o quadro branco. Por favor, tente novamente mais tarde."
     },
     "inlineDialogFailure": {
         "msg": "Tivemos um pequeno problema.",
@@ -615,7 +621,7 @@
         "errorAPI": "Ocorreu um erro ao acessar suas transmissões do YouTube. Por favor tente logar novamente.",
         "errorLiveStreamNotEnabled": "Transmissão em direto não está ativada em {{email}}. Ative a transmissão em direto ou registre numa conta com transmissão direto ativada.",
         "expandedOff": "A transmissão em direto foi encerrada",
-        "expandedOn": "A reunião está sendo transmitida pelo YouTube.",
+        "expandedOn": "A reunião está sendo transmitida em direto.",
         "expandedPending": "Iniciando a transmissão em direto...",
         "failedToStart": "Falha ao iniciar a transmissão em direto",
         "getStreamKeyManually": "Não conseguimos buscar nenhuma transmissão em direto. Tente obter sua chave de transmissão em direto no YouTube.",
@@ -800,12 +806,16 @@
         "startSilentTitle": "Entrou sem áudio!",
         "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
+        "suggestRecordingAction": "Iniciar",
+        "suggestRecordingDescription": "Gostaria de iniciar uma gravação?",
+        "suggestRecordingTitle": "Gravar esta reunião",
         "unmute": "Ligar microfone",
         "videoMutedRemotelyDescription": "Pode sempre ligá-la novamente.",
         "videoMutedRemotelyTitle": "A sua câmara foi desligada pelo {{participantDisplayName}}.",
         "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema.",
         "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
         "viewLobby": "Ver sala de espera",
+        "viewVisitors": "Ver visitantes",
         "waitingParticipants": "{{waitingParticipants}} pessoas",
         "whiteboardLimitDescription": "Guarde o seu progresso, pois o limite de utilizadores será atingido em breve e o quadro branco será encerrado.",
         "whiteboardLimitTitle": "Utilização do quadro branco"
@@ -932,6 +942,7 @@
         "or": "ou",
         "premeeting": "Pré-reunião",
         "proceedAnyway": "Continuar na mesma",
+        "recordingWarning": "Outros participantes podem estar a gravar esta chamada",
         "screenSharingError": "Erro de partilha de ecrã:",
         "showScreen": "Ativar o ecrã de pré-reunião",
         "startWithPhone": "Iniciar com o áudio do telefone",
@@ -985,7 +996,7 @@
         "error": "A gravação falhou. Tente novamente.",
         "errorFetchingLink": "Erro ao procurar link da gravação.",
         "expandedOff": "Gravação finalizada",
-        "expandedOn": "A reunião está sendo gravada.",
+        "expandedOn": "A reunião está sendo gravada",
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Partilhar o link da gravação com os participantes da reunião",
@@ -998,7 +1009,6 @@
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. Para gravações ilimitadas tente <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Gerámos um link para a sua gravação.",
-        "live": "DIRETO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Será necessário avisá-los de que a reunião está gravada.",
         "localRecordingNoVideo": "O vídeo não está a ser gravado",
         "localRecordingStartWarning": "Por favor, certifique-se de que pára a gravação antes de sair da reunião a fim de a guardar.",
@@ -1015,7 +1025,6 @@
         "onBy": "{{name}} iniciou a gravação",
         "onlyRecordSelf": "Gravar apenas as minhas transmissões áudio e vídeo",
         "pending": "Preparando para gravar a reunião...",
-        "rec": "REC",
         "recordAudioAndVideo": "Gravar áudio e vídeo",
         "recordTranscription": "Gravar transcrições",
         "saveLocalRecording": "Guardar ficheiro de gravação localmente (Beta)",
@@ -1355,12 +1364,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
-        "error": "Transcrição falhou. Tente novamente.",
         "expandedLabel": "Transcrição ativada",
         "failedToStart": "Transcrição falhou ao iniciar",
         "labelToolTip": "A reunião esta sendo transcrita",
-        "off": "Transcrição parada",
-        "pending": "Preparando a transcrição da reunião...",
         "sourceLanguageDesc": "Atualmente a língua da reunião está definida para <b>{{sourceLanguage}}</b>. <br/> Pode alterá-la a partir ",
         "sourceLanguageHere": "daqui",
         "start": "Exibir legendas",
@@ -1416,6 +1422,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Informações sobre a ligação",
+        "demote": "Passar a visitante",
         "domute": "Sem som",
         "domuteOthers": "Silenciar todos os outros",
         "domuteVideo": "Desativar a câmara",
@@ -1470,6 +1477,7 @@
         "chatIndicator": "(visitante)",
         "labelTooltip": "Número de visitantes: {{count}}",
         "notification": {
+            "demoteDescription": "Enviado aqui pelo {{actor}}, levante a mão para participar",
             "description": "Para participar levante a sua mão",
             "title": "É um visitante na reunião"
         }
@@ -1530,6 +1538,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Quadro branco"
-        }
+        },
+        "screenTitle": "Quadro branco"
     }
 }
