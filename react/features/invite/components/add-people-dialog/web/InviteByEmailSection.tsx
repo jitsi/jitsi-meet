@@ -13,6 +13,10 @@ import {
 } from '../../../../base/icons/svg';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
+import { IReduxState,IStore } from '../../../../app/types';
+import { showSuccessNotification } from '../../../../notifications/actions';
+import {  NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
+import { useDispatch } from 'react-redux';
 
 interface IProps {
 
@@ -62,6 +66,7 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactNode}
  */
 function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
+    const dispatch=useDispatch()
     const { classes } = useStyles();
     const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
@@ -76,6 +81,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
      * @returns {void}
      */
     function _onCopyText() {
+        dispatch(showSuccessNotification({
+            titleKey: "Copied meeting link"
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         copyText(inviteText);
     }
 
@@ -89,6 +97,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
     function _onCopyTextKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
+            dispatch(showSuccessNotification({
+                titleKey: "Copied meeting link"
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             copyText(inviteText);
         }
     }

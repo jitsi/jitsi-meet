@@ -103,6 +103,13 @@ export function showErrorNotification(props: INotificationProps, type?: string) 
         appearance: NOTIFICATION_TYPE.ERROR
     }, type);
 }
+export function showSuccessNotification(props:INotificationProps,type?:string)
+{
+    return showNotification({
+        ...props,
+        appearance:NOTIFICATION_TYPE.SUCCESS
+    },type);
+}
 
 /**
  * Queues a notification for display.
