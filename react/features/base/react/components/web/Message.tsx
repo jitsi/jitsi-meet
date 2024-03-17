@@ -56,9 +56,9 @@ class Message extends Component<IProps> {
         } else {
             for (const token of tokens) {
 
-                if (token.includes('://')) {
+                if (token.includes('://') || token.startsWith('@')) {
 
-                    // Bypass the emojification when urls are involved
+                    // Bypass the emojification when urls or matrix ids are involved
                     content.push(token);
                 } else {
                     content.push(...toArray(token, { className: 'smiley' }));
