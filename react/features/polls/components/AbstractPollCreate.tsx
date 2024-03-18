@@ -47,8 +47,10 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
     const setAnswer = useCallback((i, answer) => {
         setAnswers(currentAnswers => {
-            const newAnswers = [...currentAnswers];
+            const newAnswers = [ ...currentAnswers ];
+
             newAnswers[i] = answer;
+
             return newAnswers;
         });
     }, [ answers ]);
