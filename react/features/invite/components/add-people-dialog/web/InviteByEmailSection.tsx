@@ -160,22 +160,22 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
 
     return (
         <>
-            <div className={classes.container}>
-                <p className={classes.label}>{t('addPeople.shareInvite')}</p>
-                <div className={classes.iconRow}>
+            <div className = { classes.container }>
+                <p className = { classes.label }>{t('addPeople.shareInvite')}</p>
+                <div className = { classes.iconRow }>
                     <Tooltip
-                        content={t('addPeople.copyInvite')}
-                        position='top'>
+                        content = { t('addPeople.copyInvite') }
+                        position = 'top'>
                         <div
-                            aria-label={t('addPeople.copyInvite')}
-                            className={classes.iconContainer}
+                            aria-label = { t('addPeople.copyInvite') }
+                            className = { classes.iconContainer }
                             // eslint-disable-next-line react/jsx-no-bind
-                            onClick={_onCopyText}
+                            onClick = { _onCopyText }
                             // eslint-disable-next-line react/jsx-no-bind
-                            onKeyPress={_onCopyTextKeyPress}
-                            role='button'
-                            tabIndex={0}>
-                            <Icon src={IconCopy} />
+                            onKeyPress = { _onCopyTextKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 }>
+                            <Icon src = { IconCopy } />
                         </div>
                     </Tooltip>
                     {renderEmailIcons()}
