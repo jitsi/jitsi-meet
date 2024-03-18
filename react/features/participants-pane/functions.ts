@@ -305,7 +305,7 @@ export function isBreakoutRoomRenameAllowed(state: IReduxState) {
     const isLocalModerator = isLocalParticipantModerator(state);
     const conference = getCurrentConference(state);
     const isRenameBreakoutRoomsSupported
-            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
+            = conference?.getBreakoutRooms()?.isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE) ?? false;
 
     return isLocalModerator && isRenameBreakoutRoomsSupported;
 }
