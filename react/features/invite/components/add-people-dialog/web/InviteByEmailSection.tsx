@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
@@ -13,11 +14,9 @@ import {
 } from '../../../../base/icons/svg';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
-import { IReduxState,IStore } from '../../../../app/types';
 import { showSuccessNotification } from '../../../../notifications/actions';
-import {  NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
-import { useDispatch } from 'react-redux';
 
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 interface IProps {
 
     /**
@@ -66,7 +65,7 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactNode}
  */
 function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
     const { classes } = useStyles();
     const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
@@ -82,8 +81,8 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
      */
     function _onCopyText() {
         dispatch(showSuccessNotification({
-            titleKey: "Copied meeting link"
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            titleKey: 'dialog.copiedMeeting'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         copyText(inviteText);
     }
 
@@ -98,8 +97,8 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             dispatch(showSuccessNotification({
-                titleKey: "Copied meeting link"
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                titleKey: 'dialog.copiedMeeting'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             copyText(inviteText);
         }
     }
@@ -161,22 +160,22 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
 
     return (
         <>
-            <div className = { classes.container }>
-                <p className = { classes.label }>{t('addPeople.shareInvite')}</p>
-                <div className = { classes.iconRow }>
+            <div className={classes.container}>
+                <p className={classes.label}>{t('addPeople.shareInvite')}</p>
+                <div className={classes.iconRow}>
                     <Tooltip
-                        content = { t('addPeople.copyInvite') }
-                        position = 'top'>
+                        content={t('addPeople.copyInvite')}
+                        position='top'>
                         <div
-                            aria-label = { t('addPeople.copyInvite') }
-                            className = { classes.iconContainer }
+                            aria-label={t('addPeople.copyInvite')}
+                            className={classes.iconContainer}
                             // eslint-disable-next-line react/jsx-no-bind
-                            onClick = { _onCopyText }
+                            onClick={_onCopyText}
                             // eslint-disable-next-line react/jsx-no-bind
-                            onKeyPress = { _onCopyTextKeyPress }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <Icon src = { IconCopy } />
+                            onKeyPress={_onCopyTextKeyPress}
+                            role='button'
+                            tabIndex={0}>
+                            <Icon src={IconCopy} />
                         </div>
                     </Tooltip>
                     {renderEmailIcons()}

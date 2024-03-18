@@ -304,6 +304,7 @@
         "connecting": "Connecting",
         "contactSupport": "Contact support",
         "copied": "Copied",
+        "copiedMeeting":"Copied meeting link",
         "copy": "Copy",
         "demoteParticipantDialog": "Are you sure you want to move this participant to visitor?",
         "demoteParticipantTitle": "Move to visitor",
