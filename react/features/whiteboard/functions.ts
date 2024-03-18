@@ -36,26 +36,26 @@ export const getCollabDetails = (state: IReduxState): {
 } | undefined => getWhiteboardState(state).collabDetails;
 
 /**
- * Indicates whether the whiteboard is enabled in the config.
+ * Indicates whether the whiteboard collaboration details are available.
+ *
+ * @param {IReduxState} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+const hasCollabDetails = (state: IReduxState): boolean => Boolean(
+    getCollabDetails(state)?.roomId && getCollabDetails(state)?.roomKey
+);
+
+/**
+ * Indicates whether the whiteboard is enabled.
  *
  * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
 export const isWhiteboardEnabled = (state: IReduxState): boolean =>
-    getWhiteboardConfig(state).enabled
+    (getWhiteboardConfig(state).enabled || hasCollabDetails(state))
     && getWhiteboardConfig(state).collabServerBaseUrl
     && getCurrentConference(state)?.getMetadataHandler()
 ?.isSupported();
-
-/**
- * Indicates whether the whiteboard has the collaboration
- * details and is ready to be used.
- *
- * @param {IReduxState} state - The state from the Redux store.
- * @returns {boolean}
- */
-export const isWhiteboardReady = (state: IReduxState): boolean =>
-    isWhiteboardEnabled(state) && Boolean(getCollabDetails(state));
 
 /**
  * Indicates whether the whiteboard is open.
