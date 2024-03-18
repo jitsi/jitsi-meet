@@ -14,7 +14,7 @@ import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
-import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -208,7 +208,7 @@ export function canStopRecording(state: IReduxState) {
 export function shouldAutoTranscribeOnRecord(state: IReduxState) {
     const { transcription } = state['features/base/config'];
 
-    return transcription?.autoTranscribeOnRecord ?? true;
+    return (transcription?.autoTranscribeOnRecord ?? true) && canAddTranscriber(state);
 }
 
 /**
