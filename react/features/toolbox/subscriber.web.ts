@@ -92,9 +92,9 @@ StateListenerRegistry.register(
             isTileView: isLayoutTileView(state)
         };
     },
-    /* listener */({ clientHeight, isTileView }, store, { isTileView: previousIsTileView }) => {
+    /* listener */({ clientHeight, isTileView }, store, previousState) => {
         if (!isTileView) {
-            if (previousIsTileView) {
+            if (previousState?.isTileView) {
                 store.dispatch(setShiftUp(false));
             }
 
