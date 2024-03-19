@@ -148,6 +148,7 @@
         "Share": "Chia sẻ",
         "Submit": "Đăng ký",
         "WaitForHostMsg": "Cuộc họp chưa được bắt đầu. Nếu bạn là quản trị viên vui lòng xác thực. Nếu không, vui lòng đợi quản trị viên.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Đang đợi quản trị viên...",
         "Yes": "Có",
         "accessibilityLabel": {

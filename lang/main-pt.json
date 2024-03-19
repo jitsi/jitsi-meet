@@ -261,6 +261,7 @@
         "Share": "Partilhar",
         "Submit": "Submeter",
         "WaitForHostMsg": "A conferência ainda não começou porque ainda não chegaram moderadores. Se quiser ser um moderador, inicie a sessão. Caso contrário, aguarde.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostButton": "Esperar pelo moderador",
         "WaitingForHostTitle": "À espera de um moderador...",
         "Yes": "Sim",

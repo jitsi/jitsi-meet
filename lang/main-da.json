@@ -157,6 +157,7 @@
         "Share": "Del",
         "Submit": "Gem",
         "WaitForHostMsg": "Mødet er ikke startet endnu. Hvis du er værten, log venligst ind. Ellers vent på at værten kommer",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Venter på vært …",
         "Yes": "Ja",
         "accessibilityLabel": {

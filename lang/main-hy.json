@@ -136,6 +136,7 @@
         "Share": "Տարածել",
         "Submit": "Ներմուծել",
         "WaitForHostMsg": "",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Սպասում է հյուրընկալողի …",
         "Yes": "Այո",
         "accessibilityLabel": {

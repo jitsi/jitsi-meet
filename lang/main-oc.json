@@ -209,6 +209,7 @@
         "Share": "Partejar",
         "Submit": "Validar",
         "WaitForHostMsg": "La conferéncia a pas encara començat. Se sètz l’òst volgatz ben vos identificar. Autrament esperatz qu’arribe l’òste.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "En espèra de l’òste...",
         "Yes": "Òc",
         "accessibilityLabel": {

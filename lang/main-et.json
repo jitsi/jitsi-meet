@@ -156,6 +156,7 @@
         "Share": "Jaga",
         "Submit": "Esita",
         "WaitForHostMsg": "Kõne ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Võõrustaja ootamine…",
         "Yes": "Jah",
         "accessibilityLabel": {

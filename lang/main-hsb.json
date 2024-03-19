@@ -218,6 +218,7 @@
         "Share": "dźělić",
         "Submit": "ok",
         "WaitForHostMsg": "Konferenca <b>{{room}}</b> njeje so hišće započała. Sće-li organizator, so prošu awtentifikujće. Hewak čakajće, doniž so organizator njezjewi.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "na zahajenje konferency čakać",
         "Yes": "haj",
         "accessibilityLabel": {

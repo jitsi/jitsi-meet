@@ -181,6 +181,7 @@
         "Share": "పంచుకోండి",
         "Submit": "దాఖలుచేయి",
         "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
         "Yes": "అవును",
         "accessibilityLabel": {

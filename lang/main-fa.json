@@ -254,6 +254,7 @@
         "Share": "هم‌رسانی",
         "Submit": "ارسال",
         "WaitForHostMsg": "کنفرانس هنوز شروع نشده است، اگر میزبان هستید وارد شوید، در غیراین صورت تا رسیدن میزبان و شروع جلسه منتظر بمانید.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "در انتظار میزبان ...",
         "Yes": "بله",
         "accessibilityLabel": {

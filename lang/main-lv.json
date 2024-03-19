@@ -263,6 +263,7 @@
         "Share": "Kopīgot",
         "Submit": "Iesniegt",
         "WaitForHostMsg": "Sapulce vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Pretējā gadījumā, lūdzu, uzgaidiet.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostButton": "Gaidīt rīkotāju",
         "WaitingForHostTitle": "Gaida rīkotāju...",
         "Yes": "Jā",

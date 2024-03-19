@@ -222,6 +222,7 @@
         "Share": "شارك",
         "Submit": "أرسل",
         "WaitForHostMsg": "لم يبدأ المؤتمر بعد. إن كنت المضيف والراعي، فنرجو تأكيد ذلك عبر الاستيثاق أو انتظر وصول المضيف رجاءً. ",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "في انتظار المضيف ...",
         "Yes": "نعم",
         "accessibilityLabel": {
