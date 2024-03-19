@@ -15,7 +15,6 @@ import {
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
 import { showSuccessNotification } from '../../../../notifications/actions';
-
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 interface IProps {
 
@@ -65,7 +64,7 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactNode}
  */
 function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { classes } = useStyles();
     const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
@@ -160,22 +159,22 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
 
     return (
         <>
-            <div className={classes.container}>
-                <p className={classes.label}>{t('addPeople.shareInvite')}</p>
-                <div className={classes.iconRow}>
+            <div className = { classes.container }>
+                <p className = { classes.label }>{t('addPeople.shareInvite')}</p>
+                <div className = { classes.iconRow }>
                     <Tooltip
-                        content={t('addPeople.copyInvite')}
-                        position='top'>
+                        content = { t('addPeople.copyInvite') }
+                        position = 'top'>
                         <div
-                            aria-label={t('addPeople.copyInvite')}
-                            className={classes.iconContainer}
+                            aria-label = { t('addPeople.copyInvite') }
+                            className = { classes.iconContainer }
                             // eslint-disable-next-line react/jsx-no-bind
-                            onClick={_onCopyText}
+                            onClick = { _onCopyText }
                             // eslint-disable-next-line react/jsx-no-bind
-                            onKeyPress={_onCopyTextKeyPress}
-                            role='button'
-                            tabIndex={0}>
-                            <Icon src={IconCopy} />
+                            onKeyPress = { _onCopyTextKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 }>
+                            <Icon src = { IconCopy } />
                         </div>
                     </Tooltip>
                     {renderEmailIcons()}
