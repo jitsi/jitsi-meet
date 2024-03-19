@@ -246,7 +246,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             ? premeetingButtons
             : premeetingButtons.filter(b => isButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
-        _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : undefined
+        _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : ''
     };
 }
 
