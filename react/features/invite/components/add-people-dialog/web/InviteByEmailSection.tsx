@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
@@ -13,7 +14,8 @@ import {
 } from '../../../../base/icons/svg';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
-
+import { showSuccessNotification } from '../../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 interface IProps {
 
     /**
@@ -62,6 +64,7 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactNode}
  */
 function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
+    const dispatch = useDispatch();
     const { classes } = useStyles();
     const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
@@ -76,6 +79,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
      * @returns {void}
      */
     function _onCopyText() {
+        dispatch(showSuccessNotification({
+            titleKey: 'dialog.copied'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         copyText(inviteText);
     }
 
@@ -89,6 +95,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
     function _onCopyTextKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
+            dispatch(showSuccessNotification({
+                titleKey: 'dialog.copied'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             copyText(inviteText);
         }
     }
