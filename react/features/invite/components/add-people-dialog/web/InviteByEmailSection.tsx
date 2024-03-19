@@ -80,7 +80,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
      */
     function _onCopyText() {
         dispatch(showSuccessNotification({
-            titleKey: 'dialog.copiedMeeting'
+            titleKey: 'dialog.copied'
         }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         copyText(inviteText);
     }
@@ -96,7 +96,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             dispatch(showSuccessNotification({
-                titleKey: 'dialog.copiedMeeting'
+                titleKey: 'dialog.copied'
             }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
             copyText(inviteText);
         }
