@@ -1688,6 +1688,10 @@ var config = {
     // tileView: {
     //     // Whether tileview should be disabled.
     //     disabled: false,
+    //     // If true start the video in tile view. It is enforced in all cases,
+    //     // including jibri recording, screen sharing etc. The only exception are local
+    //     // user preference, which comes before everything else, or if tile view is disabled.
+    //     force: false,
     //     // The optimal number of tiles that are going to be shown in tile view. Depending on the screen size it may
     //     // not be possible to show the exact number of participants specified here.
     //     numberOfVisibleTiles: 25,
@@ -1778,6 +1782,9 @@ var config = {
     //         collectionInterval?: number;
     //         logGetStats?: boolean;
     // },
+
+    // Hide login button on auth dialog, you may want to enable this if you are using JWT tokens to authenticate users
+    // hideLoginButton: true,
 };
 
 // Temporary backwards compatibility with old mobile clients.

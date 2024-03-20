@@ -81,6 +81,13 @@ export function shouldDisplayTileView(state: IReduxState) {
         return false;
     }
 
+    const { tileView } = state['features/base/config'];
+
+    if (tileView?.force) {
+        return true;
+    }
+
+
     const participantCount = getParticipantCount(state);
     const { iAmRecorder } = state['features/base/config'];
 
