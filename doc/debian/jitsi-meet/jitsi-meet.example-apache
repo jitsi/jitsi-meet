@@ -1,7 +1,8 @@
 
 <VirtualHost *:80>
     ServerName jitsi-meet.example.com
-    Redirect permanent / https://jitsi-meet.example.com/
+    # Redirect permanent / https://jitsi-meet.example.com/
+    DocumentRoot "/usr/share/jitsi-meet"
 </VirtualHost>
 
 <VirtualHost *:443>
