@@ -428,9 +428,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         if (remoteScreenShares.includes(largeVideoParticipantId)) {
             largeVideoSourceName = largeVideoParticipantId;
         } else {
-            largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
-                ? getSourceNamesByMediaType(state, largeVideoParticipantId, MEDIA_TYPE.VIDEO)?.[0]
-                : getTrackSourceNameByMediaTypeAndParticipant(
+            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
                     tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
         }
     }
