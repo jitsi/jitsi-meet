@@ -11,16 +11,17 @@ import { isFilmstripScrollVisible } from './functions';
  * Computes the reorderd list of the remote participants.
  *
  * @param {*} store - The redux store.
+ * @param {boolean} force - Does not short circuit, the execution, make execute all checks.
  * @param {string} participantId - The endpoint id of the participant that joined the call.
  * @returns {void}
  * @private
  */
-export function updateRemoteParticipants(store: IStore, participantId?: string) {
+export function updateRemoteParticipants(store: IStore, force?: boolean, participantId?: string) {
     const state = store.getState();
     let reorderedParticipants = [];
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
 
-    if (!isFilmstripScrollVisible(state) && !sortedRemoteVirtualScreenshareParticipants.size) {
+    if (!isFilmstripScrollVisible(state) && !sortedRemoteVirtualScreenshareParticipants.size && !force) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
