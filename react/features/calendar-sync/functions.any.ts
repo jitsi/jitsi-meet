@@ -163,7 +163,7 @@ function _parseCalendarEntry(event: any, knownDomains: string[]) {
 }
 
 /**
- * Retrieves a Jitsi Meet URL from an event if present.
+ * Retrieves a C-Meet URL from an event if present.
  *
  * @param {Object} event - The event to parse.
  * @param {Array<string>} knownDomains - The known domain names.

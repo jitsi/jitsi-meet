@@ -22,8 +22,8 @@ def twaManifest = [
     applicationId: 'org.jitsi.meet',
     hostName: 'meet.jit.si', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
-    name: 'Jitsi Meet', // The application name.
-    launcherName: 'Jitsi Meet', // The name shown on the Android Launcher.
+    name: 'C-Meet', // The application name.
+    launcherName: 'C-Meet', // The name shown on the Android Launcher.
     themeColor: '#17A0DB', // The color used for the status bar.
     navigationColor: '#000000', // The color used for the navigation bar.
     navigationColorDark: '#000000', // The color used for the dark navbar.

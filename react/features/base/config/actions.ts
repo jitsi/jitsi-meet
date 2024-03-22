@@ -31,7 +31,7 @@ export function updateConfig(config: IConfig) {
 }
 
 /**
- * Signals that the configuration (commonly known in Jitsi Meet as config.js)
+ * Signals that the configuration (commonly known in C-Meet as config.js)
  * for a specific locationURL will be loaded now.
  *
  * @param {URL} locationURL - The URL of the location which necessitated the
@@ -52,7 +52,7 @@ export function configWillLoad(locationURL: URL, room: string) {
 }
 
 /**
- * Signals that a configuration (commonly known in Jitsi Meet as config.js)
+ * Signals that a configuration (commonly known in C-Meet as config.js)
  * could not be loaded due to a specific error.
  *
  * @param {Error} error - The {@code Error} which prevented the successful
@@ -147,11 +147,11 @@ export function setConfig(config: IConfig = {}) {
 }
 
 /**
- * Stores a specific Jitsi Meet config.js object into {@code localStorage}.
+ * Stores a specific C-Meet config.js object into {@code localStorage}.
  *
  * @param {string} baseURL - The base URL from which the config.js was
  * downloaded.
- * @param {Object} config - The Jitsi Meet config.js to store.
+ * @param {Object} config - The C-Meet config.js to store.
  * @returns {Function}
  */
 export function storeConfig(baseURL: string, config: Object) {

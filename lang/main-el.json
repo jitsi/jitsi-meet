@@ -465,7 +465,7 @@
         "answer": "Απάντηση",
         "audioCallTitle": "Εισερχόμενη κλήση",
         "decline": "Απόρριψη",
-        "productLabel": "από το Jitsi Meet",
+        "productLabel": "από το C-Meet",
         "videoCallTitle": "Εισερχόμενη βιντεοκλήση"
     },
     "info": {
@@ -709,7 +709,7 @@
         "noiseSuppressionFailedTitle": "Αποτυχία στην ενεργοποίηση της εξάλειψης θορύβου",
         "noiseSuppressionNoTrackDescription": "Παρακαλώ βγάλτε πρώτα την σίγηση.",
         "noiseSuppressionStereoDescription": "Δεν υποστηρίζεται ακόμα η καταστολή θορύβου για στερεοφωνικό ήχο.",
-        "oldElectronClientDescription1": "Φαίνεται να χρησιμοποιείτε μια παλιά έκδοση του Jitsi Meet με γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
+        "oldElectronClientDescription1": "Φαίνεται να χρησιμοποιείτε μια παλιά έκδοση του C-Meet με γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
         "oldElectronClientDescription2": "τελευταία έκδοση",
         "oldElectronClientDescription3": " τώρα!",
         "participantWantsToJoin": "Θέλει να συμμετέχει στη σύσκεψη",
@@ -1387,7 +1387,7 @@
         "go": "ΠΑΜΕ",
         "goSmall": "ΠΑΜΕ",
         "headerSubtitle": "Ασφαλείς και υψηλής ποιότητας συσκέψεις",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Πληροφορίες Κλήσης",
         "jitsiOnMobile": "Jitsi στο κινητό – κατεβάστε τις εφαρμογές και ξεκινήστε μια σύσκεψη από παντού",
         "join": "ΔΗΜΙΟΥΡΓΙΑ / ΕΙΣΟΔΟΣ",

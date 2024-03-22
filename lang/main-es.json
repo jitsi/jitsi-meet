@@ -481,7 +481,7 @@
         "answer": "Contestar",
         "audioCallTitle": "Llamada entrante",
         "decline": "Descartar",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de C-Meet",
         "videoCallTitle": "Videollamada"
     },
     "info": {
@@ -732,7 +732,7 @@
         "noiseSuppressionFailedTitle": "Error al activar la supresión de ruido",
         "noiseSuppressionNoTrackDescription": "Por favor active su micrófono primero.",
         "noiseSuppressionStereoDescription": "La supresión de ruido en audio estéreo no tiene soporte actualmente",
-        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de Jitsi Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
+        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de C-Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
         "oldElectronClientDescription2": "versión más reciente",
         "oldElectronClientDescription3": " YA!",
         "participantWantsToJoin": "Quiere unirse a la reunión",
@@ -1434,7 +1434,7 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniones seguras y de alta calidad",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Información",
         "jitsiOnMobile": "Jitsi en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
         "join": "CREAR / UNIRSE",

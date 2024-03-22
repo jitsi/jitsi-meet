@@ -16,7 +16,7 @@ export const EMAIL_COMMAND = 'email';
  * The name of the {@code JitsiConference} property which identifies the URL of
  * the conference represented by the {@code JitsiConference} instance.
  *
- * TODO It was introduced in a moment of desperation. Jitsi Meet SDK for Android
+ * TODO It was introduced in a moment of desperation. C-Meet SDK for Android
  * and iOS needs to deliver events from the JavaScript side where they originate
  * to the Java and Objective-C sides, respectively, where they are to be
  * handled. The URL of the {@code JitsiConference} was chosen as the identifier

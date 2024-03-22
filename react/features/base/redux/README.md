@@ -1,6 +1,6 @@
-Jitsi Meet - redux state persistence
+C-Meet - redux state persistence
 ====================================
-Jitsi Meet has a persistence layer that persists specific subtrees of the redux
+C-Meet has a persistence layer that persists specific subtrees of the redux
 store/state into window.localStorage (on Web) or AsyncStorage (on mobile).
 
 Usage
@@ -21,7 +21,7 @@ in the `reducer.js` of the `base/settings` feature.
 
 If the second parameter is omitted, the entire feature state is persisted.
 
-When it's done, Jitsi Meet will automatically persist these subtrees and
+When it's done, C-Meet will automatically persist these subtrees and
 rehydrate them on startup.
 
 Throttling

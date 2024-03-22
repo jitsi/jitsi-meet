@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * The one and only Activity that the Jitsi Meet app needs. The
+ * The one and only Activity that the C-Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
  * created upon application initialization and there will be a single instance
  * of it. Further attempts at launching the application once it was already

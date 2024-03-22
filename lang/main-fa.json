@@ -1446,7 +1446,7 @@
         "go": "برویم",
         "goSmall": "برویم",
         "headerSubtitle": "جلسات امن و با کیفیت بالا",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "اطلاعات شماره‌گیری",
         "jitsiOnMobile": "Jitsi روی تلفن همراه - برنامه ما را بارگیری کنید و جلسه‌ای را از هرکجا آغاز کنید",
         "join": "ایجاد / پیوستن",
@@ -1454,7 +1454,7 @@
             "calendar": "نشان‌وارهٔ تقویم",
             "desktopPreviewThumbnail": "تصویر بندانگشتی پیش‌نمایش میزکار",
             "googleLogo": "نشان‌وارهٔ گوگل",
-            "logoDeepLinking": "نشان‌وارهٔ Jitsi Meet",
+            "logoDeepLinking": "نشان‌وارهٔ C-Meet",
             "microsoftLogo": "نشان‌وارهٔ Microsoft",
             "policyLogo": "نشان‌وارهٔ خط مشی"
         },

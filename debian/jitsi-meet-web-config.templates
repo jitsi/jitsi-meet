@@ -3,11 +3,11 @@ Type: select
 __Choices: Let's Encrypt certificates, I want to use my own certificate, Generate a new self-signed certificate
 _Description: SSL certificate
  .
- Jitsi Meet requires an SSL certificate. This installer can generate one automatically for your using "Let’s Encrypt". This is the recommended and simplest option for most installations.
+ C-Meet requires an SSL certificate. This installer can generate one automatically for your using "Let’s Encrypt". This is the recommended and simplest option for most installations.
  .
  In the event you need to use a certificate of your own, you can configure its location which defaults to /etc/ssl/--domain.name--.key for the key and /etc/ssl/--domain.name--.crt for the certificate.
  .
- If you are a developer and are only looking for a quick way to test basic Jitsi Meet functionality then this installer can also generate a self-signed certificate.
+ If you are a developer and are only looking for a quick way to test basic C-Meet functionality then this installer can also generate a self-signed certificate.
 
 Template: jitsi-meet/cert-path-key
 Type: string
@@ -29,7 +29,7 @@ _Description: The domain of the current installation (e.g. meet.jitsi.com):
 Template: jitsi-videobridge/jvb-hostname
 Type: string
 _Description: Hostname:
- The Jitsi Meet web config package needs the DNS hostname of your instance.
+ The C-Meet web config package needs the DNS hostname of your instance.
 
 Template: jitsi-meet/jaas-choice
 Type: boolean

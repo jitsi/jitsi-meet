@@ -60,7 +60,7 @@ export interface JitsiRefProps {
 }
 
 /**
- * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
+ * Main React Native SDK component that displays a C-Meet conference and gets all required params as props
  */
 export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) => {
     const [ appProps, setAppProps ] = useState({});

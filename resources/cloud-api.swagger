@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "Documents the REST calls used by Jitsi Meet to integrate with other services"
+  description: "Documents the REST calls used by C-Meet to integrate with other services"
   version: "1.0.0"
   title: "Swagger Video"
   termsOfService: "https://jitsi.org/CloudAPITOS/"

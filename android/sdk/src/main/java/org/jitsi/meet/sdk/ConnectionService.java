@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Jitsi Meet implementation of {@link ConnectionService}. At the time of this
+ * C-Meet implementation of {@link ConnectionService}. At the time of this
  * writing it implements only the outgoing call scenario.
  *
  * NOTE the class needs to be public, but is not part of the SDK API and should
@@ -335,7 +335,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
     }
 
     /**
-     * Connection implementation for Jitsi Meet's {@link ConnectionService}.
+     * Connection implementation for C-Meet's {@link ConnectionService}.
      *
      * @author Pawel Domas
      */

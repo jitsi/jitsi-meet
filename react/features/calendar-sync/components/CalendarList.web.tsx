@@ -16,6 +16,7 @@ import { refreshCalendar } from '../actions.web';
 import { ERRORS } from '../constants';
 
 import CalendarListContent from './CalendarListContent.web';
+import { env } from '../../../../ENV';
 
 /**
  * The type of the React {@code Component} props of {@link CalendarList}.
@@ -182,7 +183,7 @@ class CalendarList extends AbstractPage<IProps> {
                 </div>
                 <div className = 'description'>
                     { t('welcomepage.connectCalendarText', {
-                        app: interfaceConfig.APP_NAME,
+                        app: env.APP_NAME,
                         provider: interfaceConfig.PROVIDER_NAME
                     }) }
                 </div>

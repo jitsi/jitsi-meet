@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../../app/types';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { translate } from '../../../i18n/functions';
+import { env } from '../../../../../../ENV';
 
 /**
  * The CSS style of the element with CSS class {@code rightwatermark}.
@@ -175,7 +176,7 @@ class Watermarks extends Component<IProps, State> {
             if (_logoLink) {
                 reactElement = (
                     <a
-                        aria-label = { t('jitsiHome', { logo: interfaceConfig.APP_NAME }) }
+                        aria-label = { t('jitsiHome', { logo: env.APP_NAME }) }
                         className = { className }
                         href = { _logoLink }
                         target = '_new'>

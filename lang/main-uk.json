@@ -467,7 +467,7 @@
         "answer": "Відповісти",
         "audioCallTitle": "Вхідний дзвінок",
         "decline": "Відхилити",
-        "productLabel": "із Jitsi Meet",
+        "productLabel": "із C-Meet",
         "videoCallTitle": "Вхідний відеодзвінок"
     },
     "info": {
@@ -717,7 +717,7 @@
         "noiseSuppressionFailedTitle": "Не вдалося ввімкнути придушення шуму",
         "noiseSuppressionNoTrackDescription": "Перевірте, що мікрофон увімкнено.",
         "noiseSuppressionStereoDescription": "Придушення шуму у форматі стерео наразі не підтримується.",
-        "oldElectronClientDescription1": "Ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі вразливості безпеки. Переконайтеся, що ви оновили до нашої ",
+        "oldElectronClientDescription1": "Ви використовуєте стару версію клієнта C-Meet, яка має відомі вразливості безпеки. Переконайтеся, що ви оновили до нашої ",
         "oldElectronClientDescription2": "останньої версії",
         "oldElectronClientDescription3": " на поточний час!",
         "participantWantsToJoin": "Хоче приєднатися до зустрічі",
@@ -1398,7 +1398,7 @@
         "go": "Гаразд",
         "goSmall": "Гаразд",
         "headerSubtitle": "Захищений та якісний відеозв'язок",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Телефонний зв'язок",
         "jitsiOnMobile": "Jitsi на мобільному пристрої – завантажуйте наші застосунки та починайте зустрічі, де б ви не були",
         "join": "Створити або приєднатися",
@@ -1406,7 +1406,7 @@
             "calendar": "Логотип Календаря",
             "desktopPreviewThumbnail": "Мініатюра виду екрана учасника",
             "googleLogo": "Логотип Google",
-            "logoDeepLinking": "Логотип Jitsi Meet",
+            "logoDeepLinking": "Логотип C-Meet",
             "microsoftLogo": "Логотип Microsoft",
             "policyLogo": "Логотип політики"
         },

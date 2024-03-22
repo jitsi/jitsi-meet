@@ -9,7 +9,7 @@ import { readyToClose } from './actions';
 /**
  * Sends a specific event to the native counterpart of the External API. Native
  * apps may listen to such events via the mechanisms provided by the (native)
- * mobile Jitsi Meet SDK.
+ * mobile C-Meet SDK.
  *
  * @param {Object} store - The redux store.
  * @param {string} name - The name of the event to send.

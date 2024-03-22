@@ -209,7 +209,7 @@ publishing {
             pom.withXml {
                 def pomXml = asNode()
                 pomXml.appendNode('name', 'jitsi-meet-sdk')
-                pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
+                pomXml.appendNode('description', 'C-Meet SDK for Android')
                 def dependencies = pomXml.appendNode('dependencies')
                 configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
                     // The (third-party) React Native modules that we depend on

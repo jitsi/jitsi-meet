@@ -526,7 +526,7 @@
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from C-Meet",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -782,7 +782,7 @@
         "noiseSuppressionDesktopAudioDescription": "Noise suppression can't be enabled while sharing desktop audio, please disable it and try again.",
         "noiseSuppressionFailedTitle": "Failed to start noise suppression",
         "noiseSuppressionStereoDescription": "Stereo audio noise suppression is not currently supported.",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the C-Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "participantWantsToJoin": "Wants to join the meeting",
@@ -1497,7 +1497,7 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Dial-in info",
         "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",

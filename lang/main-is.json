@@ -524,7 +524,7 @@
         "answer": "Svara",
         "audioCallTitle": "Innhringing",
         "decline": "Hunsa",
-        "productLabel": "frá Jitsi Meet",
+        "productLabel": "frá C-Meet",
         "videoCallTitle": "Innhringing myndsamtals"
     },
     "info": {
@@ -778,7 +778,7 @@
         "noiseSuppressionDesktopAudioDescription": "Ekki var hægt að gera truflanasíun virka á meðan deiling fór fram á hljóði, gerðu deilinguna óvirka og reyndu síðan aftur.",
         "noiseSuppressionFailedTitle": "Mistókst að ræsa truflanasíun",
         "noiseSuppressionStereoDescription": "Truflanasíun í víðómi er ekki studd ennþá.",
-        "oldElectronClientDescription1": "Þú virðist vera að nota gamla útgáfu af Jitsi Meet forritinu sem vitað er að sé með öryggisveilur. Gakktu úr skugga um að þú uppfærir í ",
+        "oldElectronClientDescription1": "Þú virðist vera að nota gamla útgáfu af C-Meet forritinu sem vitað er að sé með öryggisveilur. Gakktu úr skugga um að þú uppfærir í ",
         "oldElectronClientDescription2": "nýjustu byggingarútgáfuna okkar",
         "oldElectronClientDescription3": " núna!",
         "participantWantsToJoin": "Vill taka þátt í fundinum",
@@ -1493,7 +1493,7 @@
         "go": "Af stað",
         "goSmall": "Af stað",
         "headerSubtitle": "Öruggir hágæða myndfundir",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Innhringingarupplýsingar",
         "jitsiOnMobile": "Jitsi á snjallsímum – sæktu forritin okkar og byrjaðu fundi hvar sem er",
         "join": "BÚA TIL / TAKA ÞÁTT",
@@ -1501,7 +1501,7 @@
             "calendar": "Táknmerki dagatals",
             "desktopPreviewThumbnail": "Smámynd forskoðunar á skjáborði",
             "googleLogo": "Táknmerki Google",
-            "logoDeepLinking": "Táknmerki Jitsi Meet",
+            "logoDeepLinking": "Táknmerki C-Meet",
             "microsoftLogo": "Táknmerki Microsoft",
             "policyLogo": "Táknmerki stefnu"
         },

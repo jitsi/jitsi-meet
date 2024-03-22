@@ -29,6 +29,7 @@ import DialInSection from './DialInSection';
 import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
 import LiveStreamSection from './LiveStreamSection';
+import { env } from '../../../../../../ENV';
 
 interface IProps extends WithTranslation {
 
@@ -146,7 +147,7 @@ function AddPeopleDialog({
     }, []);
 
     const inviteSubject = t('addPeople.inviteMoreMailSubject', {
-        appName: _inviteAppName ?? interfaceConfig.APP_NAME
+        appName: _inviteAppName ?? env.APP_NAME
     });
 
     return (

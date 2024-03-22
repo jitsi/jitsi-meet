@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 <!--
-Thank you for suggesting an idea to make Jitsi Meet better.
+Thank you for suggesting an idea to make C-Meet better.
 
 Please fill in as much of the template below as you're able.
 

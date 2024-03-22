@@ -24,7 +24,7 @@ import java.net.URL;
 
 
 /**
- * This class represents the options when joining a Jitsi Meet conference. The user can create an
+ * This class represents the options when joining a C-Meet conference. The user can create an
  * instance by using {@link JitsiMeetConferenceOptions.Builder} and setting the desired options
  * there.
  *

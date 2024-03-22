@@ -1,4 +1,4 @@
-# <p align="center">Jitsi Meet React Native SDK</p>
+# <p align="center">C-Meet React Native SDK</p>
 
 
 ## Installation

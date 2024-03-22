@@ -15,6 +15,7 @@ import { CALENDAR_TYPE } from '../../../calendar-sync/constants';
 import { isCalendarEnabled } from '../../../calendar-sync/functions';
 import GoogleSignInButton from '../../../google-api/components/GoogleSignInButton';
 import logger from '../../logger';
+import { env } from '../../../../../ENV';
 
 /**
  * The type of the React {@code Component} props of {@link CalendarTab}.
@@ -295,7 +296,7 @@ function _mapStateToProps(state: IReduxState) {
     const calendarEnabled = isCalendarEnabled(state);
 
     return {
-        _appName: interfaceConfig.APP_NAME,
+        _appName: env.APP_NAME,
         _enableGoogleIntegration: Boolean(
             calendarEnabled && googleApiApplicationClientID),
         _enableMicrosoftIntegration: Boolean(

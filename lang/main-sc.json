@@ -444,7 +444,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae C-Meet",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -693,7 +693,7 @@
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura de abbolotu",
         "noiseSuppressionNoTrackDescription": "Ativa prima su telèfonu tuo.",
         "noiseSuppressionStereoDescription": "Sa limpiadura de abbolotu de àudio stereo no est suportada.",
-        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
+        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de C-Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
         "participantWantsToJoin": "Bolet intrare a sa riunione",
@@ -1345,7 +1345,7 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Informatzione pro sa mutida",
         "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",

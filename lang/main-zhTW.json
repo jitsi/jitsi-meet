@@ -523,7 +523,7 @@
         "answer": "接通",
         "audioCallTitle": "來電",
         "decline": "拒接",
-        "productLabel": "來自 Jitsi Meet",
+        "productLabel": "來自 C-Meet",
         "videoCallTitle": "視訊來電"
     },
     "info": {
@@ -777,7 +777,7 @@
         "noiseSuppressionDesktopAudioDescription": "分享電腦音訊時無法啟用雜訊抑制，請停用後重試。",
         "noiseSuppressionFailedTitle": "啟用雜訊抑制失敗",
         "noiseSuppressionStereoDescription": "目前不支援立體聲降噪功能。",
-        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 Jitsi Meet 用戶端，請盡快更新至我們的",
+        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 C-Meet 用戶端，請盡快更新至我們的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "希望加入會議",
@@ -1489,7 +1489,7 @@
         "go": "開始",
         "goSmall": "開始",
         "headerSubtitle": "安全且高品質的視訊會議",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "資訊",
         "jitsiOnMobile": "Jitsi 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
         "join": "建立/加入",
@@ -1497,7 +1497,7 @@
             "calendar": "行事曆圖示",
             "desktopPreviewThumbnail": "桌面預覽縮圖",
             "googleLogo": "Google 圖示",
-            "logoDeepLinking": "Jitsi Meet 圖示",
+            "logoDeepLinking": "C-Meet 圖示",
             "microsoftLogo": "Microsoft 圖示",
             "policyLogo": "政策圖示"
         },

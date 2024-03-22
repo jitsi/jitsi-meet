@@ -21,7 +21,7 @@ fi
 
 export MVN_REPO=$THE_MVN_REPO
 
-echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
+echo "Releasing C-Meet SDK ${SDK_VERSION}"
 echo "Using ${MVN_REPO} as the Maven repo"
 
  if [[ $MVN_HTTP == 1 ]]; then
@@ -59,8 +59,8 @@ else
     fi
 fi
 
-# Now build and publish the Jitsi Meet SDK and its dependencies
-echo "Building and publishing the Jitsi Meet SDK"
+# Now build and publish the C-Meet SDK and its dependencies
+echo "Building and publishing the C-Meet SDK"
 pushd ${THIS_DIR}/../
 ./gradlew clean
 ./gradlew assembleRelease
@@ -71,7 +71,7 @@ if [[ $DO_GIT_TAG == 1 ]]; then
     # The artifacts are now on the Maven repo, commit them
     pushd ${MVN_REPO_PATH}
     git add -A .
-    git commit -m "Jitsi Meet SDK + dependencies: ${SDK_VERSION}"
+    git commit -m "C-Meet SDK + dependencies: ${SDK_VERSION}"
     popd
 
     # Tag the release

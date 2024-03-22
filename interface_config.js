@@ -7,9 +7,10 @@
  * This file is considered deprecated. All options will eventually be moved to
  * config.js, and no new options should be added here.
  */
+import { env } from "./ENV";
 
 var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+    APP_NAME: env.APP_NAME,
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -82,7 +83,7 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: false,
 
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://sec.cmcati.vn/c-meet',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
@@ -96,7 +97,7 @@ var interfaceConfig = {
     MAXIMUM_ZOOMING_COEFFICIENT: 1.3,
 
     /**
-     * Whether the mobile app Jitsi Meet is to be promoted to participants
+     * Whether the mobile app C-Meet is to be promoted to participants
      * attempting to join a conference in a mobile Web browser. If
      * {@code undefined}, defaults to {@code true}.
      *
@@ -111,7 +112,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'CMC ATI',
 
     /**
      * If true, will display recent list
@@ -146,7 +147,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: 'https://sec.cmcati.vn/c-meet',
 
     // Browsers, in addition to those which do not fully support WebRTC, that
     // are not supported and should show the unsupported browser page.
@@ -176,7 +177,7 @@ var interfaceConfig = {
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    // TILE_VIEW_MAX_COLUMNS: 5,
+    TILE_VIEW_MAX_COLUMNS: 5,
 
     // List of undocumented settings
     /**
@@ -201,7 +202,7 @@ var interfaceConfig = {
      */
     // APP_SCHEME: 'org.jitsi.meet',
 
-    // NATIVE_APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: 'C-Meet',
 
     /**
      * Specify Firebase dynamic link properties for the mobile apps.
@@ -222,7 +223,7 @@ var interfaceConfig = {
     /**
      * Specify the Android app package name.
      */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+    ANDROID_APP_PACKAGE: 'https://sec.cmcati.vn/c-meet',
 
     /**
      * Specify custom URL for downloading f droid app.

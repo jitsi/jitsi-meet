@@ -526,7 +526,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga C-Meet",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -782,7 +782,7 @@
         "noiseSuppressionDesktopAudioDescription": "Mbytja e zhurmave s’mund të aktivizohet teksa ndahet me të tjerët audioja e desktopit, ju lutemi, çaktivizojeni dhe riprovoni.",
         "noiseSuppressionFailedTitle": "S’u arrit të nisej mbytja e zhurmave",
         "noiseSuppressionStereoDescription": "Aktualisht nuk mbulohet mbytje zhurmash audioje stereo.",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit C-Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!",
         "participantWantsToJoin": "Dëshiron të hyjë në takim",
@@ -1497,7 +1497,7 @@
         "go": "SHKO",
         "goSmall": "SHKO",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Hollësi për t’i rënë numrit",
         "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
         "join": "KRIJONI / MERRNI PJESË",

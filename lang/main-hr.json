@@ -444,7 +444,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dolazni poziv",
         "decline": "Odbij",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od C-Meet",
         "videoCallTitle": "Dolazni videopoziv"
     },
     "info": {
@@ -691,7 +691,7 @@
         "noiseSuppressionFailedTitle": "Nauspjelo pokretanje suzbijanja šumova",
         "noiseSuppressionNoTrackDescription": "Najprije isključi zvuk tvog mikrofona.",
         "noiseSuppressionStereoDescription": "Suzbijanja šumova stereo zvuka trenutačno nije podržano.",
-        "oldElectronClientDescription1": "Čini se da koristiš staru verziju klijenta Jitsi Meet koja ima poznate sigurnosne probleme. Obavezno aktualiziraj na našu ",
+        "oldElectronClientDescription1": "Čini se da koristiš staru verziju klijenta C-Meet koja ima poznate sigurnosne probleme. Obavezno aktualiziraj na našu ",
         "oldElectronClientDescription2": "najnoviju verziju",
         "oldElectronClientDescription3": " sada!",
         "participantWantsToJoin": "Želi se pridružiti sastanku",
@@ -1338,7 +1338,7 @@
         "go": "KRENI",
         "goSmall": "KRENI",
         "headerSubtitle": "Sigurni sastanci viskoke kvalitete",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "informacije zvanih brojeva",
         "jitsiOnMobile": "Jitsi na mobilnim uređajima – preuzmi naše aplikacije i započni sastanak od kuda god želiš",
         "join": "STVORI/PRIDRUŽI SE",

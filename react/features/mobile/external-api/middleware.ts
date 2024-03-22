@@ -492,7 +492,7 @@ function _toErrorString(
  * will emit an early {@link CONFERENCE_WILL_JOIN} event to let the external API
  * know that a conference is being joined. Before that happens a connection must
  * be created and only then base/conference feature would emit
- * {@link CONFERENCE_WILL_JOIN}. That is fine for the Jitsi Meet app, because
+ * {@link CONFERENCE_WILL_JOIN}. That is fine for the C-Meet app, because
  * that's the a conference instance gets created, but it's too late for
  * the external API to learn that. The latter {@link CONFERENCE_WILL_JOIN} is
  * swallowed in {@link _swallowEvent}.

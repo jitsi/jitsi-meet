@@ -446,7 +446,7 @@
         "answer": "wótegroniś",
         "audioCallTitle": "pśiźecy telefonat",
         "decline": "OK",
-        "productLabel": "wót Jitsi Meet",
+        "productLabel": "wót C-Meet",
         "videoCallTitle": "pśiźecy wideo-tefonat"
     },
     "info": {
@@ -1344,7 +1344,7 @@
         "go": "dalej",
         "goSmall": "dalej",
         "headerSubtitle": "Wěste a wusokokwalitatiwne konference",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "informacije",
         "jitsiOnMobile": "Jitsi pśecej pódla – ześěńśo sebje našu aplikaciju a startujśo konference wšuźi, źož rowno sćo",
         "join": "ŽAŁOŽYŚ / PŚISTUPIŚ",
@@ -1352,7 +1352,7 @@
             "calendar": "logo kalendarja",
             "desktopPreviewThumbnail": "naglěd desktopa ako miniatura",
             "googleLogo": "logo Google",
-            "logoDeepLinking": "logo Jitsi Meet",
+            "logoDeepLinking": "logo C-Meet",
             "microsoftLogo": "logo Microsoft",
             "policyLogo": "logo za směrnice"
         },

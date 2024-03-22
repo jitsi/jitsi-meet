@@ -28,7 +28,7 @@ ext {
     ndkVersion = "23.1.7779620"
 
     // The Maven artifact groupId of the third-party react-native modules which
-    // Jitsi Meet SDK for Android depends on and which are not available in
+    // C-Meet SDK for Android depends on and which are not available in
     // third-party Maven repositories so we have to deploy to a Maven repository
     // of ours.
     moduleGroupId = 'com.facebook.react'
@@ -73,7 +73,7 @@ allprojects {
         }
     }
 
-    // Third-party react-native modules which Jitsi Meet SDK for Android depends
+    // Third-party react-native modules which C-Meet SDK for Android depends
     // on and which are not available in third-party Maven repositories need to
     // be deployed in a Maven repository of ours.
     //

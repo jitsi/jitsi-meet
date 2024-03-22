@@ -32,14 +32,14 @@ msgstr ""
 #. Type: select
 #. Description
 #: ../jitsi-meet-web-config.templates:1002
-msgid "SSL certificate for the Jitsi Meet instance"
+msgid "SSL certificate for the C-Meet instance"
 msgstr ""
 
 #. Type: select
 #. Description
 #: ../jitsi-meet-web-config.templates:1002
 msgid ""
-"Jitsi Meet is best to be set up with an SSL certificate. Having no "
+"C-Meet is best to be set up with an SSL certificate. Having no "
 "certificate, a self-signed one will be generated. Having a certificate "
 "signed by a recognised CA, it can be uploaded on the server and point its "
 "location. The default filenames will be /etc/ssl/--domain.name--.key for the "
@@ -109,5 +109,5 @@ msgstr ""
 #. Description
 #: ../jitsi-meet-web-config.templates:6001
 msgid ""
-"The Jitsi Meet web config package needs the DNS hostname of your instance."
+"The C-Meet web config package needs the DNS hostname of your instance."
 msgstr ""

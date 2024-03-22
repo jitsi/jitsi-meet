@@ -523,7 +523,7 @@
         "answer": "Respondi",
         "audioCallTitle": "Alvenanta voko",
         "decline": "Formeti",
-        "productLabel": "el Jitsi Meet",
+        "productLabel": "el C-Meet",
         "videoCallTitle": "Alvenanta vida voko"
     },
     "info": {
@@ -777,7 +777,7 @@
         "noiseSuppressionDesktopAudioDescription": "Neeblas aktivi la nuligon de bruo dum dividado de labortabla audio. Bonvolu malŝalti ĝin kaj provi denove. ",
         "noiseSuppressionFailedTitle": "Malsukcesis startigi la nuligon de bruo",
         "noiseSuppressionStereoDescription": "Forigo de bruo por stereosono ankoraŭ ne estas subtenata.",
-        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
+        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de C-Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
         "oldElectronClientDescription2": "plej nova versio",
         "oldElectronClientDescription3": " nun!",
         "participantWantsToJoin": "Volas aliĝi al la kunveno",
@@ -1493,7 +1493,7 @@
         "go": "EK",
         "goSmall": "EK",
         "headerSubtitle": "Sekuraj kaj altkvalitaj renkontiĝoj",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "C-Meet",
         "info": "Informoj",
         "jitsiOnMobile": "Jitsi ĉe poŝtelefono - elŝutu niajn apojn kaj komencu renkontiĝon de ie ajn",
         "join": "KREI / ALIĜI",
@@ -1501,7 +1501,7 @@
             "calendar": "Kalendara",
             "desktopPreviewThumbnail": "Miniaturo de kundividado de ekrano",
             "googleLogo": "Logotipo de Google",
-            "logoDeepLinking": "Logotipo de Jitsi Meet",
+            "logoDeepLinking": "Logotipo de C-Meet",
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de regularo"
         },

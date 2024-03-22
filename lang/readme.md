@@ -1,12 +1,12 @@
-# Jitsi Meet Translation
+# C-Meet Translation
 
-Jitsi Meet uses [i18next](http://i18next.com) library for translation.
+C-Meet uses [i18next](http://i18next.com) library for translation.
 i18next uses separate json files for each language.
 
 
-## Translating Jitsi Meet
+## Translating C-Meet
 
-The translation of Jitsi Meet is handled editing manually the language files.
+The translation of C-Meet is handled editing manually the language files.
 
 You can use the `update-translation.js` script as follows to help you with that:
 
@@ -20,7 +20,7 @@ strings. All that's missing is for you to fill in the blanks!
 
 ## Development
 
-If you want to add new functionality for Jitsi Meet and you have texts that need to be translated you must add key and value in main.json file in English for each translatable text.
+If you want to add new functionality for C-Meet and you have texts that need to be translated you must add key and value in main.json file in English for each translatable text.
 Than you can use the key to get the translated text for the current language.
 
 You can add translatable text in the HTML:

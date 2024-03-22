@@ -1,3 +1,4 @@
+import { env } from '../../../ENV';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 import { getServerURL } from '../base/settings/functions.web';
@@ -29,5 +30,5 @@ export function getDefaultURL(stateful: IStateful) {
  * @returns {string} The application name.
  */
 export function getName() {
-    return interfaceConfig.APP_NAME;
+    return env.APP_NAME
 }
