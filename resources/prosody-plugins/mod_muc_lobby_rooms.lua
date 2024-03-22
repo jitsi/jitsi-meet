@@ -36,6 +36,7 @@ local st = require 'util.stanza';
 local muc_util = module:require "muc/util";
 local valid_affiliations = muc_util.valid_affiliations;
 local MUC_NS = 'http://jabber.org/protocol/muc';
+local MUC_USER_NS = 'http://jabber.org/protocol/muc#user';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
 local LOBBY_IDENTITY_TYPE = 'lobbyrooms';
@@ -311,12 +312,29 @@ function handle_mediated_invite(room, origin, stanza, payload, host_module)
     local invite = muc_util.filter_muc_x(st.clone(stanza));
     invite.attr.from = room.jid;
     invite.attr.to = invitee;
-    invite:tag('x', {xmlns='http://jabber.org/protocol/muc#user'})
+    invite:tag('x', { xmlns = MUC_USER_NS })
             :tag('invite', {from = stanza.attr.from;})
                 :tag('reason'):text(payload:get_child_text("reason")):up()
             :up()
         :up();
     if not host_module:fire_event("muc-invite", {room = room, stanza = invite, origin = origin, incoming = stanza}) then
+        local join = invite:get_child('x', MUC_USER_NS);
+        -- make sure we filter password added by any module
+        if join then
+            local password = join:get_child('password');
+            if password then
+                join:maptags(
+                    function(tag)
+                        for k, v in pairs(tag) do
+                            if k == 'name' and v == 'password' then
+                                return nil
+                            end
+                        end
+                        return tag
+                    end
+                );
+            end
+        end
         room:route_stanza(invite);
     end
     return true;
@@ -336,7 +354,7 @@ local prosody_overrides = {
     handle_message_to_room = function(room, origin, stanza, host_module)
         local type = stanza.attr.type;
         if type == nil or type == "normal" then
-            local x = stanza:get_child("x", "http://jabber.org/protocol/muc#user");
+            local x = stanza:get_child("x", MUC_USER_NS);
             if x then
                 local handled = false;
                 for _, payload in pairs(x.tags) do
@@ -501,9 +519,15 @@ process_host_module(main_muc_component_config, function(host_module, host)
             if not affiliation or affiliation == 'none' or affiliation == 'member' then
                 occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
-                    room:save_occupant(occupant);
+                room:save_occupant(occupant);
 
                 return;
+            end
+        elseif room:get_password() then
+            local affiliation = room:get_affiliation(invitee);
+            -- if pre-approved and password is set for the room, add the password to allow joining
+            if affiliation == 'member' and not password then
+                join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
             end
         end
 
@@ -541,7 +565,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-invite', function(event)
         local room, stanza = event.room, event.stanza;
         local invitee = stanza.attr.to;
-        local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
+        local from = stanza:get_child('x', MUC_USER_NS)
             :get_child('invite').attr.from;
 
         if lobby_muc_service and room._data.lobbyroom then
@@ -601,7 +625,7 @@ function handle_create_lobby(event)
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
         st.message({ type='groupchat', from=room.jid })
-            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+            :tag('x', { xmlns = MUC_USER_NS })
                 :tag('status', { code='104' })
     );
 
@@ -619,7 +643,7 @@ function handle_destroy_lobby(event)
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
         st.message({ type='groupchat', from=room.jid })
-            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+            :tag('x', { xmlns = MUC_USER_NS })
                 :tag('status', { code='104' })
     );
 end
