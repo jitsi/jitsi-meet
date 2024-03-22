@@ -83,11 +83,12 @@ if [ ${ISSUE_FAILED_CODE} -ne 0 ] ; then
     fi
 else
     eval "$INSTALL_CERT_CMD"
-
-        if [[ -n "$ENABLEDEFAULT_CMD" ]]; then  
-           echo "Cleanup: Enabling default Apache site back"
-           eval "$ENABLEDEFAULT_CMD"
-           echo "Cleanup succeeded"
-        fi
-
 fi
+
+if [[ -n "$ENABLEDEFAULT_CMD" ]]; then  
+    echo "Cleanup: Enabling default Apache site back"
+    eval "$ENABLEDEFAULT_CMD"
+    ENABLEDEFAULT_CMD=
+    echo "Cleanup succeeded"
+fi
+
