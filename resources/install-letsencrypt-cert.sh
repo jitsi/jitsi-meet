@@ -49,6 +49,18 @@ elif [ "$OPENRESTY_INSTALL_CHECK" = "installed" ] || [ "$OPENRESTY_INSTALL_CHECK
     RELOAD_CMD="systemctl force-reload openresty.service"
 elif [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
     RELOAD_CMD="systemctl force-reload apache2.service"
+	
+    FQDN=$(hostname) # Get the server FQDN
+       if [[ "$FQDN" == "$DOMAIN" ]]; then
+          DEFAULT_SITE_CONF="/etc/apache2/sites-enabled/000-default.conf"
+          if [[ -f "$DEFAULT_SITE_CONF" ]]; then # Checks if the default site is enabled
+             echo "Default Apache site may conflict with Let's Encrypt process"
+             a2dissite 000-default.conf && ${RELOAD_CMD}
+             ENABLEDEFAULT_CMD="a2ensite 000-default.conf && ${RELOAD_CMD}"
+             echo "Disabled default Apache site"
+          fi
+      fi
+
 else
     RELOAD_CMD="echo 'No webserver found'"
 fi
@@ -71,4 +83,11 @@ if [ ${ISSUE_FAILED_CODE} -ne 0 ] ; then
     fi
 else
     eval "$INSTALL_CERT_CMD"
+
+        if [[ -n "$ENABLEDEFAULT_CMD" ]]; then  
+           echo "Cleanup: Enabling default Apache site back"
+           eval "$ENABLEDEFAULT_CMD"
+           echo "Cleanup succeeded"
+        fi
+
 fi
