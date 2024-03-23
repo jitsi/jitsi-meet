@@ -285,6 +285,7 @@ const FeedbackDialog = ({ conference, onClose, title }: IProps) => {
 
     return (
         <Dialog
+            disableEnter = { true }
             ok = {{
                 translationKey: 'dialog.Submit'
             }}

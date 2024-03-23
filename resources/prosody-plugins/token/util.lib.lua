@@ -123,6 +123,7 @@ function Util.new(module)
         self.cachedKeys = {};
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);

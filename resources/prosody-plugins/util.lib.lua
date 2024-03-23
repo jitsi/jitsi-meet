@@ -26,8 +26,8 @@ local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
 
-local OUTBOUND_SIP_JIBRI_PREFIX = 'outbound-sip-jibri@';
-local INBOUND_SIP_JIBRI_PREFIX = 'inbound-sip-jibri@';
+local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
+local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
 
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
@@ -281,6 +281,19 @@ function starts_with(str, start)
     return str:sub(1, #start) == start
 end
 
+function starts_with_one_of(str, prefixes)
+    if not str then
+        return false;
+    end
+    for i=1,#prefixes do
+        if starts_with(str, prefixes[i]) then
+            return prefixes[i];
+        end
+    end
+    return false
+end
+
+
 function ends_with(str, ending)
     return ending == "" or str:sub(-#ending) == ending
 end
@@ -456,10 +469,10 @@ end
 function get_sip_jibri_email_prefix(email)
     if not email then
         return nil;
-    elseif starts_with(email, INBOUND_SIP_JIBRI_PREFIX) then
-        return INBOUND_SIP_JIBRI_PREFIX;
-    elseif starts_with(email, OUTBOUND_SIP_JIBRI_PREFIX) then
-        return OUTBOUND_SIP_JIBRI_PREFIX;
+    elseif starts_with_one_of(email, INBOUND_SIP_JIBRI_PREFIXES) then
+        return starts_with_one_of(email, INBOUND_SIP_JIBRI_PREFIXES);
+    elseif starts_with_one_of(email, OUTBOUND_SIP_JIBRI_PREFIXES) then
+        return starts_with_one_of(email, OUTBOUND_SIP_JIBRI_PREFIXES);
     else
         return nil;
     end
@@ -518,8 +531,8 @@ function table_shallow_copy(t)
 end
 
 return {
-    OUTBOUND_SIP_JIBRI_PREFIX = OUTBOUND_SIP_JIBRI_PREFIX;
-    INBOUND_SIP_JIBRI_PREFIX = INBOUND_SIP_JIBRI_PREFIX;
+    OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
+    INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
@@ -540,5 +553,6 @@ return {
     http_get_with_retry = http_get_with_retry;
     ends_with = ends_with;
     starts_with = starts_with;
+    starts_with_one_of = starts_with_one_of;
     table_shallow_copy = table_shallow_copy;
 };

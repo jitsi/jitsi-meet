@@ -114,7 +114,7 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        updateRemoteParticipants(store, action.participant?.id);
+        updateRemoteParticipants(store, false, action.participant?.id);
         break;
     }
     case SETTINGS_UPDATED: {
