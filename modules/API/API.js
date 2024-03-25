@@ -981,6 +981,12 @@ function initCommands() {
             callback(isP2pActive(APP.store.getState()));
             break;
         }
+        case 'session-id': {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            callback(conference?.getMeetingUniqueId() || '');
+            break;
+        }
         case '_new_electron_screensharing_supported': {
             callback(true);
             break;
