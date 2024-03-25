@@ -44,9 +44,9 @@ export function obtainDesktopSources(options: { thumbnailSize?: Object; types: s
 }
 
 /**
- * Check usage of old jitsi meet electron version.
+ * Check usage of old C-Meet electron version.
  *
- * @returns {boolean} True if we use old jitsi meet electron, otherwise false.
+ * @returns {boolean} True if we use old C-Meet electron, otherwise false.
  */
 export function oldJitsiMeetElectronUsage() {
     const { JitsiMeetElectron } = window as ElectronWindowType;

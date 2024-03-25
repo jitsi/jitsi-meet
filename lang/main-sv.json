@@ -721,7 +721,7 @@
         "noiseSuppressionFailedTitle": "Det gick inte att starta brusreducering",
         "noiseSuppressionNoTrackDescription": "Slå på mikrofonen först.",
         "noiseSuppressionStereoDescription": "Brusreducering i stereoljud stöds för närvarande inte.",
-        "oldElectronClientDescription1": "Den version av Jitsi meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
+        "oldElectronClientDescription1": "Den version av C-Meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
         "oldElectronClientDescription2": "senast build",
         "oldElectronClientDescription3": "nu!",
         "participantWantsToJoin": "Vill vara med på mötet",

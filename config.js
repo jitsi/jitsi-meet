@@ -1532,7 +1532,7 @@ var config = {
 
     /**
      * This property can be used to alter the generated meeting invite links (in combination with a branding domain
-     * which is retrieved internally by jitsi meet) (e.g. https://meet.jit.si/someMeeting
+     * which is retrieved internally by C-Meet) (e.g. https://meet.jit.si/someMeeting
      * can become https://brandedDomain/roomAlias)
      */
     // brandingRoomAlias: null,

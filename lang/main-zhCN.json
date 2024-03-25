@@ -762,7 +762,7 @@
         "noiseSuppressionDesktopAudioDescription": "在共享桌面音频时无法启用降噪功能，请禁用并重试。",
         "noiseSuppressionFailedTitle": "无法启动降噪功能",
         "noiseSuppressionStereoDescription": "暂不支持立体声音频降噪。",
-        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Jitsi Meet客户端，请确保您更新到我们的",
+        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版C-Meet客户端，请确保您更新到我们的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "想要加入会议",
@@ -1477,7 +1477,7 @@
             "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
             "googleLogo": "谷歌图标",
-            "logoDeepLinking": "Jitsi Meet图标",
+            "logoDeepLinking": "C-Meet图标",
             "microsoftLogo": "微软图标",
             "policyLogo": "政策图标"
         },

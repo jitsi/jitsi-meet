@@ -134,7 +134,7 @@ case "$1" in
             fi
         fi
 
-        # jitsi meet
+        # C-Meet
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
         if [ ! -f $JITSI_MEET_CONFIG ] ; then
             cp /usr/share/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
@@ -293,13 +293,13 @@ case "$1" in
         echo "     dMMMMMkxXc"
         echo "     cNMMMNl.."
         if [ "${JAAS_INPUT}" != "true" ] || [ ${JAAS_REG_ERROR} -ne 0 ]; then
-            echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+            echo "     .kMMMX;             Interested in adding telephony to your C-Meetings?"
             echo "      ;XMMMO'"
             echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
             echo "        lNMMM0,                        and follow the guide in the dev console."
         else
             echo "     .kMMMX;"
-            echo "      ;XMMMO'            Congratulations! Now you can use telephony in your Jitsi meetings!"
+            echo "      ;XMMMO'            Congratulations! Now you can use telephony in your C-Meetings!"
             echo "       lNMMWO'             We have created a free JaaS (Jitsi as a Service) account for you. "
             echo "        lNMMM0,              You can login to https://jaas.8x8.vc/components to check our developer console and your account details."
         fi

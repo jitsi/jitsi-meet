@@ -263,7 +263,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _updateRoomName() {
-        const generatedRoomName = env.WELCOME_PAGE_MESSAGE;
+        const generatedRoomName = "C-meet xin chào";
         const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 

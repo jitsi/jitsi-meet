@@ -63,7 +63,6 @@ class ChatInputBar extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    dispatchU: IStore['dispatch'];
     stompClient: any;
     meetingId: any;
     user: any;
@@ -135,7 +134,7 @@ class ChatInputBar extends Component<IProps, IState> {
             const data = JSON.parse(body);
             const { userId, meetingId } = data;
             if (data.meetingId == meetingId && this.user.id != userId) {
-                this.dispatchU(addMessage({
+                this.props.onSend({
                     displayName: data.sender,
                     hasRead: false,
                     id: data.id,
@@ -146,7 +145,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     recipient: '', //
                     timestamp: Date.now(),
                     isReaction: false
-                }));
+                });
             }
         });
     }

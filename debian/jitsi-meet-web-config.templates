@@ -33,7 +33,7 @@ _Description: Hostname:
 
 Template: jitsi-meet/jaas-choice
 Type: boolean
-_Description: Add telephony to your Jitsi meetings?
+_Description: Add telephony to your C-Meetings?
  You can easily add dial-in support to your meetings. To allow this we would need your permission to create a free JaaS (Jitsi as a Service) account for you.
 
 Template: jitsi-meet/email

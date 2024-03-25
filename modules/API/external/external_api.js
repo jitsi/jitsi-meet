@@ -1428,7 +1428,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param { string } options.mode - Recording mode, either `file` or `stream`.
      * @param { string } options.dropboxToken - Dropbox oauth2 token.
      * @param { boolean } options.shouldShare - Whether the recording should be shared with the participants or not.
-     * Only applies to certain jitsi meet deploys.
+     * Only applies to certain C-Meet deploys.
      * @param { string } options.rtmpStreamKey - The RTMP stream key.
      * @param { string } options.rtmpBroadcastID - The RTMP broadcast ID.
      * @param { string } options.youtubeStreamKey - The youtube stream key.

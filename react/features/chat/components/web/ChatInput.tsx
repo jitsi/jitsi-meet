@@ -13,7 +13,6 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { CMEET_ENV } from "../../ENV";
 import { LocalStorageHandle } from '../../LocalStorageHandler';
-import { addMessage } from '../../actions.web';
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import { areSmileysDisabled } from '../../functions';
 import SmileysPanel from './SmileysPanel';
@@ -78,7 +77,6 @@ class ChatInput extends Component<IProps, IState> {
     stompClient: any;
     meetingId: any;
     user: any;
-    dispatchU: IStore['dispatch'];
 
     /**
      * Initializes a new {@code ChatInput} instance.
@@ -153,7 +151,7 @@ class ChatInput extends Component<IProps, IState> {
             const data = JSON.parse(body);
             const { userId, meetingId } = data;
             if (data.meetingId == meetingId && this.user.id != userId) {
-                this.dispatchU(addMessage({
+                this.props.onSend({
                     displayName: data.sender,
                     hasRead: false,
                     id: data.id,
@@ -164,7 +162,7 @@ class ChatInput extends Component<IProps, IState> {
                     recipient: '', //
                     timestamp: Date.now(),
                     isReaction: false
-                }));
+                });
             }
         });
     }

@@ -31,7 +31,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 /**
- * Allow users to embed a jitsi meeting in an iframe.
+ * Allow users to embed a C-Meeting in an iframe.
  *
  * @returns {React$Element<any>}
  */
@@ -39,7 +39,7 @@ function EmbedMeeting({ t, url }: IProps) {
     const { classes } = useStyles();
 
     /**
-     * Get the embed code for a jitsi meeting.
+     * Get the embed code for a C-Meeting.
      *
      * @returns {string} The iframe embed code.
      */

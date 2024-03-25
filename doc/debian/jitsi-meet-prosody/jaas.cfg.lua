@@ -1,4 +1,4 @@
--- Enables dial-in for Jitsi meet components customers
+-- Enables dial-in for C-Meet components customers
 VirtualHost "jigasi.meet.jitsi"
     modules_enabled = {
         "ping";

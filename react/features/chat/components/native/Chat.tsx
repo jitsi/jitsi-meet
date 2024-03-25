@@ -7,7 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
-import { closeChat, sendMessage } from '../../actions.native';
+import { closeChat, sendMessage, addMessage } from '../../actions.native';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatInputBar from './ChatInputBar';
@@ -45,6 +45,8 @@ class Chat extends Component<IProps> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSendMessage = this._onSendMessage.bind(this);
+        this._onSendMessageCMC= this._onSendMessageCMC.bind(this);
+        this._handleMessage= this._handleMessage.bind(this);
     }
 
     /**
@@ -62,7 +64,7 @@ class Chat extends Component<IProps> {
 
                 /* eslint-disable react/jsx-no-bind */
                 footerComponent = { () =>
-                    <ChatInputBar onSend = { this._onSendMessage } />
+                    <ChatInputBar onSend = { this._handleMessage } />
                 }
                 hasBottomTextInput = { true }
                 hasExtraHeaderHeight = { true }
@@ -84,6 +86,18 @@ class Chat extends Component<IProps> {
     */
     _onSendMessage(text: string) {
         this.props.dispatch(sendMessage(text));
+    }
+
+    _onSendMessageCMC(data: any) {
+        this.props.dispatch(addMessage(data));
+    }
+
+    _handleMessage(data: any){
+        if(typeof data == 'object'){
+            this._onSendMessageCMC(data);
+        }else{
+            this._onSendMessage(data)
+        }
     }
 }
 

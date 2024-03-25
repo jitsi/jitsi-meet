@@ -7,10 +7,9 @@
  * This file is considered deprecated. All options will eventually be moved to
  * config.js, and no new options should be added here.
  */
-import { env } from "./ENV";
 
 var interfaceConfig = {
-    APP_NAME: env.APP_NAME,
+    APP_NAME: "C-MEET",
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 

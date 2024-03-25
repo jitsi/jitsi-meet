@@ -9,7 +9,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import PollsPane from '../../../polls/components/web/PollsPane';
-import { sendMessage, setIsPollsTabFocused, toggleChat } from '../../actions.web';
+import { sendMessage, setIsPollsTabFocused, toggleChat, addMessage } from '../../actions.web';
 import { CHAT_SIZE, CHAT_TABS, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
@@ -173,6 +173,18 @@ const Chat = ({
         dispatch(sendMessage(text));
     }, []);
 
+    const onSendMessageCmeet = useCallback((data: any) => {
+        dispatch(addMessage(data));
+    }, []);
+
+    const handldeMessage = (data: any)=> {
+        if(typeof data == 'object'){
+            onSendMessageCmeet(data);
+        }else{
+            onSendMessage(data)
+        }
+    }
+
     /**
     * Toggles the chat window.
     *
@@ -231,7 +243,7 @@ const Chat = ({
                         messages = { _messages } />
                     <MessageRecipient />
                     <ChatInput
-                        onSend = { onSendMessage } />
+                        onSend = { handldeMessage } />
                 </div>
                 {_isPollsEnabled && (
                     <>

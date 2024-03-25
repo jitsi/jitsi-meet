@@ -621,7 +621,7 @@ function initCommands() {
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
          * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
-         * Only applies to certain jitsi meet deploys.
+         * Only applies to certain C-Meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
          * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.

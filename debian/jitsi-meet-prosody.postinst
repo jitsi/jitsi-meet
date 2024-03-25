@@ -188,7 +188,7 @@ case "$1" in
 
         JAAS_HOST_CONFIG="/etc/prosody/conf.avail/jaas.cfg.lua"
         if [ "${JAAS_INPUT}" = "true" ] && [ ! -f $JAAS_HOST_CONFIG ]; then
-            sed -i "s/enabled = false -- Jitsi meet components/enabled = true -- Jitsi meet components/g" $PROSODY_HOST_CONFIG
+            sed -i "s/enabled = false -- C-Meet components/enabled = true -- C-Meet components/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
 
