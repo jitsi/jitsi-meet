@@ -195,7 +195,8 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         marginHorizontal: BaseTheme.spacing[1],
-        width: 160
+        maxWidth: 160,
+        flex: 1
     },
 
     toggleText: {
