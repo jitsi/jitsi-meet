@@ -208,7 +208,8 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButtonAndroid: {
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        marginVertical: BaseTheme.spacing[5]
     },
 
     pollPane: {
