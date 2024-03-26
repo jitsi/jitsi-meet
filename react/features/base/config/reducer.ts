@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { TOOLBAR_BUTTONS } from '../../toolbox/constants';
 import { ToolbarButton } from '../../toolbox/types';
+import { CONNECTION_PROPERTIES_UPDATED } from '../connection/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
@@ -93,6 +94,24 @@ ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInit
             */
             locationURL: action.locationURL
         };
+
+    case CONNECTION_PROPERTIES_UPDATED: {
+        const { region, shard } = action.properties;
+        const { deploymentInfo } = state;
+
+        if (deploymentInfo?.region === region && deploymentInfo?.shard === shard) {
+            return state;
+        }
+
+        return {
+            ...state,
+            deploymentInfo: JSON.parse(JSON.stringify({
+                ...deploymentInfo,
+                region,
+                shard
+            }))
+        };
+    }
 
     case LOAD_CONFIG_ERROR:
         // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
