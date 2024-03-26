@@ -262,8 +262,14 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @protected
      * @returns {void}
      */
+    
+    _renderText(){
+        return env.WELCOME_PAGE_MESSAGE[ Math.floor(Math.random() * (env.WELCOME_PAGE_MESSAGE.length-1))]
+    }
+
+
     _updateRoomName() {
-        const generatedRoomName = "C-meet xin chào";
+        const generatedRoomName = this._renderText();
         const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 
