@@ -304,7 +304,7 @@ export function _connectInternal(id?: string, password?: string) {
             }
 
             /**
-             * Rejects external promise when connection fails.
+             * Connection was redirected.
              *
              * @param {string|undefined} vnode - The vnode to connect to.
              * @param {string} focusJid - The focus jid to use.
@@ -319,7 +319,7 @@ export function _connectInternal(id?: string, password?: string) {
             }
 
             /**
-             * Rejects external promise when connection fails.
+             * Connection properties were updated.
              *
              * @param {Object} properties - The properties which were updated.
              * @private
@@ -360,7 +360,7 @@ function _connectionWillConnect(connection: Object) {
 }
 
 /**
- * Create an action for when a connection properties are updated.
+ * Create an action for when connection properties are updated.
  *
  * @param {Object} properties - The properties which were updated.
  * @private
