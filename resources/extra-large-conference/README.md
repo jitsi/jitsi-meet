@@ -83,6 +83,7 @@ s2s_whitelist = {
 - Create the visitors component in /etc/prosody/conf.d/jitmeet.example.com.cfg.lua:
 ```
 Component "visitors.jitmeet.example.com" "visitors_component"
+  auto_allow_visitor_promotion = true
 ```
 - Make sure you add the correct upstreams to nginx config
 ```
@@ -113,3 +114,9 @@ service nginx restart
 
 Now after the main 30 participants join, the rest will be visitors using the
 visitor nodes.
+
+To enable promotion where visitors need to be approved by a moderator to join the meeting:
+  - you need to switch `auto_allow_visitor_promotion=false`.
+  - You need to enable http requests to jicofo by editing config.js and adding a nginx rule for it. 
+    - In /etc/jitsi/meet/jitmeet.example.com-config.js uncomment conferenceRequestUrl.
+    - In jitsi-meet nginx config make sure you have the conference-request location rules.
