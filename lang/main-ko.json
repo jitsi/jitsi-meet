@@ -497,6 +497,11 @@
     },
     "passwordDigitsOnly": "최대 {{number}} 자리",
     "passwordSetRemotely": "다른 참가자가 설정",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "옵션은 고유해야합니다"
+        }
+    },
     "poweredby": "powered by",
     "presenceStatus": {
         "busy": "바쁨",

@@ -588,6 +588,11 @@
     },
     "passwordDigitsOnly": "{{number}} digitu arte",
     "passwordSetRemotely": "beste parte-hartzaile batek ezarrita",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Aukerak bakarrak izan behar dira"
+        }
+    },
     "poweredby": "garatzailea:",
     "prejoin": {
         "audioAndVideoError": "Errorea audio eta bideoan:",

@@ -865,6 +865,9 @@
             "removeOption": "Supprimer l'option",
             "send": "Envoyer"
         },
+        "errors": {
+            "notUniqueOption": "Les options doivent être uniques"
+        },
         "notification": {
             "description": "Ouvrez l'onglet des sondages pour voter",
             "title": "Un nouveau sondage a été ajouté à la réunion"

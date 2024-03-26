@@ -467,6 +467,11 @@
     },
     "passwordDigitsOnly": "Daugiausia {{number}} skaičių",
     "passwordSetRemotely": "nustatytas kito naudotojo",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Parinktys turi būti unikalios"
+        }
+    },
     "poweredby": "pateikiamas",
     "presenceStatus": {
         "busy": "Užimtas",

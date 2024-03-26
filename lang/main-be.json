@@ -478,6 +478,11 @@
     },
     "passwordDigitsOnly": "Да {{number}} лічбаў",
     "passwordSetRemotely": "устаноўлены іншым удзельнікам",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Варыянты павінны быць унікальнымі"
+        }
+    },
     "poweredby": "працуе на",
     "presenceStatus": {
         "busy": "Заняты",

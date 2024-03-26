@@ -477,6 +477,11 @@
     },
     "passwordDigitsOnly": "עד {{number}} ספרות",
     "passwordSetRemotely": "נקבע על ידי חבר אחר",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "האפשרויות חייבות להיות ייחודיות"
+        }
+    },
     "poweredby": "מופעל על ידי",
     "presenceStatus": {
         "busy": "עסוק",

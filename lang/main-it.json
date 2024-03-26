@@ -770,6 +770,9 @@
             "removeOption": "Elimina risposta",
             "send": "Invia"
         },
+        "errors": {
+            "notUniqueOption": "Le opzioni devono essere uniche"
+        },
         "notification": {
             "description": "Apri la scheda sondaggi per votare",
             "title": "Un nuovo sondaggio è stato aggiunto alla riunione"

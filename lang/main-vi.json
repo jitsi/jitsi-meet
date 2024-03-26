@@ -474,6 +474,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "được thiết lập bởi một người khác",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Tùy chọn phải là duy nhất"
+        }
+    },
     "poweredby": "Được hỗ trợ bởi",
     "presenceStatus": {
         "busy": "Bận",

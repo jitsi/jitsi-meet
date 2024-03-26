@@ -464,6 +464,11 @@
     },
     "passwordDigitsOnly": "Op til {{number}} tal",
     "passwordSetRemotely": "Sat af et andet medlem",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Valgmulighederne skal være unikke"
+        }
+    },
     "poweredby": "Powered by",
     "presenceStatus": {
         "busy": "Optaget",

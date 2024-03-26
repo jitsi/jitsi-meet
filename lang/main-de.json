@@ -867,6 +867,9 @@
             "removeOption": "Antwort entfernen",
             "send": "Erstellen"
         },
+        "errors": {
+            "notUniqueOption": "Optionen müssen einzigartig sein"
+        },
         "notification": {
             "description": "Öffnen Sie das Umfragen-Tab um abzustimmen",
             "title": "Dieser Konferenz wurde eine Umfrage hinzugefügt"

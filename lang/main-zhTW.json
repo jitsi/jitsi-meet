@@ -863,6 +863,9 @@
             "removeOption": "移除選項",
             "send": "傳送"
         },
+        "errors": {
+            "notUniqueOption": "選項必須是唯一的"
+        },
         "notification": {
             "description": "開啟投票分頁以參與投票",
             "title": "此會議有一項新投票"
