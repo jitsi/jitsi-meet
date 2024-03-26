@@ -61,7 +61,7 @@ export function parseURLParams(
 
             if (!dontParse) {
                 const decoded = decodeURIComponent(value).replace(/\\&/, '&')
-                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/[\u2018\u2019]/g, '\'')
                     .replace(/[\u201C\u201D]/g, '"');
 
                 value = decoded === 'undefined' ? undefined : safeJsonParse(decoded);
