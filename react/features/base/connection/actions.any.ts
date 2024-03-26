@@ -15,6 +15,7 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_PROPERTIES_UPDATED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR
@@ -230,6 +231,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_REDIRECTED,
                 _onConnectionRedirected);
+            connection.addEventListener(
+                JitsiConnectionEvents.PROPERTIES_UPDATED,
+                _onPropertiesUpdate);
 
             /**
              * Unsubscribe the connection instance from
@@ -241,6 +245,7 @@ export function _connectInternal(id?: string, password?: string) {
                 connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
+                connection.removeEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
             }
 
             /**
@@ -313,6 +318,17 @@ export function _connectInternal(id?: string, password?: string) {
                 dispatch(redirect(vnode, focusJid, username));
             }
 
+            /**
+             * Rejects external promise when connection fails.
+             *
+             * @param {Object} properties - The properties which were updated.
+             * @private
+             * @returns {void}
+             */
+            function _onPropertiesUpdate(properties: object) {
+                dispatch(_propertiesUpdate(properties));
+            }
+
             // in case of configured http url for conference request we need the room name
             const name = getBackendSafeRoomName(state['features/base/conference'].room);
 
@@ -340,6 +356,23 @@ function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
         connection
+    };
+}
+
+/**
+ * Create an action for when a connection properties are updated.
+ *
+ * @param {Object} properties - The properties which were updated.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_PROPERTIES_UPDATED,
+ *     properties: Object
+ * }}
+ */
+function _propertiesUpdate(properties: object) {
+    return {
+        type: CONNECTION_PROPERTIES_UPDATED,
+        properties
     };
 }
 
