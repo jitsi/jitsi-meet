@@ -565,6 +565,11 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "दूसरे प्रतिभागी द्वारा निर्धारित",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "विकल्प अद्वितीय होना चाहिए"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "ऑडियो और वीडियो त्रुटि:",

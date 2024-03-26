@@ -547,6 +547,11 @@
     },
     "passwordDigitsOnly": "až {{number}} číslic",
     "passwordSetRemotely": "nastavené iným účastníkom",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Možnosti musia byť jedinečné"
+        }
+    },
     "poweredby": "založené na",
     "prejoin": {
         "audioAndVideoError": "Chyba zvuku a videa:",

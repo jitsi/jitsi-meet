@@ -865,6 +865,9 @@
             "removeOption": "Fjarlægja valkost",
             "send": "Senda"
         },
+        "errors": {
+            "notUniqueOption": "Valkostir hljóta að vera einstök"
+        },
         "notification": {
             "description": "Opnaðu könnunarflipann til að greiða atkvæði",
             "title": "Nýrri könnun var bætt á þennan fund"

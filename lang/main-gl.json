@@ -454,6 +454,11 @@
     },
     "passwordDigitsOnly": "Ata {{number}} díxitos",
     "passwordSetRemotely": "estabelecida por outro participante",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "As opcións deben ser únicas"
+        }
+    },
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",

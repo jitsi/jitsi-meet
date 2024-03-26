@@ -755,6 +755,9 @@
             "removeOption": "wotmołwu wotstronić",
             "send": "zestajić"
         },
+        "errors": {
+            "notUniqueOption": "opcije dyrbja jasne być"
+        },
         "notification": {
             "description": "Za wobdźělenje wočińće tab za naprašowanje.",
             "title": "Tutej konferency bu naprašowanje přidate."

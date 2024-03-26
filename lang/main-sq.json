@@ -872,6 +872,9 @@
             "removeOption": "Hiqe mundësinë",
             "send": "Dërgoje"
         },
+        "errors": {
+            "notUniqueOption": "Opsionet duhet të jenë unike"
+        },
         "notification": {
             "description": "Që të votoni, hapni skedën e pyetësorëve",
             "title": "Te ky takim u shtua një pyetësor i ri"

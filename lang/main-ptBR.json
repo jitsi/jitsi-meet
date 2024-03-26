@@ -864,6 +864,9 @@
             "removeOption": "Remover opção",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "As opções devem ser exclusivas"
+        },
         "notification": {
             "description": "Abra a aba das votações para votar",
             "title": "Uma nova votação foi iniciada nesta conferência"

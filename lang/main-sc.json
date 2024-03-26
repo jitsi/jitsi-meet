@@ -772,6 +772,9 @@
             "removeOption": "Boga s'optzione",
             "send": "Imbia"
         },
+        "errors": {
+            "notUniqueOption": "Sas optziones depent èssere ùnicas"
+        },
         "notification": {
             "description": "Aberi ischeda de sondàgiu pro votare",
             "title": "Sondàgiu nou agiuntu a sa riunione"

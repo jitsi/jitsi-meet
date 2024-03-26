@@ -623,6 +623,9 @@
             "removeOption": "Opció eltávolítása",
             "send": "Küldés"
         },
+        "errors": {
+            "notUniqueOption": "Az opcióknak egyedinek kell lenniük"
+        },
         "notification": {
             "description": "Szavazás megnyitása",
             "title": "Új szavazás létrehozva"

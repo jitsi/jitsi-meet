@@ -427,6 +427,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "Սահմանվել է մեկ այլ մասնակցի կողմից",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Ընտրանքները պետք է լինեն եզակի"
+        }
+    },
     "poweredby": "Հիմնված է",
     "presenceStatus": {
         "busy": "",

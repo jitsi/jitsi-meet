@@ -875,6 +875,9 @@
             "removeOption": "Remover opção",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "As opções devem ser únicas"
+        },
         "notification": {
             "description": "Abrir o separador das sondagens para votar",
             "title": "Uma nova sondagem foi adicionada a esta reunião"

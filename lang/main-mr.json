@@ -482,6 +482,11 @@
     },
     "passwordDigitsOnly": " पर्यंत {{number}} अंक",
     "passwordSetRemotely": "दुसर्‍या सहभागीने सेट केलेले",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "पर्याय अद्वितीय असणे आवश्यक आहे"
+        }
+    },
     "poweredby": "द्वारा समर्थित",
     "prejoin": {
         "audioAndVideoError": "ऑडिओ आणि व्हिडिओ त्रुटी:",

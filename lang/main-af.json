@@ -432,6 +432,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Opsies moet uniek wees"
+        }
+    },
     "poweredby": "aangedryf deur",
     "presenceStatus": {
         "busy": "Besig",

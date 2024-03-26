@@ -527,6 +527,11 @@
     },
     "passwordDigitsOnly": "До {{number}} цифри",
     "passwordSetRemotely": "зададена от друг участник",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Опциите трябва да са уникални"
+        }
+    },
     "poweredby": "с подкрепата на",
     "presenceStatus": {
         "busy": "Зает",
