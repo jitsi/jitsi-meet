@@ -100,7 +100,7 @@ export function overwriteConfig(config: Object) {
  * loading of a configuration.
  * @returns {Function}
  */
-export function setConfig(config: IConfig = {}, locationURL: URL) {
+export function setConfig(config: IConfig = {}, locationURL: URL | undefined) {
     // Now that the loading of the config was successful override the values
     // with the parameters passed in the hash part of the location URI.
     // TODO We're still in the middle ground between old Web with config,
