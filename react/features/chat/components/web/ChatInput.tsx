@@ -61,6 +61,7 @@ interface IState {
  */
 class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
+    _inputIconRef?: RefObject<any>;
 
     state = {
         message: '',
@@ -77,6 +78,7 @@ class ChatInput extends Component<IProps, IState> {
         super(props);
 
         this._textArea = React.createRef<HTMLTextAreaElement>();
+        this._inputIconRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
@@ -84,6 +86,7 @@ class ChatInput extends Component<IProps, IState> {
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onSubmitMessage = this._onSubmitMessage.bind(this);
         this._toggleSmileysPanel = this._toggleSmileysPanel.bind(this);
+        this._closeSmileysPanel = this._closeSmileysPanel.bind(this);
     }
 
     /**
@@ -127,6 +130,8 @@ class ChatInput extends Component<IProps, IState> {
                             <div
                                 className = 'smileys-panel' >
                                 <SmileysPanel
+                                    closeSmileysPanel = { this._closeSmileysPanel }
+                                    inputIconRef = { this._inputIconRef }
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
                         </div>
@@ -136,6 +141,7 @@ class ChatInput extends Component<IProps, IState> {
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
                         iconClick = { this._toggleSmileysPanel }
                         id = 'chat-input-messagebox'
+                        inputIconRef = { this._inputIconRef }
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }
@@ -237,11 +243,7 @@ class ChatInput extends Component<IProps, IState> {
         if (smileyText) {
             this.setState({
                 message: `${this.state.message} ${smileyText}`,
-                showSmileysPanel: false
-            });
-        } else {
-            this.setState({
-                showSmileysPanel: false
+                showSmileysPanel: true
             });
         }
 
@@ -259,6 +261,16 @@ class ChatInput extends Component<IProps, IState> {
             this._focus();
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
+    }
+
+    /**
+     * Closes the smileys selector.
+     *
+     * @private
+     * @returns {void}
+     */
+    _closeSmileysPanel() {
+        this.setState({ showSmileysPanel: false });
     }
 }
 
