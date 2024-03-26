@@ -60,9 +60,12 @@ export function parseURLParams(
             value = param[1];
 
             if (!dontParse) {
-                const decoded = decodeURIComponent(value).replace(/\\&/, '&');
+                const decoded = decodeURIComponent(value).replace(/\\&/, '&')
+                    .replace(/[\u2018\u2019]/g, '\'')
+                    .replace(/[\u201C\u201D]/g, '"');
 
                 value = decoded === 'undefined' ? undefined : safeJsonParse(decoded);
+
             }
         } catch (e: any) {
             reportError(

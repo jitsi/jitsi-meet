@@ -592,8 +592,8 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
 
     if (room) {
         // Set the stored subject.
-        dispatch(setLocalSubject(localSubject ?? ''));
-        dispatch(setSubject(subject ?? ''));
+        localSubject && dispatch(setLocalSubject(localSubject));
+        subject && dispatch(setSubject(subject));
     }
 
     return next(action);

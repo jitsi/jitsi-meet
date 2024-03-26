@@ -50,6 +50,9 @@ export default class PrejoinApp extends BaseApp<Props> {
             ? store.getState()['features/base/settings']
             : { startWithAudioMuted: undefined,
                 startWithVideoMuted: undefined };
+        const { locationURL } = store
+            ? store.getState()['features/base/connection']
+            : { locationURL: undefined };
 
         dispatch?.(setConfig({
             prejoinConfig: {
@@ -57,7 +60,7 @@ export default class PrejoinApp extends BaseApp<Props> {
             },
             startWithAudioMuted,
             startWithVideoMuted
-        }));
+        }, locationURL));
 
         await dispatch?.(setupInitialDevices());
         const { tryCreateLocalTracks, errors } = createPrejoinTracks();
