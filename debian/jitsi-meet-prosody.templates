@@ -1,17 +1,17 @@
 Template: jitsi-meet-prosody/jvb-hostname
 Type: string
 _Description: The domain of the current installation (e.g. meet.jitsi.com):
- The value of the domain that is set in the Jitsi Videobridge installation.
+ The value of the domain that is set in the C-meet Videobridge installation.
 
 Template: jitsi-videobridge/jvb-hostname
 Type: string
 _Description: The domain of the current installation (e.g. meet.jitsi.com):
- The value of the domain that is set in the Jitsi Videobridge installation.
+ The value of the domain that is set in the C-meet Videobridge installation.
 
 Template: jitsi-videobridge/jvbsecret
 Type: password
-_Description: Jitsi Videobridge Component secret:
- The secret used by Jitsi Videobridge to connect to xmpp server as component.
+_Description: C-meet Videobridge Component secret:
+ The secret used by C-meet Videobridge to connect to xmpp server as component.
 
 Template: jicofo/jicofo-authpassword
 Type: password

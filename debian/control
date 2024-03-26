@@ -15,7 +15,7 @@ Description: WebRTC JavaScript video conferences
  C-Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
- It is a web interface to Jitsi Videobridge for audio and video
+ It is a web interface to C-meet Videobridge for audio and video
  forwarding and relaying.
 
 Package: jitsi-meet-web-config
@@ -25,7 +25,7 @@ Description: Configuration for web serving of C-Meet
  C-Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
- It is a web interface to Jitsi Videobridge for audio and video
+ It is a web interface to C-meet Videobridge for audio and video
  forwarding and relaying, using a webserver Nginx or Apache2.
  .
  This package contains configuration for Nginx to be used with
@@ -39,7 +39,7 @@ Description: Prosody configuration for C-Meet
  C-Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
  .
- It is a web interface to Jitsi Videobridge for audio and video
+ It is a web interface to C-meet Videobridge for audio and video
  forwarding and relaying.
  .
  This package contains configuration for Prosody to be used with
