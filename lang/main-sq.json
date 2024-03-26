@@ -263,6 +263,7 @@
         "Share": "Ndaje",
         "Submit": "Parashtroje",
         "WaitForHostMsg": "Konferenca s’ka nisur, ngaqë s’ka mbërritur ende ndonjë moderator. Nëse dëshironi të bëheni një moderator, ju lutemi, bëni hyrjen. Përndryshe, ju lutemi, pritni.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostButton": "Prit për moderator",
         "WaitingForHostTitle": "Po pritet për një moderator…",
         "Yes": "Po",

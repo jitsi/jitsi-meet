@@ -186,6 +186,7 @@
         "Share": "Deli",
         "Submit": "Pošlji",
         "WaitForHostMsg": "Konferenca v sobi se še ni začela. Če ste gostitelj, se prosimo prijavite, sicer pa počakajte na gostitelja srečanja.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Čakanje gostitelja ...",
         "Yes": "Da",
         "accessibilityLabel": {

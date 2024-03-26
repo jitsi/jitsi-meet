@@ -156,6 +156,7 @@
         "Share": "Dalintis",
         "Submit": "Pateikti",
         "WaitForHostMsg": "Konferencija dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Laukiama organizatoriaus ...",
         "Yes": "Taip",
         "accessibilityLabel": {

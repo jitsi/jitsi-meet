@@ -261,6 +261,7 @@
         "Share": "Compartilhar",
         "Submit": "Enviar",
         "WaitForHostMsg": "A conferência ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostButton": "Aguardar por anfitrião",
         "WaitingForHostTitle": "Esperando o anfitrião...",
         "Yes": "Sim",

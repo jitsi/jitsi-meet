@@ -222,6 +222,7 @@
         "Share": "Sdílet",
         "Submit": "Potvrdit",
         "WaitForHostMsg": "Konference ještě nezačala. Pokud jste hostitel, přihlaste se. Jinak prosím počkejte, až hostitel dorazí.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Čeká se na hostitele…",
         "Yes": "Ano",
         "accessibilityLabel": {

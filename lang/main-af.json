@@ -141,6 +141,7 @@
         "Share": "Deel",
         "Submit": "Dien in",
         "WaitForHostMsg": "",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Wag tans vir die gasheer …",
         "Yes": "Ja",
         "accessibilityLabel": {

@@ -396,6 +396,7 @@ export interface IConfig {
     hideDominantSpeakerBadge?: boolean;
     hideEmailInSettings?: boolean;
     hideLobbyButton?: boolean;
+    hideLoginButton?: boolean;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {

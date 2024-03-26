@@ -223,6 +223,7 @@
         "Share": "spśistupniś",
         "Submit": "OK",
         "WaitForHostMsg": "Konferenca <b>{{room}}</b> njejo se hyšći zachopiła. Sćo-li Wy organizator, ga awtentificěrujśo se. Howacej cakajśo, až organizator se zjawijo.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "cakajucy na zachopjeńk konference…",
         "Yes": "jo",
         "accessibilityLabel": {

@@ -207,6 +207,7 @@
         "Share": "Delen",
         "Submit": "Verzenden",
         "WaitForHostMsg": "De vergadering is nog niet gestart. Authenticeer uzelf als u de host bent. Anders wacht u tot de host aanwezig is.",
+        "WaitForHostNoAuthMsg": "",
         "Yes": "Ja",
         "accessibilityLabel": {
             "liveStreaming": "Livestream"

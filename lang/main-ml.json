@@ -175,6 +175,7 @@
         "Share": "പങ്കിടുക",
         "Submit": "സമർപ്പിക്കുക",
         "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "ഹോസ്റ്റിനായി കാത്തിരിക്കുന്നു ...",
         "Yes": "അതെ",
         "accessibilityLabel": {

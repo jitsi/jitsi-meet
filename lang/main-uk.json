@@ -237,6 +237,7 @@
         "Share": "Поділитися",
         "Submit": "Гаразд",
         "WaitForHostMsg": "Зустріч ще не почалася. Авторизуйтеся, якщо ви організатор, або дочекайтеся організатора.",
+        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "В очікуванні організатора...",
         "Yes": "Так",
         "accessibilityLabel": {
