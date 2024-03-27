@@ -791,6 +791,7 @@
         "participantsWantToJoin": "Muốn tham gia cuộc họp",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) đã bị xóa bởi một người tham gia khác",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) đã được thiết lập bởi một người tham gia khác",
+        "raiseHandAction": "Giơ tay",
         "raisedHand": "{{name}} muốn phát biểu.",
         "raisedHands": "{{participantName}} và {{raisedHands}} người nữa đã giơ tay",
         "reactionSounds": "Tắt âm",
@@ -874,6 +875,9 @@
             "removeOption": "Xóa tùy chọn",
             "send": "Gửi"
         },
+        "errors": {
+            "notUniqueOption": "Tùy chọn phải là duy nhất"
+        },
         "notification": {
             "description": "Mở tab bình chọn để bình chọn",
             "title": "Một bình chọn mới đã được thêm vào cuộc họp này"
@@ -884,9 +888,6 @@
             "hideDetailedResults": "Ẩn chi tiết",
             "showDetailedResults": "Hiển thị chi tiết",
             "vote": "Bỏ phiếu"
-        },
-        "errors": {
-            "notUniqueOption": "Tùy chọn phải là duy nhất"
         }
     },
     "poweredby": "Được hỗ trợ bởi",
@@ -1114,6 +1115,7 @@
         "alertURLText": "URL máy chủ đã nhập không hợp lệ",
         "apply": "Áp dụng",
         "buildInfoSection": "Thông tin phiên bản",
+        "conferenceSection": "",
         "disableCallIntegration": "Tắt tích hợp cuộc gọi tự nhiên",
         "disableCrashReporting": "Tắt báo cáo sự cố",
         "disableCrashReportingWarning": "Bạn có chắc muốn tắt báo cáo sự cố không? Cài đặt sẽ được áp dụng sau khi bạn khởi động lại ứng dụng.",
