@@ -48,9 +48,9 @@ export const _getTokenAuthState = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
-        localSubject,
+        localSubject = '',
         skipPrejoin = false,
-        subject,
+        subject = '',
         videoMuted = false
     } = options;
 
@@ -78,8 +78,10 @@ export const _getTokenAuthState = (
         state['config.startWithVideoMuted'] = true;
     }
 
+    // @ts-ignore
     state['config.localSubject'] = localSubject;
 
+    // @ts-ignore
     state['config.subject'] = subject;
 
     const params = new URLSearchParams(locationURL.hash);

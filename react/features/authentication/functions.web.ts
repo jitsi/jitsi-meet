@@ -66,9 +66,9 @@ export const getTokenAuthUrl = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
-        localSubject,
+        localSubject = '',
         skipPrejoin = false,
-        subject,
+        subject = '',
         videoMuted = false
     } = options;
 
