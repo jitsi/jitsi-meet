@@ -1,5 +1,6 @@
 /* eslint-disable max-params, max-len */
 
+import { IStore } from '../app/types';
 import { sendEvent } from '../mobile/external-api/functions';
 
 
@@ -15,10 +16,10 @@ const TRANSCRIPTION_CHUNK_RECEIVED = 'TRANSCRIPTION_CHUNK_RECEIVED';
  * @param {string} language - The language of the transcribed message.
  * @param {Object} participant - The participant who send the message.
  * @param {any} text - The message text.
- * @param {any} _store - The store.
+ * @param {IStore} _store - The store.
  * @returns {Event}
  */
-export const notifyTranscriptionChunkReceived = (transcriptMessageID: string, language: string, participant: Object, text: any, _store?: any) =>
+export const notifyTranscriptionChunkReceived = (transcriptMessageID: string, language: string, participant: Object, text: any, _store?: IStore) =>
     sendEvent(
         _store,
         TRANSCRIPTION_CHUNK_RECEIVED,
