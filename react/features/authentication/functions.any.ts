@@ -48,9 +48,9 @@ export const _getTokenAuthState = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
-        localSubject = "",
+        localSubject,
         skipPrejoin = false,
-        subject = "",
+        subject,
         videoMuted = false,
     } = options;
 

@@ -48,10 +48,10 @@ export const getTokenAuthUrl = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
-        localSubject = "",
+        localSubject,
         skipPrejoin = false,
-        subject = "",
-        videoMuted = false,
+        subject,
+        videoMuted = false
     } = options;
 
     let url = config.tokenAuthUrl;

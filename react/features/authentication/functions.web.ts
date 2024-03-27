@@ -69,7 +69,7 @@ export const getTokenAuthUrl = (
         localSubject,
         skipPrejoin = false,
         subject,
-        videoMuted = false,
+        videoMuted = false
     } = options;
 
     let url = config.tokenAuthUrl;
