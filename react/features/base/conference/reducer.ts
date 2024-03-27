@@ -596,10 +596,7 @@ function _setRoom(state: IConferenceState, action: AnyAction) {
      */
     return assign(state, {
         error: undefined,
-        localSubject: undefined,
-        pendingSubjectChange: undefined,
-        room,
-        subject: undefined
+        room
     });
 }
 

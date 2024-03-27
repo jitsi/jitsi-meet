@@ -18,7 +18,9 @@ export * from './functions.any';
  * @param {Object} options:  - Config options {
  *     audioMuted: boolean | undefined
  *     audioOnlyEnabled: boolean | undefined,
+ *     localSubject: string | undefined,
  *     skipPrejoin: boolean | undefined,
+ *     subject: string | undefined,
  *     videoMuted: boolean | undefined
  * }.
  * @param {string?} roomName - The room name.
@@ -34,7 +36,9 @@ export const getTokenAuthUrl = (
         options: {
             audioMuted: boolean | undefined;
             audioOnlyEnabled: boolean | undefined;
+            localSubject: string | undefined;
             skipPrejoin: boolean | undefined;
+            subject: string | undefined;
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
@@ -44,8 +48,10 @@ export const getTokenAuthUrl = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
+        localSubject = "",
         skipPrejoin = false,
-        videoMuted = false
+        subject = "",
+        videoMuted = false,
     } = options;
 
     let url = config.tokenAuthUrl;
@@ -60,7 +66,9 @@ export const getTokenAuthUrl = (
             {
                 audioMuted,
                 audioOnlyEnabled,
+                localSubject,
                 skipPrejoin,
+                subject,
                 videoMuted
             },
             roomName,

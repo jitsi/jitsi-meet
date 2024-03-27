@@ -55,15 +55,19 @@ function _getWebConferenceRoute(state: IReduxState) {
             && !state['features/base/jwt'].jwt && room) {
         const { locationURL = { href: '' } as URL } = state['features/base/connection'];
         const { tenant } = parseURIString(locationURL.href) || {};
-        const { startAudioOnly } = config;
+        const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+        const { localSubject: configLocalSubject, startAudioOnly, subject: configSubject } = config;
+        const { localSubject, subject } = state['features/base/conference'];
 
         return getTokenAuthUrl(
             config,
             locationURL,
             {
                 audioMuted: false,
-                audioOnlyEnabled: startAudioOnly,
+                audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
+                localSubject: configLocalSubject || localSubject,
                 skipPrejoin: false,
+                subject: configSubject || subject,
                 videoMuted: false
             },
             room,
