@@ -1538,7 +1538,7 @@
     },
     "whiteboard": {
         "accessibilityLabel": {
-          "heading": "Bảng trắng"
+            "heading": "Bảng trắng"
         },
         "screenTitle": "Bảng trắng"
     }
