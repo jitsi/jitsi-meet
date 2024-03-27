@@ -13,6 +13,7 @@ import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
+import { setInitialGUMPromise } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
@@ -153,6 +154,8 @@ MiddlewareRegistry.register(store => next => action => {
             error.recoverable = true;
 
             _handleLogin(store);
+        } else {
+            store.dispatch(setInitialGUMPromise());
         }
 
         break;
@@ -264,6 +267,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
     if (!room) {
+        dispatch(setInitialGUMPromise());
+
         logger.warn('Cannot handle login, room is undefined!');
 
         return;
@@ -274,6 +279,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
         return;
     }
+
+    dispatch(setInitialGUMPromise());
 
     getTokenAuthUrl(
         config,

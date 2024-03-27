@@ -1,10 +1,13 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
+import { connect } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
+import { setInitialGUMPromise } from '../base/media/actions';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
+import logger from './logger';
 
 export * from './actions.any';
 
@@ -74,5 +77,26 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
         } else {
             redirect();
         }
+    };
+}
+
+/**
+ * Executes connect with the passed credentials and then continues the flow to start a conference.
+ *
+ * @param {string} jid - The jid for the connection.
+ * @param {string} password - The password for the connection.
+ * @returns {Function}
+ */
+export function sumbitConnectionCredentials(jid?: string, password?: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { initialGUMPromise } = getState()['features/base/media'].common;
+
+        dispatch(connect(jid, password))
+            .then(() => initialGUMPromise ?? [])
+            .then((tracks: Array<Object> = []) => {
+                // clear the initial GUM promise since we don't need it anymore.
+                dispatch(setInitialGUMPromise());
+                APP.conference.startConference(tracks).catch(logger.error);
+            });
     };
 }
