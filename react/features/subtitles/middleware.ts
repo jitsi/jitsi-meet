@@ -12,6 +12,8 @@ import {
     removeTranscriptMessage,
     updateTranscriptMessage
 } from './actions.any';
+import { notifyTranscriptionChunkReceived } from './functions';
+
 
 /**
  * The type of json-message which indicates that json carries a
@@ -43,7 +45,7 @@ const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 const REMOVE_AFTER_MS = 3000;
 
 /**
- * Stability factor for a trancription. We'll treat a transcript as stable
+ * Stability factor for a transcription. We'll treat a transcript as stable
  * beyond this value.
  */
 const STABLE_TRANSCRIPTION_FACTOR = 0.85;
@@ -91,6 +93,7 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { data: json } = action;
+    const { language: dataLanguage } = json;
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
@@ -140,12 +143,12 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 txt.unstable = text;
             }
 
-            APP.API.notifyTranscriptionChunkReceived({
-                messageID: transcriptMessageID,
-                language: json.language,
+            notifyTranscriptionChunkReceived(
+                transcriptMessageID,
+                dataLanguage,
                 participant,
-                ...txt
-            });
+                txt
+            );
 
             // Dump transcript in a <transcript> element for debugging purposes.
             if (!json.is_interim && dumpTranscript) {

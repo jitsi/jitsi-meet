@@ -52,6 +52,7 @@ import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
+import { notifyTranscriptionChunkReceived } from '../../subtitles/functions.native';
 import { muteLocal } from '../../video-menu/actions.native';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
@@ -61,6 +62,7 @@ import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
+
 
 /**
  * Event which will be emitted on the native side when a chat message is received
@@ -86,7 +88,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
 
 /**
- * Event which will be emitted on the native side to indicate a participant togggles
+ * Event which will be emitted on the native side to indicate a participant toggles
  * the screen share.
  */
 const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
@@ -95,6 +97,7 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
  * Event which will be emitted on the native side with the participant info array.
  */
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
+
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
@@ -186,17 +189,27 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     }
 
     case ENDPOINT_MESSAGE_RECEIVED: {
-        const { participant, data } = action;
+        const { participant, data: json } = action;
+        const transcriptMessageID = json.message_id;
+        const { language: dataLanguage } = json;
 
-        if (data?.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+        if (json?.name === ENDPOINT_TEXT_MESSAGE_NAME) {
             sendEvent(
                 store,
                 ENDPOINT_TEXT_MESSAGE_RECEIVED,
                 /* data */ {
-                    message: data.text,
+                    message: json.text,
                     senderId: participant.getId()
                 });
         }
+
+        notifyTranscriptionChunkReceived(
+            transcriptMessageID,
+            dataLanguage,
+            participant,
+            json.text,
+            store
+        );
 
         break;
     }
