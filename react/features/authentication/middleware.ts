@@ -256,6 +256,7 @@ function _isWaitingForOwner({ getState }: IStore) {
 function _handleLogin({ dispatch, getState }: IStore) {
     const state = getState();
     const config = state['features/base/config'];
+    const { hideConferenceTimer } = config;
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
@@ -281,6 +282,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         {
             audioMuted,
             audioOnlyEnabled,
+            hideConferenceTimer,
             skipPrejoin: true,
             videoMuted
         },

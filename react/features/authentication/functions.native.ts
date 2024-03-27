@@ -18,6 +18,7 @@ export * from './functions.any';
  * @param {Object} options:  - Config options {
  *     audioMuted: boolean | undefined
  *     audioOnlyEnabled: boolean | undefined,
+ *     hideConferenceTimer: boolean | undefined,
  *     skipPrejoin: boolean | undefined,
  *     videoMuted: boolean | undefined
  * }.
@@ -34,6 +35,7 @@ export const getTokenAuthUrl = (
         options: {
             audioMuted: boolean | undefined;
             audioOnlyEnabled: boolean | undefined;
+            hideConferenceTimer: boolean | undefined;
             skipPrejoin: boolean | undefined;
             videoMuted: boolean | undefined;
         },
@@ -44,6 +46,7 @@ export const getTokenAuthUrl = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
+        hideConferenceTimer = false,
         skipPrejoin = false,
         videoMuted = false
     } = options;
@@ -60,6 +63,7 @@ export const getTokenAuthUrl = (
             {
                 audioMuted,
                 audioOnlyEnabled,
+                hideConferenceTimer,
                 skipPrejoin,
                 videoMuted
             },

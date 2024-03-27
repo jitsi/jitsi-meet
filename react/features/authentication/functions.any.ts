@@ -17,6 +17,7 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * @param {Object} options: - Config options {
  *     audioMuted: boolean | undefined
  *     audioOnlyEnabled: boolean | undefined,
+ *     hideConferenceTimer: boolean | undefined,
  *     skipPrejoin: boolean | undefined,
  *     videoMuted: boolean | undefined
  * }.
@@ -30,6 +31,7 @@ export const _getTokenAuthState = (
         options: {
             audioMuted: boolean | undefined;
             audioOnlyEnabled: boolean | undefined;
+            hideConferenceTimer: boolean | undefined;
             skipPrejoin: boolean | undefined;
             videoMuted: boolean | undefined;
         },
@@ -44,6 +46,7 @@ export const _getTokenAuthState = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
+        hideConferenceTimer = false,
         skipPrejoin = false,
         videoMuted = false
     } = options;
@@ -70,6 +73,12 @@ export const _getTokenAuthState = (
 
         // @ts-ignore
         state['config.startWithVideoMuted'] = true;
+    }
+
+    if (hideConferenceTimer) {
+
+        // @ts-ignore
+        state['config.hideConferenceTimer'] = true;
     }
 
     const params = new URLSearchParams(locationURL.hash);
