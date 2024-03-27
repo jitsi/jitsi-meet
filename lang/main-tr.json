@@ -875,6 +875,9 @@
             "removeOption": "Seçeneği sil",
             "send": "Gönder"
         },
+        "errors": {
+            "notUniqueOption": "Seçenekler benzersiz olmalı"
+        },
         "notification": {
             "description": "Oy vermek için anketler sekmesini açın",
             "title": "Anket toplantıya eklendi"

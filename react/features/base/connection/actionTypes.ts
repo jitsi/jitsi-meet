@@ -32,6 +32,16 @@ export const CONNECTION_ESTABLISHED = 'CONNECTION_ESTABLISHED';
 export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 
 /**
+ * The type of (redux) action which signals that connection properties were updated.
+ *
+ * {
+ *     type: CONNECTION_PROPERTIES_UPDATED,
+ *     properties: Object
+ * }
+ */
+export const CONNECTION_PROPERTIES_UPDATED = 'CONNECTION_PROPERTIES_UPDATED';
+
+/**
  * The type of (redux) action which signals that a connection will connect.
  *
  * {

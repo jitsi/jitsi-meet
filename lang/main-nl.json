@@ -668,6 +668,9 @@
             "removeOption": "Verwijder optie",
             "send": "Verstuur"
         },
+        "errors": {
+            "notUniqueOption": "Opties moeten uniek zijn"
+        },
         "notification": {
             "description": "Open het peilingen tabblad om te stemmen",
             "title": "Een nieuwe peiling is aangemaakt in deze vergadering"

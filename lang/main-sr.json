@@ -447,6 +447,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Опције морају бити јединствене"
+        }
+    },
     "poweredby": "",
     "prejoin": {
         "audioAndVideoError": "Грешка звука и видеа:",

@@ -715,6 +715,9 @@
             "removeOption": "選択肢の削除",
             "send": "送信"
         },
+        "errors": {
+            "notUniqueOption": "オプションは一意でなければなりません"
+        },
         "notification": {
             "description": "投票するには投票タブを開いてください",
             "title": "新しい投票がこのミーティングに追加されました"

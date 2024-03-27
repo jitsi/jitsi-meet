@@ -884,6 +884,9 @@
             "hideDetailedResults": "Ẩn chi tiết",
             "showDetailedResults": "Hiển thị chi tiết",
             "vote": "Bỏ phiếu"
+        },
+        "errors": {
+            "notUniqueOption": "Tùy chọn phải là duy nhất"
         }
     },
     "poweredby": "Được hỗ trợ bởi",

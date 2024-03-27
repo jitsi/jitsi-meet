@@ -545,6 +545,11 @@
     },
     "passwordDigitsOnly": "{{number}} അക്കങ്ങൾ വരെ",
     "passwordSetRemotely": "മറ്റൊരു പങ്കാളി സജ്ജമാക്കിയത്",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "ഓപ്ഷനുകൾ അദ്വിതീയമായിരിക്കണം"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "ഓഡിയോ, വീഡിയോ പിശക്:",

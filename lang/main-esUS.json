@@ -691,6 +691,9 @@
             "removeOption": "Eliminar la opción",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "Las opciones deben ser únicas"
+        },
         "notification": {
             "description": "Abre la pestaña de encuestas para votar",
             "title": "Se ha añadido una nueva encuesta a esta reunión"

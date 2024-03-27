@@ -471,6 +471,11 @@
     },
     "passwordDigitsOnly": "Până la {{number}} cifre",
     "passwordSetRemotely": "Setată de un alt membru",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Opțiunile trebuie să fie unice"
+        }
+    },
     "poweredby": "cu sprijinul",
     "presenceStatus": {
         "busy": "Ocupat",

@@ -467,6 +467,11 @@
     },
     "passwordDigitsOnly": "Kuni {{number}} tähemärki",
     "passwordSetRemotely": "määratud teise kasutaja poolt",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Valikud peavad olema ainulaadsed"
+        }
+    },
     "poweredby": "teieni toodud",
     "presenceStatus": {
         "busy": "Hõivatud",

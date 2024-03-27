@@ -984,7 +984,7 @@ export function setStartMutedPolicy(
  * @param {string} subject - The new subject.
  * @returns {void}
  */
-export function setSubject(subject: string) {
+export function setSubject(subject: string | undefined) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { conference } = getState()['features/base/conference'];
 
@@ -1008,7 +1008,7 @@ export function setSubject(subject: string) {
  *     localSubject: string
  * }}
  */
-export function setLocalSubject(localSubject: string) {
+export function setLocalSubject(localSubject: string | undefined) {
     return {
         type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
         localSubject

@@ -747,6 +747,9 @@
             "removeOption": "",
             "send": ""
         },
+        "errors": {
+            "notUniqueOption": "Možnosti musí být jedinečné"
+        },
         "notification": {
             "description": "",
             "title": ""
