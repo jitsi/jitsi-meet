@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
@@ -29,9 +29,19 @@ export interface IProps {
     changeFlip: (flip: boolean) => void;
 
     /**
+     * Callback to change the selfView state.
+     */
+    changeSelfView: (selfView: boolean) => void;
+
+    /**
      * The deviceId of the camera device currently being used.
      */
     currentCameraDeviceId: string;
+
+    /**
+     * Whether or not the local video is hidden.
+     */
+    disableSelfView: boolean;
 
     /**
      * Whether or not the local video is flipped.
@@ -145,7 +155,9 @@ const stopPropagation = (e: React.MouseEvent) => {
 
 const VideoSettingsContent = ({
     changeFlip,
+    changeSelfView,
     currentCameraDeviceId,
+    disableSelfView,
     localFlipX,
     selectBackground,
     setVideoInputDevice,
@@ -170,6 +182,15 @@ const VideoSettingsContent = ({
     const _onToggleFlip = useCallback(() => {
         changeFlip(!localFlipX);
     }, [ localFlipX, changeFlip ]);
+
+    /**
+     * Toggles local video view based on the provided 'enabled' state.
+     * 
+     * @returns {void}
+     */
+    const _onSelfViewToggled = useCallback(() => {
+        changeSelfView(!disableSelfView);
+    }, [ disableSelfView, changeSelfView ]);
 
     /**
      * Destroys all the tracks from trackData object.
@@ -317,6 +338,11 @@ const VideoSettingsContent = ({
                         checked = { localFlipX }
                         label = { t('videothumbnail.mirrorVideo') }
                         onChange = { _onToggleFlip } />
+                        
+                    <Checkbox
+                        checked = { Boolean(disableSelfView) }
+                        label = { t('videothumbnail.hideSelfView') }
+                        onChange = { _onSelfViewToggled } />
                 </div>
             </ContextMenuItemGroup>
         </ContextMenu>
@@ -339,6 +365,11 @@ const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
         changeFlip: (flip: boolean) => {
             dispatch(updateSettings({
                 localFlipX: flip
+            }))
+        },
+        changeSelfView: (selfView: boolean) => {
+            dispatch(updateSettings({
+                disableSelfView: selfView
             }));
         }
     };

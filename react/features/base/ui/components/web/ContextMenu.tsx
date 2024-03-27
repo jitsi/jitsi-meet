@@ -56,7 +56,7 @@ interface IProps {
     /**
      * Children of the context menu.
      */
-    children: ReactNode;
+    children?: ReactNode;
 
     /**
      * Class name for context menu. Used to overwrite default styles.

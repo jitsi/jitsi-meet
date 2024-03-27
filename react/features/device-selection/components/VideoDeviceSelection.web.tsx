@@ -52,6 +52,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     disableDeviceChange: boolean;
 
     /**
+     * Whether or not the local video is hidden.
+     */
+    disableSelfView: boolean;
+
+    /**
      * Whether video input dropdown should be enabled or not.
      */
     disableVideoInputSelect: boolean;
@@ -203,6 +208,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      */
     render() {
         const {
+            disableSelfView,
             hideAdditionalSettings,
             hideVideoInputPreview,
             localFlipX,
@@ -231,6 +237,11 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                                 label = { t('videothumbnail.mirrorVideo') }
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
+                            
+                            <Checkbox
+                                checked = { Boolean(disableSelfView) }
+                                label = { t('videothumbnail.hideSelfView') }
+                                onChange = { () => super._onChange({ disableSelfView: !disableSelfView}) }/>
                         </div>
                         {this._renderFramerateSelect()}
                     </>

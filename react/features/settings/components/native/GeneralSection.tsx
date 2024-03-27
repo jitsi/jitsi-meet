@@ -32,10 +32,6 @@ const GeneralSection = () => {
 
     const { language = DEFAULT_LANGUAGE } = i18next;
 
-    const onSelfViewToggled = useCallback((enabled?: boolean) =>
-        dispatch(updateSettings({ disableSelfView: enabled }))
-    , [ dispatch, updateSettings ]);
-
     const onShowPejoinToggled = useCallback((enabled?: boolean) => {
         dispatch(updateSettings({ userSelectedSkipPrejoin: !enabled }));
     }
@@ -51,12 +47,6 @@ const GeneralSection = () => {
 
     return (
         <FormSection>
-            <FormRow label = 'videothumbnail.hideSelfView'>
-                <Switch
-                    checked = { Boolean(disableSelfView) }
-                    onChange = { onSelfViewToggled } />
-            </FormRow>
-
             {showPrejoinSettings && <FormRow label = 'prejoin.showScreen'>
                 <Switch
                     checked = { showPrejoinPage }
