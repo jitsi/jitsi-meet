@@ -259,8 +259,6 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
-    const { localSubject: configLocalSubject, startAudioOnly, subject: configSubject } = config;
-    const { localSubject, subject } = state['features/base/conference'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
@@ -282,10 +280,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
         locationURL,
         {
             audioMuted,
-            audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
-            localSubject: configLocalSubject || localSubject,
+            audioOnlyEnabled,
             skipPrejoin: true,
-            subject: configSubject || subject,
             videoMuted
         },
         room,

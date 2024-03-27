@@ -108,8 +108,7 @@ export function maybeRedirectToTokenAuthUrl(
     const state = getState();
     const config = state['features/base/config'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const { localSubject: configLocalSubject, startAudioOnly, subject: configSubject } = config;
-    const { localSubject, subject } = state['features/base/conference'];
+    const { startAudioOnly } = config;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
@@ -134,9 +133,7 @@ export function maybeRedirectToTokenAuthUrl(
             {
                 audioMuted,
                 audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
-                localSubject: configLocalSubject || localSubject,
                 skipPrejoin: true,
-                subject: configSubject || subject,
                 videoMuted
             },
             room,

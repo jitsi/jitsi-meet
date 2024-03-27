@@ -17,9 +17,7 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * @param {Object} options: - Config options {
  *     audioMuted: boolean | undefined
  *     audioOnlyEnabled: boolean | undefined,
- *     localSubject: string | undefined,
  *     skipPrejoin: boolean | undefined,
- *     subject: string | undefined,
  *     videoMuted: boolean | undefined
  * }.
  * @param {string?} roomName - The room name.
@@ -32,9 +30,7 @@ export const _getTokenAuthState = (
         options: {
             audioMuted: boolean | undefined;
             audioOnlyEnabled: boolean | undefined;
-            localSubject: string | undefined;
             skipPrejoin: boolean | undefined;
-            subject: string | undefined;
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
@@ -48,9 +44,7 @@ export const _getTokenAuthState = (
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
-        localSubject = '',
         skipPrejoin = false,
-        subject = '',
         videoMuted = false
     } = options;
 
@@ -67,7 +61,7 @@ export const _getTokenAuthState = (
     }
 
     if (skipPrejoin) {
-        // We have already shown the pre-join screen, no need to show it again after obtaining the token.
+        // We have already shown the prejoin screen, no need to show it again after obtaining the token.
         // @ts-ignore
         state['config.prejoinConfig.enabled'] = false;
     }
@@ -77,12 +71,6 @@ export const _getTokenAuthState = (
         // @ts-ignore
         state['config.startWithVideoMuted'] = true;
     }
-
-    // @ts-ignore
-    state['config.localSubject'] = localSubject;
-
-    // @ts-ignore
-    state['config.subject'] = subject;
 
     const params = new URLSearchParams(locationURL.hash);
 
