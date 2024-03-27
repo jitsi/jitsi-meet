@@ -2,7 +2,6 @@
 local st = require "util.stanza";
 local socket = require "socket";
 local json = require "util.json";
-local ext_events = module:require "ext_events";
 local it = require "util.iterators";
 local process_host_module = module:require "util".process_host_module;
 
