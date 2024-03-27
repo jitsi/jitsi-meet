@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
@@ -185,7 +185,7 @@ const VideoSettingsContent = ({
 
     /**
      * Toggles local video view based on the provided 'enabled' state.
-     * 
+     *
      * @returns {void}
      */
     const _onSelfViewToggled = useCallback(() => {
@@ -338,7 +338,6 @@ const VideoSettingsContent = ({
                         checked = { localFlipX }
                         label = { t('videothumbnail.mirrorVideo') }
                         onChange = { _onToggleFlip } />
-                        
                     <Checkbox
                         checked = { Boolean(disableSelfView) }
                         label = { t('videothumbnail.hideSelfView') }
@@ -351,9 +350,11 @@ const VideoSettingsContent = ({
 
 const mapStateToProps = (state: IReduxState) => {
     const { localFlipX } = state['features/base/settings'];
+    const { disableSelfView } = state['features/base/settings'];
 
     return {
         localFlipX: Boolean(localFlipX),
+        disableSelfView: Boolean(disableSelfView),
         visibleVirtualBackground: checkBlurSupport()
         && checkVirtualBackgroundEnabled(state)
     };
@@ -365,7 +366,7 @@ const mapDispatchToProps = (dispatch: IStore['dispatch']) => {
         changeFlip: (flip: boolean) => {
             dispatch(updateSettings({
                 localFlipX: flip
-            }))
+            }));
         },
         changeSelfView: (selfView: boolean) => {
             dispatch(updateSettings({

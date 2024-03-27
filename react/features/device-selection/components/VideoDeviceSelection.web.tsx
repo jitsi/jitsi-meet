@@ -237,11 +237,11 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                                 label = { t('videothumbnail.mirrorVideo') }
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
-                            
                             <Checkbox
                                 checked = { Boolean(disableSelfView) }
                                 label = { t('videothumbnail.hideSelfView') }
-                                onChange = { () => super._onChange({ disableSelfView: !disableSelfView}) }/>
+                                // eslint-disable-next-line react/jsx-no-bind
+                                onChange = { () => super._onChange({ disableSelfView: !disableSelfView}) } />
                         </div>
                         {this._renderFramerateSelect()}
                     </>

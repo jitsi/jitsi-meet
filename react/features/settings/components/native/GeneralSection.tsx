@@ -22,7 +22,6 @@ const GeneralSection = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const {
-        disableSelfView,
         userSelectedSkipPrejoin
     } = useSelector((state: IReduxState) => state['features/base/settings']);
 
