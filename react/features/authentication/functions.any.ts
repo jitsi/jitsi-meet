@@ -80,9 +80,7 @@ export const _getTokenAuthState = (
 
     state['config.localSubject'] = localSubject;
 
-
     state['config.subject'] = subject;
-
 
     const params = new URLSearchParams(locationURL.hash);
 
