@@ -91,7 +91,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
     const { data: json } = action;
     const { language: dataLanguage } = json;
 
@@ -99,6 +99,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         return next(action);
     }
 
+    const { dispatch, getState } = store;
     const state = getState();
     const language
         = state['features/base/conference'].conference
@@ -132,7 +133,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         const { text } = json.transcript[0];
 
         // First, notify the external API.
-        if (typeof APP !== 'undefined' && !(json.is_interim && skipInterimTranscriptions)) {
+        if (!(json.is_interim && skipInterimTranscriptions)) {
             const txt: any = {};
 
             if (!json.is_interim) {
@@ -147,7 +148,8 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 transcriptMessageID,
                 dataLanguage,
                 participant,
-                txt
+                txt,
+                store
             );
 
             // Dump transcript in a <transcript> element for debugging purposes.
