@@ -134,7 +134,8 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
 
     /**
      * Implements {@code Component#componentDidUpdate}.
-     * If the user receive a new message scroll automatically to the bottom if scroll position was at the bottom.
+     * If the user receive a new message or the local user send a new message,
+     * scroll automatically to the bottom if scroll position was at the bottom.
      * Otherwise update hasNewMessages from component state.
      *
      * @inheritdoc
