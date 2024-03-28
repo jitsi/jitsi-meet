@@ -1,4 +1,5 @@
 import { IConfig } from '../base/config/configType';
+import { parseURLParams } from '../base/util/parseURLParams';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
 /**
@@ -72,13 +73,13 @@ export const _getTokenAuthState = (
         state['config.startWithVideoMuted'] = true;
     }
 
-    const params = new URLSearchParams(locationURL.hash);
+    const params = parseURLParams(locationURL, true);
 
-    for (const [ key, value ] of params) {
+    for (const key of Object.keys(params)) {
         // we allow only config and interfaceConfig overrides in the state
         if (key.startsWith('config.') || key.startsWith('interfaceConfig.')) {
             // @ts-ignore
-            state[key] = value;
+            state[key] = params[key];
         }
     }
 
