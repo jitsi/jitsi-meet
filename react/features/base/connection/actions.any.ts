@@ -123,7 +123,7 @@ export function constructOptions(state: IReduxState) {
         options.iceServersOverride = iceServersOverride;
     }
 
-    const { bosh, preferBosh } = options;
+    const { bosh, preferBosh, flags } = options;
     let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
@@ -160,6 +160,16 @@ export function constructOptions(state: IReduxState) {
 
     if (preferVisitor) {
         options.preferVisitor = true;
+    }
+
+    // Enable ssrc-rewriting by default.
+    if (typeof flags?.ssrcRewritingEnabled === 'undefined') {
+        const { ...otherFlags } = flags ?? {};
+
+        options.flags = {
+            ...otherFlags,
+            ssrcRewritingEnabled: true
+        };
     }
 
     return options;
