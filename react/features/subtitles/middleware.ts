@@ -151,19 +151,22 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
                 store
             );
 
-            // Dump transcript in a <transcript> element for debugging purposes.
-            if (!json.is_interim && dumpTranscript) {
-                try {
-                    let elem = document.body.getElementsByTagName('transcript')[0];
+            if (navigator.product !== 'ReactNative') {
 
-                    if (!elem) {
-                        elem = document.createElement('transcript');
-                        document.body.appendChild(elem);
+                // Dump transcript in a <transcript> element for debugging purposes.
+                if (!json.is_interim && dumpTranscript) {
+                    try {
+                        let elem = document.body.getElementsByTagName('transcript')[0];
+
+                        if (!elem) {
+                            elem = document.createElement('transcript');
+                            document.body.appendChild(elem);
+                        }
+
+                        elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
+                    } catch (_) {
+                        // Ignored.
                     }
-
-                    elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
-                } catch (_) {
-                    // Ignored.
                 }
             }
         }
