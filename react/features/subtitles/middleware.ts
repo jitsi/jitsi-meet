@@ -158,6 +158,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
                     try {
                         let elem = document.body.getElementsByTagName('transcript')[0];
 
+                        // eslint-disable-next-line max-depth
                         if (!elem) {
                             elem = document.createElement('transcript');
                             document.body.appendChild(elem);
