@@ -22,6 +22,7 @@ interface IProps extends IInputProps {
      * info (label, error) so that screen reader users don't get lost.
      */
     id: string;
+    inputIconRef?: React.RefObject<any>;
     maxLength?: number;
     maxRows?: number;
     maxValue?: number;
@@ -163,6 +164,7 @@ const Input = React.forwardRef<any, IProps>(({
     icon,
     iconClick,
     id,
+    inputIconRef,
     label,
     maxValue,
     maxLength,
@@ -199,12 +201,15 @@ const Input = React.forwardRef<any, IProps>(({
                 {label}
             </label>}
             <div className = { styles.fieldContainer }>
-                {icon && <Icon
-                    { ...(iconClick ? { tabIndex: 0 } : {}) }
-                    className = { cx(styles.icon, iconClick && styles.iconClickable) }
-                    onClick = { iconClick }
-                    size = { 20 }
-                    src = { icon } />}
+                {icon && <div ref = { inputIconRef }>
+                    <Icon
+                        { ...(iconClick ? { tabIndex: 0 } : {}) }
+                        className = { cx(styles.icon, iconClick && styles.iconClickable) }
+                        onClick = { iconClick }
+                        size = { 20 }
+                        src = { icon } />
+                </div>
+                }
                 {textarea ? (
                     <TextareaAutosize
                         aria-label = { accessibilityLabel }
