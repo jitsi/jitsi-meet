@@ -98,6 +98,10 @@
     [self _onJitsiMeetViewDelegateEvent:@"READY_TO_CLOSE" withData:data];
 }
 
+// - (void)transcriptionChunkReceived:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"TRANSCRIPTION_CHUNK_RECEIVED" withData:data];
+// }
+
 - (void)participantJoined:(NSDictionary *)data {
   NSLog(@"%@%@", @"Participant joined: ", data[@"participantId"]);
 }
@@ -129,6 +133,7 @@
 - (void)videoMutedChanged:(NSDictionary *)data {
   NSLog(@"%@%@", @"Video muted changed: ", data[@"muted"]);
 }
+
 
 #pragma mark - Helpers
 
