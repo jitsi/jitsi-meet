@@ -15,5 +15,5 @@ export const notifyTranscriptionChunkReceived = (transcriptMessageID: string, la
         messageID: transcriptMessageID,
         language,
         participant,
-        text
+        ...text
     });
