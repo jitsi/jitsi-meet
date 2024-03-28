@@ -2,7 +2,7 @@ import throttle from 'lodash/throttle';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
-import { MESSAGE_TYPE_REMOTE } from '../../constants';
+import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { IProps } from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
@@ -134,17 +134,19 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
 
     /**
      * Implements {@code Component#componentDidUpdate}.
-     * If the user receive a new message scroll automatically to the bottom if scroll position was at the bottom.
+     * If the user receive a new message or the local user send a new message,
+     * scroll automatically to the bottom if scroll position was at the bottom.
      * Otherwise update hasNewMessages from component state.
      *
      * @inheritdoc
      * @returns {void}
      */
     componentDidUpdate(prevProps: IProps) {
-        const hasNewMessages = this.props.messages.length !== prevProps.messages.length;
+        const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
+        const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
 
-        if (hasNewMessages) {
-            if (this.state.isScrolledToBottom) {
+        if (newMessages.length > 0) {
+            if (this.state.isScrolledToBottom || hasLocalMessage) {
                 this.scrollToElement(false, null);
             } else {
                 // eslint-disable-next-line react/no-did-update-set-state
