@@ -11,7 +11,7 @@ export async function defineConfig(env) {
     );
 
     return {
-        referenceLanguage: 'main',
+        referenceLanguage: 'main-vi',
         plugins: [
             i18nextPlugin({
                 pathPattern: 'lang/{language}.json',

@@ -10,9 +10,10 @@ import { IReduxState, IStore } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync/functions';
-import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';       
+import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';
 import { isRecentListEnabled } from '../../recent-list/functions';
 import { env } from '../../../../ENV';
+import { v4 as uuidV4 } from 'uuid';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -205,9 +206,23 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @protected
      * @returns {void}
      */
-    _onJoin() {
-        const room = this.state.room || this.state.generatedRoomName;
+    _isValidUUID(arg: any) {
+        const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+        if (arg instanceof Array) {
+            return arg.every(x => uuidRegex.test(x))
+        }
+        return uuidRegex.test(arg)
+    }
 
+    _onGetRoomName() {
+        if (this._isValidUUID(this.state.room)) {
+            return this.state.room
+        }
+        return uuidV4()
+    }
+    
+    _onJoin() {
+        const room = this._onGetRoomName();
         sendAnalytics(
             createWelcomePageEvent('clicked', 'joinButton', {
                 isGenerated: !this.state.room,
@@ -262,9 +277,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @protected
      * @returns {void}
      */
-    
-    _renderText(){
-        return env.WELCOME_PAGE_MESSAGE[ Math.floor(Math.random() * (env.WELCOME_PAGE_MESSAGE.length-1))]
+
+    _renderText() {
+        return env.WELCOME_PAGE_MESSAGE[Math.floor(Math.random() * (env.WELCOME_PAGE_MESSAGE.length - 1))]
     }
 
 

@@ -3,7 +3,7 @@ export interface Environment {
     API_URL: string;
     DEBUG_MODE: boolean;
     WELCOME_PAGE_MESSAGE: string[],
-    LANGUAGE: string // "en"
+    LANGUAGE: string
 }
 
 export const env: Environment = {
@@ -16,5 +16,6 @@ export const env: Environment = {
         "Trải nghiệm tốc độ và chính xác",
         "Mang đến tiện lợi và thân thiện",
     ],
-    LANGUAGE: "vi" // "en"
+    LANGUAGE: "vi"
+    // UPDATE : LANGUAGE load file in i18next.ts (main-vi.json - main.json)
 };

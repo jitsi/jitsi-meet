@@ -16,7 +16,7 @@ import { env } from '../../../../ENV';
  */
 const COUNTRIES_RESOURCES_OVERRIDES = {
     countries: {
-        TW: 'Taiwan'
+        TW: 'Vietnam'
     }
 };
 
