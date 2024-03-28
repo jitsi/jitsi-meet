@@ -1169,7 +1169,7 @@
     "toolbar": {
         "Settings": "Paramètres",
         "accessibilityLabel": {
-            "Settings": "Afficher / Masquer le menu des paramètres",
+            "Settings": "Ouvrir le menu des paramètres",
             "audioOnly": "Activer / Désactiver le mode voix uniquement",
             "audioRoute": "Sélectionner la source audio",
             "boo": "Hou",
@@ -1215,7 +1215,7 @@
             "moreActions": "Activer / Désactiver le menu d'actions supplémentaires",
             "moreActionsMenu": "Menu d'actions supplémentaires",
             "moreOptions": "Voir plus d'options",
-            "mute": "Activer / Désactiver l'audio",
+            "mute": "Couper votre micro",
             "muteEveryone": "Couper le micro de tout le monde",
             "muteEveryoneElse": "Couper le micro de tous les autres",
             "muteEveryoneElsesVideoStream": "Couper la caméra de tous les autres",
@@ -1251,11 +1251,11 @@
             "tileView": "Activer / Désactiver la vue mosaïque",
             "toggleCamera": "Changer de caméra",
             "toggleFilmstrip": "Afficher ou masquer les vignettes vidéo",
-            "unmute": "Rétablir le son",
+            "unmute": "Activer votre micro",
             "videoblur": "Activer / désactiver le floutage",
-            "videomute": "Activer / Couper la vidéo",
+            "videomute": "Couper votre vidéo",
             "videomuteGUMPending": "Connexion de votre caméra",
-            "videounmute": "Démarrer la vidéo"
+            "videounmute": "Activer votre vidéo"
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante réduite",
