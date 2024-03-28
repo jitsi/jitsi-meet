@@ -93,7 +93,6 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
     const { data: json } = action;
-    const { language: dataLanguage } = json;
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
@@ -146,7 +145,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
             notifyTranscriptionChunkReceived(
                 transcriptMessageID,
-                dataLanguage,
+                json.language,
                 participant,
                 txt,
                 store
