@@ -567,7 +567,7 @@ PODS:
     - React
   - RNCAsyncStorage (1.19.4):
     - React-Core
-  - RNCClipboard (1.5.1):
+  - RNCClipboard (1.13.2):
     - React-Core
   - RNDefaultPreference (1.4.4):
     - React-Core
@@ -654,7 +654,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNCalendarEvents (from `../node_modules/react-native-calendar-events`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -803,7 +803,7 @@ EXTERNAL SOURCES:
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
-    :path: "../node_modules/@react-native-community/clipboard"
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
   RNDeviceInfo:
@@ -902,7 +902,7 @@ SPEC CHECKSUMS:
   ReactCommon: d3522e54560e4d940554aa074a0206bf4d39ae5e
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
   RNCAsyncStorage: 3a8f7145d17cdd9f88e7b77666c94a09e4f759c8
-  RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
+  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNDefaultPreference: 08bdb06cfa9188d5da97d4642dac745218d7fb31
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
@@ -916,4 +916,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: ec00682c7062a323dff24a3c3643ca0bbb420d01
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2
