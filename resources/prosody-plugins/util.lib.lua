@@ -151,6 +151,11 @@ function get_room_by_name_and_subdomain(room_name, subdomain)
     return get_room_from_jid(room_address);
 end
 
+-- Used by spot to create async http handler
+-- see https://github.com/jitsi/jitsi-meet-spot/tree/master/spot-prosody/config/prosody-plugins-custom
+-- @param event Request event
+-- @param handler Functor to handle the request
+-- @return returns true on success
 function async_handler_wrapper(event, handler)
     if not have_async then
         module:log("error", "requires a version of Prosody with util.async");
