@@ -1,21 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import CopyButton from '../../../../base/buttons/CopyButton.web';
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
 import Icon from '../../../../base/icons/components/Icon';
 import {
-    IconCopy,
     IconEnvelope,
     IconGoogle,
     IconOffice365,
     IconYahoo
 } from '../../../../base/icons/svg';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
-import { copyText } from '../../../../base/util/copyText.web';
-import { showSuccessNotification } from '../../../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 interface IProps {
 
     /**
@@ -54,6 +50,19 @@ const useStyles = makeStyles()(theme => {
             display: 'block',
             padding: theme.spacing(2),
             cursor: 'pointer'
+        },
+
+        copyEmailInvitation: {
+            display: 'block',
+            padding: theme.spacing(2),
+            cursor: 'pointer',
+            width: '50px !important',
+            height: '50px',
+            background: 'transparent !important',
+
+            '&:hover': {
+                backgroundColor: 'transparent !important'
+            }
         }
     };
 });
@@ -64,43 +73,12 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactNode}
  */
 function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
-    const dispatch = useDispatch();
     const { classes } = useStyles();
     const { t } = useTranslation();
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
     const encodedInviteTextiOS = encodeURIComponent(inviteTextiOS);
-
     const encodedDefaultEmailText = isIosMobileBrowser() ? encodedInviteTextiOS : encodedInviteText;
-
-    /**
-     * Copies the conference invitation to the clipboard.
-     *
-     * @returns {void}
-     */
-    function _onCopyText() {
-        dispatch(showSuccessNotification({
-            titleKey: 'dialog.copied'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-        copyText(inviteText);
-    }
-
-    /**
-     * Copies the conference invitation to the clipboard.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function _onCopyTextKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            dispatch(showSuccessNotification({
-                titleKey: 'dialog.copied'
-            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-            copyText(inviteText);
-        }
-    }
 
     /**
      * Renders clickable elements that each open an email client
@@ -165,17 +143,13 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
                     <Tooltip
                         content = { t('addPeople.copyInvite') }
                         position = 'top'>
-                        <div
-                            aria-label = { t('addPeople.copyInvite') }
-                            className = { classes.iconContainer }
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onClick = { _onCopyText }
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onKeyPress = { _onCopyTextKeyPress }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <Icon src = { IconCopy } />
-                        </div>
+                        <CopyButton
+                            accessibilityText = { t('addPeople.copyInvite') }
+                            className = { classes.copyEmailInvitation }
+                            hasSuccessNotification = { true }
+                            hasText = { false }
+                            id = 'add-people-copy-meeting-invitation'
+                            textToCopy = { inviteText } />
                     </Tooltip>
                     {renderEmailIcons()}
                 </div>

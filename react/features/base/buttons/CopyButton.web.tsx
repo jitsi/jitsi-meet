@@ -1,11 +1,15 @@
 /* eslint-disable react/jsx-no-bind */
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { showSuccessNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
 import { withPixelLineHeight } from '../styles/functions.web';
 import { copyText } from '../util/copyText.web';
+
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -73,7 +77,17 @@ interface IProps {
     /**
      * The displayed text.
      */
-    displayedText: string;
+    displayedText?: string;
+
+    /**
+     * Whether the button has a success notification when text copied.
+     */
+    hasSuccessNotification?: boolean;
+
+    /**
+     * Whether the button has text on different states or it is only an icon.
+     */
+    hasText?: boolean;
 
     /**
      * The id of the button.
@@ -83,12 +97,12 @@ interface IProps {
     /**
      * The text displayed on copy success.
      */
-    textOnCopySuccess: string;
+    textOnCopySuccess?: string;
 
     /**
      * The text displayed on mouse hover.
      */
-    textOnHover: string;
+    textOnHover?: string;
 
     /**
      * The text that needs to be copied (might differ from the displayedText).
@@ -108,8 +122,11 @@ function CopyButton({
     textToCopy,
     textOnHover,
     textOnCopySuccess,
-    id
+    hasSuccessNotification = false,
+    id,
+    hasText = true
 }: IProps) {
+    const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
@@ -133,6 +150,12 @@ function CopyButton({
         const isCopied = await copyText(textToCopy);
 
         if (isCopied) {
+
+            if (hasSuccessNotification) {
+                dispatch(showSuccessNotification({
+                    titleKey: 'dialog.copied'
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            }
             setIsClicked(true);
 
             setTimeout(() => {
@@ -191,9 +214,13 @@ function CopyButton({
                         className = { classes.icon }
                         size = { 24 }
                         src = { IconCheck } />
-                    <div className = { cx(classes.content, 'selected') }>
-                        <span role = { 'alert' }>{ textOnCopySuccess }</span>
-                    </div>
+                    {
+                        hasText && (
+                            <div className = { cx(classes.content, 'selected') }>
+                                <span role = { 'alert' }>{ textOnCopySuccess }</span>
+                            </div>
+                        )
+                    }
                 </>
             );
         }
@@ -204,9 +231,13 @@ function CopyButton({
                     className = { classes.icon }
                     size = { 24 }
                     src = { IconCopy } />
-                <div className = { classes.content }>
-                    <span> { isHovered ? textOnHover : displayedText } </span>
-                </div>
+                {
+                    hasText && (
+                        <div className = { classes.content }>
+                            <span> { isHovered ? textOnHover : displayedText } </span>
+                        </div>
+                    )
+                }
             </>
         );
     }

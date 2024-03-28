@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
-import { translate } from '../../../../base/i18n/functions';
-import Icon from '../../../../base/icons/components/Icon';
-import { IconCopy } from '../../../../base/icons/svg';
-import { copyText } from '../../../../base/util/copyText.web';
+import CopyButton from '../../../../base/buttons/CopyButton.web';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { _formatConferenceIDPin } from '../../../_utils';
 
 /**
  * The type of the React {@code Component} props of {@link DialInNumber}.
  */
-interface IProps extends WithTranslation {
+interface IProps {
 
     /**
      * The numeric identifier for the current conference, used after dialing a
@@ -26,82 +25,73 @@ interface IProps extends WithTranslation {
 }
 
 /**
- * React {@code Component} responsible for displaying a telephone number and
- * conference ID for dialing into a conference.
+* If we want a copy button with only an icon on it and without text.
+*/
+
+const useStyles = makeStyles()(() => {
+    return {
+        copyButtonWithoutText: {
+            width: '50px !important',
+            height: '50px',
+            background: 'transparent !important',
+
+            '&:hover': {
+                backgroundColor: 'transparent !important'
+            }
+        }
+    };
+});
+
+/**
+ * Component responsible for displaying a telephone number and
+ * conference ID for dialing into a conference and copying them to clipboard.
  *
- * @augments Component
+ * @returns {ReactNode}
  */
-class DialInNumber extends Component<IProps> {
+function DialInNumber({ conferenceID, phoneNumber }: IProps) {
+    const { classes } = useStyles();
+    const { t } = useTranslation();
+    const dialInLabel = t('info.dialInNumber');
+    const passcode = t('info.dialInConferenceID');
+    const conferenceIDPin = `${_formatConferenceIDPin(conferenceID)}#`;
+    const textToCopy = `${dialInLabel} ${phoneNumber} ${passcode} ${conferenceIDPin}`;
 
-    /**
-     * Initializes a new DialInNumber instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        // Bind event handler so it is only bound once for every instance.
-        this._onCopyText = this._onCopyText.bind(this);
-    }
-
-    /**
-     * Copies the dial-in information to the clipboard.
-     *
-     * @returns {void}
-     */
-    _onCopyText() {
-        const { conferenceID, phoneNumber, t } = this.props;
-        const dialInLabel = t('info.dialInNumber');
-        const passcode = t('info.dialInConferenceID');
-        const conferenceIDPin = `${_formatConferenceIDPin(conferenceID)}#`;
-        const textToCopy = `${dialInLabel} ${phoneNumber} ${passcode} ${conferenceIDPin}`;
-
-        copyText(textToCopy);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { conferenceID, phoneNumber, t } = this.props;
-
-        return (
-            <div className = 'dial-in-number'>
-                <p>
-                    <span className = 'phone-number'>
-                        <span className = 'info-label'>
-                            { t('info.dialInNumber') }
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { phoneNumber }
-                        </span>
+    return (
+        <div className = 'dial-in-number'>
+            <p>
+                <span className = 'phone-number'>
+                    <span className = 'info-label'>
+                        { t('info.dialInNumber') }
                     </span>
-                    <br />
-                    <span className = 'conference-id'>
-                        <span className = 'info-label'>
-                            { t('info.dialInConferenceID') }
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { `${_formatConferenceIDPin(conferenceID)}#` }
-                        </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { phoneNumber }
                     </span>
-                </p>
-                <button
-                    aria-label = { t('info.copyNumber') }
-                    className = 'dial-in-copy invisible-button'
-                    onClick = { this._onCopyText }>
-                    <Icon src = { IconCopy } />
-                </button>
-            </div>
-        );
-    }
+                </span>
+                <br />
+                <span className = 'conference-id'>
+                    <span className = 'info-label'>
+                        { t('info.dialInConferenceID') }
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { `${_formatConferenceIDPin(conferenceID)}#` }
+                    </span>
+                </span>
+            </p>
+            <Tooltip
+                content = { t('info.copyNumber') }
+                position = 'top'>
+                <CopyButton
+                    accessibilityText = { t('info.copyNumber') }
+                    className = { classes.copyButtonWithoutText }
+                    hasSuccessNotification = { true }
+                    hasText = { false }
+                    id = 'add-people-copy-dial-in'
+                    textToCopy = { textToCopy } />
+            </Tooltip>
+        </div>
+    );
 }
 
-export default translate(DialInNumber);
+export default DialInNumber;
