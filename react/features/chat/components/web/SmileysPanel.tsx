@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import Emoji from 'react-emoji-render';
 
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { smileys } from '../../smileys';
 
 /**
@@ -60,7 +61,7 @@ class SmileysPanel extends PureComponent<IProps> {
      * @returns {void}
      */
     _onKeyPress(e: React.KeyboardEvent<HTMLDivElement>) {
-        if (e.key === ' ') {
+        if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault(); // @ts-ignore
             this.props.onSmileySelect(e.target.id && smileys[e.target.id]);
         }
@@ -95,9 +96,11 @@ class SmileysPanel extends PureComponent<IProps> {
                 onKeyPress = { this._onKeyPress }
                 role = 'option'
                 tabIndex = { 0 }>
-                <Emoji
-                    onlyEmojiClassName = 'smiley'
-                    text = { smileys[smileyKey as keyof typeof smileys] } />
+                <Tooltip content = { smileys[smileyKey as keyof typeof smileys] }>
+                    <Emoji
+                        onlyEmojiClassName = 'smiley'
+                        text = { smileys[smileyKey as keyof typeof smileys] } />
+                </Tooltip>
             </div>
         ));
 
