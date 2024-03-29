@@ -11,6 +11,19 @@ video conferencing platforms with state-of-the-art video quality and features.
 
 <hr />
 
+**Building Custom Docker Image**
+Whenever you make customizations to this repository, it's essential to build the Docker image.
+
+To build the Docker image with your customizations:
+
+1. Open your terminal.
+2. Navigate to the root directory of this repository.
+3. Run the following command:
+
+```bash
+docker build -t jitsi/web-custom .
+```
+
 Amongst others here are the main features Jitsi Meet offers:
 
 * Support for all current browsers
