@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -46,6 +47,7 @@ const PrivateMessageButton = ({ participantID, isLobbyMessage, visible }: IProps
     const dispatch = useDispatch();
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantID));
     const isVisible = useSelector((state: IReduxState) => getFeatureFlag(state, CHAT_ENABLED, true)) ?? visible;
+    const { t } = useTranslation();
 
     const handleClick = useCallback(() => {
         if (isLobbyMessage) {
@@ -61,7 +63,7 @@ const PrivateMessageButton = ({ participantID, isLobbyMessage, visible }: IProps
 
     return (
         <Button
-            accessibilityLabel = 'toolbar.accessibilityLabel.privateMessage'
+            accessibilityLabel = { t('toolbar.accessibilityLabel.privateMessage') }
             className = { classes.replyButton }
             icon = { IconReply }
             onClick = { handleClick }
