@@ -105,7 +105,7 @@ class ChatInput extends Component<IProps, IState> {
     // Update WS
     _oninit() {
         this.user = new LocalStorageHandle("features/base/settings").getByKey()
-        if(this.user.hasOwnProperty("id") || !this.user.id){
+        if (this.user.hasOwnProperty("id") || !this.user.id) {
             this.user.id = uuidV4();
         }
         this.meetingId = window.location.href.split('/').at(-1)
@@ -150,7 +150,8 @@ class ChatInput extends Component<IProps, IState> {
         this.stompClient.subscribe(CMEET_ENV.subrice, ({ body }: any) => {
             const data = JSON.parse(body);
             const { userId, meetingId } = data;
-            if (data.meetingId == meetingId && this.user.id != userId) {
+            console.log("userId, meetingId", userId, meetingId)
+            if (userId && meetingId && data.meetingId == meetingId && this.user.id != userId) {
                 this.props.onSend({
                     displayName: data.sender,
                     hasRead: false,
@@ -200,36 +201,36 @@ class ChatInput extends Component<IProps, IState> {
      */
     render() {
         return (
-            <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                <div id = 'chat-input' >
+            <div className={`chat-input-container${this.state.message.trim().length ? ' populated' : ''}`}>
+                <div id='chat-input' >
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
-                            className = 'smiley-input'>
+                            className='smiley-input'>
                             <div
-                                className = 'smileys-panel' >
+                                className='smileys-panel' >
                                 <SmileysPanel
-                                    onSmileySelect = { this._onSmileySelect } />
+                                    onSmileySelect={this._onSmileySelect} />
                             </div>
                         </div>
                     )}
                     <Input
-                        className = 'chat-input'
-                        icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
-                        iconClick = { this._toggleSmileysPanel }
-                        id = 'chat-input-messagebox'
-                        maxRows = { 5 }
-                        onChange = { this._onMessageChange }
-                        onKeyPress = { this._onDetectSubmit }
-                        placeholder = { this.props.t('chat.messagebox') }
-                        ref = { this._textArea }
-                        textarea = { true }
-                        value = { this.state.message } />
+                        className='chat-input'
+                        icon={this.props._areSmileysDisabled ? undefined : IconFaceSmile}
+                        iconClick={this._toggleSmileysPanel}
+                        id='chat-input-messagebox'
+                        maxRows={5}
+                        onChange={this._onMessageChange}
+                        onKeyPress={this._onDetectSubmit}
+                        placeholder={this.props.t('chat.messagebox')}
+                        ref={this._textArea}
+                        textarea={true}
+                        value={this.state.message} />
                     <Button
-                        accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim() }
-                        icon = { IconSend }
-                        onClick = { this._onSubmitMessage }
-                        size = { isMobileBrowser() ? 'large' : 'medium' } />
+                        accessibilityLabel={this.props.t('chat.sendButton')}
+                        disabled={!this.state.message.trim()}
+                        icon={IconSend}
+                        onClick={this._onSubmitMessage}
+                        size={isMobileBrowser() ? 'large' : 'medium'} />
                 </div>
             </div>
         );
@@ -256,7 +257,6 @@ class ChatInput extends Component<IProps, IState> {
             this.props.onSend(trimmed);
             this._onSendChatCMeet(trimmed)
             this.setState({ message: '' });
-            // Keep the textarea in focus when sending messages via submit button.
             this._focus();
         }
 
