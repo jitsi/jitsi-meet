@@ -47,7 +47,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '&.error': {
-                backgroundColor: theme.palette.ui04,
+                backgroundColor: theme.palette.actionDanger,
                 borderRadius: 0,
                 fontWeight: 100
             },
