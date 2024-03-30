@@ -46,5 +46,3 @@ const RaisedHandsCountLabel = () => {
 };
 
 export default RaisedHandsCountLabel;
-
-
