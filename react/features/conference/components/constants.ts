@@ -13,7 +13,3 @@ export const CONFERENCE_INFO = {
         'top-panel-toggle'
     ]
 };
-
-// export const PANE_TYPES = {
-//     allparticipants: []
-// }
