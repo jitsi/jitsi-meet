@@ -15,13 +15,14 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
-import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
+import { getParticipantsPaneType, getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 import MeetingParticipantItems from './MeetingParticipantItems';
+import { PANE_TYPES } from '../../constants';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -176,14 +177,19 @@ function _mapStateToProps(state: IReduxState) {
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
     // participants in the participants pane.
+    const paneType = getParticipantsPaneType(state);
     sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
         const participant = getParticipantById(state, id);
+
+        if (paneType === PANE_TYPES.RAISED_HAND_PARTICIPANTS && !participant?.raisedHandTimestamp) {
+            return false;
+        }
 
         return !isScreenShareParticipant(participant);
     });
 
     const participantsCount = sortedParticipantIds.length;
-    const showInviteButton = shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
+    const showInviteButton = paneType === PANE_TYPES.ALL_PARTICIPANTS && shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];

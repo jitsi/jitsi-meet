@@ -18,8 +18,10 @@ import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
     isMoreActionsVisible,
-    isMuteAllVisible
+    isMuteAllVisible,
+    getParticipantsPaneType,
 } from '../../functions';
+import { PANE_TYPES } from '../../constants';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
@@ -116,6 +118,7 @@ const useStyles = makeStyles()(theme => {
 const ParticipantsPane = () => {
     const { classes, cx } = useStyles();
     const paneOpen = useSelector(getParticipantsPaneOpen);
+    const paneType = useSelector(getParticipantsPaneType);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
         .conference?.getBreakoutRooms()?.isSupported();
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
@@ -171,15 +174,21 @@ const ParticipantsPane = () => {
                     onClick = { onClosePane } />
             </div>
             <div className = { classes.container }>
-                <VisitorsList />
-                <br className = { classes.antiCollapse } />
-                <LobbyParticipants />
-                <br className = { classes.antiCollapse } />
+                {
+                    paneType === PANE_TYPES.ALL_PARTICIPANTS && (
+                        <>
+                            <VisitorsList />
+                            <br className = { classes.antiCollapse } />
+                            <LobbyParticipants />
+                            <br className = { classes.antiCollapse } />
+                        </>
+                    )
+                }
                 <MeetingParticipants
                     searchString = { searchString }
                     setSearchString = { setSearchString } />
-                {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
-                {showAddRoomButton && <AddBreakoutRoomButton />}
+                {paneType === PANE_TYPES.ALL_PARTICIPANTS && isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
+                {paneType === PANE_TYPES.ALL_PARTICIPANTS && showAddRoomButton && <AddBreakoutRoomButton />}
             </div>
             {showFooter && (
                 <div className = { classes.footer }>

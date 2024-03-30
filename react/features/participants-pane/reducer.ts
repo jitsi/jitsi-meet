@@ -5,10 +5,11 @@ import {
     PARTICIPANTS_PANE_OPEN,
     SET_VOLUME
 } from './actionTypes';
-import { REDUCER_KEY } from './constants';
+import { PANE_TYPES, REDUCER_KEY } from './constants';
 
 export interface IParticipantsPaneState {
     isOpen: boolean;
+    paneType: string;
     participantsVolume: {
         [participantId: string]: number;
     };
@@ -16,6 +17,7 @@ export interface IParticipantsPaneState {
 
 const DEFAULT_STATE = {
     isOpen: false,
+    paneType: PANE_TYPES.ALL_PARTICIPANTS,
     participantsVolume: {}
 };
 
@@ -34,7 +36,8 @@ ReducerRegistry.register(
         case PARTICIPANTS_PANE_OPEN:
             return {
                 ...state,
-                isOpen: true
+                isOpen: true,
+                paneType: action.paneType || PANE_TYPES.ALL_PARTICIPANTS
             };
 
         case SET_VOLUME:

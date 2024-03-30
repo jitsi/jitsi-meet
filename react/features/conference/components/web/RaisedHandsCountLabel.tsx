@@ -8,6 +8,7 @@ import { IconRaiseHand } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { open as openParticipantsPane } from '../../../participants-pane/actions.web';
+import { PANE_TYPES } from '../../../participants-pane/constants';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -25,7 +26,9 @@ const RaisedHandsCountLabel = () => {
         (state['features/base/participants'].raisedHandsQueue || []).length);
     const { t } = useTranslation();
     const onClick = useCallback(() => {
-        dispatch(openParticipantsPane());
+        dispatch(openParticipantsPane({
+            paneType: PANE_TYPES.RAISED_HAND_PARTICIPANTS
+        }));
     }, []);
 
     return raisedHandsCount > 0 ? (<Tooltip
@@ -43,3 +46,5 @@ const RaisedHandsCountLabel = () => {
 };
 
 export default RaisedHandsCountLabel;
+
+

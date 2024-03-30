@@ -114,3 +114,8 @@ export const VideoStateIcons = {
  * Mobile web context menu avatar size.
  */
 export const AVATAR_SIZE = 20;
+
+export const PANE_TYPES = {
+    ALL_PARTICIPANTS : "all_participants",
+    RAISED_HAND_PARTICIPANTS : "raised_hand_participants",   
+}

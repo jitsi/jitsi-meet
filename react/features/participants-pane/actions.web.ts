@@ -7,8 +7,9 @@ export * from './actions.any';
  *
  * @returns {Object}
  */
-export const open = () => {
+export const open = ({ ...payload } = {}) => {
     return {
-        type: PARTICIPANTS_PANE_OPEN
+        type: PARTICIPANTS_PANE_OPEN,
+        ...payload
     };
 };

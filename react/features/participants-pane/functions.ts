@@ -315,3 +315,10 @@ export const isParticipantsPaneEnabled = (stateful: IStateful) => {
 
     return Boolean(getFeatureFlag(state, PARTICIPANTS_ENABLED, true) && enabled);
 };
+
+/**
+ *
+ * @param {IReduxState} state - Global state.
+ * @returns participants pane type.
+ */
+export const getParticipantsPaneType = (state: IReduxState) => getState(state)?.paneType;
