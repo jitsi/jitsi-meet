@@ -62,7 +62,7 @@ import {
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions,
-    subtitlesScreenOptions
+    subtitlesScreenOptions, whiteboardScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
 // @ts-ignore
@@ -75,6 +75,7 @@ import {
     conferenceNavigationRef
     // @ts-ignore
 } from '../ConferenceNavigationContainerRef';
+import Whiteboard from "../../../../../whiteboard/components/native/Whiteboard";
 
 
 const ConferenceStack = createStackNavigator();
@@ -213,6 +214,14 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...breakoutRoomsScreenOptions,
                         title: t('breakoutRooms.title')
+                    }} />
+                <ConferenceStack.Screen
+                    // @ts-ignore
+                    component = { Whiteboard }
+                    name = { screen.conference.whiteboard }
+                    options = {{
+                        ...whiteboardScreenOptions,
+                        title: t('whiteboard.screenTitle')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
