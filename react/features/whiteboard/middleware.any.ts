@@ -11,7 +11,6 @@ import {
     notifyWhiteboardLimit,
     resetWhiteboard,
     restrictWhiteboard,
-    setWhiteboardOpen,
     setupWhiteboard
 } from './actions';
 import { WHITEBOARD_ID } from './constants';

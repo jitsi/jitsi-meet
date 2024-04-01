@@ -1,10 +1,11 @@
 import { createRestrictWhiteboardEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
-import { screen } from '../mobile/navigation/routes';
 import {
     navigate
 } from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../mobile/navigation/routes';
+
 
 import { resetWhiteboard } from './actions.any';
 

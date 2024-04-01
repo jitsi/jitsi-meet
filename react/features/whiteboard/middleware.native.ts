@@ -5,6 +5,9 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import {
+    navigate
+} from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 
 import { SET_WHITEBOARD_OPEN } from './actionTypes';
@@ -20,9 +23,7 @@ import {
     shouldNotifyUserLimit
 } from './functions';
 import './middleware.any';
-import {
-    navigate
-} from "../mobile/navigation/components/conference/ConferenceNavigationContainerRef";
+
 
 /**
  * Middleware which intercepts whiteboard actions to handle changes to the related state.

@@ -1,7 +1,7 @@
 import { Route } from '@react-navigation/native';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import {Platform, View, ViewStyle} from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 
@@ -19,7 +19,7 @@ import HeaderNavigationButton
 import {
     goBack
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setupWhiteboard, setWhiteboardOpen } from '../../actions.native';
+import { setWhiteboardOpen, setupWhiteboard } from '../../actions.native';
 import { WHITEBOARD_ID } from '../../constants';
 import { getCollabServerUrl, getWhiteboardInfoForURIString } from '../../functions';
 
@@ -97,19 +97,23 @@ class Whiteboard extends PureComponent<IProps> {
                 return (
                     <HeaderNavigationButton
                         label = { t('dialog.close') }
-                        onPress = {() => {
+
+                        /* eslint-disable react/jsx-no-bind */
+                        onPress = { () => {
                             dispatch(setWhiteboardOpen(false));
                             goBack();
-                        }} />
+                        } } />
                 );
             }
 
             return (
                 <HeaderNavigationButton
-                    onPress = {() => {
+
+                    /* eslint-disable react/jsx-no-bind */
+                    onPress = { () => {
                         dispatch(setWhiteboardOpen(false));
                         goBack();
-                    }}
+                    } }
                     src = { IconCloseLarge } />
             );
         };
