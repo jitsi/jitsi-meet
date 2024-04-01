@@ -209,6 +209,73 @@ export function setPreferVisitor(preferVisitor: boolean) {
 }
 
 /**
+ * Checks if we have data to use attach instead of connect. If we have the data
+ * executes attach otherwise check if we have to wait for the data. If we have
+ * to wait for the attach data we are setting handler to APP.connect.handler
+ * which is going to be called when the attach data is received otherwise
+ * executes connect.
+ *
+ * @param {any} [id] - User id.
+ * @param {any} [password] - Password.
+ * @param {any} [name] - The name of the conference.
+ * @param {any} [connection] - The connection instance.
+ *
+ * @returns {void}
+ */
+function checkForAttachParametersAndConnect(id: any, password: any, name: any, connection: any) {
+    console.log(`checkForAttachParametersAndConnect: ${id}, ${password}, ${name}, ${connection}`);
+    console.log(connection);
+    console.log(`window.XMPPAttachInfo: ${window.XMPPAttachInfo}`);
+    console.log(window.XMPPAttachInfo);
+    console.log(`APP.connect: ${APP.connect}`);
+    console.log(APP.connect);
+    if (window.XMPPAttachInfo) {
+        // eslint-disable-next-line max-len
+        console.log('checkForAttachParametersAndConnect: window.XMPPAttachInfo and setting APP.connect.status to connecting');
+        APP.connect.status = 'connecting';
+
+        // When connection optimization is not deployed or enabled the default
+        // value will be window.XMPPAttachInfo.status = "error"
+        // If the connection optimization is deployed and enabled and there is
+        // a failure the value will be window.XMPPAttachInfo.status = "error"
+        if (window.XMPPAttachInfo.status === 'error') {
+            console.log('checkForAttachParametersAndConnect: window.XMPPAttachInfo.status = error');
+            connection.connect({
+                id,
+                password,
+                name
+            });
+
+            return;
+        }
+
+        console.log('.. window.XMPPAttachInfo.status != error and calling connection.attach');
+        const attachOptions = window.XMPPAttachInfo.data;
+
+        if (attachOptions) {
+            console.log('checkForAttachParametersAndConnect: calling connection.attach');
+            console.log(attachOptions);
+            connection.attach(attachOptions);
+            delete window.XMPPAttachInfo.data;
+        } else {
+            console.log('checkForAttachParametersAndConnect: no attachOptions so calling connection.connect');
+            connection.connect({
+                id,
+                password,
+                name
+            });
+        }
+    } else {
+        console.log('checkForAttachParametersAndConnect: no window.XMPPAttachInfo');
+        APP.connect.status = 'ready';
+        APP.connect.handler
+            = checkForAttachParametersAndConnect.bind(
+                null,
+                id, password, name, connection);
+    }
+}
+
+/**
  * Opens new connection.
  *
  * @param {string} [id] - The XMPP user's ID (e.g. {@code user@server.com}).
@@ -342,11 +409,13 @@ export function _connectInternal(id?: string, password?: string) {
             // in case of configured http url for conference request we need the room name
             const name = getBackendSafeRoomName(state['features/base/conference'].room);
 
-            connection.connect({
-                id,
-                password,
-                name
-            });
+            // connection.connect({
+            //     id,
+            //     password,
+            //     name
+            // });
+
+            checkForAttachParametersAndConnect(id, password, name, connection);
         });
     };
 }

@@ -102,7 +102,7 @@ server {
     }
 
     # ensure all static content can always be found first
-    location ~ ^/(libs|css|static|images|fonts|lang|sounds|.well-known)/(.*)$
+    location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization|.well-known)/(.*)$
     {
         add_header 'Access-Control-Allow-Origin' '*';
         alias /usr/share/jitsi-meet/$1/$2;
