@@ -6,7 +6,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { IWhiteboardConfig } from '../base/config/configType';
 import { getRemoteParticipants, isLocalParticipantModerator } from '../base/participants/functions';
 import { encodeToBase64URL } from '../base/util/httpUtils';
-import { appendURLHashParam, appendURLParam } from '../base/util/uri';
+import { appendURLHashParam, appendURLParam, getBackendSafePath } from '../base/util/uri';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MIN_USER_LIMIT, USER_LIMIT_THRESHOLD, WHITEBOARD_ID, WHITEBOARD_PATH_NAME } from './constants';
@@ -98,7 +98,9 @@ export const getCollabServerUrl = (state: IReduxState): string | undefined => {
     const { locationURL } = state['features/base/connection'];
     const inBreakoutRoom = isInBreakoutRoom(state);
     const roomId = getCurrentRoomId(state);
-    const room = md5.hex(`${locationURL?.origin}${locationURL?.pathname}${inBreakoutRoom ? `|${roomId}` : ''}`);
+    const room = md5.hex(
+        `${locationURL?.origin}${getBackendSafePath(locationURL?.pathname)}${inBreakoutRoom ? `|${roomId}` : ''}`
+    );
 
     return appendURLParam(collabServerBaseUrl, 'room', room);
 };
