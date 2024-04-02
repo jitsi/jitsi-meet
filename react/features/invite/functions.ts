@@ -449,7 +449,12 @@ export function invitePeopleAndChatRooms(
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: IReduxState): boolean {
-    const { peopleSearchUrl } = state['features/base/config'];
+    const { peopleSearchUrl, peopleSearchQueryTypes, peopleSearchToken } = state['features/base/config'];
+
+    // If sending mere invitation emails, we just need the token expected by the email directory
+    if (Boolean(peopleSearchToken) && peopleSearchQueryTypes && peopleSearchQueryTypes.length === 1 && peopleSearchQueryTypes[0] === "email") {
+        return true;
+    }
 
     return Boolean(state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state));
 }
@@ -531,14 +536,14 @@ function isPhoneNumberRegex(): RegExp {
  * @param {string} jwt - The jwt token to pass to the search service.
  * @param {string} text - Text to search.
  * @param {Array<string>} queryTypes - Array with the query types that will be
- * executed - "conferenceRooms" | "user" | "room".
+ * executed - "conferenceRooms" | "user" | "room" | "email".
  * @returns {Promise} - The promise created by the request.
  */
 export function searchDirectory( // eslint-disable-line max-params
         serviceUrl: string,
         jwt: string,
         text: string,
-        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
+        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room', 'email' ]
 ): Promise<Array<{ type: string; }>> {
 
     const query = encodeURIComponent(text);

@@ -1517,6 +1517,15 @@ var config = {
     // and will automatically redirect to the token service to get the token for the meeting.
     // tokenAuthUrlAutoRedirect: false
 
+    /** @todo document this in the dev handbook and then remove from undocumented settings list */
+    // You can put an array of values to target different entity types in the invite dialog.
+    // Valid values are "conferenceRooms", "user", "room" and "email" 
+    // peopleSearchQueryTypes: ["user", "email"],
+    // Directory endpoint which is called for invite dialog autocomplete
+    // peopleSearchUrl: "https://myservice.com/api/invite",
+    // For external entities (e. g. email), the token to use for directory endpoint authentication
+    // peopleSearchToken: "mytoken",
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
