@@ -31,12 +31,29 @@ import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
+import {
+    IconCar,
+    IconGear,
+    IconPlay
+} from '../../../base/icons/svg';
+import { NOTIFY_CLICK_MODE } from '../../types';
+import CustomOptionButton from './CustomOptionButton';
 
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 interface IProps {
+
+    /**
+     * Toolbar buttons which have their click exposed through the API.
+     */
+    _buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+
+    /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * True if breakout rooms feature is available, false otherwise.
@@ -112,6 +129,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      */
     render() {
         const {
+            _buttonsWithNotifyClick,
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
             _shouldDisplayReactionsButtons,
@@ -139,6 +157,20 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 }
             }
         };
+
+        const buttons = [{
+            key: 'sharedvideo',
+            icon: IconPlay,
+            text: 'toolbar.sharedvideo'
+        }, {
+            key: 'carmode',
+            icon: IconCar,
+            text: 'carmode.labels.buttonLabel'
+        }, {
+            key: 'settings',
+            icon: IconGear,
+            text: 'settings.buttonLabel'
+        }]
 
         return (
             <BottomSheet
@@ -170,6 +202,16 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <ClosedCaptionButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
                 <SettingsButton { ...buttonProps } />
+                <Divider style = { styles.divider as ViewStyle } />
+                {
+                    buttons.map(({ key,...rest }) => (
+                        <CustomOptionButton
+                            { ...rest }
+                            { ...buttonProps }
+                            key = { key }
+                            notifyClick = { _buttonsWithNotifyClick?.get(key) } />
+                    ))
+                }
             </BottomSheet>
         );
     }
@@ -207,8 +249,11 @@ class OverflowMenu extends PureComponent<IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
+    const { customToolbarButtons } = state['features/base/config'];
 
     return {
+        _buttonsWithNotifyClick: state['features/toolbox'].buttonsWithNotifyClick,
+        _customToolbarButtons: customToolbarButtons,
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
