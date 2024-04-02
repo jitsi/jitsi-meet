@@ -1,7 +1,7 @@
 import { Route } from '@react-navigation/native';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { View, ViewStyle } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 
@@ -10,15 +10,22 @@ import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { safeDecodeURIComponent } from '../../../base/util/uri';
-import { setupWhiteboard } from '../../actions.any';
+import HeaderNavigationButton
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
+import {
+    goBack
+} from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { setupWhiteboard } from '../../actions.native';
 import { WHITEBOARD_ID } from '../../constants';
 import { getCollabServerUrl, getWhiteboardInfoForURIString } from '../../functions';
 
 import WhiteboardErrorDialog from './WhiteboardErrorDialog';
 import styles, { INDICATOR_COLOR } from './styles';
+
 
 interface IProps extends WithTranslation {
 
@@ -85,10 +92,23 @@ class Whiteboard extends PureComponent<IProps> {
      */
     componentDidMount() {
         const { navigation, t } = this.props;
+        const headerLeft = () => {
+            if (Platform.OS === 'ios') {
+                return (
+                    <HeaderNavigationButton
+                        label = { t('dialog.close') }
+                        onPress = { goBack } />
+                );
+            }
 
-        navigation.setOptions({
-            headerTitle: t('whiteboard.screenTitle')
-        });
+            return (
+                <HeaderNavigationButton
+                    onPress = { goBack }
+                    src = { IconCloseLarge } />
+            );
+        };
+
+        navigation.setOptions({ headerLeft });
     }
 
     /**

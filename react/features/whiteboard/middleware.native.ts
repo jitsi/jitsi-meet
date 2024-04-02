@@ -5,7 +5,9 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import {
+    navigate
+} from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 
 import { SET_WHITEBOARD_OPEN } from './actionTypes';
@@ -22,6 +24,7 @@ import {
 } from './functions';
 import './middleware.any';
 
+
 /**
  * Middleware which intercepts whiteboard actions to handle changes to the related state.
  *
@@ -34,6 +37,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
 
     switch (action.type) {
     case SET_WHITEBOARD_OPEN: {
+        const { isOpen } = action;
+
         const enforceUserLimit = shouldEnforceUserLimit(state);
         const notifyUserLimit = shouldNotifyUserLimit(state);
 
@@ -44,7 +49,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             return next(action);
         }
 
-        if (action.isOpen) {
+        if (isOpen) {
             if (enforceUserLimit) {
                 dispatch(restrictWhiteboard());
 
@@ -63,7 +68,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             const collabServerUrl = getCollabServerUrl(state);
             const localParticipantName = getLocalParticipant(state)?.name;
 
-            navigateRoot(screen.conference.whiteboard, {
+            navigate(screen.conference.whiteboard, {
                 collabDetails,
                 collabServerUrl,
                 localParticipantName

@@ -13,7 +13,6 @@ import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
-import Whiteboard from '../../../whiteboard/components/native/Whiteboard';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
@@ -24,8 +23,7 @@ import {
     navigationContainerTheme,
     preJoinScreenOptions,
     unsafeMeetingScreenOptions,
-    welcomeScreenOptions,
-    whiteboardScreenOptions
+    welcomeScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
@@ -96,10 +94,6 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                     component = { ConnectingPage }
                     name = { screen.connecting }
                     options = { connectingScreenOptions } />
-                <RootStack.Screen // @ts-ignore
-                    component = { Whiteboard }
-                    name = { screen.conference.whiteboard }
-                    options = { whiteboardScreenOptions } />
                 <RootStack.Screen
                     component = { Prejoin }
                     name = { screen.preJoin }

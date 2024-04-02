@@ -43,6 +43,7 @@ import SpeakerStats
 import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
+import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
@@ -62,7 +63,8 @@ import {
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions,
-    subtitlesScreenOptions
+    subtitlesScreenOptions,
+    whiteboardScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
 // @ts-ignore
@@ -213,6 +215,14 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...breakoutRoomsScreenOptions,
                         title: t('breakoutRooms.title')
+                    }} />
+                <ConferenceStack.Screen
+                    // @ts-ignore
+                    component = { Whiteboard }
+                    name = { screen.conference.whiteboard }
+                    options = {{
+                        ...whiteboardScreenOptions,
+                        title: t('whiteboard.screenTitle')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
