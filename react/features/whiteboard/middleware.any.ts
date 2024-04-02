@@ -11,6 +11,7 @@ import {
     notifyWhiteboardLimit,
     resetWhiteboard,
     restrictWhiteboard,
+    setWhiteboardOpen,
     setupWhiteboard
 } from './actions';
 import { WHITEBOARD_ID } from './constants';
@@ -44,6 +45,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
             store.dispatch(setupWhiteboard({
                 collabDetails: metadata[WHITEBOARD_ID].collabDetails
             }));
+            store.dispatch(setWhiteboardOpen(true));
         }
 
         break;

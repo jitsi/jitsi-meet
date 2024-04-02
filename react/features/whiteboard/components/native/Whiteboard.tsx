@@ -19,7 +19,7 @@ import HeaderNavigationButton
 import {
     goBack
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { setWhiteboardOpen, setupWhiteboard } from '../../actions.native';
+import { setupWhiteboard } from '../../actions.native';
 import { WHITEBOARD_ID } from '../../constants';
 import { getCollabServerUrl, getWhiteboardInfoForURIString } from '../../functions';
 
@@ -97,23 +97,13 @@ class Whiteboard extends PureComponent<IProps> {
                 return (
                     <HeaderNavigationButton
                         label = { t('dialog.close') }
-
-                        /* eslint-disable react/jsx-no-bind */
-                        onPress = { () => {
-                            dispatch(setWhiteboardOpen(false));
-                            goBack();
-                        } } />
+                        onPress = { goBack } />
                 );
             }
 
             return (
                 <HeaderNavigationButton
-
-                    /* eslint-disable react/jsx-no-bind */
-                    onPress = { () => {
-                        dispatch(setWhiteboardOpen(false));
-                        goBack();
-                    } }
+                    onPress = { goBack }
                     src = { IconCloseLarge } />
             );
         };
