@@ -264,7 +264,15 @@ export default class LargeVideoManager {
             // in order to stop updating track streaming status for the old track and start it for the new track.
             // TODO: when this class is converted to a function react component,
             // use a custom hook to update a local track streaming status.
-            if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()) {
+            if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()
+                || this.videoTrack?.jitsiTrack?.isP2P !== videoTrack?.jitsiTrack?.isP2P) {
+            // In the case where we switch from jvb to p2p when we need to switch the p2p and jvb track, they will be
+            // with the same source name. In order to add the streaming status listener we need to check if the isP2P
+            // flag is different. Without this check we won't have the correct stream status listener for the track.
+            // Normally the Thumbnail and ConnectionIndicator components will update the streaming status the same way
+            // and this may mask the problem. But if for some reason the update from the Thumbnail and
+            // ConnectionIndicator components don't happen this may lead to showing the avatar instead of
+            // the video because of the old track inactive streaming status.
                 if (this.videoTrack && !this.videoTrack.local) {
                     this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
