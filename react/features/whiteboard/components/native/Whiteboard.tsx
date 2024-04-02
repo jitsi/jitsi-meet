@@ -91,7 +91,7 @@ class Whiteboard extends PureComponent<IProps> {
      * @returns {void}
      */
     componentDidMount() {
-        const { dispatch, navigation, t } = this.props;
+        const { navigation, t } = this.props;
         const headerLeft = () => {
             if (Platform.OS === 'ios') {
                 return (
