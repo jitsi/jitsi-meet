@@ -35,7 +35,6 @@ import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -227,7 +226,7 @@ public class MainActivity extends JitsiMeetActivity {
     private @Nullable URL buildURL(String urlStr) {
         try {
             return new URL(urlStr);
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             return null;
         }
     }
