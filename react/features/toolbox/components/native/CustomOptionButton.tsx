@@ -9,7 +9,7 @@ import { translate } from '../../../base/i18n/functions';
 interface IProps extends AbstractButtonProps {
     icon: Function;
     id?: string;
-    handlePress?: string;
+    handlePress?: Function;
     notifyPress?: string;
     text: string;
 }

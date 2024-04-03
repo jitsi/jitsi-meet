@@ -161,14 +161,17 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         const buttons = [{
             key: 'sharedvideo',
             icon: IconPlay,
+            notifyPress: `${_buttonsWithNotifyClick?.get('sharedvideo')}`,
             text: 'toolbar.sharedvideo'
         }, {
             key: 'carmode',
             icon: IconCar,
+            notifyPress: `${_buttonsWithNotifyClick?.get('carmode')}`,
             text: 'carmode.labels.buttonLabel'
         }, {
             key: 'settings',
             icon: IconGear,
+            notifyPress: `${_buttonsWithNotifyClick?.get('settings')}`,
             text: 'settings.buttonLabel'
         }]
 
@@ -208,8 +211,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                         <CustomOptionButton
                             { ...rest }
                             { ...buttonProps }
-                            key = { key }
-                            notifyClick = { _buttonsWithNotifyClick?.get(key) } />
+                            key = { key } />
                     ))
                 }
             </BottomSheet>
