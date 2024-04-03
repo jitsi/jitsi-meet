@@ -3,6 +3,7 @@ import Logger from '@jitsi/logger';
 
 import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../react/features/analytics/functions';
+import { authenticateAndUpgradeRole } from "../../react/features/authentication/actions.any";
 import {
     approveParticipantAudio,
     approveParticipantVideo,
@@ -97,6 +98,7 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
+import { joinConference } from "../../react/features/prejoin/actions.web";
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
@@ -484,6 +486,17 @@ function initCommands() {
         'email': email => {
             sendAnalytics(createApiEvent('email.changed'));
             APP.conference.changeLocalEmail(email);
+        },
+        'authenticate': (jid, password) => {
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+
+            if (conference) {
+                APP.store.dispatch(authenticateAndUpgradeRole(jid, password, conference))
+            } else {
+                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                APP.store.dispatch(joinConference(undefined, false, jid, password));
+            }
         },
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));

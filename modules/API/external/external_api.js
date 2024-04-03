@@ -38,6 +38,7 @@ const commands = {
     displayName: 'display-name',
     endConference: 'end-conference',
     email: 'email',
+    authenticate: 'authenticate',
     grantModerator: 'grant-moderator',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
