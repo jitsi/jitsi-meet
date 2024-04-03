@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import Icon from '../../../base/icons/components/Icon';
 import { translate } from '../../../base/i18n/functions';
+import Icon from '../../../base/icons/components/Icon';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 
 interface IProps extends AbstractButtonProps {
+    handlePress?: Function;
     icon: Function;
     id?: string;
-    handlePress?: Function;
     notifyPress?: string;
     text: string;
 }
@@ -20,9 +20,9 @@ interface IProps extends AbstractButtonProps {
  * @returns {Component}
  */
 class CustomOptionButton extends AbstractButton<IProps> {
+    handlePress = this.props.handlePress;
     iconSrc = this.props.icon;
     id = this.props.id;
-    handlePress = this.props.handlePress;
     notifyPress = this.props.notifyPress;
     text = this.props.text;
 

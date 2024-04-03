@@ -7,6 +7,11 @@ import { IReduxState, IStore } from '../../../app/types';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
+import {
+    IconCar,
+    IconGear,
+    IconPlay
+} from '../../../base/icons/svg';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
@@ -26,18 +31,14 @@ import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { getMovableButtons } from '../../functions.native';
 
+import { NOTIFY_CLICK_MODE } from '../../types';
+
 import AudioOnlyButton from './AudioOnlyButton';
+import CustomOptionButton from './CustomOptionButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
-import {
-    IconCar,
-    IconGear,
-    IconPlay
-} from '../../../base/icons/svg';
-import { NOTIFY_CLICK_MODE } from '../../types';
-import CustomOptionButton from './CustomOptionButton';
 
 
 /**
@@ -158,7 +159,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
             }
         };
 
-        const buttons = [{
+        const buttons = [ {
             key: 'sharedvideo',
             icon: IconPlay,
             notifyPress: `${_buttonsWithNotifyClick?.get('sharedvideo')}`,
@@ -173,7 +174,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
             icon: IconGear,
             notifyPress: `${_buttonsWithNotifyClick?.get('settings')}`,
             text: 'settings.buttonLabel'
-        }]
+        } ]
 
         return (
             <BottomSheet
