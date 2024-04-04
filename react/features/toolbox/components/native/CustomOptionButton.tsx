@@ -7,7 +7,7 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 
 
 interface IProps extends AbstractButtonProps {
-    icon: Function;
+    icon: any;
     id?: string;
     text: string;
 }

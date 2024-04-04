@@ -25,7 +25,6 @@ import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { getMovableButtons } from '../../functions.native';
-
 import { NOTIFY_CLICK_MODE } from '../../types';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -49,7 +48,7 @@ interface IProps {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>;
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * True if breakout rooms feature is available, false otherwise.
@@ -161,13 +160,12 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                     ? this._renderReactionMenu
                     : undefined }>
                 {
-                    _customToolbarButtons &&
-                    _customToolbarButtons.map(({ id, ...rest }) => (
+                    _customToolbarButtons?.map(({ id, ...rest }) => (
                         <CustomOptionButton
                             { ...rest }
                             { ...buttonProps }
                             key = { id }
-                            notifyMode = { _buttonsWithNotifyClick?.get(id) }/>
+                            notifyMode = { _buttonsWithNotifyClick?.get(id) } />
                     ))
                 }
                 <OpenCarmodeButton { ...topButtonProps } />
