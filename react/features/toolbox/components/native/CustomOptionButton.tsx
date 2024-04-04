@@ -7,10 +7,8 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 
 
 interface IProps extends AbstractButtonProps {
-    handlePress?: Function;
     icon: Function;
     id?: string;
-    notifyPress?: string;
     text: string;
 }
 
@@ -20,10 +18,8 @@ interface IProps extends AbstractButtonProps {
  * @returns {Component}
  */
 class CustomOptionButton extends AbstractButton<IProps> {
-    handlePress = this.props.handlePress;
     iconSrc = this.props.icon;
     id = this.props.id;
-    notifyPress = this.props.notifyPress;
     text = this.props.text;
 
     /**
@@ -39,8 +35,6 @@ class CustomOptionButton extends AbstractButton<IProps> {
             src = { this.iconSrc } />
     );
 
-    handleClick = this.handlePress;
-    notifyMode = this.notifyPress;
     label = this.text;
 }
 

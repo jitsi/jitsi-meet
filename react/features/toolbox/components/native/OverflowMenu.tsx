@@ -7,11 +7,6 @@ import { IReduxState, IStore } from '../../../app/types';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
-import {
-    IconCar,
-    IconGear,
-    IconPlay
-} from '../../../base/icons/svg';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
@@ -54,7 +49,7 @@ interface IProps {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>;
 
     /**
      * True if breakout rooms feature is available, false otherwise.
@@ -131,6 +126,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
     render() {
         const {
             _buttonsWithNotifyClick,
+            _customToolbarButtons,
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
             _shouldDisplayReactionsButtons,
@@ -159,28 +155,21 @@ class OverflowMenu extends PureComponent<IProps, IState> {
             }
         };
 
-        const buttons = [ {
-            key: 'sharedvideo',
-            icon: IconPlay,
-            notifyPress: `${_buttonsWithNotifyClick?.get('sharedvideo')}`,
-            text: 'toolbar.sharedvideo'
-        }, {
-            key: 'carmode',
-            icon: IconCar,
-            notifyPress: `${_buttonsWithNotifyClick?.get('carmode')}`,
-            text: 'carmode.labels.buttonLabel'
-        }, {
-            key: 'settings',
-            icon: IconGear,
-            notifyPress: `${_buttonsWithNotifyClick?.get('settings')}`,
-            text: 'settings.buttonLabel'
-        } ]
-
         return (
             <BottomSheet
                 renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
+                {
+                    _customToolbarButtons &&
+                    _customToolbarButtons.map(({ id, ...rest }) => (
+                        <CustomOptionButton
+                            { ...rest }
+                            { ...buttonProps }
+                            key = { id }
+                            notifyMode = { _buttonsWithNotifyClick?.get(id) }/>
+                    ))
+                }
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {
@@ -207,14 +196,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <SharedDocumentButton { ...buttonProps } />
                 <SettingsButton { ...buttonProps } />
                 <Divider style = { styles.divider as ViewStyle } />
-                {
-                    buttons.map(({ key,...rest }) => (
-                        <CustomOptionButton
-                            { ...rest }
-                            { ...buttonProps }
-                            key = { key } />
-                    ))
-                }
             </BottomSheet>
         );
     }
