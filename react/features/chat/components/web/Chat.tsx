@@ -226,6 +226,7 @@ const Chat = ({
      * @returns {ReactElement}
      */
     function renderChat() {
+        _isPollsEnabled = false 
         return (
             <>
                 {_isPollsEnabled && renderTabs()}
@@ -269,6 +270,7 @@ const Chat = ({
      * @returns {ReactElement}
      */
     function renderTabs() {
+        _isPollsEnabled = false;
         return (
             <Tabs
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }

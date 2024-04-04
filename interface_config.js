@@ -257,7 +257,9 @@ var interfaceConfig = {
     // TOOLBAR_ALWAYS_VISIBLE: false,
 
     // This config was moved to config.js as `toolbarButtons`.
-    // TOOLBAR_BUTTONS: [],
+    // TOOLBAR_BUTTONS: [
+
+    // ],
 
     // Moved to config.js as `toolbarConfig.timeout`.
     // TOOLBAR_TIMEOUT: 4000,

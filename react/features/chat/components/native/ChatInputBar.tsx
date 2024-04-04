@@ -55,9 +55,9 @@ interface IState {
  * Implements the chat input bar with text field and action(s).
  */
 class ChatInputBar extends Component<IProps, IState> {
-    componentWillUnmount(): void {
-        this.stompClient.deactivate();
-    }
+    // componentWillUnmount(): void {
+    //     this.stompClient.deactivate();
+    // }
     /**
      * Instantiates a new instance of the component.
      *
@@ -133,7 +133,7 @@ class ChatInputBar extends Component<IProps, IState> {
         this.stompClient.subscribe(CMEET_ENV.subrice, ({ body }: any) => {
             const data = JSON.parse(body);
             const { userId, meetingId } = data;
-            if (data.meetingId == meetingId && this.user.id != userId) {
+            if (data.content && userId && meetingId && data.meetingId == meetingId && this.user.id != userId) {
                 this.props.onSend({
                     displayName: data.sender,
                     hasRead: false,

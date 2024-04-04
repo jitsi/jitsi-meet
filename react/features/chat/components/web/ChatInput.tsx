@@ -64,9 +64,9 @@ interface IState {
  * @augments Component
  */
 class ChatInput extends Component<IProps, IState> {
-    componentWillUnmount(): void {
-        this.stompClient.deactivate();
-    }
+    // componentWillUnmount(): void {
+    //     this.stompClient.deactivate();
+    // }
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {

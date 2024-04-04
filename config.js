@@ -118,7 +118,7 @@ var config = {
     // disableReactionsModeration: false,
 
     // Disables polls feature.
-    // disablePolls: false,
+    disablePolls: true,
 
     // Disables self-view tile. (hides it from tile view and from filmstrip)
     // disableSelfView: false,
@@ -646,13 +646,13 @@ var config = {
     // enableWelcomePage: true,
 
     // Configs for welcome page.
-    // welcomePage: {
-    //     // Whether to disable welcome page. In case it's disabled a random room
-    //     // will be joined when no room is specified.
-    //     disabled: false,
-    //     // If set, landing page will redirect to this URL.
-    //     customUrl: ''
-    // },
+    welcomePage: {
+        // Whether to disable welcome page. In case it's disabled a random room
+        // will be joined when no room is specified.
+        disabled: true,
+        // If set, landing page will redirect to this URL.
+        customUrl: ''
+    },
 
     // Configs for the lobby screen.
     // lobby: {
