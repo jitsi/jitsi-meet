@@ -39,6 +39,8 @@ export function setParticipantsWithScreenShare(participantIds: Array<string>) {
 /**
  * Creates a (redux) action which that a custom overflow menu button was pressed.
  *
+ * @param {string} id - The id for the custom button.
+ * @param {string} text - The label for the custom button.
  * @returns {{
  *     type: CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
  *     id: string,

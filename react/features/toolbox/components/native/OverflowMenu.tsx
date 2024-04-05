@@ -211,10 +211,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @param {Object} topButtonProps - Button properties.
      * @returns {React.ReactElement}
      */
-    _renderCustomOverflowMenuButtons( topButtonProps: Object ) {
+    _renderCustomOverflowMenuButtons(topButtonProps: Object) {
         const { _customToolbarButtons, dispatch } = this.props;
 
-        if (!_customToolbarButtons || !_customToolbarButtons.length) {
+        if (!_customToolbarButtons?.length) {
             return;
         }
 

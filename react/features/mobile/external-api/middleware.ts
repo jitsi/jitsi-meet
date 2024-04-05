@@ -203,8 +203,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
             {
                 id,
                 text
-            }
-        )
+            });
 
         break;
     }
