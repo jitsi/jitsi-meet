@@ -40,7 +40,10 @@ export default class WhiteboardApp extends BaseApp<any> {
 
                 if (window.ReactNativeWebView) {
                     setTimeout(() => {
-                        window.ReactNativeWebView.postMessage(JSON.stringify(collabDetails));
+                        window.ReactNativeWebView.postMessage(JSON.stringify({
+                            collabDetails,
+                            collabServerUrl
+                        }));
                     }, 0);
                 }
             } catch (e: any) {

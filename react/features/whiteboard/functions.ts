@@ -83,12 +83,12 @@ export const isWhiteboardButtonVisible = (state: IReduxState): boolean =>
 export const isWhiteboardPresent = (state: IReduxState): boolean => getRemoteParticipants(state).has(WHITEBOARD_ID);
 
 /**
- * Returns the whiteboard collaboration server url.
+ * Builds the whiteboard collaboration server url.
  *
  * @param {IReduxState} state - The state from the Redux store.
  * @returns {string}
  */
-export const getCollabServerUrl = (state: IReduxState): string | undefined => {
+export const generateCollabServerUrl = (state: IReduxState): string | undefined => {
     const collabServerBaseUrl = getWhiteboardConfig(state).collabServerBaseUrl;
 
     if (!collabServerBaseUrl) {
@@ -104,6 +104,15 @@ export const getCollabServerUrl = (state: IReduxState): string | undefined => {
 
     return appendURLParam(collabServerBaseUrl, 'room', room);
 };
+
+/**
+ * Returns the whiteboard collaboration server url.
+ *
+ * @param {IReduxState} state - The state from the Redux store.
+ * @returns {string}
+ */
+export const getCollabServerUrl = (state: IReduxState): string | undefined =>
+    getWhiteboardState(state).collabServerUrl;
 
 /**
  * Whether the whiteboard is visible on stage.
