@@ -714,6 +714,9 @@
             "removeOption": "Suprimir l'opcion",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "Las opcions devon èsser unicas"
+        },
         "notification": {
             "description": "Dobrissètz l’onglet dels sondatge per votar",
             "title": "Un sondatge novèl es estat apondut a la conferéncia"

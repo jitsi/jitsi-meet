@@ -449,6 +449,11 @@
     },
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
     "passwordSetRemotely": "réglé par un autre membre",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Les options doivent être uniques"
+        }
+    },
     "poweredby": "optimisé par",
     "presenceStatus": {
         "busy": "Occupé",

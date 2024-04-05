@@ -4,7 +4,7 @@ import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
-import { canStartSubtitles } from '../functions';
+import { canStartSubtitles } from '../functions.any';
 
 export interface IAbstractProps extends AbstractButtonProps {
 

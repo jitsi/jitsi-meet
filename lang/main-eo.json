@@ -864,6 +864,9 @@
             "removeOption": "Forigi opcion",
             "send": "Sendu"
         },
+        "errors": {
+            "notUniqueOption": "Ebloj devas esti unikaj"
+        },
         "notification": {
             "description": "Malfermu la enketan langeton por voĉdoni",
             "title": "Oni aldonis novan enketon en la kunveno"

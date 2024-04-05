@@ -255,6 +255,10 @@ public class JitsiMeetActivity extends AppCompatActivity
         finish();
     }
 
+//    protected void onTranscriptionChunkReceived(HashMap<String, Object> extraData) {
+//        JitsiMeetLogger.i("Transcription chunk received: " + extraData);
+//    }
+
     // Activity lifecycle methods
     //
 
@@ -338,6 +342,9 @@ public class JitsiMeetActivity extends AppCompatActivity
                 case READY_TO_CLOSE:
                     onReadyToClose();
                     break;
+//                case TRANSCRIPTION_CHUNK_RECEIVED:
+//                    onTranscriptionChunkReceived(event.getData());
+//                    break;
             }
         }
     }

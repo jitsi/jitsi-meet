@@ -577,6 +577,11 @@
     },
     "passwordDigitsOnly": "{{number}} అంకెల వరకు",
     "passwordSetRemotely": "మరో సదస్యులు అమర్చారు",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "ఎంపికలు ప్రత్యేకంగా ఉండాలి"
+        }
+    },
     "poweredby": "శక్తిమంతం",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",

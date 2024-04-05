@@ -875,6 +875,9 @@
             "removeOption": "Noņemt opciju",
             "send": "Nosūtīt"
         },
+        "errors": {
+            "notUniqueOption": "Iespējām jābūt unikālām"
+        },
         "notification": {
             "description": "Lai balsotu, atveriet aptauju cilni",
             "title": "Šai sapulcei tika pievienota jauna aptauja"

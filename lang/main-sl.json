@@ -668,6 +668,9 @@
             "removeOption": "Odstrani možnost",
             "send": "Pošlji"
         },
+        "errors": {
+            "notUniqueOption": "Možnosti morajo biti edinstvene"
+        },
         "notification": {
             "description": "Odpri zavihek z anketami za glasovanje",
             "title": "V sestanek je bila dodana nova anketa"

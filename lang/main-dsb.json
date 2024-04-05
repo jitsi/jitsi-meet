@@ -775,6 +775,9 @@
             "removeOption": "wótegrono wulašowaś",
             "send": "wótpósłaś"
         },
+        "errors": {
+            "notUniqueOption": "Opcije musy byś jedynsće"
+        },
         "notification": {
             "description": "Wótcyńśo kórtu wopšašowanjow, aby zgłosowali",
             "title": "Za tu konferencu jo nowe wopšašowanje pśigótowane"

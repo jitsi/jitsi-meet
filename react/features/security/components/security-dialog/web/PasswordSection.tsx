@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-no-bind */
 import React, { useCallback, useRef, useState } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
-import { translate } from '../../../../base/i18n/functions';
+import { setPassword } from '../../../../base/conference/actions';
+import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import { copyText } from '../../../../base/util/copyText.web';
 import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/types';
@@ -14,95 +15,38 @@ import PasswordForm from './PasswordForm';
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
-interface IProps extends WithTranslation {
-
-    /**
-     * Whether or not the current user can modify the current password.
-     */
-    canEditPassword: boolean;
-
-    /**
-     * The JitsiConference for which to display a lock state and change the
-     * password.
-     */
-    conference: any;
-
-    /**
-     * The value for how the conference is locked (or undefined if not locked)
-     * as defined by room-lock constants.
-     */
-    locked?: string;
-
-    /**
-     * The current known password for the JitsiConference.
-     */
-    password?: string;
-
-    /**
-     * Whether or not to show the password in editing mode.
-     */
-    passwordEditEnabled: boolean;
-
-    /**
-     * The number of digits to be used in the password.
-     */
-    passwordNumberOfDigits?: number;
-
-    /**
-     * Action that sets the conference password.
-     */
-    setPassword: Function;
-
-    /**
-     * Method that sets whether the password editing is enabled or not.
-     */
-    setPasswordEditEnabled: Function;
-}
-
 /**
  * Component that handles the password manipulation from the invite dialog.
  *
  * @returns {React$Element<any>}
  */
-function PasswordSection({
-    canEditPassword,
-    conference,
-    locked,
-    password,
-    passwordEditEnabled,
-    passwordNumberOfDigits,
-    setPassword,
-    setPasswordEditEnabled,
-    t }: IProps) {
-
+function PasswordSection() {
+    const { t } = useTranslation();
+    const dispatch = useDispatch();
+    const canEditPassword = useSelector(isLocalParticipantModerator);
+    const passwordNumberOfDigits = useSelector(
+        (state: IReduxState) => state['features/base/config'].roomPasswordNumberOfDigits);
+    const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
+    const locked = useSelector((state: IReduxState) => state['features/base/conference'].locked);
+    const password = useSelector((state: IReduxState) => state['features/base/conference'].password);
     const formRef = useRef<HTMLDivElement>(null);
     const [ passwordVisible, setPasswordVisible ] = useState(false);
     const buttonsWithNotifyClick = useSelector(
         (state: IReduxState) => state['features/toolbox'].buttonsWithNotifyClick);
+    const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
-    /**
-     * Callback invoked to set a password on the current JitsiConference.
-     *
-     * @param {string} enteredPassword - The new password to be used to lock the
-     * current JitsiConference.
-     * @private
-     * @returns {void}
-     */
-    function onPasswordSubmit(enteredPassword: string) {
+    if (passwordEditEnabled && (password || locked)) {
+        setPasswordEditEnabled(false);
+    }
+
+    const onPasswordSubmit = useCallback((enteredPassword: string) => {
         if (enteredPassword && passwordNumberOfDigits && !DIGITS_ONLY.test(enteredPassword)) {
             // Don't set the password.
             return;
         }
-        setPassword(conference, conference.lock, enteredPassword);
-    }
+        dispatch(setPassword(conference, conference?.lock, enteredPassword));
+    }, [ dispatch, passwordNumberOfDigits, conference?.lock ]);
 
-    /**
-     * Toggles whether or not the password should currently be shown as being
-     * edited locally.
-     *
-     * @private
-     * @returns {void}
-     */
     const onTogglePasswordEditState = useCallback(() => {
         if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.size) {
             setPasswordEditEnabled(!passwordEditEnabled);
@@ -123,12 +67,7 @@ function PasswordSection({
         }
     }, [ buttonsWithNotifyClick, setPasswordEditEnabled, passwordEditEnabled ]);
 
-    /**
-     * Method to remotely submit the password from outside of the password form.
-     *
-     * @returns {void}
-     */
-    function onPasswordSave() {
+    const onPasswordSave = useCallback(() => {
         if (formRef.current) {
             // @ts-ignore
             const { value } = formRef.current.querySelector('div > input');
@@ -137,57 +76,30 @@ function PasswordSection({
                 onPasswordSubmit(value);
             }
         }
-    }
+    }, [ formRef.current, onPasswordSubmit ]);
 
-    /**
-     * Callback invoked to unlock the current JitsiConference.
-     *
-     * @returns {void}
-     */
-    function onPasswordRemove() {
+    const onPasswordRemove = useCallback(() => {
         onPasswordSubmit('');
-    }
+    }, [ onPasswordSubmit ]);
 
-    /**
-     * Copies the password to the clipboard.
-     *
-     * @returns {void}
-     */
-    function onPasswordCopy() {
+
+    const onPasswordCopy = useCallback(() => {
         copyText(password ?? '');
-    }
+    }, [ password ]);
 
-    /**
-     * Callback invoked to show the current password.
-     *
-     * @returns {void}
-     */
-    function onPasswordShow() {
+    const onPasswordShow = useCallback(() => {
         setPasswordVisible(true);
-    }
+    }, [ setPasswordVisible ]);
 
-    /**
-     * Callback invoked to hide the current password.
-     *
-     * @returns {void}
-     */
-    function onPasswordHide() {
+    const onPasswordHide = useCallback(() => {
         setPasswordVisible(false);
-    }
+    }, [ setPasswordVisible ]);
 
-    /**
-     * Method that renders the password action(s) based on the current
-     * locked-status of the conference.
-     *
-     * @returns {React$Element<any>}
-     */
-    function renderPasswordActions() {
-        if (!canEditPassword) {
-            return null;
-        }
+    let actions = null;
 
+    if (canEditPassword) {
         if (passwordEditEnabled) {
-            return (
+            actions = (
                 <>
                     <button
                         className = 'as-link'
@@ -205,10 +117,8 @@ function PasswordSection({
                     </button>
                 </>
             );
-        }
-
-        if (locked) {
-            return (
+        } else if (locked) {
+            actions = (
                 <>
                     <button
                         className = 'remove-password as-link'
@@ -241,14 +151,14 @@ function PasswordSection({
                     )}
                 </>
             );
+        } else {
+            actions = (
+                <button
+                    className = 'add-password as-link'
+                    onClick = { onTogglePasswordEditState }
+                    type = 'button'>{ t('info.addPassword') }</button>
+            );
         }
-
-        return (
-            <button
-                className = 'add-password as-link'
-                onClick = { onTogglePasswordEditState }
-                type = 'button'>{ t('info.addPassword') }</button>
-        );
     }
 
     return (
@@ -269,11 +179,11 @@ function PasswordSection({
                         visible = { passwordVisible } />
                 </div>
                 <div className = 'security-dialog password-actions'>
-                    { renderPasswordActions() }
+                    { actions }
                 </div>
             </div>
         </div>
     );
 }
 
-export default translate(PasswordSection);
+export default PasswordSection;

@@ -59,6 +59,10 @@ var config = {
     // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
+    // Option to send conference requests to jicofo over http (requires nginx rule for it)
+    // conferenceRequestUrl:
+    //   'https://<!--# echo var="http_host" default="jitsi-meet.example.com" -->/' + subdir + 'conference-request/v1',
+
     // Options related to the bridge (colibri) data channel
     bridgeChannel: {
         // If the backend advertises multiple colibri websockets, this options allows

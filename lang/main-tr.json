@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Toplantı linki: {{url}}"
+        },
         "add": "Davet et",
         "addContacts": "Kişilerinizi davet edin",
         "contacts": "kişiler",
@@ -39,6 +42,18 @@
     "audioOnly": {
         "audioOnly": "Düşük bant genişliği"
     },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "örneğin 10 Mbps için 10000000",
+        "assumedBandwidthBpsWarning": "Daha yüksek değerler ağ sorunlarına neden olabilir.",
+        "customValue": "özel değer",
+        "customValueEffect": "gerçek bps değerini ayarlamak için",
+        "leaveEmpty": "boş bırak",
+        "leaveEmptyEffect": "tahminlerin gerçekleşmesine izin vermek için",
+        "possibleValues": "Olası değerler",
+        "setAssumedBandwidthBps": "Varsayılan bant genişliği (bps)",
+        "title": "Bant genişliği ayarları",
+        "zeroEffect": "videoyu devre dışı bırakmak için"
+    },
     "breakoutRooms": {
         "actions": {
             "add": "Alt oda ekle",
@@ -48,15 +63,22 @@
             "leaveBreakoutRoom": "Alt odadan çık",
             "more": "Daha",
             "remove": "Sil",
+            "rename": "Yeniden adlandır",
+            "renameBreakoutRoom": "Alt odasını yeniden adlandırın",
             "sendToBreakoutRoom": "Katılımcıya gönder:"
         },
+        "breakoutList": "Alt listesi",
+        "buttonLabel": "Alt odalar",
         "defaultName": "Alt oda #{{index}}",
+        "hideParticipantList": "Katılımcı listesini gizle",
         "mainRoom": "Ana oda",
         "notifications": {
             "joined": "\"{{name}}\" alt odasına giriliyor",
             "joinedMainRoom": "Ana odaya giriliyor",
             "joinedTitle": "Alt Odalar"
-        }
+        },
+        "showParticipantList": "Katılımcı listesini göster",
+        "title": "Alt Odalar"
     },
     "calendarSync": {
         "addMeetingURL": "Bir toplantı bağlantısı ekle",
@@ -147,6 +169,7 @@
         "bridgeCount": "Sunucu sayısı: ",
         "codecs": "Kodekler (A/V): ",
         "connectedTo": "Bağlandı şuna:",
+        "e2eeVerified": "E2EE doğrulandı",
         "framerate": "Çerçeve hızı:",
         "less": "Daha az göster",
         "localaddress": "Yerel adres:",
@@ -155,6 +178,7 @@
         "localport_plural": "Yerel portlar:",
         "maxEnabledResolution": "maksimumu gönder",
         "more": "Daha fazla göster",
+        "no": "hayır",
         "packetloss": "Paket kaybı:",
         "participant_id": "Katılımcı id:",
         "quality": {
@@ -173,7 +197,8 @@
         "status": "Bağlantı:",
         "transport": "Transport:",
         "transport_plural": "Transportlar:",
-        "video_ssrc": "Video SSRC:"
+        "video_ssrc": "Video SSRC:",
+        "yes": "evet"
     },
     "dateUtils": {
         "earlier": "Daha eski",
@@ -183,13 +208,23 @@
     "deepLinking": {
         "appNotInstalled": "Bu toplantıya katılmak için {{app}} uygulamasına ihtiyacınız var.",
         "description": "Hiçbir şey olmadı mı? Toplantınızı {{app}} masaüstü uygulamasında başlatmaya çalıştık. Tekrar deneyin veya {{app}} web uygulamasını açın.",
+        "descriptionNew": "Hiçbir şey olmadı? Toplantınızı {{app}} masaüstü uygulamasında başlatmayı denedik. <br /><br /> Tekrar deneyebilir veya web üzerinde başlatabilirsiniz.",
         "descriptionWithoutWeb": "Hiçbir şey olmadı? Toplantınızı {{app}} masaüstü uygulamasında başlatmayı denedik.",
         "downloadApp": "Uygulamayı indir",
+        "downloadMobileApp": "App Store'dan indirin",
         "ifDoNotHaveApp": "Henüz uygulamanız yoksa:",
         "ifHaveApp": "Uygulamanız zaten varsa: ",
         "joinInApp": "Uygulamayı kullanarak bu toplantıya katıl",
+        "joinInAppNew": "Uygulamaya katıl",
+        "joinInBrowser": "Tarayıcıya katıl",
+        "launchMeetingLabel": "Bu toplantıya nasıl katılmak istersiniz?",
         "launchWebButton": "Web'de aç",
+        "noDesktopApp": "Uygulamanız yok mu?",
+        "noMobileApp": "Uygulamanız yok mu?",
+        "or": "VEYA",
+        "termsAndConditions": "Devam ederek <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>şartlar ve koşullarımızı</a> kabul etmiş olursunuz.",
         "title": "Toplantınız {{app}} uygulamasında açılıyor...",
+        "titleNew": "Toplantınız başlatılıyor...",
         "tryAgainButton": "Masaüstünde tekrar deneyin",
         "unsupportedBrowser": "Şu an kullandığınız tarayıcıyı desteklemiyoruz."
     },
@@ -202,6 +237,12 @@
         "microphonePermission": "Mikrofon erişim izni alınamadı"
     },
     "deviceSelection": {
+        "hid": {
+            "callControl": "Çağrı kontrolü",
+            "connectedDevices": "Bağlı cihazlar:",
+            "deleteDevice": "Cihazı sil",
+            "pairDevice": "Cihazı eşleştir"
+        },
         "noPermission": "İzin alınamadı",
         "previewUnavailable": "Önizleme mevcut değil",
         "selectADevice": "Bir cihaz seç",
@@ -226,12 +267,18 @@
         "WaitingForHostTitle": "Toplantı sahibi bekleniyor ...",
         "Yes": "Evet",
         "accessibilityLabel": {
-            "liveStreaming": "Canlı akış"
+            "Cancel": "İptal et (iletişim kutusundan ayrıl)",
+            "Ok": "Tamam (kaydet ve diyalogdan ayrıl)",
+            "close": "İletişim kutusunu kapat",
+            "liveStreaming": "Canlı akış",
+            "sharingTabs": "Paylaşım seçenekleri"
         },
         "add": "Ekle",
         "addMeetingNote": "",
         "addOptionalNote": "",
         "allow": "İzin ver",
+        "allowToggleCameraDialog": "{{initiatorName}}'ın kameraya bakma modunu değiştirmesine izin veriyor musunuz?",
+        "allowToggleCameraTitle": "Kamerayı değiştirmeye izin verilsin mi?",
         "alreadySharedVideoMsg": "Başka bir katılımcı zaten bir video paylaşıyor. Bu konferans aynı anda yalnızca bir paylaşılan videoya izin verir.",
         "alreadySharedVideoTitle": "Aynı anda yalnızca bir paylaşılan videoya izin verilir.",
         "applicationWindow": "Uygulama penceresi",
@@ -258,6 +305,8 @@
         "contactSupport": "Destek ekibine erişin",
         "copied": "Kopyalandı",
         "copy": "Kopyala",
+        "demoteParticipantDialog": "Bu katılımcıyı ziyaretçiye taşımak istediğinizden emin misiniz?",
+        "demoteParticipantTitle": "Ziyaretçiye taşı",
         "dismiss": "Son ver",
         "displayNameRequired": "Merhaba, görünmesini istediğin ismin nedir?",
         "done": "Bitti",
@@ -292,6 +341,7 @@
         "lockRoom": "Toplantı parolası ekle",
         "lockTitle": "Kilitlenemedi",
         "login": "Giriş",
+        "loginQuestion": "Oturum açıp konferanstan ayrılmak istediğinizden emin misiniz?",
         "logoutQuestion": "Oturumu kapatmak ve toplantıyı durdurmak istediğinizden emin misiniz?",
         "logoutTitle": "Oturumu kapat",
         "maxUsersLimitReached": "Maksimum katılımcı sayısı sınırına ulaşıldı. Toplantı dolu. Lütfen toplantı sahibiyle iletişime geçin veya daha sonra tekrar deneyin!",
@@ -335,8 +385,6 @@
         "permissionCameraRequiredError": "Videolu konferanslara katılmak için kamera izni gereklidir. Lütfen ayarlardan izin verin",
         "permissionErrorTitle": "İzin gerekli",
         "permissionMicRequiredError": "Konferanslara sesli olarak katılmak için lütfen mikrofon izni gereklidir. Lütfen ayarlardan izin verin",
-        "popupError": "Tarayıcınız bu siteden açılan pencereleri engelliyor. Lütfen tarayıcınızın güvenlik ayarlarından açılır pencereleri etkinleştirin ve tekrar deneyin.",
-        "popupErrorTitle": "Açılır pencere engellendi",
         "readMore": "daha fazla",
         "recentlyUsedObjects": "Son zamanlarda kullandığınız objeler",
         "recording": "Kaydediliyor",
@@ -353,6 +401,8 @@
         "removePassword": "Parolayı kaldır",
         "removeSharedVideoMsg": "Paylaşılan videonuzu kaldırmak istediğinizden emin misiniz?",
         "removeSharedVideoTitle": "Paylaşılan videoyu kaldır",
+        "renameBreakoutRoomLabel": "Oda adı",
+        "renameBreakoutRoomTitle": "Alt odasını yeniden adlandırın",
         "reservationError": "Rezervasyon sistemi hatası",
         "reservationErrorMsg": "Hata kodu: {{code}}, mesaj: {{msg}}",
         "retry": "Yeniden Dene",
@@ -372,8 +422,10 @@
         "sendPrivateMessageTitle": "Özel olarak gönderilsin mi?",
         "serviceUnavailable": "Hizmet kullanılamıyor",
         "sessTerminated": "Arama sonlandırıldı",
+        "sessTerminatedReason": "Toplantı sonlandırıldı",
         "sessionRestarted": "Çağrı köprü tarafından yeniden başlatıldı",
         "shareAudio": "Devam",
+        "shareAudioAltText": "istediğiniz içeriği paylaşmak için \"Tarayıcı Sekmesi\"ne gidin, içeriği seçin, \"sesi paylaş\" onay işaretini etkinleştirin ve ardından \"paylaş\" düğmesini tıklayın",
         "shareAudioTitle": "Ses nasıl paylaşılır",
         "shareAudioWarningD1": "sesinizi paylaşmadan önce ekran paylaşımını durdurmanız gerekiyor.",
         "shareAudioWarningD2": "ekran paylaşımınızı yeniden başlatmanız ve \"sesi paylaş\" seçeneğini işaretlemeniz gerekiyor.",
@@ -403,16 +455,42 @@
         "thankYou": "{{appName}} kullandığınız için teşekkürler!",
         "token": "token",
         "tokenAuthFailed": "Üzgünüz, bu görüşmeye katılmanıza izin verilmiyor.",
+        "tokenAuthFailedReason": {
+            "audInvalid": "Geçersiz `aud` değeri. 'jitsi' olmalı.",
+            "contextNotFound": "Yükte `context` nesnesi eksik.",
+            "expInvalid": "Geçersiz `exp` değeri.",
+            "featureInvalid": "Geçersiz özellik: {{feature}}, büyük olasılıkla henüz uygulanmadı.",
+            "featureValueInvalid": "Özellik için geçersiz değer: {{feature}}.",
+            "featuresNotFound": "`features` nesnesi yükte eksik.",
+            "headerNotFound": "Başlık eksik.",
+            "issInvalid": "Geçersiz `iss` değeri. `chat` olmalıdır.",
+            "kidMismatch": "Anahtar Kimliği (kid) alt öğeyle eşleşmiyor.",
+            "kidNotFound": "Eksik Anahtar Kimliği (kid).",
+            "nbfFuture": "`nbf` değeri gelecektedir.",
+            "nbfInvalid": "Geçersiz `nbf` değeri.",
+            "payloadNotFound": "Yük eksik.",
+            "tokenExpired": "Token'ın süresi doldu."
+        },
         "tokenAuthFailedTitle": "Kimlik doğrulama başarısız",
+        "tokenAuthFailedWithReasons": "Üzgünüz, bu görüşmeye katılmanıza izin verilmiyor. Olası nedenler: {{reason}}",
+        "tokenAuthUnsupported": "Token URL'si desteklenmiyor.",
         "transcribing": "Deşifre ediliyor",
         "unlockRoom": "Toplantı parolasını kaldır",
         "user": "Kullanıcı",
         "userIdentifier": "Kullanıcı tanımlayıcı",
         "userPassword": "Kullancı parolası",
+        "verifyParticipantConfirm": "Eşleşiyorlar",
+        "verifyParticipantDismiss": "Eşleşmiyorlar",
+        "verifyParticipantQuestion": "DENEYSEL: {{participantName}} adlı katılımcıya aynı içeriği aynı sırayla görüp görmediklerini sorun.",
+        "verifyParticipantTitle": "Kullanıcı doğrulama",
         "videoLink": "Video bağlantısı",
         "viewUpgradeOptions": "Yükseltme seçeneklerini görüntüle",
         "viewUpgradeOptionsContent": "Kayıt, çeviri yazılar, RTMP Akışı ve daha fazlası gibi premium özelliklere sınırsız erişim elde etmek için planınızı yükseltmeniz gerekir.",
         "viewUpgradeOptionsTitle": "Premium bir özellik keşfettiniz!",
+        "whiteboardLimitContent": "Üzgünüz, eşzamanlı beyaz tahta kullanıcılarının sınırına ulaşıldı.",
+        "whiteboardLimitReference": "Daha fazla bilgi için lütfen şu adresi ziyaret edin",
+        "whiteboardLimitReferenceUrl": "web sitemiz",
+        "whiteboardLimitTitle": "Beyaz tahta kullanımı kısıtlandı",
         "yourEntireScreen": "Tüm ekranınız"
     },
     "documentSharing": {
@@ -425,6 +503,9 @@
         "title": "Bu toplantıyı yerleştir"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Seçiminiz: {{rating}}"
+        },
         "average": "Orta",
         "bad": "Kötü",
         "detailsLabel": "Bize daha fazla bilgi verin.",
@@ -434,12 +515,14 @@
         "veryBad": "Çok kötü",
         "veryGood": "Çok iyi"
     },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Video küçük resimleri"
+        }
+    },
     "giphy": {
         "noResults": "Sonuç yok :(",
         "search": "GIPHY ara"
-    },
-    "helpView": {
-        "title": "Yardım merkezi"
     },
     "incomingCall": {
         "answer": "Cevapla",
@@ -479,13 +562,16 @@
         "noNumbers": "Arama numarası yok",
         "noPassword": "Yok",
         "noRoom": "Aranacak oda belirtilmedi.",
+        "noWhiteboard": "Beyaz tahta yüklenemedi.",
         "numbers": "Arama Numaraları",
         "password": "Parola:",
         "reachedLimit": "Plan limitlerine ulaştınız.",
         "sip": "SIP adresi",
+        "sipAudioOnly": "Yalnızca SIP ses adresi",
         "title": "Paylaş",
         "tooltip": "Bu toplantı için bağlantıyı ve arama bilgilerini paylaşın",
-        "upgradeOptions": "Lütfen yükseltme seçeneklerini kontrol ediniz."
+        "upgradeOptions": "Lütfen yükseltme seçeneklerini kontrol ediniz.",
+        "whiteboardError": "Beyaz tahta yüklenirken hata oluştu. Lütfen daha sonra tekrar deneyin."
     },
     "inlineDialogFailure": {
         "msg": "Biraz tökezledik.",
@@ -562,7 +648,6 @@
         "youtubeTerms": "YouTube hizmet şartları"
     },
     "lobby": {
-        "allow": "İzin ver",
         "backToKnockModeButton": "Parola yok, bunun yerine katılmayı isteyin",
         "chat": "Sohbet et",
         "dialogTitle": "Lobi modu",
@@ -588,13 +673,13 @@
         "knockingParticipantList": "Kapıyı çalan katılımcı listesi",
         "lobbyChatStartedNotification": "{{moderator}} {{attendee}} adlı kişiyle lobi mesajlaşması başlattı",
         "lobbyChatStartedTitle": "{{moderator}} sizinle lobi mesajlaşması başlattı",
+        "lobbyClosed": "Lobi odası kapatıldı.",
         "nameField": "Adınızı giriniz",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} adlı katılımcı {{originParticipantName}} tarafından reddedildi",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} adlı katılımcı {{originParticipantName}} tarafından kabul edildi",
         "notificationLobbyDisabled": "Lobi {{originParticipantName}} tarafından devre dışı bırakıldı",
         "notificationLobbyEnabled": "Lobi {{originParticipantName}} tarafından etkinleştirildi",
         "notificationTitle": "Lobi",
-        "passwordField": "Toplantı parolasını giriniz",
         "passwordJoinButton": "Katıl",
         "title": "Lobi",
         "toggleLabel": "Lobiyi etkinleştir"
@@ -627,6 +712,8 @@
         "sessionToken": "Oturum Tokeni",
         "start": "Kaydı başlat",
         "stop": "Kaydı durdur",
+        "stopping": "Kayıt Durduruluyor",
+        "wait": "Kaydınız kaydedilirken lütfen bekleyin",
         "yes": "Evet"
     },
     "lockRoomPassword": "parola",
@@ -646,8 +733,13 @@
         "connectedOneMember": "{{name}} toplantıya katıldı",
         "connectedThreePlusMembers": "{{name}} ve {{count}} kişi daha toplantıya katıldı",
         "connectedTwoMembers": "{{first}} ve {{second}} toplantıya katıldı",
+        "dataChannelClosed": "Video kalitesi bozuldu",
+        "dataChannelClosedDescription": "Köprü kanalının bağlantısı kesildi ve bu nedenle video kalitesi en düşük ayarla sınırlandı.",
+        "disabledIframe": "Yerleştirme yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecek.",
+        "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Jitsi</a>'yi kullanın!",
         "disconnected": "bağlantı kesildi",
         "displayNotifications": "Bildirimleri görüntüle",
+        "dontRemindMe": "Bana hatırlatma",
         "focus": "Toplantı odağı",
         "focusFail": "{{component}} uygun değil - {{ms}} saniye içinde tekrar deneyin",
         "gifsMenu": "GIPHY",
@@ -656,6 +748,7 @@
         "invitedOneMember": "{{name}} davet edildi",
         "invitedThreePlusMembers": "{{name}} ve {{count}} kişi daha davet edildi",
         "invitedTwoMembers": "{{first}} ve {{second}} davet edildi",
+        "joinMeeting": "Katıl",
         "kickParticipant": "{{kicked}} kişisi {{kicker}} tarafından çıkarıldı",
         "leftOneMember": "{{name}} toplantıdan ayrıldı",
         "leftThreePlusMembers": "{{name}} ve diğerleri toplantıdan ayrıldı",
@@ -690,7 +783,6 @@
         "newDeviceCameraTitle": "Yeni kamera algılandı",
         "noiseSuppressionDesktopAudioDescription": "Masaüstü sesi paylaşılırken gürültü bastırma etkinleştirilemez, lütfen devre dışı bırakın ve tekrar deneyin.",
         "noiseSuppressionFailedTitle": "Gürültü bastırma başlatılamadı",
-        "noiseSuppressionNoTrackDescription": "Lütfen önce mikrofonunuzun sesini açın.",
         "noiseSuppressionStereoDescription": "Stereo ses gürültü bastırma şu anda desteklenmemektedir.",
         "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "son yapı",
@@ -706,19 +798,27 @@
         "reactionSoundsForAll": "Herkes için sesleri devre dışı bırak",
         "screenShareNoAudio": " Pencere seçim ekranında sesi paylaş kutusu işaretlenmedi.",
         "screenShareNoAudioTitle": "Sistem sesi paylaşılamadı!",
+        "screenSharingAudioOnlyDescription": "Ekranınızı paylaşarak \"En iyi performans\" modunu etkilediğinizi ve daha fazla bant genişliği kullanacağınızı lütfen unutmayın.",
+        "screenSharingAudioOnlyTitle": "\"En iyi performans\" modu",
         "selfViewTitle": "Kendi kendine görünümü her zaman ayarlardan gizleyebilirsiniz",
         "somebody": "Birisi",
         "startSilentDescription": "Ses çıkışını açtıktan sonra tekrar bağlanın",
         "startSilentTitle": "Ses çıkışı olmadan bağlandınız",
         "suboptimalBrowserWarning": "Toplantı deneyiminizin burada çok iyi olmayacağından korkuyoruz. Bunu iyileştirmenin yollarını arıyoruz, ancak o zamana kadar lütfen şunlardan birini deneyin: <a href='{{recommendedBrowserPageLink}}' target='_blank'>desteklenen tarayıcılar</a>.",
         "suboptimalExperienceTitle": "Tarayıcı Uyarısı",
+        "suggestRecordingAction": "Başla",
+        "suggestRecordingDescription": "Kaydı başlatmak ister misiniz?",
+        "suggestRecordingTitle": "Bu toplantıyı kaydet",
         "unmute": "Sessizden çıkar",
         "videoMutedRemotelyDescription": "Her zaman yeniden açabilirsiniz.",
         "videoMutedRemotelyTitle": "{{moderator}} tarafından videonuz kapatıldı",
         "videoUnmuteBlockedDescription": "Sistem sınırları nedeniyle kamera sesini açma ve masaüstü paylaşım işlemi geçici olarak engellendi.",
         "videoUnmuteBlockedTitle": "Kameranın sesini açma ve masaüstü paylaşımı engellendi!",
         "viewLobby": "Lobiyi göster",
-        "waitingParticipants": "{{waitingParticipants}} kişi"
+        "viewVisitors": "Ziyaretçileri görüntüle",
+        "waitingParticipants": "{{waitingParticipants}} kişi",
+        "whiteboardLimitDescription": "Kullanıcı sınırına yakında ulaşılacağından ve beyaz tahta kapanacağından lütfen ilerlemenizi kaydedin.",
+        "whiteboardLimitTitle": "Beyaz tahta kullanımı"
     },
     "participantsPane": {
         "actions": {
@@ -729,6 +829,7 @@
             "askUnmute": "Sesi açmayı iste",
             "audioModeration": "Seslerini aç",
             "blockEveryoneMicCamera": "Herkesin mikrofonunu ve kamerasını blokla",
+            "breakoutRooms": "Alt odalar",
             "invite": "Birini davet et",
             "moreModerationActions": "Daha fazla denetleme seçeneği",
             "moreModerationControls": "Daha fazla denetleme kontrolü",
@@ -746,6 +847,8 @@
         "headings": {
             "lobby": "Lobi ({{count}})",
             "participantsList": "Toplantı Katılımcıları ({{count}})",
+            "visitorRequests": "(requests {{count}})",
+            "visitors": "Ziyaretçiler {{count}}",
             "waitingLobby": "Lobide bekleyen ({{count}})"
         },
         "search": "Katılımcıları ara",
@@ -753,6 +856,7 @@
     },
     "passwordDigitsOnly": "{{number}} rakama kadar",
     "passwordSetRemotely": "başka katılımcı tarafından ayarlandı",
+    "pinParticipant": "{{participantName}} - Sabitle",
     "pinnedParticipant": "Katılımcı sabitlendi",
     "polls": {
         "answer": {
@@ -770,6 +874,9 @@
             "questionPlaceholder": "Soru sor",
             "removeOption": "Seçeneği sil",
             "send": "Gönder"
+        },
+        "errors": {
+            "notUniqueOption": "Seçenekler benzersiz olmalı"
         },
         "notification": {
             "description": "Oy vermek için anketler sekmesini açın",
@@ -837,9 +944,12 @@
         "lookGood": "Mikrofonunuz düzgün çalışıyor gibi görünüyor",
         "or": "veya",
         "premeeting": "Toplantı öncesi",
+        "proceedAnyway": "Yine de devam et",
+        "recordingWarning": "Diğer katılımcılar bu çağrıyı kaydediyor olabilir",
         "screenSharingError": "Ekran paylaşma hatası:",
         "showScreen": "Toplantı öncesi ekranını etkinleştir",
         "startWithPhone": "Telefon sesiyle başlayın",
+        "unsafeRoomConsent": "Riskleri anlıyorum, toplantıya katılmak istiyorum",
         "videoOnlyError": "Video hatası:",
         "videoTrackError": "Video izleme oluşturulamadı.",
         "viewAllNumbers": "tüm numaraları görüntüle"
@@ -857,9 +967,6 @@
         "invited": "Davet edildi",
         "rejected": "Reddedildi",
         "ringing": "Çalıyor..."
-    },
-    "privacyView": {
-        "title": "Gizlilik"
     },
     "profile": {
         "avatar": "avatar",
@@ -905,7 +1012,6 @@
         "limitNotificationDescriptionNative": "Yüksek talep nedeniyle kaydınız {{limit}} dakika ile sınırlı olacaktır. Sınırsız kayıt için deneyin <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Yüksek talep nedeniyle kaydınız {{limit}} dakika ile sınırlı olacaktır. Sınırsız kayıt için deneyin <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Kaydınızla ilgili link oluşturduk.",
-        "live": "CANLI",
         "localRecordingNoNotificationWarning": "Kayıt diğer katılımcılara duyurulmayacaktır. Onlara toplantının kaydedildiğini bildirmeniz gerekecek.",
         "localRecordingNoVideo": "Video kaydedilmiyor",
         "localRecordingStartWarning": "Lütfen kaydetmek için toplantıdan çıkmadan önce kaydı durdurduğunuzdan emin olun.",
@@ -914,6 +1020,7 @@
         "localRecordingVideoWarning": "Videonuzu kaydetmek için kayda başlarken açmış olmanız gerekir",
         "localRecordingWarning": "Doğru video ve sesi kullanmak için geçerli sekmeyi seçtiğinizden emin olun. Kayıt şu anda yaklaşık 100 dakika olan 1GB ile sınırlıdır.",
         "loggedIn": "{{userName}} olarak giriş yapıldı",
+        "noMicPermission": "Mikrofon parçası oluşturulamadı. Lütfen mikrofonu kullanma izni verin.",
         "noStreams": "Ses veya video akışı algılanmadı",
         "off": "Kayıt durdu",
         "offBy": "{{name}} isimli kayıt durduruldu",
@@ -921,13 +1028,15 @@
         "onBy": "{{name}} isimli kayıt başlatıldı",
         "onlyRecordSelf": "Yalnızca ses ve video akışlarımı kaydet",
         "pending": "Toplantıyı kaydetmeye hazırlanıyor ...",
-        "rec": "KAYIT",
+        "recordAudioAndVideo": "Ses ve video kaydedin",
+        "recordTranscription": "Transkripsiyonu kaydet",
         "saveLocalRecording": "Kayıt dosyasını yerel olarak kaydet (Beta)",
         "serviceDescription": "Kaydınız kayıt hizmeti tarafından kaydedilecektir",
         "serviceDescriptionCloud": "Bulut kaydı",
         "serviceDescriptionCloudInfo": "Kaydedilen toplantılar, kayıt süresinden 24 saat sonra otomatik olarak temizlenir.",
         "serviceName": "Kayıt hizmeti",
         "sessionAlreadyActive": "Bu oturum zaten kaydediliyor veya canlı yayınlanıyor.",
+        "showAdvancedOptions": "Gelişmiş seçenekler",
         "signIn": "Giriş yap",
         "signOut": "Çıkış yap",
         "surfaceError": "Lütfen geçerli sekmeyi seçin",
@@ -943,10 +1052,17 @@
     "security": {
         "about": "Toplantınıza bir parola ekleyebilirsiniz. Katılımcıların toplantıya katılmasına izin verilmeden önce parolayı girmeleri gerekecektir.",
         "aboutReadOnly": "Moderatörler toplantıya toplantıya bir $t(lockRoomPassword) eklenebilir. Katılımcıların toplantıya katılmalarına izin verilmeden önce $t(lockRoomPassword) bilgilerini sağlamaları gerekir..",
-        "insecureRoomNameWarning": "Toplantı odası güvenli değil. Konferansınıza istenmeyen katılımcılar katılabilir.",
-        "title": "Güvenlik Seçenekleri"
+        "insecureRoomNameWarningNative": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin",
+        "insecureRoomNameWarningWeb": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin <a href = \"{{securityUrl}}\" rel = \"security\" target = \"_blank\">buraya</a>.",
+        "title": "Güvenlik Seçenekleri",
+        "unsafeRoomActions": {
+            "meeting": "Güvenlik düğmesini kullanarak toplantınızın güvenliğini sağlamayı düşünün.",
+            "prejoin": "Daha benzersiz bir toplantı adı kullanmayı düşünün",
+            "welcome": "Daha benzersiz bir toplantı adı kullanmayı düşünün veya önerilerden birini seçin."
+        }
     },
     "settings": {
+        "audio": "Ses",
         "buttonLabel": "Ayarlar",
         "calendar": {
             "about": "{{appName}} takvim entegrasyonu, yaklaşan etkinlikleri okuyabilmesi için takviminize güvenli bir şekilde erişmek için kullanılır.",
@@ -967,9 +1083,11 @@
         "maxStageParticipants": "Ana ekrana sabitlenecek maksimum katılımcı sayısı",
         "microphones": "Mikrofonlar",
         "moderator": "Yönetici",
+        "moderatorOptions": "Moderatör seçenekleri",
         "more": "Daha fazla",
         "name": "Ad",
         "noDevice": "Yok",
+        "notifications": "Bildirimler",
         "participantJoined": "Katılımcı katıldı",
         "participantKnocking": "",
         "participantLeft": "Katılımcı ayrıldı",
@@ -980,13 +1098,14 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "selfView": "Kendi görünümüm",
-        "sounds": "Sesler",
+        "shortcuts": "Kısayollar",
         "speakers": "Hoparlörler",
         "startAudioMuted": "Herkes ses kapalı başlasın",
         "startReactionsMuted": "Reaksiyon seslerini herkes için kapat",
         "startVideoMuted": "Herkes görüntü kapalı başlasın",
         "talkWhileMuted": "Sesi kapalıyken konuş",
-        "title": "Ayarlar"
+        "title": "Ayarlar",
+        "video": "Video"
     },
     "settingsView": {
         "advanced": "Gelişmiş",
@@ -994,6 +1113,7 @@
         "alertOk": "Tamam",
         "alertTitle": "Uyarı",
         "alertURLText": "Girilen sunucu bağlantısı geçersiz",
+        "apply": "Uygula",
         "buildInfoSection": "Yapı Bilgisi",
         "conferenceSection": "Toplantı",
         "disableCallIntegration": "Yerel arama entegrasyonunu devre dışı bırak",
@@ -1003,12 +1123,15 @@
         "displayName": "Görünür ad",
         "displayNamePlaceholderText": "Ör: John Doe",
         "email": "E-posta",
+        "emailPlaceholderText": "email@example.com",
+        "gavatarMessage": "E-postanız bir Gravatar hesabıyla ilişkiliyse, bunu profil resminizi görüntülemek için kullanacağız.",
         "goTo": "Git",
         "header": "Ayarlar",
         "help": "Yardım",
         "links": "Linkler",
         "privacy": "Gizlilik",
         "profileSection": "Profil",
+        "sdkVersion": "SDK sürümü",
         "serverURL": "Sunucu Bağlantısı",
         "showAdvanced": "Gelişmiş ayarları göster",
         "startCarModeInLowBandwidthMode": "Düşük bağlantı modunda araba modunu başlat",
@@ -1061,24 +1184,35 @@
             "audioOnly": "Yalnızca sesi aç/kapat",
             "audioRoute": "Ses aygıtını seçin",
             "boo": "Boo",
-            "breakoutRoom": "Alt oda",
+            "breakoutRooms": "Alt odalar",
             "callQuality": "Armama kalitesini yönetin",
             "carmode": "Araba odu",
             "cc": "Altyazıları aç/kapat",
             "chat": "Mesajlaşma penceresini aç/kapat",
             "clap": "Alkış",
+            "closeChat": "Sohbeti kapat",
+            "closeMoreActions": "Diğer işlemler menüsünü kapat",
+            "closeParticipantsPane": "Katılımcılar bölmesini kapat",
             "collapse": "Daralt",
             "document": "Paylaşılan dokümanı aç/kapat",
+            "documentClose": "Paylaşılan belgeyi kapat",
+            "documentOpen": "Paylaşılan belgeyi aç",
             "download": "Uygulamalarımızı indirin",
             "embedMeeting": "Toplantıyı yerleştir",
             "endConference": "Herkes için toplantıyı sonlandır",
+            "enterFullScreen": "Tam ekranı görüntüle",
+            "enterTileView": "Döşeme görünümüne girin",
+            "exitFullScreen": "Tam ekrandan çık",
+            "exitTileView": "Döşeme görünümünden çık",
             "expand": "Genişlet",
             "feedback": "Geri bildirim bırakın",
             "fullScreen": "Tam ekranı aç/kapat",
             "giphy": "GIPHY menüsünü aç/kapat",
             "grantModerator": "Moderatör Hakları Ver",
             "hangup": "Aramadan ayrıl",
+            "heading": "Araç Çubuğu",
             "help": "Yardım",
+            "hideWhiteboard": "Beyaz tahtayı gizle",
             "invite": "İnsanları davet et",
             "kick": "Katılımcı çıkar",
             "laugh": "Gül",
@@ -1088,6 +1222,7 @@
             "lobbyButton": "Lobi modunu etkinleştir / devre dışı bırak",
             "localRecording": "Kayıt denetimlerini aç/kapat",
             "lockRoom": "Toplantı parolasını aç/kapat",
+            "lowerHand": "Elini indir",
             "moreActions": "Diğer işlemler menüsünü aç/kapat",
             "moreActionsMenu": "Diğer işlemler menüsü",
             "moreOptions": "Daha fazla seçenek göster",
@@ -1096,12 +1231,15 @@
             "muteEveryoneElse": "Diğer herkesi sessize al",
             "muteEveryoneElsesVideoStream": "Diğer herkesin videosunu durdur",
             "muteEveryonesVideoStream": "Herkesin videosunu durdur",
+            "muteGUMPending": "Mikrofonunuz bağlanıyor",
             "noiseSuppression": "Gürültü azaltma",
+            "openChat": "Sohbeti aç",
             "participants": "Katılımcılar",
             "pip": "Resim içinde Resim modunu aç/kapat",
             "privateMessage": "Özel mesaj gönder",
             "profile": "Profilinizi düzenleyin",
             "raiseHand": "El kaldırmayı aç/kapat",
+            "reactions": "Tepkiler",
             "reactionsMenu": "Reaksiyon menüsünü Aç / Kapa",
             "recording": "Kaydetmeyi aç/kapat",
             "remoteMute": "Katılımcının sesini kapat",
@@ -1115,15 +1253,20 @@
             "sharedvideo": "Video paylaşmayı aç/kapat",
             "shortcuts": "Kısayolları aç/kapat",
             "show": "Sahnede göster",
+            "showWhiteboard": "Beyaz tahtayı göster",
             "silence": "Sessiz",
             "speakerStats": "Konuşmacı istatistiklerini aç/kapat",
+            "stopScreenSharing": "Ekranınızı paylaşmayı durdur",
+            "stopSharedVideo": "Videoyu durdur",
             "surprised": "Sürpriz",
             "tileView": "Döşeme görünümünü aç/kapat",
             "toggleCamera": "Kamerayı değiştir",
             "toggleFilmstrip": "Film şeridini aç/kapat",
+            "unmute": "Mikrofonun sesini aç",
             "videoblur": "Video bulanıklaştırma aç/kapat",
             "videomute": "Sessiz videoyu aç/kapat",
-            "whiteboard": "Beyaztahtayı Göster / Gizle"
+            "videomuteGUMPending": "Kameranız bağlanıyor",
+            "videounmute": "Kamerayı başlat"
         },
         "addPeople": "Aramanıza kişi ekleyin",
         "audioOnlyOff": "Yalnızca ses modunu devre dışı bırak",
@@ -1136,14 +1279,16 @@
         "chat": "Mesajlaşmayı aç/kapat",
         "clap": "Alkış",
         "closeChat": "Mesajlaşmayı kapat",
+        "closeParticipantsPane": "Katılımcılar bölmesini kapat",
         "closeReactionsMenu": "Reaksiyon menüsünü kapat",
-        "disableNoiseSuppression": "",
+        "disableNoiseSuppression": "Gürültü azaltmayı devre dışı bırak",
         "disableReactionSounds": "Toplantı için reaksiyon seslerini devre dışı bırak",
         "documentClose": "Paylaşılan dokümanı kapat",
         "documentOpen": "Paylaşılan dokümanı aç",
         "download": "Uygulamalarımızı indirin",
         "e2ee": "Uçtan uca şifreleme",
         "embedMeeting": "Toplantıyı yerleştir",
+        "enableNoiseSuppression": "Gürültü azaltmayı etkinleştir",
         "endConference": "Herkes için toplantıyı sonlandır",
         "enterFullScreen": "Tam ekran görüntüle",
         "enterTileView": "Döşeme görünümüne geç",
@@ -1171,6 +1316,7 @@
         "mute": "Sessiz / Sesli",
         "muteEveryone": "Herkesi sessize al",
         "muteEveryonesVideo": "Herkesin kamerasını devre dışı bırak",
+        "muteGUMPending": "Mikrofonunuz bağlanıyor",
         "noAudioSignalDesc": "Sistem ayarlarından veya donanımdan sesi kapatmadıysanız, cihazınızı değiştirin.",
         "noAudioSignalDescSuggestion": "Sistem ayarlarından veya donanımdan kasıtlı olarak kapatmadıysanız, önerilen aygıta geçmeyi düşünün.",
         "noAudioSignalDialInDesc": "",
@@ -1193,6 +1339,7 @@
         "reactionLike": "Çok iyi! gönder",
         "reactionSilence": "Sessizlik gönder",
         "reactionSurprised": "Sürpriz gönder",
+        "reactions": "Tepkiler",
         "security": "Güvenlik seçenekleri",
         "selectBackground": "Arkaplan seç",
         "shareRoom": "Birini davet et",
@@ -1212,23 +1359,26 @@
         "talkWhileMutedPopup": "Bir şey mi dediniz? Mikrofonunuz kapalı.",
         "tileViewToggle": "Döşeme görünümünü aç/kapat",
         "toggleCamera": "Kamerayı değiştir",
+        "unmute": "Mikrofonun sesini aç",
         "videoSettings": "Video ayarları",
-        "videomute": "Kamera başlat / durdur"
+        "videomute": "Kamerayı durdur",
+        "videomuteGUMPending": "Kameranıza bağlanıyor",
+        "videounmute": "Kamerayı başlat"
     },
     "transcribing": {
         "ccButtonTooltip": "Altyazılıar başlat / durdur",
-        "error": "Deşifre etme başarısız oldu. Lütfen tekrar deneyin.",
         "expandedLabel": "Deşifre etme açık",
         "failedToStart": "Deşifre etme başlatılamadı",
         "labelToolTip": "Toplantı deşifre ediliyor",
-        "off": "Deşifre etme durdu",
-        "pending": "Toplantıyı deşifre etmeye hazırlanıyor...",
+        "sourceLanguageDesc": "Şu anda toplantı dili <b>{{sourceLanguage}</b> olarak ayarlıdır. <br/> Bunu şuradan değiştirebilirsiniz",
+        "sourceLanguageHere": "burada",
         "start": "Altyazıları göstermeye başla",
         "stop": "Altyazıları göstermeyi durdur",
         "subtitles": "Altyazılar",
         "subtitlesOff": "Kapat",
         "tr": "TR"
     },
+    "unpinParticipant": "{{participantName}} - Sabitlemeyi kaldır",
     "userMedia": {
         "androidGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
         "chromeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
@@ -1267,12 +1417,15 @@
         "ldTooltip": "Düşük çözünürlüklü video görüntüleme",
         "lowDefinition": "Düşük çözünürlük",
         "performanceSettings": "Performans ayarları",
+        "recording": "Kayıt devam ediyor",
         "sd": "SD",
         "sdTooltip": "Standart çözünürlüklü video görüntüleme",
-        "standardDefinition": "Standart çözünürlük"
+        "standardDefinition": "Standart çözünürlük",
+        "streaming": "Akış devam ediyor"
     },
     "videothumbnail": {
         "connectionInfo": "Bağlantı Bilgisi",
+        "demote": "Ziyaretçiye taşı",
         "domute": "Sessize al",
         "domuteOthers": "Diğer herkesi sessize al",
         "domuteVideo": "Kamerayı devre dışı bırak",
@@ -1281,6 +1434,7 @@
         "grantModerator": "Moderatör Hakları Ver",
         "hideSelfView": "Kendi görüntümü gizle",
         "kick": "Çıkar",
+        "mirrorVideo": "Videomu yansıt",
         "moderator": "Yönetici",
         "mute": "Katılımcı sessiz",
         "muted": "Sessiz",
@@ -1290,10 +1444,15 @@
         "show": "Sahnede göster",
         "showSelfView": "Kendi görüntümü göster",
         "unpinFromStage": "Sabitlemeyi kaldır",
+        "verify": "Katılımcıyı doğrula",
         "videoMuted": "Kamerayı devre dışı bırakıldı",
         "videomute": "Katılımcı kamerayı durdurdu"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Geçerli arka plan: {{background}}",
+            "selectBackground": "Bir arka plan seçin"
+        },
         "addBackground": "Arkaplan Ekle",
         "apply": "Uygula",
         "backgroundEffectError": "Arkaplan efekt uygulaması başarısız.",
@@ -1316,6 +1475,15 @@
         "uploadedImage": "Yüklenen resim {{index}}",
         "webAssemblyWarning": "WebAssembly desteklenmiyor",
         "webAssemblyWarningDescription": "WebAssembly devre dışı bırakıldı veya bu tarayıcı tarafından desteklenmiyor"
+    },
+    "visitors": {
+        "chatIndicator": "(ziyaretçi)",
+        "labelTooltip": "Ziyaretçi sayısı: {{count}}",
+        "notification": {
+            "demoteDescription": "Buraya {{actor}} tarafından gönderildi, katılmak için elinizi kaldırın",
+            "description": "Katılmak için elinizi kaldırın",
+            "title": "Toplantıda ziyaretçisiniz"
+        }
     },
     "volumeSlider": "Ses kaydırıcısı",
     "welcomepage": {
@@ -1349,6 +1517,7 @@
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Politika logo"
         },
+        "meetingsAccessibilityLabel": "Toplantılar",
         "mobileDownLoadLinkAndroid": "Android için mobil uygulamayı indirin",
         "mobileDownLoadLinkFDroid": "F-Droid için mobil uygulamayı indirin",
         "mobileDownLoadLinkIos": "iOS için mobil uygulamayı indirin",
@@ -1357,6 +1526,7 @@
         "recentList": "En son",
         "recentListDelete": "Sil",
         "recentListEmpty": "En son görüşülenler listeniz şu anda boş. Sohbet edin ve son toplantılarınızı burada görüntüleyin.",
+        "recentMeetings": "Son toplantılarınız",
         "reducedUIText": "Hoşgeldiniz - {{app}}!",
         "roomNameAllowedChars": "Toplantı adı şu karakterlerden hiçbirini içermemelidir: ?, &, :, ', \", %, #.",
         "roomname": "Oda adı girin",
@@ -1365,6 +1535,13 @@
         "settings": "Ayarlar",
         "startMeeting": "Toplantı başlat",
         "terms": "Kurallar",
-        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama"
+        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama",
+        "upcomingMeetings": "Yaklaşan toplantılarınız"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Beyaz tahta"
+        },
+        "screenTitle": "Beyaz tahta"
     }
 }

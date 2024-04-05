@@ -6,7 +6,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { IWhiteboardConfig } from '../base/config/configType';
 import { getRemoteParticipants, isLocalParticipantModerator } from '../base/participants/functions';
 import { encodeToBase64URL } from '../base/util/httpUtils';
-import { appendURLHashParam, appendURLParam } from '../base/util/uri';
+import { appendURLHashParam, appendURLParam, getBackendSafePath } from '../base/util/uri';
 import { getCurrentRoomId, isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MIN_USER_LIMIT, USER_LIMIT_THRESHOLD, WHITEBOARD_ID, WHITEBOARD_PATH_NAME } from './constants';
@@ -83,12 +83,12 @@ export const isWhiteboardButtonVisible = (state: IReduxState): boolean =>
 export const isWhiteboardPresent = (state: IReduxState): boolean => getRemoteParticipants(state).has(WHITEBOARD_ID);
 
 /**
- * Returns the whiteboard collaboration server url.
+ * Builds the whiteboard collaboration server url.
  *
  * @param {IReduxState} state - The state from the Redux store.
  * @returns {string}
  */
-export const getCollabServerUrl = (state: IReduxState): string | undefined => {
+export const generateCollabServerUrl = (state: IReduxState): string | undefined => {
     const collabServerBaseUrl = getWhiteboardConfig(state).collabServerBaseUrl;
 
     if (!collabServerBaseUrl) {
@@ -98,10 +98,21 @@ export const getCollabServerUrl = (state: IReduxState): string | undefined => {
     const { locationURL } = state['features/base/connection'];
     const inBreakoutRoom = isInBreakoutRoom(state);
     const roomId = getCurrentRoomId(state);
-    const room = md5.hex(`${locationURL?.origin}${locationURL?.pathname}${inBreakoutRoom ? `|${roomId}` : ''}`);
+    const room = md5.hex(
+        `${locationURL?.origin}${getBackendSafePath(locationURL?.pathname)}${inBreakoutRoom ? `|${roomId}` : ''}`
+    );
 
     return appendURLParam(collabServerBaseUrl, 'room', room);
 };
+
+/**
+ * Returns the whiteboard collaboration server url.
+ *
+ * @param {IReduxState} state - The state from the Redux store.
+ * @returns {string}
+ */
+export const getCollabServerUrl = (state: IReduxState): string | undefined =>
+    getWhiteboardState(state).collabServerUrl;
 
 /**
  * Whether the whiteboard is visible on stage.

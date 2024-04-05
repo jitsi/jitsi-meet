@@ -875,6 +875,9 @@
             "removeOption": "Remove option",
             "send": "Send"
         },
+        "errors": {
+            "notUniqueOption": "Options must be unique"
+        },
         "notification": {
             "description": "Open polls tab to vote",
             "title": "A new poll was added to this meeting"

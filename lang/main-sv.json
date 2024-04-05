@@ -804,6 +804,9 @@
             "removeOption": "Ta bort alternativ",
             "send": "Skicka"
         },
+        "errors": {
+            "notUniqueOption": "Alternativ måste vara unika"
+        },
         "notification": {
             "description": "Öppna fliken omröstningar för att rösta",
             "title": "En ny omröstning har blivit tillagd till detta möte"

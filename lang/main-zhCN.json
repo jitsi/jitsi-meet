@@ -845,6 +845,9 @@
             "removeOption": "移除选项",
             "send": "发送"
         },
+        "errors": {
+            "notUniqueOption": "选项必须是唯一的"
+        },
         "notification": {
             "description": "打开投票页面进行投票",
             "title": "本次会议有一项新的投票"
