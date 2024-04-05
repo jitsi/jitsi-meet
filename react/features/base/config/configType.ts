@@ -475,7 +475,8 @@ export interface IConfig {
     pcStatsInterval?: number;
     peopleSearchQueryTypes?: string[];
     peopleSearchUrl?: string;
-    peopleSearchToken?: string;
+    peopleSearchTokenLocation?: string;
+    peopleSearchTokenKey?: string;
     preferBosh?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {

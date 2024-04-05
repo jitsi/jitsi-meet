@@ -1523,8 +1523,10 @@ var config = {
     // peopleSearchQueryTypes: ["user", "email"],
     // Directory endpoint which is called for invite dialog autocomplete
     // peopleSearchUrl: "https://myservice.com/api/invite",
-    // For external entities (e. g. email), the token to use for directory endpoint authentication
-    // peopleSearchToken: "mytoken",
+    // For external entities (e. g. email), the localStorage key holding the token value for directory endpoint authentication
+    // peopleSearchTokenLocation: "mytoken",
+    // For external entities (e. g. email), the key expected to hold the authentication token value
+    // peopleSearchTokenKey: "mytoken",
 
     // List of undocumented settings used in jitsi-meet
     /**
