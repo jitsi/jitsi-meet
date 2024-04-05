@@ -1,7 +1,7 @@
 -- DEPRECATED and will be removed, giving time for mobile clients to update
 local st = require "util.stanza";
 local socket = require "socket";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local it = require "util.iterators";
 local process_host_module = module:require "util".process_host_module;
 

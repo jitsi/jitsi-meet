@@ -12,7 +12,7 @@
 --      breakout_rooms_component = "breakout.jitmeet.example.com"
 
 local jid_node = require 'util.jid'.node;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local st = require 'util.stanza';
 
 local util = module:require 'util';
@@ -39,10 +39,16 @@ module:log("info", "Starting room metadata for %s", muc_component_host);
 -- Utility functions
 
 function getMetadataJSON(room)
-    return json.encode({
+    local res, error = json.encode({
         type = COMPONENT_IDENTITY_TYPE,
         metadata = room.jitsiMetadata or {}
     });
+
+    if not res then
+        module:log('error', 'Error encoding data room:%s', room.jid, error);
+    end
+
+    return res;
 end
 
 -- Putting the information on the config form / disco-info allows us to save
@@ -124,9 +130,9 @@ function on_message(event)
         return false;
     end
 
-    local jsonData = json.decode(messageText);
+    local jsonData, error = json.decode(messageText);
     if jsonData == nil then -- invalid JSON
-        module:log("error", "Invalid JSON message: %s", messageText);
+        module:log("error", "Invalid JSON message: %s error:%s", messageText, error);
         return false;
     end
 

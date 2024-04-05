@@ -30,7 +30,7 @@ local jid_bare = require 'util.jid'.bare;
 local jid_prep = require "util.jid".prep;
 local jid_resource = require "util.jid".resource;
 local resourceprep = require "util.encodings".stringprep.resourceprep;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 local muc_util = module:require "muc/util";
@@ -80,10 +80,17 @@ function broadcast_json_msg(room, from, json_msg)
 
     local occupant = room:get_occupant_by_real_jid(from);
     if occupant then
+        local json_msg_str, error = json.encode(json_msg);
+
+        if not json_msg_str then
+            module:log('error', 'Error broadcasting message room:%s', room.jid, error);
+            return;
+        end
+
         room:broadcast_message(
             st.message({ type = 'groupchat', from = occupant.nick })
               :tag('json-message', {xmlns='http://jitsi.org/jitmeet'})
-              :text(json.encode(json_msg)):up());
+              :text(json_msg_str):up());
     end
 end
 

@@ -2,7 +2,7 @@
 -- by keeping track of the state of polls in each room, and sending
 -- that state to new participants when they join.
 
-local json = require("util.json");
+local json = require 'cjson.safe';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
@@ -22,8 +22,11 @@ local function get_poll_message(stanza)
     if json_data == nil then
         return nil;
     end
-    local data = json.decode(json_data);
+    local data, error = json.decode(json_data);
     if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        if error then
+            module:log('error', 'Error decoding data error:%s', error);
+        end
         return nil;
     end
     return data;
@@ -192,12 +195,17 @@ module:hook("muc-occupant-joined", function(event)
         };
     end
 
+    local json_msg_str, error = json.encode(data);
+    if not json_msg_str then
+        module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+    end
+
     local stanza = st.message({
         from = room.jid,
         to = event.occupant.jid
     })
     :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
-    :text(json.encode(data))
+    :text(json_msg_str)
     :up();
     room:route_stanza(stanza);
 end);

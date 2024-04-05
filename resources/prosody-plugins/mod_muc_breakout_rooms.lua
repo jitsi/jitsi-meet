@@ -29,7 +29,7 @@ end
 local jid_node = require 'util.jid'.node;
 local jid_host = require 'util.jid'.host;
 local jid_split = require 'util.jid'.split;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
 
@@ -166,12 +166,17 @@ function broadcast_breakout_rooms(room_jid)
             end
         end
 
-        local json_msg = json.encode({
+        local json_msg, error = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
             event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
             roomCounter = main_room._data.breakout_rooms_counter,
             rooms = rooms
         });
+
+        if not json_msg then
+            module:log('error', 'not broadcasting breakout room information room:%s error:%s', main_room_jid, error);
+            return;
+        end
 
         for _, occupant in main_room:each_occupant() do
             if jid_node(occupant.jid) ~= 'focus' then
@@ -329,11 +334,15 @@ function on_message(event)
         local participant_jid = message.attr.participantJid;
         local target_room_jid = message.attr.roomJid;
 
-        local json_msg = json.encode({
+        local json_msg, error = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
             event = JSON_TYPE_MOVE_TO_ROOM_REQUEST,
             roomJid = target_room_jid
         });
+
+        if not json_msg then
+            module:log('error', 'skip sending request room:%s error:%s', room.jid, error);
+        end
 
         send_json_msg(participant_jid, json_msg)
         return true;
