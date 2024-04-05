@@ -47,6 +47,8 @@ interface IAppProps {
     flags?: object;
     room: string;
     serverURL?: string;
+    waitingAreaText?: string;
+    meetingTitle?: string;
     style?: Object;
     token?: string;
     userInfo?: IUserInfo;
@@ -73,7 +75,9 @@ export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) =>
         serverURL,
         style,
         token,
-        userInfo
+        userInfo,
+        waitingAreaText,
+        meetingTitle
     } = props;
 
     // eslint-disable-next-line arrow-body-style
@@ -138,7 +142,9 @@ export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) =>
                     onReadyToClose: eventListeners?.onReadyToClose
                 },
                 'url': urlProps,
-                'userInfo': userInfo
+                'userInfo': userInfo,
+                'waitingAreaText': waitingAreaText,
+                'meetingTitle': meetingTitle
             });
         }, []
     );

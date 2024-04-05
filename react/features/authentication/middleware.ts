@@ -35,7 +35,7 @@ import {
     redirectToDefaultLocation,
     setTokenAuthUrlSuccess,
     stopWaitForOwner,
-    waitForOwner
+    waitForOwner,
 } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';

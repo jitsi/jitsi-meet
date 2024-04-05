@@ -324,6 +324,10 @@ export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
  */
 export const SET_ROOM = 'SET_ROOM';
 
+export const SET_WAITING_TEXT = 'SET_WAITING_TEXT';
+
+export const SET_MEETING_TITLE = 'SET_MEETING_TITLE';
+
 /**
  * The type of (redux) action which updates the current known status of the
  * moderator features for starting participants as audio or video muted.

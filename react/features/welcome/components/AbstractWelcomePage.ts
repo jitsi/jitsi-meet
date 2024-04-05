@@ -1,23 +1,30 @@
 // @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-import { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import { generateRoomWithoutSeparator } from "@jitsi/js-utils/random";
+import { Component } from "react";
+import { WithTranslation } from "react-i18next";
 
-import { createWelcomePageEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
-import { IReduxState, IStore } from '../../app/types';
-import { IDeeplinkingConfig } from '../../base/config/configType';
-import isInsecureRoomName from '../../base/util/isInsecureRoomName';
-import { isCalendarEnabled } from '../../calendar-sync/functions';
-import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';
-import { isRecentListEnabled } from '../../recent-list/functions';
+import {
+    createWelcomePageEvent,
+    createDirectJoinMeetingEvent,
+} from "../../analytics/AnalyticsEvents";
+import { sendAnalytics } from "../../analytics/functions";
+import { appNavigate } from "../../app/actions";
+import { IReduxState, IStore } from "../../app/types";
+import { IDeeplinkingConfig } from "../../base/config/configType";
+import isInsecureRoomName from "../../base/util/isInsecureRoomName";
+import { isCalendarEnabled } from "../../calendar-sync/functions";
+import { isUnsafeRoomWarningEnabled } from "../../prejoin/functions";
+import { isRecentListEnabled } from "../../recent-list/functions";
+import { navigateRoot } from "../../mobile/navigation/rootNavigationContainerRef";
+import { getFeatureFlag } from "../../base/flags/functions";
+import { DIRECT_JOIN_MEETING_ENABLED } from "../../base/flags/constants";
+import { screen } from "../../mobile/navigation/routes";
+import { setRoom } from "../../base/conference/actions";
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 export interface IProps extends WithTranslation {
-
     /**
      * Whether the calendar functionality is enabled or not.
      */
@@ -53,10 +60,12 @@ export interface IProps extends WithTranslation {
      */
     _settings: Object;
 
+    _isDirectJoin: boolean;
+
     /**
      * The Redux dispatch Function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 }
 
 interface IState {
@@ -79,7 +88,10 @@ interface IState {
  *
  * @abstract
  */
-export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> {
+export class AbstractWelcomePage<P extends IProps> extends Component<
+    P,
+    IState
+> {
     _mounted: boolean | undefined;
 
     /**
@@ -97,17 +109,17 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     state: IState = {
         animateTimeoutId: undefined,
-        generatedRoomName: '',
+        generatedRoomName: "",
         generateRoomNames: undefined,
         insecureRoomName: false,
         joining: false,
-        room: '',
-        roomPlaceholder: '',
+        room: "",
+        roomPlaceholder: "",
         updateTimeoutId: undefined,
         _fieldFocused: false,
         isSettingsScreenFocused: false,
         roomNameInputAnimation: 0,
-        hintBoxAnimation: 0
+        hintBoxAnimation: 0,
     };
 
     /**
@@ -120,11 +132,12 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomNameChanging
-            = this._animateRoomNameChanging.bind(this);
+        this._animateRoomNameChanging =
+            this._animateRoomNameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
+        this._renderInsecureRoomNameWarning =
+            this._renderInsecureRoomNameWarning.bind(this);
         this._updateRoomName = this._updateRoomName.bind(this);
     }
 
@@ -136,7 +149,12 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     componentDidMount() {
         this._mounted = true;
-        sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
+        sendAnalytics(
+            createWelcomePageEvent("viewed", undefined, { value: 1 })
+        );
+        sendAnalytics(
+            createDirectJoinMeetingEvent("directJoin", undefined, { value: 1 })
+        );
     }
 
     /**
@@ -163,17 +181,13 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
 
         if (word.length > 1) {
-            animateTimeoutId
-                = window.setTimeout(
-                    () => {
-                        this._animateRoomNameChanging(
-                            word.substring(1, word.length));
-                    },
-                    70);
+            animateTimeoutId = window.setTimeout(() => {
+                this._animateRoomNameChanging(word.substring(1, word.length));
+            }, 70);
         }
         this.setState({
             animateTimeoutId,
-            roomPlaceholder
+            roomPlaceholder,
         });
     }
 
@@ -184,7 +198,8 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _clearTimeouts() {
-        this.state.animateTimeoutId && clearTimeout(this.state.animateTimeoutId);
+        this.state.animateTimeoutId &&
+            clearTimeout(this.state.animateTimeoutId);
         this.state.updateTimeoutId && clearTimeout(this.state.updateTimeoutId);
     }
 
@@ -206,23 +221,40 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomName;
+        console.log("---room---209--", room, this.state.generatedRoomName);
 
         sendAnalytics(
-            createWelcomePageEvent('clicked', 'joinButton', {
+            createWelcomePageEvent("clicked", "joinButton", {
                 isGenerated: !this.state.room,
-                room
-            }));
+                room,
+            })
+        );
+
+        sendAnalytics(
+            createDirectJoinMeetingEvent("clicked", "joinButton", {
+                isGenerated: !this.state.room,
+                room,
+            })
+        );
 
         if (room) {
             this.setState({ joining: true });
-
+            console.log("---room---if--");
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
-            const onAppNavigateSettled
-                = () => this._mounted && this.setState({ joining: false });
 
-            this.props.dispatch(appNavigate(room))
-                .then(onAppNavigateSettled, onAppNavigateSettled);
+            console.log("---_isDirectJoin---", this.props._isDirectJoin);
+            if (this.props._isDirectJoin) {
+                this.props.dispatch(setRoom(this.state.room));
+                navigateRoot(screen.conference.root);
+            } else {
+                const onAppNavigateSettled = () =>
+                    this._mounted && this.setState({ joining: false });
+
+                this.props
+                    .dispatch(appNavigate(room))
+                    .then(onAppNavigateSettled, onAppNavigateSettled);
+            }
         }
     }
 
@@ -237,7 +269,11 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     _onRoomChange(value: string) {
         this.setState({
             room: value,
-            insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
+            insecureRoomName: Boolean(
+                this.props._enableInsecureRoomNameWarning &&
+                    value &&
+                    isInsecureRoomName(value)
+            ),
         });
     }
 
@@ -247,7 +283,10 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {ReactElement}
      */
     _renderInsecureRoomNameWarning() {
-        if (this.props._enableInsecureRoomNameWarning && this.state.insecureRoomName) {
+        if (
+            this.props._enableInsecureRoomNameWarning &&
+            this.state.insecureRoomName
+        ) {
             return this._doRenderInsecureRoomNameWarning();
         }
 
@@ -263,7 +302,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     _updateRoomName() {
         const generatedRoomName = generateRoomWithoutSeparator();
-        const roomPlaceholder = '';
+        const roomPlaceholder = "";
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 
         this._clearTimeouts();
@@ -271,9 +310,10 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
             {
                 generatedRoomName,
                 roomPlaceholder,
-                updateTimeoutId
+                updateTimeoutId,
             },
-            () => this._animateRoomNameChanging(generatedRoomName));
+            () => this._animateRoomNameChanging(generatedRoomName)
+        );
     }
 }
 
@@ -288,11 +328,15 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
 export function _mapStateToProps(state: IReduxState) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
-        _deeplinkingCfg: state['features/base/config'].deeplinking || {},
+        _deeplinkingCfg: state["features/base/config"].deeplinking || {},
         _enableInsecureRoomNameWarning: isUnsafeRoomWarningEnabled(state),
-        _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
+        _moderatedRoomServiceUrl:
+            state["features/base/config"].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
-        _room: state['features/base/conference'].room ?? '',
-        _settings: state['features/base/settings']
+        _room: state["features/base/conference"].room ?? "",
+        _settings: state["features/base/settings"],
+        _isDirectJoin: Boolean(
+            getFeatureFlag(state, DIRECT_JOIN_MEETING_ENABLED, false)
+        ),
     };
 }

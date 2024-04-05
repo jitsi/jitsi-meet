@@ -375,7 +375,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     <WelcomePageTabs
                         disabled = { Boolean(this.state._fieldFocused) } // @ts-ignore
                         onListContainerPress = { this._onFieldBlur }
-                        onSettingsScreenFocused = { this._onSettingsScreenFocused } />
+                        onSettingsScreenFocused = { this._onSettingsScreenFocused } 
+                        />
                 </View>
             </>
         );

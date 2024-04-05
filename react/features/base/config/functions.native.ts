@@ -1,12 +1,14 @@
-import { NativeModules } from 'react-native';
+import { NativeModules } from "react-native";
 
-import { IReduxState } from '../../app/types';
-import { REPLACE_PARTICIPANT } from '../flags/constants';
-import { getFeatureFlag } from '../flags/functions';
+import { IReduxState } from "../../app/types";
+import {
+    REPLACE_PARTICIPANT,
+} from "../flags/constants";
+import { getFeatureFlag } from "../flags/functions";
 
-import { IConfig, IDeeplinkingConfig } from './configType';
+import { IConfig, IDeeplinkingConfig } from "./configType";
 
-export * from './functions.any';
+export * from "./functions.any";
 
 /**
  * Removes all analytics related options from the given configuration, in case of a libre build.
@@ -52,4 +54,3 @@ export function getReplaceParticipant(state: IReduxState): string {
 export function _setDeeplinkingDefaults(_deeplinking: IDeeplinkingConfig) {
     return;
 }
-

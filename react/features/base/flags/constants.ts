@@ -284,3 +284,17 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+
+// set waiting area text
+export const WAITING_AREA_TEXT = 'waitingAreaText.enabled';
+
+// set meeting title
+export const MEETING_TITLE = 'meetingTitle.enabled';
+
+// set backButtonHandler
+export const BACK_BUTTON_HANDLER = 'backButtonHandler.enabled';
+
+// set direct join jitsi directjoin.enabled
+export const DIRECT_JOIN_MEETING_ENABLED = 'directJoin.enabled';
+
+

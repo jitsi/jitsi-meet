@@ -45,6 +45,13 @@ public class JitsiMeetConferenceOptions implements Parcelable {
      */
     private String token;
 
+
+    // set waiting area Text
+    private String waitingAreaText;
+
+    // set Title for meeting in jitsi room
+    private String meetingTitle;
+
     /**
      * Config. See: https://github.com/jitsi/jitsi-meet/blob/master/config.js
      */
@@ -72,6 +79,14 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         return token;
     }
 
+    public String getWaitingAreaText() {
+        return waitingAreaText;
+    }
+
+    public String getMeetingTitle() {
+        return meetingTitle;
+    }
+
     public Bundle getFeatureFlags() {
         return featureFlags;
     }
@@ -87,7 +102,8 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         private URL serverURL;
         private String room;
         private String token;
-
+        private String waitingAreaText;
+        private String meetingTitle;
         private Bundle config;
         private Bundle featureFlags;
 
@@ -138,6 +154,20 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          */
         public Builder setToken(String token) {
             this.token = token;
+
+            return this;
+        }
+
+        // set custom text
+
+        public Builder setWaitingAreaText(String waitingAreaText) {
+            this.waitingAreaText = waitingAreaText;
+
+            return this;
+        }
+
+        public Builder setMeetingTitle(String meetingTitle) {
+            this.meetingTitle = meetingTitle;
 
             return this;
         }
@@ -240,6 +270,8 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             options.serverURL = this.serverURL;
             options.room = this.room;
             options.token = this.token;
+            options.waitingAreaText = this.waitingAreaText;
+            options.meetingTitle = this.meetingTitle;
             options.config = this.config;
             options.featureFlags = this.featureFlags;
             options.userInfo = this.userInfo;
@@ -255,6 +287,8 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         serverURL = (URL) in.readSerializable();
         room = in.readString();
         token = in.readString();
+        waitingAreaText = in.readString();
+        meetingTitle = in.readString();
         config = in.readBundle();
         featureFlags = in.readBundle();
         userInfo = new JitsiMeetUserInfo(in.readBundle());
@@ -288,6 +322,13 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             urlProps.putString("jwt", token);
         }
 
+        if (waitingAreaText != null) {
+            props.putString("waitingAreaText", waitingAreaText);
+        }
+        if (meetingTitle != null) {
+            props.putString("meetingTitle", meetingTitle);
+        }
+
         if (userInfo != null) {
             props.putBundle("userInfo", userInfo.asBundle());
         }
@@ -318,6 +359,8 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         dest.writeSerializable(serverURL);
         dest.writeString(room);
         dest.writeString(token);
+        dest.writeString(waitingAreaText);
+        dest.writeString(meetingTitle);
         dest.writeBundle(config);
         dest.writeBundle(featureFlags);
         dest.writeBundle(userInfo != null ? userInfo.asBundle() : new Bundle());

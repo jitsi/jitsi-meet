@@ -14,6 +14,8 @@ import { isRecentListEnabled, toDisplayableList } from '../functions.native';
 
 import AbstractRecentList from './AbstractRecentList';
 import RecentListItemMenu from './RecentListItemMenu.native';
+import { DIRECT_JOIN_MEETING_ENABLED } from '../../base/flags/constants';
+import { getFeatureFlag } from '../../base/flags/functions';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}.
@@ -29,6 +31,8 @@ interface IProps extends WithTranslation {
      * The recent list from the Redux store.
      */
     _recentList: Array<Section>;
+
+    _isDirectJoin: boolean;
 
     /**
      * Renders the list disabled.
@@ -77,9 +81,13 @@ class RecentList extends AbstractRecentList<IProps> {
             onListContainerPress,
             t,
             _defaultServerURL,
-            _recentList
+            _recentList, 
+            _isDirectJoin,
+            _room
         } = this.props; // @ts-ignore
-        const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
+
+        console.log("----_recentList---", _recentList, _defaultServerURL, _room)
+        const recentList = toDisplayableList(_recentList, t, _defaultServerURL, _isDirectJoin, _room);
 
         return (
             <TouchableWithoutFeedback
@@ -88,12 +96,12 @@ class RecentList extends AbstractRecentList<IProps> {
                     <NavigateSectionList
                         disabled = { disabled }
                         onLongPress = { this._onLongPress }
-                        onPress = { this._onPress }
+                        onPress = { (e)=>this._onPress(e,_isDirectJoin, _room) }
                         renderListEmptyComponent
                             = { this._getRenderListEmptyComponent() }
-
                         // @ts-ignore
-                        sections = { recentList } />
+                         sections = { recentList }
+                         />
                 </View>
             </TouchableWithoutFeedback>
         );
@@ -120,7 +128,11 @@ class RecentList extends AbstractRecentList<IProps> {
 export function _mapStateToProps(state: IReduxState) {
     return {
         _defaultServerURL: getDefaultURL(state),
-        _recentList: state['features/recent-list']
+        _recentList: state['features/recent-list'],
+        _room: state['features/base/conference'].room ?? '',
+        _isDirectJoin: Boolean(
+            getFeatureFlag(state, DIRECT_JOIN_MEETING_ENABLED, false)
+        ),
     };
 }
 

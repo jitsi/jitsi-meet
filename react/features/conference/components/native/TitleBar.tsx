@@ -1,30 +1,44 @@
-import React from 'react';
-import { Text, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
+import React from "react";
+import { Text, View, ViewStyle } from "react-native";
+import { connect, useDispatch, useSelector } from "react-redux";
 
-import { IReduxState } from '../../../app/types';
-import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
-import { CONFERENCE_TIMER_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
-import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
-import PictureInPictureButton from '../../../mobile/picture-in-picture/components/PictureInPictureButton';
-import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
-import { isParticipantsPaneEnabled } from '../../../participants-pane/functions';
-import { isRoomNameEnabled } from '../../../prejoin/functions';
-import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
-import { isToolboxVisible } from '../../../toolbox/functions.native';
-import ConferenceTimer from '../ConferenceTimer';
+import { IReduxState } from "../../../app/types";
+import {
+    getConferenceName,
+    getConferenceTimestamp,
+} from "../../../base/conference/functions";
+import {
+    CONFERENCE_TIMER_ENABLED,
+    MEETING_TITLE,
+    WAITING_AREA_TEXT,
+} from "../../../base/flags/constants";
+import { getFeatureFlag } from "../../../base/flags/functions";
+import AudioDeviceToggleButton from "../../../mobile/audio-mode/components/AudioDeviceToggleButton";
+import PictureInPictureButton from "../../../mobile/picture-in-picture/components/PictureInPictureButton";
+import ParticipantsPaneButton from "../../../participants-pane/components/native/ParticipantsPaneButton";
+import { isParticipantsPaneEnabled } from "../../../participants-pane/functions";
+import { isRoomNameEnabled } from "../../../prejoin/functions";
+import ToggleCameraButton from "../../../toolbox/components/native/ToggleCameraButton";
+import { isToolboxVisible } from "../../../toolbox/functions.native";
+import ConferenceTimer from "../ConferenceTimer";
 
-import Labels from './Labels';
-import styles from './styles';
-
+import Labels from "./Labels";
+import styles from "./styles";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
+    /**
+     * Whether displaying the current conference timer is enabled or not.
+     */
+
+    _meetingTitle: string;
+
+    _conferenceTimerEnabled: boolean;
 
     /**
      * Whether displaying the current conference timer is enabled or not.
      */
-    _conferenceTimerEnabled: boolean;
+    _isMeetingTitleEnabled: boolean;
 
     /**
      * Creates a function to be invoked when the onPress of the touchables are
@@ -62,52 +76,56 @@ interface IProps {
  */
 const TitleBar = (props: IProps) => {
     const { _isParticipantsPaneEnabled, _visible } = props;
+    const { t } = useTranslation();
 
     if (!_visible) {
         return null;
     }
 
     return (
-        <View
-            style = { styles.titleBarWrapper as ViewStyle }>
-            <View style = { styles.pipButtonContainer as ViewStyle }>
-                <PictureInPictureButton styles = { styles.pipButton } />
+        <View style={styles.titleBarWrapper as ViewStyle}>
+            <View style={styles.pipButtonContainer as ViewStyle}>
+                <PictureInPictureButton styles={styles.pipButton} />
             </View>
             <View
-                pointerEvents = 'box-none'
-                style = { styles.roomNameWrapper as ViewStyle }>
-                {
-                    props._conferenceTimerEnabled
-                    && <View style = { styles.roomTimerView as ViewStyle }>
-                        <ConferenceTimer textStyle = { styles.roomTimer } />
+                pointerEvents="box-none"
+                style={styles.roomNameWrapper as ViewStyle}
+            >
+                {props._conferenceTimerEnabled && (
+                    <View style={styles.roomTimerView as ViewStyle}>
+                        <ConferenceTimer textStyle={styles.roomTimer} />
                     </View>
-                }
-                {
-                    props._roomNameEnabled
-                    && <View style = { styles.roomNameView as ViewStyle }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { styles.roomName }>
-                            { props._meetingName }
+                )}
+                {props._roomNameEnabled && (
+                    <View style={styles.roomNameView as ViewStyle}>
+                        <Text numberOfLines={1} style={styles.roomName}>
+                            {props._meetingName}
                         </Text>
                     </View>
-                }
+                )}
+
+                {props._isMeetingTitleEnabled && (
+                    <View style={{backgroundColor: 'red'}}>
+                        <Text numberOfLines={1} style={styles.roomName}>
+                            {props._meetingTitle}
+                        </Text>
+                    </View>
+                )}
+
                 {/* eslint-disable-next-line react/jsx-no-bind */}
-                <Labels createOnPress = { props._createOnPress } />
+                <Labels createOnPress={props._createOnPress} />
             </View>
-            <View style = { styles.titleBarButtonContainer }>
-                <ToggleCameraButton styles = { styles.titleBarButton } />
+            <View style={styles.titleBarButtonContainer}>
+                <ToggleCameraButton styles={styles.titleBarButton} />
             </View>
-            <View style = { styles.titleBarButtonContainer }>
-                <AudioDeviceToggleButton styles = { styles.titleBarButton } />
+            <View style={styles.titleBarButtonContainer}>
+                <AudioDeviceToggleButton styles={styles.titleBarButton} />
             </View>
-            {
-                _isParticipantsPaneEnabled
-                && <View style = { styles.titleBarButtonContainer }>
-                    <ParticipantsPaneButton
-                        styles = { styles.titleBarButton } />
+            {_isParticipantsPaneEnabled && (
+                <View style={styles.titleBarButtonContainer}>
+                    <ParticipantsPaneButton styles={styles.titleBarButton} />
                 </View>
-            }
+            )}
         </View>
     );
 };
@@ -119,16 +137,24 @@ const TitleBar = (props: IProps) => {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { hideConferenceTimer } = state['features/base/config'];
+    const { hideConferenceTimer } = state["features/base/config"];
+    const { meetingTitle } = state["features/base/conference"];
     const startTimestamp = getConferenceTimestamp(state);
 
     return {
-        _conferenceTimerEnabled:
-            Boolean(getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !hideConferenceTimer && startTimestamp),
+        _conferenceTimerEnabled: Boolean(
+            getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) &&
+                !hideConferenceTimer &&
+                startTimestamp
+        ),
         _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
         _meetingName: getConferenceName(state),
         _roomNameEnabled: isRoomNameEnabled(state),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _meetingTitle: meetingTitle,
+        _isMeetingTitleEnabled: Boolean(
+            getFeatureFlag(state, MEETING_TITLE, true)
+        ),
     };
 }
 

@@ -1,39 +1,45 @@
-import React, { ComponentType } from 'react';
-import { NativeModules, Platform, StyleSheet, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SplashScreen from 'react-native-splash-screen';
+import React, { ComponentType } from "react";
+import { NativeModules, Platform, StyleSheet, View } from "react-native";
+import DeviceInfo from "react-native-device-info";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
 
-import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
-import DialogContainer from '../../base/dialog/components/native/DialogContainer';
-import { updateFlags } from '../../base/flags/actions';
-import { CALL_INTEGRATION_ENABLED } from '../../base/flags/constants';
-import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actions';
-import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
-import { updateSettings } from '../../base/settings/actions';
-import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
-import { _getRouteToRender } from '../getRouteToRender.native';
-import logger from '../logger';
+import BottomSheetContainer from "../../base/dialog/components/native/BottomSheetContainer";
+import DialogContainer from "../../base/dialog/components/native/DialogContainer";
+import { updateFlags } from "../../base/flags/actions";
+import { CALL_INTEGRATION_ENABLED } from "../../base/flags/constants";
+import {
+    clientResized,
+    setSafeAreaInsets,
+} from "../../base/responsive-ui/actions";
+import DimensionsDetector from "../../base/responsive-ui/components/DimensionsDetector.native";
+import { updateSettings } from "../../base/settings/actions";
+import JitsiThemePaperProvider from "../../base/ui/components/JitsiThemeProvider.native";
+import { _getRouteToRender } from "../getRouteToRender.native";
+import logger from "../logger";
 
-import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
+import { AbstractApp, IProps as AbstractAppProps } from "./AbstractApp";
 
 // Register middlewares and reducers.
-import '../middlewares.native';
-import '../reducers.native';
-
+import "../middlewares.native";
+import "../reducers.native";
+import { setMeetingTitle, setWaitingText } from "../../base/conference/actions";
 
 declare let __DEV__: any;
 
 const { AppInfo } = NativeModules;
 
 const DialogContainerWrapper = Platform.select({
-    default: View
+    default: View,
 });
 
 /**
  * The type of React {@code Component} props of {@link App}.
  */
 interface IProps extends AbstractAppProps {
+    waitingAreaText?: String;
+
+    meetingTitle?: String;
 
     /**
      * An object with the feature flags.
@@ -52,7 +58,6 @@ interface IProps extends AbstractAppProps {
  * @augments AbstractApp
  */
 export class App extends AbstractApp<IProps> {
-
     /**
      * Initializes a new {@code App} instance.
      *
@@ -70,7 +75,8 @@ export class App extends AbstractApp<IProps> {
 
         // Bind event handler so it is only bound once per instance.
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
-        this._onSafeAreaInsetsChanged = this._onSafeAreaInsetsChanged.bind(this);
+        this._onSafeAreaInsetsChanged =
+            this._onSafeAreaInsetsChanged.bind(this);
     }
 
     /**
@@ -85,7 +91,7 @@ export class App extends AbstractApp<IProps> {
 
         SplashScreen.hide();
 
-        const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
+        const liteTxt = AppInfo.isLiteSDK ? " (lite)" : "";
 
         logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt}`);
     }
@@ -98,9 +104,7 @@ export class App extends AbstractApp<IProps> {
      */
     render() {
         return (
-            <JitsiThemePaperProvider>
-                { super.render() }
-            </JitsiThemePaperProvider>
+            <JitsiThemePaperProvider>{super.render()}</JitsiThemePaperProvider>
         );
     }
 
@@ -111,18 +115,22 @@ export class App extends AbstractApp<IProps> {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store ?? {};
-        const { flags = {}, url, userInfo } = this.props;
-        let callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
+        const { flags = {}, url, userInfo, waitingAreaText, meetingTitle } = this.props;
+        let callIntegrationEnabled =
+            flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         // CallKit does not work on the simulator, make sure we disable it.
-        if (Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()) {
+        if (Platform.OS === "ios" && DeviceInfo.isEmulatorSync()) {
             flags[CALL_INTEGRATION_ENABLED] = false;
             callIntegrationEnabled = false;
-            logger.info('Disabling CallKit because this is a simulator');
+            logger.info("Disabling CallKit because this is a simulator");
         }
 
         // Disable Android ConnectionService by default.
-        if (Platform.OS === 'android' && typeof callIntegrationEnabled === 'undefined') {
+        if (
+            Platform.OS === "android" &&
+            typeof callIntegrationEnabled === "undefined"
+        ) {
             flags[CALL_INTEGRATION_ENABLED] = false;
             callIntegrationEnabled = false;
         }
@@ -139,10 +147,10 @@ export class App extends AbstractApp<IProps> {
         // Wait until the root navigator is ready.
         // We really need to break the inheritance relationship between App,
         // AbstractApp and BaseApp, it's very inflexible and cumbersome right now.
-        const rootNavigationReady = new Promise<void>(resolve => {
+        const rootNavigationReady = new Promise<void>((resolve) => {
             const i = setInterval(() => {
                 // @ts-ignore
-                const { ready } = getState()['features/app'] || {};
+                const { ready } = getState()["features/app"] || {};
 
                 if (ready) {
                     clearInterval(i);
@@ -154,12 +162,11 @@ export class App extends AbstractApp<IProps> {
         await rootNavigationReady;
 
         // Update specified server URL.
-        if (typeof url !== 'undefined') {
-
+        if (typeof url !== "undefined") {
             // @ts-ignore
             const { serverURL } = url;
 
-            if (typeof serverURL !== 'undefined') {
+            if (typeof serverURL !== "undefined") {
                 dispatch?.(updateSettings({ serverURL }));
             }
         }
@@ -167,9 +174,17 @@ export class App extends AbstractApp<IProps> {
         // @ts-ignore
         dispatch?.(updateSettings(userInfo || {}));
 
+        dispatch?.(setWaitingText(waitingAreaText || ""));
+
+        dispatch?.(setMeetingTitle(meetingTitle || ""))
+
         // Update settings with feature-flag.
-        if (typeof callIntegrationEnabled !== 'undefined') {
-            dispatch?.(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+        if (typeof callIntegrationEnabled !== "undefined") {
+            dispatch?.(
+                updateSettings({
+                    disableCallIntegration: !callIntegrationEnabled,
+                })
+            );
         }
     }
 
@@ -183,9 +198,10 @@ export class App extends AbstractApp<IProps> {
         return (
             <SafeAreaProvider>
                 <DimensionsDetector
-                    onDimensionsChanged = { this._onDimensionsChanged }
-                    onSafeAreaInsetsChanged = { this._onSafeAreaInsetsChanged }>
-                    { super._createMainElement(component, props) }
+                    onDimensionsChanged={this._onDimensionsChanged}
+                    onSafeAreaInsetsChanged={this._onSafeAreaInsetsChanged}
+                >
+                    {super._createMainElement(component, props)}
                 </DimensionsDetector>
             </SafeAreaProvider>
         );
@@ -209,7 +225,7 @@ export class App extends AbstractApp<IProps> {
             // to suffer.
             return;
         }
-        if (Platform.OS !== 'android') {
+        if (Platform.OS !== "android") {
             // A solution based on RTCSetFatalHandler was implemented on iOS and
             // it is preferred because it is at a later step of the
             // error/exception handling and it is specific to fatal
@@ -271,8 +287,9 @@ export class App extends AbstractApp<IProps> {
     _renderDialogContainer() {
         return (
             <DialogContainerWrapper
-                pointerEvents = 'box-none'
-                style = { StyleSheet.absoluteFill }>
+                pointerEvents="box-none"
+                style={StyleSheet.absoluteFill}
+            >
                 <BottomSheetContainer />
                 <DialogContainer />
             </DialogContainerWrapper>
@@ -303,6 +320,6 @@ function _handleException(error: Error, fatal: boolean) {
         // @ts-ignore
         const { next } = _handleException;
 
-        typeof next === 'function' && next(error, fatal);
+        typeof next === "function" && next(error, fatal);
     }
 }

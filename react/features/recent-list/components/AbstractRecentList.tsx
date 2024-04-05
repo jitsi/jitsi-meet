@@ -1,23 +1,28 @@
-import React from 'react';
+import React from "react";
 
-import { createRecentClickedEvent, createRecentSelectedEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
-import { IStore } from '../../app/types';
-import AbstractPage from '../../base/react/components/AbstractPage';
-import { Container, Text } from '../../base/react/components/index';
+import {
+    createRecentClickedEvent,
+    createRecentSelectedEvent,
+} from "../../analytics/AnalyticsEvents";
+import { sendAnalytics } from "../../analytics/functions";
+import { appNavigate } from "../../app/actions";
+import { IStore } from "../../app/types";
+import AbstractPage from "../../base/react/components/AbstractPage";
+import { Container, Text } from "../../base/react/components/index";
 
-import styles from './styles';
+import styles from "./styles";
+import { navigateRoot } from "../../mobile/navigation/rootNavigationContainerRef";
+import { screen } from "../../mobile/navigation/routes";
+import { setRoom } from "../../base/conference/actions";
 
 /**
  * The type of the React {@code Component} props of {@link AbstractRecentList}.
  */
 interface IProps {
-
     /**
      * The redux store's {@code dispatch} function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * The translate function.
@@ -29,7 +34,9 @@ interface IProps {
  * An abstract component for the recent list.
  *
  */
-export default class AbstractRecentList<P extends IProps> extends AbstractPage<P> {
+export default class AbstractRecentList<
+    P extends IProps
+> extends AbstractPage<P> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -61,20 +68,22 @@ export default class AbstractRecentList<P extends IProps> extends AbstractPage<P
      */
     _getRenderListEmptyComponent() {
         const { t } = this.props;
-        const descriptionId = 'meetings-list-empty-description';
+        const descriptionId = "meetings-list-empty-description";
 
         return (
             <Container
-                aria-describedby = { descriptionId }
-                aria-label = { t('welcomepage.recentList') }
-                className = 'meetings-list-empty'
-                role = 'region'
-                style = { styles.emptyListContainer as any }>
+                aria-describedby={descriptionId}
+                aria-label={t("welcomepage.recentList")}
+                className="meetings-list-empty"
+                role="region"
+                style={styles.emptyListContainer as any}
+            >
                 <Text // @ts-ignore
-                    className = 'description'
-                    id = { descriptionId }
-                    style = { styles.emptyListText as any }>
-                    { t('welcomepage.recentListEmpty') }
+                    className="description"
+                    id={descriptionId}
+                    style={styles.emptyListText as any}
+                >
+                    {t("welcomepage.recentListEmpty")}
                 </Text>
             </Container>
         );
@@ -87,11 +96,16 @@ export default class AbstractRecentList<P extends IProps> extends AbstractPage<P
      * @param {string} url - The url string to navigate to.
      * @returns {void}
      */
-    _onPress(url: string) {
+    _onPress(url: string, _isDirectJoin: boolean, _room: String) {
         const { dispatch } = this.props;
 
-        sendAnalytics(createRecentClickedEvent('meeting.tile'));
-
-        dispatch(appNavigate(url));
+        console.log("---url---", url,_isDirectJoin,_room)
+        sendAnalytics(createRecentClickedEvent("meeting.tile"));
+        if (_isDirectJoin) {
+            dispatch(setRoom(_room));
+            navigateRoot(screen.conference.root);
+        } else {
+            dispatch(appNavigate(url));
+        }
     }
 }

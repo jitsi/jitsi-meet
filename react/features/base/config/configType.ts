@@ -1,89 +1,93 @@
-import { ToolbarButton } from '../../toolbox/types';
+import { ToolbarButton } from "../../toolbox/types";
 
-type ButtonsWithNotifyClick = 'camera' |
-    'chat' |
-    'closedcaptions' |
-    'desktop' |
-    'download' |
-    'embedmeeting' |
-    'end-meeting' |
-    'etherpad' |
-    'feedback' |
-    'filmstrip' |
-    'fullscreen' |
-    'hangup' |
-    'hangup-menu' |
-    'help' |
-    'invite' |
-    'livestreaming' |
-    'microphone' |
-    'mute-everyone' |
-    'mute-video-everyone' |
-    'participants-pane' |
-    'profile' |
-    'raisehand' |
-    'recording' |
-    'security' |
-    'select-background' |
-    'settings' |
-    'shareaudio' |
-    'sharedvideo' |
-    'shortcuts' |
-    'stats' |
-    'tileview' |
-    'toggle-camera' |
-    'videoquality' |
-    'add-passcode' |
-    '__end';
+type ButtonsWithNotifyClick =
+    | "camera"
+    | "chat"
+    | "closedcaptions"
+    | "desktop"
+    | "download"
+    | "embedmeeting"
+    | "end-meeting"
+    | "etherpad"
+    | "feedback"
+    | "filmstrip"
+    | "fullscreen"
+    | "hangup"
+    | "hangup-menu"
+    | "help"
+    | "invite"
+    | "livestreaming"
+    | "microphone"
+    | "mute-everyone"
+    | "mute-video-everyone"
+    | "participants-pane"
+    | "profile"
+    | "raisehand"
+    | "recording"
+    | "security"
+    | "select-background"
+    | "settings"
+    | "shareaudio"
+    | "sharedvideo"
+    | "shortcuts"
+    | "stats"
+    | "tileview"
+    | "toggle-camera"
+    | "videoquality"
+    | "add-passcode"
+    | "__end";
 
-type ParticipantMenuButtonsWithNotifyClick = 'allow-video' |
-    'ask-unmute' |
-    'conn-status' |
-    'flip-local-video' |
-    'grant-moderator' |
-    'hide-self-view' |
-    'kick' |
-    'mute' |
-    'mute-others' |
-    'mute-others-video' |
-    'mute-video' |
-    'pinToStage' |
-    'privateMessage' |
-    'remote-control' |
-    'send-participant-to-room' |
-    'verify';
+type ParticipantMenuButtonsWithNotifyClick =
+    | "allow-video"
+    | "ask-unmute"
+    | "conn-status"
+    | "flip-local-video"
+    | "grant-moderator"
+    | "hide-self-view"
+    | "kick"
+    | "mute"
+    | "mute-others"
+    | "mute-others-video"
+    | "mute-video"
+    | "pinToStage"
+    | "privateMessage"
+    | "remote-control"
+    | "send-participant-to-room"
+    | "verify";
 
-type NotifyClickButtonKey = string |
-    ButtonsWithNotifyClick |
-    ParticipantMenuButtonsWithNotifyClick;
+type NotifyClickButtonKey =
+    | string
+    | ButtonsWithNotifyClick
+    | ParticipantMenuButtonsWithNotifyClick;
 
-export type NotifyClickButton = NotifyClickButtonKey |
-    {
-        key: NotifyClickButtonKey;
-        preventExecution: boolean;
-    };
+export type NotifyClickButton =
+    | NotifyClickButtonKey
+    | {
+          key: NotifyClickButtonKey;
+          preventExecution: boolean;
+      };
 
-export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
-    'E2EE_OFF_SOUND' |
-    'E2EE_ON_SOUND' |
-    'INCOMING_MSG_SOUND' |
-    'KNOCKING_PARTICIPANT_SOUND' |
-    'LIVE_STREAMING_OFF_SOUND' |
-    'LIVE_STREAMING_ON_SOUND' |
-    'NO_AUDIO_SIGNAL_SOUND' |
-    'NOISY_AUDIO_INPUT_SOUND' |
-    'OUTGOING_CALL_EXPIRED_SOUND' |
-    'OUTGOING_CALL_REJECTED_SOUND' |
-    'OUTGOING_CALL_RINGING_SOUND' |
-    'OUTGOING_CALL_START_SOUND' |
-    'PARTICIPANT_JOINED_SOUND' |
-    'PARTICIPANT_LEFT_SOUND' |
-    'RAISE_HAND_SOUND' |
-    'REACTION_SOUND' |
-    'RECORDING_OFF_SOUND' |
-    'RECORDING_ON_SOUND' |
-    'TALK_WHILE_MUTED_SOUND';
-
+export type Sounds =
+    | "ASKED_TO_UNMUTE_SOUND"
+    | "E2EE_OFF_SOUND"
+    | "E2EE_ON_SOUND"
+    | "INCOMING_MSG_SOUND"
+    | "KNOCKING_PARTICIPANT_SOUND"
+    | "LIVE_STREAMING_OFF_SOUND"
+    | "LIVE_STREAMING_ON_SOUND"
+    | "NO_AUDIO_SIGNAL_SOUND"
+    | "NOISY_AUDIO_INPUT_SOUND"
+    | "OUTGOING_CALL_EXPIRED_SOUND"
+    | "OUTGOING_CALL_REJECTED_SOUND"
+    | "OUTGOING_CALL_RINGING_SOUND"
+    | "OUTGOING_CALL_START_SOUND"
+    | "PARTICIPANT_JOINED_SOUND"
+    | "PARTICIPANT_LEFT_SOUND"
+    | "RAISE_HAND_SOUND"
+    | "REACTION_SOUND"
+    | "RECORDING_OFF_SOUND"
+    | "RECORDING_ON_SOUND"
+    | "TALK_WHILE_MUTED_SOUND";
 
 export interface IMobileDynamicLink {
     apn: string;
@@ -181,7 +185,7 @@ export interface IConfig {
         watchRTCEnabled?: boolean;
         whiteListedEvents?: string[];
     };
-    apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
+    apiLogLevels?: Array<"warn" | "log" | "error" | "info" | "debug">;
     appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
@@ -199,10 +203,13 @@ export interface IConfig {
         hideAutoAssignButton?: boolean;
         hideJoinRoomButton?: boolean;
     };
-    buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
-        key: ButtonsWithNotifyClick;
-        preventExecution: boolean;
-    }>;
+    buttonsWithNotifyClick?: Array<
+        | ButtonsWithNotifyClick
+        | {
+              key: ButtonsWithNotifyClick;
+              preventExecution: boolean;
+          }
+    >;
     callDisplayName?: string;
     callFlowsEnabled?: boolean;
     callHandle?: string;
@@ -210,7 +217,7 @@ export interface IConfig {
     cameraFacingMode?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
-        chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
+        chromeExtensionsInfo?: Array<{ id: string; path: string }>;
         edgeUrl?: string;
         url?: string;
     };
@@ -236,8 +243,17 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
-    customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
-    customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+    customParticipantMenuButtons?: Array<{
+        icon: string;
+        id: string;
+        text: string;
+    }>;
+    customToolbarButtons?: Array<{
+        backgroundColor?: string;
+        icon: string;
+        id: string;
+        text: string;
+    }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
@@ -345,6 +361,8 @@ export interface IConfig {
     enableTcc?: boolean;
     enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
+    enableWaitingText?: boolean;
+    enableMeetingText?: boolean;
     etherpad_base?: string;
     faceLandmarks?: {
         captureInterval?: number;
@@ -372,10 +390,10 @@ export interface IConfig {
     focusUserJid?: string;
     gatherStats?: boolean;
     giphy?: {
-        displayMode?: 'all' | 'tile' | 'chat';
+        displayMode?: "all" | "tile" | "chat";
         enabled?: boolean;
         proxyUrl?: string;
-        rating?: 'g' | 'pg' | 'pg-13' | 'r';
+        rating?: "g" | "pg" | "pg-13" | "r";
         sdkKey?: string;
         tileTime?: number;
     };
@@ -388,7 +406,9 @@ export interface IConfig {
     guestDialOutStatusUrl?: string;
     guestDialOutUrl?: string;
     helpCentreURL?: string;
-    hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
+    hiddenPremeetingButtons?: Array<
+        "microphone" | "camera" | "select-background" | "invite" | "settings"
+    >;
     hideAddRoomButton?: boolean;
     hideConferenceSubject?: boolean;
     hideConferenceTimer?: boolean;
@@ -460,12 +480,16 @@ export interface IConfig {
         enabled?: boolean;
         iceTransportPolicy?: string;
         mobileCodecPreferenceOrder?: Array<string>;
-        stunServers?: Array<{ urls: string; }>;
+        stunServers?: Array<{ urls: string }>;
     };
-    participantMenuButtonsWithNotifyClick?: Array<string | ParticipantMenuButtonsWithNotifyClick | {
-        key: string | ParticipantMenuButtonsWithNotifyClick;
-        preventExecution: boolean;
-    }>;
+    participantMenuButtonsWithNotifyClick?: Array<
+        | string
+        | ParticipantMenuButtonsWithNotifyClick
+        | {
+              key: string | ParticipantMenuButtonsWithNotifyClick;
+              preventExecution: boolean;
+          }
+    >;
     participantsPane?: {
         enabled?: boolean;
         hideModeratorSettingsTab?: boolean;
@@ -514,7 +538,7 @@ export interface IConfig {
     salesforceUrl?: string;
     screenshotCapture?: {
         enabled?: boolean;
-        mode?: 'always' | 'recording';
+        mode?: "always" | "recording";
     };
     securityUi?: {
         disableLobbyPassword?: boolean;
@@ -525,9 +549,9 @@ export interface IConfig {
     speakerStats?: {
         disableSearch?: boolean;
         disabled?: boolean;
-        order?: Array<'role' | 'name' | 'hasLeft'>;
+        order?: Array<"role" | "name" | "hasLeft">;
     };
-    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
+    speakerStatsOrder?: Array<"role" | "name" | "hasLeft">;
     startAudioMuted?: number;
     startAudioOnly?: boolean;
     startLastN?: number;
@@ -597,6 +621,22 @@ export interface IConfig {
     websocketKeepAliveUrl?: string;
     welcomePage?: {
         customUrl?: string;
+        disabled?: boolean;
+    };
+    directJoinMeeting?: {
+        directJoin?: string;
+        disabled?: boolean;
+    };
+    backButtonHandler?: {
+        backButton?: string;
+        disabled?: boolean;
+    };
+    TextForWaitingArea?: {
+        waitingAreaText?: string;
+        disabled?: boolean;
+    };
+    TextForMeetingTitle?: {
+        meetingTitle?: string;
         disabled?: boolean;
     };
     whiteboard?: IWhiteboardConfig;

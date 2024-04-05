@@ -1,30 +1,40 @@
-import { IReduxState } from '../app/types';
+import { IReduxState } from "../app/types";
 import {
     CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE,
-    SET_ROOM
-} from '../base/conference/actionTypes';
-import { SET_CONFIG } from '../base/config/actionTypes';
-import { SET_NETWORK_INFO } from '../base/net-info/actionTypes';
-import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+    SET_WAITING_TEXT,
+    SET_MEETING_TITLE,
+    SET_ROOM,
+} from "../base/conference/actionTypes";
+import { SET_CONFIG } from "../base/config/actionTypes";
+import { SET_NETWORK_INFO } from "../base/net-info/actionTypes";
+import MiddlewareRegistry from "../base/redux/MiddlewareRegistry";
 import {
     TRACK_ADDED,
     TRACK_REMOVED,
-    TRACK_UPDATED
-} from '../base/tracks/actionTypes';
+    TRACK_UPDATED,
+} from "../base/tracks/actionTypes";
 import {
     getLocalAudioTrack,
-    getLocalVideoTrack
-} from '../base/tracks/functions';
-import { SET_LOBBY_VISIBILITY } from '../lobby/actionTypes';
-import { getIsLobbyVisible } from '../lobby/functions';
-import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
-import { iAmVisitor } from '../visitors/functions';
+    getLocalVideoTrack,
+} from "../base/tracks/functions";
+import { SET_LOBBY_VISIBILITY } from "../lobby/actionTypes";
+import { getIsLobbyVisible } from "../lobby/functions";
+import { I_AM_VISITOR_MODE } from "../visitors/actionTypes";
+import { iAmVisitor } from "../visitors/functions";
 
-import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
-import { SET_INITIALIZED, UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
-import { setPermanentProperty } from './actions';
-import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
+import {
+    createLocalTracksDurationEvent,
+    createNetworkInfoEvent,
+} from "./AnalyticsEvents";
+import { SET_INITIALIZED, UPDATE_LOCAL_TRACKS_DURATION } from "./actionTypes";
+import { setPermanentProperty } from "./actions";
+import {
+    createHandlers,
+    initAnalytics,
+    resetAnalytics,
+    sendAnalytics,
+} from "./functions";
 
 /**
  * Calculates the duration of the local tracks.
@@ -34,11 +44,11 @@ import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './
  */
 function calculateLocalTrackDuration(state: IReduxState) {
     const now = Date.now();
-    const { localTracksDuration } = state['features/analytics'];
-    const { conference } = state['features/base/conference'];
+    const { localTracksDuration } = state["features/analytics"];
+    const { conference } = state["features/base/conference"];
     const { audio, video } = localTracksDuration;
     const { camera, desktop } = video;
-    const tracks = state['features/base/tracks'];
+    const tracks = state["features/base/tracks"];
     const audioTrack = getLocalAudioTrack(tracks);
     const videoTrack = getLocalVideoTrack(tracks);
     const newDuration = { ...localTracksDuration };
@@ -46,7 +56,9 @@ function calculateLocalTrackDuration(state: IReduxState) {
     if (!audioTrack || audioTrack.muted || !conference) {
         newDuration.audio = {
             startedTime: -1,
-            value: audio.value + (audio.startedTime === -1 ? 0 : now - audio.startedTime)
+            value:
+                audio.value +
+                (audio.startedTime === -1 ? 0 : now - audio.startedTime),
         };
     } else if (audio.startedTime === -1) {
         newDuration.audio.startedTime = now;
@@ -56,24 +68,31 @@ function calculateLocalTrackDuration(state: IReduxState) {
         newDuration.video = {
             camera: {
                 startedTime: -1,
-                value: camera.value + (camera.startedTime === -1 ? 0 : now - camera.startedTime)
+                value:
+                    camera.value +
+                    (camera.startedTime === -1 ? 0 : now - camera.startedTime),
             },
             desktop: {
                 startedTime: -1,
-                value: desktop.value + (desktop.startedTime === -1 ? 0 : now - desktop.startedTime)
-            }
+                value:
+                    desktop.value +
+                    (desktop.startedTime === -1
+                        ? 0
+                        : now - desktop.startedTime),
+            },
         };
     } else {
         const { videoType } = videoTrack;
 
         if (video[videoType as keyof typeof video].startedTime === -1) {
-            newDuration.video[videoType as keyof typeof video].startedTime = now;
+            newDuration.video[videoType as keyof typeof video].startedTime =
+                now;
         }
     }
 
     return {
         ...localTracksDuration,
-        ...newDuration
+        ...newDuration,
     };
 }
 
@@ -84,132 +103,149 @@ function calculateLocalTrackDuration(state: IReduxState) {
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store) => (next) => (action) => {
     switch (action.type) {
-    case I_AM_VISITOR_MODE: {
-        const oldIAmVisitor = iAmVisitor(store.getState());
-        const result = next(action);
-        const newIAmVisitor = iAmVisitor(store.getState());
+        case I_AM_VISITOR_MODE: {
+            const oldIAmVisitor = iAmVisitor(store.getState());
+            const result = next(action);
+            const newIAmVisitor = iAmVisitor(store.getState());
 
-        store.dispatch(setPermanentProperty({
-            isVisitor: newIAmVisitor,
-            isPromotedFromVisitor: oldIAmVisitor && !newIAmVisitor
-        }));
+            store.dispatch(
+                setPermanentProperty({
+                    isVisitor: newIAmVisitor,
+                    isPromotedFromVisitor: oldIAmVisitor && !newIAmVisitor,
+                })
+            );
 
-        return result;
-    }
-    case SET_CONFIG:
-        if (navigator.product === 'ReactNative') {
-            // Resetting the analytics is currently not needed for web because
-            // the user will be redirected to another page and new instance of
-            // Analytics will be created and initialized.
-            resetAnalytics();
-
-            const { dispatch } = store;
-
-            dispatch({
-                type: SET_INITIALIZED,
-                value: false
-            });
+            return result;
         }
-        break;
-    case SET_ROOM: {
-        // createHandlers is called before the SET_ROOM action is executed in order for Amplitude to initialize before
-        // the deeplinking logic is executed (after the SET_ROOM action) so that the Amplitude device id is available
-        // if needed.
-        const createHandlersPromise = createHandlers(store);
-        const result = next(action);
+        case SET_CONFIG:
+            if (navigator.product === "ReactNative") {
+                // Resetting the analytics is currently not needed for web because
+                // the user will be redirected to another page and new instance of
+                // Analytics will be created and initialized.
+                resetAnalytics();
 
-        createHandlersPromise.then(handlers => {
-            if (initAnalytics(store, handlers)) {
-                store.dispatch({
+                const { dispatch } = store;
+
+                dispatch({
                     type: SET_INITIALIZED,
-                    value: true
+                    value: false,
                 });
             }
-        });
+            break;
 
-        return result;
-    }
+        // case SET_WAITING_TEXT:
+        //         // Update state with waitingAreaText
+        //         store.dispatch({
+        //           type: SET_WAITING_TEXT,
+        //           payload: action.payload,
+        //         });
+        //         break;
+
+        case SET_ROOM: {
+            // createHandlers is called before the SET_ROOM action is executed in order for Amplitude to initialize before
+            // the deeplinking logic is executed (after the SET_ROOM action) so that the Amplitude device id is available
+            // if needed.
+            const createHandlersPromise = createHandlers(store);
+            const result = next(action);
+
+            createHandlersPromise.then((handlers) => {
+                if (initAnalytics(store, handlers)) {
+                    store.dispatch({
+                        type: SET_INITIALIZED,
+                        value: true,
+                    });
+                }
+            });
+
+            return result;
+        }
     }
 
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_JOINED: {
-        const { dispatch, getState } = store;
-        const state = getState();
+        case CONFERENCE_JOINED: {
+            const { dispatch, getState } = store;
+            const state = getState();
 
-        dispatch({
-            type: UPDATE_LOCAL_TRACKS_DURATION,
-            localTracksDuration: {
-                ...calculateLocalTrackDuration(state),
-                conference: {
-                    startedTime: Date.now(),
-                    value: 0
-                }
-            }
-        });
-        break;
-    }
-
-    case CONFERENCE_WILL_LEAVE: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const { localTracksDuration } = state['features/analytics'];
-        const newLocalTracksDuration = {
-            ...calculateLocalTrackDuration(state),
-            conference: {
-                startedTime: -1,
-                value: Date.now() - localTracksDuration.conference.startedTime
-            }
-        };
-
-        sendAnalytics(createLocalTracksDurationEvent(newLocalTracksDuration));
-
-        dispatch({
-            type: UPDATE_LOCAL_TRACKS_DURATION,
-            localTracksDuration: newLocalTracksDuration
-        });
-        break;
-    }
-    case SET_LOBBY_VISIBILITY:
-        if (getIsLobbyVisible(store.getState())) {
-            store.dispatch(setPermanentProperty({
-                wasLobbyVisible: true
-            }));
-        }
-
-        break;
-    case SET_NETWORK_INFO:
-        sendAnalytics(
-            createNetworkInfoEvent({
-                isOnline: action.isOnline,
-                details: action.details,
-                networkType: action.networkType
-            }));
-        break;
-    case TRACK_ADDED:
-    case TRACK_REMOVED:
-    case TRACK_UPDATED: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const { localTracksDuration } = state['features/analytics'];
-
-        if (localTracksDuration.conference.startedTime === -1) {
-            // We don't want to track the media duration if the conference is not joined yet because otherwise we won't
-            // be able to compare them with the conference duration (from conference join to conference will leave).
+            dispatch({
+                type: UPDATE_LOCAL_TRACKS_DURATION,
+                localTracksDuration: {
+                    ...calculateLocalTrackDuration(state),
+                    conference: {
+                        startedTime: Date.now(),
+                        value: 0,
+                    },
+                },
+            });
             break;
         }
-        dispatch({
-            type: UPDATE_LOCAL_TRACKS_DURATION,
-            localTracksDuration: {
-                ...localTracksDuration,
-                ...calculateLocalTrackDuration(state)
+
+        case CONFERENCE_WILL_LEAVE: {
+            const { dispatch, getState } = store;
+            const state = getState();
+            const { localTracksDuration } = state["features/analytics"];
+            const newLocalTracksDuration = {
+                ...calculateLocalTrackDuration(state),
+                conference: {
+                    startedTime: -1,
+                    value:
+                        Date.now() - localTracksDuration.conference.startedTime,
+                },
+            };
+
+            sendAnalytics(
+                createLocalTracksDurationEvent(newLocalTracksDuration)
+            );
+
+            dispatch({
+                type: UPDATE_LOCAL_TRACKS_DURATION,
+                localTracksDuration: newLocalTracksDuration,
+            });
+            break;
+        }
+        case SET_LOBBY_VISIBILITY:
+            if (getIsLobbyVisible(store.getState())) {
+                store.dispatch(
+                    setPermanentProperty({
+                        wasLobbyVisible: true,
+                    })
+                );
             }
-        });
-        break;
-    }
+
+            break;
+        case SET_NETWORK_INFO:
+            sendAnalytics(
+                createNetworkInfoEvent({
+                    isOnline: action.isOnline,
+                    details: action.details,
+                    networkType: action.networkType,
+                })
+            );
+            break;
+        case TRACK_ADDED:
+        case TRACK_REMOVED:
+        case TRACK_UPDATED: {
+            const { dispatch, getState } = store;
+            const state = getState();
+            const { localTracksDuration } = state["features/analytics"];
+
+            if (localTracksDuration.conference.startedTime === -1) {
+                // We don't want to track the media duration if the conference is not joined yet because otherwise we won't
+                // be able to compare them with the conference duration (from conference join to conference will leave).
+                break;
+            }
+            dispatch({
+                type: UPDATE_LOCAL_TRACKS_DURATION,
+                localTracksDuration: {
+                    ...localTracksDuration,
+                    ...calculateLocalTrackDuration(state),
+                },
+            });
+            break;
+        }
     }
 
     return result;

@@ -218,6 +218,8 @@ export default [
     'startWithVideoMuted',
     'stereo',
     'subject',
+    'WaitingText',
+    'meetingTitle',
     'testing',
     'toolbarButtons',
     'toolbarConfig',

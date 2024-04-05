@@ -18,10 +18,12 @@ import {
     endConference,
     sendTones,
     setAssumedBandwidthBps,
+    setWaitingText,
     setFollowMe,
     setLocalSubject,
     setPassword,
-    setSubject
+    setSubject,
+    setMeetingTitle
 } from '../../react/features/base/conference/actions';
 import { getCurrentConference, isP2pActive } from '../../react/features/base/conference/functions';
 import { overwriteConfig } from '../../react/features/base/config/actions';
@@ -361,6 +363,14 @@ function initCommands() {
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
             APP.store.dispatch(setSubject(subject));
+        },
+        'waitingText': waitingText => {
+            sendAnalytics(createApiEvent('waitingText.changed'));
+            APP.store.dispatch(setWaitingText(waitingText));
+        },
+        'meetingTitle': meetingTitle => {
+            sendAnalytics(createApiEvent('meetingTitle.changed'));
+            APP.store.dispatch(setMeetingTitle(meetingTitle));
         },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));

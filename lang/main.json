@@ -144,7 +144,7 @@
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
     },
     "connectingOverlay": {
-        "joiningRoom": "Connecting you to your meeting..."
+        "joiningRoom": "Joining"
     },
     "connection": {
         "ATTACHED": "Attached",
@@ -1133,6 +1133,7 @@
         "profileSection": "Profile",
         "sdkVersion": "SDK version",
         "serverURL": "Server URL",
+        "waitingAreaText": "Waiting title", 
         "showAdvanced": "Show advanced settings",
         "startCarModeInLowBandwidthMode": "Start car mode in low bandwidth mode",
         "startWithAudioMuted": "Start with audio muted",

@@ -184,6 +184,7 @@ export function forEachConference(
  */
 export function getConferenceName(stateful: IStateful): string {
     const state = toState(stateful);
+    
     const { callee } = state['features/base/jwt'];
     const {
         callDisplayName,
@@ -380,7 +381,7 @@ export function getConferenceTimestamp(stateful: IStateful) {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: IStateful): IJitsiConference | undefined {
-    const { conference, joining, leaving, membersOnly, passwordRequired }
+    const { conference, joining, leaving, membersOnly, passwordRequired}
         = getConferenceState(toState(stateful));
 
     // There is a precedence

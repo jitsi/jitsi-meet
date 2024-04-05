@@ -26,9 +26,12 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
+    SET_WAITING_TEXT,
+    SET_MEETING_TITLE,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED,
     UPDATE_CONFERENCE_METADATA
+    
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -42,7 +45,9 @@ const DEFAULT_STATE = {
     membersOnly: undefined,
     metadata: undefined,
     password: undefined,
-    passwordRequired: undefined
+    passwordRequired: undefined,
+    waitingText: undefined,
+    meetingTitle: undefined
 };
 
 export interface IConferenceMetadata {
@@ -125,6 +130,8 @@ export interface IJitsiConference {
     sendTones: Function;
     sessionId: string;
     setAssumedBandwidthBps: (value: number) => void;
+    setWaitingText: Function;
+    setMeetingTitle: Function;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setLocalParticipantProperty: Function;
@@ -146,6 +153,8 @@ export interface IConferenceState {
     authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
+    waitingText?: string;
+    meetingTitle?: string;
     e2eeSupported?: boolean;
     error?: Error;
     followMeEnabled?: boolean;
@@ -252,6 +261,12 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
         case SET_PENDING_SUBJECT_CHANGE:
             return set(state, 'pendingSubjectChange', action.subject);
+        
+        case SET_WAITING_TEXT:
+        return set(state, 'waitingText', action.waitingText);
+
+        case SET_MEETING_TITLE:
+        return set(state, 'meetingTitle', action.meetingTitle);
 
         case SET_ROOM:
             return _setRoom(state, action);

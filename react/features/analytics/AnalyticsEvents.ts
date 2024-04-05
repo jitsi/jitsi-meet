@@ -908,7 +908,17 @@ export function createWelcomePageEvent(action: string, actionSubject?: string, a
         action,
         actionSubject,
         attributes,
-        source: 'welcomePage'
+        source: 'welcomePage',
+
+    };
+}
+
+export function createDirectJoinMeetingEvent(action: string, actionSubject?: string, attributes = {}) {
+    return {
+        action: 'directJoin',
+        actionSubject,
+        attributes,
+        source: 'directJoinMeeting',
     };
 }
 
@@ -972,5 +982,21 @@ export function createOpenWhiteboardEvent() {
 export function createRestrictWhiteboardEvent() {
     return {
         action: 'whiteboard.restrict'
+    };
+}
+
+//Set waiting Text
+
+export function createWaitingTextAreaEvent() {
+    return {
+        action: 'waitingText'
+    };
+}
+
+//Set meeting title
+
+export function createMeetingTitleEvent() {
+    return {
+        action: 'meetingTitle'
     };
 }
