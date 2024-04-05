@@ -416,7 +416,7 @@
         "searchResultsError": "Something went wrong while retrieving data.",
         "searchResultsNotFound": "No search results found.",
         "searchResultsTryAgain": "Try using alternative keywords.",
-        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
+        "sendPrivateMessage": "You recently received a private message. Do you intend to reply to that privately, or you want to send your message to the group?",
         "sendPrivateMessageCancel": "Send to the group",
         "sendPrivateMessageOk": "Send privately",
         "sendPrivateMessageTitle": "Send privately?",
