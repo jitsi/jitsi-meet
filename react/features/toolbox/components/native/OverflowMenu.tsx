@@ -11,6 +11,7 @@ import SettingsButton from '../../../base/settings/components/native/SettingsBut
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
+import { customOverflowMenuButtonPressed } from '../../../mobile/external-api/actions';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
@@ -25,7 +26,6 @@ import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { getMovableButtons } from '../../functions.native';
-import { NOTIFY_CLICK_MODE } from '../../types';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import CustomOptionButton from './CustomOptionButton';
@@ -39,11 +39,6 @@ import ScreenSharingButton from './ScreenSharingButton';
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 interface IProps {
-
-    /**
-     * Toolbar buttons which have their click exposed through the API.
-     */
-    _buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
 
     /**
      * Custom Toolbar buttons.
@@ -124,8 +119,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      */
     render() {
         const {
-            _buttonsWithNotifyClick,
-            _customToolbarButtons,
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
             _shouldDisplayReactionsButtons,
@@ -159,15 +152,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
-                {
-                    _customToolbarButtons?.map(({ id, ...rest }) => (
-                        <CustomOptionButton
-                            { ...rest }
-                            { ...buttonProps }
-                            key = { id }
-                            notifyMode = { _buttonsWithNotifyClick?.get(id) } />
-                    ))
-                }
+                { this._renderCustomOverflowMenuButtons(topButtonProps) }
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {
@@ -193,7 +178,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <ClosedCaptionButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
                 <SettingsButton { ...buttonProps } />
-                <Divider style = { styles.divider as ViewStyle } />
             </BottomSheet>
         );
     }
@@ -211,13 +195,47 @@ class OverflowMenu extends PureComponent<IProps, IState> {
     /**
      * Function to render the reaction menu as the footer of the bottom sheet.
      *
-     * @returns {React$Element}
+     * @returns {React.ReactElement}
      */
     _renderReactionMenu() {
         return (
             <ReactionMenu
                 onCancel = { this._onCancel }
                 overflowMenu = { true } />
+        );
+    }
+
+    /**
+     * Function to render the custom buttons for the overflow menu.
+     *
+     * @param {Object} topButtonProps - Button properties.
+     * @returns {React.ReactElement}
+     */
+    _renderCustomOverflowMenuButtons( topButtonProps: Object ) {
+        const { _customToolbarButtons, dispatch } = this.props;
+
+        if (!_customToolbarButtons || !_customToolbarButtons.length) {
+            return;
+        }
+
+        return (
+            <>
+                {
+                    _customToolbarButtons.map(({ id, text, ...rest }) => (
+                        <CustomOptionButton
+                            { ...rest }
+                            { ...topButtonProps }
+
+                            /* eslint-disable react/jsx-no-bind */
+                            handleClick = { () =>
+                                dispatch(customOverflowMenuButtonPressed(id, text))
+                            }
+                            key = { id }
+                            text = { text } />
+                    ))
+                }
+                <Divider style = { styles.divider as ViewStyle } />
+            </>
         );
     }
 }
@@ -234,7 +252,6 @@ function _mapStateToProps(state: IReduxState) {
     const { customToolbarButtons } = state['features/base/config'];
 
     return {
-        _buttonsWithNotifyClick: state['features/toolbox'].buttonsWithNotifyClick,
         _customToolbarButtons: customToolbarButtons,
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
