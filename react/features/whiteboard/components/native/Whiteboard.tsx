@@ -21,18 +21,13 @@ import {
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setupWhiteboard } from '../../actions.native';
 import { WHITEBOARD_ID } from '../../constants';
-import { getCollabServerUrl, getWhiteboardInfoForURIString } from '../../functions';
+import { getWhiteboardInfoForURIString } from '../../functions';
+import logger from '../../logger';
 
 import WhiteboardErrorDialog from './WhiteboardErrorDialog';
 import styles, { INDICATOR_COLOR } from './styles';
 
-
 interface IProps extends WithTranslation {
-
-    /**
-     * The whiteboard collab server url.
-     */
-    collabServerUrl?: string;
 
     /**
      * The current Jitsi conference.
@@ -188,11 +183,22 @@ class Whiteboard extends PureComponent<IProps> {
      * @returns {void}
      */
     _onMessage(event: any) {
-        const { collabServerUrl, conference } = this.props;
-        const collabDetails = JSON.parse(event.nativeEvent.data);
+        const { conference, dispatch } = this.props;
+        const collabData = JSON.parse(event.nativeEvent.data);
 
-        if (collabDetails?.roomId && collabDetails?.roomKey) {
-            this.props.dispatch(setupWhiteboard({ collabDetails }));
+        if (!collabData) {
+            logger.error('Message payload is missing whiteboard collaboration data');
+
+            return;
+        }
+
+        const { collabDetails, collabServerUrl } = collabData;
+
+        if (collabDetails?.roomId && collabDetails?.roomKey && collabServerUrl) {
+            dispatch(setupWhiteboard({
+                collabDetails,
+                collabServerUrl
+            }));
 
             // Broadcast the collab details.
             conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
@@ -232,7 +238,6 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         conference: getCurrentConference(state),
-        collabServerUrl: getCollabServerUrl(state),
         locationHref: href
     };
 }

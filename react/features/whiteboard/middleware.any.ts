@@ -16,6 +16,7 @@ import {
 } from './actions';
 import { WHITEBOARD_ID } from './constants';
 import {
+    generateCollabServerUrl,
     isWhiteboardOpen,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
@@ -43,7 +44,8 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
 
         if (metadata?.[WHITEBOARD_ID]) {
             store.dispatch(setupWhiteboard({
-                collabDetails: metadata[WHITEBOARD_ID].collabDetails
+                collabDetails: metadata[WHITEBOARD_ID].collabDetails,
+                collabServerUrl: generateCollabServerUrl(store.getState())
             }));
             store.dispatch(setWhiteboardOpen(true));
         }
