@@ -123,4 +123,11 @@
  */
 - (void)transcriptionChunkReceived:(NSDictionary *)data;
 
+/**
+ * Called when the custom overflow menu button is pressed.
+ *
+ * The `data` dictionary contains a `id`, `text` key.
+ */
+- (void)customOverflowMenuButtonPressed:(NSDictionary *)data;
+
 @end
