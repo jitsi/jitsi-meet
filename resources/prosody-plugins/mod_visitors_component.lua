@@ -14,7 +14,7 @@ local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
@@ -127,7 +127,13 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
                 body_json.on = false;
             end
 
-            local msg_to_send = json.encode(body_json);
+            local msg_to_send, error = json.encode(body_json);
+
+            if not msg_to_send then
+                module:log('error', 'Error encoding msg room:%s error:%s', room.jid, error)
+                return true;
+            end
+
             if visitors_promotion_requests[room.jid] then
                 visitors_promotion_requests[room.jid][from_jid] = {
                     msg = msg_to_send;
@@ -386,9 +392,12 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         if json_data == nil then
             return;
         end
-        local data = json.decode(json_data);
+        local data, error = json.decode(json_data);
         if not data or data.type ~= 'visitors'
             or (data.action ~= "promotion-response" and data.action ~= "demote-request") then
+            if error then
+                module:log('error', 'Error decoding error:%s', error);
+            end
             return;
         end
 

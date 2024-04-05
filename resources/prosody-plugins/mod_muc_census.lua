@@ -19,7 +19,7 @@
 -- network filters
 
 local jid = require "util.jid";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local iterators = require "util.iterators";
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;

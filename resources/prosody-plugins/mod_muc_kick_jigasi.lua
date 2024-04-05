@@ -8,7 +8,7 @@ local starts_with = util.starts_with;
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
-local json = require "util.json";
+local json = require 'cjson.safe';
 
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -107,9 +107,9 @@ function handle_kick_participant (event)
         return { status_code = 400; }
     end
 
-    local params = json.decode(request.body);
+    local params, error = json.decode(request.body);
     if not params then
-        module:log("warn", "Missing params");
+        module:log("warn", "Missing params error:%s", error);
         return { status_code = 400; }
     end
 
