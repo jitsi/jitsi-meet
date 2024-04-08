@@ -128,6 +128,7 @@
         "privateNotice": "Private message to {{recipient}}",
         "sendButton": "Send",
         "smileysPanel": "Emoji panel",
+        "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
             "polls": "Polls"
