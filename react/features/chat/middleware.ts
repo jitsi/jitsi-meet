@@ -45,7 +45,7 @@ import {
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE,
-    SYSTEM_CHAT_MESSAGE
+    MESSAGE_TYPE_SYSTEM
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
@@ -139,7 +139,7 @@ MiddlewareRegistry.register(store => next => action => {
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
         const { id, json: data } = action;
 
-        if (data?.type === SYSTEM_CHAT_MESSAGE && data.message) {
+        if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
             _handleReceivedMessage(store, {
                 displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
                 id,

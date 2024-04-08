@@ -45,6 +45,6 @@ export const CHAT_TABS = {
 export const TIMESTAMP_FORMAT = 'H:mm';
 
 /**
- * The namespace system messages.
+ * The namespace for system messages.
  */
-export const SYSTEM_CHAT_MESSAGE = 'system_chat_message';
+export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';

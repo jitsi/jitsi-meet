@@ -53,8 +53,12 @@ function handle_send_system_message (event)
 
     local payload = json.decode(request.body);
 
-    module:log('info', 'Received payload %s', inspect(payload))
+    if not payload then
+        module:log("error", "Request body is missing");
+        return { status_code = 400; }
+    end
 
+    local displayName = payload["displayName"];
     local message = payload["message"];
     local to = payload["to"];
     local payload_room = payload["room"];
@@ -90,6 +94,7 @@ function handle_send_system_message (event)
     end
 
     local data = {
+        displayName = displayName,
         type = "system_chat_message",
         message = message,
     };
