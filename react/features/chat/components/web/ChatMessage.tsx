@@ -7,8 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
+import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
 import PrivateMessageButton from './PrivateMessageButton';
@@ -117,6 +116,7 @@ const useStyles = makeStyles()((theme: Theme) => {
  * @returns {JSX}
  */
 const ChatMessage = ({
+    canReply,
     knocking,
     message,
     showDisplayName,
@@ -191,8 +191,7 @@ const ChatMessage = ({
                         {(message.privateMessage || (message.lobbyChat && !knocking))
                             && _renderPrivateNotice()}
                     </div>
-                    {(message.privateMessage || (message.lobbyChat && !knocking))
-                        && message.messageType !== MESSAGE_TYPE_LOCAL
+                    {canReply
                         && (
                             <div
                                 className = { classes.replyButtonContainer }>
@@ -214,10 +213,11 @@ const ChatMessage = ({
  * @param {Object} state - The Redux state.
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState) {
+function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
 
     return {
+        canReply: getCanReplyToMessage(state, message),
         knocking
     };
 }

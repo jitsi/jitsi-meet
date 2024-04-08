@@ -40,9 +40,14 @@ export interface IChatProps extends WithTranslation {
 export interface IChatMessageProps extends WithTranslation {
 
     /**
+     * Whether the message can be replied to.
+     */
+    canReply?: boolean;
+
+    /**
      * Whether current participant is currently knocking in the lobby room.
      */
-    knocking: boolean;
+    knocking?: boolean;
 
     /**
      * The representation of a chat message.
