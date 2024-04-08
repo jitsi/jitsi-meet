@@ -4,9 +4,8 @@
 
 -- curl https://{host}/send-system-message  -d '{"message": "testmessage", "to": "{connection_jid}", "room": "{room_jid}"}' -H "content-type: application/json" -H "authorization: Bearer {token}"
 
-module:set_global();
-
 local util = module:require "util";
+local token_util = module:require "token/util".new(module);
 
 local async_handler_wrapper = util.async_handler_wrapper;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -14,14 +13,15 @@ local starts_with = util.starts_with;
 local get_room_from_jid = util.get_room_from_jid;
 
 local st = require "util.stanza";
-local json = require "util.json";
-local inspect = require 'inspect';
-
--- will be initialized once the main virtual host module is initialized
-local token_util;
+local json = require "cjson.safe";
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
+
+if asapKeyServer then
+    -- init token util with our asap keyserver
+    token_util:set_asap_key_server(asapKeyServer)
+end
 
 function verify_token(token)
     if token == nil then
@@ -42,7 +42,7 @@ end
 function handle_send_system_message (event)
     local request = event.request;
 
-    module:log("info", "Request for sending a system message received: reqid %s", request.headers["request_id"])
+    module:log("debug", "Request for sending a system message received: reqid %s", request.headers["request_id"])
 
     -- verify payload
     if request.headers.content_type ~= "application/json"
@@ -112,29 +112,13 @@ function handle_send_system_message (event)
     return { status_code = 200 };
 end
 
-
--- module API called on virtual host added, passing the host module
-function module.add_host(host_module)
-    if host_module.host == muc_domain_base then
-        -- the main virtual host
-        module:log("info", "Initialize token_util using %s", host_module.host)
-
-        token_util = module:require "token/util".new(host_module);
-
-        if asapKeyServer then
-            -- init token util with our asap keyserver
-            token_util:set_asap_key_server(asapKeyServer)
-        end
-
-        module:log("info", "Adding http handler for /send-system-chat-message on %s", host_module.host);
-        host_module:depends("http");
-        host_module:provides("http", {
-            default_path = "/";
-            route = {
-                ["POST send-system-chat-message"] = function(event)
-                    return async_handler_wrapper(event, handle_send_system_message)
-                end;
-            };
-        });
-    end
-end
+module:log("info", "Adding http handler for /send-system-chat-message on %s", module.host);
+module:depends("http");
+module:provides("http", {
+    default_path = "/";
+    route = {
+        ["POST send-system-chat-message"] = function(event)
+            return async_handler_wrapper(event, handle_send_system_message)
+        end;
+    };
+});
