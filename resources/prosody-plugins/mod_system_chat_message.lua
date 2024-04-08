@@ -1,5 +1,5 @@
--- A global module which can be used as http endpoint to send system chat messages to meeting participants. The provided token
---- in the request is verified whether it has the right to do so.
+-- Module which can be used as an http endpoint to send system chat messages to meeting participants. The provided token
+--- in the request is verified whether it has the right to do so. This module should be loaded under the virtual host.
 -- Copyright (C) 2024-present 8x8, Inc.
 
 -- curl https://{host}/send-system-message  -d '{"message": "testmessage", "to": "{connection_jid}", "room": "{room_jid}"}' -H "content-type: application/json" -H "authorization: Bearer {token}"
