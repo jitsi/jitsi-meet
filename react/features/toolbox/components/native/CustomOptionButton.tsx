@@ -1,8 +1,8 @@
 import React from 'react';
+import { Image } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import Icon from '../../../base/icons/components/Icon';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 
@@ -25,15 +25,15 @@ class CustomOptionButton extends AbstractButton<IProps> {
     /**
      * Custom icon component.
      *
-     * @param {any} props - Icon's props.
-     * @returns {img}
+     * @returns {React.Component}
      */
-    icon = (props: any) => (
-        <Icon
-            { ...props }
-            size = { 24 }
-            src = { this.iconSrc } />
-    );
+    icon = () =>
+        <Image
+            source = {{ uri: this.iconSrc }}
+            style = {{
+                height: 24,
+                width: 24
+            }} />
 
     label = this.text;
 }
