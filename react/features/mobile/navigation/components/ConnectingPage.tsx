@@ -20,15 +20,21 @@ const ConnectingPage = (props: IProps) => {
             <View style={navigationStyles.connectingScreenContent as ViewStyle}>
                 <SafeAreaView>
                     <LoadingIndicator color={TEXT_COLOR} size="large" />
-                    <Text style={navigationStyles.connectingScreenText}>
+                    {/* <Text style={navigationStyles.connectingScreenText}>
                         {`${t("connectingOverlay.joiningRoom")} ${
                             props._waitingText
                         }`}
-                    </Text>
-
-                    {/* <Text style = { navigationStyles.connectingScreenText }>
-                        { t('connectingOverlay.joiningRoom') }
                     </Text> */}
+                    {props._waitingText!='' && props._waitingText!=undefined && props._waitingText!=null ? 
+                    
+                     <Text style = { navigationStyles.connectingScreenText }>
+                        { props._waitingText }
+                    </Text> 
+                    :
+                    <Text style={navigationStyles.connectingScreenText}>
+                    {t("connectingOverlay.joiningRoom")}
+                </Text>
+                    }
                 </SafeAreaView>
             </View>
         </JitsiScreen>

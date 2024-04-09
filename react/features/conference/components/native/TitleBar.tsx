@@ -81,7 +81,7 @@ const TitleBar = (props: IProps) => {
     if (!_visible) {
         return null;
     }
-
+console.log(props._meetingName,'props._meetingName',props._isMeetingTitleEnabled,props._roomNameEnabled,'props._meetingTitle',props._meetingTitle)
     return (
         <View style={styles.titleBarWrapper as ViewStyle}>
             <View style={styles.pipButtonContainer as ViewStyle}>
@@ -96,13 +96,13 @@ const TitleBar = (props: IProps) => {
                         <ConferenceTimer textStyle={styles.roomTimer} />
                     </View>
                 )}
-                {/* {props._roomNameEnabled && (
+                {props._roomNameEnabled && (props._meetingTitle=='' || props._meetingTitle=='' || props._meetingTitle==undefined || props._meetingTitle ==null) &&  (
                     <View style={styles.roomNameView as ViewStyle}>
-                        <Text numberOfLines={1} style={[styles.roomName,{color:"transparent"}]}>
+                        <Text numberOfLines={1} style={styles.roomName}>
                             {props._meetingName}
                         </Text>
                     </View>
-                )} */}
+                )}
 
                 {props._isMeetingTitleEnabled && (
                     // @ts-ignore:next-line
