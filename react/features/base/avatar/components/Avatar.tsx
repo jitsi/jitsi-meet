@@ -93,6 +93,11 @@ export interface IProps {
      * Indicates whether to load the avatar using CORS or not.
      */
     useCORS?: boolean;
+
+    /**
+     * Indicates the default icon for the avatar.
+     */
+    defaultIcon?: string;
 }
 
 interface IState {
@@ -126,7 +131,8 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
         const {
             _corsAvatarURLs,
             url,
-            useCORS
+            useCORS,
+            defaultIcon = IconUser,
         } = props;
 
         this.state = {
@@ -177,7 +183,8 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             size,
             status,
             testId,
-            url
+            url,
+            defaultIcon,
         } = this.props;
         const { avatarFailed, isUsingCORS } = this.state;
 
@@ -229,7 +236,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
         }
 
         if (navigator.product !== 'ReactNative') {
-            avatarProps.iconUser = IconUser;
+            avatarProps.iconUser = defaultIcon;
         }
 
         return (

@@ -434,15 +434,27 @@ export function invitePeopleAndChatRooms(
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        inviteItems: Array<Object>
+        inviteItems: Array<Object>,
+        peopleSearchTokenLocation?: string,
+        peopleSearchTokenKey?: string,
 ): Promise<any> {
 
     if (!inviteItems || inviteItems.length === 0) {
         return Promise.resolve();
     }
 
+    // Parse all the query strings of the search directory endpoint
+    const params = new URLSearchParams();
+    params.append('jwt', jwt);
+
+    // Authentication params for external entities (e. g. email)
+    if (peopleSearchTokenLocation && peopleSearchTokenKey) {
+        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
+        params.append(peopleSearchTokenKey, peopleSearchToken);
+    }
+
     return fetch(
-        `${inviteServiceUrl}?token=${jwt}`,
+        `${inviteServiceUrl}?${params.toString()}`,
         {
             body: JSON.stringify({
                 'invited': inviteItems,

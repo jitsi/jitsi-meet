@@ -52,7 +52,8 @@ export const INVITE_TYPES = {
     ROOM: 'room',
     SIP: 'sip',
     USER: 'user',
-    VIDEO_ROOM: 'videosipgw'
+    VIDEO_ROOM: 'videosipgw',
+    EMAIL: 'email',
 };
 
 export const UPGRADE_OPTIONS_TEXT = 'jaas.8x8.vc';
