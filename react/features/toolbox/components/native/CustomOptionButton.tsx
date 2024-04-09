@@ -3,7 +3,9 @@ import { Image } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import AbstractButton, { IProps as AbstractButtonProps }
+    from '../../../base/toolbox/components/AbstractButton';
+
 import styles from './styles';
 
 
