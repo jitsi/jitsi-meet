@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import styles from './styles';
 
 
 interface IProps extends AbstractButtonProps {
@@ -27,13 +28,11 @@ class CustomOptionButton extends AbstractButton<IProps> {
      *
      * @returns {React.Component}
      */
-    icon = () =>
+    icon = () => (
         <Image
             source = {{ uri: this.iconSrc }}
-            style = {{
-                height: 24,
-                width: 24
-            }} />
+            style = { styles.iconImageStyles } />
+    );
 
     label = this.text;
 }

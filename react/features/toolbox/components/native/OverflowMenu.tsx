@@ -34,6 +34,10 @@ import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
 
+const instagramImg = require('./instagram.png');
+const snowFlakeSvg = require('./snow-flake.svg');
+const usersGroupImg = require('./users-group.png');
+
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -214,14 +218,28 @@ class OverflowMenu extends PureComponent<IProps, IState> {
     _renderCustomOverflowMenuButtons(topButtonProps: Object) {
         const { _customToolbarButtons, dispatch } = this.props;
 
-        if (!_customToolbarButtons?.length) {
+        const buttons = [{
+            id: 'sharedvideo',
+            icon: 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png',
+            text: 'toolbar.sharedvideo'
+        }, {
+            id: 'settings',
+            icon: 'https://w7.pngwing.com/pngs/308/74/png-transparent-computer-icons-setting-icon-cdr-svg-setting-icon.png',
+            text: 'settings.buttonLabel'
+        }, {
+            id: 'carmode',
+            icon: 'https://www.svgrepo.com/show/532037/clouds.svg',
+            text: 'carmode.labels.buttonLabel'
+        }]
+
+        if (!buttons?.length) {
             return;
         }
 
         return (
             <>
                 {
-                    _customToolbarButtons.map(({ id, text, ...rest }) => (
+                    buttons.map(({ id, text, ...rest }) => (
                         <CustomOptionButton
                             { ...rest }
                             { ...topButtonProps }
