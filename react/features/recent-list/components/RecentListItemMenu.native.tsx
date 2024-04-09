@@ -81,7 +81,7 @@ class RecentListItemMenu extends PureComponent<IProps> {
      */
     _renderMenuHeader() {
         const { item } = this.props;
-
+        console.log(this.props,'llllllllllllllllllllllllllllllllllllll')
         return (
             <View
                 style = { [

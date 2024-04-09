@@ -96,20 +96,19 @@ const TitleBar = (props: IProps) => {
                         <ConferenceTimer textStyle={styles.roomTimer} />
                     </View>
                 )}
-                {props._roomNameEnabled && (
+                {/* {props._roomNameEnabled && (
                     <View style={styles.roomNameView as ViewStyle}>
-                        <Text numberOfLines={1} style={styles.roomName}>
+                        <Text numberOfLines={1} style={[styles.roomName,{color:"transparent"}]}>
                             {props._meetingName}
                         </Text>
                     </View>
-                )}
+                )} */}
 
                 {props._isMeetingTitleEnabled && (
-                    <View style={{backgroundColor: 'red'}}>
+                    // @ts-ignore:next-line
                         <Text numberOfLines={1} style={styles.roomName}>
                             {props._meetingTitle}
                         </Text>
-                    </View>
                 )}
 
                 {/* eslint-disable-next-line react/jsx-no-bind */}

@@ -20,6 +20,7 @@ import {
 } from "../../../base/conference/actionTypes";
 import {
     BACK_BUTTON_HANDLER,
+    DIRECT_JOIN_MEETING_ENABLED,
     FULLSCREEN_ENABLED,
     PIP_ENABLED,
 } from "../../../base/flags/constants";
@@ -163,6 +164,12 @@ interface IProps extends AbstractProps {
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: any;
+
+
+    /*** 
+     * Get direct join flag from mainactivity
+    */
+    _isDirectJoin: boolean
 }
 
 type State = {
@@ -229,14 +236,14 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: IProps) {
-        const { _audioOnlyEnabled, _showLobby, _startCarMode } = this.props;
+        const { _audioOnlyEnabled, _showLobby, _startCarMode, _isDirectJoin } = this.props;
 
-        if (!prevProps._showLobby && _showLobby) {
+        if (!prevProps._showLobby && _showLobby && !_isDirectJoin) {
             console.log("---lobby----")
             navigate(screen.lobby.root);
         }
 
-        if (prevProps._showLobby && !_showLobby) {
+        if (prevProps._showLobby && !_showLobby ) {
             console.log("---conference----");
             if (_audioOnlyEnabled && _startCarMode) {
                 return;
@@ -625,6 +632,9 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _toolboxVisible: isToolboxVisible(state),
         _isBackButtonEnabled: Boolean(
             getFeatureFlag(state, BACK_BUTTON_HANDLER, false)
+        ),
+        _isDirectJoin: Boolean(
+            getFeatureFlag(state, DIRECT_JOIN_MEETING_ENABLED, false)
         ),
     };
 }

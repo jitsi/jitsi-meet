@@ -86,7 +86,7 @@ class RecentList extends AbstractRecentList<IProps> {
             _room
         } = this.props; // @ts-ignore
 
-        console.log("----_recentList---", _recentList, _defaultServerURL, _room)
+        // console.log("----_recentList---", _recentList, _defaultServerURL, _room)
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL, _isDirectJoin, _room);
 
         return (

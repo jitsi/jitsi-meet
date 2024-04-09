@@ -55,9 +55,10 @@ export * from "./actions.any";
 export function appNavigate(
     uri?: string,
     options: IReloadNowOptions = {},
-    _isDirectJoin: boolean
+    _isDirectJoin?: boolean,
 ) {
     logger.info(`appNavigate to ${uri}`);
+    console.log(`appNavigate to ${uri}`, options,_isDirectJoin)
 
     return async (
         dispatch: IStore["dispatch"],
@@ -120,7 +121,7 @@ export function appNavigate(
                     return;
                 }
             } else {
-                console.log("---else---");
+                console.log("---else---pp");
                 navigateRoot(screen.connecting, {
                     roomId: room,
                     hostname: hostname,
@@ -194,7 +195,7 @@ export function appNavigate(
 
             return;
         }
-
+        console.log(locationURL,'locationURL',room,'rooom')
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config, locationURL));
         dispatch(setRoom(room));
@@ -207,6 +208,12 @@ export function appNavigate(
 
         dispatch(createDesiredLocalTracks());
         dispatch(clearNotifications());
+        if(_isDirectJoin){
+            dispatch(connect());
+            navigateRoot(screen.conference.root);
+            console.log("inside diect join")
+            return;
+        }
 
         if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
             console.log("---isPrejoinPageEnabled---");

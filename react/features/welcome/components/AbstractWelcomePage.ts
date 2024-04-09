@@ -220,8 +220,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<
      * @returns {void}
      */
     _onJoin() {
+        console.log("clicked")
         const room = this.state.room || this.state.generatedRoomName;
-        console.log("---room---209--", room, this.state.generatedRoomName);
+        console.log("---room---209--", room, this.state.generatedRoomName,this.state.room);
 
         sendAnalytics(
             createWelcomePageEvent("clicked", "joinButton", {
@@ -244,17 +245,17 @@ export class AbstractWelcomePage<P extends IProps> extends Component<
             // may have already been unmounted.
 
             console.log("---_isDirectJoin---", this.props._isDirectJoin);
-            if (this.props._isDirectJoin) {
-                this.props.dispatch(setRoom(this.state.room));
-                navigateRoot(screen.conference.root);
-            } else {
+            // if (this.props._isDirectJoin) {
+            //     this.props.dispatch(setRoom(this.state.room));
+            //     navigateRoot(screen.conference.root);
+            // } else {
                 const onAppNavigateSettled = () =>
                     this._mounted && this.setState({ joining: false });
 
                 this.props
-                    .dispatch(appNavigate(room))
+                    .dispatch(appNavigate(room,{},this.props._isDirectJoin))
                     .then(onAppNavigateSettled, onAppNavigateSettled);
-            }
+            // }
         }
     }
 

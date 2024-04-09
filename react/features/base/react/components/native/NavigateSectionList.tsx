@@ -201,7 +201,7 @@ class NavigateSectionList extends Component<IProps> {
      */
     _renderItem(listItem: { item: Item; }, key = '') {
 
-        console.log("----listItem---", listItem)
+        // console.log("----listItem---", listItem)
         const { item } = listItem;
         const { id, url } = item;
 
