@@ -8,7 +8,6 @@ import AbstractButton, { IProps as AbstractButtonProps }
 
 import styles from './styles';
 
-const ICON_COLOR = '#fff';
 
 interface IProps extends AbstractButtonProps {
     icon: any;
@@ -34,8 +33,7 @@ class CustomOptionButton extends AbstractButton<IProps> {
     icon = () => (
         <Image
             source = {{ uri: this.iconSrc }}
-            style = { styles.iconImageStyles }
-            tintColor = { ICON_COLOR } />
+            style = { styles.iconImageStyles } />
     );
 
     label = this.text;
