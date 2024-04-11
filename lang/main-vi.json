@@ -1502,5 +1502,14 @@
             "heading": "Bảng trắng"
         },
         "screenTitle": "Bảng trắng"
+    },
+    "deepLinking":{
+        "launchMeetingLabel":"Bắt đầu cuộc họp",
+        "joinInAppNew":"Tham gia với C-meet",
+        "noMobileApp":"Không có ứng dụng",
+        "downloadMobileApp":"Tải ứng dụng C-meet",
+        "or":"hoặc",
+        "joinInBrowser":"Tham gia trên trình duyệt"
+
     }
 }
