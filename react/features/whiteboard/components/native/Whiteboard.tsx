@@ -128,6 +128,7 @@ class Whiteboard extends PureComponent<IProps> {
                 safeAreaInsets = { [ 'bottom', 'left', 'right' ] }
                 style = { styles.backDrop }>
                 <WebView
+                    domStorageEnabled = { false }
                     incognito = { true }
                     javaScriptEnabled = { true }
                     nestedScrollEnabled = { true }
