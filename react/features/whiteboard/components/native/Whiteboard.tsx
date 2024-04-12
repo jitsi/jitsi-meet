@@ -140,7 +140,8 @@ class Whiteboard extends PureComponent<IProps> {
                     setSupportMultipleWindows = { false }
                     source = {{ uri }}
                     startInLoadingState = { true }
-                    style = { styles.webView } />
+                    style = { styles.webView }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }
