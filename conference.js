@@ -1337,12 +1337,11 @@ export default {
      * @returns {Promise}
      */
     useVideoStream(newTrack) {
-        const state = APP.store.getState();
-
         logger.debug(`useVideoStream: ${newTrack}`);
 
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
+                const state = APP.store.getState();
                 const oldTrack = getLocalJitsiVideoTrack(state);
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
