@@ -141,6 +141,10 @@ function getConfig(options = {}) {
                 },
                 test: /\.jsx?$/
             }, {
+                test: /\.s[ac]ss$/i, // This will apply to both .scss and .sass files
+                use: ['style-loader', 'css-loader', 'sass-loader', ],
+            },
+            {
                 // Allow CSS to be imported into JavaScript.
 
                 test: /\.css$/,
