@@ -443,8 +443,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 process_promotion_response(room, data.id, data.approved and 'true' or 'false');
             else
                 -- we are in the case with admit all, we need to read data.ids
-                for i in pairs(data.ids) do
-                    process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+                for _,value in pairs(data.ids) do
+                    process_promotion_response(room, value, data.approved and 'true' or 'false');
                 end
             end
         end
