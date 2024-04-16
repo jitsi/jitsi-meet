@@ -65,10 +65,9 @@ class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     state = {
-        // message: '',
-        showSmileysPanel: false,
         message: '',
-        messages: []
+        messages: [],
+        showSmileysPanel: false
     };
 
 
@@ -128,9 +127,9 @@ class ChatInput extends Component<IProps, IState> {
      */
     render() {
         return (
-            <div className = 'chat-input-container' >
+            <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
-                    {this.state.showSmileysPanel && (
+                    {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
                             className = 'smiley-input' >
                             <div
