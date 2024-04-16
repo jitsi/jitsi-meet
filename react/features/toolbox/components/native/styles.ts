@@ -106,8 +106,8 @@ const styles = {
     },
 
     iconImageStyles: {
-        height: BaseTheme.spacing[5],
-        width: BaseTheme.spacing[5]
+        height: BaseTheme.spacing[4],
+        width: BaseTheme.spacing[4]
     }
 };
 
