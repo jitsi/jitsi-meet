@@ -2,8 +2,6 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { approveParticipant } from '../../av-moderation/actions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
@@ -20,6 +18,7 @@ import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
+import { changeLocalDisplayName } from '../../settings/actions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
@@ -241,7 +240,7 @@ MiddlewareRegistry.register(store => next => action => {
             const participant = getLocalParticipant(store.getState());
 
             if (participant && participant.id === action.id) {
-                APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
+                store.dispatch(changeLocalDisplayName(action.name));
             }
         }
 

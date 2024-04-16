@@ -2,7 +2,6 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
-import EventEmitter from 'events';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
@@ -165,11 +164,8 @@ import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/Au
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
-import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
-
-const eventEmitter = new EventEmitter();
 
 let room;
 
@@ -1916,21 +1912,12 @@ export default {
             JitsiE2ePingEvents.E2E_RTT_CHANGED,
             (...args) => APP.store.dispatch(e2eRttChanged(...args)));
 
-        APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
-            this.muteAudio(muted);
-        });
-        APP.UI.addListener(UIEvents.VIDEO_MUTED, (muted, showUI = false) => {
-            this.muteVideo(muted, showUI);
-        });
-
         room.addCommandListener(this.commands.defaults.ETHERPAD,
             ({ value }) => {
                 APP.UI.initEtherpad(value);
             }
         );
 
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED,
-            this.changeLocalEmail.bind(this));
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
                 conference: room,
@@ -1949,9 +1936,6 @@ export default {
                         avatarURL: data.value
                     }));
             });
-
-        APP.UI.addListener(UIEvents.NICKNAME_CHANGED,
-            this.changeLocalDisplayName.bind(this));
 
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
@@ -2007,113 +1991,117 @@ export default {
                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
             }
         );
+    },
 
-        // call hangup
-        APP.UI.addListener(UIEvents.HANGUP, () => {
-            this.hangup(true);
+    /**
+     * Handles audio device changes.
+     *
+     * @param {string} cameraDeviceId - The new device id.
+     * @returns {Promise}
+     */
+    async onAudioDeviceChanged(micDeviceId) {
+        const audioWasMuted = this.isLocalAudioMuted();
+
+        // Disable noise suppression if it was enabled on the previous track.
+        await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+
+        // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
+        // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
+        const isDefaultMicSelected = micDeviceId === 'default';
+        const selectedDeviceId = isDefaultMicSelected
+            ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+            : micDeviceId;
+
+        logger.info(`Switching audio input device to ${selectedDeviceId}`);
+        sendAnalytics(createDeviceChangedEvent('audio', 'input'));
+        createLocalTracksF({
+            devices: [ 'audio' ],
+            micDeviceId: selectedDeviceId
+        })
+        .then(([ stream ]) => {
+            // if audio was muted before changing the device, mute
+            // with the new device
+            if (audioWasMuted) {
+                return stream.mute()
+                    .then(() => stream);
+            }
+
+            return stream;
+        })
+        .then(async stream => {
+            await this._maybeApplyAudioMixerEffect(stream);
+
+            return this.useAudioStream(stream);
+        })
+        .then(() => {
+            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+            if (localAudio && isDefaultMicSelected) {
+                // workaround for the default device to be shown as selected in the
+                // settings even when the real device id was passed to gUM because of the
+                // above mentioned chrome bug.
+                localAudio._realDeviceId = localAudio.deviceId = 'default';
+            }
+        })
+        .catch(err => {
+            logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
+            APP.store.dispatch(notifyMicError(err));
         });
+    },
 
-        APP.UI.addListener(
-            UIEvents.VIDEO_DEVICE_CHANGED,
-            cameraDeviceId => {
-                const videoWasMuted = this.isLocalVideoMuted();
-                const localVideoTrack = getLocalJitsiVideoTrack(APP.store.getState());
+    /**
+     * Handles video device changes.
+     *
+     * @param {string} cameraDeviceId - The new device id.
+     * @returns {void}
+     */
+    onVideoDeviceChanged(cameraDeviceId) {
+        const videoWasMuted = this.isLocalVideoMuted();
+        const localVideoTrack = getLocalJitsiVideoTrack(APP.store.getState());
 
-                if (localVideoTrack?.getDeviceId() === cameraDeviceId) {
-                    return;
-                }
+        if (localVideoTrack?.getDeviceId() === cameraDeviceId) {
+            return;
+        }
 
-                sendAnalytics(createDeviceChangedEvent('video', 'input'));
+        sendAnalytics(createDeviceChangedEvent('video', 'input'));
 
-                createLocalTracksF({
-                    devices: [ 'video' ],
-                    cameraDeviceId
-                })
-                .then(([ stream ]) => {
-                    // if we are in audio only mode or video was muted before
-                    // changing device, then mute
-                    if (this.isAudioOnly() || videoWasMuted) {
-                        return stream.mute()
-                            .then(() => stream);
-                    }
-
-                    return stream;
-                })
-                .then(stream => {
-                    logger.info(`Switching the local video device to ${cameraDeviceId}.`);
-
-                    return this.useVideoStream(stream);
-                })
-                .catch(error => {
-                    logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
-
-                    return APP.store.dispatch(notifyCameraError(error));
-                });
+        createLocalTracksF({
+            devices: [ 'video' ],
+            cameraDeviceId
+        })
+        .then(([ stream ]) => {
+            // if we are in audio only mode or video was muted before
+            // changing device, then mute
+            if (this.isAudioOnly() || videoWasMuted) {
+                return stream.mute()
+                    .then(() => stream);
             }
-        );
 
-        APP.UI.addListener(
-            UIEvents.AUDIO_DEVICE_CHANGED,
-            async micDeviceId => {
-                const audioWasMuted = this.isLocalAudioMuted();
+            return stream;
+        })
+        .then(stream => {
+            logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
-                // Disable noise suppression if it was enabled on the previous track.
-                await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+            return this.useVideoStream(stream);
+        })
+        .catch(error => {
+            logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
-                // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
-                // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
-                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689.
-                const isDefaultMicSelected = micDeviceId === 'default';
-                const selectedDeviceId = isDefaultMicSelected
-                    ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
-                    : micDeviceId;
-
-                logger.info(`Switching audio input device to ${selectedDeviceId}`);
-                sendAnalytics(createDeviceChangedEvent('audio', 'input'));
-                createLocalTracksF({
-                    devices: [ 'audio' ],
-                    micDeviceId: selectedDeviceId
-                })
-                .then(([ stream ]) => {
-                    // if audio was muted before changing the device, mute
-                    // with the new device
-                    if (audioWasMuted) {
-                        return stream.mute()
-                            .then(() => stream);
-                    }
-
-                    return stream;
-                })
-                .then(async stream => {
-                    await this._maybeApplyAudioMixerEffect(stream);
-
-                    return this.useAudioStream(stream);
-                })
-                .then(() => {
-                    const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-
-                    if (localAudio && isDefaultMicSelected) {
-                        // workaround for the default device to be shown as selected in the
-                        // settings even when the real device id was passed to gUM because of the
-                        // above mentioned chrome bug.
-                        localAudio._realDeviceId = localAudio.deviceId = 'default';
-                    }
-                })
-                .catch(err => {
-                    logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
-                    APP.store.dispatch(notifyMicError(err));
-                });
-            }
-        );
-
-        APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, () => {
-            // Immediately update the UI by having remote videos and the large video update themselves.
-            const displayedUserId = APP.UI.getLargeVideoID();
-
-            if (displayedUserId) {
-                APP.UI.updateLargeVideo(displayedUserId, true);
-            }
+            return APP.store.dispatch(notifyCameraError(error));
         });
+    },
+
+    /**
+     * Handles audio only changes.
+     */
+    onToggleAudioOnly() {
+        // Immediately update the UI by having remote videos and the large video update themselves.
+        const displayedUserId = APP.UI.getLargeVideoID();
+
+        if (displayedUserId) {
+            APP.UI.updateLargeVideo(displayedUserId, true);
+        }
     },
 
     /**
@@ -2408,8 +2396,6 @@ export default {
                 this.deviceChangeListener);
         }
 
-        APP.UI.removeAllListeners();
-
         let feedbackResultPromise = Promise.resolve({});
 
         if (requestFeedback) {
@@ -2514,37 +2500,6 @@ export default {
      */
     sendEndpointMessage(to, payload) {
         room.sendEndpointMessage(to, payload);
-    },
-
-    /**
-     * Adds new listener.
-     * @param {String} eventName the name of the event
-     * @param {Function} listener the listener.
-     */
-    addListener(eventName, listener) {
-        eventEmitter.addListener(eventName, listener);
-    },
-
-    /**
-     * Removes listener.
-     * @param {String} eventName the name of the event that triggers the
-     * listener
-     * @param {Function} listener the listener.
-     */
-    removeListener(eventName, listener) {
-        eventEmitter.removeListener(eventName, listener);
-    },
-
-    /**
-     * Changes the display name for the local user
-     * @param nickname {string} the new display name
-     */
-    changeLocalDisplayName(nickname = '') {
-        const formattedNickname = getNormalizedDisplayName(nickname);
-
-        APP.store.dispatch(updateSettings({
-            displayName: formattedNickname
-        }));
     },
 
     /**

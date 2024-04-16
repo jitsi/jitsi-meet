@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
@@ -1083,7 +1081,7 @@ export function redirect(vnode: string, focusJid: string, username: string) {
                                 dispatch(setAudioMuted(false, true));
 
                                 // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, false);
+                                typeof APP === 'undefined' || APP.conference.muteAudio(false);
                             }
                         }
 
@@ -1096,7 +1094,7 @@ export function redirect(vnode: string, focusJid: string, username: string) {
                                 dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
 
                                 // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, false);
+                                typeof APP === 'undefined' || APP.conference.muteVideo(false, false);
                             }
                         }
                     }
