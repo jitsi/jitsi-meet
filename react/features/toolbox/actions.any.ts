@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { VIDEO_MUTE, createToolbarEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
@@ -103,7 +101,7 @@ export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTr
         // FIXME: The old conference logic still relies on this event being
         // emitted.
         typeof APP === 'undefined'
-            || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, muted, showUI);
+            || APP.conference.muteVideo(muted, showUI);
 
     };
 }

@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -41,7 +39,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case TOGGLE_DOCUMENT_EDITING: {
         if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
+            APP.UI.onEtherpadClicked();
         }
         break;
     }

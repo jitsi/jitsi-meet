@@ -76,6 +76,7 @@ import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/act
 import {
     addStageParticipant,
     resizeFilmStrip,
+    setFilmstripVisible,
     setVolume,
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
@@ -104,6 +105,7 @@ import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/fea
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
+import { changeLocalDisplayName } from '../../react/features/settings/actions.web';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
@@ -199,7 +201,7 @@ function initCommands() {
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
-            APP.conference.changeLocalDisplayName(displayName);
+            APP.store.dispatch(changeLocalDisplayName(displayName));
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -376,7 +378,9 @@ function initCommands() {
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
-            APP.UI.toggleFilmstrip();
+            const { visible } = APP.store.getState()['features/filmstrip'];
+
+            APP.store.dispatch(setFilmstripVisible(!visible));
         },
 
         /*
