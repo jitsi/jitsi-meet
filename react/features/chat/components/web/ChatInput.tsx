@@ -1,3 +1,5 @@
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -10,7 +12,6 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled } from '../../functions';
 
-import SmileysPanel from './SmileysPanel';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -64,8 +65,10 @@ class ChatInput extends Component<IProps, IState> {
 
     state = {
         message: '',
+        messages: [],
         showSmileysPanel: false
     };
+
 
     /**
      * Initializes a new {@code ChatInput} instance.
@@ -109,7 +112,9 @@ class ChatInput extends Component<IProps, IState> {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
+
     }
+
 
     /**
      * Implements React's {@link Component#render()}.
@@ -123,11 +128,16 @@ class ChatInput extends Component<IProps, IState> {
                 <div id = 'chat-input' >
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
-                            className = 'smiley-input'>
+                            className = 'smiley-input' >
                             <div
                                 className = 'smileys-panel' >
-                                <SmileysPanel
-                                    onSmileySelect = { this._onSmileySelect } />
+
+                                <Picker
+                                    data = { data } 
+                                    onEmojiSelect = { this.addEmoji } 
+                                    autoFocus = { true }
+                                />
+
                             </div>
                         </div>
                     )}
@@ -147,7 +157,9 @@ class ChatInput extends Component<IProps, IState> {
                         accessibilityLabel = { this.props.t('chat.sendButton') }
                         disabled = { !this.state.message.trim() }
                         icon = { IconSend }
-                        onClick = { this._onSubmitMessage }
+                        onClick={() => {
+                            this._onSubmitMessage() 
+                            this._toggleSmileysPanel();}}
                         size = { isMobileBrowser() ? 'large' : 'medium' } />
                 </div>
             </div>
@@ -260,6 +272,13 @@ class ChatInput extends Component<IProps, IState> {
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
     }
+
+
+    addEmoji = e => {
+        const emoji = e.native;
+
+        this.setState({ message: this.state.message + emoji });
+    };
 }
 
 /**
