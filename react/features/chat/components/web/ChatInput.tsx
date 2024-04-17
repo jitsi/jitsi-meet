@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import React, { Component, RefObject } from 'react';
@@ -135,7 +134,11 @@ class ChatInput extends Component<IProps, IState> {
                             <div
                                 className = 'smileys-panel' >
 
-                                <Picker data = { data } onEmojiSelect = { this.addEmoji } />
+                                <Picker
+                                    data = { data } 
+                                    onEmojiSelect = { this.addEmoji } 
+                                    autoFocus = { true }
+                                />
 
                             </div>
                         </div>
