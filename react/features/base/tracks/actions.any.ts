@@ -26,7 +26,6 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
-    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED,
@@ -381,9 +380,6 @@ export function trackAdded(track: any) {
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
-        track.on(
-            JitsiTrackEvents.TRACK_OWNER_CHANGED,
-            (owner: string) => dispatch(trackOwnerChanged(track, owner)));
         const local = track.isLocal();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
@@ -539,10 +535,6 @@ export function trackRemoved(track: any): {
     };
     type: 'TRACK_REMOVED';
 } {
-    track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
-
     return {
         type: TRACK_REMOVED,
         track: {
@@ -621,32 +613,6 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
         track: {
             jitsiTrack: track,
             streamingStatus
-        }
-    };
-}
-
-/**
- * Create an action for when the owner of the track changes due to ssrc remapping.
- *
- * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
- * @param {string} participantId - New owner's participant ID.
- * @returns {{
- *     type: TRACK_OWNER_CHANGED,
- *     track: Track
- * }}
- */
-export function trackOwnerChanged(track: any, participantId: string): {
-    track: {
-        jitsiTrack: any;
-        participantId: string;
-    };
-    type: 'TRACK_OWNER_CHANGED';
-} {
-    return {
-        type: TRACK_OWNER_CHANGED,
-        track: {
-            jitsiTrack: track,
-            participantId
         }
     };
 }

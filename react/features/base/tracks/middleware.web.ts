@@ -15,7 +15,6 @@ import {
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
-    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED
@@ -77,23 +76,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (participantId && !action.track?.jitsiTrack?.isLocal()) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track removed');
-        }
-
-        return result;
-    }
-
-    case TRACK_OWNER_CHANGED: {
-        const oldTrack = getTrackByJitsiTrack(store.getState()['features/base/tracks'], action.track?.jitsiTrack);
-        const oldOwner = oldTrack?.participantId;
-        const result = next(action);
-        const newOwner = action.track?.participantId;
-
-        if (oldOwner) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], oldOwner, 'Owner changed');
-        }
-
-        if (newOwner) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], newOwner, 'Owner changed');
         }
 
         return result;

@@ -468,7 +468,7 @@ export function getScreenshareParticipantIds(stateful: IStateful): Array<string>
 }
 
 /**
- * Returns a list source name associated with a given remote participant and for the given media type.
+ * Returns a list of source names associated with a given remote participant and for the given media type.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
  * retrieve the state.
@@ -476,7 +476,7 @@ export function getScreenshareParticipantIds(stateful: IStateful): Array<string>
  * @param {string} mediaType - The type of source, audio or video.
  * @returns {Array<string>|undefined}
  */
-export function getSourceNamesByMediaType(
+export function getSourceNamesByMediaTypeAndParticipant(
         stateful: IStateful,
         id: string,
         mediaType: string): Array<string> | undefined {
@@ -494,6 +494,37 @@ export function getSourceNamesByMediaType(
 
     return Array.from(sources.get(mediaType) ?? new Map())
         .filter(source => source[1].videoType !== VIDEO_TYPE.DESKTOP || !source[1].muted)
+        .map(s => s[0]);
+}
+
+/**
+ * Returns a list of source names associated with a given remote participant and for the given video type (only for
+ * video sources).
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @param {string} id - The id of the participant whose source names are to be retrieved.
+ * @param {string} videoType - The type of video, camera or desktop.
+ * @returns {Array<string>|undefined}
+ */
+export function getSourceNamesByVideoTypeAndParticipant(
+        stateful: IStateful,
+        id: string,
+        videoType: string): Array<string> | undefined {
+    const participant: IParticipant | undefined = getParticipantById(stateful, id);
+
+    if (!participant) {
+        return;
+    }
+
+    const sources = participant.sources;
+
+    if (!sources) {
+        return;
+    }
+
+    return Array.from(sources.get(MEDIA_TYPE.VIDEO) ?? new Map())
+        .filter(source => source[1].videoType === videoType && (videoType === VIDEO_TYPE.CAMERA || !source[1].muted))
         .map(s => s[0]);
 }
 
