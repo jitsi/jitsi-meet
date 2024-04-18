@@ -18,7 +18,6 @@ import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
-import { changeLocalDisplayName } from '../../settings/actions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
@@ -40,7 +39,6 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     OVERWRITE_PARTICIPANTS_NAMES,
     OVERWRITE_PARTICIPANT_NAME,
-    PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
@@ -230,20 +228,6 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference?.muteParticipant(action.id, action.mediaType);
-        break;
-    }
-
-    // TODO Remove this middleware when the local display name update flow is
-    // fully brought into redux.
-    case PARTICIPANT_DISPLAY_NAME_CHANGED: {
-        if (typeof APP !== 'undefined') {
-            const participant = getLocalParticipant(store.getState());
-
-            if (participant && participant.id === action.id) {
-                store.dispatch(changeLocalDisplayName(action.name));
-            }
-        }
-
         break;
     }
 
