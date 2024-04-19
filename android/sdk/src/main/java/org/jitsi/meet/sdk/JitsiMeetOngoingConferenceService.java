@@ -16,6 +16,9 @@
 
 package org.jitsi.meet.sdk;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,6 +32,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -52,11 +58,14 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
+    private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
+
     private boolean isAudioMuted;
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     public static void launch(Context context, HashMap<String, Object> extraData) {
 
         OngoingNotification.createNotificationChannel((Activity) context);
@@ -68,6 +77,14 @@ public class JitsiMeetOngoingConferenceService extends Service
         intent.putExtra(EXTRA_DATA_BUNDLE_KEY, extraDataBundle);
 
         ComponentName componentName;
+
+        if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                (Activity) context,
+                new String[]{POST_NOTIFICATIONS},
+                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE
+            );
+        }
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
