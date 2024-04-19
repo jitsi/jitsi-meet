@@ -36,16 +36,3 @@ export function openLogoutDialog() {
         }));
     };
 }
-
-/**
-* Changes the display name for the local user.
-*
-* @param {string} _nickname - The new display name.
-* @returns {Function}
-*/
-export function changeLocalDisplayName(_nickname = '') {
-    // not used on mobile.
-    return (_dispatch: IStore['dispatch'], _getState: IStore['getState']) => {
-        // no-op action.
-    };
-}

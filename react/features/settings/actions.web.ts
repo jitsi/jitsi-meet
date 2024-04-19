@@ -192,26 +192,12 @@ export function submitProfileTab(newState: any) {
         const currentState = getProfileTabProps(getState());
 
         if (newState.displayName !== currentState.displayName) {
-            dispatch(changeLocalDisplayName(newState.displayName));
+            dispatch(updateSettings({ displayName: getNormalizedDisplayName(newState.displayName) }));
         }
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
         }
-    };
-}
-
-/**
-* Changes the display name for the local user.
-*
-* @param {string} nickname - The new display name.
-* @returns {Function}
-*/
-export function changeLocalDisplayName(nickname = '') {
-    return (dispatch: IStore['dispatch']) => {
-        const formattedNickname = getNormalizedDisplayName(nickname);
-
-        dispatch(updateSettings({ displayName: formattedNickname }));
     };
 }
 
