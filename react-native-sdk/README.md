@@ -95,7 +95,7 @@ https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
 
 
 ## Using JWT tokens
-- If you are planning to use tokens or another domain you can do that by updating the following props, as shown below.
+- If you are planning to use tokens or another domain, you can do that by updating the following props, as shown below.
 - For example:
 ```javascript
   <JitsiMeeting
@@ -105,7 +105,7 @@ https://github.com/jitsi/jitsi-meet-sdk-samples/tree/master/react-native
 ```
 
 ## Using custom overflow menu buttons
-- If you are planning to use tokens or another domain you can do that by updating the following props, as shown below.
+- If you are planning to add custom overflow menu buttons, you can do that by updating the ```config``` prop, as shown below.
 - For example:
 ```javascript
   <JitsiMeeting
