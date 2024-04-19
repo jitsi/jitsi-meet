@@ -336,7 +336,9 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         if visitors_promotion_map[room.jid] then
             -- now let's check for jid
             if visitors_promotion_map[room.jid][jid.node(stanza.attr.from)] -- promotion was approved
-                or ignore_list:contains(jid.host(stanza.attr.from)) then -- jibri or other domains to ignore
+                or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
+                or host_module:fire_event('jitsi-visitors-allow-join',
+                        { room = room; stanza = stanza; occupant = occupant; session = origin; }) then
                 -- allow join
                 return;
             end

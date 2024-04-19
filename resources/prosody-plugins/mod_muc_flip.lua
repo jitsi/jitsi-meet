@@ -41,7 +41,7 @@ end
 -- id from jwt is the same as another occupant and the presence
 -- stanza has flip_device tag
 local function process_checks_flip(room, occupant, session, stanza)
-    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) or stanza._flip_processed then
         return;
     end
     local flip_device_tag = stanza:get_child("flip_device");
@@ -86,6 +86,12 @@ local function process_checks_flip(room, occupant, session, stanza)
                         end);
             end
             join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
+
+            -- avoid processing it twice, muc-occupant-pre-join in visitors may fire jitsi-visitors-allow-join
+            -- and if it passes it through, this module will execute same check for the pre-join event
+            stanza._flip_processed = true;
+
+            return true;
         elseif not is_feature_flip_allowed then
             module:log("warn", "Flip device tag present without jwt permission")
             --remove flip_device tag if somebody wants to abuse this feature
@@ -117,6 +123,12 @@ module:hook("muc-occupant-pre-join", function(event)
         participants[id] = occupant.nick;
         room._data.participants_details = participants;
     end
+end);
+
+module:hook('jitsi-visitors-allow-join', function(e)
+    local room, stanza, occupant, session = e.room, e.stanza, e.occupant, e.session;
+
+    return process_checks_flip(room, occupant, session, stanza);
 end);
 
 -- Kick participant from the the first device from the main room and lobby if applies
