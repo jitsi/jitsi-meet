@@ -1,6 +1,7 @@
 -- Allows flipping device. When a presence contains flip_device tag
--- and the used jwt matches the id(session.jitsi_meet_context_user.id) of another user this is indication that the user
+-- and the used jwt matches the id(session.jitsi_meet_context_user.id) of another user - this is indication that the user
 -- is moving from one device to another. The flip feature should be present and enabled in the token features.
+-- Should be enabled under the main muc component
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local oss_util = module:require "util";
@@ -28,7 +29,6 @@ end
 local function remove_flip_tag(stanza)
     stanza:maptags(function(tag)
         if tag and tag.name == "flip_device" then
-            -- module:log("debug", "Removing %s tag from presence stanza!", tag.name);
             return nil;
         else
             return tag;
@@ -53,14 +53,16 @@ module:hook("muc-occupant-pre-join", function(event)
         local id = session.jitsi_meet_context_user.id;
         local first_device_occ_nick = participants[id];
         if flip_device_tag then
-            if first_device_occ_nick and session.jitsi_meet_context_features.flip and (session.jitsi_meet_context_features.flip == true or session.jitsi_meet_context_features.flip == "true") then
+            local is_feature_flip_allowed = session.jitsi_meet_context_features
+                and (session.jitsi_meet_context_features.flip == true
+                        or session.jitsi_meet_context_features.flip == "true");
+            if first_device_occ_nick and is_feature_flip_allowed then
                 room._data.kicked_participant_nick = first_device_occ_nick;
                 room._data.flip_participant_nick = occupant.nick;
                 -- allow participant from flip device to bypass Lobby
                 local occupant_jid = stanza.attr.from;
                 local affiliation = room:get_affiliation(occupant_jid);
                 if not affiliation or affiliation == 'none' or affiliation == 'member' then
-                    -- module:log("debug", "Bypass lobby invitee %s", occupant_jid)
                     occupant.role = "participant";
                     room:set_affiliation(true, jid_bare(occupant_jid), "member")
                     room:save_occupant(occupant);
@@ -83,7 +85,7 @@ module:hook("muc-occupant-pre-join", function(event)
                             end);
                 end
                 join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
-            elseif not session.jitsi_meet_context_features.flip or session.jitsi_meet_context_features.flip == false or session.jitsi_meet_context_features.flip == "false" then
+            elseif not is_feature_flip_allowed then
                 module:log("warn", "Flip device tag present without jwt permission")
                 --remove flip_device tag if somebody wants to abuse this feature
                 remove_flip_tag(stanza)
@@ -96,7 +98,6 @@ module:hook("muc-occupant-pre-join", function(event)
         -- update authenticated participant list
         participants[id] = occupant.nick;
         room._data.participants_details = participants
-        -- module:log("debug", "current details list %s", inspect(participants))
     else
         if flip_device_tag then
             module:log("warn", "Flip device tag present for a guest user")
@@ -126,7 +127,6 @@ module:hook("muc-occupant-joined", function(event)
         end
 
         local initial_affiliation = room:get_affiliation(kicked_occupant.jid) or "member";
-        -- module:log("debug", "Transfer affiliation %s to occupant jid %s", initial_affiliation, occupant.jid)
         room:set_affiliation(true, occupant.bare_jid, initial_affiliation)
         if initial_affiliation == "owner" then
             event.occupant.role = "moderator";
