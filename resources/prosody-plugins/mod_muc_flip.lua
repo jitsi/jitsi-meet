@@ -40,72 +40,84 @@ end
 -- A user is considered to join from another device if the
 -- id from jwt is the same as another occupant and the presence
 -- stanza has flip_device tag
-module:hook("muc-occupant-pre-join", function(event)
-    local room, occupant = event.room, event.occupant;
-    local session = event.origin;
-    local stanza = event.stanza;
+local function process_checks_flip(room, occupant, session, stanza)
     if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
-        return ;
+        return;
     end
     local flip_device_tag = stanza:get_child("flip_device");
+
+    if not flip_device_tag then
+        return;
+    end
+
     if session.jitsi_meet_context_user and session.jitsi_meet_context_user.id then
         local participants = room._data.participants_details or {};
         local id = session.jitsi_meet_context_user.id;
         local first_device_occ_nick = participants[id];
-        if flip_device_tag then
-            local is_feature_flip_allowed = session.jitsi_meet_context_features
-                and (session.jitsi_meet_context_features.flip == true
-                        or session.jitsi_meet_context_features.flip == "true");
-            if first_device_occ_nick and is_feature_flip_allowed then
-                room._data.kicked_participant_nick = first_device_occ_nick;
-                room._data.flip_participant_nick = occupant.nick;
-                -- allow participant from flip device to bypass Lobby
-                local occupant_jid = stanza.attr.from;
-                local affiliation = room:get_affiliation(occupant_jid);
-                if not affiliation or affiliation == 'none' or affiliation == 'member' then
-                    occupant.role = "participant";
-                    room:set_affiliation(true, jid_bare(occupant_jid), "member")
-                    room:save_occupant(occupant);
-                end
-                -- bypass password on the flip device
-                local join = stanza:get_child("x", MUC_NS);
-                if not join then
-                    join = stanza:tag("x", { xmlns = MUC_NS });
-                end
-                local password = join:get_child("password", MUC_NS);
-                if password then
-                    join:maptags(
-                            function(tag)
-                                for k, v in pairs(tag) do
-                                    if k == "name" and v == "password" then
-                                        return nil
-                                    end
-                                end
-                                return tag
-                            end);
-                end
-                join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
-            elseif not is_feature_flip_allowed then
-                module:log("warn", "Flip device tag present without jwt permission")
-                --remove flip_device tag if somebody wants to abuse this feature
-                remove_flip_tag(stanza)
-            else
-                module:log("warn", "Flip device tag present without user from different device")
-                --remove flip_device tag if somebody wants to abuse this feature
-                remove_flip_tag(stanza)
+        local is_feature_flip_allowed = session.jitsi_meet_context_features
+            and (session.jitsi_meet_context_features.flip == true
+                    or session.jitsi_meet_context_features.flip == "true");
+        if first_device_occ_nick and is_feature_flip_allowed then
+            room._data.kicked_participant_nick = first_device_occ_nick;
+            room._data.flip_participant_nick = occupant.nick;
+            -- allow participant from flip device to bypass Lobby
+            local occupant_jid = stanza.attr.from;
+            local affiliation = room:get_affiliation(occupant_jid);
+            if not affiliation or affiliation == 'none' or affiliation == 'member' then
+                occupant.role = "participant";
+                room:set_affiliation(true, jid_bare(occupant_jid), "member")
+                room:save_occupant(occupant);
             end
-        end
-        -- update authenticated participant list
-        participants[id] = occupant.nick;
-        room._data.participants_details = participants
-    else
-        if flip_device_tag then
-            module:log("warn", "Flip device tag present for a guest user")
-            -- remove flip_device tag because a guest want to do a sneaky join
+            -- bypass password on the flip device
+            local join = stanza:get_child("x", MUC_NS);
+            if not join then
+                join = stanza:tag("x", { xmlns = MUC_NS });
+            end
+            local password = join:get_child("password", MUC_NS);
+            if password then
+                join:maptags(
+                        function(tag)
+                            for k, v in pairs(tag) do
+                                if k == "name" and v == "password" then
+                                    return nil
+                                end
+                            end
+                            return tag
+                        end);
+            end
+            join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
+        elseif not is_feature_flip_allowed then
+            module:log("warn", "Flip device tag present without jwt permission")
+            --remove flip_device tag if somebody wants to abuse this feature
+            remove_flip_tag(stanza)
+        else
+            module:log("warn", "Flip device tag present without user from different device")
+            --remove flip_device tag if somebody wants to abuse this feature
             remove_flip_tag(stanza)
         end
+    else
+        module:log("warn", "Flip device tag present for a guest user")
+        -- remove flip_device tag because a guest want to do a sneaky join
+        remove_flip_tag(stanza)
     end
-end)
+end
+
+module:hook("muc-occupant-pre-join", function(event)
+    local room, occupant = event.room, event.occupant;
+    local session = event.origin;
+    local stanza = event.stanza;
+
+    process_checks_flip(room, occupant, session, stanza);
+
+    if session.jitsi_meet_context_user and session.jitsi_meet_context_user.id then
+        local id = session.jitsi_meet_context_user.id;
+
+        local participants = room._data.participants_details or {};
+        -- update authenticated participant list
+        participants[id] = occupant.nick;
+        room._data.participants_details = participants;
+    end
+end);
 
 -- Kick participant from the the first device from the main room and lobby if applies
 -- and transfer role from the previous participant, this will take care of the grant
