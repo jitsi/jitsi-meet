@@ -128,6 +128,7 @@
         "privateNotice": "Privāta ziņa adresātam {{recipient}}",
         "sendButton": "Nosūtīt",
         "smileysPanel": "Emociju panelis",
+        "systemDisplayName": "Sistēma",
         "tabs": {
             "chat": "Tērzēšana",
             "polls": "Aptaujas"
