@@ -128,6 +128,7 @@
         "privateNotice": "Private Nachricht an {{recipient}}",
         "sendButton": "Senden",
         "smileysPanel": "Emoji-Auswahl",
+        "systemDisplayName": "System",
         "tabs": {
             "chat": "Chatten",
             "polls": "Umfragen"
@@ -305,6 +306,8 @@
         "contactSupport": "Support kontaktieren",
         "copied": "Kopiert",
         "copy": "Kopieren",
+        "demoteParticipantDialog": "Sind Sie sicher, dass Sie diese Person zu den Gästen verschieben möchten?",
+        "demoteParticipantTitle": "Zu Gästen verschieben",
         "dismiss": "OK",
         "displayNameRequired": "Hallo! Wie ist Ihr Name?",
         "done": "Fertig",
@@ -560,6 +563,7 @@
         "noNumbers": "Keine Telefonnummern verfügbar.",
         "noPassword": "Kein Passwort benötigt",
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
+        "noWhiteboard": "Whiteboard konnte nicht geladen werden.",
         "numbers": "Einwahlnummern",
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Sie haben die Grenzen Ihres Tarifs erreicht.",
@@ -567,7 +571,8 @@
         "sipAudioOnly": "SIP-Adresse (nur Ton)",
         "title": "Teilen",
         "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
-        "upgradeOptions": "Bitte prüfen Sie Ihre Upgrade-Optionen auf"
+        "upgradeOptions": "Bitte prüfen Sie Ihre Upgrade-Optionen auf",
+        "whiteboardError": "Whiteboard konnte nicht geladen werden. Bitte versuchen Sie es später erneut."
     },
     "inlineDialogFailure": {
         "msg": "Es ist ein Fehler aufgetreten.",
@@ -802,12 +807,16 @@
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
         "suboptimalBrowserWarning": "Tut uns leid, aber die Konferenz wird mit {{appName}} kein großartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"{{recommendedBrowserPageLink}}\" target=\"_blank\">vollständig unterstützen Browser</a>.",
         "suboptimalExperienceTitle": "Browserwarnung",
+        "suggestRecordingAction": "Starten",
+        "suggestRecordingDescription": "Möchten Sie eine Aufzeichnung starten?",
+        "suggestRecordingTitle": "Konferenz aufzeichnen",
         "unmute": "Stummschaltung aufheben",
         "videoMutedRemotelyDescription": "Sie können sie jederzeit wieder einschalten.",
         "videoMutedRemotelyTitle": "Ihre Kamera wurde von {{participantDisplayName}} ausgeschaltet!",
         "videoUnmuteBlockedDescription": "Die Kamera und Bildschirmfreigabe kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden.",
         "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!",
         "viewLobby": "Lobby ansehen",
+        "viewVisitors": "Gäste anzeigen",
         "waitingParticipants": "{{waitingParticipants}} Personen",
         "whiteboardLimitDescription": "Bitte speichern Sie Ihre Inhalte, da das Nutzungslimit bald erreicht wird und dann Ihr Whiteboard geschlossen wird.",
         "whiteboardLimitTitle": "Whiteboard-Nutzung"
@@ -937,6 +946,7 @@
         "or": "oder",
         "premeeting": "Vorschau",
         "proceedAnyway": "Trotzdem fortsetzen",
+        "recordingWarning": "Diese Konferenz wird möglicherweise von anderen Personen aufgezeichnet",
         "screenSharingError": "Fehler bei Bildschirmfreigabe:",
         "showScreen": "Konferenzvorschau aktivieren",
         "startWithPhone": "Mit Telefonaudio starten",
@@ -1003,7 +1013,6 @@
         "limitNotificationDescriptionNative": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} Min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} Min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Link zur Aufzeichnung wurde generiert.",
-        "live": "LIVE",
         "localRecordingNoNotificationWarning": "Die Aufzeichnung wird anderen Anwesenden nicht mitgeteilt. Sie müssen diese selbst darauf hinweisen, dass die Konferenz aufgezeichnet wird.",
         "localRecordingNoVideo": "Videos werden nicht aufgenommen",
         "localRecordingStartWarning": "Bitte beenden Sie die Aufzeichnung vor dem Verlassen der Konferenz, um die Aufzeichnung zu speichern.",
@@ -1020,7 +1029,6 @@
         "onBy": "{{name}} startete die Aufnahme",
         "onlyRecordSelf": "Nur eigenes Kamerabild und Ton aufzeichnen",
         "pending": "Aufzeichnung des Meetings wird vorbereitet…",
-        "rec": "AUFZ",
         "recordAudioAndVideo": "Kamera und Ton aufzeichnen",
         "recordTranscription": "Transkription aufzeichnen",
         "saveLocalRecording": "Aufzeichnung lokal abspeichern",
@@ -1177,7 +1185,7 @@
             "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
             "boo": "Buhen",
-            "breakoutRoom": "Breakout-Räume betreten/verlassen",
+            "breakoutRooms": "Breakout-Räume",
             "callQuality": "Qualitätseinstellungen",
             "carmode": "Automodus",
             "cc": "Untertitel ein-/ausschalten",
@@ -1360,13 +1368,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
-        "error": "Die Aufzeichnung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
         "failedToStart": "Transkribieren konnte nicht gestartet werden",
         "labelToolTip": "Das Meeting wird transkribiert",
-        "off": "Transkribieren gestoppt",
-        "on": "Transkribieren gestartet",
-        "pending": "Transkribieren des Meetings wird vorbereitet…",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
         "start": "Anzeige der Untertitel starten",
@@ -1422,6 +1426,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Verbindungsinformationen",
+        "demote": "Zu Gästen verschieben",
         "domute": "Stummschalten",
         "domuteOthers": "Alle anderen stummschalten",
         "domuteVideo": "Kamera ausschalten",
@@ -1476,6 +1481,7 @@
         "chatIndicator": "(Gast)",
         "labelTooltip": "Anzahl Gäste: {{count}}",
         "notification": {
+            "demoteDescription": "Hierhin verschoben von {{actor}}, bitte melden Sie sich um teilzunehmen",
             "description": "Bitte melden Sie sich um teilzunehmen",
             "title": "Sie sind Gast in der Konferenz"
         }
@@ -1536,6 +1542,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Whiteboard"
-        }
+        },
+        "screenTitle": "Whiteboard"
     }
 }
