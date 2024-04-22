@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -36,7 +35,6 @@ import android.os.IBinder;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -66,10 +64,7 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    private static final HashMap<Integer, Promise> permissionsPromises = new HashMap<>();
-
-
-    public static void doLaunch(Context context, HashMap<String, Object> extraData) {
+    private static void doLaunch(Context context, HashMap<String, Object> extraData) {
 
         OngoingNotification.createNotificationChannel((Activity) context);
 
@@ -99,22 +94,18 @@ public class JitsiMeetOngoingConferenceService extends Service
         }
     }
 
-    public static Object onRequestPermissionsResult(int requestCode, Context context) {
-        if (permissionsPromises.containsKey(requestCode)) {
+    private static PermissionListener getNotificationPermissionListener(Context context, HashMap<String, Object> extraData) {
+        return new PermissionListener() {
+            @Override
+            public boolean onRequestPermissionsResult(int i, String[] strings, int[] ints) {
+                if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    doLaunch(context, extraData);
 
-            // If request is cancelled, the result arrays are empty.
-            Promise permissionsPromise = permissionsPromises.get(requestCode);
-
-            if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                permissionsPromise.resolve("authorized");
-            } else {
-                permissionsPromise.resolve("denied");
+                    return true;
+                }
+                return false;
             }
-
-            permissionsPromises.remove(requestCode);
-        }
-
-        return permissionsPromises.size() == 0;
+        };
     }
 
 
@@ -124,12 +115,11 @@ public class JitsiMeetOngoingConferenceService extends Service
                 (Activity) context,
                 new String[]{POST_NOTIFICATIONS},
                 POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
-                (PermissionListener) onRequestPermissionsResult(
-                    POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
-                    context
+                getNotificationPermissionListener(
+                    context,
+                    extraData
                 )
             );
-            doLaunch(context, extraData);
         } else {
             doLaunch(context, extraData);
         }
