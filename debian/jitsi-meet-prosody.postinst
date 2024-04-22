@@ -138,10 +138,8 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
-        USER_EXISTS_CHECK=`prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN < /dev/null || true`
-        if [ ! "$USER_EXISTS_CHECK" = "That user already exists" ]; then
-            prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
-        fi
+        # creates the user if it does not exist
+        echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
