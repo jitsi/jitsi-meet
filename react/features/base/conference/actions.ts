@@ -1064,41 +1064,41 @@ export function redirect(vnode: string, focusJid: string, username: string) {
                 // conference without tracks.
                 dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
 
-                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                if (typeof APP !== 'undefined') {
-                    if (!vnode) {
-                        const state = getState();
-                        const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
-                        const { audio = false, video = false } = enableMediaOnPromote;
+                if (!vnode) {
+                    const state = getState();
+                    const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
+                    const { audio = false, video = false } = enableMediaOnPromote;
 
-                        if (audio) {
-                            const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
-                            const { startSilent } = state['features/base/config'];
+                    if (audio) {
+                        const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
+                        const { startSilent } = state['features/base/config'];
 
-                            // do not unmute the user if he was muted before (on the prejoin, the config
-                            // or URL param, etc.)
-                            if (!unmuteBlocked && !muted && !startSilent && available) {
-                                dispatch(setAudioMuted(false, true));
+                        // do not unmute the user if he was muted before (on the prejoin, the config
+                        // or URL param, etc.)
+                        if (!unmuteBlocked && !muted && !startSilent && available) {
+                            dispatch(setAudioMuted(false, true));
 
-                                // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.conference.muteAudio(false);
-                            }
-                        }
-
-                        if (video) {
-                            const { muted, unmuteBlocked } = state['features/base/media'].video;
-
-                            // do not unmute the user if he was muted before (on the prejoin, the config, URL param or
-                            // audo only, etc)
-                            if (!unmuteBlocked && !muted && hasAvailableDevices(state, 'videoInput')) {
-                                dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
-
-                                // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.conference.muteVideo(false, false);
-                            }
+                            // // FIXME: The old conference logic still relies on this event being emitted.
+                            typeof APP === 'undefined' || APP.conference.muteAudio(false);
                         }
                     }
 
+                    if (video) {
+                        const { muted, unmuteBlocked } = state['features/base/media'].video;
+
+                        // do not unmute the user if he was muted before (on the prejoin, the config, URL param or
+                        // audo only, etc)
+                        if (!unmuteBlocked && !muted && hasAvailableDevices(state, 'videoInput')) {
+                            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
+
+                            // // FIXME: The old conference logic still relies on this event being emitted.
+                            typeof APP === 'undefined' || APP.conference.muteVideo(false, false);
+                        }
+                    }
+                }
+
+                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                if (typeof APP !== 'undefined') {
                     APP.conference.startConference([]);
                 }
             });
