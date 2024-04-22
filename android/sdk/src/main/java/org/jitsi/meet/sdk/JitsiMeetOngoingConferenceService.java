@@ -27,15 +27,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -64,9 +66,10 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
+    private static final HashMap<Integer, Promise> permissionsPromises = new HashMap<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
-    public static void launch(Context context, HashMap<String, Object> extraData) {
+
+    public static void doLaunch(Context context, HashMap<String, Object> extraData) {
 
         OngoingNotification.createNotificationChannel((Activity) context);
 
@@ -77,14 +80,6 @@ public class JitsiMeetOngoingConferenceService extends Service
         intent.putExtra(EXTRA_DATA_BUNDLE_KEY, extraDataBundle);
 
         ComponentName componentName;
-
-        if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                (Activity) context,
-                new String[]{POST_NOTIFICATIONS},
-                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE
-            );
-        }
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -101,6 +96,42 @@ public class JitsiMeetOngoingConferenceService extends Service
 
         if (componentName == null) {
             JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
+        }
+    }
+
+    public static Object onRequestPermissionsResult(int requestCode, Context context) {
+        if (permissionsPromises.containsKey(requestCode)) {
+
+            // If request is cancelled, the result arrays are empty.
+            Promise permissionsPromise = permissionsPromises.get(requestCode);
+
+            if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                permissionsPromise.resolve("authorized");
+            } else {
+                permissionsPromise.resolve("denied");
+            }
+
+            permissionsPromises.remove(requestCode);
+        }
+
+        return permissionsPromises.size() == 0;
+    }
+
+
+    public static void launch(Context context, HashMap<String, Object> extraData) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            JitsiMeetActivityDelegate.requestPermissions(
+                (Activity) context,
+                new String[]{POST_NOTIFICATIONS},
+                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
+                (PermissionListener) onRequestPermissionsResult(
+                    POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
+                    context
+                )
+            );
+            doLaunch(context, extraData);
+        } else {
+            doLaunch(context, extraData);
         }
     }
 
