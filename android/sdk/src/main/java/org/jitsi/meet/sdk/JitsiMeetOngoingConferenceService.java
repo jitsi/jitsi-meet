@@ -32,7 +32,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
