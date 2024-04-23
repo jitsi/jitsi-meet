@@ -133,6 +133,12 @@ function filter_admin_set_query(event)
     local room = get_room_from_jid(room_jid);
 
     local item = stanza.tags[1].tags[1];
+
+    if not item then
+        module:log('error', 'Error unexpected stanza: %s', stanza);
+        return true;
+    end
+
     local _aff = item.attr.affiliation;
 
     -- if it is a moderated room we skip it
