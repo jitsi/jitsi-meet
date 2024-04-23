@@ -94,32 +94,25 @@ public class JitsiMeetOngoingConferenceService extends Service
         }
     }
 
-    private static PermissionListener getNotificationPermissionListener(Context context, HashMap<String, Object> extraData) {
-        return new PermissionListener() {
-            @Override
-            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-                    doLaunch(context, extraData);
-
-                    return true;
-                }
-
-                return true;
-            }
-        };
-    }
-
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            PermissionListener listener = new PermissionListener() {
+                @Override
+                public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                    if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                        doLaunch(context, extraData);
+                    }
+
+                    return true;
+                }
+            };
+
             JitsiMeetActivityDelegate.requestPermissions(
                 (Activity) context,
                 new String[]{POST_NOTIFICATIONS},
                 POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
-                getNotificationPermissionListener(
-                    context,
-                    extraData
-                )
+                listener
             );
         } else {
             doLaunch(context, extraData);
