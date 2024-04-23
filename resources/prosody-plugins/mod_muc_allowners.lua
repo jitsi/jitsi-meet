@@ -147,7 +147,7 @@ function filter_admin_set_query(event)
     end
 
     -- any revoking is disabled, everyone should be owners
-    if _aff == 'none' or _aff == 'outcast' or _aff == 'member' then
+    if _aff and _aff ~= 'owner' then
         origin.send(st.error_reply(stanza, "auth", "forbidden"));
         return true;
     end
