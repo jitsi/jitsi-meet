@@ -97,13 +97,14 @@ public class JitsiMeetOngoingConferenceService extends Service
     private static PermissionListener getNotificationPermissionListener(Context context, HashMap<String, Object> extraData) {
         return new PermissionListener() {
             @Override
-            public boolean onRequestPermissionsResult(int i, String[] strings, int[] ints) {
-                if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
                     doLaunch(context, extraData);
 
                     return true;
                 }
-                return false;
+
+                return true;
             }
         };
     }
