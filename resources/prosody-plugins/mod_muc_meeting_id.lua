@@ -78,7 +78,7 @@ end);
 --- Avoids any participant joining the room in the interval between creating the room
 --- and jicofo entering the room
 module:hook('muc-occupant-pre-join', function (event)
-    local room, stanza = event.room, event.stanza;
+    local room = event.room;
 
     -- we skip processing only if jicofo_lock is set to false
     if room._data.jicofo_lock == false or is_healthcheck_room(room.jid) then
@@ -86,9 +86,7 @@ module:hook('muc-occupant-pre-join', function (event)
     end
 
     local occupant = event.occupant;
-    if ends_with(occupant.nick, '/focus') then
-        module:fire_event('jicofo-unlock-room', { room = room; });
-    else
+    if not ends_with(occupant.nick, '/focus') then
         room._data.jicofo_lock = true;
         if not room.pre_join_queue then
             room.pre_join_queue = queue.new(QUEUE_MAX_SIZE);
@@ -104,6 +102,21 @@ module:hook('muc-occupant-pre-join', function (event)
         return true;
     end
 end, 8); -- just after the rate limit
+
+-- unlock room when jicofo for real is in the room
+module:hook('muc-occupant-joined', function (event)
+    local room = event.room;
+
+    -- we skip processing only if jicofo_lock is set to false
+    if room._data.jicofo_lock == false or is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local occupant = event.occupant;
+    if ends_with(occupant.nick, '/focus') then
+        module:fire_event('jicofo-unlock-room', { room = room; });
+    end
+end);
 
 function handle_jicofo_unlock(event)
     local room = event.room;
