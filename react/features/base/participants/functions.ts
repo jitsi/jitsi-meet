@@ -12,9 +12,9 @@ import { getCurrentConference } from '../conference/functions';
 import { ADD_PEOPLE_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 import i18next from '../i18n/i18next';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
-import { getScreenShareTrack } from '../tracks/functions.any';
+import { getScreenShareTrack, isLocalTrackMuted } from '../tracks/functions.any';
 import { createDeferred } from '../util/helpers';
 
 import {
@@ -363,6 +363,42 @@ export function getRemoteParticipantCountWithFake(stateful: IStateful) {
 }
 
 /**
+ * Returns the muted state of the given media source for a given participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's.
+ * @param {IParticipant} participant - The participant entity.
+ * @param {MediaType} mediaType - The media type.
+ * @returns {boolean} - True its muted, false otherwise.
+ */
+export function getMutedStateByParticipantAndMediaType(
+        stateful: IStateful,
+        participant: IParticipant,
+        mediaType: MediaType): boolean {
+    const type = mediaType === MEDIA_TYPE.SCREENSHARE ? 'video' : mediaType;
+
+    if (participant.local) {
+        const state = toState(stateful);
+        const tracks = state['features/base/tracks'];
+
+        return isLocalTrackMuted(tracks, mediaType);
+    }
+
+    const sources = participant.sources?.get(type);
+
+    if (!sources) {
+        return true;
+    }
+
+    if (mediaType === MEDIA_TYPE.AUDIO) {
+        return Array.from(sources.values())[0].muted;
+    }
+    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.SCREENSHARE;
+    const source = Array.from(sources.values()).find(src => src.videoType === videoType);
+
+    return source?.muted ?? true;
+}
+
+/**
  * Returns a count of the known participants in the passed in redux state,
  * including fake participants.
  *
@@ -474,22 +510,22 @@ export function getScreenshareParticipantIds(stateful: IStateful): Array<string>
  * retrieve the state.
  * @param {string} id - The id of the participant whose source names are to be retrieved.
  * @param {string} mediaType - The type of source, audio or video.
- * @returns {Array<string>|undefined}
+ * @returns {Array<string>}
  */
 export function getSourceNamesByMediaTypeAndParticipant(
         stateful: IStateful,
         id: string,
-        mediaType: string): Array<string> | undefined {
+        mediaType: string): Array<string> {
     const participant: IParticipant | undefined = getParticipantById(stateful, id);
 
     if (!participant) {
-        return;
+        return [];
     }
 
     const sources = participant.sources;
 
     if (!sources) {
-        return;
+        return [];
     }
 
     return Array.from(sources.get(mediaType) ?? new Map())
@@ -505,22 +541,22 @@ export function getSourceNamesByMediaTypeAndParticipant(
  * retrieve the state.
  * @param {string} id - The id of the participant whose source names are to be retrieved.
  * @param {string} videoType - The type of video, camera or desktop.
- * @returns {Array<string>|undefined}
+ * @returns {Array<string>}
  */
 export function getSourceNamesByVideoTypeAndParticipant(
         stateful: IStateful,
         id: string,
-        videoType: string): Array<string> | undefined {
+        videoType: string): Array<string> {
     const participant: IParticipant | undefined = getParticipantById(stateful, id);
 
     if (!participant) {
-        return;
+        return [];
     }
 
     const sources = participant.sources;
 
     if (!sources) {
-        return;
+        return [];
     }
 
     return Array.from(sources.get(MEDIA_TYPE.VIDEO) ?? new Map())
