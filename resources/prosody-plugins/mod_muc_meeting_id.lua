@@ -1,3 +1,4 @@
+local cache = require "util.cache";
 local queue = require "util.queue";
 local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
@@ -75,33 +76,33 @@ module:hook('muc-broadcast-presence', function (event)
     end
 end);
 
+--- START logic for waiting jicofo to be the first in the room
+-- stores presences for participants that tried to create a room, we let jicofo do that and process the waiting
+-- presences so the participants can join after jicofo and do not let them receive not-allowed error because
+-- only jicofo is allowed to create rooms
+local rooms_pre_join_queue = cache.new(1000);
+
 --- Avoids any participant joining the room in the interval between creating the room
 --- and jicofo entering the room
-module:hook('muc-occupant-pre-join', function (event)
-    local room = event.room;
+module:hook('muc-room-pre-create', function (event)
+    local room, stanza = event.room, event.stanza;
 
-    -- we skip processing only if jicofo_lock is set to false
-    if room._data.jicofo_lock == false or is_healthcheck_room(room.jid) then
-        return;
-    end
-
-    local occupant = event.occupant;
-    if not ends_with(occupant.nick, '/focus') then
-        room._data.jicofo_lock = true;
-        if not room.pre_join_queue then
-            room.pre_join_queue = queue.new(QUEUE_MAX_SIZE);
+    if not is_admin(stanza.attr.from) then
+        local pre_join_queue = rooms_pre_join_queue:get(room.jid);
+        if not pre_join_queue then
+            pre_join_queue = queue.new(QUEUE_MAX_SIZE);
+            rooms_pre_join_queue:set(room.jid, pre_join_queue);
         end
 
-        if not room.pre_join_queue:push(event) then
+        if not pre_join_queue:push(event) then
             module:log('error', 'Error enqueuing occupant event for: %s', occupant.nick);
             return true;
         end
-        module:log('debug', 'Occupant pushed to prejoin queue %s', occupant.nick);
 
         -- stop processing
         return true;
     end
-end, 8); -- just after the rate limit
+end, 1); -- the room creation check is on default priority 0
 
 -- unlock room when jicofo for real is in the room
 module:hook('muc-occupant-joined', function (event)
@@ -113,7 +114,7 @@ module:hook('muc-occupant-joined', function (event)
     end
 
     local occupant = event.occupant;
-    if ends_with(occupant.nick, '/focus') then
+    if is_admin(occupant.bare_jid) then
         module:fire_event('jicofo-unlock-room', { room = room; });
     end
 end);
@@ -122,22 +123,29 @@ function handle_jicofo_unlock(event)
     local room = event.room;
 
     room._data.jicofo_lock = false;
-    if not room.pre_join_queue then
+
+    local pre_join_queue = rooms_pre_join_queue:get(room.jid);
+    if not pre_join_queue then
         return;
     end
 
     -- and now let's handle all pre_join_queue events
-    for _, ev in room.pre_join_queue:items() do
+    for _, ev in pre_join_queue:items() do
         -- if the connection was closed while waiting in the queue, ignore
         if ev.origin.conn then
-            module:log('debug', 'Occupant processed from queue %s', ev.occupant.nick);
             room:handle_normal_presence(ev.origin, ev.stanza);
         end
     end
-    room.pre_join_queue = nil;
+    rooms_pre_join_queue:set(room.jid, nil);
 end
 
 module:hook('jicofo-unlock-room', handle_jicofo_unlock);
+
+module:hook('muc-room-destroyed',function(event)
+    rooms_pre_join_queue:set(event.room.jid, nil);
+end);
+
+--- END logic for waiting jicofo to be the first in the room
 
 -- make sure we remove nick if someone is sending it with a message to protect
 -- forgery of display name
