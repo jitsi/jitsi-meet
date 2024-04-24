@@ -102,14 +102,15 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
-    const toggleBreakoutRoomPublishStatus = useCallback(
-        () => dispatch(publishBreakoutRooms(!published)), [ dispatch, published ]);
 
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
 
     const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
 
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
+
+    const toggleBreakoutRoomPublishStatus = useCallback(
+        () => dispatch(publishBreakoutRooms(!published)), [ dispatch, published ]);
 
     const { classes } = useStyles();
 
@@ -118,7 +119,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
 
     const openModeratorSettings = () => dispatch(openSettingsDialog(SETTINGS_TABS.MODERATOR));
 
-    const actions = [
+    const actions: any = [
         {
             accessibilityLabel: t('participantsPane.actions.audioModeration'),
             className: isAudioModerationEnabled ? classes.indentedLabel : '',

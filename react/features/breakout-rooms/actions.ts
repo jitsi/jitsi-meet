@@ -62,9 +62,7 @@ export function createBreakoutRoom(name?: string) {
  * @returns {Function}
  */
 export function publishBreakoutRooms(published: boolean) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-
-        // $FlowExpectedError
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.publish(published);
     };
