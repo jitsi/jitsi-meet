@@ -467,6 +467,8 @@ var config = {
     //          low: 100000,
     //          standard: 300000,
     //          high: 1000000,
+    //          fullHd: 2000000,
+    //          ultraHd: 4000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true,
@@ -478,6 +480,8 @@ var config = {
     //          low: 200000,
     //          standard: 500000,
     //          high: 1500000,
+    //          fullHd: 3000000,
+    //          ultraHd: 6000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true
@@ -487,6 +491,8 @@ var config = {
     //          low: 200000,
     //          standard: 500000,
     //          high: 1500000,
+    //          fullHd: 3000000,
+    //          ultraHd: 6000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: false
@@ -496,6 +502,8 @@ var config = {
     //          low: 100000,
     //          standard: 300000,
     //          high: 1200000,
+    //          fullHd: 2500000,
+    //          ultraHd: 5000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true,
