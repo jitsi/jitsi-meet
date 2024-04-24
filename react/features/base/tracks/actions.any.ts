@@ -535,6 +535,10 @@ export function trackRemoved(track: any): {
     };
     type: 'TRACK_REMOVED';
 } {
+    track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
+    track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
+    track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+
     return {
         type: TRACK_REMOVED,
         track: {

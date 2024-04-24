@@ -322,10 +322,10 @@ function _getSourceNames(participantList: Array<string>, state: IReduxState): Ar
 
     participantList.forEach(participantId => {
         if (getSsrcRewritingFeatureFlag(state)) {
-            const sourceNames: string[] | undefined
+            const sourceNames: string[]
                 = getSourceNamesByMediaTypeAndParticipant(state, participantId, MEDIA_TYPE.VIDEO);
 
-            sourceNames?.length && sourceNamesList.push(...sourceNames);
+            sourceNames.length && sourceNamesList.push(...sourceNames);
         } else {
             let sourceName: string;
 
@@ -430,7 +430,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
             largeVideoSourceName = largeVideoParticipantId;
         } else {
             largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
-                ? getSourceNamesByVideoTypeAndParticipant(state, largeVideoParticipantId, VIDEO_TYPE.CAMERA)?.[0]
+                ? getSourceNamesByVideoTypeAndParticipant(state, largeVideoParticipantId, VIDEO_TYPE.CAMERA)[0]
                 : getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
         }
     }
