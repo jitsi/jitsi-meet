@@ -72,8 +72,7 @@ export const _getTokenAuthState = (
         // @ts-ignore
         state['config.startWithVideoMuted'] = true;
     }
-
-    const params = parseURLParams(locationURL, true);
+    const params = parseURLParams(locationURL);
 
     for (const key of Object.keys(params)) {
         // we allow only config and interfaceConfig overrides in the state
