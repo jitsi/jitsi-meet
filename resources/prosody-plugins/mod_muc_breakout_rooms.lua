@@ -158,7 +158,12 @@ function broadcast_breakout_rooms(room_jid)
             published = published,
             rooms = rooms
         };
-        local unpublished_json_msg = json.encode(msg);
+        local unpublished_json_msg, error = json.encode(msg);
+
+        if not unpublished_json_msg then
+            module:log('error', 'not broadcasting breakout room information room:%s error:%s', main_room_jid, error);
+            return;
+        end
 
         for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
             local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
@@ -177,12 +182,7 @@ function broadcast_breakout_rooms(room_jid)
             end
         end
 
-        local json_msg, error = json.encode({
-            type = BREAKOUT_ROOMS_IDENTITY_TYPE,
-            event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
-            roomCounter = main_room._data.breakout_rooms_counter,
-            rooms = rooms
-        });
+        local json_msg, error = json.encode(msg);
 
         if not json_msg then
             module:log('error', 'not broadcasting breakout room information room:%s error:%s', main_room_jid, error);
