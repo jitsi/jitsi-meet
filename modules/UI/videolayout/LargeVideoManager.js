@@ -11,6 +11,7 @@ import { createScreenSharingIssueEvent } from '../../../react/features/analytics
 import { sendAnalytics } from '../../../react/features/analytics/functions';
 import Avatar from '../../../react/features/base/avatar/components/Avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
+import { getSsrcRewritingFeatureFlag } from '../../../react/features/base/config/functions.any';
 import i18next from '../../../react/features/base/i18n/i18next';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media/constants';
@@ -221,10 +222,10 @@ export default class LargeVideoManager {
 
         this.updateInProcess = true;
 
-        // Include hide()/fadeOut only if we're switching between users
-        // eslint-disable-next-line eqeqeq
+        // Include hide()/fadeOut if we're switching between users or between different sources of the same user.
         const container = this.getCurrentContainer();
-        const isUserSwitch = this.newStreamData.id !== container.id;
+        const isUserSwitch = container.id !== this.newStreamData.id
+            || container.stream?.getSourceName() !== this.newStreamData.stream?.getSourceName();
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
