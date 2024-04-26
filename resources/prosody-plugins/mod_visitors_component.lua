@@ -311,7 +311,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access
     -- check list of allowed jids for the room
     host_module:hook('muc-occupant-pre-join', function (event)
-        local room, stanza, occupant, origin = event.room, event.stanza, event.occupant, event.origin;
+        local room, stanza, occupant, session = event.room, event.stanza, event.occupant, event.origin;
 
         if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
             return;
@@ -341,8 +341,16 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 return;
             end
             module:log('error', 'Visitor needs to be allowed by a moderator %s', stanza.attr.from);
-            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitor needs to be allowed by a moderator'));
+            session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitor needs to be allowed by a moderator'));
             return true;
+        elseif is_vpaas(room) then
+            -- special case for vpaas where if someone with a visitor token tries to join a room, where
+            -- there are no visitors yet, we deny access
+            if session.jitsi_meet_context_user and session.jitsi_meet_context_user.role == 'visitor' then
+                session.log('warn', 'Deny user join as visitor in the main meeting, not approved');
+                session.send(st.error_reply(
+                    stanza, 'cancel', 'not-allowed', 'Visitor tried to join the main room without approval'));
+            end
         end
 
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
