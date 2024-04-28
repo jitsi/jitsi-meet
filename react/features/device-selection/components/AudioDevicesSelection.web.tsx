@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvailableDevices } from '../../base/devices/actions.web';
@@ -37,7 +37,7 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Whether or not the audio selector can be interacted with. If true,
@@ -234,7 +234,6 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      */
     render() {
         const {
-            classes,
             hasAudioPermission,
             hideAudioInputPreview,
             hideAudioOutputPreview,
@@ -246,6 +245,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
             t
         } = this.props;
         const { audioInput, audioOutput } = this._getSelectors();
+
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = { classes.container }>
@@ -392,4 +393,4 @@ const mapStateToProps = (state: IReduxState) => {
     };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(translate(AudioDevicesSelection)));
+export default connect(mapStateToProps)(withStyles(translate(AudioDevicesSelection), styles));

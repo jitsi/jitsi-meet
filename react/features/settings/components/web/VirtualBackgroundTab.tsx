@@ -1,6 +1,6 @@
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps
@@ -17,7 +17,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Virtual background options.
@@ -79,10 +79,10 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
      */
     render() {
         const {
-            classes,
             options,
             selectedVideoInputId
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div
@@ -99,4 +99,4 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(VirtualBackgroundTab));
+export default withStyles(translate(VirtualBackgroundTab), styles);

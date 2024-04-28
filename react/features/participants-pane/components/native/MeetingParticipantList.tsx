@@ -69,19 +69,9 @@ const MeetingParticipantList = () => {
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
     const { color, shareDialogVisible } = inviteOthersControl;
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
-    const visitorsLabelText = visitorsCount > 0
-        ? t('participantsPane.headings.visitors', { count: visitorsCount })
-        : undefined;
 
     return (
         <View style = { styles.meetingListContainer }>
-            {
-                visitorsCount > 0
-                && <Text style = { styles.visitorsLabel }>
-                    { visitorsLabelText }
-                </Text>
-            }
             <Text
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }

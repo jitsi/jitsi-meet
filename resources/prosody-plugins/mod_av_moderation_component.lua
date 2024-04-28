@@ -1,9 +1,11 @@
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
-local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
-local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local util = module:require 'util';
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local is_healthcheck_room = util.is_healthcheck_room;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local process_host_module = util.process_host_module;
 local array = require "util.array";
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local st = require 'util.stanza';
 
 local muc_component_host = module:get_option_string('muc_component');
@@ -47,7 +49,12 @@ function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     body_json.room = internal_room_jid_match_rewrite(room.jid);
     body_json.actor = actorJid;
     body_json.mediaType = mediaType;
-    local body_json_str = json.encode(body_json);
+    local body_json_str, error = json.encode(body_json);
+
+    if not body_json_str then
+        module:log('error', 'error encoding json room:%s error:%s', room.jid, error);
+        return;
+    end
 
     if jid then
         send_json_message(jid, body_json_str)
@@ -73,12 +80,23 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
         body_json.removed = true;
     end
     body_json.mediaType = mediaType;
-    local moderators_body_json_str = json.encode(body_json);
+    local moderators_body_json_str, error = json.encode(body_json);
+
+    if not moderators_body_json_str then
+        module:log('error', 'error encoding moderator json room:%s error:%s', room.jid, error);
+        return;
+    end
+
     body_json.whitelists = nil;
     if not removed then
         body_json.approved = true; -- we want to send to participants only that they were approved to unmute
     end
-    local participant_body_json_str = json.encode(body_json);
+    local participant_body_json_str, error = json.encode(body_json);
+
+    if not participant_body_json_str then
+        module:log('error', 'error encoding participant json room:%s error:%s', room.jid, error);
+        return;
+    end
 
     for _, occupant in room:each_occupant() do
         if moderators and occupant.role == 'moderator' then
@@ -108,7 +126,13 @@ function notify_jid_approved(jid, from, room, mediaType)
     body_json.mediaType = mediaType;
     body_json.from = from;
 
-    send_json_message(jid, json.encode(body_json));
+    local json_message, error = json.encode(body_json);
+    if not json_message then
+        module:log('error', 'skip sending json message to:%s error:%s', jid, error);
+        return;
+    end
+
+    send_json_message(jid, json_message);
 end
 
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
@@ -300,22 +324,8 @@ end
 -- we will receive messages from the clients
 module:hook('message/host', on_message);
 
--- executed on every host added internally in prosody, including components
-function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log('info','Hook to muc events on %s', host);
-
-        local muc_module = module:context(host);
-        muc_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
-        muc_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
-    end
-end
-
-if prosody.hosts[muc_component_host] == nil then
-    module:log('info', 'No muc component found, will listen for it: %s', muc_component_host);
-
-    -- when a host or component is added
-    prosody.events.add_handler('host-activated', process_host);
-else
-    process_host(muc_component_host);
-end
+process_host_module(muc_component_host, function(host_module, host)
+    module:log('info','Hook to muc events on %s', host);
+    host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
+    host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
+end);

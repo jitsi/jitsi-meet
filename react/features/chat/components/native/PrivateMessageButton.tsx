@@ -8,6 +8,7 @@ import { IconMessage, IconReply } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { handleLobbyChatInitialized, openChat } from '../../actions.native';
@@ -96,11 +97,10 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
-    const { disablePolls } = state['features/base/config'];
     const { visible = enabled, isLobbyMessage, participantID } = ownProps;
 
     return {
-        _isPollsDisabled: disablePolls,
+        _isPollsDisabled: arePollsDisabled(state),
         _participant: getParticipantById(state, participantID),
         _isLobbyMessage: isLobbyMessage,
         visible

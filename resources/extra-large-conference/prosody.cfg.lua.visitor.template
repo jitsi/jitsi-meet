@@ -105,6 +105,7 @@ VirtualHost 'vX.meet.jitsi'
       'external_services';
       'smacks';
       'jiconop';
+      'conference_duration';
     }
     main_muc = 'conference.vX.meet.jitsi';
 

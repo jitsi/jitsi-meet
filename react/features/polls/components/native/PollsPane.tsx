@@ -48,7 +48,7 @@ const PollsPane = (props: AbstractProps) => {
         <JitsiScreen
             contentContainerStyle = { chatStyles.pollPane as StyleType }
             disableForcedKeyboardDismiss = { true }
-            hasTabNavigator = { true }
+            hasExtraHeaderHeight = { true }
             style = { chatStyles.pollPaneContainer as StyleType }>
             {
                 createMode

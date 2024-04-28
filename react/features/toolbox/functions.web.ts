@@ -1,5 +1,4 @@
 import { IReduxState } from '../app/types';
-import { getToolbarButtons } from '../base/config/functions.web';
 import { hasAvailableDevices } from '../base/devices/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
@@ -40,7 +39,7 @@ import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { TOOLBAR_TIMEOUT } from './constants';
-import { IToolboxButton } from './types';
+import { IToolboxButton, NOTIFY_CLICK_MODE } from './types';
 
 export * from './functions.any';
 
@@ -56,18 +55,16 @@ export function getToolboxHeight() {
 }
 
 /**
- * Indicates if a toolbar button is enabled.
+ * Checks if the specified button is enabled.
  *
- * @param {string} name - The name of the setting section as defined in
- * interface_config.js.
- * @param {IReduxState} state - The redux state.
- * @returns {boolean|undefined} - True to indicate that the given toolbar button
- * is enabled, false - otherwise.
+ * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
+ * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
+ * @returns {boolean} - True if the button is enabled and false otherwise.
  */
-export function isButtonEnabled(name: string, state: IReduxState) {
-    const toolbarButtons = getToolbarButtons(state);
+export function isButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
+    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
 
-    return toolbarButtons.indexOf(name) !== -1;
+    return buttons.includes(buttonName);
 }
 
 /**
@@ -444,4 +441,14 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         help,
         ...customButtons
     };
+}
+
+/**
+ * Returns the list of participant menu buttons that have that notify the api when clicked.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Map<string, NOTIFY_CLICK_MODE>} - The list of participant menu buttons.
+ */
+export function getParticipantMenuButtonsWithNotifyClick(state: IReduxState): Map<string, NOTIFY_CLICK_MODE> {
+    return state['features/toolbox'].participantMenuButtonsWithNotifyClick;
 }

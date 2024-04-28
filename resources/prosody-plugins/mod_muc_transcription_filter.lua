@@ -11,7 +11,7 @@ function filter_transcription_tag(event)
     local stanza = event.stanza;
     local session = event.origin;
     if stanza and stanza.name == "presence" then
-        if not is_feature_allowed(session,'transcription') then
+        if not is_feature_allowed(session.jitsi_meet_context_features,'transcription') then
             stanza:maptags(function(tag)
                 if tag and tag.name == filtered_tag_name then
                     module:log("info", "Removing %s tag from presence stanza!", filtered_tag_name);

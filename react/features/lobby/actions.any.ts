@@ -21,7 +21,8 @@ import {
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
-import { getKnockingParticipants, getLobbyConfig, getLobbyEnabled } from './functions';
+import { getKnockingParticipants, getLobbyConfig, getLobbyEnabled, isEnablingLobbyAllowed } from './functions';
+import logger from './logger';
 import { IKnockingParticipant } from './types';
 
 /**
@@ -115,9 +116,7 @@ export function admitMultiple(participants: Array<IKnockingParticipant>) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        participants.forEach(p => {
-            conference?.lobbyApproveAccess(p.id);
-        });
+        conference?.lobbyApproveAccess(participants.map(p => p.id));
     };
 }
 
@@ -243,7 +242,11 @@ export function toggleLobbyMode(enabled: boolean) {
         const conference = getCurrentConference(getState);
 
         if (enabled) {
-            conference?.enableLobby();
+            if (isEnablingLobbyAllowed(getState())) {
+                conference?.enableLobby();
+            } else {
+                logger.info('Ignoring enable lobby request because there are visitors in the call already.');
+            }
         } else {
             conference?.disableLobby();
         }

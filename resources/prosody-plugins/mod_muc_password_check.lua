@@ -2,10 +2,11 @@ local inspect = require "inspect";
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
 local starts_with = util.starts_with;
+local process_host_module = util.process_host_module;
 local token_util = module:require "token/util".new(module);
 
 -- option to enable/disable room API token verifications
@@ -105,9 +106,9 @@ function handle_validate_room_password (event)
         return { status_code = 400; }
     end
 
-    local params = json.decode(request.body);
+    local params, error = json.decode(request.body);
     if not params then
-        module:log("warn", "Missing params");
+        module:log("warn", "Missing params error:%s", error);
         return { status_code = 400; }
     end
 
@@ -124,12 +125,18 @@ function handle_validate_room_password (event)
         return { status_code = error_code; }
     end
 
+    local json_msg_str, error_encode = json.encode({ valid = (room:get_password() == passcode) });
+    if not json_msg_str then
+        module:log('error', 'Cannot encode json room:%s error:%s', room.jid, error_encode);
+        return { status_code = 400; };
+    end
+
     local PUT_response = {
         headers = { content_type = "application/json"; };
-        body = json.encode({ valid = (room:get_password() == passcode) })
+        body = json_msg_str;
     };
 
-    module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
+    -- module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
 
     return PUT_response;
 end
@@ -149,33 +156,21 @@ function handle_get_room_password (event)
     room_details["passcodeProtected"] = room:get_password() ~= nil;
     room_details["lobbyEnabled"] = room._data ~= nil and room._data.lobbyroom ~= nil;
 
+    local json_msg_str, error = json.encode(room_details);
+    if not json_msg_str then
+        module:log('error', 'Cannot encode json room:%s error:%s', room.jid, error);
+        return { status_code = 400; };
+    end
+
     local GET_response = {
         headers = {
             content_type = "application/json";
         };
-        body = json.encode(room_details);
+        body = json_msg_str;
     };
-    module:log("debug","Sending response for room password: %s", inspect(GET_response));
+    -- module:log("debug","Sending response for room password: %s", inspect(GET_response));
 
     return GET_response;
-end
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
 end
 
 process_host_module(muc_domain_base, function(host_module, host)

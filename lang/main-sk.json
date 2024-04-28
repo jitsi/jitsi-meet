@@ -466,7 +466,6 @@
         "notificationTitle": "Čakáreň",
         "passwordField": "Zadajte heslo do konferencie",
         "passwordJoinButton": "Vstúpiť",
-        "reject": "Odmietnuť",
         "title": "Čakáreň",
         "toggleLabel": "Zapnúť čakáreň"
     },
@@ -541,8 +540,18 @@
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
         "unmute": "Zapnúť mikrofón"
     },
+    "participantsPane": {
+        "actions": {
+            "reject": "Odmietnuť"
+        }
+    },
     "passwordDigitsOnly": "až {{number}} číslic",
     "passwordSetRemotely": "nastavené iným účastníkom",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Možnosti musia byť jedinečné"
+        }
+    },
     "poweredby": "založené na",
     "prejoin": {
         "audioAndVideoError": "Chyba zvuku a videa:",
@@ -694,6 +703,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Meno",
+        "search": "Hľadať",
+        "searchHint": "Vyhľadajte účastníkov",
         "seconds": "{{count}}s",
         "speakerStats": "Štatistiky rečníka",
         "speakerTime": "Čas rečníka"

@@ -105,6 +105,20 @@ export function showErrorNotification(props: INotificationProps, type?: string) 
 }
 
 /**
+ * Queues a success notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
+ * @returns {Object}
+ */
+export function showSuccessNotification(props: INotificationProps, type?: string) {
+    return showNotification({
+        ...props,
+        appearance: NOTIFICATION_TYPE.SUCCESS
+    }, type);
+}
+
+/**
  * Queues a notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.

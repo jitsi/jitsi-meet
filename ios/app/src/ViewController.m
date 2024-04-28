@@ -88,6 +88,10 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
 
+// - (void)customOverflowMenuButtonPressed:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED" withData:data];
+// }
+
 #if 0
 - (void)enterPictureInPicture:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"ENTER_PICTURE_IN_PICTURE" withData:data];
@@ -97,6 +101,10 @@
 - (void)readyToClose:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"READY_TO_CLOSE" withData:data];
 }
+
+// - (void)transcriptionChunkReceived:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"TRANSCRIPTION_CHUNK_RECEIVED" withData:data];
+// }
 
 - (void)participantJoined:(NSDictionary *)data {
   NSLog(@"%@%@", @"Participant joined: ", data[@"participantId"]);
@@ -129,6 +137,7 @@
 - (void)videoMutedChanged:(NSDictionary *)data {
   NSLog(@"%@%@", @"Video muted changed: ", data[@"muted"]);
 }
+
 
 #pragma mark - Helpers
 

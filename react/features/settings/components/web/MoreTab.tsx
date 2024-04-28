@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps
@@ -20,7 +20,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The currently selected language to display in the language select
@@ -138,12 +138,13 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
     render() {
         const {
             showPrejoinSettings,
-            classes,
             disableHideSelfView,
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
-            t } = this.props;
+            t
+        } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div
@@ -271,7 +272,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     _renderLanguageSelect() {
         const {
-            classes,
             currentLanguage,
             languages,
             t
@@ -287,7 +287,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
 
         return (
             <Select
-                className = { classes.bottomMargin }
                 id = 'more-language-select'
                 label = { t('settings.language') }
                 onChange = { this._onLanguageItemSelect }
@@ -297,4 +296,4 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(MoreTab));
+export default withStyles(translate(MoreTab), styles);

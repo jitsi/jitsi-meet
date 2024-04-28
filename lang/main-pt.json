@@ -67,13 +67,18 @@
             "renameBreakoutRoom": "Renomear sala",
             "sendToBreakoutRoom": "Enviar participante para:"
         },
+        "breakoutList": "lista de salas",
+        "buttonLabel": "Salas simultâneas",
         "defaultName": "Sala #{{index}}",
+        "hideParticipantList": "Ocultar lista de participantes",
         "mainRoom": "Sala principal",
         "notifications": {
             "joined": "Entrada na sala \"{{name}}\"",
             "joinedMainRoom": "Entrada na sala principal",
             "joinedTitle": "Salas simultâneas"
-        }
+        },
+        "showParticipantList": "Mostrar lista de participantes",
+        "title": "Salas simultâneas"
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
@@ -214,7 +219,9 @@
         "joinInBrowser": "Entrar pelo navegador de Internet",
         "launchMeetingLabel": "Como deseja entrar nesta reunião?",
         "launchWebButton": "Iniciar pelo navegador de Internet",
+        "noDesktopApp": "Não tem a aplicação?",
         "noMobileApp": "Não tem a aplicação?",
+        "or": "OU",
         "termsAndConditions": "Ao continuar, concorda com os nossos <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>termos & condições.</a>",
         "title": "Iniciando a sua reunião na {{app}}...",
         "titleNew": "Iniciando a sua reunião ...",
@@ -298,6 +305,8 @@
         "contactSupport": "Contacte o suporte",
         "copied": "Copiado",
         "copy": "Cópia",
+        "demoteParticipantDialog": "Tem a certeza de que pretende passar este participante para visitante?",
+        "demoteParticipantTitle": "Passar a visitante",
         "dismiss": "Dispensar",
         "displayNameRequired": "Olá! Qual é o seu nome?",
         "done": "Feito",
@@ -416,6 +425,7 @@
         "sessTerminatedReason": "A reunião foi encerrada",
         "sessionRestarted": "Chamada reiniciada devido a um problema de ligação.",
         "shareAudio": "Continuar",
+        "shareAudioAltText": "Para partilhar o conteúdo pretendido, navegue até ao \"Separador do navegador\", seleccione o conteúdo, active a marca de verificação \"Partilhar áudio\" e, em seguida, clique no botão \"Partilhar\"",
         "shareAudioTitle": "Como partilhar áudio",
         "shareAudioWarningD1": "precisa de parar a partilha do ecrã antes de partilhar o seu áudio.",
         "shareAudioWarningD2": "precisa de reiniciar a sua partilha de ecrã e verificar a opção \"partilhar áudio\".",
@@ -477,6 +487,10 @@
         "viewUpgradeOptions": "Ver opções de actualização",
         "viewUpgradeOptionsContent": "Para obter acesso ilimitado a funcionalidades premium como gravação, transcrições, RTMP Streaming & mais, terá de actualizar o seu plano.",
         "viewUpgradeOptionsTitle": "Descobriu uma característica premium!",
+        "whiteboardLimitContent": "Lamentamos, mas o limite de utilizadores do quadro branco foi atingido.",
+        "whiteboardLimitReference": "Para mais informações consultar",
+        "whiteboardLimitReferenceUrl": "o nosso sítio Web",
+        "whiteboardLimitTitle": "Restrição da utilização do quadro branco",
         "yourEntireScreen": "O seu ecrã inteiro"
     },
     "documentSharing": {
@@ -548,6 +562,7 @@
         "noNumbers": "Sem números de telefone.",
         "noPassword": "Nenhum",
         "noRoom": "Não foi especificado nenhuma sala para ligar.",
+        "noWhiteboard": "Não foi possível carregar o quadro branco.",
         "numbers": "Números para entrar por chamada telefónica",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "atingiu o limite do seu plano.",
@@ -555,7 +570,8 @@
         "sipAudioOnly": "Endereço SIP só de áudio",
         "title": "Partilhar",
         "tooltip": "Partilhar link e acesso telefónico para esta reunião",
-        "upgradeOptions": "Por favor, verifique as opções de atualização em"
+        "upgradeOptions": "Por favor, verifique as opções de atualização em",
+        "whiteboardError": "Erro ao carregar o quadro branco. Por favor, tente novamente mais tarde."
     },
     "inlineDialogFailure": {
         "msg": "Tivemos um pequeno problema.",
@@ -605,7 +621,7 @@
         "errorAPI": "Ocorreu um erro ao acessar suas transmissões do YouTube. Por favor tente logar novamente.",
         "errorLiveStreamNotEnabled": "Transmissão em direto não está ativada em {{email}}. Ative a transmissão em direto ou registre numa conta com transmissão direto ativada.",
         "expandedOff": "A transmissão em direto foi encerrada",
-        "expandedOn": "A reunião está sendo transmitida pelo YouTube.",
+        "expandedOn": "A reunião está sendo transmitida em direto.",
         "expandedPending": "Iniciando a transmissão em direto...",
         "failedToStart": "Falha ao iniciar a transmissão em direto",
         "getStreamKeyManually": "Não conseguimos buscar nenhuma transmissão em direto. Tente obter sua chave de transmissão em direto no YouTube.",
@@ -632,8 +648,6 @@
         "youtubeTerms": "Termos de serviços do YouTube"
     },
     "lobby": {
-        "admit": "Aceitar",
-        "admitAll": "Aceitar todos",
         "backToKnockModeButton": "Peça para aderir",
         "chat": "Chat",
         "dialogTitle": "Modo sala de espera",
@@ -667,8 +681,6 @@
         "notificationLobbyEnabled": "A sala de espera foi activada por {{originParticipantName}}",
         "notificationTitle": "Sala de espera",
         "passwordJoinButton": "Solicitar",
-        "reject": "Rejeitar",
-        "rejectAll": "Rejeitar todos",
         "title": "Sala de espera",
         "toggleLabel": "Ativar sala de espera"
     },
@@ -724,6 +736,7 @@
         "dataChannelClosed": "Deficiência na qualidade do vídeo",
         "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
         "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
+        "disabledIframeSecondary": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Por favor, use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
         "dontRemindMe": "Não me lembre",
@@ -793,21 +806,30 @@
         "startSilentTitle": "Entrou sem áudio!",
         "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
+        "suggestRecordingAction": "Iniciar",
+        "suggestRecordingDescription": "Gostaria de iniciar uma gravação?",
+        "suggestRecordingTitle": "Gravar esta reunião",
         "unmute": "Ligar microfone",
         "videoMutedRemotelyDescription": "Pode sempre ligá-la novamente.",
         "videoMutedRemotelyTitle": "A sua câmara foi desligada pelo {{participantDisplayName}}.",
         "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema.",
         "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
         "viewLobby": "Ver sala de espera",
-        "waitingParticipants": "{{waitingParticipants}} pessoas"
+        "viewVisitors": "Ver visitantes",
+        "waitingParticipants": "{{waitingParticipants}} pessoas",
+        "whiteboardLimitDescription": "Guarde o seu progresso, pois o limite de utilizadores será atingido em breve e o quadro branco será encerrado.",
+        "whiteboardLimitTitle": "Utilização do quadro branco"
     },
     "participantsPane": {
         "actions": {
+            "admit": "Aceitar",
+            "admitAll": "Aceitar todos",
             "allow": "Permitir aos participantes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pedir para ligar o som",
             "audioModeration": "Ligar o microfone deles",
             "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
+            "breakoutRooms": "Salas simultâneas",
             "invite": "Convidar alguém",
             "moreModerationActions": "Mais opções de moderação",
             "moreModerationControls": "Mais controlos de moderação",
@@ -815,6 +837,7 @@
             "mute": "Silenciar",
             "muteAll": "Silenciar todos",
             "muteEveryoneElse": "Silenciar todos os outros",
+            "reject": "Rejeitar",
             "stopEveryonesVideo": "Desligar a câmara de todos",
             "stopVideo": "Desligar a câmara",
             "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos",
@@ -824,6 +847,7 @@
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
+            "visitorRequests": " (pedidos {{count}})",
             "visitors": "Visitantes ({{count}})",
             "waitingLobby": "Aguardam na sala de espera ({{count}})"
         },
@@ -850,6 +874,9 @@
             "questionPlaceholder": "Faça uma pergunta",
             "removeOption": "Remover opção",
             "send": "Enviar"
+        },
+        "errors": {
+            "notUniqueOption": "As opções devem ser únicas"
         },
         "notification": {
             "description": "Abrir o separador das sondagens para votar",
@@ -914,10 +941,11 @@
         "joinWithoutAudio": "Entrar sem áudio",
         "keyboardShortcuts": "Ativar os atalhos de teclado",
         "linkCopied": "Link copiado para a área de transferência",
-        "lookGood": "O seu microfone funciona corretamente",
+        "lookGood": "Tudo está a funcionar corretamente",
         "or": "ou",
         "premeeting": "Pré-reunião",
         "proceedAnyway": "Continuar na mesma",
+        "recordingWarning": "Outros participantes podem estar a gravar esta chamada",
         "screenSharingError": "Erro de partilha de ecrã:",
         "showScreen": "Ativar o ecrã de pré-reunião",
         "startWithPhone": "Iniciar com o áudio do telefone",
@@ -971,7 +999,7 @@
         "error": "A gravação falhou. Tente novamente.",
         "errorFetchingLink": "Erro ao procurar link da gravação.",
         "expandedOff": "Gravação finalizada",
-        "expandedOn": "A reunião está sendo gravada.",
+        "expandedOn": "A reunião está sendo gravada",
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Partilhar o link da gravação com os participantes da reunião",
@@ -984,7 +1012,6 @@
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. Para gravações ilimitadas tente <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Gerámos um link para a sua gravação.",
-        "live": "DIRETO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Será necessário avisá-los de que a reunião está gravada.",
         "localRecordingNoVideo": "O vídeo não está a ser gravado",
         "localRecordingStartWarning": "Por favor, certifique-se de que pára a gravação antes de sair da reunião a fim de a guardar.",
@@ -1001,13 +1028,15 @@
         "onBy": "{{name}} iniciou a gravação",
         "onlyRecordSelf": "Gravar apenas as minhas transmissões áudio e vídeo",
         "pending": "Preparando para gravar a reunião...",
-        "rec": "REC",
+        "recordAudioAndVideo": "Gravar áudio e vídeo",
+        "recordTranscription": "Gravar transcrições",
         "saveLocalRecording": "Guardar ficheiro de gravação localmente (Beta)",
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "As reuniões gravadas são automaticamente apagadas 24h após a hora de gravação.",
         "serviceName": "Serviço de gravação",
         "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
+        "showAdvancedOptions": "Opções avançadas",
         "signIn": "Entrar",
         "signOut": "Sair",
         "surfaceError": "Por favor, seleccione o separador actual.",
@@ -1128,6 +1157,7 @@
         "neutral": "Neutro",
         "sad": "Triste",
         "search": "Pesquisar",
+        "searchHint": "Pesquisar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas dos Participantes",
         "speakerTime": "Tempo do Participante",
@@ -1150,11 +1180,11 @@
     "toolbar": {
         "Settings": "Definições",
         "accessibilityLabel": {
-            "Settings": "Mudar configurações",
+            "Settings": "Abrir definições",
             "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
-            "breakoutRoom": "Entrar/Sair da sala",
+            "breakoutRooms": "Salas simultâneas",
             "callQuality": "Gerir a qualidade do vídeo",
             "carmode": "Modo de condução",
             "cc": "Mudar legendas",
@@ -1337,12 +1367,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
-        "error": "Transcrição falhou. Tente novamente.",
         "expandedLabel": "Transcrição ativada",
         "failedToStart": "Transcrição falhou ao iniciar",
         "labelToolTip": "A reunião esta sendo transcrita",
-        "off": "Transcrição parada",
-        "pending": "Preparando a transcrição da reunião...",
         "sourceLanguageDesc": "Atualmente a língua da reunião está definida para <b>{{sourceLanguage}}</b>. <br/> Pode alterá-la a partir ",
         "sourceLanguageHere": "daqui",
         "start": "Exibir legendas",
@@ -1398,6 +1425,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Informações sobre a ligação",
+        "demote": "Passar a visitante",
         "domute": "Sem som",
         "domuteOthers": "Silenciar todos os outros",
         "domuteVideo": "Desativar a câmara",
@@ -1452,6 +1480,7 @@
         "chatIndicator": "(visitante)",
         "labelTooltip": "Número de visitantes: {{count}}",
         "notification": {
+            "demoteDescription": "Enviado aqui pelo {{actor}}, levante a mão para participar",
             "description": "Para participar levante a sua mão",
             "title": "É um visitante na reunião"
         }
@@ -1512,6 +1541,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Quadro branco"
-        }
+        },
+        "screenTitle": "Quadro branco"
     }
 }

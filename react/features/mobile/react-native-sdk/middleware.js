@@ -6,7 +6,8 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN
 } from '../../base/conference/actionTypes';
-import { PARTICIPANT_JOINED } from '../../base/participants/actionTypes';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
@@ -16,8 +17,10 @@ import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
+
 /**
- * Check if native modules are being used or not. If not then the init of middleware doesn't happen.
+ * Check if native modules are being used or not.
+ * If not, then the init of middleware doesn't happen.
  */
 !externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -25,6 +28,12 @@ const externalAPIEnabled = isExternalAPIAvailable();
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case SET_AUDIO_MUTED:
+        rnSdkHandlers?.onAudioMutedChanged && rnSdkHandlers?.onAudioMutedChanged(action.muted);
+        break;
+    case SET_VIDEO_MUTED:
+        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(Boolean(action.muted));
+        break;
     case CONFERENCE_BLURRED:
         rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
         break;
@@ -50,11 +59,18 @@ const externalAPIEnabled = isExternalAPIAvailable();
         rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
         break;
     }
+    case PARTICIPANT_LEFT: {
+        const { participant } = action;
+
+        const { id } = participant ?? {};
+
+        rnSdkHandlers?.onParticipantLeft && rnSdkHandlers?.onParticipantLeft({ id });
+        break;
+    }
     case READY_TO_CLOSE:
         rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
         break;
     }
 
     return result;
-}
-);
+});

@@ -35,6 +35,7 @@ const SpeakerStatsSearch = () => {
 
     return (
         <Input
+            accessibilityLabel = { t('speakerStats.searchHint') }
             clearable = { true }
             customStyles = {{ container: styles.customContainer }}
             icon = { IconSearch }

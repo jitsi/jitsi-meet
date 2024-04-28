@@ -14,9 +14,11 @@ local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 local starts_with = main_util.starts_with;
+local table_shallow_copy = main_util.table_shallow_copy;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
+local inspect = require 'inspect';
 
 local nr_retries = 3;
 local ssl = require "ssl";
@@ -118,17 +120,27 @@ function Util.new(module)
     end
 
     if self.cacheKeysUrl then
+        self.cachedKeys = {};
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
-                self.cachedKeys = {};
+                local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
                 for k, v in pairs(cjson_safe.decode(content)) do
                     if starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
+                        -- do not clean this key if it already exists
+                        keys_to_delete[k] = nil;
                     end
                 end
+                -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
+                timer.add_task(90*60, function ()
+                    for k, _ in pairs(keys_to_delete) do
+                        self.cachedKeys[k] = nil;
+                    end
+                end);
 
                 if cache_for then
                     cache_for = tonumber(cache_for);
@@ -139,8 +151,18 @@ function Util.new(module)
                     timer.add_task(cache_for, function ()
                         update_keys_cache:run("update_keys_cache");
                     end);
+                else
+                    -- no cache header let's consider updating in 6hours
+                    timer.add_task(6*60*60, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
                 end
-
+            else
+                module:log('warn', 'Failed to retrieve cached public keys code:%s', code);
+                -- failed let's retry in 30 seconds
+                timer.add_task(30, function ()
+                    update_keys_cache:run("update_keys_cache");
+                end);
             end
         end);
         update_keys_cache:run("update_keys_cache");
@@ -174,19 +196,25 @@ end
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
     local content = self.cache:get(keyId);
+    local code;
     if content == nil then
         -- If the key is not found in the cache.
-        module:log("debug", "Cache miss for key: %s", keyId);
+        -- module:log("debug", "Cache miss for key: %s", keyId);
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
-        module:log("debug", "Fetching public key from: %s", keyurl);
-        content = http_get_with_retry(keyurl, nr_retries);
+        -- module:log("debug", "Fetching public key from: %s", keyurl);
+        content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
             self.cache:set(keyId, content);
+        else
+            if code == nil then
+                -- this is timout after nr_retries retries
+                module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
+            end
         end
         return content;
     else
         -- If the key is in the cache, use it.
-        module:log("debug", "Cache hit for key: %s", keyId);
+        -- module:log("debug", "Cache hit for key: %s", keyId);
         return content;
     end
 end
@@ -197,6 +225,7 @@ end
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
 -- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_room - the room details from the token
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
@@ -218,7 +247,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     local key;
     if session.public_key then
         -- We're using an public key stored in the session
-        module:log("debug","Public key was found on the session");
+        -- module:log("debug","Public key was found on the session");
         key = session.public_key;
     elseif self.asapKeyServer and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
@@ -281,6 +310,8 @@ function Util:process_and_verify_token(session, acceptedIssuers)
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then
+          session.jitsi_meet_str_tenant = claims["context"]["tenant"];
+
           if claims["context"]["user"] ~= nil then
             session.jitsi_meet_context_user = claims["context"]["user"];
           end
@@ -301,6 +332,17 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           session.jitsi_meet_context_user = {};
           session.jitsi_meet_context_user.id = claims["user_id"];
         end
+
+        -- fire event that token has been verified and pass the session and the decoded token
+        prosody.events.fire_event('jitsi-authentication-token-verified', {
+            session = session;
+            claims = claims;
+        });
+
+        if session.contextRequired and claims["context"] == nil then
+            return false, "not-allowed", 'jwt missing required context claim';
+        end
+
         return true;
     else
         return false, "not-allowed", msg;
@@ -333,7 +375,11 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        auth_room = string.lower(auth_room);
+        if type(auth_room) == 'string' then
+            auth_room = string.lower(auth_room);
+        else
+            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+        end
     end
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
@@ -379,7 +425,7 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        module:log("debug", "room to check: %s", room_to_check)
+        -- module:log("debug", "room to check: %s", room_to_check)
         if not room_to_check then
             if not self.requireRoomClaim then
                 -- if we do not require to have the room claim, and it is missing
@@ -389,6 +435,15 @@ function Util:verify_room(session, room_address)
 
             return false;
         end
+    end
+
+    if session.jitsi_meet_str_tenant
+        and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
+            session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
+            session.jitsi_meet_context_group,
+            session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
+        session.jitsi_meet_tenant_mismatch = true;
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);

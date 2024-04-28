@@ -16,6 +16,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
+    ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
 } from '../../base/conference/actionTypes';
 import { JITSI_CONFERENCE_URL_KEY } from '../../base/conference/constants';
@@ -56,7 +57,10 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
 import { isExternalAPIAvailable } from '../react-native-sdk/functions';
 
-import { READY_TO_CLOSE } from './actionTypes';
+import {
+    CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
+    READY_TO_CLOSE
+} from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
@@ -79,13 +83,19 @@ const CHAT_TOGGLED = 'CHAT_TOGGLED';
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
 /**
+ * Event which will be emitted on the native side to indicate that the custom overflow menu button was pressed.
+ */
+const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_MENU_BUTTON_PRESSED';
+
+
+/**
  * Event which will be emitted on the native side to indicate a message was received
  * through the channel.
  */
 const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
 
 /**
- * Event which will be emitted on the native side to indicate a participant togggles
+ * Event which will be emitted on the native side to indicate a participant toggles
  * the screen share.
  */
 const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
@@ -178,6 +188,36 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
                 CONFERENCE_TERMINATED,
                 /* data */ {
                     url: _normalizeUrl(locationURL)
+                });
+        }
+
+        break;
+    }
+
+    case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED: {
+        const { id, text } = action;
+
+        sendEvent(
+            store,
+            CUSTOM_MENU_BUTTON_PRESSED,
+            {
+                id,
+                text
+            });
+
+        break;
+    }
+
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+
+        if (data?.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+            sendEvent(
+                store,
+                ENDPOINT_TEXT_MESSAGE_RECEIVED,
+                /* data */ {
+                    message: data.text,
+                    senderId: participant.getId()
                 });
         }
 
@@ -379,9 +419,10 @@ function _registerForNativeEvents(store: IStore) {
         dispatch(sendMessage(message));
     });
 
-    eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED, ({ enabled }: any) => {
-        dispatch(setRequestingSubtitles(enabled));
-    });
+    eventEmitter.addListener(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED,
+        ({ enabled, displaySubtitles, language }: any) => {
+            dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
+        });
 
     eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA, () => {
         dispatch(toggleCameraFacingMode());
@@ -417,24 +458,6 @@ function _unregisterForNativeEvents() {
  */
 function _registerForEndpointTextMessages(store: IStore) {
     const conference = getCurrentConference(store.getState());
-
-    conference?.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-        (...args: any[]) => {
-            if (args && args.length >= 2) {
-                const [ sender, eventData ] = args;
-
-                if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
-                    sendEvent(
-                        store,
-                        ENDPOINT_TEXT_MESSAGE_RECEIVED,
-                        /* data */ {
-                            message: eventData.text,
-                            senderId: sender._id
-                        });
-                }
-            }
-        });
 
     conference?.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,

@@ -9,7 +9,12 @@ import { IReduxState } from '../../app/types';
 export interface IAbstractCaptionsProps {
 
     /**
-     * Whether local participant is requesting to see subtitles.
+     * Whether local participant is displaying subtitles.
+     */
+    _displaySubtitles: boolean;
+
+    /**
+     * Whether local participant is requesting subtitles.
      */
     _requestingSubtitles: boolean;
 
@@ -34,9 +39,9 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
      * @returns {ReactElement}
      */
     render(): any {
-        const { _requestingSubtitles, _transcripts } = this.props;
+        const { _displaySubtitles, _requestingSubtitles, _transcripts } = this.props;
 
-        if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
+        if (!_requestingSubtitles || !_displaySubtitles || !_transcripts || !_transcripts.size) {
             return null;
         }
 
@@ -95,7 +100,7 @@ function _constructTranscripts(state: IReduxState): Map<string, string> {
 
     for (const [ id, transcriptMessage ] of _transcriptMessages) {
         if (transcriptMessage) {
-            let text = `${transcriptMessage.participantName}: `;
+            let text = `${transcriptMessage.participant.name}: `;
 
             if (transcriptMessage.final) {
                 text += transcriptMessage.final;
@@ -125,10 +130,11 @@ function _constructTranscripts(state: IReduxState): Map<string, string> {
  * }}
  */
 export function _abstractMapStateToProps(state: IReduxState) {
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const { _displaySubtitles, _requestingSubtitles } = state['features/subtitles'];
     const transcripts = _constructTranscripts(state);
 
     return {
+        _displaySubtitles,
         _requestingSubtitles,
 
         // avoid re-renders by setting to prop new empty Map instances.

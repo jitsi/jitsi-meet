@@ -6,6 +6,7 @@ import { createPollEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { COMMAND_NEW_POLL } from '../constants';
+import { hasIdenticalAnswers } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -37,6 +38,8 @@ export type AbstractProps = InputProps & {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
+
+
 const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
 
     const { setCreateMode } = props;
@@ -46,9 +49,13 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const [ answers, setAnswers ] = useState([ '', '' ]);
 
     const setAnswer = useCallback((i, answer) => {
-        answers[i] = answer;
+        setAnswers(currentAnswers => {
+            const newAnswers = [ ...currentAnswers ];
 
-        setAnswers([ ...answers ]);
+            newAnswers[i] = answer;
+
+            return newAnswers;
+        });
     }, [ answers ]);
 
     const addAnswer = useCallback((i?: number) => {
@@ -98,7 +105,8 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled
         = question.trim().length <= 0 // If no question is provided
-        || answers.filter(answer => answer.trim().length > 0).length < 2; // If not enough options are provided
+        || answers.filter(answer => answer.trim().length > 0).length < 2 // If not enough options are provided
+        || hasIdenticalAnswers(answers); // If duplicate options are provided
 
     const { t } = useTranslation();
 

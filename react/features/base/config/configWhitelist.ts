@@ -23,6 +23,7 @@ export default [
     'avgRtpStatsN',
     'backgroundAlpha',
     'breakoutRooms',
+    'bridgeChannel',
     'buttonsWithNotifyClick',
 
     /**
@@ -54,10 +55,6 @@ export default [
      * @type string
      */
     'callHandle',
-    'callStatsConfIDNamespace',
-    'callStatsConfigParams',
-    'callStatsID',
-    'callStatsSecret',
 
     /**
      * The UUID of the CallKit call representing the conference/meeting
@@ -74,10 +71,12 @@ export default [
      */
     'callUUID',
 
+    'cameraFacingMode',
     'conferenceInfo',
     'channelLastN',
     'connectionIndicators',
     'constraints',
+    'customToolbarButtons',
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
@@ -118,7 +117,6 @@ export default [
     'disableRtx',
     'disableSelfView',
     'disableSelfViewSettings',
-    'disableScreensharingVirtualBackground',
     'disableShortcuts',
     'disableShowMoreStats',
     'disableRemoveRaisedHandOnFocus',
@@ -128,6 +126,7 @@ export default [
     'disableThirdPartyRequests',
     'disableTileView',
     'disableTileEnlargement',
+    'disableVirtualBackground',
     'displayJids',
     'doNotStoreRoom',
     'doNotFlipLocalVideo',
@@ -140,7 +139,6 @@ export default [
     'enableEncodedTransformSupport',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
-    'enableLipSync',
     'enableLobbyChat',
     'enableOpusRed',
     'enableRemb',
@@ -158,7 +156,6 @@ export default [
     'filmstrip',
     'firefox_fake_device',
     'flags',
-    'forceJVB121Ratio',
     'forceTurnRelay',
     'gatherStats',
     'giphy',
@@ -205,6 +202,7 @@ export default [
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',
     'readOnlyName',
+    'recordings',
     'replaceParticipant',
     'resolution',
     'salesforceUrl',
@@ -230,6 +228,7 @@ export default [
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
+    'visitors',
     'watchRTCConfigParams',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',

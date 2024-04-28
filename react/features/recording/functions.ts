@@ -1,19 +1,37 @@
-import { IReduxState } from '../app/types';
+import i18next from 'i18next';
+
+import { IReduxState, IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
+import { getSoundFileSrc } from '../base/media/functions';
 import {
     getLocalParticipant,
     getRemoteParticipants,
     isLocalParticipantModerator
 } from '../base/participants/functions';
+import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
-import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
+import {
+    LIVE_STREAMING_OFF_SOUND_ID,
+    LIVE_STREAMING_ON_SOUND_ID,
+    RECORDING_OFF_SOUND_ID,
+    RECORDING_ON_SOUND_ID,
+    RECORDING_STATUS_PRIORITIES,
+    RECORDING_TYPES
+} from './constants';
 import logger from './logger';
+import {
+    LIVE_STREAMING_OFF_SOUND_FILE,
+    LIVE_STREAMING_ON_SOUND_FILE,
+    RECORDING_OFF_SOUND_FILE,
+    RECORDING_ON_SOUND_FILE
+} from './sounds';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -122,9 +140,8 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
             }
         }
     }
-    if ((!Array.isArray(recordingSessions) || recordingSessions.length === 0)
-        && mode === JitsiRecordingConstants.mode.FILE
-        && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+    if (!status && mode === JitsiRecordingConstants.mode.FILE
+            && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
 
@@ -139,6 +156,71 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
 export function supportsLocalRecording() {
     return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
         && navigator.product !== 'ReactNative';
+}
+
+/**
+ * Returns true if there is a cloud recording running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isCloudRecordingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
+}
+
+/**
+ * Returns true if there is a recording session running.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingRunning(state: IReduxState) {
+    return (
+        isCloudRecordingRunning(state)
+        || LocalRecordingManager.isRecordingLocally()
+    );
+}
+
+/**
+ * Returns true if the participant can stop recording.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function canStopRecording(state: IReduxState) {
+    if (LocalRecordingManager.isRecordingLocally()) {
+        return true;
+    }
+
+    if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
+        return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
+    }
+
+    return false;
+}
+
+/**
+ * Returns whether the transcription should start automatically when recording starts.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function shouldAutoTranscribeOnRecord(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return (transcription?.autoTranscribeOnRecord ?? true) && canAddTranscriber(state);
+}
+
+/**
+ * Returns whether the recording should be shared.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingSharingEnabled(state: IReduxState) {
+    const { recordingService } = state['features/base/config'];
+
+    return recordingService?.sharingEnabled ?? false;
 }
 
 /**
@@ -171,12 +253,12 @@ export function getRecordButtonProps(state: IReduxState) {
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
-    const recordingEnabled = recordingService?.enabled || localRecordingEnabled || dropboxEnabled;
+    const recordingEnabled = recordingService?.enabled || dropboxEnabled;
 
-    if (isModerator) {
+    if (localRecordingEnabled) {
+        visible = true;
+    } else if (isModerator) {
         visible = recordingEnabled ? isJwtFeatureEnabled(state, 'recording', true) : false;
-    } else {
-        visible = navigator.product !== 'ReactNative' && localRecordingEnabled;
     }
 
     // disable the button if the livestreaming is running.
@@ -266,7 +348,7 @@ export async function sendMeetingHighlight(state: IReduxState) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-function isRemoteParticipantRecordingLocally(state: IReduxState) {
+export function isRemoteParticipantRecordingLocally(state: IReduxState) {
     const participants = getRemoteParticipants(state);
 
     // eslint-disable-next-line prefer-const
@@ -277,4 +359,48 @@ function isRemoteParticipantRecordingLocally(state: IReduxState) {
     }
 
     return false;
+}
+
+/**
+ * Unregisters the audio files based on locale.
+ *
+ * @param {Dispatch<any>} dispatch - The redux dispatch function.
+ * @returns {void}
+ */
+export function unregisterRecordingAudioFiles(dispatch: IStore['dispatch']) {
+    dispatch(unregisterSound(LIVE_STREAMING_OFF_SOUND_FILE));
+    dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_OFF_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_ON_SOUND_FILE));
+}
+
+/**
+ * Registers the audio files based on locale.
+ *
+ * @param {Dispatch<any>} dispatch - The redux dispatch function.
+ * @param {boolean|undefined} shouldUnregister - Whether the sounds should be unregistered.
+ * @returns {void}
+ */
+export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], shouldUnregister?: boolean) {
+    const language = i18next.language;
+
+    if (shouldUnregister) {
+        unregisterRecordingAudioFiles(dispatch);
+    }
+
+    dispatch(registerSound(
+        LIVE_STREAMING_OFF_SOUND_ID,
+        getSoundFileSrc(LIVE_STREAMING_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        LIVE_STREAMING_ON_SOUND_ID,
+        getSoundFileSrc(LIVE_STREAMING_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_OFF_SOUND_ID,
+        getSoundFileSrc(RECORDING_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_ON_SOUND_ID,
+        getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
 }

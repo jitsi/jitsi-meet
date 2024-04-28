@@ -22,6 +22,7 @@ import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { copyText } from '../../../../base/util/copyText.native';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
+import { isEnablingLobbyAllowed } from '../../../../lobby/functions';
 import {
     endRoomLockRequest,
     unlockRoom
@@ -51,12 +52,17 @@ interface IProps {
     _conference?: IJitsiConference;
 
     /**
+     * Whether enabling lobby is allowed or not.
+     */
+    _isEnablingLobbyAllowed: boolean;
+
+    /**
      * Whether the local user is the moderator.
      */
     _isModerator: boolean;
 
     /**
-     * State of the lobby mode.
+     * Whether lobby mode is enabled or not.
      */
     _lobbyEnabled: boolean;
 
@@ -108,6 +114,11 @@ interface IProps {
 interface IState {
 
     /**
+     * State of lobby mode.
+     */
+    lobbyEnabled: boolean;
+
+    /**
      * Password added by the participant for room lock.
      */
     passwordInputValue: string;
@@ -134,6 +145,7 @@ class SecurityDialog extends PureComponent<IProps, IState> {
         super(props);
 
         this.state = {
+            lobbyEnabled: props._lobbyEnabled,
             passwordInputValue: '',
             showElement: props._locked === LOCKED_LOCALLY || false
         };
@@ -168,12 +180,12 @@ class SecurityDialog extends PureComponent<IProps, IState> {
      */
     _renderLobbyMode() {
         const {
-            _lobbyEnabled,
+            _isEnablingLobbyAllowed,
             _lobbyModeSwitchVisible,
             t
         } = this.props;
 
-        if (!_lobbyModeSwitchVisible) {
+        if (!_lobbyModeSwitchVisible || !_isEnablingLobbyAllowed) {
             return null;
         }
 
@@ -188,7 +200,7 @@ class SecurityDialog extends PureComponent<IProps, IState> {
                             { t('lobby.toggleLabel') }
                         </Text>
                         <Switch
-                            checked = { _lobbyEnabled }
+                            checked = { this.state.lobbyEnabled }
                             onChange = { this._onToggleLobbyMode } />
                     </View>
                 </View>
@@ -386,13 +398,14 @@ class SecurityDialog extends PureComponent<IProps, IState> {
      * @returns {void}
      */
     _onToggleLobbyMode() {
-        const { _lobbyEnabled, dispatch } = this.props;
+        const { dispatch } = this.props;
+        const { lobbyEnabled } = this.state;
 
-        if (_lobbyEnabled) {
-            dispatch(toggleLobbyMode(false));
-        } else {
-            dispatch(toggleLobbyMode(true));
-        }
+        this.setState({
+            lobbyEnabled: !lobbyEnabled
+        });
+
+        dispatch(toggleLobbyMode(!lobbyEnabled));
     }
 
     /**
@@ -503,6 +516,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _conference: conference,
+        _isEnablingLobbyAllowed: isEnablingLobbyAllowed(state),
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:

@@ -43,7 +43,7 @@ const DEVICE_TYPE_TO_SETTINGS_KEYS = {
         userSelectedDeviceLabel: 'userSelectedAudioOutputDeviceLabel'
     },
     videoInput: {
-        currentDeviceId: 'audioOutputDeviceId',
+        currentDeviceId: 'cameraDeviceId',
         userSelectedDeviceId: 'userSelectedCameraDeviceId',
         userSelectedDeviceLabel: 'userSelectedCameraDeviceLabel'
     }

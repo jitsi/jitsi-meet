@@ -4,20 +4,11 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { NotifyClickButton } from '../../../base/config/configType';
-import { VISITORS_MODE_BUTTONS } from '../../../base/config/constants';
-import {
-    getButtonNotifyMode,
-    getButtonsWithNotifyClick,
-    getToolbarButtons,
-    isToolbarButtonEnabled
-} from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
-import { isReactionsButtonEnabled, isReactionsEnabled } from '../../../reactions/functions.web';
-import { iAmVisitor } from '../../../visitors/functions';
+import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
 import {
     setHangupMenuVisible,
     setOverflowMenuVisible,
@@ -28,10 +19,11 @@ import { NOT_APPLICABLE, THRESHOLDS } from '../../constants';
 import {
     getAllToolboxButtons,
     getJwtDisabledButtons,
+    isButtonEnabled,
     isToolboxVisible
 } from '../../functions.web';
 import { useKeyboardShortcuts } from '../../hooks.web';
-import { IToolboxButton } from '../../types';
+import { IToolboxButton, NOTIFY_CLICK_MODE } from '../../types';
 import HangupButton from '../HangupButton';
 
 import { EndConferenceButton } from './EndConferenceButton';
@@ -48,7 +40,7 @@ interface IProps extends WithTranslation {
     /**
      * Toolbar buttons which have their click exposed through the API.
      */
-    _buttonsWithNotifyClick?: NotifyClickButton[];
+    _buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
 
     /**
      * Whether or not the chat feature is currently displayed.
@@ -116,14 +108,14 @@ interface IProps extends WithTranslation {
     _reactionsButtonEnabled: boolean;
 
     /**
-     * Whether or not reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean;
-
-    /**
      * Whether the toolbox should be shifted up or not.
      */
     _shiftUp: boolean;
+
+    /**
+     * Whether any reactions buttons should be displayed or not.
+     */
+    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The enabled buttons.
@@ -185,8 +177,8 @@ const Toolbox = ({
     _overflowDrawer,
     _overflowMenuVisible,
     _reactionsButtonEnabled,
-    _reactionsEnabled,
     _shiftUp,
+    _shouldDisplayReactionsButtons,
     _toolbarButtons,
     _visible,
     dispatch,
@@ -268,13 +260,13 @@ const Toolbox = ({
      * @returns {void}
      */
     function setButtonsNotifyClickMode(buttons: Object) {
-        if (typeof APP === 'undefined' || !_buttonsWithNotifyClick?.length) {
+        if (typeof APP === 'undefined' || (_buttonsWithNotifyClick?.size ?? 0) <= 0) {
             return;
         }
 
         Object.values(buttons).forEach((button: any) => {
             if (typeof button === 'object') {
-                button.notifyMode = getButtonNotifyMode(button.key, _buttonsWithNotifyClick);
+                button.notifyMode = _buttonsWithNotifyClick.get(button.key);
             }
         });
     }
@@ -289,7 +281,7 @@ const Toolbox = ({
         const buttons = getAllToolboxButtons(_customToolbarButtons);
 
         setButtonsNotifyClickMode(buttons);
-        const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
+        const isHangupVisible = isButtonEnabled('hangup', _toolbarButtons);
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
 
@@ -300,7 +292,7 @@ const Toolbox = ({
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButtons.includes(key)
-            && (isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons))
+            && (isButtonEnabled(key, _toolbarButtons) || isButtonEnabled(alias, _toolbarButtons))
         );
 
         let sliceIndex = _overflowDrawer || _reactionsButtonEnabled ? order.length + 2 : order.length + 1;
@@ -362,10 +354,11 @@ const Toolbox = ({
 
         const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons();
         const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
-        const showReactionsInOverflowMenu
-            = (_reactionsEnabled && !_reactionsButtonEnabled
-                && (raiseHandInOverflowMenu || _isNarrowLayout || _isMobile))
-            || overflowMenuButtons.some(({ key }) => key === 'reactions');
+        const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
+            && (
+                (!_reactionsButtonEnabled && (raiseHandInOverflowMenu || _isNarrowLayout || _isMobile))
+                    || overflowMenuButtons.some(({ key }) => key === 'reactions')
+            );
         const showRaiseHandInReactionsMenu = showReactionsInOverflowMenu && raiseHandInOverflowMenu;
 
         return (
@@ -422,13 +415,13 @@ const Toolbox = ({
                                 showReactionsMenu = { showReactionsInOverflowMenu } />
                         )}
 
-                        {isToolbarButtonEnabled('hangup', _toolbarButtons) && (
+                        {isButtonEnabled('hangup', _toolbarButtons) && (
                             _endConferenceSupported
                                 ? <HangupMenuButton
                                     ariaControls = 'hangup-menu'
                                     isOpen = { _hangupMenuVisible }
                                     key = 'hangup-menu'
-                                    notifyMode = { getButtonNotifyMode('hangup-menu', _buttonsWithNotifyClick) }
+                                    notifyMode = { _buttonsWithNotifyClick?.get('hangup-menu') }
                                     onVisibilityChange = { onSetHangupVisible }>
                                     <ContextMenu
                                         accessibilityLabel = { t(toolbarAccLabel) }
@@ -438,21 +431,18 @@ const Toolbox = ({
                                         onKeyDown = { onEscKey }>
                                         <EndConferenceButton
                                             buttonKey = 'end-meeting'
-                                            notifyMode = { getButtonNotifyMode(
-                                                'end-meeting',
-                                                _buttonsWithNotifyClick
-                                            ) } />
+                                            notifyMode = { _buttonsWithNotifyClick?.get('end-meeting') } />
                                         <LeaveConferenceButton
                                             buttonKey = 'hangup'
-                                            notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) } />
+                                            notifyMode = { _buttonsWithNotifyClick?.get('hangup') } />
                                     </ContextMenu>
                                 </HangupMenuButton>
                                 : <HangupButton
                                     buttonKey = 'hangup'
                                     customClass = 'hangup-button'
                                     key = 'hangup-button'
-                                    notifyMode = { getButtonNotifyMode('hangup', _buttonsWithNotifyClick) }
-                                    visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
+                                    notifyMode = { _buttonsWithNotifyClick.get('hangup') }
+                                    visible = { isButtonEnabled('hangup', _toolbarButtons) } />
                         )}
                     </div>
                 </div>
@@ -501,15 +491,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         overflowDrawer
     } = state['features/toolbox'];
     const { clientWidth } = state['features/base/responsive-ui'];
-    let toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
-    const _reactionsEnabled = isReactionsEnabled(state);
-
-    if (iAmVisitor(state)) {
-        toolbarButtons = VISITORS_MODE_BUTTONS.filter(e => toolbarButtons.indexOf(e) > -1);
-    }
+    const toolbarButtons = ownProps.toolbarButtons || state['features/toolbox'].toolbarButtons;
 
     return {
-        _buttonsWithNotifyClick: getButtonsWithNotifyClick(state),
+        _buttonsWithNotifyClick: state['features/toolbox'].buttonsWithNotifyClick,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _customToolbarButtons: customToolbarButtons,
@@ -523,8 +508,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _overflowMenuVisible: overflowMenuVisible,
         _overflowDrawer: overflowDrawer,
         _reactionsButtonEnabled: isReactionsButtonEnabled(state),
-        _reactionsEnabled,
         _shiftUp: state['features/toolbox'].shiftUp,
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _toolbarButtons: toolbarButtons,
         _visible: isToolboxVisible(state)
     };

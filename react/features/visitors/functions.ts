@@ -1,3 +1,4 @@
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
@@ -14,6 +15,16 @@ export function getVisitorsShortText(visitorsCount: number) {
 }
 
 /**
+ * Selector to return a list of promotion requests from visitors.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Array<Object>}
+ */
+export function getPromotionRequests(state: IReduxState) {
+    return state['features/visitors'].promotionRequests;
+}
+
+/**
  * Whether current UI is in visitor mode.
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}
@@ -22,4 +33,15 @@ export function getVisitorsShortText(visitorsCount: number) {
  */
 export function iAmVisitor(stateful: IStateful) {
     return toState(stateful)['features/visitors'].iAmVisitor;
+}
+
+/**
+ * Returns the number of visitors.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {number} - The number of visitors.
+ */
+export function getVisitorsCount(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].count ?? 0;
 }

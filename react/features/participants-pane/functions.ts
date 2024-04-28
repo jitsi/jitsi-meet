@@ -7,7 +7,7 @@ import {
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { INVITE_ENABLED } from '../base/flags/constants';
+import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
@@ -242,19 +242,11 @@ searchString: string) {
     if (searchString === '') {
         return true;
     }
+    const participantName = normalizeAccents(participant?.name || participant?.displayName || '')
+        .toLowerCase();
+    const lowerCaseSearchString = searchString.trim().toLowerCase();
 
-    const names = normalizeAccents(participant?.name || participant?.displayName || '')
-        .toLowerCase()
-        .split(' ');
-    const lowerCaseSearchString = searchString.toLowerCase();
-
-    for (const name of names) {
-        if (name.startsWith(lowerCaseSearchString)) {
-            return true;
-        }
-    }
-
-    return false;
+    return participantName.includes(lowerCaseSearchString);
 }
 
 /**
@@ -305,7 +297,21 @@ export function isBreakoutRoomRenameAllowed(state: IReduxState) {
     const isLocalModerator = isLocalParticipantModerator(state);
     const conference = getCurrentConference(state);
     const isRenameBreakoutRoomsSupported
-            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
+            = conference?.getBreakoutRooms()?.isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE) ?? false;
 
     return isLocalModerator && isRenameBreakoutRoomsSupported;
 }
+
+/**
+ * Returns true if participants is enabled and false otherwise.
+ *
+ * @param {IStateful} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {boolean}
+ */
+export const isParticipantsPaneEnabled = (stateful: IStateful) => {
+    const state = toState(stateful);
+    const { enabled = true } = getParticipantsPaneConfig(state);
+
+    return Boolean(getFeatureFlag(state, PARTICIPANTS_ENABLED, true) && enabled);
+};

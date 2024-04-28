@@ -201,11 +201,19 @@ const PollCreate = ({
                     value = { question } />
             </div>
             <ol className = { classes.answerList }>
-                {answers.map((answer: any, i: number) =>
-                    (<li
+                {answers.map((answer: any, i: number) => {
+
+                    const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
+                        : answers.slice(0, i).some((prevAnswer: string) =>
+                            prevAnswer === answer && prevAnswer !== '' && answer !== '');
+
+                    return (<li
                         className = { classes.answer }
                         key = { i }>
                         <Input
+                            bottomLabel = { (isIdenticalAnswer ? t('polls.errors.notUniqueOption',
+                             { index: i + 1 }) : '') }
+                            error = { isIdenticalAnswer }
                             id = { `polls-answer-input-${i}` }
                             label = { t('polls.create.pollOption', { index: i + 1 }) }
                             maxLength = { CHAR_LIMIT }
@@ -223,7 +231,8 @@ const PollCreate = ({
                             type = 'button'>
                             { t('polls.create.removeOption') }
                         </button>}
-                    </li>)
+                    </li>);
+                }
                 )}
             </ol>
             <div className = { classes.addButtonContainer }>

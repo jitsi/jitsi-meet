@@ -14,6 +14,12 @@ const recipientContainer = {
     padding: BaseTheme.spacing[2]
 };
 
+const inputBar = {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+};
+
 /**
  * The styles of the feature chat.
  *
@@ -116,12 +122,16 @@ export default {
         paddingBottom: 30
     },
 
-    inputBar: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginLeft: BaseTheme.spacing[3],
-        width: '100%'
+    inputBarNarrow: {
+        ...inputBar,
+        height: 112,
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    inputBarWide: {
+        ...inputBar,
+        height: 88,
+        marginHorizontal: BaseTheme.spacing[9]
     },
 
     customInputContainer: {
@@ -155,10 +165,6 @@ export default {
     replyWrapper: {
         alignItems: 'center',
         flexDirection: 'row'
-    },
-
-    sendButton: {
-        marginRight: BaseTheme.spacing[5]
     },
 
     /**

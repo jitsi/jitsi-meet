@@ -432,6 +432,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Opsies moet uniek wees"
+        }
+    },
     "poweredby": "aangedryf deur",
     "presenceStatus": {
         "busy": "Besig",
@@ -529,6 +534,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Naam",
+        "search": "Soek",
+        "searchHint": "Soek deelnemers",
         "seconds": "{{count}}s",
         "speakerStats": "Sprekerstatistiek",
         "speakerTime": "Sprekertyd"

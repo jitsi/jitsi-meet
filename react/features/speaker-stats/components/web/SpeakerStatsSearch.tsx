@@ -103,6 +103,7 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
                 color = { theme.palette.icon03 }
                 src = { IconSearch } />
             <input
+                aria-label = { t('speakerStats.searchHint') }
                 autoComplete = 'off'
                 autoFocus = { false }
                 className = { classes.speakerStatsSearch }

@@ -153,6 +153,11 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     _overwriteLocalParticipant(
                         store, { ...newUser,
                             features: context.features });
+
+                    // eslint-disable-next-line max-depth
+                    if (context.user && context.user.role === 'visitor') {
+                        action.preferVisitor = true;
+                    }
                 } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
                     // there are some tokens (firebase) having picture and name on the main level.
                     _overwriteLocalParticipant(store, {

@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
@@ -17,7 +17,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Array of disabled sounds ids.
@@ -175,7 +175,6 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
      */
     render() {
         const {
-            classes,
             disabledSounds,
             enabledNotifications,
             showNotificationsSettings,
@@ -190,6 +189,7 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
             moderatorMutedSoundsReactions,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div
@@ -273,4 +273,4 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(NotificationsTab));
+export default withStyles(translate(NotificationsTab), styles);

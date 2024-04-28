@@ -16,6 +16,7 @@ local new_id = require 'util.id'.medium;
 local filters = require 'util.filters';
 
 local util = module:require 'util';
+local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
@@ -48,6 +49,8 @@ local measure_visitors = module:measure('vnode-visitors', 'amount');
 
 local sent_iq_cache = require 'util.cache'.new(200);
 
+local sessions = prosody.full_sessions;
+
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
@@ -67,6 +70,46 @@ module:hook('muc-occupant-pre-join', function (event)
         end
     end
 end, 3);
+
+-- if a visitor leaves we want to lower its hand if it was still raised before leaving
+-- this is to clear indication for promotion on moderators visitors list
+module:hook('muc-occupant-pre-leave', function (event)
+    local occupant = event.occupant;
+
+    ---- we are interested only of visitors presence
+    if occupant.role ~= 'visitor' then
+        return;
+    end
+
+    local room = event.room;
+
+    -- let's check if the visitor has a raised hand send a lower hand
+    -- to main prosody
+    local pr = occupant:get_presence();
+
+    local raiseHand = pr:get_child_text('jitsi_participant_raisedHand');
+
+    -- a promotion detected let's send it to main prosody
+    if raiseHand and #raiseHand > 0 then
+        local iq_id = new_id();
+        sent_iq_cache:set(iq_id, socket.gettime());
+        local promotion_request = st.iq({
+            type = 'set',
+            to = 'visitors.'..main_domain,
+            from = local_domain,
+            id = iq_id })
+          :tag('visitors', { xmlns = 'jitsi:visitors',
+                             room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
+          :tag('promotion-request', {
+            xmlns = 'jitsi:visitors',
+            jid = occupant.jid,
+            time = nil;
+          }):up();
+
+        module:send(promotion_request);
+    end
+
+end, 1); -- rate limit is 0
 
 -- Returns the main participants count and the visitors count
 local function get_occupant_counts(room)
@@ -185,6 +228,31 @@ module:hook('muc-broadcast-presence', function (event)
     local raiseHand = full_p:get_child_text('jitsi_participant_raisedHand');
     -- a promotion detected let's send it to main prosody
     if raiseHand then
+        local user_id;
+        local is_moderator;
+        local session = sessions[occupant.jid];
+        local identity = session and session.jitsi_meet_context_user;
+
+        if is_vpaas(room) and identity then
+            -- in case of moderator in vpaas meeting we want to do auto-promotion
+            local is_vpaas_moderator = identity.moderator;
+            if is_vpaas_moderator == 'true' or is_vpaas_moderator == true then
+                is_moderator = true;
+            end
+        else
+            -- The case with single moderator in the room, we want to report our id
+            -- so we can be auto promoted
+            if identity and identity.id then
+                user_id = session.jitsi_meet_context_user.id;
+
+                -- non-vpass and having a token in correct tenant is considered a moderator
+                if session.jitsi_meet_str_tenant
+                    and session.jitsi_web_query_prefix == string.lower(session.jitsi_meet_str_tenant) then
+                    is_moderator = true;
+                end
+            end
+        end
+
         local iq_id = new_id();
         sent_iq_cache:set(iq_id, socket.gettime());
         local promotion_request = st.iq({
@@ -194,7 +262,13 @@ module:hook('muc-broadcast-presence', function (event)
             id = iq_id })
           :tag('visitors', { xmlns = 'jitsi:visitors',
                              room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
-          :tag('promotion-request', { xmlns = 'jitsi:visitors', jid = occupant.jid }):up();
+          :tag('promotion-request', {
+            xmlns = 'jitsi:visitors',
+            jid = occupant.jid,
+            time = raiseHand,
+            userId = user_id,
+            forcePromote = is_moderator and 'true' or 'false';
+          }):up();
 
         local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
         if nick_element then
@@ -292,10 +366,12 @@ end);
 module:hook('muc-occupant-groupchat', function(event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;
     local from = stanza.attr.from;
-    local occupant_host = jid.host(occupant.bare_jid);
+    local occupant_host;
 
     -- if there is no occupant this is a message from main, probably coming from other vnode
     if occupant then
+        occupant_host = jid.host(occupant.bare_jid);
+
         -- we manage nick only for visitors
         if occupant_host ~= main_domain then
             -- add to message stanza display name for the visitor
@@ -438,6 +514,8 @@ local function iq_from_main_handler(event)
     }));
 
     if process_disconnect then
+        cancel_destroy_timer(room);
+
         local main_count, visitors_count = get_occupant_counts(room);
         module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
         room:destroy(nil, 'Conference ended.');
@@ -448,6 +526,8 @@ local function iq_from_main_handler(event)
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
+    local createdTimestamp = node.attr.createdTimestamp;
+    room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
 
     if node.attr.lobby == 'true' then
         room._main_room_lobby_enabled = true;
@@ -502,7 +582,7 @@ function route_s2s_stanza(event)
     end
 
      if stanza.name == 'message' then
-        if jid.resource(stanza.to) then
+        if jid.resource(stanza.attr.to) then
             -- there is no point of delivering messages to main participants individually
             return true; -- drop it
         end

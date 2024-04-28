@@ -4,10 +4,9 @@ import { batch, connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { getButtonNotifyMode, getParticipantMenuButtonsWithNotifyClick } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
-import { getLocalParticipant } from '../../../base/participants/functions';
+import { getLocalParticipant, getParticipantCount } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { getHideSelfView } from '../../../base/settings/functions.web';
@@ -18,11 +17,13 @@ import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuIte
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { getParticipantMenuButtonsWithNotifyClick } from '../../../toolbox/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { renderConnectionStatus } from '../../actions.web';
 import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
+import DemoteToVisitorButton from './DemoteToVisitorButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 import TogglePinToStageButton from './TogglePinToStageButton';
@@ -53,6 +54,11 @@ interface IProps {
      * Whether to render the connection info pane.
      */
     _showConnectionInfo: boolean;
+
+    /**
+     * Shows/hides the local switch to visitor button.
+     */
+    _showDemote: boolean;
 
     /**
      * Whether to render the hide self view button.
@@ -131,6 +137,7 @@ const LocalVideoMenuTriggerButton = ({
     _menuPosition,
     _overflowDrawer,
     _showConnectionInfo,
+    _showDemote,
     _showHideSelfViewButton,
     _showLocalVideoFlipButton,
     _showPinToStage,
@@ -143,10 +150,11 @@ const LocalVideoMenuTriggerButton = ({
     const { classes } = useStyles();
     const { t } = useTranslation();
     const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
+    const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
 
     const notifyClick = useCallback(
         (buttonKey: string) => {
-            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+            const notifyMode = buttonsWithNotifyClick?.get(buttonKey);
 
             if (!notifyMode) {
                 return;
@@ -157,7 +165,7 @@ const LocalVideoMenuTriggerButton = ({
                 _localParticipantId,
                 notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
-        }, [ buttonsWithNotifyClick, getButtonNotifyMode ]);
+        }, [ buttonsWithNotifyClick ]);
 
     const _onPopoverOpen = useCallback(() => {
         showPopover?.();
@@ -185,7 +193,7 @@ const LocalVideoMenuTriggerButton = ({
                             className = { _overflowDrawer ? classes.flipText : '' }
                             // eslint-disable-next-line react/jsx-no-bind
                             notifyClick = { () => notifyClick(BUTTONS.FLIP_LOCAL_VIDEO) }
-                            notifyMode = { getButtonNotifyMode(BUTTONS.FLIP_LOCAL_VIDEO, buttonsWithNotifyClick) }
+                            notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.FLIP_LOCAL_VIDEO) }
                             onClick = { hidePopover } />
                     }
                     {_showHideSelfViewButton
@@ -193,7 +201,7 @@ const LocalVideoMenuTriggerButton = ({
                             className = { _overflowDrawer ? classes.flipText : '' }
                             // eslint-disable-next-line react/jsx-no-bind
                             notifyClick = { () => notifyClick(BUTTONS.HIDE_SELF_VIEW) }
-                            notifyMode = { getButtonNotifyMode(BUTTONS.HIDE_SELF_VIEW, buttonsWithNotifyClick) }
+                            notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.HIDE_SELF_VIEW) }
                             onClick = { hidePopover } />
                     }
                     {
@@ -202,7 +210,17 @@ const LocalVideoMenuTriggerButton = ({
                             noIcon = { true }
                             // eslint-disable-next-line react/jsx-no-bind
                             notifyClick = { () => notifyClick(BUTTONS.PIN_TO_STAGE) }
-                            notifyMode = { getButtonNotifyMode(BUTTONS.PIN_TO_STAGE, buttonsWithNotifyClick) }
+                            notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.PIN_TO_STAGE) }
+                            onClick = { hidePopover }
+                            participantID = { _localParticipantId } />
+                    }
+                    {
+                        _showDemote && visitorsSupported && <DemoteToVisitorButton
+                            className = { _overflowDrawer ? classes.flipText : '' }
+                            noIcon = { true }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            notifyClick = { () => notifyClick(BUTTONS.DEMOTE) }
+                            notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.DEMOTE) }
                             onClick = { hidePopover }
                             participantID = { _localParticipantId } />
                     }
@@ -210,7 +228,7 @@ const LocalVideoMenuTriggerButton = ({
                         isMobileBrowser() && <ConnectionStatusButton
                             // eslint-disable-next-line react/jsx-no-bind
                             notifyClick = { () => notifyClick(BUTTONS.CONN_STATUS) }
-                            notifyMode = { getButtonNotifyMode(BUTTONS.CONN_STATUS, buttonsWithNotifyClick) }
+                            notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.CONN_STATUS) }
                             participantID = { _localParticipantId } />
                     }
                 </ContextMenuItemGroup>
@@ -274,6 +292,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _menuPosition,
+        _showDemote: getParticipantCount(state) > 1,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,

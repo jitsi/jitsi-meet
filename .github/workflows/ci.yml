@@ -7,14 +7,14 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
         cache: 'npm'
     - name: Get changed files
       id: changed-files
-      uses: tj-actions/changed-files@v35
+      uses: tj-actions/changed-files@v41
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
@@ -34,8 +34,8 @@ jobs:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
         cache: 'npm'
@@ -45,8 +45,8 @@ jobs:
     name: Build Frontend (macOS)
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
         cache: 'npm'
@@ -56,8 +56,8 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
         cache: 'npm'
@@ -65,12 +65,42 @@ jobs:
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
   ios-build:
     name: Build mobile bundle (iOS)
-    runs-on: macOS-latest
+    runs-on: macOS-13
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
         cache: 'npm'
     - run: npm install
+    - name: setup Xcode
+      run: |
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+        xcodebuild -version
+    - name: setup-cocoapods
+      uses: maxim-lobanov/setup-cocoapods@v1
+      with:
+        podfile-path: ios/Podfile.lock
+    - name: Install Pods
+      run: |
+        pod --version
+        cd ios
+        pod install --repo-update
+    - name: Check if the git repository is clean
+      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+  debian-build:
+    name: Test Debian packages build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm install
+    - run: make
+    - run: sudo apt-get install -y debhelper
+    - run: dpkg-buildpackage -A -rfakeroot -us -uc -d
+    - run: make source-package

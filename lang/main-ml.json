@@ -464,7 +464,6 @@
         "notificationTitle": "ലോബി",
         "passwordField": "മീറ്റിംഗ് പാസ്‌വേഡ് നൽകുക",
         "passwordJoinButton": "ചേരുക",
-        "reject": "നിരസിക്കുക",
         "title": "ലോബി",
         "toggleLabel": "ലോബി പ്രവർത്തനക്ഷമമാക്കുക"
     },
@@ -539,8 +538,18 @@
         "suboptimalExperienceTitle": "ബ്രൗസർ മുന്നറിയിപ്പ്",
         "unmute": "അൺമ്യൂട്ട്"
     },
+    "participantsPane": {
+        "actions": {
+            "reject": "നിരസിക്കുക"
+        }
+    },
     "passwordDigitsOnly": "{{number}} അക്കങ്ങൾ വരെ",
     "passwordSetRemotely": "മറ്റൊരു പങ്കാളി സജ്ജമാക്കിയത്",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "ഓപ്ഷനുകൾ അദ്വിതീയമായിരിക്കണം"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "ഓഡിയോ, വീഡിയോ പിശക്:",
@@ -715,6 +724,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "പേര്",
+        "search": "തിരയുക",
+        "searchHint": "പങ്കെടുക്കുന്നവരെ തിരയുക",
         "seconds": "{{count}}s",
         "speakerStats": "സ്പീക്കർ സ്ഥിതിവിവരക്കണക്കുകൾ",
         "speakerTime": "സ്പീക്കർ സമയം"

@@ -438,6 +438,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Vaihtoehtojen on oltava ainutlaatuisia"
+        }
+    },
     "poweredby": "tukija:",
     "presenceStatus": {
         "busy": "Varattu",
@@ -535,6 +540,8 @@
         "hours": "{{count}} t",
         "minutes": "{{count}} min",
         "name": "Nimi",
+        "search": "Etsi",
+        "searchHint": "Etsi osallistujia",
         "seconds": "{{count}} s",
         "speakerStats": "Puhujatilastot",
         "speakerTime": "Puhujan aika"

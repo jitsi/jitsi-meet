@@ -477,6 +477,11 @@
     },
     "passwordDigitsOnly": "עד {{number}} ספרות",
     "passwordSetRemotely": "נקבע על ידי חבר אחר",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "האפשרויות חייבות להיות ייחודיות"
+        }
+    },
     "poweredby": "מופעל על ידי",
     "presenceStatus": {
         "busy": "עסוק",
@@ -583,6 +588,8 @@
         "hours": "{{count}} שעות",
         "minutes": "{{count}} דקות",
         "name": "שם",
+        "search": "לחפש",
+        "searchHint": "חפש משתתפים",
         "seconds": "{{count}} שניות",
         "speakerStats": "סטטיסטיקות דיבורים",
         "speakerTime": "זמן דיבור"

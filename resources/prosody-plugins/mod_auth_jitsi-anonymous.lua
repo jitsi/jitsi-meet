@@ -2,7 +2,7 @@
 -- * session resumption
 -- Copyright (C) 2021-present 8x8, Inc.
 
-local generate_random_id = require "util.id".medium;
+local generate_uuid = require "util.uuid".generate;
 local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
 local sessions = prosody.full_sessions;
@@ -59,7 +59,7 @@ module:provides("auth", provider);
 
 local function anonymous(self, message)
     -- Same as the vanilla anonymous auth plugin
-    local username = generate_random_id():lower();
+    local username = generate_uuid();
 
     -- This calls the handler created in 'provider.get_sasl_handler(session)'
     local result, err, msg = self.profile.anonymous(self, username, self.realm);

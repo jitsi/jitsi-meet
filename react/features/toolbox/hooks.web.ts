@@ -4,7 +4,6 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
-import { getToolbarButtons, isToolbarButtonEnabled } from '../base/config/functions.web';
 import { toggleDialog } from '../base/dialog/actions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
@@ -17,11 +16,14 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../participants-pane/actions.web';
-import { getParticipantsPaneOpen } from '../participants-pane/functions';
+import {
+    getParticipantsPaneOpen,
+    isParticipantsPaneEnabled
+} from '../participants-pane/functions';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
 import { REACTIONS } from '../reactions/constants';
-import { isReactionsEnabled } from '../reactions/functions.any';
+import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
 import { startScreenShareFlow } from '../screen-share/actions.web';
 import { isScreenVideoShared } from '../screen-share/functions';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
@@ -31,12 +33,15 @@ import { shouldDisplayTileView } from '../video-layout/functions.any';
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 
 import { setFullScreen } from './actions.web';
-import { isDesktopShareButtonDisabled } from './functions.web';
+import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
-    const _toolbarButtons = useSelector((state: IReduxState) => toolbarButtons || getToolbarButtons(state));
+    const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
+    const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
+    const _toolbarButtons = useSelector(
+        (state: IReduxState) => toolbarButtons || state['features/toolbox'].toolbarButtons);
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const desktopSharingButtonDisabled = useSelector(isDesktopShareButtonDisabled);
     const desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
@@ -44,7 +49,6 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const gifsEnabled = useSelector(isGifEnabled);
     const participantsPaneOpen = useSelector(getParticipantsPaneOpen);
     const raisedHand = useSelector((state: IReduxState) => hasRaisedHand(getLocalParticipant(state)));
-    const reactionsEnabled = useSelector(isReactionsEnabled);
     const screenSharing = useSelector(isScreenVideoShared);
     const tileViewEnabled = useSelector(shouldDisplayTileView);
 
@@ -201,42 +205,42 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
 
     useEffect(() => {
         const KEYBOARD_SHORTCUTS = [
-            isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
+            isButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
                 exec: onToggleVideoQuality,
                 helpDescription: 'toolbar.callQuality'
             },
-            isToolbarButtonEnabled('chat', _toolbarButtons) && {
+            isButtonEnabled('chat', _toolbarButtons) && {
                 character: 'C',
                 exec: onToggleChat,
                 helpDescription: 'keyboardShortcuts.toggleChat'
             },
-            isToolbarButtonEnabled('desktop', _toolbarButtons) && {
+            isButtonEnabled('desktop', _toolbarButtons) && {
                 character: 'D',
                 exec: onToggleScreenshare,
                 helpDescription: 'keyboardShortcuts.toggleScreensharing'
             },
-            isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
+            _isParticipantsPaneEnabled && isButtonEnabled('participants-pane', _toolbarButtons) && {
                 character: 'P',
                 exec: onToggleParticipantsPane,
                 helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
             },
-            isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
+            isButtonEnabled('raisehand', _toolbarButtons) && {
                 character: 'R',
                 exec: onToggleRaiseHand,
                 helpDescription: 'keyboardShortcuts.raiseHand'
             },
-            isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
+            isButtonEnabled('fullscreen', _toolbarButtons) && {
                 character: 'S',
                 exec: onToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
             },
-            isToolbarButtonEnabled('tileview', _toolbarButtons) && {
+            isButtonEnabled('tileview', _toolbarButtons) && {
                 character: 'W',
                 exec: onToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
             },
-            !_isSpeakerStatsDisabled && isToolbarButtonEnabled('stats', _toolbarButtons) && {
+            !_isSpeakerStatsDisabled && isButtonEnabled('stats', _toolbarButtons) && {
                 character: 'T',
                 exec: onSpeakerStats,
                 helpDescription: 'keyboardShortcuts.showSpeakerStats'
@@ -253,7 +257,8 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
             }
         });
 
-        if (reactionsEnabled) {
+        // If the buttons for sending reactions are not displayed we should disable the shortcuts too.
+        if (_shouldDisplayReactionsButtons) {
             const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
                 const onShortcutSendReaction = () => {
                     dispatch(addReactionToBuffer(key));
@@ -299,13 +304,14 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
             [ 'A', 'C', 'D', 'P', 'R', 'S', 'W', 'T', 'G' ].forEach(letter =>
                 dispatch(unregisterShortcut(letter)));
 
-            if (reactionsEnabled) {
+            if (_shouldDisplayReactionsButtons) {
                 Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                     .forEach(letter =>
                         dispatch(unregisterShortcut(letter, true)));
             }
         };
     }, [
+        _shouldDisplayReactionsButtons,
         chatOpen,
         desktopSharingButtonDisabled,
         desktopSharingEnabled,

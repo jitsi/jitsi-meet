@@ -41,6 +41,7 @@ import {
 import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
 import {
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
     getScreenshareParticipantIds,
     getVirtualScreenshareParticipantByOwnerId,
@@ -67,7 +68,6 @@ import {
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
-import { setDesktopSources } from '../../react/features/desktop-picker/actions';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -77,6 +77,7 @@ import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/act
 import {
     addStageParticipant,
     resizeFilmStrip,
+    setFilmstripVisible,
     setVolume,
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
@@ -114,7 +115,7 @@ import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/function
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
-import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
 import {
@@ -200,7 +201,7 @@ function initCommands() {
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
-            APP.conference.changeLocalDisplayName(displayName);
+            APP.store.dispatch(updateSettings({ displayName: getNormalizedDisplayName(displayName) }));
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -245,8 +246,6 @@ function initCommands() {
             }
         },
         'pin-participant': (id, videoType) => {
-            logger.debug('Pin participant command received');
-
             const state = APP.store.getState();
 
             // if id not provided, unpin everybody.
@@ -304,7 +303,6 @@ function initCommands() {
             APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
         },
         'resize-large-video': (width, height) => {
-            logger.debug('Resize large video command received');
             sendAnalytics(createApiEvent('largevideo.resized'));
             APP.store.dispatch(resizeLargeVideo(width, height));
         },
@@ -325,7 +323,6 @@ function initCommands() {
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
         'set-follow-me': value => {
-            logger.debug('Set follow me command received');
 
             if (value) {
                 sendAnalytics(createApiEvent('follow.me.set'));
@@ -336,7 +333,6 @@ function initCommands() {
             APP.store.dispatch(setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
-            logger.debug('Set large video participant command received');
             const { getState, dispatch } = APP.store;
 
             if (!participantId) {
@@ -374,17 +370,17 @@ function initCommands() {
         },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
-            logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
-            logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
-            APP.UI.toggleFilmstrip();
+            const { visible } = APP.store.getState()['features/filmstrip'];
+
+            APP.store.dispatch(setFilmstripVisible(!visible));
         },
 
         /*
@@ -474,8 +470,8 @@ function initCommands() {
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
-        'set-subtitles': enabled => {
-            APP.store.dispatch(setRequestingSubtitles(enabled));
+        'set-subtitles': (enabled, displaySubtitles, language) => {
+            APP.store.dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
@@ -498,7 +494,6 @@ function initCommands() {
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
-            logger.debug('Send chat message command received');
             if (to) {
                 const participant = getParticipantById(APP.store.getState(), to);
 
@@ -516,7 +511,6 @@ function initCommands() {
             APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
-            logger.debug('Send endpoint message command received');
             try {
                 APP.conference.sendEndpointMessage(to, {
                     name: ENDPOINT_TEXT_MESSAGE_NAME,
@@ -539,25 +533,19 @@ function initCommands() {
             });
         },
         'overwrite-names': participantList => {
-            logger.debug('Overwrite names command received');
-
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
-            logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
-            logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-
         'start-share-video': url => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.start'));
             const id = extractYoutubeIdOrURL(url);
 
@@ -565,9 +553,7 @@ function initCommands() {
                 APP.store.dispatch(playSharedVideo(id));
             }
         },
-
         'stop-share-video': () => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
         },
@@ -642,6 +628,7 @@ function initCommands() {
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
+         * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.
          * @returns {void}
          */
         'start-recording': ({
@@ -652,7 +639,8 @@ function initCommands() {
             rtmpStreamKey,
             rtmpBroadcastID,
             youtubeStreamKey,
-            youtubeBroadcastID
+            youtubeBroadcastID,
+            extraMetadata = {}
         }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
@@ -702,6 +690,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'upload_credentials': {
                                     'service_name': RECORDING_TYPES.DROPBOX,
                                     'token': dropboxToken
@@ -714,6 +703,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'share': shouldShare
                             }
                         })
@@ -839,20 +829,11 @@ function initCommands() {
         },
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard());
-        },
-        '_request-desktop-sources-result': data => {
-            if (data.error) {
-                logger.error(`Error to retrieve desktop sources result, error data: ${data.error}`);
-
-                return;
-            }
-            if (data.success?.data?.sources) {
-                APP.store.dispatch(setDesktopSources(data.success.data.sources));
-            }
         }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
+            logger.info(`API command received: ${name}`);
             commands[name](...data);
 
             return true;
@@ -1004,7 +985,19 @@ function initCommands() {
             callback(isP2pActive(APP.store.getState()));
             break;
         }
+        case 'session-id': {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            callback(conference?.getMeetingUniqueId() || '');
+            break;
+        }
+        case '_new_electron_screensharing_supported': {
+            callback(true);
+            break;
+        }
         default:
+            callback({ error: new Error('UnknownRequestError') });
+
             return false;
         }
 
@@ -1112,7 +1105,11 @@ class API {
         this._enabled = true;
 
         initCommands();
+
         this.notifyBrowserSupport(isSupportedBrowser());
+
+        // Let the embedder know we are ready.
+        this._sendEvent({ name: 'ready' });
     }
 
     /**
@@ -1296,8 +1293,8 @@ class API {
      * @param {Object} options - Object with the options for desktop sources.
      * @returns {void}
      */
-    notifyRequestDesktopSources(options) {
-        this._sendEvent({
+    requestDesktopSources(options) {
+        return transport.sendRequest({
             name: '_request-desktop-sources',
             options
         });
@@ -1985,6 +1982,33 @@ class API {
             name: 'toolbar-button-clicked',
             key,
             preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that transcribing has started or stopped.
+     *
+     * @param {boolean} on - True if transcribing is on, false otherwise.
+     * @returns {void}
+     */
+    notifyTranscribingStatusChanged(on) {
+        this._sendEvent({
+            name: 'transcribing-status-changed',
+            on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user received
+     * a transcription chunk.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyTranscriptionChunkReceived(data) {
+        this._sendEvent({
+            name: 'transcription-chunk-received',
+            data
         });
     }
 

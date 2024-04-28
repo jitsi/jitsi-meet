@@ -8,6 +8,7 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import LobbyParticipantList from './LobbyParticipantList';
 import MeetingParticipantList from './MeetingParticipantList';
 import ParticipantsPaneFooter from './ParticipantsPaneFooter';
+import VisitorsList from './VisitorsList';
 import styles from './styles';
 
 
@@ -32,6 +33,7 @@ const ParticipantsPane = () => {
                 // eslint-disable-next-line react/jsx-no-bind
                 ListHeaderComponent = { () => (
                     <>
+                        <VisitorsList />
                         <LobbyParticipantList />
                         <MeetingParticipantList />
                     </>

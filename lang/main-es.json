@@ -598,8 +598,6 @@
         "youtubeTerms": "Términos de servicios de YouTube"
     },
     "lobby": {
-        "admit": "Admitir",
-        "admitAll": "Admitir todo",
         "backToKnockModeButton": "No hay contraseña, pide permiso para entrar.",
         "chat": "Chat",
         "dialogTitle": "Sala de espera",
@@ -633,8 +631,6 @@
         "notificationTitle": "Sala de espera",
         "passwordField": "Introduce la contraseña de la reunión",
         "passwordJoinButton": "Entrar",
-        "reject": "Rechazar",
-        "rejectAll": "Rechazar todo",
         "title": "Sala de espera",
         "toggleLabel": "Activar sala de espera"
     },
@@ -768,6 +764,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Admitir",
+            "admitAll": "Admitir todo",
             "allow": "Permitir a los asistentes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pida que le quiten el silencio",
@@ -778,8 +776,9 @@
             "moreModerationControls": "Más controles de moderación",
             "moreParticipantOptions": "Más opciones de participantes",
             "mute": "Silenciar",
-            "muteAll": "Silenciar a todos los demás",
+            "muteAll": "Silenciar a todos",
             "muteEveryoneElse": "Silenciar al resto",
+            "reject": "Rechazar",
             "stopEveryonesVideo": "Detener el vídeo de todos",
             "stopVideo": "Detener el vídeo",
             "unblockEveryoneMicCamera": "Desbloquear el micrófono y la cámara de todos",
@@ -815,6 +814,9 @@
             "questionPlaceholder": "Haz una pregunta",
             "removeOption": "Eliminar la opción",
             "send": "Enviar"
+        },
+        "errors": {
+            "notUniqueOption": "Las opciones deben ser únicas"
         },
         "notification": {
             "description": "Abre la pestaña de encuestas para votar",
@@ -1090,6 +1092,7 @@
         "neutral": "Neutral",
         "sad": "Triste",
         "search": "Buscar",
+        "searchHint": "Buscar participantes",
         "seconds": "{{count}} s",
         "speakerStats": "Estadísticas de participantes",
         "speakerTime": "Tiempo hablado",
@@ -1361,7 +1364,7 @@
     "videothumbnail": {
         "connectionInfo": "Información de conexión",
         "domute": "Silenciar",
-        "domuteOthers": "Silenciar a todos",
+        "domuteOthers": "Silenciar a todos los demás",
         "domuteVideo": "Desactivar la cámara",
         "domuteVideoOfOthers": "Desactivar la cámara de todos los demás",
         "flip": "Voltear",

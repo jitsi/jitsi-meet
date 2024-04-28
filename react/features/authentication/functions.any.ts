@@ -1,4 +1,5 @@
 import { IConfig } from '../base/config/configType';
+import { parseURLParams } from '../base/util/parseURLParams';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
 /**
@@ -13,22 +14,52 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
 /**
  * Returns the state that we can add as a parameter to the tokenAuthUrl.
  *
+ * @param {URL} locationURL - The location URL.
+ * @param {Object} options: - Config options {
+ *     audioMuted: boolean | undefined
+ *     audioOnlyEnabled: boolean | undefined,
+ *     skipPrejoin: boolean | undefined,
+ *     videoMuted: boolean | undefined
+ * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
- * @param {boolean} skipPrejoin - Whether to skip pre-join page.
- * @param {URL} locationURL - The location URL.
+ *
  * @returns {Object} The state object.
  */
 export const _getTokenAuthState = (
+        locationURL: URL,
+        options: {
+            audioMuted: boolean | undefined;
+            audioOnlyEnabled: boolean | undefined;
+            skipPrejoin: boolean | undefined;
+            videoMuted: boolean | undefined;
+        },
         roomName: string | undefined,
-        tenant: string | undefined,
-        skipPrejoin: boolean | undefined = false,
-        locationURL: URL): object => {
+        tenant: string | undefined): object => {
     const state = {
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
         tenant
     };
+
+    const {
+        audioMuted = false,
+        audioOnlyEnabled = false,
+        skipPrejoin = false,
+        videoMuted = false
+    } = options;
+
+    if (audioMuted) {
+
+        // @ts-ignore
+        state['config.startWithAudioMuted'] = true;
+    }
+
+    if (audioOnlyEnabled) {
+
+        // @ts-ignore
+        state['config.startAudioOnly'] = true;
+    }
 
     if (skipPrejoin) {
         // We have already shown the prejoin screen, no need to show it again after obtaining the token.
@@ -36,13 +67,18 @@ export const _getTokenAuthState = (
         state['config.prejoinConfig.enabled'] = false;
     }
 
-    const params = new URLSearchParams(locationURL.hash);
+    if (videoMuted) {
 
-    for (const [ key, value ] of params) {
+        // @ts-ignore
+        state['config.startWithVideoMuted'] = true;
+    }
+    const params = parseURLParams(locationURL);
+
+    for (const key of Object.keys(params)) {
         // we allow only config and interfaceConfig overrides in the state
         if (key.startsWith('config.') || key.startsWith('interfaceConfig.')) {
             // @ts-ignore
-            state[key] = value;
+            state[key] = params[key];
         }
     }
 

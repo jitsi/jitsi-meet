@@ -92,8 +92,12 @@ StateListenerRegistry.register(
             isTileView: isLayoutTileView(state)
         };
     },
-    /* listener */({ clientHeight, isTileView }, store) => {
+    /* listener */({ clientHeight, isTileView }, store, previousState) => {
         if (!isTileView) {
+            if (previousState?.isTileView) {
+                store.dispatch(setShiftUp(false));
+            }
+
             return;
         }
         throttledCheckOverlap(clientHeight, store);

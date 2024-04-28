@@ -35,6 +35,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     _additionalCardTemplate: HTMLTemplateElement | null;
     _additionalContentTemplate: HTMLTemplateElement | null;
     _additionalToolbarContentTemplate: HTMLTemplateElement | null;
+    _titleHasNotAllowCharacter: boolean;
 
     /**
      * Default values for {@code WelcomePage} component's properties.
@@ -60,6 +61,14 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             generateRoomNames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
         };
+
+        /**
+      * Used To display a warning massage if the title input has no allow character.
+      *
+      * @private
+      * @type {boolean}
+      */
+        this._titleHasNotAllowCharacter = false;
 
         /**
          * The HTML Element used as the container for additional content. Used
@@ -205,7 +214,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             <SettingsButton
                                 defaultTab = { SETTINGS_TABS.CALENDAR }
                                 isDisplayedOnWelcomePage = { true } />
-                            { showAdditionalToolbarContent
+                            {showAdditionalToolbarContent
                                 ? <div
                                     className = 'settings-toolbar-content'
                                     ref = { this._setAdditionalToolbarContentRef } />
@@ -213,10 +222,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             }
                         </div>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.headerTitle') }
+                            {t('welcomepage.headerTitle')}
                         </h1>
                         <span className = 'header-text-subtitle'>
-                            { t('welcomepage.headerSubtitle')}
+                            {t('welcomepage.headerSubtitle')}
                         </span>
                         <div id = 'enter_room'>
                             <div className = 'join-meeting-container'>
@@ -232,11 +241,11 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                             pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
                                             placeholder = { this.state.roomPlaceholder }
                                             ref = { this._setRoomInputRef }
-                                            title = { t('welcomepage.roomNameAllowedChars') }
                                             type = 'text'
                                             value = { this.state.room } />
                                     </form>
                                 </div>
+
                                 <button
                                     aria-disabled = 'false'
                                     aria-label = 'Start meeting'
@@ -245,17 +254,27 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     onClick = { this._onFormSubmit }
                                     tabIndex = { 0 }
                                     type = 'button'>
-                                    { t('welcomepage.startMeeting') }
+                                    {t('welcomepage.startMeeting')}
                                 </button>
                             </div>
                         </div>
-                        { this._renderInsecureRoomNameWarning() }
+                        {this._titleHasNotAllowCharacter && (
+                            <div
+                                className = 'not-allow-title-character-div'
+                                role = 'alert'>
+                                <Icon src = { IconWarning } />
+                                <span className = 'not-allow-title-character-text'>
+                                    {t('welcomepage.roomNameAllowedChars')}
+                                </span>
+                            </div>
+                        )}
+                        {this._renderInsecureRoomNameWarning()}
 
-                        { _moderatedRoomServiceUrl && (
+                        {_moderatedRoomServiceUrl && (
                             <div id = 'moderated-meetings'>
                                 {
                                     translateToHTML(
-                                    t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
                                 }
                             </div>)}
                     </div>
@@ -264,22 +283,22 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 <div className = 'welcome-cards-container'>
                     <div className = 'welcome-card-column'>
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
-                            { this._renderTabs() }
+                            {this._renderTabs()}
                         </div>
-                        { showAdditionalCard
+                        {showAdditionalCard
                             ? <div
                                 className = 'welcome-card welcome-card--dark'
                                 ref = { this._setAdditionalCardRef } />
-                            : null }
+                            : null}
                     </div>
 
-                    { showAdditionalContent
+                    {showAdditionalContent
                         ? <div
                             className = 'welcome-page-content'
                             ref = { this._setAdditionalContentRef } />
-                        : null }
+                        : null}
                 </div>
-                { DISPLAY_WELCOME_FOOTER && this._renderFooter()}
+                {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
             </div>
 
         );
@@ -295,7 +314,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             <div className = 'insecure-room-name-warning'>
                 <Icon src = { IconWarning } />
                 <span>
-                    { getUnsafeRoomText(this.props.t, 'welcome') }
+                    {getUnsafeRoomText(this.props.t, 'welcome')}
                 </span>
             </div>
         );
@@ -329,6 +348,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     // @ts-ignore
     // eslint-disable-next-line require-jsdoc
     _onRoomChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const specialCharacters = [ '?', '&', ':', '\'', '"', '%', '#', '.' ];
+
+        this._titleHasNotAllowCharacter = specialCharacters.some(char => event.target.value.includes(char));
         super._onRoomChange(event.target.value);
     }
 
@@ -342,8 +364,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             t,
             _deeplinkingCfg: {
                 ios = { downloadLink: undefined },
-                android = { fDroidUrl: undefined,
-                    downloadLink: undefined }
+                android = {
+                    fDroidUrl: undefined,
+                    downloadLink: undefined
+                }
             }
         } = this.props;
 

@@ -383,6 +383,17 @@ module.exports = (_env, argv) => {
 
                 globalObject: 'AudioWorkletGlobalScope'
             }
+        }),
+
+        Object.assign({}, config, {
+            entry: {
+                'screenshot-capture-worker': './react/features/screenshot-capture/worker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 4 * 1024)
         })
     ];
 };

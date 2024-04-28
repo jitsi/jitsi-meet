@@ -7,8 +7,7 @@ import SplashScreen from 'react-native-splash-screen';
 import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import DialogContainer from '../../base/dialog/components/native/DialogContainer';
 import { updateFlags } from '../../base/flags/actions';
-import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
-import { getFeatureFlag } from '../../base/flags/functions';
+import { CALL_INTEGRATION_ENABLED } from '../../base/flags/constants';
 import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actions';
 import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
 import { updateSettings } from '../../base/settings/actions';
@@ -21,6 +20,7 @@ import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
 // Register middlewares and reducers.
 import '../middlewares.native';
 import '../reducers.native';
+
 
 declare let __DEV__: any;
 
@@ -111,7 +111,7 @@ export class App extends AbstractApp<IProps> {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store ?? {};
-        const { flags = {} } = this.props;
+        const { flags = {}, url, userInfo } = this.props;
         let callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         // CallKit does not work on the simulator, make sure we disable it.
@@ -153,22 +153,19 @@ export class App extends AbstractApp<IProps> {
 
         await rootNavigationReady;
 
-        // Check if serverURL is configured externally and not allowed to change.
-        const serverURLChangeEnabled = getState && getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+        // Update specified server URL.
+        if (typeof url !== 'undefined') {
 
-        if (!serverURLChangeEnabled) {
-            // As serverURL is provided externally, so we push it to settings.
-            if (typeof this.props.url !== 'undefined') {
-                // @ts-ignore
-                const { serverURL } = this.props.url;
+            // @ts-ignore
+            const { serverURL } = url;
 
-                if (typeof serverURL !== 'undefined') {
-                    dispatch?.(updateSettings({ serverURL }));
-                }
+            if (typeof serverURL !== 'undefined') {
+                dispatch?.(updateSettings({ serverURL }));
             }
         }
 
-        dispatch?.(updateSettings(this.props.userInfo || {}));
+        // @ts-ignore
+        dispatch?.(updateSettings(userInfo || {}));
 
         // Update settings with feature-flag.
         if (typeof callIntegrationEnabled !== 'undefined') {

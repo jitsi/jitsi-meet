@@ -1,10 +1,10 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
 import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -227,7 +227,7 @@ export interface IProps extends WithTranslation {
     /**
      * An object containing CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof defaultStyles>, string>>;
 
     /**
      * The redux dispatch function.
@@ -351,8 +351,8 @@ const defaultStyles = (theme: Theme) => {
             '& img': {
                 maxWidth: '100%',
                 maxHeight: '100%',
-                objectFit: 'contain',
-                flexGrow: '1'
+                objectFit: 'contain' as const,
+                flexGrow: 1
             }
         },
 
@@ -946,9 +946,9 @@ class Thumbnail extends Component<IProps, IState> {
             _isDominantSpeakerDisabled,
             _participant,
             _raisedHand,
-            _thumbnailType,
-            classes
+            _thumbnailType
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         className += ` ${DISPLAY_MODE_TO_CLASS_NAME[displayMode]}`;
 
@@ -994,7 +994,8 @@ class Thumbnail extends Component<IProps, IState> {
      * @returns {Component}
      */
     _renderGif() {
-        const { _gifSrc, classes } = this.props;
+        const { _gifSrc } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return _gifSrc && (
             <div className = { classes.gif }>
@@ -1033,10 +1034,10 @@ class Thumbnail extends Component<IProps, IState> {
             _shouldDisplayTintBackground,
             _thumbnailType,
             _videoTrack,
-            classes,
             filmstripType,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const { id, name, pinned } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
         const styles = this._getStyles();
@@ -1197,7 +1198,8 @@ class Thumbnail extends Component<IProps, IState> {
 
         if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
+            const { _videoTrack, _isMobile, _thumbnailType } = this.props;
+            const classes = withStyles.getClasses(this.props);
 
             return (
                 <VirtualScreenshareParticipant
@@ -1399,4 +1401,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(defaultStyles)(translate(Thumbnail)));
+export default connect(_mapStateToProps)(withStyles(translate(Thumbnail), defaultStyles));

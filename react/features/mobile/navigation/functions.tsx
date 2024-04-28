@@ -11,6 +11,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { IconCloseLarge } from '../../base/icons/svg';
 import { toState } from '../../base/redux/functions';
 import { cancelKnocking } from '../../lobby/actions.native';
+import { isPrejoinEnabledInConfig } from '../../prejoin/functions';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
 
@@ -50,10 +51,8 @@ export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | Rea
  */
 export function isPrejoinPageEnabled(stateful: IStateful) {
     const state = toState(stateful);
-    const { prejoinConfig } = state['features/base/config'];
-    const isPrejoinEnabledInConfig = prejoinConfig?.enabled;
 
-    return getFeatureFlag(state, PREJOIN_PAGE_ENABLED, isPrejoinEnabledInConfig ?? true);
+    return getFeatureFlag(state, PREJOIN_PAGE_ENABLED, isPrejoinEnabledInConfig(state));
 }
 
 /**

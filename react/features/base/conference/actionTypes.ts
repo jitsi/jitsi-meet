@@ -179,6 +179,18 @@ export const DATA_CHANNEL_OPENED = 'DATA_CHANNEL_OPENED';
 export const DATA_CHANNEL_CLOSED = 'DATA_CHANNEL_CLOSED';
 
 /**
+ * The type of (redux) action which indicates that an endpoint message
+ * sent by another participant to the data channel is received.
+ *
+ * {
+ *     type: ENDPOINT_MESSAGE_RECEIVED,
+ *     participant: Object,
+ *     data: Object
+ * }
+ */
+export const ENDPOINT_MESSAGE_RECEIVED = 'ENDPOINT_MESSAGE_RECEIVED';
+
+/**
  * The type of action which signals that the user has been kicked out from
  * the conference.
  *
@@ -333,3 +345,13 @@ export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
  * }
  */
 export const SET_ASSUMED_BANDWIDTH_BPS = 'SET_ASSUMED_BANDWIDTH_BPS';
+
+/**
+ * The type of (redux) action which updated the conference metadata.
+ *
+ * {
+ *     type: UPDATE_CONFERENCE_METADATA,
+ *     metadata: Object
+ * }
+ */
+export const UPDATE_CONFERENCE_METADATA = 'UPDATE_CONFERENCE_METADATA';

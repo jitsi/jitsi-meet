@@ -1,17 +1,16 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { isNameReadOnly } from '../base/config/functions';
+import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
-import {
-    getLocalParticipant
-} from '../base/participants/functions';
+import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { getHideSelfView } from '../base/settings/functions';
+import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
+import { isPrejoinEnabledInConfig } from '../prejoin/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
@@ -26,9 +25,8 @@ import { shouldShowModeratorSettings } from './functions';
  */
 export function isServerURLChangeEnabled(stateful: IStateful) {
     const state = toState(stateful);
-    const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 
-    return flag;
+    return getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 }
 
 /**
@@ -117,7 +115,7 @@ export function getMoreTabProps(stateful: IStateful) {
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
+        showPrejoinSettings: isPrejoinEnabledInConfig(state),
         stageFilmstripEnabled
     };
 }
@@ -211,6 +209,7 @@ export function getNotificationsTabProps(stateful: IStateful, showSoundsSettings
         soundsTalkWhileMuted,
         soundsReactions
     } = state['features/base/settings'];
+
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
     const enabledNotifications = getNotificationsMap(stateful);

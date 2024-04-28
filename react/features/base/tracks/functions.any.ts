@@ -1,10 +1,7 @@
 import { IReduxState, IStore } from '../../app/types';
-import {
-    getMultipleVideoSendingSupportFeatureFlag
-} from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending } from '../media/actions';
-import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { IMediaState } from '../media/reducer';
 import { IGUMPendingState } from '../media/types';
 import {
@@ -400,8 +397,7 @@ export function setTrackMuted(track: any, muted: boolean, state: IReduxState | I
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
-    if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
+    if (track.isMuted() === muted && track.getVideoType() !== VIDEO_TYPE.DESKTOP) {
         return Promise.resolve();
     }
 
@@ -446,4 +442,14 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
     const tracksLogMsg = trackStateStrings.length > 0 ? `\n${trackStateStrings.join('\n')}` : ' No tracks available!';
 
     logger.debug(`${logStringPrefix}${reason ? `(reason: ${reason})` : ''}:${tracksLogMsg}`);
+}
+
+/**
+ * Gets the default camera facing mode.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {string} - The camera facing mode.
+ */
+export function getCameraFacingMode(state: IReduxState) {
+    return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
 }

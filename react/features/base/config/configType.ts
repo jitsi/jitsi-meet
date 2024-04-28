@@ -1,40 +1,4 @@
-export type ToolbarButton = 'camera' |
-    'chat' |
-    'closedcaptions' |
-    'desktop' |
-    'download' |
-    'embedmeeting' |
-    'etherpad' |
-    'feedback' |
-    'filmstrip' |
-    'fullscreen' |
-    'hangup' |
-    'help' |
-    'highlight' |
-    'invite' |
-    'linktosalesforce' |
-    'livestreaming' |
-    'microphone' |
-    'mute-everyone' |
-    'mute-video-everyone' |
-    'noisesuppression' |
-    'participants-pane' |
-    'profile' |
-    'raisehand' |
-    'reactions' |
-    'recording' |
-    'security' |
-    'select-background' |
-    'settings' |
-    'shareaudio' |
-    'sharedvideo' |
-    'shortcuts' |
-    'stats' |
-    'tileview' |
-    'toggle-camera' |
-    'videoquality' |
-    'whiteboard' |
-    '__end';
+import { ToolbarButton } from '../../toolbox/types';
 
 type ButtonsWithNotifyClick = 'camera' |
     'chat' |
@@ -131,19 +95,30 @@ export interface IMobileDynamicLink {
 
 export interface IDeeplinkingPlatformConfig {
     appName: string;
+    appScheme: string;
 }
 
 export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
     appPackage?: string;
-    appScheme: string;
     downloadLink: string;
     dynamicLink?: IMobileDynamicLink;
     fDroidUrl?: string;
 }
 
+export interface IDesktopDownloadConfig {
+    linux?: string;
+    macos?: string;
+    windows?: string;
+}
+
+export interface IDeeplinkingDesktopConfig extends IDeeplinkingPlatformConfig {
+    download?: IDesktopDownloadConfig;
+    enabled: boolean;
+}
+
 export interface IDeeplinkingConfig {
     android?: IDeeplinkingMobileConfig;
-    desktop?: IDeeplinkingPlatformConfig;
+    desktop?: IDeeplinkingDesktopConfig;
     disabled?: boolean;
     hideLogo?: boolean;
     ios?: IDeeplinkingMobileConfig;
@@ -231,28 +206,8 @@ export interface IConfig {
     callDisplayName?: string;
     callFlowsEnabled?: boolean;
     callHandle?: string;
-    callStatsConfigParams?: {
-        additionalIDs?: {
-            customerID?: string;
-            fqExtensionID?: string;
-            meetingsName?: string;
-            pbxExtensionID?: string;
-            pbxID?: string;
-            productName?: string;
-            serverName?: string;
-            sessionID?: string;
-            tenantID?: string;
-        };
-        applicationVersion?: string;
-        collectIP?: boolean;
-        collectLegacyStats?: boolean;
-        disableBeforeUnloadHandler?: boolean;
-        disablePrecalltest?: boolean;
-        siteID?: string;
-    };
-    callStatsID?: string;
-    callStatsSecret?: string;
     callUUID?: string;
+    cameraFacingMode?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
         chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
@@ -332,7 +287,6 @@ export interface IConfig {
     disableRemoveRaisedHandOnFocus?: boolean;
     disableResponsiveTiles?: boolean;
     disableRtx?: boolean;
-    disableScreensharingVirtualBackground?: boolean;
     disableSelfView?: boolean;
     disableSelfViewSettings?: boolean;
     disableShortcuts?: boolean;
@@ -382,7 +336,6 @@ export interface IConfig {
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;
-    enableLipSync?: boolean;
     enableLobbyChat?: boolean;
     enableNoAudioDetection?: boolean;
     enableNoisyMicDetection?: boolean;
@@ -459,6 +412,7 @@ export interface IConfig {
     inviteServiceCallFlowsUrl?: string;
     inviteServiceUrl?: string;
     jaasActuatorUrl?: string;
+    jaasConferenceCreatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;
     legalUrls?: {
@@ -513,6 +467,7 @@ export interface IConfig {
         preventExecution: boolean;
     }>;
     participantsPane?: {
+        enabled?: boolean;
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;
         hideMuteAllButton?: boolean;
@@ -540,7 +495,13 @@ export interface IConfig {
         sharingEnabled?: boolean;
     };
     recordingSharingUrl?: string;
+    recordings?: {
+        recordAudioAndVideo?: boolean;
+        showPrejoinWarning?: boolean;
+        suggestRecording?: boolean;
+    };
     remoteVideoMenu?: {
+        disableDemote?: boolean;
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;
@@ -579,11 +540,12 @@ export interface IConfig {
     subject?: string;
     testing?: {
         assumeBandwidth?: boolean;
-        callStatsThreshold?: number;
         disableE2EE?: boolean;
+        dumpTranscript?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
+        skipInterimTranscriptions?: boolean;
         testMode?: boolean;
     };
     tileView?: {
@@ -603,8 +565,7 @@ export interface IConfig {
     transcribeWithAppLanguage?: boolean;
     transcribingEnabled?: boolean;
     transcription?: {
-        autoCaptionOnRecord?: boolean;
-        disableStartForAll?: boolean;
+        autoTranscribeOnRecord?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;

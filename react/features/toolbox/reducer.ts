@@ -4,9 +4,12 @@ import { set } from '../base/redux/functions';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
+    SET_BUTTONS_WITH_NOTIFY_CLICK,
     SET_HANGUP_MENU_VISIBLE,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
+    SET_PARTICIPANT_MENU_BUTTONS_WITH_NOTIFY_CLICK,
+    SET_TOOLBAR_BUTTONS,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_SHIFT_UP,
@@ -14,11 +17,13 @@ import {
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
+import { NOTIFY_CLICK_MODE } from './types';
 
 /**
  * Initial state of toolbox's part of Redux store.
  */
 const INITIAL_STATE = {
+    buttonsWithNotifyClick: new Map(),
 
     /**
      * The indicator which determines whether the Toolbox is enabled.
@@ -41,6 +46,8 @@ const INITIAL_STATE = {
      * @type {boolean}
      */
     hovered: false,
+
+    participantMenuButtonsWithNotifyClick: new Map(),
 
     /**
      * The indicator which determines whether the overflow menu(s) are to be displayed as drawers.
@@ -69,6 +76,13 @@ const INITIAL_STATE = {
      */
     timeoutID: null,
 
+    /**
+     * The list of enabled toolbar buttons.
+     *
+     * @type {Array<string>}
+     */
+    toolbarButtons: [],
+
 
     /**
      * The indicator that determines whether the Toolbox is visible.
@@ -79,14 +93,17 @@ const INITIAL_STATE = {
 };
 
 export interface IToolboxState {
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
     enabled: boolean;
     fullScreen?: boolean;
     hangupMenuVisible: boolean;
     hovered: boolean;
     overflowDrawer: boolean;
     overflowMenuVisible: boolean;
+    participantMenuButtonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
     shiftUp: boolean;
     timeoutID?: number | null;
+    toolbarButtons: Array<string>;
     visible: boolean;
 }
 
@@ -124,6 +141,16 @@ ReducerRegistry.register<IToolboxState>(
                 overflowMenuVisible: action.visible
             };
 
+        case SET_TOOLBAR_BUTTONS:
+            return {
+                ...state,
+                toolbarButtons: action.toolbarButtons
+            };
+        case SET_BUTTONS_WITH_NOTIFY_CLICK:
+            return {
+                ...state,
+                buttonsWithNotifyClick: action.buttonsWithNotifyClick
+            };
         case SET_TOOLBAR_HOVERED:
             return {
                 ...state,
@@ -150,6 +177,12 @@ ReducerRegistry.register<IToolboxState>(
 
         case SET_TOOLBOX_VISIBLE:
             return set(state, 'visible', action.visible);
+
+        case SET_PARTICIPANT_MENU_BUTTONS_WITH_NOTIFY_CLICK:
+            return {
+                ...state,
+                participantMenuButtonsWithNotifyClick: action.participantMenuButtonsWithNotifyClick
+            };
 
         case TOGGLE_TOOLBOX_VISIBLE:
             return set(state, 'visible', !state.visible);

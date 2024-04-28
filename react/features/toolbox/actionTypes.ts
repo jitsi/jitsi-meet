@@ -19,6 +19,26 @@ export const CLEAR_TOOLBOX_TIMEOUT = 'CLEAR_TOOLBOX_TIMEOUT';
 export const FULL_SCREEN_CHANGED = 'FULL_SCREEN_CHANGED';
 
 /**
+ * The type of (redux) action which sets the buttonsWithNotifyClick redux property.
+ *
+ * {
+ *     type: SET_BUTTONS_WITH_NOTIFY_CLICK,
+ *     buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>
+ * }
+ */
+export const SET_BUTTONS_WITH_NOTIFY_CLICK = 'SET_BUTTONS_WITH_NOTIFY_CLICK';
+
+/**
+ * The type of (redux) action which sets the participantMenuButtonsWithNotifyClick redux property.
+ *
+ * {
+ *     type: SET_BUTTONS_WITH_NOTIFY_CLICK,
+ *     participantMenuButtonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>
+ * }
+ */
+export const SET_PARTICIPANT_MENU_BUTTONS_WITH_NOTIFY_CLICK = 'SET_PARTICIPANT_MENU_BUTTONS_WITH_NOTIFY_CLICK';
+
+/**
  * The type of (redux) action which requests full screen mode be entered or
  * exited.
  *
@@ -53,6 +73,17 @@ export const SET_OVERFLOW_DRAWER = 'SET_OVERFLOW_DRAWER';
  * }
  */
 export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
+
+
+/**
+ * The type of the action which sets enabled toolbar buttons.
+ *
+ * {
+ *     type: SET_TOOLBAR_BUTTONS,
+ *     toolbarButtons: Array<string>
+ * }
+ */
+export const SET_TOOLBAR_BUTTONS = 'SET_TOOLBAR_BUTTONS';
 
 /**
  * The type of the action which sets the indicator which determines whether a

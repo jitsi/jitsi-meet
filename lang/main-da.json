@@ -464,6 +464,11 @@
     },
     "passwordDigitsOnly": "Op til {{number}} tal",
     "passwordSetRemotely": "Sat af et andet medlem",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Valgmulighederne skal være unikke"
+        }
+    },
     "poweredby": "Powered by",
     "presenceStatus": {
         "busy": "Optaget",
@@ -568,6 +573,8 @@
         "hours": "{{count}}t",
         "minutes": "{{count}}m",
         "name": "Navn",
+        "search": "Søg",
+        "searchHint": "Søg deltagere",
         "seconds": "{{count}}s",
         "speakerStats": "Deltagerstatistik",
         "speakerTime": "Taletid"

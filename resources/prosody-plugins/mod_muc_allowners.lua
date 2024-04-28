@@ -50,9 +50,7 @@ module:hook("muc-occupant-pre-join", function (event)
             return;
         end
 
-	-- FIX ME: luacheck warning 581
-	--   not (x == y)' can be replaced by 'x ~= y' (if neither side is a table or NaN)
-        if not (subdomain == session.jitsi_meet_domain) then
+        if session.jitsi_meet_domain ~= '*' and subdomain ~= session.jitsi_meet_domain then
             module:log('debug', 'skip allowners for auth user and non matching room subdomain: %s, jwt subdomain: %s',
                 subdomain, session.jitsi_meet_domain);
             return;
@@ -138,7 +136,7 @@ function filter_admin_set_query(event)
     local _aff = item.attr.affiliation;
 
     -- if it is a moderated room we skip it
-    if is_moderated(room.jid) then
+    if room and is_moderated(room.jid) then
         return nil;
     end
 

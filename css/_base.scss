@@ -115,17 +115,18 @@ form {
 }
 
 .leftwatermark {
+    max-width: 140px;
+    max-height:70px;
     left: 32px;
     top: 32px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
-}
 
-.leftwatermarknomargin {
-    background-position: center left;
-    background-repeat: no-repeat;
-    background-size: contain;
+    &.no-margin {
+        left:0;
+        top:0;
+    }
 }
 
 .rightwatermark {

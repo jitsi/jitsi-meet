@@ -15,6 +15,12 @@ end
 
 module:depends("jitsi_session");
 
+local measure_pre_fetch_fail = module:measure('pre_fetch_fail', 'counter');
+local measure_verify_fail = module:measure('verify_fail', 'counter');
+local measure_success = module:measure('success', 'counter');
+local measure_ban = module:measure('ban', 'counter');
+local measure_post_auth_fail = module:measure('post_auth_fail', 'counter');
+
 -- define auth provider
 local provider = {};
 
@@ -22,10 +28,10 @@ local host = module.host;
 
 -- Extract 'token' param from URL when session is created
 function init_session(event)
-	local session, request = event.session, event.request;
-	local query = request.url.query;
+    local session, request = event.session, event.request;
+    local query = request.url.query;
 
-	if query ~= nil then
+    if query ~= nil then
         local params = formdecode(query);
 
         -- The following fields are filled in the session, by extracting them
@@ -41,32 +47,32 @@ module:hook_global("bosh-session", init_session);
 module:hook_global("websocket-session", init_session);
 
 function provider.test_password(username, password)
-	return nil, "Password based auth not supported";
+    return nil, "Password based auth not supported";
 end
 
 function provider.get_password(username)
-	return nil;
+    return nil;
 end
 
 function provider.set_password(username, password)
-	return nil, "Set password not supported";
+    return nil, "Set password not supported";
 end
 
 function provider.user_exists(username)
-	return nil;
+    return nil;
 end
 
 function provider.create_user(username, password)
-	return nil;
+    return nil;
 end
 
 function provider.delete_user(username)
-	return nil;
+    return nil;
 end
 
 function provider.get_sasl_handler(session)
 
-	local function get_username_from_token(self, message)
+    local function get_username_from_token(self, message)
 
         -- retrieve custom public key from server and save it on the session
         local pre_event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
@@ -74,6 +80,7 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
             session.auth_token = nil;
+            measure_pre_fetch_fail(1);
             return pre_event_result.res, pre_event_result.error, pre_event_result.reason;
         end
 
@@ -82,21 +89,21 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token err:%s, reason:%s", error, reason);
             session.auth_token = nil;
+            measure_verify_fail(1);
             return res, error, reason;
         end
 
         local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
         if shouldAllow == false then
             module:log("warn", "user is banned")
+            measure_ban(1);
             return false, "not-allowed", "user is banned";
         end
 
-        local customUsername
-            = prosody.events.fire_event("pre-jitsi-authentication", session);
-
-        if (customUsername) then
+        local customUsername = prosody.events.fire_event("pre-jitsi-authentication", session);
+        if customUsername then
             self.username = customUsername;
-        elseif (session.previd ~= nil) then
+        elseif session.previd ~= nil then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
@@ -112,32 +119,34 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
             session.auth_token = nil;
+            measure_post_auth_fail(1);
             return post_event_result.res, post_event_result.error, post_event_result.reason;
         end
 
+        measure_success(1);
         return res;
-	end
+    end
 
-	return new_sasl(host, { anonymous = get_username_from_token });
+    return new_sasl(host, { anonymous = get_username_from_token });
 end
 
 module:provides("auth", provider);
 
 local function anonymous(self, message)
 
-	local username = generate_uuid();
+    local username = generate_uuid();
 
-	-- This calls the handler created in 'provider.get_sasl_handler(session)'
-	local result, err, msg = self.profile.anonymous(self, username, self.realm);
+    -- This calls the handler created in 'provider.get_sasl_handler(session)'
+    local result, err, msg = self.profile.anonymous(self, username, self.realm);
 
-	if result == true then
-		if (self.username == nil) then
-			self.username = username;
-		end
-		return "success";
-	else
-		return "failure", err, msg;
-	end
-end
+    if result == true then
+        if (self.username == nil) then
+            self.username = username;
+        end
+        return "success";
+    else
+        return "failure", err, msg;
+    end
+    end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);

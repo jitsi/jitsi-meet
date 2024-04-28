@@ -30,7 +30,6 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-    SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD
@@ -314,25 +313,6 @@ export function joinConferenceWithoutAudio() {
 }
 
 /**
- * Initializes the 'precallTest' and executes one test, storing the results.
- *
- * @param {Object} conferenceOptions - The conference options.
- * @returns {Function}
- */
-export function makePrecallTest(conferenceOptions: Object) {
-    return async function(dispatch: IStore['dispatch']) {
-        try {
-            await JitsiMeetJS.precallTest.init(conferenceOptions);
-            const results = await JitsiMeetJS.precallTest.execute();
-
-            dispatch(setPrecallTestResults(results));
-        } catch (error) {
-            logger.debug('Failed to execute pre call test - ', error);
-        }
-    };
-}
-
-/**
  * Opens an external page with all the dial in numbers.
  *
  * @returns {Function}
@@ -511,19 +491,6 @@ export function setSkipPrejoinOnReload(value: boolean) {
 export function setJoinByPhoneDialogVisiblity(value: boolean) {
     return {
         type: SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-        value
-    };
-}
-
-/**
- * Action used to set data from precall test.
- *
- * @param {Object} value - The precall test results.
- * @returns {Object}
- */
-export function setPrecallTestResults(value: Object) {
-    return {
-        type: SET_PRECALL_TEST_RESULTS,
         value
     };
 }

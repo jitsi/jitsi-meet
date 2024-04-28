@@ -12,12 +12,11 @@ import {
 import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
-import { appNavigate } from '../../../app/actions';
+import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
 import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { getParticipantCount } from '../../../base/participants/functions';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import TintedView from '../../../base/react/components/native/TintedView';
@@ -41,15 +40,15 @@ import { navigate } from '../../../mobile/navigation/components/conference/Confe
 import { screen } from '../../../mobile/navigation/routes';
 import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
-import { setToolboxVisible } from '../../../toolbox/actions';
+import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
-import { isToolboxVisible } from '../../../toolbox/functions';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
-import { isConnecting } from '../functions';
+import { isConnecting } from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -100,11 +99,6 @@ interface IProps extends AbstractProps {
      * The indicator which determines whether fullscreen (immersive) mode is enabled.
      */
     _fullscreenEnabled: boolean;
-
-    /**
-     * The indicator which determines if the conference type is one to one.
-     */
-    _isOneToOneConference: boolean;
 
     /**
      * The indicator which determines if the participants pane is open.
@@ -230,7 +224,9 @@ class Conference extends AbstractConference<IProps, State> {
      */
     componentDidUpdate(prevProps: IProps) {
         const {
-            _showLobby
+            _audioOnlyEnabled,
+            _showLobby,
+            _startCarMode
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
@@ -238,6 +234,10 @@ class Conference extends AbstractConference<IProps, State> {
         }
 
         if (prevProps._showLobby && !_showLobby) {
+            if (_audioOnlyEnabled && _startCarMode) {
+                return;
+            }
+
             navigate(screen.conference.main);
         }
     }
@@ -364,7 +364,6 @@ class Conference extends AbstractConference<IProps, State> {
             _aspectRatio,
             _connecting,
             _filmstripVisible,
-            _isOneToOneConference,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
@@ -420,13 +419,11 @@ class Conference extends AbstractConference<IProps, State> {
                     <Captions onPress = { this._onClick } />
 
                     {
-                        _shouldDisplayTileView || (
-                            !_isOneToOneConference
-                            && <Container style = { styles.displayNameContainer }>
-                                <DisplayNameLabel
-                                    participantId = { _largeVideoParticipantId } />
-                            </Container>
-                        )
+                        _shouldDisplayTileView
+                        || <Container style = { styles.displayNameContainer }>
+                            <DisplayNameLabel
+                                participantId = { _largeVideoParticipantId } />
+                        </Container>
                     }
 
                     { !_shouldDisplayTileView && <LonelyMeetingExperience /> }
@@ -567,7 +564,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { backgroundColor } = state['features/dynamic-branding'];
     const { startCarMode } = state['features/base/settings'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const participantCount = getParticipantCount(state);
     const brandingStyles = backgroundColor ? {
         backgroundColor
     } : undefined;
@@ -581,7 +577,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
-        _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),

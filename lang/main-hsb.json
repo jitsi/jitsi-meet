@@ -551,8 +551,6 @@
         "youtubeTerms": "wuměnjenja wužiwanja na YouTube"
     },
     "lobby": {
-        "admit": "přizwolić",
-        "admitAll": "wšitko přizwolić",
         "allow": "přiwzać",
         "backToKnockModeButton": "žane hesło, město toho wo přistup prosyć",
         "chat": "chat",
@@ -587,8 +585,6 @@
         "notificationTitle": "lobby",
         "passwordField": "konferencne hesło zapodać",
         "passwordJoinButton": "přistupić",
-        "reject": "wotpokazać",
-        "rejectAll": "wšitko wotpokazać",
         "title": "lobby",
         "toggleLabel": "lobby aktiwěrować"
     },
@@ -710,6 +706,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "přizwolić",
+            "admitAll": "wšitko přizwolić",
             "allow": "přitomnym dowolić",
             "allowVideo": "kameru zaswěčić",
             "askUnmute": "wo wotstajenje šaltowanja na němosć prosyć",
@@ -722,6 +720,7 @@
             "mute": "něme šaltować",
             "muteAll": "wšěch němych šaltować",
             "muteEveryoneElse": "wšěch druhich němych šaltować",
+            "reject": "wotpokazać",
             "stopEveryonesVideo": "wšitke kamery hasnyć",
             "stopVideo": "kameru hasnyć",
             "unblockEveryoneMicCamera": "kameru a mikrofon wšěch wočinić",
@@ -755,6 +754,9 @@
             "questionPlaceholder": "prašenje stajić",
             "removeOption": "wotmołwu wotstronić",
             "send": "zestajić"
+        },
+        "errors": {
+            "notUniqueOption": "opcije dyrbja jasne być"
         },
         "notification": {
             "description": "Za wobdźělenje wočińće tab za naprašowanje.",
@@ -1001,6 +1003,7 @@
         "neutral": "neutralny",
         "sad": "zrudny",
         "search": "pytać",
+        "searchHint": "přitomnych pytać",
         "seconds": "{{count}}s",
         "speakerStats": "statistika rěčnikow",
         "speakerTime": "čas rěčnikow",

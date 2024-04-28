@@ -37,6 +37,7 @@ import com.oney.WebRTCModule.webrtcutils.H264AndSoftwareVideoEncoderFactory;
 
 import org.devio.rn.splashscreen.SplashScreenModule;
 import org.webrtc.EglBase;
+import org.webrtc.Logging;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -240,6 +241,8 @@ class ReactInstanceManagerHolder {
 
         options.videoDecoderFactory = new H264AndSoftwareVideoDecoderFactory(eglContext);
         options.videoEncoderFactory = new H264AndSoftwareVideoEncoderFactory(eglContext);
+        options.enableMediaProjectionService = true;
+//      options.loggingSeverity = Logging.Severity.LS_INFO;
 
         Log.d(TAG, "initializing RN with Activity");
 

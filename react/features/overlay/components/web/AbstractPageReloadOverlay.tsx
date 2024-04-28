@@ -152,9 +152,6 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @returns {void}
      */
     componentDidMount() {
-        // FIXME (CallStats - issue) This event will not make it to CallStats
-        // because the log queue is not flushed before "fabric terminated" is
-        // sent to the backed.
         // FIXME: We should dispatch action for this.
         if (typeof APP !== 'undefined' && APP.conference?._room) {
             APP.conference._room.sendApplicationLog(JSON.stringify({

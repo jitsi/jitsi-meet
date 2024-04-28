@@ -1,5 +1,3 @@
-/* global APP */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -9,24 +7,30 @@ import Platform from './features/base/react/Platform.web';
 import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
 import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
+import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
 
 const logger = getLogger('index.web');
-const OS = Platform.OS;
 
-/**
- * Renders the app when the DOM tree has been loaded.
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const now = window.performance.now();
+// Add global loggers.
+window.addEventListener('error', ev => {
+    logger.error(
+        `UnhandledError: ${ev.message}`,
+        `Script: ${ev.filename}`,
+        `Line: ${ev.lineno}`,
+        `Column: ${ev.colno}`,
+        'StackTrace: ', ev.error?.stack);
+});
 
-    APP.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
+window.addEventListener('unhandledrejection', ev => {
+    logger.error(
+        `UnhandledPromiseRejection: ${ev.reason}`,
+        'StackTrace: ', ev.reason?.stack);
 });
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
 // to be rendered.
-if (OS === 'ios') {
+if (Platform.OS === 'ios') {
     window.addEventListener('pageshow', event => {
         // Detect pages loaded from the 'back-forward' cache
         // (https://webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/)
@@ -42,10 +46,23 @@ if (OS === 'ios') {
 
 const globalNS = getJitsiMeetGlobalNS();
 
+// Used for automated performance tests.
+globalNS.connectionTimes = {
+    'index.loaded': window.indexLoadedTime
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const now = window.performance.now();
+
+    globalNS.connectionTimes['document.ready'] = now;
+    logger.log('(TIME) document ready:\t', now);
+});
+
 globalNS.entryPoints = {
     APP: App,
     PREJOIN: PrejoinApp,
-    DIALIN: DialInSummaryApp
+    DIALIN: DialInSummaryApp,
+    WHITEBOARD: WhiteboardApp
 };
 
 globalNS.renderEntryPoint = ({

@@ -189,6 +189,11 @@ export const connectingScreenOptions = {
 };
 
 /**
+ * Screen options for the whiteboard screen.
+ */
+export const whiteboardScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for pre-join screen.
  */
 export const preJoinScreenOptions = {

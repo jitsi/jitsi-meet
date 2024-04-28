@@ -233,7 +233,7 @@ export default class WebHidManager extends EventTarget {
     /**
      * Close device and reset state.
      *
-     * @returns {void}.
+     * @returns {void}
      */
     async close() {
         try {

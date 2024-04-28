@@ -104,6 +104,13 @@ export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
 export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
 
 /**
+ * The identifier of the lobby notification.
+ *
+ * @type {string}
+ */
+export const VISITORS_PROMOTION_NOTIFICATION_ID = 'VISITORS_PROMOTION_NOTIFICATION';
+
+/**
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;
@@ -112,3 +119,10 @@ export const SILENT_JOIN_THRESHOLD = 30;
  * Amount of participants beyond which no left notification will be emitted.
  */
 export const SILENT_LEFT_THRESHOLD = 30;
+
+/**
+ * The identifier for the transcriber notifications.
+ *
+ * @type {string}
+ */
+export const TRANSCRIBING_NOTIFICATION_ID = 'TRANSCRIBING_NOTIFICATION';

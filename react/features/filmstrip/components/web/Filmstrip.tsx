@@ -1,15 +1,14 @@
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { FixedSizeGrid, FixedSizeList } from 'react-window';
+import { withStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
@@ -213,7 +212,7 @@ interface IProps extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The redux {@code dispatch} function.
@@ -349,10 +348,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _verticalViewBackground,
             _verticalViewGrid,
             _verticalViewMaxWidth,
-            classes,
             filmstripType,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const { isMouseDown } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
@@ -838,12 +837,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
     _renderToggleButton() {
         const {
             t,
-            classes,
             _isVerticalFilmstrip,
             _mainFilmstripVisible,
             _topPanelFilmstrip,
             _topPanelVisible
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const icon = (_topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible) ? IconArrowDown : IconArrowUp;
         const actions = isMobileBrowser()
             ? { onTouchStart: this._onToggleButtonTouch }
@@ -884,11 +883,11 @@ class Filmstrip extends PureComponent <IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
     const { iAmRecorder } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
-    const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
+    const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
@@ -942,4 +941,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(Filmstrip)));
+export default withStyles(translate(connect(_mapStateToProps)(Filmstrip)), styles);

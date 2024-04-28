@@ -7,6 +7,7 @@ import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
+import { getParticipantById } from '../base/participants/functions';
 import { escapeRegexp } from '../base/util/helpers';
 
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
@@ -159,6 +160,23 @@ export function getMessageText(message: IMessage) {
             error: message.message
         })
         : message.message;
+}
+
+
+/**
+ * Returns whether a message can be replied to.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message to be checked.
+ * @returns {boolean}
+ */
+export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
+    const { knocking } = state['features/lobby'];
+    const participant = getParticipantById(state, message.id);
+
+    return Boolean(participant)
+        && (message.privateMessage || (message.lobbyChat && !knocking))
+        && message.messageType !== MESSAGE_TYPE_LOCAL;
 }
 
 /**

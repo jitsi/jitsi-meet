@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
 import Avatar from '../../../../base/avatar/components/Avatar';
@@ -53,7 +53,7 @@ interface IProps extends AbstractProps {
     /**
      * Css classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The redux {@code dispatch} function.
@@ -159,6 +159,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
             _sipInviteEnabled,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         let isMultiSelectDisabled = this.state.addToCallInProgress;
         const loadingMessage = 'addPeople.searching';
         const noMatches = 'addPeople.noResults';
@@ -182,7 +183,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
 
         return (
             <div
-                className = { this.props.classes.formWrap }
+                className = { classes.formWrap }
                 onKeyDown = { this._onKeyDown }>
                 <MultiSelectAutocomplete
                     id = 'invite-contacts-input'
@@ -443,7 +444,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      */
     _renderFormActions() {
         const { inviteItems } = this.state;
-        const { t, classes } = this.props;
+        const { t } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         if (!inviteItems.length) {
             return null;
@@ -511,4 +513,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(styles)(InviteContactsForm)));
+export default translate(connect(_mapStateToProps)(withStyles(InviteContactsForm, styles)));

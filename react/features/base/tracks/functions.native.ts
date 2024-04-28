@@ -1,6 +1,7 @@
 import { IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
+import { getCameraFacingMode } from './functions.any';
 import { ITrackOptions } from './types';
 
 export * from './functions.any';
@@ -39,6 +40,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store: IStore) {
 
             // Copy array to avoid mutations inside library.
             devices: options.devices?.slice(0),
+            facingMode: options.facingMode || getCameraFacingMode(state),
             micDeviceId,
             resolution
         });

@@ -467,6 +467,11 @@
     },
     "passwordDigitsOnly": "Daugiausia {{number}} skaičių",
     "passwordSetRemotely": "nustatytas kito naudotojo",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Parinktys turi būti unikalios"
+        }
+    },
     "poweredby": "pateikiamas",
     "presenceStatus": {
         "busy": "Užimtas",
@@ -571,6 +576,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Vardas",
+        "search": "Ieškoti",
+        "searchHint": "Ieškokite dalyvių",
         "seconds": "{{count}}s",
         "speakerStats": "Garsiakalbio nuostatos",
         "speakerTime": "Garsiakalbio laikas"

@@ -164,12 +164,12 @@ export default {
         color: BaseTheme.palette.uiBackground
     },
 
-    lobbyButtonAdmit: {
+    buttonAdmit: {
         position: 'absolute',
         right: 16
     },
 
-    lobbyButtonReject: {
+    buttonReject: {
         position: 'absolute',
         right: 112
     },
@@ -178,7 +178,7 @@ export default {
         ...participantListDescription
     },
 
-    lobbyListDetails: {
+    listDetails: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
@@ -288,6 +288,6 @@ export default {
     visitorsLabel: {
         ...BaseTheme.typography.heading6,
         color: BaseTheme.palette.warning02,
-        marginLeft: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[2]
     }
 };
