@@ -74,7 +74,7 @@
         "mainRoom": "Salle principale",
         "notifications": {
             "joined": "Entrée en salle annexe \"{{name}}\"",
-            "joinedMainRoom": "Retour à la salle principalem",
+            "joinedMainRoom": "Retour à la salle principale",
             "joinedTitle": "Salles annexes"
         },
         "showParticipantList": "Afficher la liste des participants",
@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajouter un lien de conférence",
-        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement ?",
+        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement?",
         "error": {
             "appConfiguration": "L'intégration du calendrier n'est pas correctement configurée.",
             "generic": "Une erreur s'est produite. Veuillez vérifier les paramètres de votre calendrier ou tenter de l'actualiser.",
@@ -138,7 +138,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Installer l'extension Chrome",
-        "buttonTextEdge": "Installer l’extension Edge",
+        "buttonTextEdge": "Installer l'extension Edge",
         "close": "Fermer",
         "dontShowAgain": "Ne plus m'afficher ceci",
         "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365"
@@ -424,7 +424,7 @@
         "shareAudioAltText": "Pour partager le contenu voulu, naviguer vers \"Onglet du Navigateur\", sélectionner le contenu, activer le bouton \"partager l’audio\" et enfin cliquer sur le bouton \"partager\"",
         "shareAudioTitle": "Comment partager le son",
         "shareAudioWarningD1": "vous devez cesser le partage d'écran avant de partager votre son.",
-        "shareAudioWarningD2": "viys devez partager votre écran à nouveau et cocher l'ootion \"Partager l'audio\".",
+        "shareAudioWarningD2": "vous devez partager votre écran à nouveau et cocher l'option \"Partager l'audio\".",
         "shareAudioWarningH1": "Si vous voulez partager uniquement de l'audio:",
         "shareAudioWarningTitle": "Vous devez cesser de partager l'écran avant de partager l'audio",
         "shareMediaWarningGenericH2": "Si vous voulez partager votre écran et l'audio",
