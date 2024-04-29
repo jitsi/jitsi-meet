@@ -5,6 +5,7 @@ import { connect as reduxConnect } from 'react-redux';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
+import { connect } from '../../../base/connection/actions.web';
 import { toJid } from '../../../base/connection/functions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
@@ -12,8 +13,7 @@ import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import {
     authenticateAndUpgradeRole,
-    cancelLogin,
-    sumbitConnectionCredentials
+    cancelLogin
 } from '../../actions.web';
 
 /**
@@ -134,7 +134,7 @@ class LoginDialog extends Component<IProps, IState> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            dispatch(sumbitConnectionCredentials(jid, password));
+            dispatch(connect(jid, password));
         }
     }
 

@@ -10,14 +10,12 @@ import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
-    gumPending,
     setAudioMuted,
     setAudioUnmutePermissions,
     setVideoMuted,
     setVideoUnmutePermissions
 } from '../media/actions';
 import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../media/constants';
-import { IGUMPendingState } from '../media/types';
 import {
     dominantSpeakerChanged,
     participantKicked,
@@ -1060,10 +1058,6 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => dispatch(conferenceWillInit()))
             .then(() => dispatch(connect()))
             .then(() => {
-                // Clear the gum pending state in case we have set it to pending since we are starting the
-                // conference without tracks.
-                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
-
                 if (!vnode) {
                     const state = getState();
                     const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
@@ -1095,11 +1089,6 @@ export function redirect(vnode: string, focusJid: string, username: string) {
                             typeof APP === 'undefined' || APP.conference.muteVideo(false, false);
                         }
                     }
-                }
-
-                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                if (typeof APP !== 'undefined') {
-                    APP.conference.startConference([]);
                 }
             });
     };
