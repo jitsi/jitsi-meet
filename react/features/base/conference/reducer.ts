@@ -18,6 +18,8 @@ import {
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
+    DATA_CHANNEL_CLOSED,
+    DATA_CHANNEL_OPENED,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_ASSUMED_BANDWIDTH_BPS,
@@ -35,6 +37,7 @@ import { isRoomValid } from './functions';
 const DEFAULT_STATE = {
     assumedBandwidthBps: undefined,
     conference: undefined,
+    dataChannelOpen: undefined,
     e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
@@ -146,6 +149,7 @@ export interface IConferenceState {
     authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
+    dataChannelOpen?: boolean;
     e2eeSupported?: boolean;
     error?: Error;
     followMeEnabled?: boolean;
@@ -218,6 +222,12 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
         case CONNECTION_WILL_CONNECT:
             return set(state, 'authRequired', undefined);
+
+        case DATA_CHANNEL_CLOSED:
+            return set(state, 'dataChannelOpen', false);
+
+        case DATA_CHANNEL_OPENED:
+            return set(state, 'dataChannelOpen', true);
 
         case LOCK_STATE_CHANGED:
             return _lockStateChanged(state, action);
