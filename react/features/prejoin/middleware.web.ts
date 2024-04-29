@@ -2,14 +2,19 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
-import { CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { browser } from '../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media/actionTypes';
+import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { updateSettings } from '../base/settings/actions';
 import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
+import { replaceLocalTrack } from '../base/tracks/actions.any';
+import { getLocalTracks } from '../base/tracks/functions.any';
+import { iAmVisitor } from '../visitors/functions';
 
 import {
     setDeviceStatusOk,
@@ -17,6 +22,7 @@ import {
     setJoiningInProgress
 } from './actions';
 import { isPrejoinPageVisible } from './functions';
+import logger from './logger';
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -26,6 +32,48 @@ import { isPrejoinPageVisible } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case CONNECTION_ESTABLISHED: {
+        const { dispatch, getState } = store;
+        const result = next(action);
+
+        if (isPrejoinPageVisible(getState())) {
+            const { initialGUMPromise = Promise.resolve() } = getState()['features/base/media'].common;
+
+            initialGUMPromise.then(() => {
+                const state = getState();
+                let localTracks = getLocalTracks(state['features/base/tracks']);
+                const trackReplacePromises = [];
+
+                // Do not signal audio/video tracks if the user joins muted.
+                for (const track of localTracks) {
+                    // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                    // if the user joins audio and video muted.
+                    if ((track.muted && !(browser.isWebKitBased() && track.jitsiTrack
+                            && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) || iAmVisitor(state)) {
+                        trackReplacePromises.push(dispatch(replaceLocalTrack(track.jitsiTrack, null))
+                            .catch((error: any) => {
+                                logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                            }));
+                    }
+                }
+
+                Promise.allSettled(trackReplacePromises).then(() => {
+
+                    // Re-fetch the local tracks after muted tracks have been removed above.
+                    // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should
+                    // not be used anymore.
+                    localTracks = getLocalTracks(getState()['features/base/tracks']);
+
+                    const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+
+
+                    return APP.conference.startConference(jitsiTracks);
+                });
+            });
+        }
+
+        return result;
+    }
     case SET_AUDIO_MUTED: {
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(updateSettings({

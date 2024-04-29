@@ -103,7 +103,7 @@ export function setCameraFacingMode(cameraFacingMode: string) {
  *     promise: Promise
  * }}
  */
-export function setInitialGUMPromise(promise?: Promise<Array<Object>>) {
+export function setInitialGUMPromise(promise?: Promise<{ errors: any; tracks: Array<any>; }>) {
     return {
         type: SET_INITIAL_GUM_PROMISE,
         promise

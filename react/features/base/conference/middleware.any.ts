@@ -24,7 +24,7 @@ import LocalRecordingManager from '../../recording/components/Recording/LocalRec
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
-import { connect, connectionDisconnected, disconnect } from '../connection/actions';
+import { connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
@@ -37,7 +37,6 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
-import { getLocalTracks } from '../tracks/functions.any';
 
 import {
     CONFERENCE_FAILED,
@@ -209,17 +208,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             dispatch(conferenceWillLeave(conference));
 
             conference.leave()
-                .then(() => dispatch(disconnect()))
-                .then(() => dispatch(connect()))
-                .then(() => {
-                    // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                    if (typeof APP !== 'undefined') {
-                        const localTracks = getLocalTracks(getState()['features/base/tracks']);
-                        const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
-
-                        APP.conference.startConference(jitsiTracks).catch(logger.error);
-                    }
-                });
+                .then(() => dispatch(disconnect()));
         }
 
         break;

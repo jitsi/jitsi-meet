@@ -4,8 +4,14 @@ import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
 } from '../../prejoin/actions.web';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { iAmVisitor } from '../../visitors/functions';
+import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED } from '../connection/actionTypes';
 import { hangup } from '../connection/actions.web';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { gumPending, setInitialGUMPromise } from '../media/actions';
+import { MEDIA_TYPE } from '../media/constants';
+import { IGUMPendingState } from '../media/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import {
@@ -131,6 +137,39 @@ MiddlewareRegistry.register(store => next => action => {
         releaseScreenLock();
 
         break;
+    case CONNECTION_DISCONNECTED: {
+        const { initialGUMPromise } = getState()['features/base/media'].common;
+
+        if (initialGUMPromise) {
+            store.dispatch(setInitialGUMPromise());
+        }
+
+        break;
+    }
+    case CONNECTION_ESTABLISHED: {
+        const state = getState();
+
+        if (!isPrejoinPageVisible(state)) {
+            const { initialGUMPromise = Promise.resolve({ tracks: [] }) } = state['features/base/media'].common;
+
+            initialGUMPromise.then(({ tracks }) => {
+                let tracksToUse = tracks ?? [];
+
+                if (iAmVisitor(getState())) {
+                    tracksToUse = [];
+                    tracks.forEach(track => track.dispose().catch(logger.error));
+                    dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                }
+
+                dispatch(setInitialGUMPromise());
+
+                return APP.conference.startConference(tracksToUse);
+            })
+            .catch(logger.error);
+        }
+
+        break;
+    }
     }
 
     return next(action);
