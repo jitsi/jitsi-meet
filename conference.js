@@ -166,7 +166,6 @@ import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { muteLocal } from './react/features/video-menu/actions.any';
 
 const logger = Logger.getLogger(__filename);
-const DATA_CHANNEL_DISCONNECTED_TIMEOUT = 60000;
 let room;
 
 /*
@@ -1983,28 +1982,31 @@ export default {
 
         room.on(
             JitsiConferenceEvents.DATA_CHANNEL_CLOSED, ev => {
-                APP.store.dispatch(dataChannelClosed(ev.code, ev.reason));
+                const state = APP.store.getState();
+                const { dataChannelOpen } = state['features/base/conference'];
+                const timeout = typeof dataChannelOpen === 'undefined' ? 15000 : 60000;
 
-                // Show the notification only when the data channel connection doesn't get re-established in 60 secs.
-                // Notification can be confusing and alarming to users even when there is no significant impact to user
-                // experience if the the reconnect happens immediately.
+                // Show the notification only when the data channel connection doesn't get re-established in 60 secs if
+                // it was already established at the beginning of the call, show it sooner otherwise. This notification
+                // can be confusing and alarming to users even when there is no significant impact to user experience
+                // if the the reconnect happens immediately.
                 setTimeout(() => {
-                    const state = APP.store.getState();
-                    const { dataChannelOpen } = state['features/base/conference'];
+                    const { dataChannelOpen: open } = APP.store.getState()['features/base/conference'];
 
-                    if (!dataChannelOpen) {
+                    if (!open) {
                         const descriptionKey = getSsrcRewritingFeatureFlag(state)
                             ? 'notify.dataChannelClosedDescriptionWithAudio' : 'notify.dataChannelClosedDescription';
                         const titleKey = getSsrcRewritingFeatureFlag(state)
                             ? 'notify.dataChannelClosedWithAudio' : 'notify.dataChannelClosed';
 
+                        APP.store.dispatch(dataChannelClosed(ev.code, ev.reason));
                         APP.store.dispatch(showWarningNotification({
                             descriptionKey,
                             titleKey,
                             uid: DATA_CHANNEL_CLOSED_NOTIFICATION_ID
                         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
                     }
-                }, DATA_CHANNEL_DISCONNECTED_TIMEOUT);
+                }, timeout);
             }
         );
     },
