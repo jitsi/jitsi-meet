@@ -4,16 +4,13 @@ import { IStore } from '../app/types';
 import { updateConfig } from '../base/config/actions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { connect } from '../base/connection/actions';
-import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
-import { MEDIA_TYPE } from '../base/media/constants';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
 import { replaceLocalTrack, trackAdded } from '../base/tracks/actions';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
-    getLocalTracks,
     getLocalVideoTrack
 } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
@@ -230,35 +227,7 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
 
         options && dispatch(updateConfig(options));
 
-        dispatch(connect(jid, password)).then(async () => {
-            // TODO keep this here till we move tracks and conference management from
-            // conference.js to react.
-            const state = getState();
-            let localTracks = getLocalTracks(state['features/base/tracks']);
-
-            // Do not signal audio/video tracks if the user joins muted.
-            for (const track of localTracks) {
-                // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
-                // if the user joins audio and video muted.
-                if (track.muted && !(browser.isWebKitBased() && track.jitsiTrack
-                        && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
-                    try {
-                        await dispatch(replaceLocalTrack(track.jitsiTrack, null));
-                    } catch (error) {
-                        logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
-                    }
-                }
-            }
-
-            // Re-fetch the local tracks after muted tracks have been removed above.
-            // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be
-            // used anymore.
-            localTracks = getLocalTracks(getState()['features/base/tracks']);
-
-            const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
-
-            APP.conference.startConference(jitsiTracks).catch(logger.error);
-        })
+        dispatch(connect(jid, password))
         .catch(() => {
             // There is nothing to do here. This is handled and dispatched in base/connection/actions.
         });

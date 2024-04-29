@@ -21,11 +21,5 @@ export function setupVisitorStartupMedia(media: Array<MediaType>) {
         if (media && Array.isArray(media) && media.length > 0) {
             dispatch(createAndAddInitialAVTracks(media));
         }
-
-        // FIXME: The name of the function doesn't fit the startConference execution but another PR will removes
-        // this and calls startConference based on the connection status. This will stay here temporary.
-        if (typeof APP !== 'undefined') {
-            APP.conference.startConference([]);
-        }
     };
 }
