@@ -273,7 +273,10 @@ interface IAudioState {
 }
 
 interface ICommonState {
-    initialGUMPromise?: Promise<Array<Object>>;
+    initialGUMPromise?: Promise<{
+        errors: any;
+        tracks: Array<any>;
+    }>;
 }
 
 interface IScreenshareState {
