@@ -128,6 +128,7 @@
         "privateNotice": "{{recipient}} için özel mesaj",
         "sendButton": "Gönder",
         "smileysPanel": "Emoji paneli",
+        "systemDisplayName": "Sistem",
         "tabs": {
             "chat": "Sohbet",
             "polls": "Anket"
@@ -735,6 +736,8 @@
         "connectedTwoMembers": "{{first}} ve {{second}} toplantıya katıldı",
         "dataChannelClosed": "Video kalitesi bozuldu",
         "dataChannelClosedDescription": "Köprü kanalının bağlantısı kesildi ve bu nedenle video kalitesi en düşük ayarla sınırlandı.",
+        "dataChannelClosedDescriptionWithAudio": "Köprü kanalı kapalı olduğu için ses ve video kesintileri yaşanabilir.",
+        "dataChannelClosedWithAudio": "Ses ve video kalitesi etkilenebilir.",
         "disabledIframe": "Yerleştirme yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecek.",
         "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Jitsi</a>'yi kullanın!",
         "disconnected": "bağlantı kesildi",
