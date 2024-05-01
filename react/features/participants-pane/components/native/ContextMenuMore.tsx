@@ -80,7 +80,7 @@ export const ContextMenuMore = () => {
                     && (published
                         ? <TouchableOpacity
                             onPress = { toggleBreakoutRoomPublishStatus }
-                            style = { styles.contextMenuItem }>
+                            style = { styles.contextMenuItem as ViewStyle }>
                             <Icon
                                 size = { 24 }
                                 src = { IconCheck } />
@@ -90,7 +90,7 @@ export const ContextMenuMore = () => {
                         </TouchableOpacity>
                         : <TouchableOpacity
                             onPress = { toggleBreakoutRoomPublishStatus }
-                            style = { styles.contextMenuItem }>
+                            style = { styles.contextMenuItem as ViewStyle }>
                             <Text style = { styles.contextMenuItemTextNoIcon }>
                                 {t('participantsPane.actions.breakoutRoomsVisible')}
                             </Text>
