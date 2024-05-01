@@ -466,6 +466,11 @@ function is_vpaas(room)
     return true;
 end
 
+-- Returns the initiator extension if the stanza is coming from a sip jigasi
+function is_sip_jigasi(stanza)
+    return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
+end
+
 function get_sip_jibri_email_prefix(email)
     if not email then
         return nil;
@@ -538,6 +543,7 @@ return {
     is_healthcheck_room = is_healthcheck_room;
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;
+    is_sip_jigasi = is_sip_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;
