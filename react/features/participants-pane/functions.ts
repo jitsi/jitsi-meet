@@ -63,6 +63,10 @@ export function getParticipantAudioMediaState(participant: IParticipant | undefi
         muted: Boolean, state: IReduxState) {
     const dominantSpeaker = getDominantSpeakerParticipant(state);
 
+    if (participant?.isSilent) {
+        return MEDIA_STATE.NONE;
+    }
+
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
@@ -146,9 +150,10 @@ export function getQuickActionButtonType(
         state: IReduxState) {
     // handled only by moderators
     const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+    const isParticipantSilent = participant?.isSilent || false;
 
     if (isLocalParticipantModerator(state)) {
-        if (!isAudioMuted) {
+        if (!isAudioMuted && !isParticipantSilent) {
             return QUICK_ACTION_BUTTON.MUTE;
         }
         if (!isVideoMuted) {
@@ -157,7 +162,7 @@ export function getQuickActionButtonType(
         if (isVideoForceMuted) {
             return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
         }
-        if (isSupported()(state)) {
+        if (isSupported()(state) && !isParticipantSilent) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
         }
     }

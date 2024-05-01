@@ -79,6 +79,11 @@ interface IProps {
     _isParticipantAvailable?: boolean;
 
     /**
+     * Whether or not the targeted participant joined without audio.
+     */
+    _isParticipantSilent: boolean;
+
+    /**
      * Whether the local participant is moderator or not.
      */
     _moderator: boolean;
@@ -143,6 +148,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             _disableGrantModerator,
             _isBreakoutRoom,
             _isParticipantAvailable,
+            _isParticipantSilent,
             _moderator,
             _rooms,
             _showDemote,
@@ -166,10 +172,10 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
-                <AskUnmuteButton { ...buttonProps } />
+                {!_isParticipantSilent && <AskUnmuteButton { ...buttonProps } />}
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
                 <MuteEveryoneElseButton { ...buttonProps } />
-                { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
+                { !_disableRemoteMute && !_isParticipantSilent && <MuteVideoButton { ...buttonProps } /> }
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 { !_disableKick && <KickButton { ...buttonProps } /> }
@@ -258,6 +264,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _disablePrivateChat: Boolean(disablePrivateChat) || _iAmVisitor,
         _isBreakoutRoom,
         _isParticipantAvailable: Boolean(isParticipantAvailable),
+        _isParticipantSilent: Boolean(isParticipantAvailable?.isSilent),
         _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
         _rooms,
