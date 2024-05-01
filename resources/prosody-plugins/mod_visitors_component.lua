@@ -4,6 +4,7 @@ local jid = require 'util.jid';
 local st = require 'util.stanza';
 local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
+local is_sip_jigasi = util.is_sip_jigasi;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
@@ -328,7 +329,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         -- we skip any checks when auto-allow is enabled
         if auto_allow_promotion
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
-            or stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi')
+            or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza) then
             return;
         end
