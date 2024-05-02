@@ -165,6 +165,10 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { enableForcedReload } = getState()['features/base/config'];
 
+    if (LocalRecordingManager.isRecordingLocally()) {
+        dispatch(stopLocalVideoRecording());
+    }
+
     // Handle specific failure reasons.
     switch (error.name) {
     case JitsiConferenceErrors.CONFERENCE_RESTARTED: {
