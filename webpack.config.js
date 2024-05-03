@@ -214,7 +214,7 @@ function getConfig(options = {}) {
             ],
             fallback: {
                 // Provide some empty Node modules (required by AtlasKit, olm).
-                crypto: false,
+                crypto: 'crypto-browserify',
                 fs: false,
                 path: false,
                 process: false
