@@ -224,9 +224,30 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         break;
     }
     case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
-        const [ msg ] = error.params;
+        const [ type, msg ] = error.params;
 
-        sendAnalytics(createNotAllowedErrorEvent(msg));
+        let descriptionKey;
+        let titleKey = 'dialog.tokenAuthFailed';
+
+        if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_MAIN_PARTICIPANTS) {
+            descriptionKey = 'visitors.notification.noMainParticipantsDescription';
+            titleKey = 'visitors.notification.noMainParticipantsTitle';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_VISITORS_LOBBY) {
+            descriptionKey = 'visitors.notification.noVisitorLobby';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.PROMOTION_NOT_ALLOWED) {
+            descriptionKey = 'visitors.notification.notAllowedPromotion';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_CREATION_RESTRICTION) {
+            descriptionKey = 'dialog.errorRoomCreationRestriction';
+        }
+
+        APP.store.dispatch(showErrorNotification({
+            descriptionKey,
+            hideErrorSupportLink: true,
+            titleKey
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+        sendAnalytics(createNotAllowedErrorEvent(type, msg));
+
         break;
     }
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:

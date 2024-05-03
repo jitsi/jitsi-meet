@@ -17,7 +17,6 @@ import {
 import { sendAnalytics } from './react/features/analytics/functions';
 import {
     maybeRedirectToWelcomePage,
-    redirectToStaticPage,
     reloadWithStoredParams
 } from './react/features/app/actions';
 import { showModeratedNotification } from './react/features/av-moderation/actions';
@@ -274,12 +273,6 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
-
-        case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
-            // let's show some auth not allowed page
-            APP.store.dispatch(redirectToStaticPage('static/authError.html'));
-            break;
-        }
 
         case JitsiConferenceErrors.RESERVATION_ERROR: {
             const [ code, msg ] = params;

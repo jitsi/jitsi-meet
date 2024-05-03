@@ -319,6 +319,7 @@
         "embedMeeting": "Embed meeting",
         "enterDisplayName": "Enter your name",
         "error": "Error",
+        "errorRoomCreationRestriction": "You tried to join too quickly, please come back in a bit.",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator rights",
@@ -1485,6 +1486,10 @@
         "notification": {
             "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
             "description": "To participate raise your hand",
+            "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
+            "noMainParticipantsTitle": "This meeting hasn’t started yet.",
+            "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
+            "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"
         }
     },
