@@ -63,7 +63,8 @@ module:hook('muc-occupant-pre-join', function (event)
 
     if host == local_domain then
         if room._main_room_lobby_enabled then
-            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!'));
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!')
+                :tag('no-visitors-lobby', { xmlns = 'jitsi:visitors' }));
             return true;
         else
             occupant.role = 'visitor';
