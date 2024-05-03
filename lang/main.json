@@ -1486,7 +1486,8 @@
         "notification": {
             "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
             "description": "To participate raise your hand",
-            "noMainParticipants": "A participant needs to start the call, please come back in a bit.",
+            "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
+            "noMainParticipantsTitle": "This meeting hasn’t started yet.",
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
             "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"

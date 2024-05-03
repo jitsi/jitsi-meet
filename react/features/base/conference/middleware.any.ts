@@ -227,9 +227,11 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         const [ type, msg ] = error.params;
 
         let descriptionKey;
+        let titleKey = 'dialog.tokenAuthFailed';
 
         if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_MAIN_PARTICIPANTS) {
-            descriptionKey = 'visitors.notification.noMainParticipants';
+            descriptionKey = 'visitors.notification.noMainParticipantsDescription';
+            titleKey = 'visitors.notification.noMainParticipantsTitle';
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_VISITORS_LOBBY) {
             descriptionKey = 'visitors.notification.noVisitorLobby';
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.PROMOTION_NOT_ALLOWED) {
@@ -241,7 +243,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         APP.store.dispatch(showErrorNotification({
             descriptionKey,
             hideErrorSupportLink: true,
-            titleKey: 'dialog.tokenAuthFailed'
+            titleKey
         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
         sendAnalytics(createNotAllowedErrorEvent(type, msg));
