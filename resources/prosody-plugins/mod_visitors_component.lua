@@ -344,16 +344,15 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitor needs to be allowed by a moderator')
                 :tag('promotion-not-allowed', { xmlns = 'jitsi:visitors' }));
             return true;
-        else
---             if is_vpaas(room) then
---             -- special case for vpaas where if someone with a visitor token tries to join a room, where
---             -- there are no visitors yet, we deny access
---             if session.jitsi_meet_context_user and session.jitsi_meet_context_user.role == 'visitor' then
+        elseif is_vpaas(room) then
+            -- special case for vpaas where if someone with a visitor token tries to join a room, where
+            -- there are no visitors yet, we deny access
+            if session.jitsi_meet_context_user and session.jitsi_meet_context_user.role == 'visitor' then
                 session.log('warn', 'Deny user join as visitor in the main meeting, not approved');
                 session.send(st.error_reply(
                     stanza, 'cancel', 'not-allowed', 'Visitor tried to join the main room without approval')
                         :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
---             end
+            end
         end
 
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
