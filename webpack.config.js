@@ -6,6 +6,7 @@ const { join, resolve } = require('path');
 const process = require('process');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const dotenv = require('dotenv');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -290,11 +291,15 @@ module.exports = (_env, argv) => {
                 }),
                 new webpack.ProvidePlugin({
                     process: 'process/browser'
+                }),
+                new webpack.DefinePlugin({
+                    'process.env': JSON.stringify(dotenv.config().parsed)
+                }),
+                new webpack.ProvidePlugin({
+                    Buffer: ['buffer', 'Buffer']
                 })
             ],
-
             performance: getPerformanceHints(perfHintOptions, 5 * 1024 * 1024)
-
         }),
         Object.assign({}, config, {
             entry: {
