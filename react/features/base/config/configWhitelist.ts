@@ -81,6 +81,7 @@ export default [
     'debug',
     'debugAudioLevels',
     'deeplinking.disabled',
+    'deeplinking.desktop.enabled',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'deploymentUrls',
