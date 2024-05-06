@@ -456,7 +456,8 @@ PODS:
   - react-native-webrtc (118.0.7):
     - JitsiWebRTC (~> 118.0.0)
     - React-Core
-  - react-native-webview (13.5.1):
+  - react-native-webview (13.8.7):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - React-NativeModulesApple (0.72.9):
     - React-callinvoker
@@ -882,7 +883,7 @@ SPEC CHECKSUMS:
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: 472b7c366eaaaa0207e546d9a50410df89790bcf
   react-native-webrtc: 8b024c7bb9a005d2b9efeba4c691172dbd00268d
-  react-native-webview: 8baa0f5c6d336d6ba488e942bcadea5bf51f050a
+  react-native-webview: fb0df3f6551616ac5a7ccb2bc77aca451f58373d
   React-NativeModulesApple: 4225ac31a26696c02c54b471052b3e85e74a9a0c
   React-perflogger: cb433f318c6667060fc1f62e26eb58d6eb30a627
   React-RCTActionSheet: 0af3f8ac067e8a1dde902810b7ad169d0a0ec31e
