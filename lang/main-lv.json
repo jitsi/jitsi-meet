@@ -319,6 +319,7 @@
         "embedMeeting": "Iegult sapulci",
         "enterDisplayName": "Ievadiet savu vārdu",
         "error": "Kļūda",
+        "errorRoomCreationRestriction": "Jūs mēģinājāt pievienoties pārāk ātri. Lūdzu, atgriezieties vēlāk.",
         "gracefulShutdown": "Mūsu serviss pašlaik nedarbojas apkopes dēļ. Lūdzu, pamēģiniet vēlreiz vēlāk.",
         "grantModeratorDialog": "Vai tiešām vēlaties piešķirt moderatora tiesības dalībniekam {{participantName}}?",
         "grantModeratorTitle": "Piešķirt moderatora tiesības",
@@ -734,8 +735,10 @@
         "connectedOneMember": "{{name}} ir pievienojies sapulcei",
         "connectedThreePlusMembers": "{{name}} un {{count}} citi ir pievienojušies sapulcei",
         "connectedTwoMembers": "{{first}} un {{second}} ir pievienojušies sapulcei",
-        "dataChannelClosed": "Video kvalitāte ir traucēta",
-        "dataChannelClosedDescription": "Savienojuma kanāls ir atvienots, un tādējādi video kvalitāte ir ierobežota līdz zemākajam iestatījumam.",
+        "dataChannelClosed": "Video kvalitāte var būt traucēta",
+        "dataChannelClosedDescription": "Savienojuma kanāls nedarbojas, tāpēc video kvalitāte var būt ierobežota līdz zemākajam iestatījumam.",
+        "dataChannelClosedDescriptionWithAudio": "Savienojuma kanāls nedarbojas, tāpēc var rasties audio un video traucējumi.",
+        "dataChannelClosedWithAudio": "Audio un video kvalitāte var būt traucēta",
         "disabledIframe": "Iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm.",
         "disabledIframeSecondary": "{{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm. Lūdzu, izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi kā Pakalpojums</a> produkcijas iegulšanai!",
         "disconnected": "savienojums pārtraukts",
@@ -1483,6 +1486,10 @@
         "notification": {
             "demoteDescription": "{{actor}} pārveidoja par apmeklētāju, paceliet roku, lai piedalītos",
             "description": "Paceliet roku, lai piedalītos",
+            "noMainParticipantsDescription": "Dalībniekam ir jāsāk sapulce. Lūdzu, pēc brīža mēģiniet vēlreiz.",
+            "noMainParticipantsTitle": "Šī sapulce vēl nav sākusies.",
+            "noVisitorLobby": "Jūs nevarat pievienoties, kamēr sapulcei ir iespējots vestibils.",
+            "notAllowedPromotion": "Dalībniekam vispirms ir jāatļauj jūsu pieprasījums.",
             "title": "Jūs esat sapulces apmeklētājs"
         }
     },
