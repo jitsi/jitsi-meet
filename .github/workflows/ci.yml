@@ -65,7 +65,11 @@ jobs:
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
   ios-build:
     name: Build mobile bundle (iOS)
-    runs-on: macOS-13
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14]
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -75,6 +79,7 @@ jobs:
     - run: npm install
     - name: setup Xcode
       run: |
+        uname -a
         xcode-select -p
         sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
         xcodebuild -version
