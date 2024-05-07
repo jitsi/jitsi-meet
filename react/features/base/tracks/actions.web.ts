@@ -323,30 +323,28 @@ export function setGUMPendingStateOnFailedTracks(tracks: Array<any>, dispatch: I
  * @returns {Function}
  */
 export function createAndAddInitialAVTracks(devices: Array<MediaType>) {
-    return (dispatch: IStore['dispatch']) => {
+    return async (dispatch: IStore['dispatch']) => {
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
 
-        return dispatch(createInitialAVTracks({ devices }))
-        .then(({ tracks, errors }) => {
-            setGUMPendingStateOnFailedTracks(tracks, dispatch);
-            dispatch(displayErrorsForCreateInitialLocalTracks(errors));
+        const { tracks, errors } = await dispatch(createInitialAVTracks({ devices }));
 
-            return Promise.allSettled(tracks.map((track: any) => {
-                const legacyConferenceObject = APP.conference;
+        setGUMPendingStateOnFailedTracks(tracks, dispatch);
+        dispatch(displayErrorsForCreateInitialLocalTracks(errors));
 
-                if (track.isAudioTrack()) {
-                    return legacyConferenceObject.useAudioStream(track);
-                }
-                if (track.isVideoTrack()) {
-                    return legacyConferenceObject.useVideoStream(track);
-                }
+        await Promise.allSettled(tracks.map((track: any) => {
+            const legacyConferenceObject = APP.conference;
 
-                return Promise.resolve();
-            }));
-        })
-        .finally(() => {
-            dispatch(gumPending(devices, IGUMPendingState.NONE));
-        });
+            if (track.isAudioTrack()) {
+                return legacyConferenceObject.useAudioStream(track);
+            }
+            if (track.isVideoTrack()) {
+                return legacyConferenceObject.useVideoStream(track);
+            }
+
+            return Promise.resolve();
+        }));
+
+        dispatch(gumPending(devices, IGUMPendingState.NONE));
     };
 }
 
