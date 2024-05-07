@@ -30,7 +30,6 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
         }
 
         const is2FANeeded = await AuthService.instance.is2FANeeded(email);
-        console.info({ is2FANeeded });
         let twoFactorCode: string | undefined;
         if (is2FANeeded) {
             twoFactorCode = '';
