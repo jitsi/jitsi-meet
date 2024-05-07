@@ -33,23 +33,23 @@ function init_session(event)
 
     local token = nil;
 
-    -- preferentially extract token from Authorization header
+    -- extract token from Authorization header
     if request.headers["authorization"] then
         -- assumes the header value starts with "Bearer "
         token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
     end
 
-    -- fallback to token from query parameter
-    if token == nil then
-        if query ~= nil then
-            local params = formdecode(query);
+    -- allow override of token via query parameter
+    if query ~= nil then
+        local params = formdecode(query);
 
-            -- The following fields are filled in the session, by extracting them
-            -- from the query and no validation is being done.
-            -- After validating auth_token will be cleaned in case of error and few
-            -- other fields will be extracted from the token and set in the session
+        -- The following fields are filled in the session, by extracting them
+        -- from the query and no validation is being done.
+        -- After validating auth_token will be cleaned in case of error and few
+        -- other fields will be extracted from the token and set in the session
 
-            token = query and params.token or nil;
+        if query and params.token then
+            token = params.token;
         end
     end
 
