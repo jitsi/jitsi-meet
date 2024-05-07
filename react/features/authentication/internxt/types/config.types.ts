@@ -1,6 +1,7 @@
 export interface ConfigKeys {
-  readonly REACT_APP_DRIVE_API_URL: string;
-  readonly REACT_APP_CRYPTO_SECRET: string;
-  readonly REACT_APP_MAGIC_IV: string;
-  readonly REACT_APP_MAGIC_SALT: string;
+  readonly DRIVE_API_URL: string;
+  readonly CRYPTO_SECRET: string;
+  readonly MAGIC_IV: string;
+  readonly MAGIC_SALT: string;
+  readonly JITSI_APP_ID: string;
 }

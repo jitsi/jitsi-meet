@@ -55,7 +55,7 @@ export class SdkManager {
 
   /** Auth old client SDK */
   getAuth() {
-    const DRIVE_API_URL = ConfigService.instance.get('REACT_APP_DRIVE_API_URL');
+    const DRIVE_API_URL = ConfigService.instance.get('DRIVE_API_URL');
 
     const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
     const appDetails = SdkManager.getAppDetails();
@@ -65,7 +65,7 @@ export class SdkManager {
 
   /** Users SDK */
   getUsers() {
-    const DRIVE_API_URL = ConfigService.instance.get('REACT_APP_DRIVE_API_URL');
+    const DRIVE_API_URL = ConfigService.instance.get('DRIVE_API_URL');
 
     const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
     const appDetails = SdkManager.getAppDetails();
