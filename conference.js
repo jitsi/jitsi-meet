@@ -4,7 +4,6 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
-import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
 import { createTaskQueue } from './modules/util/helpers';
@@ -76,7 +75,6 @@ import {
     JitsiConferenceEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
-    JitsiTrackErrors,
     JitsiTrackEvents,
     browser
 } from './react/features/base/lib-jitsi-meet';
@@ -117,8 +115,11 @@ import {
 import { updateSettings } from './react/features/base/settings/actions';
 import {
     addLocalTrack,
+    createInitialAVTracks,
     destroyLocalTracks,
+    displayErrorsForCreateInitialLocalTracks,
     replaceLocalTrack,
+    setGUMPendingStateOnFailedTracks,
     toggleScreensharing as toggleScreensharingA,
     trackAdded,
     trackRemoved
@@ -383,27 +384,6 @@ function disconnect() {
     return APP.connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
-/**
- * Sets the GUM pending state for the tracks that have failed.
- *
- * NOTE: Some of the track that we will be setting to GUM pending state NONE may not have failed but they may have
- * been requested. This won't be a problem because their current GUM pending state will be NONE anyway.
- * @param {JitsiLocalTrack} tracks - The tracks that have been created.
- * @returns {void}
- */
-function setGUMPendingStateOnFailedTracks(tracks) {
-    const tracksTypes = tracks.map(track => {
-        if (track.getVideoType() === VIDEO_TYPE.DESKTOP) {
-            return MEDIA_TYPE.SCREENSHARE;
-        }
-
-        return track.getType();
-    });
-    const nonPendingTracks = [ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ].filter(type => !tracksTypes.includes(type));
-
-    APP.store.dispatch(gumPending(nonPendingTracks, IGUMPendingState.NONE));
-}
-
 export default {
     /**
      * Flag used to delay modification of the muted status of local media tracks
@@ -502,57 +482,12 @@ export default {
                     return [];
                 });
         } else if (requestedAudio || requestedVideo) {
-            APP.store.dispatch(gumPending(initialDevices, IGUMPendingState.PENDING_UNMUTE));
-            tryCreateLocalTracks = createLocalTracksF({
+            tryCreateLocalTracks = APP.store.dispatch(createInitialAVTracks({
                 devices: initialDevices,
                 timeout,
                 firePermissionPromptIsShownEvent: true
-            })
-            .catch(async error => {
-                if (error.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
-                    errors.audioAndVideoError = error;
-
-                    return [];
-                }
-
-                // Retry with separate gUM calls.
-                const gUMPromises = [];
-                const tracks = [];
-
-                if (requestedAudio) {
-                    gUMPromises.push(createLocalTracksF(audioOptions));
-                }
-
-                if (requestedVideo) {
-                    gUMPromises.push(createLocalTracksF({
-                        devices: [ MEDIA_TYPE.VIDEO ],
-                        timeout,
-                        firePermissionPromptIsShownEvent: true
-                    }));
-                }
-
-                const results = await Promise.allSettled(gUMPromises);
-                let errorMsg;
-
-                results.forEach((result, idx) => {
-                    if (result.status === 'fulfilled') {
-                        tracks.push(result.value[0]);
-                    } else {
-                        errorMsg = result.reason;
-                        const isAudio = idx === 0;
-
-                        logger.error(`${isAudio ? 'Audio' : 'Video'} track creation failed with error ${errorMsg}`);
-                        if (isAudio) {
-                            errors.audioOnlyError = errorMsg;
-                        } else {
-                            errors.videoOnlyError = errorMsg;
-                        }
-                    }
-                });
-
-                if (errors.audioOnlyError && errors.videoOnlyError) {
-                    errors.audioAndVideoError = errorMsg;
-                }
+            })).then(({ tracks, errors: pErrors }) => {
+                Object.assign(errors, pErrors);
 
                 return tracks;
             });
@@ -571,42 +506,6 @@ export default {
             tryCreateLocalTracks,
             errors
         };
-    },
-
-    /**
-     * Displays error notifications according to the state carried by {@code errors} object returned
-     * by {@link createInitialLocalTracks}.
-     * @param {Object} errors - the errors (if any) returned by {@link createInitialLocalTracks}.
-     *
-     * @returns {void}
-     * @private
-     */
-    _displayErrorsForCreateInitialLocalTracks(errors) {
-        const {
-            audioAndVideoError,
-            audioOnlyError,
-            screenSharingError,
-            videoOnlyError
-        } = errors;
-
-        // FIXME If there will be microphone error it will cover any screensharing dialog, but it's still better than in
-        // the reverse order where the screensharing dialog will sometimes be closing the microphone alert
-        // ($.prompt.close(); is called). Need to figure out dialogs chaining to fix that.
-        if (screenSharingError) {
-            this._handleScreenSharingError(screenSharingError);
-        }
-        if (audioAndVideoError || audioOnlyError) {
-            if (audioOnlyError || videoOnlyError) {
-                // If both requests for 'audio' + 'video' and 'audio' only failed, we assume that there are some
-                // problems with user's microphone and show corresponding dialog.
-                APP.store.dispatch(notifyMicError(audioOnlyError));
-                APP.store.dispatch(notifyCameraError(videoOnlyError));
-            } else {
-                // If request for 'audio' + 'video' failed, but request for 'audio' only was OK, we assume that we had
-                // problems with camera and show corresponding dialog.
-                APP.store.dispatch(notifyCameraError(audioAndVideoError));
-            }
-        }
     },
 
     startConference(tracks) {
@@ -724,11 +623,11 @@ export default {
 
             logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
 
-            this._displayErrorsForCreateInitialLocalTracks(errors);
+            APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
 
             const tracks = handleInitialTracks(initialOptions, localTracks);
 
-            setGUMPendingStateOnFailedTracks(tracks);
+            setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
 
             return this._setLocalAudioVideoStreams(tracks);
         }
@@ -737,7 +636,7 @@ export default {
 
         return Promise.all([
             tryCreateLocalTracks.then(tr => {
-                this._displayErrorsForCreateInitialLocalTracks(errors);
+                APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
 
                 return tr;
             }).then(tr => {
@@ -745,7 +644,7 @@ export default {
 
                 const filteredTracks = handleInitialTracks(initialOptions, tr);
 
-                setGUMPendingStateOnFailedTracks(filteredTracks);
+                setGUMPendingStateOnFailedTracks(filteredTracks, APP.store.dispatch);
 
                 return filteredTracks;
             }),
@@ -1226,7 +1125,7 @@ export default {
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
         const localTracks = await tryCreateLocalTracks;
 
-        this._displayErrorsForCreateInitialLocalTracks(errors);
+        APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
         localTracks.forEach(track => {
             if ((track.isAudioTrack() && this.isLocalAudioMuted())
                 || (track.isVideoTrack() && this.isLocalVideoMuted())) {
@@ -1564,50 +1463,6 @@ export default {
         }, error => {
             throw error;
         });
-    },
-
-    /**
-     * Handles {@link JitsiTrackError} returned by the lib-jitsi-meet when
-     * trying to create screensharing track. It will either do nothing if
-     * the dialog was canceled on user's request or display an error if
-     * screensharing couldn't be started.
-     * @param {JitsiTrackError} error - The error returned by
-     * {@link _createDesktopTrack} Promise.
-     * @private
-     */
-    _handleScreenSharingError(error) {
-        if (error.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
-            return;
-        }
-
-        logger.error('failed to share local desktop', error);
-
-        // Handling:
-        // JitsiTrackErrors.CONSTRAINT_FAILED
-        // JitsiTrackErrors.PERMISSION_DENIED
-        // JitsiTrackErrors.SCREENSHARING_GENERIC_ERROR
-        // and any other
-        let descriptionKey;
-        let titleKey;
-
-        if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
-            descriptionKey = 'dialog.screenSharingPermissionDeniedError';
-            titleKey = 'dialog.screenSharingFailedTitle';
-        } else if (error.name === JitsiTrackErrors.CONSTRAINT_FAILED) {
-            descriptionKey = 'dialog.cameraConstraintFailedError';
-            titleKey = 'deviceError.cameraError';
-        } else if (error.name === JitsiTrackErrors.SCREENSHARING_GENERIC_ERROR) {
-            descriptionKey = 'dialog.screenSharingFailed';
-            titleKey = 'dialog.screenSharingFailedTitle';
-        } else if (error === AUDIO_ONLY_SCREEN_SHARE_NO_TRACK) {
-            descriptionKey = 'notify.screenShareNoAudio';
-            titleKey = 'notify.screenShareNoAudioTitle';
-        }
-
-        APP.store.dispatch(showErrorNotification({
-            descriptionKey,
-            titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     },
 
     /**

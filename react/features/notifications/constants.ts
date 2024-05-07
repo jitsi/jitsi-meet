@@ -11,12 +11,12 @@ export const NOTIFICATION_TIMEOUT = {
 /**
  * Notification timeout type.
  */
-export const NOTIFICATION_TIMEOUT_TYPE = {
-    SHORT: 'short',
-    MEDIUM: 'medium',
-    LONG: 'long',
-    STICKY: 'sticky'
-};
+export enum NOTIFICATION_TIMEOUT_TYPE {
+    LONG = 'long',
+    MEDIUM = 'medium',
+    SHORT = 'short',
+    STICKY = 'sticky'
+}
 
 /**
  * The set of possible notification types.
