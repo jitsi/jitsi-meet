@@ -10,14 +10,12 @@ import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
-    gumPending,
     setAudioMuted,
     setAudioUnmutePermissions,
     setVideoMuted,
     setVideoUnmutePermissions
 } from '../media/actions';
-import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY } from '../media/constants';
-import { IGUMPendingState } from '../media/types';
+import { MEDIA_TYPE, MediaType } from '../media/constants';
 import {
     dominantSpeakerChanged,
     participantKicked,
@@ -72,6 +70,7 @@ import {
     SET_START_REACTIONS_MUTED,
     UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
+import { setupVisitorStartupMedia } from './actions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -1060,47 +1059,37 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => dispatch(conferenceWillInit()))
             .then(() => dispatch(connect()))
             .then(() => {
-                // Clear the gum pending state in case we have set it to pending since we are starting the
-                // conference without tracks.
-                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                const media: Array<MediaType> = [];
 
-                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                if (typeof APP !== 'undefined') {
-                    if (!vnode) {
-                        const state = getState();
-                        const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
-                        const { audio = false, video = false } = enableMediaOnPromote;
+                if (!vnode) {
+                    const state = getState();
+                    const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
+                    const { audio = false, video = false } = enableMediaOnPromote;
 
-                        if (audio) {
-                            const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
-                            const { startSilent } = state['features/base/config'];
+                    if (audio) {
+                        const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
+                        const { startSilent } = state['features/base/config'];
 
-                            // do not unmute the user if he was muted before (on the prejoin, the config
-                            // or URL param, etc.)
-                            if (!unmuteBlocked && !muted && !startSilent && available) {
-                                dispatch(setAudioMuted(false, true));
-
-                                // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.conference.muteAudio(false);
-                            }
-                        }
-
-                        if (video) {
-                            const { muted, unmuteBlocked } = state['features/base/media'].video;
-
-                            // do not unmute the user if he was muted before (on the prejoin, the config, URL param or
-                            // audo only, etc)
-                            if (!unmuteBlocked && !muted && hasAvailableDevices(state, 'videoInput')) {
-                                dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
-
-                                // // FIXME: The old conference logic still relies on this event being emitted.
-                                typeof APP === 'undefined' || APP.conference.muteVideo(false, false);
-                            }
+                        // do not unmute the user if he was muted before (on the prejoin, the config
+                        // or URL param, etc.)
+                        if (!unmuteBlocked && !muted && !startSilent && available) {
+                            media.push(MEDIA_TYPE.AUDIO);
                         }
                     }
 
-                    APP.conference.startConference([]);
+                    if (video) {
+                        const { muted, unmuteBlocked } = state['features/base/media'].video;
+
+                        // do not unmute the user if he was muted before (on the prejoin, the config, URL param or
+                        // audo only, etc)
+                        if (!unmuteBlocked && !muted && hasAvailableDevices(state, 'videoInput')) {
+                            media.push(MEDIA_TYPE.VIDEO);
+                        }
+                    }
                 }
+
+                dispatch(setupVisitorStartupMedia(media));
             });
     };
 }
+

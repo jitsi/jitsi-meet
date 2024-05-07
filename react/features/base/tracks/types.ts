@@ -72,3 +72,16 @@ export interface IShareOptions {
     desktopSharingSources?: string[];
     desktopStream?: any;
 }
+
+export interface ICreateInitialTracksOptions {
+    devices: Array<MediaType>;
+    firePermissionPromptIsShownEvent?: boolean;
+    timeout?: number;
+}
+
+export interface IInitialTracksErrors {
+    audioAndVideoError?: Error;
+    audioOnlyError: Error;
+    screenSharingError: Error;
+    videoOnlyError: Error;
+}
