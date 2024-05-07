@@ -72,6 +72,7 @@ interface IState {
     roomNameInputAnimation?: any;
     roomPlaceholder: string;
     updateTimeoutId?: number;
+    inxtToken?: string;
 }
 
 /**
@@ -107,7 +108,8 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         _fieldFocused: false,
         isSettingsScreenFocused: false,
         roomNameInputAnimation: 0,
-        hintBoxAnimation: 0
+        hintBoxAnimation: 0,
+        inxtToken: undefined,
     };
 
     /**
@@ -275,6 +277,19 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
             },
             () => this._animateRoomNameChanging(generatedRoomName));
     }
+
+    /**
+     * Triggers the generation of a new Internxt Token.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _updateInxtToken = (inxtToken: string) =>{
+        this.setState(
+            {
+                inxtToken,
+            });
+    };
 }
 
 /**
