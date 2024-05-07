@@ -34,7 +34,7 @@ function init_session(event)
     local token = nil;
 
     -- preferentially extract token from Authorization header
-    if request.headers["authorization"] and starts_with(request.headers["authorization"],'Bearer ') then
+    if request.headers["authorization"] then
         token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
     end
 
