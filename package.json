@@ -13,7 +13,7 @@
     "xmpp",
     "browser"
   ],
-  "author": "larryrider",
+  "author": "Internxt",
   "readmeFilename": "README.md",
   "dependencies": {
     "@amplitude/react-native": "2.7.0",
