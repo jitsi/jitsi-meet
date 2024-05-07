@@ -31,16 +31,29 @@ function init_session(event)
     local session, request = event.session, event.request;
     local query = request.url.query;
 
-    if query ~= nil then
-        local params = formdecode(query);
+    local token = nil;
 
-        -- The following fields are filled in the session, by extracting them
-        -- from the query and no validation is being done.
-        -- After validating auth_token will be cleaned in case of error and few
-        -- other fields will be extracted from the token and set in the session
-
-        session.auth_token = query and params.token or nil;
+    -- preferentially extract token from Authorization header
+    if request.headers["authorization"] and starts_with(request.headers["authorization"],'Bearer ') then
+        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
     end
+
+    -- fallback to token from query parameter
+    if token == nil then
+        if query ~= nil then
+            local params = formdecode(query);
+
+            -- The following fields are filled in the session, by extracting them
+            -- from the query and no validation is being done.
+            -- After validating auth_token will be cleaned in case of error and few
+            -- other fields will be extracted from the token and set in the session
+
+            token = query and params.token or nil;
+        end
+    end
+
+    -- in either case set auth_token in the session
+    session.auth_token = token;
 end
 
 module:hook_global("bosh-session", init_session);
