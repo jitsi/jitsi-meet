@@ -363,11 +363,6 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
             timeout,
             firePermissionPromptIsShownEvent
         } = options;
-        const audioOptions = {
-            devices: [ MEDIA_TYPE.AUDIO ],
-            timeout,
-            firePermissionPromptIsShownEvent
-        };
 
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
 
@@ -381,7 +376,17 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
             const errors = {} as IInitialTracksErrors;
 
             if (error.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
-                errors.audioAndVideoError = error;
+                if (devices.includes(MEDIA_TYPE.AUDIO)) {
+                    errors.audioOnlyError = error;
+                }
+
+                if (devices.includes(MEDIA_TYPE.VIDEO)) {
+                    errors.videoOnlyError = error;
+                }
+
+                if (errors.audioOnlyError && errors.videoOnlyError) {
+                    errors.audioAndVideoError = error;
+                }
 
                 return {
                     errors,
@@ -394,7 +399,11 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
             const tracks: any[] | PromiseLike<any[]> = [];
 
             if (devices.includes(MEDIA_TYPE.AUDIO)) {
-                gUMPromises.push(createLocalTracksF(audioOptions));
+                gUMPromises.push(createLocalTracksF({
+                    devices: [ MEDIA_TYPE.AUDIO ],
+                    timeout,
+                    firePermissionPromptIsShownEvent
+                }));
             }
 
             if (devices.includes(MEDIA_TYPE.VIDEO)) {
@@ -446,28 +455,21 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
 export function displayErrorsForCreateInitialLocalTracks(errors: IInitialTracksErrors) {
     return (dispatch: IStore['dispatch']) => {
         const {
-            audioAndVideoError,
             audioOnlyError,
             screenSharingError,
             videoOnlyError
         } = errors;
 
-        // FIXME If there will be microphone error it will cover any screensharing dialog, but it's still better than in
-        // the reverse order where the screensharing dialog will sometimes be closing the microphone alert
-        // ($.prompt.close(); is called). Need to figure out dialogs chaining to fix that.
         if (screenSharingError) {
             dispatch(handleScreenSharingError(screenSharingError, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
-        if (audioAndVideoError || audioOnlyError) {
-            if (audioOnlyError || videoOnlyError) {
-                // If both requests for 'audio' + 'video' and 'audio' only failed, we assume that there are some
-                // problems with user's microphone and show corresponding dialog.
+        if (audioOnlyError || videoOnlyError) {
+            if (audioOnlyError) {
                 dispatch(notifyMicError(audioOnlyError));
+            }
+
+            if (videoOnlyError) {
                 dispatch(notifyCameraError(videoOnlyError));
-            } else if (audioAndVideoError) {
-                // If request for 'audio' + 'video' failed, but request for 'audio' only was OK, we assume that we had
-                // problems with camera and show corresponding dialog.
-                dispatch(notifyCameraError(audioAndVideoError));
             }
         }
     };
@@ -485,10 +487,6 @@ export function handleScreenSharingError(
         error: Error | AUDIO_ONLY_SCREEN_SHARE_NO_TRACK,
         timeout: NOTIFICATION_TIMEOUT_TYPE) {
     return (dispatch: IStore['dispatch']) => {
-        if (error.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
-            return;
-        }
-
         logger.error('failed to share local desktop', error);
 
         let descriptionKey;
@@ -506,6 +504,9 @@ export function handleScreenSharingError(
         } else if (error === AUDIO_ONLY_SCREEN_SHARE_NO_TRACK) {
             descriptionKey = 'notify.screenShareNoAudio';
             titleKey = 'notify.screenShareNoAudioTitle';
+        } else { // safeguard for not showing notification with empty text. This will also include
+            // error.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED
+            return;
         }
 
         dispatch(showErrorNotification({
