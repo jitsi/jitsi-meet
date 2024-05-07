@@ -23,11 +23,12 @@ import {
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
 import { ConnectionFailedError, IIceServers } from './types';
+import { get8x8AppId, get8x8JWT, get8x8Options } from './options8x8';
 
 /**
  * The options that will be passed to the JitsiConnection instance.
  */
-interface IOptions extends IConfigState {
+export interface IOptions extends IConfigState {
     iceServersOverride?: IIceServers;
     preferVisitor?: boolean;
 }
@@ -220,9 +221,13 @@ export function _connectInternal(id?: string, password?: string) {
         const state = getState();
         const options = constructOptions(state);
         const { locationURL } = state['features/base/connection'];
-        const { jwt } = state['features/base/jwt'];
 
-        const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, options);
+        const room = state['features/base/conference'].room || '';
+        const jwt = get8x8JWT();
+        const appId = get8x8AppId();
+        const newOptions = get8x8Options(options, appId, room);
+
+        const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
 
         connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
