@@ -35,6 +35,7 @@ function init_session(event)
 
     -- preferentially extract token from Authorization header
     if request.headers["authorization"] then
+        -- assumes the header value starts with "Bearer "
         token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
     end
 
