@@ -31,6 +31,15 @@ function init_session(event)
     local session, request = event.session, event.request;
     local query = request.url.query;
 
+    local token = nil;
+
+    -- extract token from Authorization header
+    if request.headers["authorization"] then
+        -- assumes the header value starts with "Bearer "
+        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
+    end
+
+    -- allow override of token via query parameter
     if query ~= nil then
         local params = formdecode(query);
 
@@ -39,8 +48,13 @@ function init_session(event)
         -- After validating auth_token will be cleaned in case of error and few
         -- other fields will be extracted from the token and set in the session
 
-        session.auth_token = query and params.token or nil;
+        if query and params.token then
+            token = params.token;
+        end
     end
+
+    -- in either case set auth_token in the session
+    session.auth_token = token;
 end
 
 module:hook_global("bosh-session", init_session);
