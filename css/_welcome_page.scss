@@ -18,7 +18,6 @@ body.welcome-page {
         background-position: $welcomePageHeaderBackgroundPosition;
         background-repeat: $welcomePageHeaderBackgroundRepeat;
         background-size: $welcomePageHeaderBackgroundSize;
-        padding-bottom: $welcomePageHeaderPaddingBottom;
         background-color: #131519;
         overflow: hidden;
         position: relative;
@@ -348,4 +347,91 @@ body.welcome-page {
         max-width: 200px;
         margin-right: 16px;
     }
+}
+
+
+.mainContainer {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.formContainer {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.875rem;
+    font-weight: bolder;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 400px;
+}
+
+.resultContainer,
+.historyItem {
+    flex-direction: row;
+    display: flex;
+    width: 400px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.historyContainer {
+    flex-direction: column;
+    display: flex;
+    height: 200px;
+    align-items: center;
+    flex-grow: 5;
+    justify-content: flex-start;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.inputContainer>.errorLabel {
+    color: red;
+    font-size: 12px;
+}
+
+.inputBox {
+    height: 48px;
+    width: 400px;
+    font-size: large;
+    border-radius: 8px;
+    border: 1px solid grey;
+    padding-left: 8px;
+}
+
+.inputButton {
+    height: 40px;
+    width: 400px;
+    border: none;
+    background: #0066ff;
+    color: white;
+    margin: 8px;
+    font-size: 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.5rem;
 }

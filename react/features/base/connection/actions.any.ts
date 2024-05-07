@@ -217,13 +217,15 @@ export function setPreferVisitor(preferVisitor: boolean) {
  * @returns {Function}
  */
 export function _connectInternal(id?: string, password?: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const options = constructOptions(state);
         const { locationURL } = state['features/base/connection'];
 
         const room = state['features/base/conference'].room || '';
-        const jwt = get8x8JWT();
+
+        const inxtToken = localStorage.getItem('xNewToken') || '';
+        const jwt = await get8x8JWT(inxtToken);
         const appId = get8x8AppId();
         const newOptions = get8x8Options(options, appId, room);
 
