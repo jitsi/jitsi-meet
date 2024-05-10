@@ -23,7 +23,8 @@ import {
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
 import { ConnectionFailedError, IIceServers } from './types';
-import { get8x8AppId, get8x8JWT, get8x8Options } from './options8x8';
+import { get8x8AppId, get8x8UserJWT, get8x8Options } from './options8x8';
+import { isJwtValid } from '../jwt/functions';
 
 /**
  * The options that will be passed to the JitsiConnection instance.
