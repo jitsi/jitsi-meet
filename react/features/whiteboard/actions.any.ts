@@ -15,15 +15,18 @@ import { IWhiteboardAction } from './reducer';
  * @param {Object} payload - The whiteboard settings.
  * @returns {{
  *     type: SETUP_WHITEBOARD,
- *     collabDetails: { roomId: string, roomKey: string }
+ *     collabDetails: { roomId: string, roomKey: string },
+ *     collabServerUrl: string
  * }}
  */
-export const setupWhiteboard = ({ collabDetails }: {
+export const setupWhiteboard = ({ collabDetails, collabServerUrl }: {
     collabDetails: { roomId: string; roomKey: string; };
+    collabServerUrl?: string;
 }): IWhiteboardAction => {
     return {
         type: SETUP_WHITEBOARD,
-        collabDetails
+        collabDetails,
+        collabServerUrl
     };
 };
 

@@ -2,8 +2,6 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { approveParticipant } from '../../av-moderation/actions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
@@ -41,7 +39,6 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     OVERWRITE_PARTICIPANTS_NAMES,
     OVERWRITE_PARTICIPANT_NAME,
-    PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
@@ -231,20 +228,6 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference?.muteParticipant(action.id, action.mediaType);
-        break;
-    }
-
-    // TODO Remove this middleware when the local display name update flow is
-    // fully brought into redux.
-    case PARTICIPANT_DISPLAY_NAME_CHANGED: {
-        if (typeof APP !== 'undefined') {
-            const participant = getLocalParticipant(store.getState());
-
-            if (participant && participant.id === action.id) {
-                APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
-            }
-        }
-
         break;
     }
 

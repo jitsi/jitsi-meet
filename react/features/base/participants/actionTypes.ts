@@ -44,18 +44,6 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
 
 /**
- * Create an action for when the local participant's display name is updated.
- *
- * {
- *     type: PARTICIPANT_DISPLAY_NAME_CHANGED,
- *     id: string,
- *     name: string
- * }
- */
-export const PARTICIPANT_DISPLAY_NAME_CHANGED
-    = 'PARTICIPANT_DISPLAY_NAME_CHANGED';
-
-/**
  * Action to signal that ID of participant has changed. This happens when
  * local participant joins a new conference or quits one.
  *

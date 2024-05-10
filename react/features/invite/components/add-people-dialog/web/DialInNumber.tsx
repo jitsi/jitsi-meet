@@ -1,11 +1,17 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconCopy } from '../../../../base/icons/svg';
+import { IconCheck, IconCopy } from '../../../../base/icons/svg';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
+import { showSuccessNotification } from '../../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 import { _formatConferenceIDPin } from '../../../_utils';
+
+let mounted: boolean;
 
 /**
  * The type of the React {@code Component} props of {@link DialInNumber}.
@@ -25,83 +31,108 @@ interface IProps extends WithTranslation {
     phoneNumber: string;
 }
 
+
 /**
- * React {@code Component} responsible for displaying a telephone number and
- * conference ID for dialing into a conference.
+ * Component responsible for displaying a telephone number and
+ * conference ID for dialing into a conference and copying them to clipboard.
  *
- * @augments Component
+ * @returns {ReactNode}
  */
-class DialInNumber extends Component<IProps> {
+function DialInNumber({ conferenceID, phoneNumber, t }: IProps) {
+    const dispatch = useDispatch();
+    const [ isClicked, setIsClicked ] = useState(false);
+    const dialInLabel = t('info.dialInNumber');
+    const passcode = t('info.dialInConferenceID');
+    const conferenceIDPin = `${_formatConferenceIDPin(conferenceID)}#`;
+    const textToCopy = `${dialInLabel} ${phoneNumber} ${passcode} ${conferenceIDPin}`;
+
+
+    useEffect(() => {
+        mounted = true;
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     /**
-     * Initializes a new DialInNumber instance.
+     * Copies the conference ID and phone number to the clipboard.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+     * @returns {void}
+    */
+    function _onCopyText() {
+        copyText(textToCopy);
+        dispatch(showSuccessNotification({
+            titleKey: 'dialog.copied'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        setIsClicked(true);
+        setTimeout(() => {
+            // avoid: Can't perform a React state update on an unmounted component
+            if (mounted) {
+                setIsClicked(false);
+            }
+        }, 2500);
 
-        // Bind event handler so it is only bound once for every instance.
-        this._onCopyText = this._onCopyText.bind(this);
     }
 
     /**
-     * Copies the dial-in information to the clipboard.
+     * Copies the conference invitation to the clipboard.
+     *
+     * @param {Object} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onCopyText() {
-        const { conferenceID, phoneNumber, t } = this.props;
-        const dialInLabel = t('info.dialInNumber');
-        const passcode = t('info.dialInConferenceID');
-        const conferenceIDPin = `${_formatConferenceIDPin(conferenceID)}#`;
-        const textToCopy = `${dialInLabel} ${phoneNumber} ${passcode} ${conferenceIDPin}`;
-
-        copyText(textToCopy);
+    function _onCopyTextKeyPress(e: React.KeyboardEvent) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            _onCopyText();
+        }
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders section that shows the phone number and conference ID
+     * and give user the ability to copy them to the clipboard.
      *
-     * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {ReactNode}
      */
-    render() {
-        const { conferenceID, phoneNumber, t } = this.props;
-
-        return (
-            <div className = 'dial-in-number'>
-                <p>
-                    <span className = 'phone-number'>
-                        <span className = 'info-label'>
-                            { t('info.dialInNumber') }
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { phoneNumber }
-                        </span>
+    return (
+        <div className = 'dial-in-number'>
+            <p>
+                <span className = 'phone-number'>
+                    <span className = 'info-label'>
+                        { t('info.dialInNumber') }
                     </span>
-                    <br />
-                    <span className = 'conference-id'>
-                        <span className = 'info-label'>
-                            { t('info.dialInConferenceID') }
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { `${_formatConferenceIDPin(conferenceID)}#` }
-                        </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { phoneNumber }
                     </span>
-                </p>
+                </span>
+                <br />
+                <span className = 'conference-id'>
+                    <span className = 'info-label'>
+                        { t('info.dialInConferenceID') }
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { `${_formatConferenceIDPin(conferenceID)}#` }
+                    </span>
+                </span>
+            </p>
+            <Tooltip
+                content = { t('info.copyNumber') }
+                position = 'top'>
                 <button
                     aria-label = { t('info.copyNumber') }
                     className = 'dial-in-copy invisible-button'
-                    onClick = { this._onCopyText }>
-                    <Icon src = { IconCopy } />
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onClick = { _onCopyText }
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onKeyPress = { _onCopyTextKeyPress }>
+                    <Icon src = { isClicked ? IconCheck : IconCopy } />
                 </button>
-            </div>
-        );
-    }
+            </Tooltip>
+        </div>
+    );
 }
 
 export default translate(DialInNumber);

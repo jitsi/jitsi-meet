@@ -61,9 +61,10 @@ module:hook('muc-occupant-pre-join', function (event)
     local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
     local node, host = jid.split(occupant.bare_jid);
 
-    if host == local_domain then
+    if prosody.hosts[host] and not is_admin(occupant.bare_jid) then
         if room._main_room_lobby_enabled then
-            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!'));
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!')
+                :tag('no-visitors-lobby', { xmlns = 'jitsi:visitors' }));
             return true;
         else
             occupant.role = 'visitor';
@@ -160,7 +161,7 @@ module:hook('muc-occupant-left', function (event)
     local room, occupant = event.room, event.occupant;
     local occupant_domain = jid.host(occupant.bare_jid);
 
-    if occupant_domain == local_domain then
+    if prosody.hosts[occupant_domain] and not is_admin(occupant.bare_jid) then
         local focus_occupant = get_focus_occupant(room);
         if not focus_occupant then
             module:log('info', 'No focus found for %s', room.jid);
@@ -427,14 +428,15 @@ module:hook_global('stats-update', function ()
     for room in prosody.hosts[module.host].modules.muc.each_room() do
         rooms_count = rooms_count + 1;
         for _, o in room:each_occupant() do
-            if jid.host(o.bare_jid) == local_domain then
-                visitors_count = visitors_count + 1;
-            else
-                participants_count = participants_count + 1;
+            if not is_admin(o.bare_jid) then
+                local _, host = jid.split(o.bare_jid);
+                if prosody.hosts[host] then -- local hosts are visitors (including jigasi)
+                    visitors_count = visitors_count + 1;
+                else
+                    participants_count = participants_count + 1;
+                end
             end
         end
-        -- do not count jicofo
-        participants_count = participants_count - 1;
     end
 
     measure_rooms(rooms_count);

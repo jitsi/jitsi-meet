@@ -165,6 +165,10 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { enableForcedReload } = getState()['features/base/config'];
 
+    if (LocalRecordingManager.isRecordingLocally()) {
+        dispatch(stopLocalVideoRecording());
+    }
+
     // Handle specific failure reasons.
     switch (error.name) {
     case JitsiConferenceErrors.CONFERENCE_RESTARTED: {
@@ -220,9 +224,30 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         break;
     }
     case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
-        const [ msg ] = error.params;
+        const [ type, msg ] = error.params;
 
-        sendAnalytics(createNotAllowedErrorEvent(msg));
+        let descriptionKey;
+        let titleKey = 'dialog.tokenAuthFailed';
+
+        if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_MAIN_PARTICIPANTS) {
+            descriptionKey = 'visitors.notification.noMainParticipantsDescription';
+            titleKey = 'visitors.notification.noMainParticipantsTitle';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_VISITORS_LOBBY) {
+            descriptionKey = 'visitors.notification.noVisitorLobby';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.PROMOTION_NOT_ALLOWED) {
+            descriptionKey = 'visitors.notification.notAllowedPromotion';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_CREATION_RESTRICTION) {
+            descriptionKey = 'dialog.errorRoomCreationRestriction';
+        }
+
+        APP.store.dispatch(showErrorNotification({
+            descriptionKey,
+            hideErrorSupportLink: true,
+            titleKey
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+        sendAnalytics(createNotAllowedErrorEvent(type, msg));
+
         break;
     }
     case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
@@ -592,8 +617,8 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
 
     if (room) {
         // Set the stored subject.
-        dispatch(setLocalSubject(localSubject ?? ''));
-        dispatch(setSubject(subject ?? ''));
+        localSubject && dispatch(setLocalSubject(localSubject));
+        subject && dispatch(setSubject(subject));
     }
 
     return next(action);

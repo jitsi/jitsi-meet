@@ -668,6 +668,9 @@
             "removeOption": "Kkes aɣewwaṛ",
             "send": "Azen"
         },
+        "errors": {
+            "notUniqueOption": "tifranin ilaq ad ilin d imaynuten"
+        },
         "notification": {
             "description": "Ldi iccer n yisenqad i ufran",
             "title": "Asenqed amaynut yettwarna ɣer temlilt-a"

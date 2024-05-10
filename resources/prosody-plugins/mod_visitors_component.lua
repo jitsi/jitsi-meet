@@ -4,6 +4,7 @@ local jid = require 'util.jid';
 local st = require 'util.stanza';
 local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
+local is_sip_jigasi = util.is_sip_jigasi;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
@@ -14,7 +15,7 @@ local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
@@ -95,11 +96,13 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             local iq_id = new_id();
             sent_iq_cache:set(iq_id, socket.gettime());
 
+            local node = jid.node(room.jid);
+
             module:send(st.iq({
                     type='set', to = req_from, from = module.host, id = iq_id })
                 :tag('visitors', {
                     xmlns='jitsi:visitors',
-                    room = string.gsub(room.jid, muc_domain_base, req_from),
+                    room = jid.join(node, muc_domain_prefix..'.'..req_from),
                     focusjid = focus_jid })
                  :tag('promotion-response', {
                     xmlns='jitsi:visitors',
@@ -125,7 +128,13 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
                 body_json.on = false;
             end
 
-            local msg_to_send = json.encode(body_json);
+            local msg_to_send, error = json.encode(body_json);
+
+            if not msg_to_send then
+                module:log('error', 'Error encoding msg room:%s error:%s', room.jid, error)
+                return true;
+            end
+
             if visitors_promotion_requests[room.jid] then
                 visitors_promotion_requests[room.jid][from_jid] = {
                     msg = msg_to_send;
@@ -282,11 +291,13 @@ local function process_promotion_response(room, id, approved)
     local iq_id = new_id();
     sent_iq_cache:set(iq_id, socket.gettime());
 
+    local node = jid.node(room.jid);
+
     module:send(st.iq({
             type='set', to = req_from, from = module.host, id = iq_id })
         :tag('visitors', {
             xmlns='jitsi:visitors',
-            room = string.gsub(room.jid, muc_domain_base, req_from),
+            room = jid.join(node, muc_domain_prefix..'.'..req_from),
             focusjid = focus_jid })
          :tag('promotion-response', {
             xmlns='jitsi:visitors',
@@ -301,7 +312,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access
     -- check list of allowed jids for the room
     host_module:hook('muc-occupant-pre-join', function (event)
-        local room, stanza, occupant, origin = event.room, event.stanza, event.occupant, event.origin;
+        local room, stanza, occupant, session = event.room, event.stanza, event.occupant, event.origin;
 
         if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
             return;
@@ -318,7 +329,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         -- we skip any checks when auto-allow is enabled
         if auto_allow_promotion
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
-            or stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi')
+            or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza) then
             return;
         end
@@ -330,9 +341,19 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 -- allow join
                 return;
             end
-
-            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitor needs to be allowed by a moderator'));
+            module:log('error', 'Visitor needs to be allowed by a moderator %s', stanza.attr.from);
+            session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitor needs to be allowed by a moderator')
+                :tag('promotion-not-allowed', { xmlns = 'jitsi:visitors' }));
             return true;
+        elseif is_vpaas(room) then
+            -- special case for vpaas where if someone with a visitor token tries to join a room, where
+            -- there are no visitors yet, we deny access
+            if session.jitsi_meet_context_user and session.jitsi_meet_context_user.role == 'visitor' then
+                session.log('warn', 'Deny user join as visitor in the main meeting, not approved');
+                session.send(st.error_reply(
+                    stanza, 'cancel', 'not-allowed', 'Visitor tried to join the main room without approval')
+                        :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
+            end
         end
 
     end, 7); -- after muc_meeting_id, the logic for not joining before jicofo
@@ -382,9 +403,12 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         if json_data == nil then
             return;
         end
-        local data = json.decode(json_data);
+        local data, error = json.decode(json_data);
         if not data or data.type ~= 'visitors'
             or (data.action ~= "promotion-response" and data.action ~= "demote-request") then
+            if error then
+                module:log('error', 'Error decoding error:%s', error);
+            end
             return;
         end
 
@@ -430,8 +454,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 process_promotion_response(room, data.id, data.approved and 'true' or 'false');
             else
                 -- we are in the case with admit all, we need to read data.ids
-                for i in pairs(data.ids) do
-                    process_promotion_response(room, data.id, data.approved and 'true' or 'false');
+                for _,value in pairs(data.ids) do
+                    process_promotion_response(room, value, data.approved and 'true' or 'false');
                 end
             end
         end

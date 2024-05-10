@@ -16,6 +16,8 @@
 
 package org.jitsi.meet.sdk;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,12 +26,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -52,12 +57,13 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
+    private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
+
     private boolean isAudioMuted;
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-
-    public static void launch(Context context, HashMap<String, Object> extraData) {
+    private static void doLaunch(Context context, HashMap<String, Object> extraData) {
 
         OngoingNotification.createNotificationChannel((Activity) context);
 
@@ -87,6 +93,31 @@ public class JitsiMeetOngoingConferenceService extends Service
         }
     }
 
+
+    public static void launch(Context context, HashMap<String, Object> extraData) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            PermissionListener listener = new PermissionListener() {
+                @Override
+                public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                    if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                        doLaunch(context, extraData);
+                    }
+
+                    return true;
+                }
+            };
+
+            JitsiMeetActivityDelegate.requestPermissions(
+                (Activity) context,
+                new String[]{POST_NOTIFICATIONS},
+                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
+                listener
+            );
+        } else {
+            doLaunch(context, extraData);
+        }
+    }
+
     public static void abort(Context context) {
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         context.stopService(intent);
@@ -102,7 +133,7 @@ public class JitsiMeetOngoingConferenceService extends Service
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
             } else {
                 startForeground(NOTIFICATION_ID, notification);
             }

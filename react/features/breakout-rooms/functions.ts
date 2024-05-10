@@ -161,8 +161,7 @@ export const getCurrentRoomId = (stateful: IStateful) => {
 export const isInBreakoutRoom = (stateful: IStateful) => {
     const conference = getCurrentConference(stateful);
 
-    return conference?.getBreakoutRooms()
-        ?.isBreakoutRoom();
+    return conference?.getBreakoutRooms()?.isBreakoutRoom();
 };
 
 /**

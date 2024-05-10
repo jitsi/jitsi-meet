@@ -59,6 +59,10 @@ var config = {
     // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
+    // Option to send conference requests to jicofo over http (requires nginx rule for it)
+    // conferenceRequestUrl:
+    //   'https://<!--# echo var="http_host" default="jitsi-meet.example.com" -->/' + subdir + 'conference-request/v1',
+
     // Options related to the bridge (colibri) data channel
     bridgeChannel: {
         // If the backend advertises multiple colibri websockets, this options allows
@@ -329,6 +333,8 @@ var config = {
 
     // configuration for all things recording related. Existing settings will be migrated here in the future.
     // recordings: {
+    //    // IF true (default) recording audio and video is selected by default in the recording dialog.
+    //    // recordAudioAndVideo: true,
     //    // If true, shows a notification at the start of the meeting with a call to action button
     //    // to start recording (for users who can do so).
     //    // suggestRecording: true,
@@ -461,6 +467,8 @@ var config = {
     //          low: 100000,
     //          standard: 300000,
     //          high: 1000000,
+    //          fullHd: 2000000,
+    //          ultraHd: 4000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true,
@@ -472,6 +480,8 @@ var config = {
     //          low: 200000,
     //          standard: 500000,
     //          high: 1500000,
+    //          fullHd: 3000000,
+    //          ultraHd: 6000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true
@@ -481,6 +491,8 @@ var config = {
     //          low: 200000,
     //          standard: 500000,
     //          high: 1500000,
+    //          fullHd: 3000000,
+    //          ultraHd: 6000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: false
@@ -490,6 +502,8 @@ var config = {
     //          low: 100000,
     //          standard: 300000,
     //          high: 1200000,
+    //          fullHd: 2500000,
+    //          ultraHd: 5000000,
     //          ssHigh: 2500000
     //      },
     //      scalabilityModeEnabled: true,

@@ -150,6 +150,15 @@ server {
     #    alias /usr/share/jitsi-meet/load-test/libs/$1;
     #}
 
+    location ~ ^/conference-request/v1(\/.*)?$ {
+        proxy_pass http://127.0.0.1:8888/conference-request/v1$1;
+        add_header "Cache-Control" "no-cache, no-store";
+        add_header 'Access-Control-Allow-Origin' '*';
+    }
+    location ~ ^/([^/?&:'"]+)/conference-request/v1(\/.*)?$ {
+        rewrite ^/([^/?&:'"]+)/conference-request/v1(\/.*)?$ /conference-request/v1$2;
+    }
+
     location ~ ^/([^/?&:'"]+)$ {
         set $roomname "$1";
         try_files $uri @root_path;

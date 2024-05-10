@@ -2,7 +2,11 @@ import { AnyAction } from 'redux';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
-import { CONFERENCE_JOINED, ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_JOINED,
+    ENDPOINT_MESSAGE_RECEIVED,
+    NON_PARTICIPANT_MESSAGE_RECEIVED
+} from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { openDialog } from '../base/dialog/actions';
@@ -40,7 +44,8 @@ import {
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
-    MESSAGE_TYPE_REMOTE
+    MESSAGE_TYPE_REMOTE,
+    MESSAGE_TYPE_SYSTEM
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
@@ -126,6 +131,23 @@ MiddlewareRegistry.register(store => next => action => {
                 lobbyChat: false,
                 timestamp: data.timestamp
             }, false, true);
+        }
+
+        break;
+    }
+
+    case NON_PARTICIPANT_MESSAGE_RECEIVED: {
+        const { id, json: data } = action;
+
+        if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
+            _handleReceivedMessage(store, {
+                displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
+                id,
+                lobbyChat: false,
+                message: data.message,
+                privateMessage: true,
+                timestamp: Date.now()
+            });
         }
 
         break;

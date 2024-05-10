@@ -12,6 +12,8 @@ import {
     removeTranscriptMessage,
     updateTranscriptMessage
 } from './actions.any';
+import { notifyTranscriptionChunkReceived } from './functions';
+
 
 /**
  * The type of json-message which indicates that json carries a
@@ -43,7 +45,7 @@ const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 const REMOVE_AFTER_MS = 3000;
 
 /**
- * Stability factor for a trancription. We'll treat a transcript as stable
+ * Stability factor for a transcription. We'll treat a transcript as stable
  * beyond this value.
  */
 const STABLE_TRANSCRIPTION_FACTOR = 0.85;
@@ -89,13 +91,14 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
     const { data: json } = action;
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);
     }
 
+    const { dispatch, getState } = store;
     const state = getState();
     const language
         = state['features/base/conference'].conference
@@ -129,7 +132,7 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
         const { text } = json.transcript[0];
 
         // First, notify the external API.
-        if (typeof APP !== 'undefined' && !(json.is_interim && skipInterimTranscriptions)) {
+        if (!(json.is_interim && skipInterimTranscriptions)) {
             const txt: any = {};
 
             if (!json.is_interim) {
@@ -140,26 +143,31 @@ function _endpointMessageReceived({ dispatch, getState }: IStore, next: Function
                 txt.unstable = text;
             }
 
-            APP.API.notifyTranscriptionChunkReceived({
-                messageID: transcriptMessageID,
-                language: json.language,
+            notifyTranscriptionChunkReceived(
+                transcriptMessageID,
+                json.language,
                 participant,
-                ...txt
-            });
+                txt,
+                store
+            );
 
-            // Dump transcript in a <transcript> element for debugging purposes.
-            if (!json.is_interim && dumpTranscript) {
-                try {
-                    let elem = document.body.getElementsByTagName('transcript')[0];
+            if (navigator.product !== 'ReactNative') {
 
-                    if (!elem) {
-                        elem = document.createElement('transcript');
-                        document.body.appendChild(elem);
+                // Dump transcript in a <transcript> element for debugging purposes.
+                if (!json.is_interim && dumpTranscript) {
+                    try {
+                        let elem = document.body.getElementsByTagName('transcript')[0];
+
+                        // eslint-disable-next-line max-depth
+                        if (!elem) {
+                            elem = document.createElement('transcript');
+                            document.body.appendChild(elem);
+                        }
+
+                        elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
+                    } catch (_) {
+                        // Ignored.
                     }
-
-                    elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
-                } catch (_) {
-                    // Ignored.
                 }
             }
         }

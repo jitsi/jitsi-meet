@@ -11,6 +11,7 @@ import SettingsButton from '../../../base/settings/components/native/SettingsBut
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
+import { customOverflowMenuButtonPressed } from '../../../mobile/external-api/actions';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
@@ -27,6 +28,7 @@ import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardBu
 import { getMovableButtons } from '../../functions.native';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import CustomOptionButton from './CustomOptionButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
@@ -37,6 +39,11 @@ import ScreenSharingButton from './ScreenSharingButton';
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 interface IProps {
+
+    /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * True if breakout rooms feature is available, false otherwise.
@@ -145,6 +152,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
+                { this._renderCustomOverflowMenuButtons(topButtonProps) }
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {
@@ -187,13 +195,48 @@ class OverflowMenu extends PureComponent<IProps, IState> {
     /**
      * Function to render the reaction menu as the footer of the bottom sheet.
      *
-     * @returns {React$Element}
+     * @returns {React.ReactElement}
      */
     _renderReactionMenu() {
         return (
             <ReactionMenu
                 onCancel = { this._onCancel }
                 overflowMenu = { true } />
+        );
+    }
+
+    /**
+     * Function to render the custom buttons for the overflow menu.
+     *
+     * @param {Object} topButtonProps - Button properties.
+     * @returns {React.ReactElement}
+     */
+    _renderCustomOverflowMenuButtons(topButtonProps: Object) {
+        const { _customToolbarButtons, dispatch } = this.props;
+
+        if (!_customToolbarButtons?.length) {
+            return;
+        }
+
+        return (
+            <>
+                {
+                    _customToolbarButtons.map(({ id, text, icon, ...rest }) => (
+                        <CustomOptionButton
+                            { ...rest }
+                            { ...topButtonProps }
+
+                            /* eslint-disable react/jsx-no-bind */
+                            handleClick = { () =>
+                                dispatch(customOverflowMenuButtonPressed(id, text))
+                            }
+                            icon = { icon }
+                            key = { id }
+                            text = { text } />
+                    ))
+                }
+                <Divider style = { styles.divider as ViewStyle } />
+            </>
         );
     }
 }
@@ -207,8 +250,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
+    const { customToolbarButtons } = state['features/base/config'];
 
     return {
+        _customToolbarButtons: customToolbarButtons,
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),

@@ -368,8 +368,6 @@ class Conference extends AbstractConference<IProps, any> {
      */
     _start() {
         APP.UI.start();
-
-        APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach(name =>

@@ -1,7 +1,5 @@
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { processExternalDeviceRequest } from '../../device-selection/functions';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
@@ -161,7 +159,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(replaceAudioTrackById(action.deviceId));
         } else {
-            APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
+            APP.conference.onAudioDeviceChanged(action.deviceId);
         }
         break;
     case SET_VIDEO_INPUT_DEVICE: {
@@ -174,7 +172,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(replaceVideoTrackById(action.deviceId));
         } else {
-            APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
+            APP.conference.onVideoDeviceChanged(action.deviceId);
         }
         break;
     }

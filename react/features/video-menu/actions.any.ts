@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import {
     AUDIO_MUTE,
     VIDEO_MUTE,
@@ -55,8 +53,9 @@ export function muteLocal(enable: boolean, mediaType: MediaType, stopScreenShari
             : setVideoMuted(enable, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
 
         // FIXME: The old conference logic still relies on this event being emitted.
-        typeof APP === 'undefined'
-            || APP.UI.emitEvent(isAudio ? UIEvents.AUDIO_MUTED : UIEvents.VIDEO_MUTED, enable);
+        if (typeof APP !== 'undefined') {
+            isAudio ? APP.conference.muteAudio(enable) : APP.conference.muteVideo(enable, false);
+        }
     };
 }
 

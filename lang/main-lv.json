@@ -128,6 +128,7 @@
         "privateNotice": "Privāta ziņa adresātam {{recipient}}",
         "sendButton": "Nosūtīt",
         "smileysPanel": "Emociju panelis",
+        "systemDisplayName": "Sistēma",
         "tabs": {
             "chat": "Tērzēšana",
             "polls": "Aptaujas"
@@ -306,6 +307,8 @@
         "contactSupport": "Sazinieties ar atbalsta dienestu",
         "copied": "Nokopēts",
         "copy": "Kopēt",
+        "demoteParticipantDialog": "Vai tiešām vēlaties pārveidot šo dalībnieku par apmeklētāju?",
+        "demoteParticipantTitle": "Pārveidot par apmeklētāju",
         "dismiss": "Noraidīt",
         "displayNameRequired": "Sveiki! Kā jūs sauc?",
         "done": "Darīts",
@@ -317,6 +320,7 @@
         "embedMeeting": "Iegult sapulci",
         "enterDisplayName": "Ievadiet savu vārdu",
         "error": "Kļūda",
+        "errorRoomCreationRestriction": "Jūs mēģinājāt pievienoties pārāk ātri. Lūdzu, atgriezieties vēlāk.",
         "gracefulShutdown": "Mūsu serviss pašlaik nedarbojas apkopes dēļ. Lūdzu, pamēģiniet vēlreiz vēlāk.",
         "grantModeratorDialog": "Vai tiešām vēlaties piešķirt moderatora tiesības dalībniekam {{participantName}}?",
         "grantModeratorTitle": "Piešķirt moderatora tiesības",
@@ -352,28 +356,28 @@
         "micPermissionDeniedError": "Nav piekļuves mikrofonam. Jūs varat piedalīties sapulcē, bet citi jūs nedzirdēs. Lai to novērstu, izmantojiet kameras ikonu pārlūkprogrammas adrešu joslā.",
         "micTimeoutError": "Nevarēja palaist audio avotu. Iestājās noildze!",
         "micUnknownError": "Nevar izmantot mikrofonu nezināma iemesla dēļ.",
-        "moderationAudioLabel": "Ļaujiet dalībniekiem ieslēgt savu mikrofonu",
-        "moderationVideoLabel": "Ļaujiet dalībniekiem ieslēgt savu kameru",
-        "muteEveryoneDialog": "Dalībnieki jebkurā laikā var ieslēgt savu mikrofonu.",
-        "muteEveryoneDialogModerationOn": "Dalībnieki jebkurā laikā var nosūtīt pieprasījumu runāt.",
-        "muteEveryoneElseDialog": "Kad skaņa būs izslēgta, jūs nevarēsit to ieslēgt atpakaļ, taču dalībnieki jebkurā laikā to varēs izdarīt paši.",
+        "moderationAudioLabel": "Atļaut dalībniekiem ieslēgt savu mikrofonu",
+        "moderationVideoLabel": "Atļaut dalībniekiem ieslēgt savu kameru",
+        "muteEveryoneDialog": "Dalībnieki paši var ieslēgt savu mikrofonu.",
+        "muteEveryoneDialogModerationOn": "Dalībnieki var nosūtīt pieprasījumu ieslēgt savu mikrofonu.",
+        "muteEveryoneElseDialog": "Kad skaņa būs izslēgta, jūs nevarēsiet to ieslēgt atpakaļ, taču dalībnieki to varēs izdarīt paši.",
         "muteEveryoneElseTitle": "Vai izslēgt skaņu visiem, izņemot {{whom}}?",
-        "muteEveryoneElsesVideoDialog": "Kad video būs izslēgts, jūs nevarēsit to ieslēgt atpakaļ, taču dalībnieki jebkurā laikā to varēs izdarīt paši.",
+        "muteEveryoneElsesVideoDialog": "Kad video būs izslēgts, jūs nevarēsiet to ieslēgt atpakaļ, taču dalībnieki to varēs izdarīt paši.",
         "muteEveryoneElsesVideoTitle": "Vai izslēgt video visiem, izņemot {{whom}}?",
         "muteEveryoneSelf": "jūs",
         "muteEveryoneStartMuted": "No šī brīža visi jauni dalībnieki pieslēdzas ar izslēgt skaņu",
         "muteEveryoneTitle": "Vai izslēgt skaņu visiem?",
-        "muteEveryonesVideoDialog": "Dalībnieki var jebkurā laikā ieslēgt savu video.",
-        "muteEveryonesVideoDialogModerationOn": "Dalībnieki jebkurā laikā var nosūtīt pieprasījumu ieslēgt viņu video.",
+        "muteEveryonesVideoDialog": "Dalībnieki var ieslēgt savu video.",
+        "muteEveryonesVideoDialogModerationOn": "Dalībnieki var nosūtīt pieprasījumu ieslēgt viņu video.",
         "muteEveryonesVideoDialogOk": "Atspējot",
         "muteEveryonesVideoTitle": "Vai apturēt ikviena video?",
-        "muteParticipantBody": "Jūs nevarat viņiem ieslēgt skaņu, bet viņi paši to var izdarīt jebkurā laikā.",
+        "muteParticipantBody": "Jūs nevariet viņiem ieslēgt skaņu, bet viņi paši to var izdarīt jebkurā laikā.",
         "muteParticipantButton": "Izslēgt skaņu",
-        "muteParticipantsVideoBody": "Jūs nevarēsiet atkal ieslēgt kameru, taču viņi var to jebkurā laikā atkal ieslēgt.",
-        "muteParticipantsVideoBodyModerationOn": "Jūs nevarēsiet atkal ieslēgt kameru, un viņi arī nevarēs.",
+        "muteParticipantsVideoBody": "Jūs nevarēsiet kameru ieslēgt atpakaļ, taču viņi paši to varēs izdarīt jebkurā laikā.",
+        "muteParticipantsVideoBodyModerationOn": "Ne Jūs, ne dalībnieki nevarēsiet ieslēgt kameru atpakaļ.",
         "muteParticipantsVideoButton": "Pārtraukt video",
-        "muteParticipantsVideoDialog": "Vai tiešām vēlaties izslēgt šī dalībnieka kameru? Jūs nevarēsiet atkal ieslēgt kameru, taču viņi var to jebkurā laikā atkal ieslēgt.",
-        "muteParticipantsVideoDialogModerationOn": "Vai tiešām vēlaties izslēgt šī dalībnieka kameru? Jūs nevarēsiet atkal ieslēgt kameru, un viņi arī nevarēs.",
+        "muteParticipantsVideoDialog": "Vai tiešām vēlaties izslēgt šī dalībnieka kameru? Jūs nevarēsiet to ieslēgt atpakaļ, taču dalībnieks pats to varēs izdarīt jebkurā laikā.",
+        "muteParticipantsVideoDialogModerationOn": "Vai tiešām vēlaties izslēgt šī dalībnieka kameru? Ne Jūs, ne dalībnieks nevarēsiet to ieslēgt atpakaļ.",
         "muteParticipantsVideoTitle": "Vai izslēgt šī dalībnieka video?",
         "noDropboxToken": "Nav derīga Dropbox tokena",
         "password": "Parole",
@@ -451,7 +455,7 @@
         "stopRecordingWarning": "Tiešām vēlaties beigt ierakstu?",
         "stopStreamingWarning": "Tiešām vēlaties beigt tiešraidi?",
         "streamKey": "Tiešraides atslēga",
-        "thankYou": "Paldies, ka izmantojat {{appName}}!",
+        "thankYou": "Paldies, ka izmantojāt {{appName}}!",
         "token": "tokens",
         "tokenAuthFailed": "Atvainojiet, jums nav atļauts pievienoties šim zvanam.",
         "tokenAuthFailedReason": {
@@ -561,6 +565,7 @@
         "noNumbers": "Nav iezvana #.",
         "noPassword": "bez paroles",
         "noRoom": "Iezvana numuram nav piesaistīta neviena sapulces telpa.",
+        "noWhiteboard": "Nevarēja ielādēt tāfeli.",
         "numbers": "Iezvana numuri",
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Jūs esat sasniedzis sava plāna limitu.",
@@ -568,7 +573,8 @@
         "sipAudioOnly": "Tikai SIP audio adrese",
         "title": "Kopīgot",
         "tooltip": "Kopīgot šīs sapulces saiti un iezvana # informāciju",
-        "upgradeOptions": "Lūdzu, pārbaudiet jaunināšanas opcijas"
+        "upgradeOptions": "Lūdzu, ieslēdziet jaunināšanas iespējas",
+        "whiteboardError": "Kļūda ielādējot tāfeli. Lūdzu, mēģiniet vēlreiz."
     },
     "inlineDialogFailure": {
         "msg": "Neliels misēklis.",
@@ -730,8 +736,10 @@
         "connectedOneMember": "{{name}} ir pievienojies sapulcei",
         "connectedThreePlusMembers": "{{name}} un {{count}} citi ir pievienojušies sapulcei",
         "connectedTwoMembers": "{{first}} un {{second}} ir pievienojušies sapulcei",
-        "dataChannelClosed": "Video kvalitāte ir traucēta",
-        "dataChannelClosedDescription": "Savienojuma kanāls ir atvienots, un tādējādi video kvalitāte ir ierobežota līdz zemākajam iestatījumam.",
+        "dataChannelClosed": "Video kvalitāte var būt traucēta",
+        "dataChannelClosedDescription": "Savienojuma kanāls nedarbojas, tāpēc video kvalitāte var būt ierobežota līdz zemākajam iestatījumam.",
+        "dataChannelClosedDescriptionWithAudio": "Savienojuma kanāls nedarbojas, tāpēc var rasties audio un video traucējumi.",
+        "dataChannelClosedWithAudio": "Audio un video kvalitāte var būt traucēta",
         "disabledIframe": "Iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm.",
         "disabledIframeSecondary": "{{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm. Lūdzu, izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi kā Pakalpojums</a> produkcijas iegulšanai!",
         "disconnected": "savienojums pārtraukts",
@@ -803,12 +811,16 @@
         "startSilentTitle": "Jūs esiet nedzirdams!",
         "suboptimalBrowserWarning": "Diemžēl jūsu pārlūks pilnībā neatbalsta šo virtuālo sapulču sistēmu. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot <a href='{{recommendedBrowserPageLink}}' target='_blank'> šos pārlūkus</a>.",
         "suboptimalExperienceTitle": "Diemžēl jūsu pārlūks, iespējams, var pienācīgi nestrādāt ar {{appName}}. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot kādu no <a href='{{recommendedBrowserPageLink}} 'target='_blank'>pilnībā atbalstītajiem pārlūkiem</a>.",
+        "suggestRecordingAction": "Sākt",
+        "suggestRecordingDescription": "Vai vēlaties sākt ierakstīšanu?",
+        "suggestRecordingTitle": "Ierakstīt sanāksmi",
         "unmute": "Ieslēgt mikrofonu",
         "videoMutedRemotelyDescription": "Jūs vienmēr varat to atkal ieslēgt.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} izslēdza jūsu video",
         "videoUnmuteBlockedDescription": "Kameras ieslēgšanas un darbvirsmas koplietošanas darbība ir īslaicīgi bloķēta sistēmas ierobežojumu dēļ.",
         "videoUnmuteBlockedTitle": "Kameras ieslēgšana un darbvirsmas koplietošana ir bloķēta!",
         "viewLobby": "Skatīt vestibilu",
+        "viewVisitors": "Skatīt apmeklētājus",
         "waitingParticipants": "{{waitingParticipants}} personas",
         "whiteboardLimitDescription": "Lūdzu, saglabājiet savu progresu, jo drīz tiks sasniegts lietotāju limits un tāfele tiks aizvērta.",
         "whiteboardLimitTitle": "Tāfeles lietošana"
@@ -825,7 +837,7 @@
             "breakoutRooms": "Grupu istabas",
             "invite": "Uzaicināt",
             "moreModerationActions": "Vairāk moderēšanas iespēju",
-            "moreModerationControls": "Vairāk moderēšanas kontroļu",
+            "moreModerationControls": "Vairāk moderēšanas iespēju",
             "moreParticipantOptions": "Vairāk dalībnieku iespēju",
             "mute": "Apklusināt",
             "muteAll": "Apklusināt visus",
@@ -867,6 +879,9 @@
             "questionPlaceholder": "Uzdod jautājumu",
             "removeOption": "Noņemt opciju",
             "send": "Nosūtīt"
+        },
+        "errors": {
+            "notUniqueOption": "Iespējām jābūt unikālām"
         },
         "notification": {
             "description": "Lai balsotu, atveriet aptauju cilni",
@@ -935,6 +950,7 @@
         "or": "vai",
         "premeeting": "Pirms sapulces",
         "proceedAnyway": "Tik un tā turpināt",
+        "recordingWarning": "Citi dalībnieki var ierakstīt šo zvanu",
         "screenSharingError": "Ekrāna koplietošanas kļūda:",
         "showScreen": "Iespējot ekrānu pirms sapulces",
         "startWithPhone": "Sākt ar tālruņa audio",
@@ -1392,7 +1408,7 @@
     },
     "videoStatus": {
         "adjustFor": "Pielāgot:",
-        "audioOnly": "Tikai skaņu",
+        "audioOnly": "Tikai skaņa",
         "audioOnlyExpanded": "Kanāla/trafika taupīšanas režīms. Šajā režīmā pieejami tikai audio un ekrāna kopīgošana",
         "bestPerformance": "Labākais sniegums",
         "callQuality": "Video kvalitāte",
@@ -1414,6 +1430,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Informācija par savienojumu",
+        "demote": "Pārveidot par apmeklētāju",
         "domute": "Izlsēgt skaņu",
         "domuteOthers": "Izslēgt skaņu visiem pārējiem",
         "domuteVideo": "Izslēgt kameru",
@@ -1468,7 +1485,12 @@
         "chatIndicator": "(apmeklētājs)",
         "labelTooltip": "Apmeklētāju skaits: {{count}}",
         "notification": {
-            "description": "Lai piedalītos, pacel roku",
+            "demoteDescription": "{{actor}} pārveidoja par apmeklētāju, paceliet roku, lai piedalītos",
+            "description": "Paceliet roku, lai piedalītos",
+            "noMainParticipantsDescription": "Dalībniekam ir jāsāk sapulce. Lūdzu, pēc brīža mēģiniet vēlreiz.",
+            "noMainParticipantsTitle": "Šī sapulce vēl nav sākusies.",
+            "noVisitorLobby": "Jūs nevarat pievienoties, kamēr sapulcei ir iespējots vestibils.",
+            "notAllowedPromotion": "Dalībniekam vispirms ir jāatļauj jūsu pieprasījums.",
             "title": "Jūs esat sapulces apmeklētājs"
         }
     },
@@ -1528,6 +1550,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Tāfele"
-        }
+        },
+        "screenTitle": "Tāfele"
     }
 }

@@ -242,19 +242,11 @@ searchString: string) {
     if (searchString === '') {
         return true;
     }
+    const participantName = normalizeAccents(participant?.name || participant?.displayName || '')
+        .toLowerCase();
+    const lowerCaseSearchString = searchString.trim().toLowerCase();
 
-    const names = normalizeAccents(participant?.name || participant?.displayName || '')
-        .toLowerCase()
-        .split(' ');
-    const lowerCaseSearchString = searchString.toLowerCase();
-
-    for (const name of names) {
-        if (name.startsWith(lowerCaseSearchString)) {
-            return true;
-        }
-    }
-
-    return false;
+    return participantName.includes(lowerCaseSearchString);
 }
 
 /**
@@ -305,7 +297,7 @@ export function isBreakoutRoomRenameAllowed(state: IReduxState) {
     const isLocalModerator = isLocalParticipantModerator(state);
     const conference = getCurrentConference(state);
     const isRenameBreakoutRoomsSupported
-            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
+            = conference?.getBreakoutRooms()?.isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE) ?? false;
 
     return isLocalModerator && isRenameBreakoutRoomsSupported;
 }

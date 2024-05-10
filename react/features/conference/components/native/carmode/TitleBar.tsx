@@ -4,11 +4,10 @@ import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import { getConferenceName } from '../../../../base/conference/functions';
-import { MEETING_NAME_ENABLED } from '../../../../base/flags/constants';
-import { getFeatureFlag } from '../../../../base/flags/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants/functions';
 import ConnectionIndicator from '../../../../connection-indicator/components/native/ConnectionIndicator';
+import { isRoomNameEnabled } from '../../../../prejoin/functions';
 import RecordingLabel from '../../../../recording/components/native/RecordingLabel';
 import VideoQualityLabel from '../../../../video-quality/components/VideoQualityLabel.native';
 
@@ -78,12 +77,9 @@ const TitleBar = (props: IProps): JSX.Element => {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { hideConferenceSubject } = state['features/base/config'];
-
     return {
         _meetingName: getConferenceName(state),
-        _meetingNameEnabled:
-            getFeatureFlag(state, MEETING_NAME_ENABLED, true) && !hideConferenceSubject
+        _meetingNameEnabled: isRoomNameEnabled(state)
     };
 }
 

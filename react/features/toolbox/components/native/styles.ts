@@ -103,6 +103,11 @@ const styles = {
         marginLeft: 'auto',
         marginRight: 'auto',
         width: '100%'
+    },
+
+    iconImageStyles: {
+        height: BaseTheme.spacing[4],
+        width: BaseTheme.spacing[4]
     }
 };
 

@@ -5,7 +5,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local array = require "util.array";
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local st = require 'util.stanza';
 
 local muc_component_host = module:get_option_string('muc_component');
@@ -49,7 +49,12 @@ function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     body_json.room = internal_room_jid_match_rewrite(room.jid);
     body_json.actor = actorJid;
     body_json.mediaType = mediaType;
-    local body_json_str = json.encode(body_json);
+    local body_json_str, error = json.encode(body_json);
+
+    if not body_json_str then
+        module:log('error', 'error encoding json room:%s error:%s', room.jid, error);
+        return;
+    end
 
     if jid then
         send_json_message(jid, body_json_str)
@@ -75,12 +80,23 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
         body_json.removed = true;
     end
     body_json.mediaType = mediaType;
-    local moderators_body_json_str = json.encode(body_json);
+    local moderators_body_json_str, error = json.encode(body_json);
+
+    if not moderators_body_json_str then
+        module:log('error', 'error encoding moderator json room:%s error:%s', room.jid, error);
+        return;
+    end
+
     body_json.whitelists = nil;
     if not removed then
         body_json.approved = true; -- we want to send to participants only that they were approved to unmute
     end
-    local participant_body_json_str = json.encode(body_json);
+    local participant_body_json_str, error = json.encode(body_json);
+
+    if not participant_body_json_str then
+        module:log('error', 'error encoding participant json room:%s error:%s', room.jid, error);
+        return;
+    end
 
     for _, occupant in room:each_occupant() do
         if moderators and occupant.role == 'moderator' then
@@ -110,7 +126,13 @@ function notify_jid_approved(jid, from, room, mediaType)
     body_json.mediaType = mediaType;
     body_json.from = from;
 
-    send_json_message(jid, json.encode(body_json));
+    local json_message, error = json.encode(body_json);
+    if not json_message then
+        module:log('error', 'skip sending json message to:%s error:%s', jid, error);
+        return;
+    end
+
+    send_json_message(jid, json_message);
 end
 
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding

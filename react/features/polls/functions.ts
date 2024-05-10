@@ -45,3 +45,18 @@ export function getUnreadPollCount(state: IReduxState) {
 export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
     return !checkBoxStates.find(checked => checked);
 }
+
+/**
+ * Check if the input array has identical answers.
+ *
+ * @param {Array<string>} currentAnswers - The array of current answers to compare.
+ * @returns {boolean} - Returns true if the answers are identical.
+ */
+export function hasIdenticalAnswers(currentAnswers: Array<string>): boolean {
+
+    const nonEmptyCurrentAnswers = currentAnswers.filter((answer: string): boolean => answer !== '');
+
+    const currentAnswersSet = new Set(nonEmptyCurrentAnswers);
+
+    return currentAnswersSet.size !== nonEmptyCurrentAnswers.length;
+}

@@ -6,7 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 
 // TODO: Move these enums into the store after further reactification of the
 // non-react RemoteVideo component.

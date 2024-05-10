@@ -9,6 +9,7 @@ import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifMessage } from '../../../gifs/functions.native';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
+    getCanReplyToMessage,
     getFormattedTimestamp,
     getMessageText,
     getPrivateNoticeMessage,
@@ -163,10 +164,10 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React$Element<*> | null}
      */
     _renderPrivateReplyButton() {
-        const { message, knocking } = this.props;
-        const { messageType, privateMessage, lobbyChat } = message;
+        const { message, canReply } = this.props;
+        const { lobbyChat } = message;
 
-        if (!(privateMessage || lobbyChat) || messageType === MESSAGE_TYPE_LOCAL || knocking) {
+        if (!canReply) {
             return null;
         }
 
@@ -206,8 +207,9 @@ class ChatMessage extends Component<IChatMessageProps> {
  * @param {Object} state - The Redux state.
  * @returns {IProps}
  */
-function _mapStateToProps(state: IReduxState) {
+function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
     return {
+        canReply: getCanReplyToMessage(state, message),
         knocking: state['features/lobby'].knocking
     };
 }

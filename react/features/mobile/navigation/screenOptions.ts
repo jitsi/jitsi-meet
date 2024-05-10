@@ -191,15 +191,7 @@ export const connectingScreenOptions = {
 /**
  * Screen options for the whiteboard screen.
  */
-export const whiteboardScreenOptions = {
-    gestureEnabled: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.ui01
-    },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
+export const whiteboardScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for pre-join screen.

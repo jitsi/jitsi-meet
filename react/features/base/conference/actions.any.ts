@@ -7,16 +7,15 @@ import { overwriteConfig } from '../config/actions';
 import { getReplaceParticipant } from '../config/functions';
 import { connect, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
+import { hasAvailableDevices } from '../devices/functions.any';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
-    gumPending,
     setAudioMuted,
     setAudioUnmutePermissions,
     setVideoMuted,
     setVideoUnmutePermissions
 } from '../media/actions';
-import { MEDIA_TYPE } from '../media/constants';
-import { IGUMPendingState } from '../media/types';
+import { MEDIA_TYPE, MediaType } from '../media/constants';
 import {
     dominantSpeakerChanged,
     participantKicked,
@@ -71,6 +70,7 @@ import {
     SET_START_REACTIONS_MUTED,
     UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
+import { setupVisitorStartupMedia } from './actions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -984,7 +984,7 @@ export function setStartMutedPolicy(
  * @param {string} subject - The new subject.
  * @returns {void}
  */
-export function setSubject(subject: string) {
+export function setSubject(subject: string | undefined) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { conference } = getState()['features/base/conference'];
 
@@ -1008,7 +1008,7 @@ export function setSubject(subject: string) {
  *     localSubject: string
  * }}
  */
-export function setLocalSubject(localSubject: string) {
+export function setLocalSubject(localSubject: string | undefined) {
     return {
         type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
         localSubject
@@ -1059,15 +1059,37 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => dispatch(conferenceWillInit()))
             .then(() => dispatch(connect()))
             .then(() => {
+                const media: Array<MediaType> = [];
 
-                // Clear the gum pending state in case we have set it to pending since we are starting the
-                // conference without tracks.
-                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                if (!vnode) {
+                    const state = getState();
+                    const { enableMediaOnPromote = {} } = state['features/base/config'].visitors ?? {};
+                    const { audio = false, video = false } = enableMediaOnPromote;
 
-                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-                if (typeof APP !== 'undefined') {
-                    APP.conference.startConference([]);
+                    if (audio) {
+                        const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
+                        const { startSilent } = state['features/base/config'];
+
+                        // do not unmute the user if he was muted before (on the prejoin, the config
+                        // or URL param, etc.)
+                        if (!unmuteBlocked && !muted && !startSilent && available) {
+                            media.push(MEDIA_TYPE.AUDIO);
+                        }
+                    }
+
+                    if (video) {
+                        const { muted, unmuteBlocked } = state['features/base/media'].video;
+
+                        // do not unmute the user if he was muted before (on the prejoin, the config, URL param or
+                        // audo only, etc)
+                        if (!unmuteBlocked && !muted && hasAvailableDevices(state, 'videoInput')) {
+                            media.push(MEDIA_TYPE.VIDEO);
+                        }
+                    }
                 }
+
+                dispatch(setupVisitorStartupMedia(media));
             });
     };
 }
+

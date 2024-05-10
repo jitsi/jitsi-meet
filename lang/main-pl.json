@@ -804,6 +804,9 @@
             "removeOption": "Usuń opcję",
             "send": "Wyślij"
         },
+        "errors": {
+            "notUniqueOption": "Opcje muszą być wyjątkowe"
+        },
         "notification": {
             "description": "Otwórz kartę ankiet, aby zagłosować",
             "title": "Utworzono nową ankietę do tego spotkania"

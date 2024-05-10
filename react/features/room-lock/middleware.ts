@@ -1,7 +1,5 @@
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
@@ -36,12 +34,6 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceJoined(store, next, action);
 
     case LOCK_STATE_CHANGED: {
-        // TODO Remove this logic when all components interested in the lock
-        // state change event are moved into react/redux.
-        if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK, action.locked);
-        }
-
         const previousLockedState = store.getState()['features/base/conference'].locked;
 
         const result = next(action);
