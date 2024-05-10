@@ -256,7 +256,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     }
 
     return {
-        _logoLink,
+        _logoLink: 'https://internxt.com',
         _logoUrl,
         _showJitsiWatermark
     };

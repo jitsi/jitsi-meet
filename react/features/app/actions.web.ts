@@ -142,7 +142,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
         // else: show thankYou dialog only if there is no feedback
         if (options.showThankYou) {
             dispatch(showNotification({
-                titleArguments: { appName: getName() },
+                titleArguments: { appName: 'Internxt Meet' },
                 titleKey: 'dialog.thankYou'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
