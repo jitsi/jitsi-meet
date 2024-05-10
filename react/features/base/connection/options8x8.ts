@@ -2,16 +2,25 @@ import { ConfigService } from "../../authentication/internxt/config.service";
 import { doGetJSON } from "../util/httpUtils";
 import { IOptions } from "./actions.any";
 
-export async function get8x8JWT(inxtNewToken: string) {
+export async function get8x8UserJWT(room: string) {
     //A Jitsi JWT, can be manually generated here: https://jaas.8x8.vc/#/apikeys
     //more documentation: https://developer.8x8.com/jaas/docs/api-keys-jwt
-    const res = await doGetJSON('https://api.internxt.com/drive/users/meet-token', false, {
+    const res = await doGetJSON(ConfigService.instance.get('DRIVE_NEW_API_URL') + '/users/meet-token?room=' + room, false, {
+        method: 'get',
+    });
+    return res;
+}
+
+export async function get8x8CreatorJWT(inxtNewToken: string) {
+    //A Jitsi JWT, can be manually generated here: https://jaas.8x8.vc/#/apikeys
+    //more documentation: https://developer.8x8.com/jaas/docs/api-keys-jwt
+    const res = await doGetJSON(ConfigService.instance.get('DRIVE_NEW_API_URL') + '/users/meet-token/creator', false, {
         method: 'get',
         headers: new Headers({
             'Authorization': 'Bearer ' + inxtNewToken,
         }),
     });
-    return res.token || '';
+    return res;
 }
 
 export function get8x8AppId() {
