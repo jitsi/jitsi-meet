@@ -223,9 +223,12 @@ export function _connectInternal(id?: string, password?: string) {
         const { locationURL } = state['features/base/connection'];
 
         const room = state['features/base/conference'].room || '';
+        let jwt = localStorage.getItem('jToken');
 
-        const inxtToken = localStorage.getItem('xNewToken') || '';
-        const jwt = await get8x8JWT(inxtToken);
+        if (!jwt || !isJwtValid(jwt)) {
+            jwt = (await get8x8UserJWT(room)).token;
+        }
+
         const appId = get8x8AppId();
         const newOptions = get8x8Options(options, appId, room);
 
