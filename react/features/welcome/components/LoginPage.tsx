@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ValidationService } from '../../authentication/internxt/validation.service';
 import { AuthService } from '../../authentication/internxt/auth.service';
+import { get8x8CreatorJWT } from '../../base/connection/options8x8';
 
 const Login = (props: { _updateInxtToken: (token: string) => void }) => {
     const [email, setEmail] = useState('');
@@ -29,19 +30,31 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
             return;
         }
 
-        const is2FANeeded = await AuthService.instance.is2FANeeded(email);
-        let twoFactorCode: string | undefined;
-        if (is2FANeeded) {
-            twoFactorCode = '';
+        try {
+            const is2FANeeded = await AuthService.instance.is2FANeeded(email);
+            let twoFactorCode: string | undefined;
+            if (is2FANeeded) {
+                twoFactorCode = '';
+            }
+
+            const loginCredentials = await AuthService.instance.doLogin(email, password, twoFactorCode);
+
+            if (loginCredentials?.newToken && loginCredentials?.user) {
+                const meetTokenCreator = await get8x8CreatorJWT(loginCredentials.newToken);
+
+                if (meetTokenCreator?.token && meetTokenCreator?.room) {
+                    localStorage.setItem('xToken', loginCredentials.token);
+                    localStorage.setItem('xMnemonic', loginCredentials.mnemonic);
+                    localStorage.setItem('xNewToken', loginCredentials.newToken);
+                    localStorage.setItem('xUser', JSON.stringify(loginCredentials.user));
+
+                    props._updateInxtToken(loginCredentials.newToken);
+                } else {
+                    // user can not create meetings
+                }
+            }
+        } catch (err) {
         }
-
-        const loginCredentials = await AuthService.instance.doLogin(email, password, twoFactorCode);
-
-        localStorage.setItem('xToken', loginCredentials.token);
-        localStorage.setItem('xMnemonic', loginCredentials.mnemonic);
-        localStorage.setItem('xNewToken', loginCredentials.newToken);
-        localStorage.setItem('xUser', JSON.stringify(loginCredentials.user));
-        props._updateInxtToken(loginCredentials.newToken);
     };
 
     return (
