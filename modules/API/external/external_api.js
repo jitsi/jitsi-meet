@@ -108,6 +108,7 @@ const events = {
     'camera-error': 'cameraError',
     'chat-updated': 'chatUpdated',
     'compute-pressure-changed': 'computePressureChanged',
+    'conference-created-timestamp': 'conferenceCreatedTimestamp',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
     'data-channel-closed': 'dataChannelClosed',
     'data-channel-opened': 'dataChannelOpened',

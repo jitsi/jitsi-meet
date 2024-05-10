@@ -2139,6 +2139,21 @@ class API {
 
 
     /**
+     * Notify external application (if API is enabled) the conference
+     * start time.
+     *
+     * @param {number} timestamp - Timestamp conference was created.
+     * @returns {void}
+     */
+    notifyConferenceCreatedTimestamp(timestamp) {
+        this._sendEvent({
+            name: 'conference-created-timestamp',
+            timestamp
+        });
+    }
+
+
+    /**
      * Notify the external application (if API is enabled) if the connection type changed.
      *
      * @param {boolean} isP2p - Whether the new connection is P2P.
