@@ -207,5 +207,5 @@ export function isRoomNameEnabled(state: IReduxState): boolean {
     const { hideConferenceSubject = false } = state['features/base/config'];
 
     return getFeatureFlag(state, MEETING_NAME_ENABLED, true)
-        || !hideConferenceSubject;
+        && !hideConferenceSubject;
 }
