@@ -59,7 +59,7 @@ function updateDependencies() {
             updated = true;
 
             console.log(
-                `A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
+`A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
 This is now set on your end.`
             );
         }
