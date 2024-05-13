@@ -353,6 +353,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 session.send(st.error_reply(
                     stanza, 'cancel', 'not-allowed', 'Visitor tried to join the main room without approval')
                         :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
+                return true;
             end
         end
 
