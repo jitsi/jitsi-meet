@@ -10,6 +10,8 @@ const pathToPackageJSON = path.resolve(__dirname, '../../../package.json');
 
 const packageJSON = require(pathToPackageJSON);
 
+let packageJSONDependencies = packageJSON.dependencies || packageJSON.devDependencies;
+
 const RNSDKpackageJSON = require(path.resolve(__dirname, './package.json'));
 
 
@@ -20,29 +22,29 @@ function updateDependencies() {
     let updated = false;
 
     for (const key in RNSDKpackageJSON.peerDependencies) {
-        if (!packageJSON.dependencies.hasOwnProperty(key)) {
-            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+        if (!packageJSONDependencies.hasOwnProperty(key)) {
+            packageJSONDependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
         }
 
-        if (!semver.valid(packageJSON.dependencies[key])
-            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
-            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+        if (!semver.valid(packageJSONDependencies[key])
+            && packageJSONDependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
+            packageJSONDependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
             console.log(`
-⚠️We changed ${key} version number from ${packageJSON.dependencies[key]} to ${RNSDKpackageJSON.peerDependencies[key]}`
+⚠️We changed ${key} version number from ${packageJSONDependencies[key]} to ${RNSDKpackageJSON.peerDependencies[key]}`
             );
 
             continue;
         }
 
-        if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `=${packageJSON.dependencies[key]}`)) {
+        if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `=${packageJSONDependencies[key]}`)) {
             continue;
         }
 
-        if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `>${packageJSON.dependencies[key]}`)) {
-            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+        if (semver.satisfies(RNSDKpackageJSON.peerDependencies[key], `>${packageJSONDependencies[key]}`)) {
+            packageJSONDependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
@@ -50,8 +52,8 @@ function updateDependencies() {
 
         if (!semver.valid(RNSDKpackageJSON.peerDependencies[key])
             && RNSDKpackageJSON.peerDependencies[key].includes('github')
-            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
-            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            && packageJSONDependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
+            packageJSONDependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
             console.log(
@@ -84,10 +86,10 @@ This is now set on your end.`
 =========================
 `);
 
-    packageJSON.dependencies = Object.keys(packageJSON.dependencies)
+    packageJSONDependencies = Object.keys(packageJSONDependencies)
         .sort()
         .reduce((item, itemKey) => {
-            item[itemKey] = packageJSON.dependencies[itemKey];
+            item[itemKey] = packageJSONDependencies[itemKey];
 
             return item;
         }, {});
