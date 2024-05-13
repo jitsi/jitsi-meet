@@ -115,10 +115,6 @@ copyFolderRecursiveSync(
     '.'
 );
 copyFolderRecursiveSync(
-    '../service',
-    '.'
-);
-copyFolderRecursiveSync(
     '../ios/sdk/sdk.xcodeproj',
     './ios'
 );
