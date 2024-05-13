@@ -20,10 +20,6 @@ function updateDependencies() {
     let updated = false;
 
     for (const key in RNSDKpackageJSON.peerDependencies) {
-        if (packageJSON.devDependencies.hasOwnProperty(key)) {
-            continue;
-        }
-
         if (!packageJSON.dependencies.hasOwnProperty(key)) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
