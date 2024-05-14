@@ -12,6 +12,7 @@ import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
 import Button from './Button';
 import ClickableIcon from './ClickableIcon';
 import ContextMenuItem from './ContextMenuItem';
+import { redirectToStaticPage } from '../../../../app/actions.any';
 
 const MOBILE_BREAKPOINT = 607;
 
@@ -214,6 +215,11 @@ const DialogWithTabs = ({
         }
     }, [ isMobile, userSelected, selectedTab ]);
 
+    const onLogout = () => {
+        localStorage.setItem('xNewToken', '');
+        dispatch(redirectToStaticPage('/'));
+    };
+
     const onClose = useCallback((isCancel = true) => {
         if (isCancel) {
             tabs.forEach(({ cancel }) => {
@@ -398,6 +404,12 @@ const DialogWithTabs = ({
                     )}
                     <div
                         className = { cx(classes.buttonContainer, classes.footer) }>
+                        <Button
+                            accessibilityLabel = { t('dialog.logoutTitle') }
+                            id = 'modal-dialog-logout-button'
+                            labelKey = { 'dialog.logoutTitle' }
+                            onClick = { onLogout }
+                            type = 'secondary' />
                         <Button
                             accessibilityLabel = { t('dialog.accessibilityLabel.Cancel') }
                             id = 'modal-dialog-cancel-button'

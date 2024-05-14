@@ -14,7 +14,8 @@ export async function get8x8UserJWT(room: string) {
 export async function get8x8BetaJWT(inxtNewToken: string, room?: string) {
     //A Jitsi JWT, can be manually generated here: https://jaas.8x8.vc/#/apikeys
     //more documentation: https://developer.8x8.com/jaas/docs/api-keys-jwt
-    const res = await doGetJSON(`${ConfigService.instance.get('DRIVE_NEW_API_URL')}/users/meet-token/beta${room ? '?room=' : ''}`, false, {
+    const roomString = room ? `?room=${room}` : '';
+    const res = await doGetJSON(`${ConfigService.instance.get('DRIVE_NEW_API_URL')}/users/meet-token/beta${roomString}`, false, {
         method: 'get',
         headers: new Headers({
             'Authorization': 'Bearer ' + inxtNewToken,
