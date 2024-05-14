@@ -86,7 +86,8 @@ paths:
           description: "successful operation"
           schema:
             type: array
-            $ref: "#/definitions/PhoneNumberListAnswer"
+            items:
+              $ref: "#/definitions/PhoneNumberListAnswer"
 securityDefinitions:
   token:
     type: "apiKey"
@@ -139,8 +140,8 @@ definitions:
       tollFree:
         type: boolean
     example:
-      {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
-      {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
+      - {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
+      - {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
 
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
