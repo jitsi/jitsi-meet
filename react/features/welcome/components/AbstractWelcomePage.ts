@@ -12,7 +12,7 @@ import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync/functions';
 import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';
 import { isRecentListEnabled } from '../../recent-list/functions';
-import { get8x8CreatorJWT } from '../../base/connection/options8x8';
+import { get8x8BetaJWT } from '../../base/connection/options8x8';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -210,15 +210,13 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     async _onJoin() {
         this.setState({ joining: true });
 
-        const meetTokenCreator = await get8x8CreatorJWT(localStorage.getItem('xNewToken') || '');
+        const meetTokenCreator = await get8x8BetaJWT(localStorage.getItem('xNewToken') || '');
 
-        if (meetTokenCreator?.token && meetTokenCreator?.room) {
+        if (meetTokenCreator?.room) {
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
             const onAppNavigateSettled
                 = () => this._mounted && this.setState({ joining: false });
-
-            localStorage.setItem('jToken', meetTokenCreator.token);
 
             this.props.dispatch(appNavigate(meetTokenCreator.room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);

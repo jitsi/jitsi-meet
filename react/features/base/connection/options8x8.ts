@@ -5,22 +5,38 @@ import { IOptions } from "./actions.any";
 export async function get8x8UserJWT(room: string) {
     //A Jitsi JWT, can be manually generated here: https://jaas.8x8.vc/#/apikeys
     //more documentation: https://developer.8x8.com/jaas/docs/api-keys-jwt
-    const res = await doGetJSON(ConfigService.instance.get('DRIVE_NEW_API_URL') + '/users/meet-token?room=' + room, false, {
+    const res = await doGetJSON(`${ConfigService.instance.get('DRIVE_NEW_API_URL')}/users/meet-token/anon?room=${room}`, false, {
         method: 'get',
     });
     return res;
 }
 
-export async function get8x8CreatorJWT(inxtNewToken: string) {
+export async function get8x8BetaJWT(inxtNewToken: string, room?: string) {
     //A Jitsi JWT, can be manually generated here: https://jaas.8x8.vc/#/apikeys
     //more documentation: https://developer.8x8.com/jaas/docs/api-keys-jwt
-    const res = await doGetJSON(ConfigService.instance.get('DRIVE_NEW_API_URL') + '/users/meet-token/creator', false, {
+    const res = await doGetJSON(`${ConfigService.instance.get('DRIVE_NEW_API_URL')}/users/meet-token/beta${room ? '?room=' : ''}`, false, {
         method: 'get',
         headers: new Headers({
             'Authorization': 'Bearer ' + inxtNewToken,
         }),
     });
     return res;
+}
+
+export async function get8x8JWT(room?: string) {
+    let jwt: string | undefined;
+    let inxtUserToken = localStorage.getItem('xNewToken');
+    if (inxtUserToken) {
+        try {
+            jwt = (await get8x8BetaJWT(inxtUserToken, room)).token;
+        } catch { }
+    }
+    if (!jwt) {
+        try {
+            jwt = (await get8x8UserJWT(room || '')).token;
+        } catch { }
+    }
+    return jwt;
 }
 
 export function get8x8AppId() {

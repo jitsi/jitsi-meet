@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ValidationService } from '../../authentication/internxt/validation.service';
 import { AuthService } from '../../authentication/internxt/auth.service';
-import { get8x8CreatorJWT } from '../../base/connection/options8x8';
+import { get8x8BetaJWT } from '../../base/connection/options8x8';
 
 const Login = (props: { _updateInxtToken: (token: string) => void }) => {
     const [email, setEmail] = useState('');
@@ -40,7 +40,7 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
             const loginCredentials = await AuthService.instance.doLogin(email, password, twoFactorCode);
 
             if (loginCredentials?.newToken && loginCredentials?.user) {
-                const meetTokenCreator = await get8x8CreatorJWT(loginCredentials.newToken);
+                const meetTokenCreator = await get8x8BetaJWT(loginCredentials.newToken);
 
                 if (meetTokenCreator?.token && meetTokenCreator?.room) {
                     localStorage.setItem('xToken', loginCredentials.token);

@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
-import { get8x8UserJWT } from '../base/connection/options8x8';
+import { get8x8JWT } from '../base/connection/options8x8';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -124,7 +124,7 @@ export function isFeatureDisabled(state: IReduxState, feature: string) {
 export async function sendGetJWTRequest({ room }: {
     room: string;
 }) {
-    return await get8x8UserJWT(room);
+    return await get8x8JWT(room);
 }
 
 /**
@@ -140,7 +140,7 @@ export async function getJaasJWT(state: IReduxState) {
             room,
         });
 
-        return jwt.token;
+        return jwt;
     } catch (err) {
         logger.error('Could not send request', err);
     }
