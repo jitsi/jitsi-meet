@@ -35,6 +35,11 @@ export interface IPoll {
     changingVote: boolean;
 
     /**
+     * To edit or not to edit the poll.
+     */
+    edit: boolean;
+
+    /**
      * The last sent votes for this poll, or null if voting was skipped
      * Note: This is reset when voting/skipping, not when clicking "Change vote".
      */
@@ -44,6 +49,11 @@ export interface IPoll {
      * The question asked by this poll.
      */
     question: string;
+
+    /**
+     * To save or not to save the poll.
+     */
+    save: boolean;
 
     /**
      * ID of the sender of this poll.

@@ -53,20 +53,19 @@ const PollsPane = (props: AbstractProps) => {
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
-                    : <PollsList />
-            }
-            {
-                !createMode && <Button
-                    accessibilityLabel = 'polls.create.create'
-                    labelKey = 'polls.create.create'
-                    onClick = { onCreate }
-                    style = { createPollButtonStyles }
-                    type = { BUTTON_TYPES.PRIMARY } />
+                    : <>
+                        <PollsList setCreateMode = { setCreateMode } />
+                        <Button
+                            accessibilityLabel = 'polls.create.create'
+                            labelKey = 'polls.create.create'
+                            onClick = { onCreate }
+                            style = { createPollButtonStyles }
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    </>
             }
         </JitsiScreen>
     );
 };
-
 
 /*
  * We apply AbstractPollsPane to fill in the AbstractProps common

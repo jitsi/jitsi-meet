@@ -8,6 +8,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
+
 const useStyles = makeStyles()(theme => {
     return {
         container: {
@@ -255,10 +256,10 @@ const PollCreate = ({
                 onClick = { () => setCreateMode(false) }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
-                accessibilityLabel = { t('polls.create.send') }
+                accessibilityLabel = { t('polls.create.save') }
                 disabled = { isSubmitDisabled }
                 isSubmit = { true }
-                labelKey = { 'polls.create.send' } />
+                labelKey = { 'polls.create.save' } />
         </div>
     </form>);
 };

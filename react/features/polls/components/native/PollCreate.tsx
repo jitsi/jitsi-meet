@@ -168,9 +168,9 @@ const PollCreate = (props: AbstractProps) => {
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
-                            accessibilityLabel = 'polls.create.send'
+                            accessibilityLabel = 'polls.create.save'
                             disabled = { isSubmitDisabled }
-                            labelKey = 'polls.create.send'
+                            labelKey = 'polls.create.save'
                             onClick = { onSubmit }
                             style = { chatStyles.pollCreateButton }
                             type = { PRIMARY } />
