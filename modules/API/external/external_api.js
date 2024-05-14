@@ -667,6 +667,16 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'breakout-rooms-updated':
                 this.updateNumberOfParticipants(data.rooms);
                 break;
+            case 'audio-mute-status-changed':{
+                const user = this._participants[userID];
+
+                if (user) {
+                    console.log(data, user);
+                    user.displayName = data.displayname;
+                    user.muted = data.muted;
+                }
+                break;
+            }
             case 'local-storage-changed':
                 jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
 
