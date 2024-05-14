@@ -272,7 +272,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     :
                     <Login _updateInxtToken={this._updateInxtToken} />
             }
-            <div style={{ position: 'absolute', top: 10, right: 10 }}>LOGOUT</div>
         </>
         );
     }
