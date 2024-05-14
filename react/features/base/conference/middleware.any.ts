@@ -240,7 +240,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             descriptionKey = 'dialog.errorRoomCreationRestriction';
         }
 
-        APP.store.dispatch(showErrorNotification({
+        dispatch(showErrorNotification({
             descriptionKey,
             hideErrorSupportLink: true,
             titleKey
