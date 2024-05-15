@@ -9,6 +9,6 @@ export * from './functions.any';
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isGoLiveButtonEnabled(state: IReduxState): string {
+export function isGoLiveButtonEnabled(state: IReduxState): boolean {
     return isButtonEnabled('golive', state);
 }

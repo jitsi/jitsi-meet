@@ -19,7 +19,7 @@ export interface IProps extends AbstractButtonProps {
     /**
      * True if the button needs to be disabled.
      */
-    _disabled: boolean;
+    _disabled?: boolean;
 }
 
 /**
@@ -52,7 +52,7 @@ class GoLiveButton<P extends IProps> extends AbstractButton<P> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props._disabled;
+        return this.props._disabled || false;
     }
 }
 
@@ -68,10 +68,11 @@ function _mapStateToProps(state: IReduxState) {
     const { enableGoLive } = state['features/base/config'];
     const { metadata } = state['features/base/conference'];
     const enabled = isGoLiveButtonEnabled(state);
+    const visible = (isModerator && supported && enabled && enableGoLive) || false;
 
     return {
         _disabled: metadata?.visitorsLive, // once the meeting is live, the button is disabled
-        visible: isModerator && supported && enabled && enableGoLive
+        visible
     };
 }
 

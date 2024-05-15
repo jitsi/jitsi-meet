@@ -145,7 +145,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const { metadata } = getState()['features/base/conference'];
             const isModerator = isLocalParticipantModerator(getState());
 
-            if (enableGoLive === true && isModerator && metadata?.visitorsGoLive === undefined) {
+            if (enableGoLive === true && isModerator && metadata?.visitorsLive === undefined) {
                 const { conference } = getState()['features/base/conference'];
 
                 // the local user is moderator and wants to enable the go live mode
