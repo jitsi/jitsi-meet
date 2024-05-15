@@ -13,7 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Run a build step here if your project requires
+      - name: Build application
+        run: make compile deploy
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
