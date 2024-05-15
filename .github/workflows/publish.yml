@@ -21,4 +21,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: be0ce6f7f99eef6b96518eb1f3a2e976
           projectName: meet-test
-          directory: meet
+          directory: .
