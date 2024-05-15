@@ -16,6 +16,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Configure environment
+        run: cp .env.template .env
+
       - name: Build application
         run: make compile deploy
 
