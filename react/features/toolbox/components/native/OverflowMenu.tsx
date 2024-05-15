@@ -27,6 +27,7 @@ import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { getMovableButtons } from '../../functions.native';
 
+import GoLiveButton from './../../../visitors/components/GoLiveButton';
 import AudioOnlyButton from './AudioOnlyButton';
 import CustomOptionButton from './CustomOptionButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
@@ -164,6 +165,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <SecurityDialogButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
+                <GoLiveButton { ...buttonProps } />
                 <LinkToSalesforceButton { ...buttonProps } />
                 <WhiteboardButton { ...buttonProps } />
                 {/* @ts-ignore */}

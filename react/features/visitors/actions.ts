@@ -194,3 +194,17 @@ export function updateVisitorsCount(count: number) {
         count
     };
 }
+
+/**
+ * Closes the overflow menu if opened.
+ *
+ * @private
+ * @returns {void}
+ */
+export function goLive() {
+    return (_: IStore['dispatch'], getState: IStore['getState']) => {
+        const { conference } = getState()['features/base/conference'];
+
+        conference?.getMetadataHandler().setMetadata('visitorsLive', true);
+    };
+}

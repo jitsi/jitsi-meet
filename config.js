@@ -805,6 +805,7 @@ var config = {
     //    'feedback',
     //    'filmstrip',
     //    'fullscreen',
+    //    'golive',
     //    'hangup',
     //    'help',
     //    'highlight',

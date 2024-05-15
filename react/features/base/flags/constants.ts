@@ -79,6 +79,12 @@ export const FILMSTRIP_ENABLED = 'filmstrip.enabled';
 export const FULLSCREEN_ENABLED = 'fullscreen.enabled';
 
 /**
+ * Flag indicating if the Go live button should be enabled.
+ * Default: enabled (true).
+ */
+export const GOLIVE_BUTTON_ENABLED = 'golive.enabled';
+
+/**
  * Flag indicating if the Help button should be enabled.
  * Default: enabled (true).
  */
