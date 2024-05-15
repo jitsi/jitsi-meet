@@ -11,7 +11,7 @@ import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
-import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { hideNotification, showNotification } from '../notifications/actions';
@@ -23,6 +23,7 @@ import {
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 
+import { SET_VISITORS_SUPPORTED } from './actionTypes';
 import {
     approveRequest,
     clearPromotionRequest,
@@ -134,6 +135,26 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             request && dispatch(clearPromotionRequest(request));
         }
+        break;
+    }
+    case SET_VISITORS_SUPPORTED: {
+        const { value: supported } = action;
+
+        if (supported) {
+            const { enableGoLive } = getState()['features/base/config'];
+            const { metadata } = getState()['features/base/conference'];
+            const isModerator = isLocalParticipantModerator(getState());
+
+            if (enableGoLive === true && isModerator && metadata?.visitorsGoLive === undefined) {
+                const { conference } = getState()['features/base/conference'];
+
+                // the local user is moderator and wants to enable the go live mode
+                // the initial value of it is that the meeting is not live - false, later the moderator can use
+                // the UI to toggle the setting and set the meeting to live with a value of true
+                conference?.getMetadataHandler().setMetadata('visitorsLive', false);
+            }
+        }
+
         break;
     }
     }
