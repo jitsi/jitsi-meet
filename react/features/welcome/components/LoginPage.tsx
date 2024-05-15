@@ -54,6 +54,7 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
                 }
             }
         } catch (err) {
+            console.log(err);
         }
     };
 
