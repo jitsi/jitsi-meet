@@ -300,7 +300,7 @@ module.exports = (_env, argv) => {
                     Buffer: ['buffer', 'Buffer']
                 })
             ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 7 * 1024 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
