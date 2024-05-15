@@ -19,7 +19,8 @@ import logger from './logger';
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    const jwt = parseURLParams(url, true, 'hash').jwt;
+    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
 }
 
 /**

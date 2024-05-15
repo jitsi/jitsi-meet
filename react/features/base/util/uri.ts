@@ -561,6 +561,14 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     let { hash } = url;
 
+    if (jwt) {
+        if (hash.length) {
+            hash = `${hash}&jwt=${jwt}`;
+        } else {
+            hash = `#jwt=${jwt}`;
+        }
+    }
+
     for (const urlPrefix of [ 'config', 'iceServers', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
