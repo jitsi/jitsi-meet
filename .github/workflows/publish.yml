@@ -34,6 +34,6 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: be0ce6f7f99eef6b96518eb1f3a2e976
-          projectName: meet-test
+          accountId: 157168a1684d7105399ec2339cf1281b
+          projectName: meet-web
           directory: .
