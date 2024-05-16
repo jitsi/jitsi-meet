@@ -1,6 +1,13 @@
 name: Publish to Cloudflare
 
-on: [pull_request]
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
 
 jobs:
   publish:
