@@ -537,6 +537,7 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     const search = new URLSearchParams(url.search);
 
+    //@TODO: once all available versions are updated to support the jwt in the hash, remove this
     if (jwt) {
         search.set('jwt', jwt);
     }
