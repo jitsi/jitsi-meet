@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - name: Get changed files
       id: changed-files
@@ -37,7 +37,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - run: npm install
     - run: make
@@ -48,7 +48,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - run: npm install
     - run: make
@@ -59,7 +59,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - run: npm install
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
@@ -74,7 +74,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - run: npm install
     - name: setup Xcode
