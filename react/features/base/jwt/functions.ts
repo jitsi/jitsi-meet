@@ -19,7 +19,11 @@ import logger from './logger';
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    const jwt = parseURLParams(url, true, 'hash').jwt;
+
+    // TODO: eventually remove the search param and only pull from the hash
+    // @ts-ignore
+    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
 }
 
 /**
