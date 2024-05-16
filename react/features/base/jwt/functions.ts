@@ -21,7 +21,7 @@ export function parseJWTFromURLParams(url: URL | typeof window.location = window
     // @ts-ignore
     const jwt = parseURLParams(url, true, 'hash').jwt;
 
-    //@TODO: eventually remove the search param and only pull from the hash
+    // TODO: eventually remove the search param and only pull from the hash
     return jwt ? jwt : parseURLParams(<URL>url, true, 'search').jwt;
 }
 
