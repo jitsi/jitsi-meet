@@ -1,5 +1,6 @@
 import { IReduxState } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
+import { get8x8JWT } from '../base/connection/options8x8';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -120,26 +121,10 @@ export function isFeatureDisabled(state: IReduxState, feature: string) {
  * @param {string} reqData.baseUrl - The base url for the request.
  * @returns {void}
  */
-export async function sendGetJWTRequest({ appId, baseUrl }: {
-    appId: string;
-    baseUrl: string;
+export async function sendGetJWTRequest({ room }: {
+    room: string;
 }) {
-    const fullUrl = `${baseUrl}/v1/public/token/${encodeURIComponent(appId)}`;
-
-    try {
-        const res = await fetch(fullUrl, {
-            method: 'GET'
-        });
-
-        if (res.ok) {
-            return res.json();
-        }
-
-        throw new Error('Request not successful');
-    } catch (err: any) {
-        throw new Error(err);
-
-    }
+    return await get8x8JWT(room);
 }
 
 /**
@@ -149,21 +134,14 @@ export async function sendGetJWTRequest({ appId, baseUrl }: {
  * @returns {string} The JWT.
  */
 export async function getJaasJWT(state: IReduxState) {
-    const baseUrl = state['features/base/config'].jaasTokenUrl;
-    const appId = getVpaasTenant(state);
+    const room = state['features/base/conference'].room || '';
+    try {
+        const jwt = await sendGetJWTRequest({
+            room,
+        });
 
-    const shouldSendRequest = Boolean(baseUrl && appId);
-
-    if (shouldSendRequest) {
-        try {
-            const jwt = await sendGetJWTRequest({
-                appId,
-                baseUrl: baseUrl ?? ''
-            });
-
-            return jwt.token;
-        } catch (err) {
-            logger.error('Could not send request', err);
-        }
+        return jwt;
+    } catch (err) {
+        logger.error('Could not send request', err);
     }
 }

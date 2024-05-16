@@ -235,36 +235,17 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 <span className='header-text-subtitle'>
                                     {t('welcomepage.headerSubtitle')}
                                 </span>
-                                <div id='enter_room'>
-                                    <div className='join-meeting-container'>
-                                        <div className='enter-room-input-container'>
-                                            <form onSubmit={this._onFormSubmit}>
-                                                <input
-                                                    aria-disabled='false'
-                                                    aria-label='Meeting name input'
-                                                    autoFocus={true}
-                                                    className='enter-room-input'
-                                                    id='enter_room_field'
-                                                    onChange={this._onRoomChange}
-                                                    pattern={ROOM_NAME_VALIDATE_PATTERN_STR}
-                                                    placeholder={this.state.roomPlaceholder}
-                                                    ref={this._setRoomInputRef}
-                                                    type='text'
-                                                    value={this.state.room} />
-                                            </form>
-                                        </div>
-
-                                        <button
-                                            aria-disabled='false'
-                                            aria-label='Start meeting'
-                                            className='welcome-page-button'
-                                            id='enter_room_button'
-                                            onClick={this._onFormSubmit}
-                                            tabIndex={0}
-                                            type='button'>
-                                            {t('welcomepage.startMeeting')}
-                                        </button>
-                                    </div>
+                                <div id='enter_room' style={{ justifyContent: 'center' }}>
+                                    <button
+                                        aria-disabled='false'
+                                        aria-label='Start meeting'
+                                        className='welcome-page-button'
+                                        id='enter_room_button'
+                                        onClick={this._onFormSubmit}
+                                        tabIndex={0}
+                                        type='button'>
+                                        {t('welcomepage.startMeeting')}
+                                    </button>
                                 </div>
                                 {this._titleHasNotAllowCharacter && (
                                     <div
@@ -291,7 +272,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     :
                     <Login _updateInxtToken={this._updateInxtToken} />
             }
-            <div style={{ position: 'absolute', top: 10, right: 10 }}>LOGOUT</div>
         </>
         );
     }

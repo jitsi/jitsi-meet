@@ -206,3 +206,83 @@ export function getJwtExpirationDate(jwt: string | undefined) {
         return new Date(exp * 1000);
     }
 }
+
+
+/**
+ * Extracts and returns the expiration date of jwt.
+ *
+ * @param {string|undefined} jwt - The jwt to check.
+ * @returns {Date} The expiration date of the jwt.
+ */
+export function isJwtValid(jwt: string | undefined) {
+    if (!jwt) {
+        return false;
+    }
+
+    const currentTimestamp = new Date().getTime();
+    try {
+        const header = jwtDecode(jwt, { header: true });
+        const payload = jwtDecode(jwt);
+
+        if (!header) {
+            return false;
+        }
+        if (!payload) {
+            return false;
+        }
+
+        const {
+            aud,
+            context,
+            exp,
+            iss,
+            nbf,
+            sub
+        } = payload;
+
+        // JaaS only
+        if (sub?.startsWith('vpaas-magic-cookie')) {
+            const { kid } = header;
+
+            // if Key ID is missing, we return the error immediately without further validations.
+            if (!kid) {
+                return false;
+            }
+
+            if (kid.substring(0, kid.indexOf('/')) !== sub) {
+                return false;
+            }
+
+            if (aud !== 'jitsi') {
+                return false;
+            }
+
+            if (iss !== 'chat') {
+                return false;
+            }
+
+            if (!context?.features) {
+                return false;
+            }
+        }
+
+        if (!isValidUnixTimestamp(nbf)) {
+            return false;
+        } else if (currentTimestamp < nbf * 1000) {
+            return false;
+        }
+
+        if (!isValidUnixTimestamp(exp)) {
+            return false;
+        } else if (currentTimestamp > exp * 1000) {
+            return false;
+        }
+
+        if (!context) {
+            return false;
+        }
+    } catch (e: any) {
+        return false;
+    }
+    return true;
+}

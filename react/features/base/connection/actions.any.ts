@@ -23,7 +23,7 @@ import {
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
 import { ConnectionFailedError, IIceServers } from './types';
-import { get8x8AppId, get8x8JWT, get8x8Options } from './options8x8';
+import { get8x8AppId, get8x8Options, get8x8JWT } from './options8x8';
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -223,9 +223,7 @@ export function _connectInternal(id?: string, password?: string) {
         const { locationURL } = state['features/base/connection'];
 
         const room = state['features/base/conference'].room || '';
-
-        const inxtToken = localStorage.getItem('xNewToken') || '';
-        const jwt = await get8x8JWT(inxtToken);
+        const jwt = await get8x8JWT(room);
         const appId = get8x8AppId();
         const newOptions = get8x8Options(options, appId, room);
 
