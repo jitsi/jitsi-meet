@@ -1525,6 +1525,19 @@ var config = {
     // and will automatically redirect to the token service to get the token for the meeting.
     // tokenAuthUrlAutoRedirect: false
 
+    // You can put an array of values to target different entity types in the invite dialog.
+    // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"
+    // peopleSearchQueryTypes: ["user", "email"],
+    // Directory endpoint which is called for invite dialog autocomplete
+    // peopleSearchUrl: "https://myservice.com/api/people",
+    // Endpoint which is called to send invitation requests
+    // inviteServiceUrl: https://myservice.com/api/invite",
+
+    // For external entities (e. g. email), the localStorage key holding the token value for directory endpoint authentication
+    // peopleSearchTokenLocation: "mytoken",
+    // For external entities (e. g. email), the key expected to hold the authentication token value
+    // peopleSearchTokenKey: "mytoken",
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
@@ -1541,8 +1554,6 @@ var config = {
      iAmRecorder
      iAmSipGateway
      microsoftApiApplicationClientID
-     peopleSearchQueryTypes
-     peopleSearchUrl
      requireDisplayName
      */
 

@@ -149,6 +149,16 @@ export type GetInviteResultsOptions = {
     peopleSearchUrl: string;
 
     /**
+     * Key in localStorage holding the alternative token for people directory.
+     */
+    peopleSearchTokenLocation?: string;
+
+    /**
+     * Key used to pass alternative token for people directory.
+     */
+    peopleSearchTokenKey?: string;
+
+    /**
      * The region we are connected to.
      */
     region: string;
@@ -181,6 +191,8 @@ export function getInviteResultsForQuery(
         dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
+        peopleSearchTokenLocation,
+        peopleSearchTokenKey,
         region,
         sipInviteEnabled,
         jwt
@@ -193,7 +205,9 @@ export function getInviteResultsForQuery(
             peopleSearchUrl,
             jwt,
             text,
-            peopleSearchQueryTypes);
+            peopleSearchQueryTypes,
+            peopleSearchTokenLocation,
+            peopleSearchTokenKey);
     } else {
         peopleSearchPromise = Promise.resolve([]);
     }
@@ -420,15 +434,27 @@ export function invitePeopleAndChatRooms(
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        inviteItems: Array<Object>
+        inviteItems: Array<Object>,
+        peopleSearchTokenLocation?: string,
+        peopleSearchTokenKey?: string,
 ): Promise<any> {
 
     if (!inviteItems || inviteItems.length === 0) {
         return Promise.resolve();
     }
 
+    // Parse all the query strings of the search directory endpoint
+    const params = new URLSearchParams();
+    params.append('jwt', jwt);
+
+    // Authentication params for external entities (e. g. email)
+    if (peopleSearchTokenLocation && peopleSearchTokenKey) {
+        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
+        params.append(peopleSearchTokenKey, peopleSearchToken);
+    }
+
     return fetch(
-        `${inviteServiceUrl}?token=${jwt}`,
+        `${inviteServiceUrl}?${params.toString()}`,
         {
             body: JSON.stringify({
                 'invited': inviteItems,
@@ -449,7 +475,18 @@ export function invitePeopleAndChatRooms(
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: IReduxState): boolean {
-    const { peopleSearchUrl } = state['features/base/config'];
+    const { peopleSearchUrl, peopleSearchQueryTypes, peopleSearchTokenLocation, peopleSearchTokenKey } = state['features/base/config'];
+
+    // If sending mere invitation emails, we just need the token expected by the email directory
+    if (
+        Boolean(peopleSearchTokenLocation)
+        && Boolean(peopleSearchTokenKey)
+        && peopleSearchQueryTypes
+        && peopleSearchQueryTypes.length === 1
+        && peopleSearchQueryTypes[0] === "email"
+    ) {
+        return true;
+    }
 
     return Boolean(state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state));
 }
@@ -531,21 +568,33 @@ function isPhoneNumberRegex(): RegExp {
  * @param {string} jwt - The jwt token to pass to the search service.
  * @param {string} text - Text to search.
  * @param {Array<string>} queryTypes - Array with the query types that will be
- * executed - "conferenceRooms" | "user" | "room".
+ * executed - "conferenceRooms" | "user" | "room" | "email".
  * @returns {Promise} - The promise created by the request.
  */
 export function searchDirectory( // eslint-disable-line max-params
         serviceUrl: string,
         jwt: string,
         text: string,
-        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
+        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room', 'email' ],
+        peopleSearchTokenLocation?: string,
+        peopleSearchTokenKey?: string,
 ): Promise<Array<{ type: string; }>> {
 
     const query = encodeURIComponent(text);
     const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
 
-    return fetch(`${serviceUrl}?query=${query}&queryTypes=${
-        queryTypesString}&jwt=${jwt}`)
+    // Parse all the query strings of the search directory endpoint
+    const params = new URLSearchParams();
+    params.append('query', query);
+    params.append('queryTypes', queryTypesString);
+    params.append('jwt', jwt);
+
+    if (peopleSearchTokenLocation && peopleSearchTokenKey) {
+        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
+        params.append(peopleSearchTokenKey, peopleSearchToken);
+    }
+
+    return fetch(`${serviceUrl}?${params.toString()}`)
             .then(response => {
                 const jsonify = response.json();
 
