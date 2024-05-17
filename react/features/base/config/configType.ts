@@ -441,6 +441,7 @@ export interface IConfig {
     };
     localSubject?: string;
     locationURL?: URL;
+    mainToolbarButtons?: Array<Array<string>>;
     maxFullResolutionParticipants?: number;
     microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;

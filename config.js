@@ -848,6 +848,22 @@ var config = {
     //     autoHideWhileChatIsOpen: false,
     // },
 
+    // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
+    // buttons varies from 2 buttons to 8 buttons. Every array in the mainToolbarButtons array will replace the
+    // corresponding default buttons configuration matched by the number of buttons specified in the array. Arrays with
+    // more than 8 buttons or less then 2 buttons will be ignored. When there there isn't an override for a cerain
+    // configuration (for example when 3 buttons are displayed) the default jitsi-meet configuration will be used.
+    // The order of the buttons in the array is preserved.
+    // mainToolbarButtons: [
+    //     [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview' ],
+    //     [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'tileview' ],
+    //     [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane' ],
+    //     [ 'microphone', 'camera', 'desktop', 'chat', 'participants-pane' ],
+    //     [ 'microphone', 'camera', 'chat', 'participants-pane' ],
+    //     [ 'microphone', 'camera', 'chat' ],
+    //     [ 'microphone', 'camera' ]
+    // ],
+
     // Toolbar buttons which have their click/tap event exposed through the API on
     // `toolbarButtonClicked`. Passing a string for the button key will
     // prevent execution of the click/tap routine; passing an object with `key` and
