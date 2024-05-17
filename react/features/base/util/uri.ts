@@ -564,9 +564,9 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     if (jwt) {
         if (hash.length) {
-            hash = `${hash}&jwt=${jwt}`;
+            hash = `${hash}&jwt=${JSON.stringify(jwt)}`;
         } else {
-            hash = `#jwt=${jwt}`;
+            hash = `#jwt=${JSON.stringify(jwt)}`;
         }
     }
 
