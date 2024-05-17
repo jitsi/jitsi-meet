@@ -185,6 +185,7 @@ export default [
     'localRecording',
     'localSubject',
     'logging',
+    'mainToolbarButtons',
     'maxFullResolutionParticipants',
     'mouseMoveCallbackInterval',
     'notifications',

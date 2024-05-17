@@ -16,6 +16,7 @@ import {
     SET_TOOLBAR_BUTTONS,
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
+import { setMainToolbarThresholds } from './actions.web';
 import { TOOLBAR_BUTTONS, VISITORS_MODE_BUTTONS } from './constants';
 import { NOTIFY_CLICK_MODE } from './types';
 
@@ -53,6 +54,9 @@ MiddlewareRegistry.register(store => next => action => {
             } = state['features/base/config'];
 
             batch(() => {
+                if (action.type !== I_AM_VISITOR_MODE) {
+                    dispatch(setMainToolbarThresholds());
+                }
                 dispatch({
                     type: SET_BUTTONS_WITH_NOTIFY_CLICK,
                     buttonsWithNotifyClick: _buildButtonsArray(buttonsWithNotifyClick, customToolbarButtons)

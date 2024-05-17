@@ -2,7 +2,6 @@ import { ComponentType } from 'react';
 
 export interface IToolboxButton {
     Content: ComponentType<any>;
-    alias?: string;
     group: number;
     key: string;
 }
@@ -49,3 +48,8 @@ export enum NOTIFY_CLICK_MODE {
     ONLY_NOTIFY = 'ONLY_NOTIFY',
     PREVENT_AND_NOTIFY = 'PREVENT_AND_NOTIFY'
 }
+
+export type IMainToolbarButtonThresholds = Array<{
+    order: Array<ToolbarButton | string>;
+    width: number;
+}>;
