@@ -460,6 +460,6 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                 dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }
