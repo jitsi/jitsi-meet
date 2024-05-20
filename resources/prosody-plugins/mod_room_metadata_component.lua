@@ -86,7 +86,10 @@ function room_created(event)
         return ;
     end
 
-    room.jitsiMetadata = {};
+    -- jitsiMetadata can be pre-set somewhere else
+    if not room.jitsiMetadata then
+        room.jitsiMetadata = {};
+    end
 end
 
 function on_message(event)
