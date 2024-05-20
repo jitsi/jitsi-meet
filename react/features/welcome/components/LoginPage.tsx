@@ -1,61 +1,108 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ValidationService } from '../../authentication/internxt/validation.service';
 import { AuthService } from '../../authentication/internxt/auth.service';
 import { get8x8BetaJWT } from '../../base/connection/options8x8';
+import Spinner from '../../base/ui/components/web/Spinner';
+import { LoginCredentials } from '../../authentication/internxt/types/command.types';
 
 const Login = (props: { _updateInxtToken: (token: string) => void }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [globalError, setGlobalError] = useState('');
+    const [twoFactorCode, setTwoFactorCode] = useState<string | undefined>(undefined);
+    const [enableTwoFactorCode, setEnableTwoFactorCode] = useState(false);
+    const [twoFactorCodeError, setTwoFactorCodeError] = useState('');
+    const [checkingCredentials, setCheckingCredentials] = useState(false);
+
+    useEffect(() => {
+        setEmailError('');
+        setPasswordError('');
+        setTwoFactorCodeError('');
+        setGlobalError('');
+        setEnableTwoFactorCode(false);
+        setTwoFactorCode(undefined);
+    }, [email]);
 
     const onButtonClick = async () => {
         // Set initial error values to empty
         setEmailError('');
         setPasswordError('');
+        setTwoFactorCodeError('');
+        setGlobalError('');
+        setCheckingCredentials(true);
 
-        // Check if the user has entered both fields correctly
+        // Check if the user has entered all fields correctly
         if (email.trim().length <= 0) {
             setEmailError('Please enter your email');
+            setCheckingCredentials(false);
             return;
         }
 
         if (!ValidationService.instance.validateEmail(email)) {
             setEmailError('Please enter a valid email');
+            setCheckingCredentials(false);
             return;
         }
 
         if (password.trim().length <= 0) {
             setPasswordError('Please enter a password');
+            setCheckingCredentials(false);
             return;
         }
 
-        try {
-            const is2FANeeded = await AuthService.instance.is2FANeeded(email);
-            let twoFactorCode: string | undefined;
-            if (is2FANeeded) {
-                twoFactorCode = '';
+        const is2FANeeded = await AuthService.instance.is2FANeeded(email);
+        if (is2FANeeded) {
+            if (!enableTwoFactorCode) {
+                setEnableTwoFactorCode(true);
+                setCheckingCredentials(false);
+                return;
             }
-
-            const loginCredentials = await AuthService.instance.doLogin(email, password, twoFactorCode);
-
-            if (loginCredentials?.newToken && loginCredentials?.user) {
-                const meetTokenCreator = await get8x8BetaJWT(loginCredentials.newToken);
-
-                if (meetTokenCreator?.token && meetTokenCreator?.room) {
-                    localStorage.setItem('xToken', loginCredentials.token);
-                    localStorage.setItem('xMnemonic', loginCredentials.mnemonic);
-                    localStorage.setItem('xNewToken', loginCredentials.newToken);
-                    localStorage.setItem('xUser', JSON.stringify(loginCredentials.user));
-
-                    props._updateInxtToken(loginCredentials.newToken);
-                } else {
-                    // user can not create meetings
-                }
+            if (!twoFactorCode || !ValidationService.instance.validate2FA(twoFactorCode)) {
+                setTwoFactorCodeError('Please enter a valid two factor auth code (6 digit number)');
+                setCheckingCredentials(false);
+                return;
             }
-        } catch (err) {
-            // show error
+        } else {
+            setEnableTwoFactorCode(false);
         }
+
+        let loginCredentials: LoginCredentials;
+
+        try {
+            loginCredentials = await AuthService.instance.doLogin(email, password, twoFactorCode);
+        } catch (err) {
+            setGlobalError('Wrong credentials, please try again');
+            setCheckingCredentials(false);
+            return;
+        }
+
+        if (loginCredentials?.newToken && loginCredentials?.user) {
+            let meetTokenCreator;
+
+            try {
+                meetTokenCreator = await get8x8BetaJWT(loginCredentials.newToken);
+            } catch (err) {
+                setGlobalError('User can not create meetings');
+                setCheckingCredentials(false);
+                return;
+            }
+
+            if (meetTokenCreator?.token && meetTokenCreator?.room) {
+                localStorage.setItem('xToken', loginCredentials.token);
+                localStorage.setItem('xMnemonic', loginCredentials.mnemonic);
+                localStorage.setItem('xNewToken', loginCredentials.newToken);
+                localStorage.setItem('xUser', JSON.stringify(loginCredentials.user));
+
+                props._updateInxtToken(loginCredentials.newToken);
+            } else {
+                setGlobalError('User can not create meetings');
+            }
+        } else {
+            setGlobalError('Wrong credentials, please try again');
+        }
+        setCheckingCredentials(false);
     };
 
     return (
@@ -97,9 +144,30 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
                     />
                     <label className='errorLabel'>{passwordError}</label>
                 </div>
+                {enableTwoFactorCode && <>
+                    <br />
+                    <div className='inputContainer'>
+                        <input
+                            type="text"
+                            value={twoFactorCode}
+                            placeholder="Two Factor Code"
+                            onChange={(ev) => setTwoFactorCode(ev.target.value)}
+                            className='inputBox'
+                        />
+                        <label className='errorLabel'>{twoFactorCodeError}</label>
+                    </div>
+                </>}
                 <br />
                 <div className='inputContainer'>
-                    <input className='inputButton' type="button" onClick={onButtonClick} value={'Log in'} />
+                    {checkingCredentials ?
+                        <div className='inputButton' style={{ backgroundColor: '#a5a5a5' }}>
+                            <Spinner /> <label style={{ marginLeft: '10px' }}>Decrypting...</label>
+                        </div> :
+                        <div className='inputButton' onClick={onButtonClick}>
+                            Log in
+                        </div>
+                    }
+                    <label className='errorLabel'>{globalError}</label>
                 </div>
             </div>
         </div>
