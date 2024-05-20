@@ -1,6 +1,6 @@
 /* eslint-disable arrow-body-style */
 
-import React, {ComponentType, FormEvent, useCallback, useMemo, useState} from 'react';
+import React, { ComponentType, FormEvent, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,7 +10,7 @@ import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { savePoll } from '../actions';
 import { hasIdenticalAnswers } from '../functions';
-import { IAnswer, IPoll } from '../types';
+import { IPoll } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.

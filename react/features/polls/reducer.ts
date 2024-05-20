@@ -11,7 +11,7 @@ import {
     RETRACT_VOTE,
     SAVE_POLL
 } from './actionTypes';
-import { IAnswer, IPoll } from './types';
+import {IAnswer, IPoll} from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -56,9 +56,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     // Reducer triggered when a poll is received or saved.
     case RECEIVE_POLL:
     case SAVE_POLL: {
-        let newState;
-
-        newState = {
+        return {
             ...state,
             polls: {
                 ...state.polls,
@@ -67,8 +65,6 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
         };
-
-        return newState;
     }
 
     // Reducer triggered when an answer is received
@@ -167,9 +163,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     }
 
     case EDIT_POLL: {
-        let newState;
-
-        newState = {
+        return {
             ...state,
             polls: {
                 ...state.polls,
@@ -179,8 +173,6 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
                 }
             }
         };
-
-        return newState;
     }
 
     default:
