@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 import { IReduxState } from '../app/types';
 
 /**
@@ -49,13 +51,10 @@ export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
 /**
  * Check if the input array has identical answers.
  *
- * @param {Array<{ name: string; voters: Array<string>; }> | Array<string>} currentAnswers -
- * The array of current answers to compare.
+ * @param {Array<string>} currentAnswers - The array of current answers to compare.
  * @returns {boolean} - Returns true if the answers are identical.
  */
-export function hasIdenticalAnswers(
-    currentAnswers: Array<{ name: string; voters: Array<string>; }> | Array<string>
-): boolean {
+export function hasIdenticalAnswers(currentAnswers: Array<{ name: string; voters: Array<string>; }> | Array<string>): boolean {
 
     // @ts-ignore
     const nonEmptyCurrentAnswers = currentAnswers.filter((answer: string): boolean => answer !== '');
