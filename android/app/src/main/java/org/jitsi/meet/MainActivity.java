@@ -24,6 +24,8 @@ import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -36,8 +38,11 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -145,7 +150,71 @@ public class MainActivity extends JitsiMeetActivity {
         super.onDestroy();
     }
 
+    public static class CustomButton implements Parcelable {
+
+        public String iconProp;
+        public String idProp;
+        public String textProp;
+
+        public CustomButton (String icon, String id, String text) {
+            iconProp = icon;
+            idProp = id;
+            textProp = text;
+        }
+
+        public CustomButton(Parcel in) {
+            super();
+            readFromParcel(in);
+        }
+
+        public final Parcelable.Creator<CustomButton> CREATOR = new Parcelable.Creator<CustomButton>() {
+            public CustomButton createFromParcel(Parcel in) {
+                return new CustomButton(in);
+            }
+
+            public CustomButton[] newArray(int size) {
+
+                return new CustomButton[size];
+            }
+
+        };
+
+        public void readFromParcel(Parcel in) {
+            iconProp = in.readString();
+            idProp = in.readString();
+            textProp = in.readString();
+
+        }
+        public int describeContents() {
+            return 0;
+        }
+
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(iconProp);
+            dest.writeString(idProp);
+            dest.writeString(textProp);
+        }
+    }
+
     private void setJitsiMeetConferenceDefaultOptions() {
+
+        ArrayList<CustomButton> customButtons = new ArrayList<CustomButton>();
+
+        CustomButton firstCustomButton = new CustomButton(
+            "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
+            "btn1",
+            "Button one"
+        );
+
+        CustomButton secondCustomButton = new CustomButton(
+            "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
+            "btn2",
+            "Button two"
+        );
+
+        customButtons.add(firstCustomButton);
+        customButtons.add(secondCustomButton);
+
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
@@ -153,6 +222,7 @@ public class MainActivity extends JitsiMeetActivity {
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
+            .setConfigOverrideArray("customToolbarButtons", customButtons)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }

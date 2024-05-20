@@ -21,6 +21,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
 
 
 /**
@@ -223,10 +225,17 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             return this;
         }
 
-        public Builder setConfigOverride(String config, String[] list) {
-            this.config.putStringArray(config, list);
+//        public Builder setConfigOverride(String config, String[] list) {
+//            this.config.putStringArray(config, list);
+//
+//            return this;
+//        }
 
-            return this;
+        public Builder setConfigOverrideArray(String config, ArrayList<? extends Parcelable> arrayList) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(config, arrayList);
+
+            return setConfigOverride(config, bundle);
         }
 
         /**
