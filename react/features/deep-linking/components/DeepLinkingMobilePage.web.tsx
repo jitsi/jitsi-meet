@@ -177,6 +177,9 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'DeepLinkingMobile', { isMobileBrowser: true }));
+        if (isSupportedMobileBrowser()) {
+            dispatch(openWebApp());
+        }
     }, []);
 
 
@@ -187,31 +190,8 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                     alt = { t('welcomepage.logo.logoDeepLinking') }
                     src = 'images/logo-deep-linking-mobile.png' />
                 )}
-
-                <div className = { styles.launchingMeetingLabel }>{ t(`${_TNS}.launchMeetingLabel`) }</div>
-                <div className = ''>{room}</div>
-                <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.joinMeetWrapper }
-                    href = { deepLinkingUrl }
-                    onClick = { onOpenApp }
-                    target = '_top'>
-                    <Button
-                        fullWidth = { true }
-                        label = { t(`${_TNS}.joinInAppNew`) } />
-                </a>
-                <div className = { styles.labelDescription }>{ t(`${_TNS}.noMobileApp`) }</div>
-                <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.linkWrapper }
-                    href = { generateDownloadURL() }
-                    onClick = { onDownloadApp }
-                    target = '_top'>
-                    <div className = { styles.linkLabel }>{ t(`${_TNS}.downloadMobileApp`) }</div>
-                </a>
                 {isSupportedMobileBrowser() ? (
                     <div className = { styles.supportedBrowserContent }>
-                        <div className = { styles.labelOr }>{ t(`${_TNS}.or`) }</div>
                         <a
                             className = { styles.linkWrapper }
                             onClick = { onLaunchWeb }
@@ -224,13 +204,6 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                         {t(`${_TNS}.unsupportedBrowser`)}
                     </div>
                 )}
-                <div className = { styles.separator } />
-                <DialInSummary
-                    className = 'deep-linking-dial-in'
-                    clickableNumbers = { true }
-                    hideError = { true }
-                    room = { room }
-                    url = { url } />
             </div>
         </div>
     );
