@@ -19,6 +19,7 @@ local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -66,7 +67,7 @@ function broadcastMetadata(room)
     local json_msg = getMetadataJSON(room);
 
     for _, occupant in room:each_occupant() do
-        send_json_msg(occupant.jid, room.jid, json_msg)
+        send_json_msg(occupant.jid, internal_room_jid_match_rewrite(room.jid), json_msg)
     end
 end
 
