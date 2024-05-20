@@ -42,13 +42,9 @@ const SubjectText = () => {
     const { classes } = useStyles();
 
     return (
-        <Tooltip
-            content = { subject }
-            position = 'bottom'>
-            <div className = { classes.container }>
-                <div className = { clsx('subject-text--content', classes.content) }>Internxt Meet</div>
-            </div>
-        </Tooltip>
+        <div className={classes.container}>
+            <div className={clsx('subject-text--content', classes.content)}>Internxt Meet</div>
+        </div>
     );
 };
 
