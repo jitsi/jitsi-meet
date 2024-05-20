@@ -155,7 +155,7 @@ function AddPeopleDialog({
             ok = {{ hidden: true }}
             titleKey = 'addPeople.inviteMorePrompt'>
             <div className = 'invite-more-dialog'>
-                { _inviteContactsVisible && <InviteContactsSection /> }
+                { /*_inviteContactsVisible && <InviteContactsSection />*/ }
                 {_urlSharingVisible ? <CopyMeetingLinkSection url = { _inviteUrl } /> : null}
                 {
                     _emailSharingVisible
@@ -165,19 +165,19 @@ function AddPeopleDialog({
                             inviteTextiOS = { _invitationTextiOS } />
                         : null
                 }
-                <div className = 'invite-more-dialog separator' />
+                {/*<div className = 'invite-more-dialog separator' />*/}
                 {
                     _liveStreamViewURL
                         && <LiveStreamSection liveStreamViewURL = { _liveStreamViewURL } />
                 }
-                {
+                {/*
                     _phoneNumber
                         && _dialInVisible
                         && <DialInSection phoneNumber = { _phoneNumber } />
-                }
-                {
+                */}
+                {/*
                     !_phoneNumber && _dialInVisible && _isDialInOverLimit && <DialInLimit />
-                }
+                */}
             </div>
         </Dialog>
     );
