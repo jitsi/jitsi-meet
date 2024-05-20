@@ -17,7 +17,7 @@ interface IProps {
     /**
      * Create mode control.
      */
-    setCreateMode: Function;
+    setCreateMode: (mode: boolean) => void;
 
 }
 
@@ -30,10 +30,10 @@ const PollItem = React.forwardRef<HTMLDivElement, IProps>(({ pollId, setCreateMo
                 ? <PollResults
                     key = { pollId }
                     pollId = { pollId } />
+
+                // @ts-ignore
                 : <PollAnswer
                     pollId = { pollId }
-
-                    // @ts-ignore
                     setCreateMode = { setCreateMode } />
             }
 

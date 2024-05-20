@@ -53,34 +53,20 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         };
     }
 
-    // Reducer triggered when a poll is edited or saved or received
-    case EDIT_POLL:
+    // Reducer triggered when a poll is received or saved.
     case RECEIVE_POLL:
     case SAVE_POLL: {
         let newState;
 
-        if (action.edit) {
-            newState = {
-                ...state,
-                polls: {
-                    ...state.polls,
-                    [action]: {
-                        ...state.polls[action.pollId],
-                        ...action.poll
-                    }
-                }
-            };
-        } else {
-            newState = {
-                ...state,
-                polls: {
-                    ...state.polls,
+        newState = {
+            ...state,
+            polls: {
+                ...state.polls,
 
-                    [action.pollId]: action.poll
-                },
-                nbUnreadPolls: state.nbUnreadPolls + 1
-            };
-        }
+                [action.pollId]: action.poll
+            },
+            nbUnreadPolls: state.nbUnreadPolls + 1
+        };
 
         return newState;
     }
@@ -178,6 +164,23 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
             ...state,
             nbUnreadPolls: 0
         };
+    }
+
+    case EDIT_POLL: {
+        let newState;
+
+        newState = {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: {
+                    ...state.polls[action.pollId],
+                    ...action.poll
+                }
+            }
+        };
+
+        return newState;
     }
 
     default:

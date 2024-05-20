@@ -1,6 +1,6 @@
 /* eslint-disable arrow-body-style */
 
-import React, { ComponentType, FormEvent, useCallback, useState } from 'react';
+import React, {ComponentType, FormEvent, useCallback, useMemo, useState} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,6 +10,7 @@ import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../../base/participants/functions';
 import { savePoll } from '../actions';
 import { hasIdenticalAnswers } from '../functions';
+import { IAnswer, IPoll } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -24,10 +25,10 @@ type InputProps = {
  **/
 export type AbstractProps = InputProps & {
     addAnswer: (index?: number) => void;
-    answers: Array<string> | any;
+    answers: Array<string>;
     isSubmitDisabled: boolean;
     onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
-    question: string | any;
+    question: string;
     removeAnswer: (index: number) => void;
     setAnswer: (index: number, value: string) => void;
     setQuestion: (question: string) => void;
@@ -49,46 +50,34 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
     const pollState = useSelector((state: IReduxState) => state['features/polls'].polls);
 
-    // @ts-ignore
-    let stateAnswers;
+    const editingPoll: [ string, IPoll ] | null = useMemo(() => {
+        if (!pollState) {
+            return null;
+        }
 
-    // @ts-ignore
-    let stateQuestion;
-
-    // @ts-ignore
-    let statePollId;
-
-    // @ts-ignore
-    let isEditing;
-
-    if (pollState !== undefined) {
         for (const key in pollState) {
-            if (pollState[key].edit) {
-                isEditing = pollState[key].edit;
-                stateAnswers = pollState[key].answers;
-                statePollId = key;
-                stateQuestion = pollState[key].question;
+            if (pollState.hasOwnProperty(key) && pollState[key].edit) {
+                return [ key, pollState[key] ];
             }
         }
-    }
 
-    const answerResults = useCallback(() => {
+        return null;
+    }, [ pollState ]);
 
-        // @ts-ignore
-        return isEditing ? stateAnswers : [ '', '' ];
-    }, [ isEditing, stateAnswers ]);
+    const answerResults = useMemo(() => {
+        return editingPoll ? editingPoll[1].answers : [ '', '' ];
+    }, [ editingPoll ]);
 
-    const questionResult = useCallback(() => {
-
-        // @ts-ignore
-        return isEditing ? stateQuestion : '';
-    }, [ isEditing, stateQuestion ]);
+    const questionResult = useMemo(() => {
+        return editingPoll ? editingPoll[1].question : '';
+    }, [ editingPoll ]);
 
     const [ question, setQuestion ] = useState(questionResult);
 
     const [ answers, setAnswers ] = useState(answerResults);
 
     const setAnswer = useCallback((i, answer) => {
+
         // @ts-ignore
         setAnswers(currentAnswers => {
             const newAnswers = [ ...currentAnswers ];
@@ -100,10 +89,12 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ answers ]);
 
     const addAnswer = useCallback((i?: number) => {
-        const newAnswers = [ ...answers ];
+        const newAnswers: (string | { name: string; voters: string[]; })[] = [ ...answers ];
 
         sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
+
+        // @ts-ignore
         setAnswers(newAnswers);
     }, [ answers ]);
 
@@ -115,6 +106,8 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
         sendAnalytics(createPollEvent('option.removed'));
         newAnswers.splice(i, 1);
+
+        // @ts-ignore
         setAnswers(newAnswers);
     }, [ answers ]);
 
@@ -132,7 +125,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         }
 
         // @ts-ignore
-        const filteredAnswers = answers.filter(answer => answer.trim().length > 0) as any;
+        const filteredAnswers = answers.filter((answer: string) => answer.trim().length > 0);
 
         if (filteredAnswers.length < 2) {
             return;
@@ -147,11 +140,8 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             answers: filteredAnswers
         };
 
-        // @ts-ignore
-        if (isEditing) {
-
-            // @ts-ignore
-            dispatch(savePoll(statePollId, poll, true));
+        if (editingPoll) {
+            dispatch(savePoll(editingPoll[0], poll, true));
         } else {
             dispatch(savePoll(pollId, poll, true));
         }
@@ -165,14 +155,17 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled
         = question.trim().length <= 0 // If no question is provided
+
         // @ts-ignore
-        || answers.filter(answer => answer.trim().length > 0).length < 2 // If not enough options are provided
+        || answers.filter((answer: string) => answer.trim().length > 0).length < 2 // If not enough options are provided
         || hasIdenticalAnswers(answers); // If duplicate options are provided
 
     const { t } = useTranslation();
 
     return (<Component
         addAnswer = { addAnswer }
+
+        // @ts-ignore
         answers = { answers }
         isSubmitDisabled = { isSubmitDisabled }
         onSubmit = { onSubmit }

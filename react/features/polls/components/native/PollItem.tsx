@@ -18,7 +18,7 @@ interface IProps {
     /**
      * Create mode control.
      */
-    setCreateMode: Function;
+    setCreateMode: (mode: boolean) => void;
 
 }
 
@@ -32,10 +32,10 @@ const PollItem = ({ pollId, setCreateMode }: IProps) => {
                 ? <PollResults
                     key = { pollId }
                     pollId = { pollId } />
+
+                // @ts-ignore
                 : <PollAnswer
                     pollId = { pollId }
-
-                    // @ts-ignore
                     setCreateMode = { setCreateMode } />
             }
 

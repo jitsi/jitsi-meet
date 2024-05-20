@@ -202,7 +202,7 @@ const PollCreate = ({
                     value = { question } />
             </div>
             <ol className = { classes.answerList }>
-                {answers.map((answer: any, i: number) => {
+                {answers.map((answer: string, i: number) => {
 
                     const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
                         : answers.slice(0, i).some((prevAnswer: string) =>

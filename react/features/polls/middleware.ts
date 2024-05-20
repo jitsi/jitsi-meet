@@ -131,7 +131,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
             showResults: false,
             lastVote: null,
             question,
-            answers: answers.map((answer: any) => {
+            answers: answers.map((answer: string) => {
                 return {
                     name: answer,
                     voters: []

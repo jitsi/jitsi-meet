@@ -52,8 +52,9 @@ export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
  * @param {Array<string>} currentAnswers - The array of current answers to compare.
  * @returns {boolean} - Returns true if the answers are identical.
  */
-export function hasIdenticalAnswers(currentAnswers: Array<string>): boolean {
+export function hasIdenticalAnswers(currentAnswers: Array<{ name: string; voters: Array<string> }> | Array<string>): boolean {
 
+    // @ts-ignore
     const nonEmptyCurrentAnswers = currentAnswers.filter((answer: string): boolean => answer !== '');
 
     const currentAnswersSet = new Set(nonEmptyCurrentAnswers);

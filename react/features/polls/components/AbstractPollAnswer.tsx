@@ -11,21 +11,15 @@ import { editPoll, registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL, COMMAND_NEW_POLL } from '../constants';
 import { IPoll } from '../types';
 
-/**
- * The type of the React {@code Component} props of inheriting component.
- */
-type InputProps = {
-    pollId: string;
-};
-
 /*
  * Props that will be passed by the AbstractPollAnswer to its
  * concrete implementations (web/native).
  **/
-export type AbstractProps = InputProps & {
+export type AbstractProps = {
     checkBoxStates: boolean[];
     creatorName: string;
     poll: IPoll;
+    pollId: string;
     sendPoll: () => void;
     setCheckbox: Function;
     setCreateMode: (mode: boolean) => void;
