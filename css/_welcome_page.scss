@@ -69,19 +69,21 @@ body.welcome-page {
             text-align: $welcomePageHeaderTextAlign;
             border-radius: 5px;
             padding: 5px;
+
             .not-allow-title-character-text {
                 float: right;
                 line-height: 1.9;
-            };
+            }
+
             .jitsi-icon {
                 margin-right: 9px;
                 float: left;
 
 
                 svg {
-                    fill:#f03e3e;
+                    fill: #f03e3e;
 
-                    & > *:first-child {
+                    &>*:first-child {
                         fill: none !important;
                     }
                 }
@@ -105,7 +107,7 @@ body.welcome-page {
                 svg {
                     fill: rgb(215, 121, 118);
 
-                    & > *:first-child {
+                    &>*:first-child {
                         fill: none !important;
                     }
                 }
@@ -177,7 +179,7 @@ body.welcome-page {
         display: $welcomePageTabContainerDisplay;
         flex-direction: column;
 
-        .tab-content{
+        .tab-content {
             display: $welcomePageTabContentDisplay;
             height: 250px;
             margin: 5px 0px;
@@ -273,7 +275,7 @@ body.welcome-page {
     }
 
     .welcome-cards-container {
-        color:#131519;
+        color: #131519;
         padding-top: 40px;
     }
 
@@ -285,7 +287,7 @@ body.welcome-page {
         max-width: 688px;
         margin: auto;
 
-        > div {
+        >div {
             margin-bottom: 16px;
         }
     }
@@ -369,10 +371,11 @@ body.welcome-page {
     display: flex;
     flex-direction: column;
     font-size: 1.875rem;
-    font-weight: bolder;
+    font-weight: 500;
     align-items: flex-start;
     justify-content: flex-start;
     width: 400px;
+    line-height: 2.25rem;
 }
 
 .resultContainer,
@@ -414,12 +417,21 @@ body.welcome-page {
 }
 
 .inputBox {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     height: 48px;
     width: 400px;
     font-size: large;
     border-radius: 8px;
-    border: 1px solid grey;
-    padding-left: 8px;
+    border: 1px solid rgb(174, 174, 179);
+    padding-left: 1rem;
+    padding-right: 1rem;
+    color: rgb(58, 58, 59);
+}
+
+.inputBox:focus {
+    border-color: rgb(0, 102, 255);
+    box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 102, 255, 0.1) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
 }
 
 .inputButton {
@@ -434,4 +446,7 @@ body.welcome-page {
     cursor: pointer;
     font-size: 1rem;
     line-height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

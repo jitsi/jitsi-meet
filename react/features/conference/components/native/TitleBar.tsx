@@ -82,7 +82,7 @@ const TitleBar = (props: IProps) => {
                         <ConferenceTimer textStyle = { styles.roomTimer } />
                     </View>
                 }
-                {
+                {/*
                     props._roomNameEnabled
                     && <View style = { styles.roomNameView as ViewStyle }>
                         <Text
@@ -91,7 +91,7 @@ const TitleBar = (props: IProps) => {
                             { props._meetingName }
                         </Text>
                     </View>
-                }
+                */}
                 {/* eslint-disable-next-line react/jsx-no-bind */}
                 <Labels createOnPress = { props._createOnPress } />
             </View>
