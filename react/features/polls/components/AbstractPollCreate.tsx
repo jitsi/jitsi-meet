@@ -26,8 +26,8 @@ type InputProps = {
 export type AbstractProps = InputProps & {
     addAnswer: (index?: number) => void;
     answers: Array<string>;
-    editingPoll: IPoll | null;
-    editingPollId: string | null;
+    editingPoll: IPoll | undefined;
+    editingPollId: string | undefined;
     isSubmitDisabled: boolean;
     onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
     question: string;
