@@ -24,7 +24,6 @@ import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
@@ -150,79 +149,35 @@ public class MainActivity extends JitsiMeetActivity {
         super.onDestroy();
     }
 
-    public static class CustomButton implements Parcelable {
-
-        public String iconProp;
-        public String idProp;
-        public String textProp;
-
-        public CustomButton (String icon, String id, String text) {
-            iconProp = icon;
-            idProp = id;
-            textProp = text;
-        }
-
-        public CustomButton(Parcel in) {
-            super();
-            readFromParcel(in);
-        }
-
-        public final Parcelable.Creator<CustomButton> CREATOR = new Parcelable.Creator<CustomButton>() {
-            public CustomButton createFromParcel(Parcel in) {
-                return new CustomButton(in);
-            }
-
-            public CustomButton[] newArray(int size) {
-
-                return new CustomButton[size];
-            }
-
-        };
-
-        public void readFromParcel(Parcel in) {
-            iconProp = in.readString();
-            idProp = in.readString();
-            textProp = in.readString();
-
-        }
-        public int describeContents() {
-            return 0;
-        }
-
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(iconProp);
-            dest.writeString(idProp);
-            dest.writeString(textProp);
-        }
-    }
-
     private void setJitsiMeetConferenceDefaultOptions() {
 
-        ArrayList<CustomButton> customButtons = new ArrayList<CustomButton>();
+        ArrayList<Bundle> customButtons = new ArrayList<Bundle>();
 
-        CustomButton firstCustomButton = new CustomButton(
-            "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
-            "btn1",
-            "Button one"
-        );
+        Bundle firstCustomButton = new Bundle();
+        Bundle secondCustomButton = new Bundle();
 
-        CustomButton secondCustomButton = new CustomButton(
-            "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
-            "btn2",
-            "Button two"
-        );
+        firstCustomButton.putString("text", "Button one");
+        firstCustomButton.putString("icon", "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png");
+        firstCustomButton.putString("id", "btn1");
+
+        secondCustomButton.putString("text", "Button two");
+        secondCustomButton.putString("icon", "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png");
+        secondCustomButton.putString("id", "btn2");
 
         customButtons.add(firstCustomButton);
         customButtons.add(secondCustomButton);
 
+        Log.d(String.valueOf(secondCustomButton), "SECOND CUSTOM BUTTON");
+
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setServerURL(buildURL(defaultURL))
+            .setServerURL(buildURL("https://8x8.vc/8x8/calin.chitu"))
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
-            .setConfigOverrideArray("customToolbarButtons", customButtons)
+            .setConfigOverride("requireDisplayName", true)
+            .setConfigOverride("customToolbarButtons", customButtons)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
