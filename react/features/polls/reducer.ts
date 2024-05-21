@@ -113,6 +113,8 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         // finally we update the state by returning the updated poll
         return {
             ...state,
+
+            // @ts-ignore
             polls: {
                 ...state.polls,
                 [pollId]: {
