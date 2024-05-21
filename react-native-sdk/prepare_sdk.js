@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-
+//ss
 const packageJSON = require('../package.json');
 
 const SDKPackageJSON = require('./package.json');
@@ -172,7 +172,7 @@ fs.copyFileSync(
 );
 copyFolderRecursiveSync(
     `${androidSourcePath}/log`,
-     `${androidTargetPath}/log`
+    `${androidTargetPath}/log`
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/values`,
@@ -180,23 +180,23 @@ copyFolderRecursiveSync(
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-hdpi`,
-     `${androidMainTargetPath}`
+    `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-mdpi`,
-     `${androidMainTargetPath}`
+    `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-xhdpi`,
-     `${androidMainTargetPath}`
+    `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-xxhdpi`,
-     `${androidMainTargetPath}`
+    `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-xxxhdpi`,
-     `${androidMainTargetPath}`
+    `${androidMainTargetPath}`
 );
 copyFolderRecursiveSync(
     `${androidSourcePath}/net`,
