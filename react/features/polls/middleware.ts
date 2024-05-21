@@ -51,8 +51,8 @@ const parsePollData = (pollData: IPollData): IPoll | null => {
         showResults: true,
         lastVote: null,
         answers,
-        save: false,
-        edit: false
+        saved: false,
+        editing: false
     };
 };
 
@@ -137,8 +137,8 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
                     voters: []
                 };
             }),
-            save: false,
-            edit: false
+            saved: false,
+            editing: false
         };
 
         dispatch(receivePoll(pollId, poll, true));

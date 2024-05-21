@@ -19,10 +19,13 @@ export const CHANGE_VOTE = 'CHANGE_VOTE';
 export const CLEAR_POLLS = 'CLEAR_POLLS';
 
 /**
- * The type of the action triggered when the poll is edited.
+ * The type of the action triggered when the poll is editing.
  *
  * {
- *     type: EDIT_POLL
+ *     type: EDIT_POLL,
+ *     poll: Poll,
+ *     pollId: string,
+ *     editing: boolean
  * }
  */
 export const EDIT_POLL = 'EDIT_POLL';
@@ -85,7 +88,10 @@ export const RESET_NB_UNREAD_POLLS = 'RESET_NB_UNREAD_POLLS';
  * The type of the action triggered when the poll is saved.
  *
  * {
- *     type: SAVE_POLL
+ *     type: SAVE_POLL,
+ *     poll: Poll,
+ *     pollId: string,
+ *     saved: boolean
  * }
  */
 export const SAVE_POLL = 'SAVE_POLL';

@@ -27,7 +27,7 @@ export interface IPoll {
      * An array of answers:
      * the name of the answer name and a map of ids and names of voters voting for this option.
      */
-    answers: Array<{ name: string; voters: Array<string>; }>;
+    answers: Array<{ name: string; voters: Array<string>; }> | string[];
 
     /**
      * Whether the poll vote is being edited/changed.
@@ -35,9 +35,9 @@ export interface IPoll {
     changingVote: boolean;
 
     /**
-     * To edit or not to edit the poll.
+     * Whether poll is in edit mode or not?.
      */
-    edit: boolean;
+    editing: boolean;
 
     /**
      * The last sent votes for this poll, or null if voting was skipped
@@ -51,9 +51,9 @@ export interface IPoll {
     question: string;
 
     /**
-     * To save or not to save the poll.
+     * Whether poll is saved or not?.
      */
-    save: boolean;
+    saved: boolean;
 
     /**
      * ID of the sender of this poll.

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
@@ -6,6 +7,7 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
+import { editPoll } from '../../actions';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
 
@@ -65,6 +67,8 @@ const useStyles = makeStyles()(theme => {
 const PollCreate = ({
     addAnswer,
     answers,
+    editingPoll,
+    editingPollId,
     isSubmitDisabled,
     onSubmit,
     question,
@@ -75,6 +79,7 @@ const PollCreate = ({
     t
 }: AbstractProps) => {
     const { classes } = useStyles();
+    const dispatch = useDispatch();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -253,7 +258,11 @@ const PollCreate = ({
                 accessibilityLabel = { t('polls.create.cancel') }
                 className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
-                onClick = { () => setCreateMode(false) }
+                onClick = { () => {
+                    setCreateMode(false)
+                    editingPoll?.editing
+                    && dispatch(editPoll(editingPollId, editingPoll, false));
+                } }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
                 accessibilityLabel = { t('polls.create.save') }

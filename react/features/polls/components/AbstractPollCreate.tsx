@@ -26,6 +26,8 @@ type InputProps = {
 export type AbstractProps = InputProps & {
     addAnswer: (index?: number) => void;
     answers: Array<string>;
+    editingPoll: IPoll;
+    editingPollId: string;
     isSubmitDisabled: boolean;
     onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
     question: string;
@@ -56,7 +58,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         }
 
         for (const key in pollState) {
-            if (pollState.hasOwnProperty(key) && pollState[key].edit) {
+            if (pollState.hasOwnProperty(key) && pollState[key].editing) {
                 return [ key, pollState[key] ];
             }
         }
@@ -65,7 +67,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ pollState ]);
 
     const answerResults = useMemo(() => {
-        return editingPoll ? editingPoll[1].answers : [ '', '' ];
+        return editingPoll ? editingPoll[1].answers as string[] : [ '', '' ];
     }, [ editingPoll ]);
 
     const questionResult = useMemo(() => {
@@ -77,8 +79,6 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const [ answers, setAnswers ] = useState(answerResults);
 
     const setAnswer = useCallback((i, answer) => {
-
-        // @ts-ignore
         setAnswers(currentAnswers => {
             const newAnswers = [ ...currentAnswers ];
 
@@ -93,9 +93,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
         sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
-
-        // @ts-ignore
-        setAnswers(newAnswers);
+        setAnswers(newAnswers as string[]);
     }, [ answers ]);
 
     const removeAnswer = useCallback(i => {
@@ -106,9 +104,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
         sendAnalytics(createPollEvent('option.removed'));
         newAnswers.splice(i, 1);
-
-        // @ts-ignore
-        setAnswers(newAnswers);
+        setAnswers(newAnswers as string[]);
     }, [ answers ]);
 
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
@@ -124,7 +120,6 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             ev.preventDefault();
         }
 
-        // @ts-ignore
         const filteredAnswers = answers.filter((answer: string) => answer.trim().length > 0);
 
         if (filteredAnswers.length < 2) {
@@ -155,8 +150,6 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled
         = question.trim().length <= 0 // If no question is provided
-
-        // @ts-ignore
         || answers.filter((answer: string) => answer.trim().length > 0).length < 2 // If not enough options are provided
         || hasIdenticalAnswers(answers); // If duplicate options are provided
 
@@ -164,9 +157,9 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
     return (<Component
         addAnswer = { addAnswer }
-
-        // @ts-ignore
         answers = { answers }
+        editingPoll = { editingPoll && editingPoll[1] }
+        editingPollId = { editingPoll && editingPoll[0] }
         isSubmitDisabled = { isSubmitDisabled }
         onSubmit = { onSubmit }
         question = { question }

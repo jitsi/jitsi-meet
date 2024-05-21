@@ -28,7 +28,7 @@ const PollAnswer = (props: AbstractProps) => {
         submitAnswer,
         t
     } = props;
-    const { changingVote, save: pollSaved } = poll;
+    const { changingVote, saved: pollSaved } = poll;
     const dispatch = useDispatch();
     const localParticipant = useSelector(getLocalParticipant);
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
@@ -48,10 +48,10 @@ const PollAnswer = (props: AbstractProps) => {
                             style = { chatStyles.switchRow as ViewStyle } >
                             <Switch
                                 checked = { checkBoxStates[index] }
-                                disabled = { poll.save }
+                                disabled = { poll.saved }
                                 onChange = { state => setCheckbox(index, state) } />
                             <Text style = { chatStyles.switchLabel as TextStyle }>
-                                { poll.save ? answer : answer.name }
+                                { poll.saved ? answer : answer.name }
                             </Text>
                         </View>
                     ))

@@ -66,7 +66,7 @@ const PollAnswer = ({
     submitAnswer,
     t
 }: AbstractProps) => {
-    const { changingVote, save: pollSaved } = poll;
+    const { changingVote, saved: pollSaved } = poll;
     const dispatch = useDispatch();
 
     const { classes } = useStyles();
@@ -89,9 +89,9 @@ const PollAnswer = ({
                             key = { index }>
                             <Checkbox
                                 checked = { checkBoxStates[index] }
-                                disabled = { poll.save }
+                                disabled = { poll.saved }
                                 key = { index }
-                                label = { poll.save ? answer : answer.name }
+                                label = { poll.saved ? answer : answer.name }
                                 onChange = { ev => setCheckbox(index, ev.target.checked) } />
                         </li>
                     ))

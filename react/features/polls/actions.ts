@@ -136,21 +136,21 @@ export function resetNbUnreadPollsMessages() {
  *
  * @param {string} pollId - The id of the poll that gets to be saved.
  * @param {IPoll} poll - The Poll object that gets to be saved.
- * @param {boolean} save - Whether to save or not a poll.
+ * @param {boolean} saved - Whether the poll is saved or not.
  * @returns {{
  *     type: RECEIVE_POLL,
  *     poll: IPoll,
  *     pollId: string,
- *     save: boolean
+ *     saved: boolean
  * }}
  */
-export function savePoll(pollId: any, poll: any, save: boolean) {
+export function savePoll(pollId: any, poll: any, saved: boolean) {
     return {
         type: SAVE_POLL,
         pollId,
         poll: {
             ...poll,
-            save
+            saved
         }
     };
 }
@@ -160,21 +160,21 @@ export function savePoll(pollId: any, poll: any, save: boolean) {
  *
  * @param {string} pollId - The id of the poll that gets to be edited.
  * @param {IPoll} poll - The Poll object that gets to be edited.
- * @param {boolean} edit - Whether to edit or not a poll.
+ * @param {boolean} editing - Whether the poll is in edit mode or not.
  * @returns {{
  *     type: RECEIVE_POLL,
  *     poll: IPoll,
  *     pollId: string,
- *     edit: boolean
+ *     editing: boolean
  * }}
  */
-export function editPoll(pollId: any, poll: any, edit: boolean) {
+export function editPoll(pollId: any, poll: any, editing: boolean) {
     return {
         type: EDIT_POLL,
         pollId,
         poll: {
             ...poll,
-            edit
+            editing
         }
     };
 }
