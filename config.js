@@ -1790,6 +1790,9 @@ var config = {
     //         collectionInterval?: number;
     //         logGetStats?: boolean;
     // },
+
+    // Hide login button on auth dialog, you may want to enable this if you are using JWT tokens to authenticate users
+    // hideLoginButton: true,
 };
 
 // Temporary backwards compatibility with old mobile clients.

@@ -264,6 +264,7 @@
         "Share": "Teilen",
         "Submit": "OK",
         "WaitForHostMsg": "Die Konferenz wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
+        "WaitForHostNoAuthMsg": "Die Konferenz wurde noch nicht gestartet. Bitte warten Sie, bis die Konferenz gestartet wird.",
         "WaitingForHostButton": "Auf Moderation warten",
         "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
