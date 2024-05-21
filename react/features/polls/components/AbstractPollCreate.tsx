@@ -158,8 +158,8 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     return (<Component
         addAnswer = { addAnswer }
         answers = { answers }
-        editingPoll = { editingPoll && editingPoll[1] }
-        editingPollId = { editingPoll && editingPoll[0] }
+        editingPoll = { editingPoll?.[1] }
+        editingPollId = { editingPoll?.[0] }
         isSubmitDisabled = { isSubmitDisabled }
         onSubmit = { onSubmit }
         question = { question }

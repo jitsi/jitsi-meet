@@ -8,7 +8,6 @@ import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
-
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
 
