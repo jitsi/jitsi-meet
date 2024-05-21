@@ -67,7 +67,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ pollState ]);
 
     const answerResults = useMemo(() => {
-        return editingPoll ? editingPoll[1].answers as string[] : [ '', '' ];
+        return editingPoll ? editingPoll[1].answers as Array<string> : [ '', '' ];
     }, [ editingPoll ]);
 
     const questionResult = useMemo(() => {
@@ -89,7 +89,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ answers ]);
 
     const addAnswer = useCallback((i?: number) => {
-        const newAnswers: (string | { name: string; voters: string[]; })[] = [ ...answers ];
+        const newAnswers: (string | { name: string; voters: Array<string>; })[] = [ ...answers ];
 
         sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
