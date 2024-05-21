@@ -6,8 +6,9 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
-import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import { editPoll } from '../../actions';
+import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
+
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
 
@@ -259,7 +260,7 @@ const PollCreate = ({
                 className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
                 onClick = { () => {
-                    setCreateMode(false)
+                    setCreateMode(false);
                     editingPoll?.editing
                     && dispatch(editPoll(editingPollId, editingPoll, false));
                 } }
