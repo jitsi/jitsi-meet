@@ -8,7 +8,7 @@
     "homepage": "https://jitsi.org",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/jitsi/jitsi-meet.git"
+        "url": "git+https://github.com/khayym/jitsi-meet.git"
     },
     "dependencies": {
         "@jitsi/js-utils": "2.2.1",
