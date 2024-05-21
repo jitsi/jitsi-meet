@@ -175,7 +175,6 @@
         "Share": "Zdieľať",
         "Submit": "OK",
         "WaitForHostMsg": "Konferencia sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Čakám na hostiteľa ...",
         "Yes": "Áno",
         "accessibilityLabel": {

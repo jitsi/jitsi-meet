@@ -251,7 +251,6 @@
         "Share": "Compartir",
         "Submit": "Enviar",
         "WaitForHostMsg": "La conferencia aún no ha comenzado. Si eres el anfitrión, inicia sesión. De lo contrario, espera a que llegue el anfitrión.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Esperando al anfitrión...",
         "Yes": "Sí",
         "accessibilityLabel": {

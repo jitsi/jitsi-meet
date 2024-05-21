@@ -222,7 +222,6 @@
         "Share": "Dijeli",
         "Submit": "Pošalji",
         "WaitForHostMsg": "Konferencija još nije počela. Ako si domaćin autentificiraj se. U suprotnom, pričekaj dolazak domaćina.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Čekanje na domaćina …",
         "Yes": "Da",
         "accessibilityLabel": {

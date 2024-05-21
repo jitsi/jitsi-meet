@@ -222,7 +222,6 @@
         "Share": "Condividi",
         "Submit": "Invia",
         "WaitForHostMsg": "La riunione non è ancora cominciata. Se sei l'organizzatore, per favore autenticati. Altrimenti, aspetta l'arrivo dell'organizzatore.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "In attesa dell'organizzatore...",
         "Yes": "Sì",
         "accessibilityLabel": {

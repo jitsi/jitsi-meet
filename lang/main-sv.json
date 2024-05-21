@@ -239,7 +239,6 @@
         "Share": "Dela",
         "Submit": "Skicka",
         "WaitForHostMsg": "Konferensen har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Väntar på värden ...",
         "Yes": "Ja",
         "accessibilityLabel": {

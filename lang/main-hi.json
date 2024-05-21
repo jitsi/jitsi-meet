@@ -181,7 +181,6 @@
         "Share": "Share",
         "Submit": "सबमिट करें",
         "WaitForHostMsg": "सम्मेलन अभी तक शुरू नहीं हुआ है। यदि आप मेजबान हैं तो कृपया प्रमाणित करें। अन्यथा, कृपया मेजबान के आने की प्रतीक्षा करें।",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "होस्ट की प्रतीक्षा कर रहा है ...",
         "Yes": "हाँ",
         "accessibilityLabel": {

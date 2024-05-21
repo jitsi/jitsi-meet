@@ -160,7 +160,6 @@
         "Share": "Partajare",
         "Submit": "Trimiteți",
         "WaitForHostMsg": "Conferința nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Așteptare moderator conferință ...",
         "Yes": "Da",
         "accessibilityLabel": {

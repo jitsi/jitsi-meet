@@ -142,7 +142,6 @@
         "Share": "Jaa",
         "Submit": "Lähetä",
         "WaitForHostMsg": "Kokous ei ole vielä alkanut. Jos olet vetäjä, todenna henkilöllisyytesi. Muussa tapauksessa odota vetäjän saapumista.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "Odotetaan vetäjää…",
         "Yes": "Kyllä",
         "accessibilityLabel": {

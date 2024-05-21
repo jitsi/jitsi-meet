@@ -256,7 +256,6 @@
         "Share": "分享",
         "Submit": "提交",
         "WaitForHostMsg": "会议尚未开始。如果你是主持人，请进行身份验证。否则，请等待主持人加入。",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "正在等待主持人加入……",
         "Yes": "是",
         "accessibilityLabel": {

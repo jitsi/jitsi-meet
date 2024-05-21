@@ -156,7 +156,6 @@
         "Share": "שתף",
         "Submit": "שלח",
         "WaitForHostMsg": "הועידה טרם החלה. אם אתה המארח אז בצע אימות. אחרת, אנא המתן שהמארח יגיע.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHost": "ממתין למארח ...",
         "Yes": "כן",
         "accessibilityLabel": {

@@ -239,7 +239,6 @@
         "Share": "Udostępnij",
         "Submit": "Wyślij",
         "WaitForHostMsg": "Spotkanie jeszcze się nie rozpoczęło. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Oczekiwanie na gospodarza...",
         "Yes": "Tak",
         "accessibilityLabel": {

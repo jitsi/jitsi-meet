@@ -239,7 +239,6 @@
         "Share": "Хуваалцах",
         "Submit": "Илгээх",
         "WaitForHostMsg": "Уулзалт хараахан эхлээгүй байна. Хэрэв та хост байгаа бол нэвтэрнэ үү. Үгүй бол хост ирэхийг хүлээнэ үү.",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "Зочдыг хүлээж байна ...",
         "Yes": "Тийм",
         "accessibilityLabel": {

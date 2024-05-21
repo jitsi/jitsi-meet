@@ -209,7 +209,6 @@
         "Share": "共有",
         "Submit": "投稿",
         "WaitForHostMsg": "ミーティング はまだ開始されていません。あなたがホストの場合は、認証を行ってください。それ以外の場合は、ホストの到着をお待ちください。",
-        "WaitForHostNoAuthMsg": "",
         "WaitingForHostTitle": "ホストの到着を待っています...",
         "Yes": "はい",
         "accessibilityLabel": {
