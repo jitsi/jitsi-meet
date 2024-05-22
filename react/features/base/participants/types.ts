@@ -19,9 +19,7 @@ export interface IParticipant {
     e2eeVerified?: boolean;
     email?: string;
     fakeParticipant?: FakeParticipant;
-    features?: {
-        'screen-sharing'?: boolean | string;
-    };
+    features?: IParticipantFeatures;
     getId?: Function;
     id: string;
     isJigasi?: boolean;
@@ -52,6 +50,10 @@ export interface ILocalParticipant extends IParticipant {
     startWithVideoMuted?: boolean;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;
+}
+
+export interface IParticipantFeatures {
+    'screen-sharing'?: boolean | string;
 }
 
 export interface ISourceInfo {
