@@ -75,7 +75,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             voters.forEach((voter: string) => allVoters.add(voter));
         }
 
-        return pollDetailsAnswers.map((answer) => {
+        return pollDetailsAnswers.map(answer => {
             const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
