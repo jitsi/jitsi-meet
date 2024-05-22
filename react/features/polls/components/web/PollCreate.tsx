@@ -259,7 +259,8 @@ const PollCreate = ({
                 labelKey = { 'polls.create.cancel' }
                 onClick = { () => {
                     setCreateMode(false);
-                    editingPoll?.editing
+                    editingPollId
+                    && editingPoll?.editing
                     && dispatch(editPoll(editingPollId, false));
                 } }
                 type = { BUTTON_TYPES.SECONDARY } />
