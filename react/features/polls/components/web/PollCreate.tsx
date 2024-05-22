@@ -10,7 +10,6 @@ import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
-
 const useStyles = makeStyles()(theme => {
     return {
         container: {

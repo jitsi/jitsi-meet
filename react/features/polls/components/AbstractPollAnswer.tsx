@@ -11,6 +11,14 @@ import { editPoll, registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL, COMMAND_NEW_POLL } from '../constants';
 import { IPoll } from '../types';
 
+/**
+ * The type of the React {@code Component} props of inheriting component.
+ */
+type InputProps = {
+    pollId: string;
+    setCreateMode: (mode: boolean) => void;
+};
+
 /*
  * Props that will be passed by the AbstractPollAnswer to its
  * concrete implementations (web/native).
@@ -36,7 +44,7 @@ export type AbstractProps = {
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: AbstractProps) => {
+const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
 
     const { pollId, setCreateMode } = props;
 

@@ -32,8 +32,6 @@ const PollItem = ({ pollId, setCreateMode }: IProps) => {
                 ? <PollResults
                     key = { pollId }
                     pollId = { pollId } />
-
-                // @ts-ignore
                 : <PollAnswer
                     pollId = { pollId }
                     setCreateMode = { setCreateMode } />

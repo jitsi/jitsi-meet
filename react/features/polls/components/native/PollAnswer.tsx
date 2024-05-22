@@ -42,7 +42,7 @@ const PollAnswer = (props: AbstractProps) => {
             </Text>
             <View style = { chatStyles.answerContent as ViewStyle }>
                 {
-                    poll.answers.map((answer: { name: string; voters: []; }, index: number) => (
+                    poll.answers.map((answer: { name: string; voters: string[]; }, index: number) => (
                         <View
                             key = { index }
                             style = { chatStyles.switchRow as ViewStyle } >

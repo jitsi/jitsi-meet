@@ -82,7 +82,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
 
         // if the poll exists, we update it with the incoming answer
         const newAnswers = state.polls[pollId].answers
-            .map((_answer: { name: string; voters: []; }) => {
+            .map((_answer: { name: string; voters: string[]; }) => {
                 // checking if the voters is an array for supporting old structure model
                 const answerVoters = _answer.voters
                     ? _answer.voters.length
@@ -113,8 +113,6 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         // finally we update the state by returning the updated poll
         return {
             ...state,
-
-            // @ts-ignore
             polls: {
                 ...state.polls,
                 [pollId]: {
