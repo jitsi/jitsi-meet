@@ -132,7 +132,9 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             showResults: false,
             lastVote: null,
             question,
-            answers: filteredAnswers
+            answers: filteredAnswers,
+            saved: false,
+            editing: false
         };
 
         if (editingPoll) {

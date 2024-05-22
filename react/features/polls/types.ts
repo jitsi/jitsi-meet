@@ -58,7 +58,7 @@ export interface IPoll {
     /**
      * ID of the sender of this poll.
      */
-    senderId: string;
+    senderId: string | undefined;
 
     /**
      * Whether the results should be shown instead of the answer form.

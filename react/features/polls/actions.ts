@@ -144,7 +144,7 @@ export function resetNbUnreadPollsMessages() {
  *     saved: boolean
  * }}
  */
-export function savePoll(pollId: any, poll: any, saved: boolean) {
+export function savePoll(pollId: string, poll: IPoll, saved: boolean) {
     return {
         type: SAVE_POLL,
         pollId,
@@ -166,7 +166,7 @@ export function savePoll(pollId: any, poll: any, saved: boolean) {
  *     editing: boolean
  * }}
  */
-export function editPoll(pollId: any, editing: boolean) {
+export function editPoll(pollId: string, editing: boolean) {
     return {
         type: EDIT_POLL,
         pollId,
