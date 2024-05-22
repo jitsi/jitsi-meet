@@ -4,7 +4,7 @@ import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
-import { IconSites } from '../../base/icons/svg';
+import { IconGoLive } from '../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { goLive } from '../actions';
@@ -27,7 +27,7 @@ export interface IProps extends AbstractButtonProps {
  */
 class GoLiveButton<P extends IProps> extends AbstractButton<P> {
     accessibilityLabel = 'toolbar.accessibilityLabel.golive';
-    icon = IconSites;
+    icon = IconGoLive;
     label = 'toolbar.golive';
     tooltip = 'toolbar.golive';
 

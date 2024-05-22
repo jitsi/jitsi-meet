@@ -43,6 +43,7 @@ import { default as IconFavoriteSolid } from './favorite-solid.svg';
 import { default as IconFavorite } from './favorite.svg';
 import { default as IconFeedback } from './feedback.svg';
 import { default as IconGear } from './gear.svg';
+import { default as IconGoLive } from './go-live.svg';
 import { default as IconGoogle } from './google.svg';
 import { default as IconHangup } from './hangup.svg';
 import { default as IconDeviceHeadphone } from './headset.svg';
@@ -157,6 +158,7 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconFavoriteSolid,
     IconFeedback,
     IconGear,
+    IconGoLive,
     IconGoogle,
     IconHangup,
     IconHelp,
