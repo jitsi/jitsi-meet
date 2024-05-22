@@ -159,22 +159,17 @@ export function savePoll(pollId: any, poll: any, saved: boolean) {
  * Action to signal editing a poll.
  *
  * @param {string} pollId - The id of the poll that gets to be edited.
- * @param {IPoll} poll - The Poll object that gets to be edited.
  * @param {boolean} editing - Whether the poll is in edit mode or not.
  * @returns {{
  *     type: RECEIVE_POLL,
- *     poll: IPoll,
  *     pollId: string,
  *     editing: boolean
  * }}
  */
-export function editPoll(pollId: any, poll: any, editing: boolean) {
+export function editPoll(pollId: any, editing: boolean) {
     return {
         type: EDIT_POLL,
         pollId,
-        poll: {
-            ...poll,
-            editing
-        }
+        editing
     };
 }

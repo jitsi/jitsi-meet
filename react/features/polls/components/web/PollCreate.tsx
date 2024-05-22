@@ -260,7 +260,7 @@ const PollCreate = ({
                 onClick = { () => {
                     setCreateMode(false);
                     editingPoll?.editing
-                    && dispatch(editPoll(editingPollId, editingPoll, false));
+                    && dispatch(editPoll(editingPollId, false));
                 } }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button

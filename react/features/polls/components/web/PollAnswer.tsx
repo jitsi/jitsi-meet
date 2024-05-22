@@ -106,7 +106,7 @@ const PollAnswer = ({
                             labelKey = { 'polls.answer.edit' }
                             onClick = { () => {
                                 setCreateMode(true);
-                                dispatch(editPoll(pollId, poll, true));
+                                dispatch(editPoll(pollId, true));
                             } }
                             type = { BUTTON_TYPES.SECONDARY } />
                         <Button

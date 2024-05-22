@@ -23,7 +23,6 @@ export const CLEAR_POLLS = 'CLEAR_POLLS';
  *
  * {
  *     type: EDIT_POLL,
- *     poll: Poll,
  *     pollId: string,
  *     editing: boolean
  * }

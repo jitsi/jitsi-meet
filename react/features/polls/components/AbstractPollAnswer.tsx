@@ -95,7 +95,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
             answers
         });
 
-        dispatch(editPoll(pollId, poll, false));
+        dispatch(editPoll(pollId, false));
 
     }, [ conference, question, answers ]);
 

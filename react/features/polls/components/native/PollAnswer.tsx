@@ -66,7 +66,7 @@ const PollAnswer = (props: AbstractProps) => {
                             labelKey = 'polls.answer.edit'
                             onClick = { () => {
                                 setCreateMode(true);
-                                dispatch(editPoll(pollId, poll, true));
+                                dispatch(editPoll(pollId, true));
                             } }
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />

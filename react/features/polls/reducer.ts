@@ -170,7 +170,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
                 ...state.polls,
                 [action.pollId]: {
                     ...state.polls[action.pollId],
-                    ...action.poll
+                    editing: action.editing
                 }
             }
         };
