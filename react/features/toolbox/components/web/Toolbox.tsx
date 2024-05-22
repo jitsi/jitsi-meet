@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
 import {
@@ -97,7 +97,9 @@ export default function Toolbox({
     const toolbarButtonsToUse = toolbarButtons || reduxToolbarButtons;
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
-    const jwtDisabledButtons = useSelector(getJwtDisabledButtons);
+    const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
+    const localParticipant = useSelector(getLocalParticipant);
+    const jwtDisabledButtons = getJwtDisabledButtons(jwt, localParticipant?.features);
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
     const toolbarVisible = useSelector(isToolboxVisible);

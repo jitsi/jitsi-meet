@@ -1,7 +1,8 @@
 import { IReduxState } from '../app/types';
 import { FEATURES_TO_BUTTONS_MAPPING } from '../base/jwt/constants';
-import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { isJwtFeatureEnabledStateless } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
+import { IParticipantFeatures } from '../base/participants/types';
 
 /**
  * Indicates if the audio mute button is disabled or not.
@@ -19,12 +20,18 @@ export function isAudioMuteButtonDisabled(state: IReduxState) {
 /**
  * Returns the buttons corresponding to features disabled through jwt.
  *
- * @param {IReduxState} state - The state from the Redux store.
+ * @param {string | undefined} jwt - The jwt token.
+ * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @returns {string[]} - The disabled by jwt buttons array.
  */
-export function getJwtDisabledButtons(state: IReduxState) {
+export function getJwtDisabledButtons(jwt: string | undefined, localParticipantFeatures?: IParticipantFeatures) {
     return Object.keys(FEATURES_TO_BUTTONS_MAPPING).reduce((acc: string[], current: string) => {
-        if (!isJwtFeatureEnabled(state, current, true)) {
+        if (!isJwtFeatureEnabledStateless({
+            jwt,
+            localParticipantFeatures,
+            feature: current,
+            ifNoToken: true
+        })) {
             acc.push(FEATURES_TO_BUTTONS_MAPPING[current as keyof typeof FEATURES_TO_BUTTONS_MAPPING]);
         }
 
