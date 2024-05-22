@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Platform, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import styles
     from '../../../settings/components/native/styles';
+import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
@@ -17,6 +19,8 @@ const PollCreate = (props: AbstractProps) => {
     const {
         addAnswer,
         answers,
+        editingPoll,
+        editingPollId,
         isSubmitDisabled,
         onSubmit,
         question,
@@ -28,6 +32,7 @@ const PollCreate = (props: AbstractProps) => {
     } = props;
 
     const answerListRef = useRef<FlatList>(null);
+    const dispatch = useDispatch();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -164,13 +169,18 @@ const PollCreate = (props: AbstractProps) => {
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             labelKey = 'polls.create.cancel'
-                            onClick = { () => setCreateMode(false) }
+                            onClick = { () => {
+                                setCreateMode(false);
+                                editingPollId
+                                && editingPoll?.editing
+                                && dispatch(editPoll(editingPollId, false));
+                            } }
                             style = { chatStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
-                            accessibilityLabel = 'polls.create.send'
+                            accessibilityLabel = 'polls.create.save'
                             disabled = { isSubmitDisabled }
-                            labelKey = 'polls.create.send'
+                            labelKey = 'polls.create.save'
                             onClick = { onSubmit }
                             style = { chatStyles.pollCreateButton }
                             type = { PRIMARY } />

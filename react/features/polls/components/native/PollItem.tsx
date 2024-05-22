@@ -15,9 +15,14 @@ interface IProps {
      */
     pollId: string;
 
+    /**
+     * Create mode control.
+     */
+    setCreateMode: (mode: boolean) => void;
+
 }
 
-const PollItem = ({ pollId }: IProps) => {
+const PollItem = ({ pollId, setCreateMode }: IProps) => {
     const showResults = useSelector(shouldShowResults(pollId));
 
     return (
@@ -28,7 +33,8 @@ const PollItem = ({ pollId }: IProps) => {
                     key = { pollId }
                     pollId = { pollId } />
                 : <PollAnswer
-                    pollId = { pollId } />
+                    pollId = { pollId }
+                    setCreateMode = { setCreateMode } />
             }
 
         </View>

@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
@@ -64,6 +66,8 @@ const useStyles = makeStyles()(theme => {
 const PollCreate = ({
     addAnswer,
     answers,
+    editingPoll,
+    editingPollId,
     isSubmitDisabled,
     onSubmit,
     question,
@@ -74,6 +78,7 @@ const PollCreate = ({
     t
 }: AbstractProps) => {
     const { classes } = useStyles();
+    const dispatch = useDispatch();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -201,7 +206,7 @@ const PollCreate = ({
                     value = { question } />
             </div>
             <ol className = { classes.answerList }>
-                {answers.map((answer: any, i: number) => {
+                {answers.map((answer: string, i: number) => {
 
                     const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
                         : answers.slice(0, i).some((prevAnswer: string) =>
@@ -252,13 +257,18 @@ const PollCreate = ({
                 accessibilityLabel = { t('polls.create.cancel') }
                 className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
-                onClick = { () => setCreateMode(false) }
+                onClick = { () => {
+                    setCreateMode(false);
+                    editingPollId
+                    && editingPoll?.editing
+                    && dispatch(editPoll(editingPollId, false));
+                } }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
-                accessibilityLabel = { t('polls.create.send') }
+                accessibilityLabel = { t('polls.create.save') }
                 disabled = { isSubmitDisabled }
                 isSubmit = { true }
-                labelKey = { 'polls.create.send' } />
+                labelKey = { 'polls.create.save' } />
         </div>
     </form>);
 };

@@ -1,11 +1,13 @@
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
+    EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
     RESET_NB_UNREAD_POLLS,
-    RETRACT_VOTE
+    RETRACT_VOTE,
+    SAVE_POLL
 } from './actionTypes';
 import { IAnswer, IPoll } from './types';
 
@@ -126,5 +128,48 @@ export const retractVote = (pollId: string) => {
 export function resetNbUnreadPollsMessages() {
     return {
         type: RESET_NB_UNREAD_POLLS
+    };
+}
+
+/**
+ * Action to signal saving a poll.
+ *
+ * @param {string} pollId - The id of the poll that gets to be saved.
+ * @param {IPoll} poll - The Poll object that gets to be saved.
+ * @param {boolean} saved - Whether the poll is saved or not.
+ * @returns {{
+ *     type: RECEIVE_POLL,
+ *     poll: IPoll,
+ *     pollId: string,
+ *     saved: boolean
+ * }}
+ */
+export function savePoll(pollId: string, poll: IPoll, saved: boolean) {
+    return {
+        type: SAVE_POLL,
+        pollId,
+        poll: {
+            ...poll,
+            saved
+        }
+    };
+}
+
+/**
+ * Action to signal editing a poll.
+ *
+ * @param {string} pollId - The id of the poll that gets to be edited.
+ * @param {boolean} editing - Whether the poll is in edit mode or not.
+ * @returns {{
+ *     type: RECEIVE_POLL,
+ *     pollId: string,
+ *     editing: boolean
+ * }}
+ */
+export function editPoll(pollId: string, editing: boolean) {
+    return {
+        type: EDIT_POLL,
+        pollId,
+        editing
     };
 }

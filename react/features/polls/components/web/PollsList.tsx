@@ -39,7 +39,11 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const PollsList = () => {
+interface IPollListProps {
+    setCreateMode: (mode: boolean) => void;
+}
+
+const PollsList = ({ setCreateMode }: IPollListProps) => {
     const { t } = useTranslation();
     const { classes, theme } = useStyles();
 
@@ -80,7 +84,8 @@ const PollsList = () => {
                     <PollItem
                         key = { id }
                         pollId = { id }
-                        ref = { listPolls.length - 1 === index ? pollListEndRef : null } />
+                        ref = { listPolls.length - 1 === index ? pollListEndRef : null }
+                        setCreateMode = { setCreateMode } />
                 ))}
         </>
     );

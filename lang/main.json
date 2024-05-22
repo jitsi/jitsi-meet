@@ -865,6 +865,8 @@
     "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
+            "edit": "Edit",
+            "send": "Send",
             "skip": "Skip",
             "submit": "Submit"
         },
@@ -878,6 +880,7 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
+            "save": "Save",
             "send": "Send"
         },
         "errors": {

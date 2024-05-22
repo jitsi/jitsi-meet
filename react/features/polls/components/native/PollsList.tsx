@@ -12,7 +12,11 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import PollItem from './PollItem';
 import { chatStyles } from './styles';
 
-const PollsList = () => {
+interface IPollListProps {
+    setCreateMode: (mode: boolean) => void;
+}
+
+const PollsList = ({ setCreateMode }: IPollListProps) => {
     const polls = useSelector((state: IReduxState) => state['features/polls'].polls);
     const { t } = useTranslation();
     const listPolls = Object.keys(polls);
@@ -20,7 +24,8 @@ const PollsList = () => {
     const renderItem = useCallback(({ item }) => (
         <PollItem
             key = { item }
-            pollId = { item } />)
+            pollId = { item }
+            setCreateMode = { setCreateMode } />)
     , []);
 
     const flatlistRef = useRef<FlatList>(null);
