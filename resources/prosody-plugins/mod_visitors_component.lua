@@ -78,7 +78,6 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
         -- only for raise hand, ignore lowering the hand
         if time and time > 0 and (
             auto_allow_promotion
-            or (user_id and user_id == room._data.moderator_id)
             or force_promote == 'true') then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
@@ -231,17 +230,6 @@ local function stanza_handler(event)
             return true; -- stop processing
         end
 
-        local force_promote = request_promotion.attr.forcePromote;
-        if force_promote == 'true' and not is_vpaas(room) then
-            -- allow force promote only in case there are no moderators in the room
-            for _, occupant in room:each_occupant() do
-                if occupant.role == 'moderator' and not is_admin(occupant.bare_jid) then
-                    force_promote = false;
-                    break;
-                end
-            end
-        end
-
         local display_name = visitors_iq:get_child_text('nick', 'http://jabber.org/protocol/nick');
         processed = request_promotion_received(
             room,
@@ -250,7 +238,7 @@ local function stanza_handler(event)
             display_name,
             tonumber(request_promotion.attr.time),
             request_promotion.attr.userId,
-            force_promote
+            request_promotion.attr.forcePromote
         );
     end
 

@@ -247,9 +247,12 @@ module:hook('muc-broadcast-presence', function (event)
             if identity and identity.id then
                 user_id = session.jitsi_meet_context_user.id;
 
-                -- non-vpass and having a token in correct tenant is considered a moderator
-                if session.jitsi_meet_str_tenant
-                    and session.jitsi_web_query_prefix == string.lower(session.jitsi_meet_str_tenant) then
+                if room._data.moderator_id then
+                    if room._data.moderator_id == user_id then
+                        is_moderator = true;
+                    end
+                elseif session.auth_token then
+                    -- non-vpass and having a token is considered a moderator
                     is_moderator = true;
                 end
             end
@@ -540,6 +543,7 @@ local function iq_from_main_handler(event)
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
+    room._data.moderator_id = node.attr.moderatorId;
     local createdTimestamp = node.attr.createdTimestamp;
     room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
 
