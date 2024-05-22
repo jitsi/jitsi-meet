@@ -38,8 +38,8 @@ import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
-import { TOOLBAR_TIMEOUT } from './constants';
-import { IToolboxButton, NOTIFY_CLICK_MODE } from './types';
+import { MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
+import { IMainToolbarButtonThresholds, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
 
 export * from './functions.any';
 
@@ -189,19 +189,21 @@ export function getToolbarTimeout(state: IReduxState) {
     return toolbarConfig?.timeout || TOOLBAR_TIMEOUT;
 }
 
+interface ICustomToolbarButton {
+    backgroundColor?: string;
+    icon: string;
+    id: string;
+    text: string;
+}
+
 /**
     * Returns all buttons that could be rendered.
     *
     * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
     * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
     */
-export function getAllToolboxButtons(_customToolbarButtons?: {
-    backgroundColor?: string;
-    icon: string;
-    id: string;
-    text: string;
-    }[]): { [key: string]: IToolboxButton; } {
-
+export function getAllToolboxButtons(
+        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
     const microphone = {
         key: 'microphone',
         Content: AudioSettingsButton,
@@ -439,6 +441,89 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         download,
         help,
         ...customButtons
+    };
+}
+
+/**
+ * Sets the notify click mode for the buttons.
+ *
+ * @param {Object} buttons - The list of toolbar buttons.
+ * @param {Map} buttonsWithNotifyClick - The buttons notify click configuration.
+ * @returns {void}
+ */
+function setButtonsNotifyClickMode(buttons: Object, buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>) {
+    if (typeof APP === 'undefined' || (buttonsWithNotifyClick?.size ?? 0) <= 0) {
+        return;
+    }
+
+    Object.values(buttons).forEach((button: any) => {
+        if (typeof button === 'object') {
+            button.notifyMode = buttonsWithNotifyClick.get(button.key);
+        }
+    });
+}
+
+interface IGetVisibleButtonsParams {
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+    clientWidth: number;
+    customToolbarButtons?: ICustomToolbarButton[];
+    jwtDisabledButtons: string[];
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
+}
+
+/**
+ * Returns all buttons that need to be rendered.
+ *
+ * @param {IGetVisibleButtonsParams} params - The parameters needed to extract the visible buttons.
+ * @returns {Object} - The visible buttons arrays .
+ */
+export function getVisibleButtons({
+    customToolbarButtons,
+    buttonsWithNotifyClick,
+    toolbarButtons,
+    clientWidth,
+    jwtDisabledButtons,
+    mainToolbarButtonsThresholds
+}: IGetVisibleButtonsParams) {
+    const buttons = getAllToolboxButtons(customToolbarButtons);
+
+    const filteredButtons = Object.keys(buttons).filter(key =>
+        typeof key !== 'undefined' // filter invalid buttons that may be comming from config.mainToolbarButtons
+        // override
+        && !jwtDisabledButtons.includes(key)
+        && isButtonEnabled(key, toolbarButtons));
+
+    setButtonsNotifyClickMode(buttons, buttonsWithNotifyClick);
+    const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth > width)
+        || mainToolbarButtonsThresholds[mainToolbarButtonsThresholds.length - 1];
+
+    const mainToolbarButtonKeysOrder = [
+        ...order.filter(key => filteredButtons.includes(key)),
+        ...MAIN_TOOLBAR_BUTTONS_PRIORITY.filter(key => !order.includes(key) && filteredButtons.includes(key)),
+        ...filteredButtons.filter(key => !order.includes(key) && !MAIN_TOOLBAR_BUTTONS_PRIORITY.includes(key))
+    ];
+
+    const mainButtonsKeys = mainToolbarButtonKeysOrder.slice(0, order.length);
+    const overflowMenuButtons = filteredButtons.reduce((acc, key) => {
+        if (!mainButtonsKeys.includes(key)) {
+            acc.push(buttons[key]);
+        }
+
+        return acc;
+    }, [] as IToolboxButton[]);
+
+    // if we have 1 button in the overflow menu it is better to directly display it in the main toolbar by replacing
+    // the "More" menu button with it.
+    if (overflowMenuButtons.length === 1) {
+        const button = overflowMenuButtons.shift()?.key;
+
+        button && mainButtonsKeys.push(button);
+    }
+
+    return {
+        mainMenuButtons: mainButtonsKeys.map(key => buttons[key]),
+        overflowMenuButtons
     };
 }
 
