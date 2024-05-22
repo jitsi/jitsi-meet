@@ -32,6 +32,7 @@ const PollAnswer = (props: AbstractProps) => {
     const dispatch = useDispatch();
     const localParticipant = useSelector(getLocalParticipant);
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const pollAnswers = poll.answers as { name: string; voters: string[]; }[];
 
     return (
         <>
@@ -42,7 +43,7 @@ const PollAnswer = (props: AbstractProps) => {
             </Text>
             <View style = { chatStyles.answerContent as ViewStyle }>
                 {
-                    poll.answers.map((answer: { name: string; voters: string[]; }, index: number) => (
+                    pollAnswers.map((answer, index: number) => (
                         <View
                             key = { index }
                             style = { chatStyles.switchRow as ViewStyle } >
