@@ -404,3 +404,31 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
 }
+
+/**
+ * Returns true if the live streaming button should be visible.
+ *
+ * @param {boolean} localParticipantIsModerator - True if the local participant is moderator.
+ * @param {boolean} liveStreamingEnabled - True if the live streaming is enabled.
+ * @param {boolean} liveStreamingEnabledInJwt - True if the lives treaming feature is enabled in JWT.
+ * @returns {boolean}
+ */
+export function isLiveStreamingButtonVisible({
+    localParticipantIsModerator,
+    liveStreamingEnabled,
+    liveStreamingEnabledInJwt,
+    isInBreakoutRoom
+}: {
+    localParticipantIsModerator: boolean;
+    liveStreamingEnabled: boolean;
+    liveStreamingEnabledInJwt: boolean;
+    isInBreakoutRoom: boolean;
+}) {
+    let visible = false;
+
+    if (localParticipantIsModerator && !isInBreakoutRoom) {
+        visible = liveStreamingEnabled ? liveStreamingEnabledInJwt : false;
+    }
+
+    return visible;
+}
