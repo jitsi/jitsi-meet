@@ -57,4 +57,4 @@ More on [STOMP](https://stomp.github.io/stomp-specification-1.2.html).
 
 ## Sample code
 
-There is sample code showing how to handle the visitor case [here](./waiting-queue/visitor.js).
+There is sample code showing how to handle the visitor case [here](./examples/visitor.js).
