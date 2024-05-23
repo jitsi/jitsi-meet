@@ -1,5 +1,7 @@
 import { ComponentType } from 'react';
 
+import { CustomOptionButton } from './components';
+
 export interface IToolboxButton {
     Content: ComponentType<any>;
     group: number;
@@ -53,3 +55,13 @@ export type IMainToolbarButtonThresholds = Array<{
     order: Array<ToolbarButton | string>;
     width: number;
 }>;
+
+export interface ICustomToolbarButton {
+    Content?: typeof CustomOptionButton;
+    backgroundColor?: string;
+    group?: number;
+    icon: string;
+    id: string;
+    key?: string;
+    text: string;
+}
