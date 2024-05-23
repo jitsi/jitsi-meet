@@ -92,7 +92,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
             type: COMMAND_NEW_POLL,
             pollId,
             question,
-            answers: answers.map((answer) => answer.name),
+            answers: answers.map(answer => answer.name),
             poll
         });
 
