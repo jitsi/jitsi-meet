@@ -548,11 +548,15 @@ export function searchDirectory( // eslint-disable-line max-params
     const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
 
     const headers = {
-        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {}
     };
 
     return fetch(`${serviceUrl}?query=${query}&queryTypes=${
-        queryTypesString}`, { method: 'GET', headers })
+        queryTypesString}`,
+            {
+                method: 'GET',
+                headers
+            })
             .then(response => {
                 const jsonify = response.json();
 
