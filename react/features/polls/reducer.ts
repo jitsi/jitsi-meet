@@ -11,7 +11,7 @@ import {
     RETRACT_VOTE,
     SAVE_POLL
 } from './actionTypes';
-import {IAnswer, IAnswerData, IPoll} from './types';
+import { IAnswer, IPoll } from './types';
 
 const INITIAL_STATE = {
     polls: {},

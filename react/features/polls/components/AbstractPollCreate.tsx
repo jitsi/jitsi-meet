@@ -32,7 +32,7 @@ export type AbstractProps = InputProps & {
     onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
     question: string;
     removeAnswer: (index: number) => void;
-    setAnswer: (index: number, value: { name: string; voters: string[]; }) => void;
+    setAnswer: (index: number, value: IAnswerData) => void;
     setQuestion: (question: string) => void;
     t: Function;
 };
@@ -69,12 +69,12 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const answerResults = useMemo(() => {
         return editingPoll
             ? editingPoll[1].answers
-            : [{ name: ' ', voters: [] }, { name: ' ', voters: [] }
+            : [{ name: '', voters: [] }, { name: '', voters: [] }
         ];
     }, [ editingPoll ]);
 
     const questionResult = useMemo(() => {
-        return editingPoll ? editingPoll[1].question : ' ';
+        return editingPoll ? editingPoll[1].question : '';
     }, [ editingPoll ]);
 
     const [ question, setQuestion ] = useState(questionResult);
@@ -95,7 +95,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         const newAnswers: Array<IAnswerData> = [ ...answers ];
 
         sendAnalytics(createPollEvent('option.added'));
-        newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, { name: ' ', voters: []});
+        newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, { name: '', voters: []});
         setAnswers(newAnswers);
     }, [ answers ]);
 
@@ -107,7 +107,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
         sendAnalytics(createPollEvent('option.removed'));
         newAnswers.splice(i, 1);
-        setAnswers(newAnswers as Array<IAnswerData>);
+        setAnswers(newAnswers);
     }, [ answers ]);
 
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
@@ -123,7 +123,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             ev.preventDefault();
         }
 
-        const filteredAnswers = answers.filter((answer: IAnswerData) => answer.name.trim().length > 0);
+        const filteredAnswers = answers.filter((answer) => answer.name.trim().length > 0);
 
         if (filteredAnswers.length < 2) {
             return;
@@ -155,7 +155,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled
         = question.trim().length <= 0 // If no question is provided
-        || answers.filter((answer: IAnswerData) => answer.name.trim().length > 0).length < 2 // If not enough options are provided
+        || answers.filter((answer) => answer.name.trim().length > 0).length < 2 // If not enough options are provided
         || hasIdenticalAnswers(answers); // If duplicate options are provided
 
     const { t } = useTranslation();
