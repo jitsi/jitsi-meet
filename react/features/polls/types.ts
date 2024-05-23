@@ -71,6 +71,7 @@ export interface IPollData extends IPoll {
 }
 
 export interface IAnswerData {
+
     /**
      * The answer name chosen for the poll.
      */

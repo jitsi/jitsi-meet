@@ -209,7 +209,7 @@ const PollCreate = ({
                 {answers.map((answer, i: number) => {
 
                     const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
-                        : answers.slice(0, i).some((prevAnswer) =>
+                        : answers.slice(0, i).some(prevAnswer =>
                             prevAnswer === answer && prevAnswer.name !== '' && answer.name !== '');
 
                     return (<li
@@ -222,7 +222,10 @@ const PollCreate = ({
                             id = { `polls-answer-input-${i}` }
                             label = { t('polls.create.pollOption', { index: i + 1 }) }
                             maxLength = { CHAR_LIMIT }
-                            onChange = { name => setAnswer(i, { name, voters: []}) }
+                            onChange = { name => setAnswer(i, {
+                                name,
+                                voters: []
+                            }) }
                             onKeyPress = { ev => onAnswerKeyDown(i, ev) }
                             placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                             ref = { r => registerFieldRef(i, r) }

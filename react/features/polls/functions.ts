@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+
 import { IAnswerData } from './types';
 
 /**
