@@ -427,17 +427,20 @@ export function invitePeopleAndChatRooms(
         return Promise.resolve();
     }
 
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        'Content-Type': 'application/json'
+    };
+
     return fetch(
-        `${inviteServiceUrl}?token=${jwt}`,
+        `${inviteServiceUrl}`,
         {
             body: JSON.stringify({
                 'invited': inviteItems,
                 'url': inviteUrl
             }),
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers
         }
     );
 }
@@ -544,8 +547,16 @@ export function searchDirectory( // eslint-disable-line max-params
     const query = encodeURIComponent(text);
     const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
 
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {}
+    };
+
     return fetch(`${serviceUrl}?query=${query}&queryTypes=${
-        queryTypesString}&jwt=${jwt}`)
+        queryTypesString}`,
+            {
+                method: 'GET',
+                headers
+            })
             .then(response => {
                 const jsonify = response.json();
 
