@@ -20,7 +20,7 @@ import {
     isButtonEnabled,
     isToolboxVisible
 } from '../../functions.web';
-import { useKeyboardShortcuts } from '../../hooks.web';
+import { useKeyboardShortcuts, useToolboxButtons } from '../../hooks.web';
 import { IToolboxButton } from '../../types';
 import HangupButton from '../HangupButton';
 
@@ -105,6 +105,7 @@ export default function Toolbox({
     const toolbarVisible = useSelector(isToolboxVisible);
     const mainToolbarButtonsThresholds
         = useSelector((state: IReduxState) => state['features/toolbox'].mainToolbarButtonsThresholds);
+    const allButtons = useToolboxButtons(customToolbarButtons);
 
     useKeyboardShortcuts(toolbarButtonsToUse);
 
@@ -216,7 +217,7 @@ export default function Toolbox({
     const containerClassName = `toolbox-content${isMobile || isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
     const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons({
-        customToolbarButtons,
+        allButtons,
         buttonsWithNotifyClick,
         toolbarButtons: toolbarButtonsToUse,
         clientWidth,
@@ -225,10 +226,9 @@ export default function Toolbox({
     });
     const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
     const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
-    && (
-        (!reactionsButtonEnabled && (raiseHandInOverflowMenu || isNarrowLayout || isMobile))
-            || overflowMenuButtons.some(({ key }) => key === 'reactions')
-    );
+        && (
+            (!reactionsButtonEnabled && (raiseHandInOverflowMenu || isNarrowLayout || isMobile))
+            || overflowMenuButtons.some(({ key }) => key === 'reactions'));
     const showRaiseHandInReactionsMenu = showReactionsInOverflowMenu && raiseHandInOverflowMenu;
 
     return (

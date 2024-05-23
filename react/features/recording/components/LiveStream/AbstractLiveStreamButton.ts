@@ -8,7 +8,7 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
-import { getActiveSession, isCloudRecordingRunning } from '../../functions';
+import { getActiveSession, isCloudRecordingRunning, isLiveStreamingButtonVisible } from '../../functions';
 
 import { getLiveStreaming } from './functions';
 
@@ -133,11 +133,12 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
-        if (isModerator) {
-            visible = liveStreaming.enabled ? isJwtFeatureEnabled(state, 'livestreaming', true) : false;
-        } else {
-            visible = false;
-        }
+        visible = isLiveStreamingButtonVisible({
+            localParticipantIsModerator: isModerator,
+            liveStreamingEnabled: liveStreaming?.enabled,
+            liveStreamingEnabledInJwt: isJwtFeatureEnabled(state, 'livestreaming', true),
+            isInBreakoutRoom: isInBreakoutRoom(state)
+        });
     }
 
     // disable the button if the recording is running.
@@ -149,7 +150,6 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     // disable the button if we are in a breakout room.
     if (isInBreakoutRoom(state)) {
         _disabled = true;
-        visible = false;
     }
 
     return {
