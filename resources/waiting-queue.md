@@ -27,7 +27,7 @@ context: {
     }
 }
 ```
-It allows visitors to connect to the /moderator websocket and wait for the status message to be published on /secured/conference/state/topic.{conference} topic (triggered every 15 min).
+It allows visitors to connect to the /moderator websocket and wait for the status message to be published on /secured/conference/state/topic.{conference} topic (triggered every 15 seconds).
 
 ## Flow
 
