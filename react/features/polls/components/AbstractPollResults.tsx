@@ -65,17 +65,16 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
 
     const answers: Array<AnswerInfo> = useMemo(() => {
         const allVoters = new Set();
-        const pollDetailsAnswers = pollDetails.answers as { name: string; voters: string[]; }[];
 
         // Getting every voters ID that participates to the poll
-        for (const answer of pollDetailsAnswers) {
+        for (const answer of pollDetails.answers) {
             // checking if the voters is an array for supporting old structure model
             const voters: string[] = answer.voters.length ? answer.voters : Object.keys(answer.voters);
 
             voters.forEach((voter: string) => allVoters.add(voter));
         }
 
-        return pollDetailsAnswers.map(answer => {
+        return pollDetails.answers.map(answer => {
             const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 

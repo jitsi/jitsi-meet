@@ -11,7 +11,7 @@ import {
     RETRACT_VOTE,
     SAVE_POLL
 } from './actionTypes';
-import { IAnswer, IPoll } from './types';
+import {IAnswer, IAnswerData, IPoll} from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -60,7 +60,6 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
             ...state,
             polls: {
                 ...state.polls,
-
                 [action.pollId]: action.poll
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
@@ -81,8 +80,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         }
 
         // if the poll exists, we update it with the incoming answer
-        const statePollsAnswers = state.polls[pollId].answers as { name: string; voters: string[]; }[];
-        const newAnswers = statePollsAnswers
+        const newAnswers = state.polls[pollId].answers
             .map(_answer => {
                 // checking if the voters is an array for supporting old structure model
                 const answerVoters = _answer.voters
