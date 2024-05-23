@@ -50,7 +50,7 @@ The topics used:
 | POST /golive | REST | require a server-to-server token for conference | Our backend calls it anytime the visitorsLive state for a conference changes from “false” to “true”, including when a conference is created with visitorsLive=true |
 
 >
-> Note: CONNECT and MESSAGE STOMP events expect an additional header for Authorization
+> Note: CONNECT and MESSAGE STOMP frames expect an additional header for Authorization
 >
 
 More on [STOMP](https://stomp.github.io/stomp-specification-1.2.html).
