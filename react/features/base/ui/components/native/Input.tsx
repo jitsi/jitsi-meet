@@ -9,7 +9,8 @@ import {
     TextInputChangeEventData,
     TextInputFocusEventData,
     TextInputKeyPressEventData,
-    TextInputSubmitEditingEventData, TextStyle,
+    TextInputSubmitEditingEventData,
+    TextStyle,
     TouchableOpacity,
     View,
     ViewStyle
