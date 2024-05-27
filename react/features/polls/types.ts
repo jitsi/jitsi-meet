@@ -27,7 +27,7 @@ export interface IPoll {
      * An array of answers:
      * the name of the answer name and a map of ids and names of voters voting for this option.
      */
-    answers: Array<{ name: string; voters: string[]; }> | string[];
+    answers: Array<IAnswerData>;
 
     /**
      * Whether the poll vote is being edited/changed.
@@ -68,4 +68,17 @@ export interface IPoll {
 
 export interface IPollData extends IPoll {
     id: string;
+}
+
+export interface IAnswerData {
+
+    /**
+     * The answer name chosen for the poll.
+     */
+    name: string;
+
+    /**
+     * An array of voters.
+     */
+    voters: Array<string>;
 }

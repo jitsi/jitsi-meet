@@ -79,7 +79,7 @@ const PollCreate = (props: AbstractProps) => {
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((index: number, ev) => {
         const { key } = ev.nativeEvent;
-        const currentText = answers[index];
+        const currentText = answers[index].name;
 
         if (key === 'Backspace' && currentText === '' && answers.length > 1) {
             removeAnswer(index);
@@ -110,14 +110,18 @@ const PollCreate = (props: AbstractProps) => {
                     label = { t('polls.create.pollOption', { index: index + 1 }) }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
-                    onChange = { text => setAnswer(index, text) }
+                    onChange = { name => setAnswer(index,
+                        {
+                            name,
+                            voters: []
+                        }) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
 
                     // This is set to help the touch event not be propagated to any subviews.
                     pointerEvents = { 'auto' }
                     ref = { input => registerFieldRef(index, input) }
-                    value = { answers[index] } />
+                    value = { answers[index].name } />
                 {
                     answers.length > 2
                     && createRemoveOptionButton(() => removeAnswer(index))

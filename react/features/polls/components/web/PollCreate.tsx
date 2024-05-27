@@ -206,11 +206,12 @@ const PollCreate = ({
                     value = { question } />
             </div>
             <ol className = { classes.answerList }>
-                {answers.map((answer: string, i: number) => {
+                {answers.map((answer, i: number) => {
 
                     const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
-                        : answers.slice(0, i).some((prevAnswer: string) =>
-                            prevAnswer === answer && prevAnswer !== '' && answer !== '');
+                        : answers.slice(0, i).some(prevAnswer =>
+                            prevAnswer.name === answer.name
+                            && prevAnswer.name !== '' && answer.name !== '');
 
                     return (<li
                         className = { classes.answer }
@@ -222,12 +223,15 @@ const PollCreate = ({
                             id = { `polls-answer-input-${i}` }
                             label = { t('polls.create.pollOption', { index: i + 1 }) }
                             maxLength = { CHAR_LIMIT }
-                            onChange = { val => setAnswer(i, val) }
+                            onChange = { name => setAnswer(i, {
+                                name,
+                                voters: []
+                            }) }
                             onKeyPress = { ev => onAnswerKeyDown(i, ev) }
                             placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                             ref = { r => registerFieldRef(i, r) }
                             textarea = { true }
-                            value = { answer } />
+                            value = { answer.name } />
 
                         { answers.length > 2
                         && <button

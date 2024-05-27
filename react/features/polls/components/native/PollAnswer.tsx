@@ -14,7 +14,6 @@ import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
 import { chatStyles, dialogStyles } from './styles';
 
-
 const PollAnswer = (props: AbstractProps) => {
     const {
         checkBoxStates,
@@ -32,7 +31,6 @@ const PollAnswer = (props: AbstractProps) => {
     const dispatch = useDispatch();
     const localParticipant = useSelector(getLocalParticipant);
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
-    const pollAnswers = poll.answers as { name: string; voters: string[]; }[];
 
     return (
         <>
@@ -43,7 +41,7 @@ const PollAnswer = (props: AbstractProps) => {
             </Text>
             <View style = { chatStyles.answerContent as ViewStyle }>
                 {
-                    pollAnswers.map((answer, index: number) => (
+                    poll.answers.map((answer, index: number) => (
                         <View
                             key = { index }
                             style = { chatStyles.switchRow as ViewStyle } >
@@ -52,7 +50,7 @@ const PollAnswer = (props: AbstractProps) => {
                                 disabled = { poll.saved }
                                 onChange = { state => setCheckbox(index, state) } />
                             <Text style = { chatStyles.switchLabel as TextStyle }>
-                                { poll.saved ? answer : answer.name }
+                                { answer.name }
                             </Text>
                         </View>
                     ))

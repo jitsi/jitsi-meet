@@ -83,7 +83,7 @@ const PollAnswer = ({
             </div>
             <ul className = { classes.answerList }>
                 {
-                    poll.answers.map((answer: any, index: number) => (
+                    poll.answers.map((answer, index: number) => (
                         <li
                             className = { classes.answer }
                             key = { index }>
@@ -91,7 +91,7 @@ const PollAnswer = ({
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
                                 key = { index }
-                                label = { poll.saved ? answer : answer.name }
+                                label = { answer.name }
                                 onChange = { ev => setCheckbox(index, ev.target.checked) } />
                         </li>
                     ))
