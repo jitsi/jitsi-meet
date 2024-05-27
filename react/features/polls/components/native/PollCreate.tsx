@@ -97,16 +97,26 @@ const PollCreate = (props: AbstractProps) => {
             type = { TERTIARY } />
     );
 
+    const pollCreateButtonsContainerStyles = Platform.OS === 'android'
+        ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
 
     /* eslint-disable react/jsx-no-bind */
-    const renderListItem = ({ index }: { index: number; }) =>
+    const renderListItem = ({ index }: { index: number; }) => {
 
-        // padding to take into account the two default options
-        (
+        const isIdenticalAnswer
+            = answers.slice(0, index).length === 0 ? false : answers.slice(0, index).some(prevAnswer =>
+                prevAnswer.name === answers[index].name
+                && prevAnswer.name !== '' && answers[index].name !== '');
+
+        return (
             <View
                 style = { dialogStyles.optionContainer as ViewStyle }>
                 <Input
                     blurOnSubmit = { false }
+                    bottomLabel = { (
+                        isIdenticalAnswer ? t('polls.errors.notUniqueOption', { index: index + 1 }) : '') }
+                    error = { isIdenticalAnswer }
+                    id = { `polls-answer-input-${index}` }
                     label = { t('polls.create.pollOption', { index: index + 1 }) }
                     maxLength = { CHAR_LIMIT }
                     multiline = { true }
@@ -128,8 +138,7 @@ const PollCreate = (props: AbstractProps) => {
                 }
             </View>
         );
-    const pollCreateButtonsContainerStyles = Platform.OS === 'android'
-        ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
+    };
 
     return (
         <View style = { chatStyles.pollCreateContainer as ViewStyle }>
