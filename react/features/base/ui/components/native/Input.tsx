@@ -162,7 +162,7 @@ const Input = forwardRef<TextInput, IProps>(({
                     multiline && styles.inputMultiline,
                     focused && styles.inputFocused,
                     error && styles.inputError
-                ] as TextStyle }
+                ] as StyleProp<TextStyle> }
                 textContentType = { textContentType }
                 value = { typeof value === 'number' ? `${value}` : value } />
             { clearable && !disabled && value !== '' && (
