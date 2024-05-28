@@ -58,7 +58,7 @@ export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean
 
     const nonEmptyCurrentAnswers = currentAnswers.filter((answer): boolean => answer.name !== '');
 
-    const currentAnswersSet = new Set(nonEmptyCurrentAnswers);
+    const currentAnswersSet = new Set(nonEmptyCurrentAnswers.map(answer => answer.name));
 
     return currentAnswersSet.size !== nonEmptyCurrentAnswers.length;
 }
