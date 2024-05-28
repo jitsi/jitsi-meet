@@ -24,7 +24,6 @@ import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,14 +33,12 @@ import androidx.annotation.Nullable;
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -77,7 +74,6 @@ public class MainActivity extends JitsiMeetActivity {
      * Default URL as could be obtained from RestrictionManager
      */
     private String defaultURL;
-
 
     // JitsiMeetActivity overrides
     //
@@ -148,10 +144,9 @@ public class MainActivity extends JitsiMeetActivity {
 
         super.onDestroy();
     }
-
     private void setJitsiMeetConferenceDefaultOptions() {
 
-        ArrayList<Bundle> customButtons = new ArrayList<Bundle>();
+        ArrayList<Bundle> customToolbarButtons = new ArrayList<Bundle>();
 
         Bundle firstCustomButton = new Bundle();
         Bundle secondCustomButton = new Bundle();
@@ -164,10 +159,8 @@ public class MainActivity extends JitsiMeetActivity {
         secondCustomButton.putString("icon", "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png");
         secondCustomButton.putString("id", "btn2");
 
-        customButtons.add(firstCustomButton);
-        customButtons.add(secondCustomButton);
-
-        Log.d(String.valueOf(secondCustomButton), "SECOND CUSTOM BUTTON");
+        customToolbarButtons.add(firstCustomButton);
+        customToolbarButtons.add(secondCustomButton);
 
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
@@ -177,10 +170,12 @@ public class MainActivity extends JitsiMeetActivity {
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .setConfigOverride("requireDisplayName", true)
-            .setConfigOverride("customToolbarButtons", customButtons)
+            .setConfigOverride("customToolbarButtons", customToolbarButtons)
             .build();
+
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
+
 
     private void resolveRestrictions() {
         RestrictionsManager manager =

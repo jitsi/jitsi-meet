@@ -38,6 +38,17 @@
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
+        [builder setConfigOverride:@"customToolbarButtons" withArray:@[
+              @{
+                  @"icon": @"https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
+                  @"id": @"btn1",
+                  @"text": @"Button one"
+                },
+              @{
+                  @"icon": @"https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png",
+                  @"id": @"btn2",
+                  @"text": @"Button two"
+              }]];
     }];
 
   [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
