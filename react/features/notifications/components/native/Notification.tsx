@@ -154,7 +154,7 @@ const Notification = ({
                 <>
                     <Text
                         style = { styles.contentTextTitle as TextStyle }>
-                        {titleText}
+                        { titleText }
                     </Text>
                     {
                         descriptionArray.map((line, index) => (
@@ -171,7 +171,7 @@ const Notification = ({
 
         return (
             <Text style = { styles.contentTextTitle as TextStyle }>
-                {titleText}
+                { titleText }
             </Text>
         );
     };
