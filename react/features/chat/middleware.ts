@@ -116,7 +116,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         if (!isReactionsEnabled(state)) {
-            return;
+            return next(action);
         }
 
         const { participant, data } = action;
