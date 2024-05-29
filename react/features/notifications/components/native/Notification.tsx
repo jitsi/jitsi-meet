@@ -152,7 +152,8 @@ const Notification = ({
         if (descriptionArray?.length) {
             return (
                 <>
-                    <Text style = { styles.contentTextTitle as TextStyle }>
+                    <Text
+                        style = { styles.contentTextTitle as TextStyle }>
                         {titleText}
                     </Text>
                     {
@@ -202,7 +203,7 @@ const Notification = ({
                     {_renderContent()}
                 </View>
                 <View style = { styles.btnContainer as ViewStyle }>
-                    {mapAppearanceToButtons()}
+                    { mapAppearanceToButtons() }
                 </View>
             </View>
             <IconButton
