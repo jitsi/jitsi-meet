@@ -1930,6 +1930,8 @@ export default {
 
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
+                track.isAudioTrack() && APP.API.notifyAudioMutedStatusChanged(track.isMuted());
+
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
                 if (this.isSharingScreen && track.isVideoTrack()) {
                     logger.debug('TRACK_MUTE_CHANGED while screen sharing');
