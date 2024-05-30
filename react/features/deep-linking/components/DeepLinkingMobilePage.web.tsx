@@ -18,6 +18,7 @@ import DialInSummary from '../../invite/components/dial-in-summary/web/DialInSum
 import { openWebApp } from '../actions';
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
+import { env } from '../../../../ENV';
 
 
 const PADDINGS = {
@@ -106,6 +107,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
     const { classes: styles } = useStyles();
 
     const generateDownloadURL = useCallback(() => {
+        return (Platform.OS == 'ios') ? env.IOS_LINK : env.ANDROID_LINK;
         const { downloadLink, dynamicLink, appScheme }
             = (deeplinkingCfg?.[Platform.OS as keyof typeof deeplinkingCfg] || {}) as IDeeplinkingMobileConfig;
 
@@ -123,13 +125,8 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
 
         const domain = customDomain ?? `https://${appCode}.app.goo.gl`;
 
-        return `${domain}/?link=${
-            encodeURIComponent(window.location.href)}&apn=${
-            apn}&ibi=${
-            ibi}&isi=${
-            isi}&ius=${
-            appScheme}&efr=1`;
-    }, [ deeplinkingCfg ]);
+        return `${domain}/?link=${encodeURIComponent(window.location.href)}&apn=${apn}&ibi=${ibi}&isi=${isi}&ius=${appScheme}&efr=1`;
+    }, [deeplinkingCfg]);
 
     const onDownloadApp = useCallback(() => {
         sendAnalytics(
@@ -171,7 +168,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
             target: '_blank',
             rel: 'noopener noreferrer'
         };
-    }, [ deeplinkingCfg ]);
+    }, [deeplinkingCfg]);
 
     useEffect(() => {
         sendAnalytics(
@@ -181,56 +178,56 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
 
 
     return (
-        <div className = { styles.container }>
-            <div className = { styles.contentPane }>
+        <div className={styles.container}>
+            <div className={styles.contentPane}>
                 {!hideLogo && (<img
-                    alt = { t('welcomepage.logo.logoDeepLinking') }
-                    src = 'images/logo-deep-linking-mobile.png' />
+                    alt={t('welcomepage.logo.logoDeepLinking')}
+                    src='images/logo-deep-linking-mobile.png' />
                 )}
 
-                <div className = { styles.launchingMeetingLabel }>{ t(`${_TNS}.launchMeetingLabel`) }</div>
-                <div className = ''>{room}</div>
+                <div className={styles.launchingMeetingLabel}>{t(`${_TNS}.launchMeetingLabel`)}</div>
+                <div className=''>{room}</div>
                 <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.joinMeetWrapper }
-                    href = { deepLinkingUrl }
-                    onClick = { onOpenApp }
-                    target = '_top'>
+                    {...onOpenLinkProperties}
+                    className={styles.joinMeetWrapper}
+                    href={deepLinkingUrl}
+                    onClick={onOpenApp}
+                    target='_top'>
                     <Button
-                        fullWidth = { true }
-                        label = { t(`${_TNS}.joinInAppNew`) } />
+                        fullWidth={true}
+                        label={t(`${_TNS}.joinInAppNew`)} />
                 </a>
-                <div className = { styles.labelDescription }>{ t(`${_TNS}.noMobileApp`) }</div>
+                <div className={styles.labelDescription}>{t(`${_TNS}.noMobileApp`)}</div>
                 <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.linkWrapper }
-                    href = { generateDownloadURL() }
-                    onClick = { onDownloadApp }
-                    target = '_top'>
-                    <div className = { styles.linkLabel }>{ t(`${_TNS}.downloadMobileApp`) }</div>
+                    {...onOpenLinkProperties}
+                    className={styles.linkWrapper}
+                    href={generateDownloadURL()}
+                    onClick={onDownloadApp}
+                    target='_top'>
+                    <div className={styles.linkLabel}>{t(`${_TNS}.downloadMobileApp`)}</div>
                 </a>
                 {isSupportedMobileBrowser() ? (
-                    <div className = { styles.supportedBrowserContent }>
-                        <div className = { styles.labelOr }>{ t(`${_TNS}.or`) }</div>
+                    <div className={styles.supportedBrowserContent}>
+                        <div className={styles.labelOr}>{t(`${_TNS}.or`)}</div>
                         <a
-                            className = { styles.linkWrapper }
-                            onClick = { onLaunchWeb }
-                            target = '_top'>
-                            <div className = { styles.linkLabel }>{ t(`${_TNS}.joinInBrowser`) }</div>
+                            className={styles.linkWrapper}
+                            onClick={onLaunchWeb}
+                            target='_top'>
+                            <div className={styles.linkLabel}>{t(`${_TNS}.joinInBrowser`)}</div>
                         </a>
                     </div>
                 ) : (
-                    <div className = { styles.labelDescription }>
+                    <div className={styles.labelDescription}>
                         {t(`${_TNS}.unsupportedBrowser`)}
                     </div>
                 )}
-                <div className = { styles.separator } />
+                <div className={styles.separator} />
                 <DialInSummary
-                    className = 'deep-linking-dial-in'
-                    clickableNumbers = { true }
-                    hideError = { true }
-                    room = { room }
-                    url = { url } />
+                    className='deep-linking-dial-in'
+                    clickableNumbers={true}
+                    hideError={true}
+                    room={room}
+                    url={url} />
             </div>
         </div>
     );
