@@ -5,6 +5,25 @@ The moderators should be able to see the visitors count.
 
 ## Authentication
 
+The JWT token is sent at least in the CONNECT STOMP message as connect header - see sample code:
+
+```
+headers = {
+        Authorization: 'Bearer ' + token
+    };
+
+    stompClient.connectHeaders = headers;
+
+    stompClient.onConnect = (frame) => {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+
+        stompClient.subscribe('/secured/conference/visitor/topic.' + conference, (message) => {
+            showMessage(message.body);
+        }, headers);
+    };
+```
+
 ### Visitors
 
 This endpoint should accept only visitor's jaas tokens for a conference specified as param to the endpoint and the token to be valid for that room. The token for visitors contains:
@@ -27,7 +46,7 @@ context: {
     }
 }
 ```
-It allows visitors to connect to the /moderator websocket and wait for the status message to be published on /secured/conference/state/topic.{conference} topic (triggered every 15 seconds).
+It allows moderators to connect to the /moderator websocket and wait for the status message to be published on /secured/conference/state/topic.{conference} topic (triggered every 15 seconds).
 
 ## Flow
 
