@@ -66,7 +66,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 // setters in order to reduce the risks of inconsistent state.
                 location.hostname = defaultLocation.hostname;
                 location.pathname
-                    = defaultLocation.pathname + location.pathname.substr(1);
+                    = defaultLocation.pathname + location.pathname.slice(1);
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
             } else {

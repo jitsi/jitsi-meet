@@ -133,7 +133,7 @@ export function setConfig(config: IConfig = {}, locationURL: URL | undefined) {
                 contextRoot
             } = parseURIString(locationURL?.href);
 
-            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
+            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.slice(1)}`;
         }
         config.bosh = bosh;
     }
