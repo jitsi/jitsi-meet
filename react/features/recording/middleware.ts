@@ -144,10 +144,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 dispatch(playSound(RECORDING_ON_SOUND_ID));
             }
             dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-            dispatch(showNotification({
-                titleKey: 'recording.localRecordingStartWarningTitle',
-                descriptionKey: 'recording.localRecordingStartWarning'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            // CacDi modified: remove recording start warning dialog
+            // dispatch(showNotification({
+            //     titleKey: 'recording.localRecordingStartWarningTitle',
+            //     descriptionKey: 'recording.localRecordingStartWarning'
+            // }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
             if (typeof APP !== 'undefined') {
@@ -235,7 +238,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                     if (typeof recordingLimit === 'object') {
                         dispatch(showRecordingLimitNotification(mode));
                     } else {
-                        dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+                        // CacDi modified: remove started recording notification
+                        // dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                     }
                 }
                 if (!oldSessionData || oldSessionData.status !== ON) {
