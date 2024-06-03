@@ -20,7 +20,7 @@ import {
     unregisterSound
 } from '../base/sounds/actions';
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
-import { showErrorNotification, showNotification } from '../notifications/actions';
+import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
@@ -31,7 +31,6 @@ import {
     showRecordingError,
     showRecordingLimitNotification,
     showRecordingWarning,
-    showStartedRecordingNotification,
     showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
@@ -143,7 +142,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             if (localRecording?.notifyAllParticipants && !onlySelf) {
                 dispatch(playSound(RECORDING_ON_SOUND_ID));
             }
-            dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+            // CacDi modified: remove start local recording notification
+            // dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
             // CacDi modified: remove recording start warning dialog
             // dispatch(showNotification({
