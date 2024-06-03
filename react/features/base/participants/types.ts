@@ -53,7 +53,20 @@ export interface ILocalParticipant extends IParticipant {
 }
 
 export interface IParticipantFeatures {
+    'branding'?: boolean | string;
+    'calendar'?: boolean | string;
+    'flip'?: boolean | string;
+    'inbound-call'?: boolean | string;
+    'livestreaming'?: boolean | string;
+    'lobby'?: boolean | string;
+    'moderation'?: boolean | string;
+    'outbound-call'?: boolean | string;
+    'recording'?: boolean | string;
+    'room'?: boolean | string;
     'screen-sharing'?: boolean | string;
+    'sip-inbound-call'?: boolean | string;
+    'sip-outbound-call'?: boolean | string;
+    'transcription'?: boolean | string;
 }
 
 export interface ISourceInfo {
