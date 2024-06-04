@@ -62,7 +62,7 @@
 
         // Initialize the one and only bridge for interfacing with React Native.
         _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
-        
+
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
 
@@ -141,7 +141,7 @@
     if (_bridgeWrapper != nil) {
         return;
     };
-    
+
     _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
 }
 
@@ -231,7 +231,7 @@
 }
 
 - (void)setDefaultConferenceOptions:(JitsiMeetConferenceOptions *)defaultConferenceOptions {
-    if (defaultConferenceOptions != nil && _defaultConferenceOptions.room != nil) {
+    if (defaultConferenceOptions != nil && defaultConferenceOptions.room != nil) {
         @throw [NSException exceptionWithName:@"RuntimeError"
                                        reason:@"'room' must be null in the default conference options"
                                      userInfo:nil];
