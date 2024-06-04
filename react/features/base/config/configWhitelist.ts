@@ -25,7 +25,6 @@ export default [
     'breakoutRooms',
     'bridgeChannel',
     'buttonsWithNotifyClick',
-    'customToolbarButtons',
 
     /**
      * The display name of the CallKit call representing the conference/meeting
@@ -235,6 +234,5 @@ export default [
     'watchRTCConfigParams',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
-    'whiteboard.enabled',
-    'customToolbarButtons'
+    'whiteboard.enabled'
 ].concat(extraConfigWhitelist);
