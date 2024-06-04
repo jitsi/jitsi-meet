@@ -142,13 +142,12 @@ public class MainActivity extends JitsiMeetActivity {
 
         super.onDestroy();
     }
+
     private void setJitsiMeetConferenceDefaultOptions() {
 
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setServerURL(buildURL("https://stage.8x8.vc"))
-            .setRoom("MonthlyEndorsementsRebuildConsequently")
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
