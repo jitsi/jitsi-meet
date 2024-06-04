@@ -36,7 +36,6 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -145,36 +144,17 @@ public class MainActivity extends JitsiMeetActivity {
     }
     private void setJitsiMeetConferenceDefaultOptions() {
 
-        ArrayList<Bundle> customToolbarButtons = new ArrayList<Bundle>();
-
-        Bundle firstCustomButton = new Bundle();
-        Bundle secondCustomButton = new Bundle();
-
-        firstCustomButton.putString("text", "Button one");
-        firstCustomButton.putString("icon", "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png");
-        firstCustomButton.putString("id", "btn1");
-
-        secondCustomButton.putString("text", "Button two");
-        secondCustomButton.putString("icon", "https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png");
-        secondCustomButton.putString("id", "btn2");
-
-        customToolbarButtons.add(firstCustomButton);
-        customToolbarButtons.add(secondCustomButton);
-
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setServerURL(buildURL("https://8x8.vc/8x8/calin.chitu"))
+            .setServerURL(buildURL("https://stage.8x8.vc"))
+            .setRoom("MonthlyEndorsementsRebuildConsequently")
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
-            .setConfigOverride("requireDisplayName", true)
-            .setConfigOverride("customToolbarButtons", customToolbarButtons)
             .build();
-
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
-
 
     private void resolveRestrictions() {
         RestrictionsManager manager =
