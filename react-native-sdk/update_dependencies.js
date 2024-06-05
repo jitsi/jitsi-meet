@@ -21,6 +21,11 @@ function updateDependencies() {
 
     for (const key in RNSDKpackageJSON.peerDependencies) {
         if (!packageJSON.dependencies.hasOwnProperty(key)) {
+
+            if (packageJSON.devDependencies.hasOwnProperty('@react-native/metro-config')) {
+                continue;
+            }
+
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
         }
