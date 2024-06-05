@@ -229,6 +229,14 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         })));
 
     conference.on(
+        JitsiConferenceEvents.SILENT_STATUS_CHANGED,
+        (id: string, isSilent: boolean) => dispatch(participantUpdated({
+            conference,
+            id,
+            isSilent
+        })));
+
+    conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
         (dominant: string, previous: string[], silence: boolean | string) => {
             dispatch(dominantSpeakerChanged(dominant, previous, Boolean(silence), conference));
