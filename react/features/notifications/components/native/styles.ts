@@ -47,14 +47,14 @@ export default {
 
     contentText: {
         color: BaseTheme.palette.text04,
-        marginLeft: BaseTheme.spacing[5],
+        marginLeft: BaseTheme.spacing[4],
         marginTop: BaseTheme.spacing[1]
     },
 
     contentTextTitle: {
         color: BaseTheme.palette.text04,
         fontWeight: 'bold',
-        marginLeft: BaseTheme.spacing[5],
+        marginLeft: BaseTheme.spacing[4],
         marginTop: BaseTheme.spacing[2]
     },
 
@@ -89,9 +89,8 @@ export default {
     },
 
     iconContainer: {
-        left: BaseTheme.spacing[1],
         position: 'absolute',
-        top: BaseTheme.spacing[2]
+        top: 12
     },
 
     btn: {
