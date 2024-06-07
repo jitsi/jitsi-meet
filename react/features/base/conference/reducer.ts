@@ -289,9 +289,9 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
     });
 
 /**
- * Extracts the height to quality level mapping from the new config.
+ * Processes subject and local subject of the conference based on the new config.
  *
- * @param {Object} state - The Redux state of feature base/lastn.
+ * @param {Object} state - The Redux state of feature base/conference.
  * @param {Action} action - The Redux action SET_CONFIG to reduce.
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
