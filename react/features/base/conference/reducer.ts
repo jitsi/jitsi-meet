@@ -3,6 +3,8 @@ import { AnyAction } from 'redux';
 import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { ISpeakerStats } from '../../speaker-stats/reducer';
+import { SET_CONFIG } from '../config/actionTypes';
+import { IConfig } from '../config/configType';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -278,10 +280,32 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
                 ...state,
                 metadata: action.metadata
             };
+
+        case SET_CONFIG:
+            return _setConfig(state, action);
         }
 
         return state;
     });
+
+/**
+ * Processes subject and local subject of the conference based on the new config.
+ *
+ * @param {Object} state - The Redux state of feature base/conference.
+ * @param {Action} action - The Redux action SET_CONFIG to reduce.
+ * @private
+ * @returns {Object} The new state after the reduction of the specified action.
+ */
+function _setConfig(state: IConferenceState, { config }: { config: IConfig; }) {
+    const { localSubject, subject } = config;
+
+    return {
+        ...state,
+        localSubject,
+        pendingSubjectChange: subject,
+        subject: undefined
+    };
+}
 
 /**
  * Reduces a specific Redux action AUTH_STATUS_CHANGED of the feature
@@ -606,10 +630,7 @@ function _setRoom(state: IConferenceState, action: AnyAction) {
      */
     return assign(state, {
         error: undefined,
-        localSubject: undefined,
-        pendingSubjectChange: undefined,
-        room,
-        subject: undefined
+        room
     });
 }
 
