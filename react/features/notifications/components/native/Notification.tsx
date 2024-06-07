@@ -161,7 +161,7 @@ const Notification = ({
                             <Text
                                 key = { index }
                                 style = { styles.contentText }>
-                                {replaceNonUnicodeEmojis(line)}
+                                { replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))
                     }
@@ -200,7 +200,7 @@ const Notification = ({
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.contentContainer }>
-                    {_renderContent()}
+                    { _renderContent() }
                 </View>
                 <View style = { styles.btnContainer as ViewStyle }>
                     { mapAppearanceToButtons() }
