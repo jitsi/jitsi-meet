@@ -151,7 +151,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         }
 
         dispatch(setLocationURL(locationURL));
-        dispatch(setConfig(config, locationURL));
+        dispatch(setConfig(config));
         dispatch(setRoom(room));
 
         if (!room) {
