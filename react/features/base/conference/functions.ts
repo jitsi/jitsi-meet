@@ -185,18 +185,12 @@ export function forEachConference(
 export function getConferenceName(stateful: IStateful): string {
     const state = toState(stateful);
     const { callee } = state['features/base/jwt'];
-    const {
-        callDisplayName,
-        localSubject: configLocalSubject,
-        subject: configSubject
-    } = state['features/base/config'];
+    const { callDisplayName } = state['features/base/config'];
     const { localSubject, pendingSubjectChange, room, subject } = getConferenceState(state);
 
-    return (pendingSubjectChange
-        || configSubject
+    return (localSubject
+        || pendingSubjectChange
         || subject
-        || configLocalSubject
-        || localSubject
         || callDisplayName
         || callee?.name
         || (room && safeStartCase(safeDecodeURIComponent(room)))) ?? '';
