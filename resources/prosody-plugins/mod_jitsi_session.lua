@@ -26,5 +26,5 @@ function init_session(event)
     end
 end
 
-module:hook_global("bosh-session", init_session);
-module:hook_global("websocket-session", init_session);
+module:hook_global("bosh-session", init_session, 1);
+module:hook_global("websocket-session", init_session, 1);
