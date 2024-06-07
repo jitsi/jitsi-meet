@@ -126,13 +126,6 @@ export function constructOptions(state: IReduxState) {
     const { bosh, preferBosh, flags } = options;
     let { websocket } = options;
 
-    // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === 'ReactNative') {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
-            websocket = undefined;
-        }
-    }
-
     if (preferBosh) {
         websocket = undefined;
     }

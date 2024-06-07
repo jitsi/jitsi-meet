@@ -544,7 +544,6 @@ export interface IConfig {
         assumeBandwidth?: boolean;
         disableE2EE?: boolean;
         dumpTranscript?: boolean;
-        mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
         skipInterimTranscriptions?: boolean;
