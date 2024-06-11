@@ -143,28 +143,38 @@ const PollCreate = (props: AbstractProps) => {
     return (
         <View style = { chatStyles.pollCreateContainer as ViewStyle }>
             <View style = { chatStyles.pollCreateSubContainer as ViewStyle }>
-                <Input
-                    autoFocus = { true }
-                    blurOnSubmit = { false }
-                    customStyles = {{ container: dialogStyles.customContainer }}
-                    label = { t('polls.create.pollQuestion') }
-                    maxLength = { CHAR_LIMIT }
-                    multiline = { true }
-                    onChange = { setQuestion }
-                    onSubmitEditing = { onQuestionKeyDown }
-                    placeholder = { t('polls.create.questionPlaceholder') }
-
-                    // This is set to help the touch event not be propagated to any subviews.
-                    pointerEvents = { 'auto' }
-                    value = { question } />
-                {/* @ts-ignore */}
-                <Divider style = { styles.fieldSeparator } />
                 <FlatList
-                    data = { answers }
-                    extraData = { answers }
+
+                    // eslint-disable-next-line react/jsx-no-bind
+                    ListHeaderComponent = { () => (
+                        <>
+                            <Input
+                                autoFocus = { true }
+                                blurOnSubmit = { false }
+                                customStyles = {{ container: dialogStyles.customContainer }}
+                                label = { t('polls.create.pollQuestion') }
+                                maxLength = { CHAR_LIMIT }
+                                multiline = { true }
+                                onChange = { setQuestion }
+                                onSubmitEditing = { onQuestionKeyDown }
+                                placeholder = { t('polls.create.questionPlaceholder') }
+
+                                // This is set to help the touch event not be propagated to any subviews.
+                                pointerEvents = { 'auto' }
+                                value = { question } />
+                            <Divider style = { styles.fieldSeparator } />
+                            <FlatList
+                                data = { answers }
+                                extraData = { answers }
+                                keyExtractor = { (item, index) => index.toString() }
+                                ref = { answerListRef }
+                                renderItem = { renderListItem } />
+                        </>
+                    ) }
+                    data = { [] as ReadonlyArray<undefined> }
                     keyExtractor = { (item, index) => index.toString() }
-                    ref = { answerListRef }
-                    renderItem = { renderListItem } />
+                    renderItem = { null }
+                    windowSize = { 2 } />
                 <View style = { pollCreateButtonsContainerStyles as ViewStyle }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
