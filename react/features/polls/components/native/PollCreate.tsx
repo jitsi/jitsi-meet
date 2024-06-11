@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import { FlatList, Platform, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
@@ -140,41 +140,35 @@ const PollCreate = (props: AbstractProps) => {
         );
     };
 
+    const renderListHeaderComponent = useMemo(() => (
+        <>
+            <Input
+                autoFocus = { true }
+                blurOnSubmit = { false }
+                customStyles = {{ container: dialogStyles.customContainer }}
+                label = { t('polls.create.pollQuestion') }
+                maxLength = { CHAR_LIMIT }
+                multiline = { true }
+                onChange = { setQuestion }
+                placeholder = { t('polls.create.questionPlaceholder') }
+
+                // This is set to help the touch event not be propagated to any subviews.
+                pointerEvents = { 'auto' }
+                value = { question } />
+            <Divider style = { styles.fieldSeparator } />
+        </>
+    ), [ question ])
+
     return (
         <View style = { chatStyles.pollCreateContainer as ViewStyle }>
             <View style = { chatStyles.pollCreateSubContainer as ViewStyle }>
                 <FlatList
-
-                    // eslint-disable-next-line react/jsx-no-bind
-                    ListHeaderComponent = { () => (
-                        <>
-                            <Input
-                                autoFocus = { true }
-                                blurOnSubmit = { false }
-                                customStyles = {{ container: dialogStyles.customContainer }}
-                                label = { t('polls.create.pollQuestion') }
-                                maxLength = { CHAR_LIMIT }
-                                multiline = { true }
-                                onChange = { setQuestion }
-                                onSubmitEditing = { onQuestionKeyDown }
-                                placeholder = { t('polls.create.questionPlaceholder') }
-
-                                // This is set to help the touch event not be propagated to any subviews.
-                                pointerEvents = { 'auto' }
-                                value = { question } />
-                            <Divider style = { styles.fieldSeparator } />
-                            <FlatList
-                                data = { answers }
-                                extraData = { answers }
-                                keyExtractor = { (item, index) => index.toString() }
-                                ref = { answerListRef }
-                                renderItem = { renderListItem } />
-                        </>
-                    ) }
-                    data = { [] as ReadonlyArray<undefined> }
+                    ListHeaderComponent = { renderListHeaderComponent }
+                    data = { answers }
+                    extraData = { answers }
                     keyExtractor = { (item, index) => index.toString() }
-                    renderItem = { null }
-                    windowSize = { 2 } />
+                    ref = { answerListRef }
+                    renderItem = { renderListItem } />
                 <View style = { pollCreateButtonsContainerStyles as ViewStyle }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
