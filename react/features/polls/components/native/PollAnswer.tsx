@@ -12,7 +12,7 @@ import { editPoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
-import { pollsStyles, dialogStyles } from './styles';
+import { dialogStyles, pollsStyles } from './styles';
 
 const PollAnswer = (props: AbstractProps) => {
     const {

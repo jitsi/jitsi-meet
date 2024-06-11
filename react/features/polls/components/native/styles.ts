@@ -231,5 +231,5 @@ export const pollsStyles = createStyleSheet({
         borderBottomWidth: 1,
         borderColor: BaseTheme.palette.ui05,
         marginTop: BaseTheme.spacing[3]
-    },
+    }
 });

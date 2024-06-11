@@ -6,7 +6,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
-import { pollsStyles, dialogStyles, resultsStyles } from './styles';
+import { dialogStyles, pollsStyles, resultsStyles } from './styles';
 
 /**
  * Component that renders the poll results.

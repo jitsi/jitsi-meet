@@ -6,12 +6,12 @@ import { useDispatch } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';;
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
-import { pollsStyles, dialogStyles } from './styles';
+import { dialogStyles, pollsStyles } from './styles';
 
 const PollCreate = (props: AbstractProps) => {
     const {
