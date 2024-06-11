@@ -109,7 +109,7 @@ export const resultsStyles = createStyleSheet({
     }
 });
 
-export const chatStyles = createStyleSheet({
+export const pollsStyles = createStyleSheet({
 
     noPollContent: {
         alignItems: 'center',
@@ -227,26 +227,9 @@ export const chatStyles = createStyleSheet({
         marginHorizontal: BaseTheme.spacing[1]
     },
 
-    unreadPollsCounterContainer: {
-        display: 'flex',
-        flexDirection: 'row'
+    fieldSeparator: {
+        borderBottomWidth: 1,
+        borderColor: BaseTheme.palette.ui05,
+        marginTop: BaseTheme.spacing[3]
     },
-
-    unreadPollsCounterDescription: {
-        color: BaseTheme.palette.text01
-    },
-
-    unreadPollsCounterCircle: {
-        backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: BaseTheme.spacing[3] / 2,
-        height: BaseTheme.spacing[3],
-        justifyContent: 'center',
-        marginLeft: BaseTheme.spacing[2],
-        width: BaseTheme.spacing[3]
-    },
-
-    unreadPollsCounter: {
-        alignSelf: 'center',
-        color: BaseTheme.palette.text04
-    }
 });

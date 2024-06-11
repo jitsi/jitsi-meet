@@ -6,14 +6,12 @@ import { useDispatch } from 'react-redux';
 
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import styles
-    from '../../../settings/components/native/styles';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';;
 import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
-import { chatStyles, dialogStyles } from './styles';
+import { pollsStyles, dialogStyles } from './styles';
 
 const PollCreate = (props: AbstractProps) => {
     const {
@@ -98,7 +96,7 @@ const PollCreate = (props: AbstractProps) => {
     );
 
     const pollCreateButtonsContainerStyles = Platform.OS === 'android'
-        ? chatStyles.pollCreateButtonsContainerAndroid : chatStyles.pollCreateButtonsContainerIos;
+        ? pollsStyles.pollCreateButtonsContainerAndroid : pollsStyles.pollCreateButtonsContainerIos;
 
     /* eslint-disable react/jsx-no-bind */
     const renderListItem = ({ index }: { index: number; }) => {
@@ -154,13 +152,13 @@ const PollCreate = (props: AbstractProps) => {
                 // This is set to help the touch event not be propagated to any subviews.
                 pointerEvents = { 'auto' }
                 value = { question } />
-            <Divider style = { styles.fieldSeparator } />
+            <Divider style = { pollsStyles.fieldSeparator as ViewStyle } />
         </>
     ), [ question ]);
 
     return (
-        <View style = { chatStyles.pollCreateContainer as ViewStyle }>
-            <View style = { chatStyles.pollCreateSubContainer as ViewStyle }>
+        <View style = { pollsStyles.pollCreateContainer as ViewStyle }>
+            <View style = { pollsStyles.pollCreateSubContainer as ViewStyle }>
                 <FlatList
                     ListHeaderComponent = { renderListHeaderComponent }
                     data = { answers }
@@ -178,10 +176,10 @@ const PollCreate = (props: AbstractProps) => {
                             addAnswer();
                             requestFocus(answers.length);
                         } }
-                        style = { chatStyles.pollCreateAddButton }
+                        style = { pollsStyles.pollCreateAddButton }
                         type = { SECONDARY } />
                     <View
-                        style = { chatStyles.buttonRow as ViewStyle }>
+                        style = { pollsStyles.buttonRow as ViewStyle }>
                         <Button
                             accessibilityLabel = 'polls.create.cancel'
                             labelKey = 'polls.create.cancel'
@@ -191,14 +189,14 @@ const PollCreate = (props: AbstractProps) => {
                                 && editingPoll?.editing
                                 && dispatch(editPoll(editingPollId, false));
                             } }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
                             accessibilityLabel = 'polls.create.save'
                             disabled = { isSubmitDisabled }
                             labelKey = 'polls.create.save'
                             onClick = { onSubmit }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { PRIMARY } />
                     </View>
                 </View>

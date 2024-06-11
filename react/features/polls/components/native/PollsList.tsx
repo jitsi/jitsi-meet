@@ -10,7 +10,7 @@ import { IconMessage } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import PollItem from './PollItem';
-import { chatStyles } from './styles';
+import { pollsStyles } from './styles';
 
 interface IPollListProps {
     setCreateMode: (mode: boolean) => void;
@@ -42,12 +42,12 @@ const PollsList = ({ setCreateMode }: IPollListProps) => {
         <>
             {
                 listPolls.length === 0
-                && <View style = { chatStyles.noPollContent as ViewStyle }>
+                && <View style = { pollsStyles.noPollContent as ViewStyle }>
                     <Icon
                         color = { BaseTheme.palette.icon03 }
                         size = { 160 }
                         src = { IconMessage } />
-                    <Text style = { chatStyles.noPollText as TextStyle } >
+                    <Text style = { pollsStyles.noPollText as TextStyle } >
                         {
                             t('polls.results.empty')
                         }
