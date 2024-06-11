@@ -36,6 +36,8 @@ const ParticipantsPane = () => {
 
             { /* Fixes warning regarding nested lists */ }
             <FlatList
+
+                // eslint-disable-next-line react/jsx-no-bind
                 ListHeaderComponent = { renderListHeaderComponent }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }

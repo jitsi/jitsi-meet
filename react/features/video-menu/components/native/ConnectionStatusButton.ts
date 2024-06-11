@@ -28,6 +28,7 @@ class ConnectionStatusButton extends AbstractButton<IProps> {
      */
     _handleClick() {
         const { dispatch, participantID } = this.props;
+
         dispatch(showConnectionStatus(participantID));
     }
 }

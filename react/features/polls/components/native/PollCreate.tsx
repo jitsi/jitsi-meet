@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
@@ -119,7 +119,6 @@ const PollCreate = (props: AbstractProps) => {
                     id = { `polls-answer-input-${index}` }
                     label = { t('polls.create.pollOption', { index: index + 1 }) }
                     maxLength = { CHAR_LIMIT }
-                    multiline = { true }
                     onChange = { name => setAnswer(index,
                         {
                             name,
@@ -148,8 +147,8 @@ const PollCreate = (props: AbstractProps) => {
                 customStyles = {{ container: dialogStyles.customContainer }}
                 label = { t('polls.create.pollQuestion') }
                 maxLength = { CHAR_LIMIT }
-                multiline = { true }
                 onChange = { setQuestion }
+                onSubmitEditing = { onQuestionKeyDown }
                 placeholder = { t('polls.create.questionPlaceholder') }
 
                 // This is set to help the touch event not be propagated to any subviews.
@@ -157,7 +156,7 @@ const PollCreate = (props: AbstractProps) => {
                 value = { question } />
             <Divider style = { styles.fieldSeparator } />
         </>
-    ), [ question ])
+    ), [ question ]);
 
     return (
         <View style = { chatStyles.pollCreateContainer as ViewStyle }>

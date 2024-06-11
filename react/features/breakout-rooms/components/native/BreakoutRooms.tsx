@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -45,7 +45,7 @@ const BreakoutRooms = () => {
                     roomId = { room.id } />))
             }
         </>
-    ), [ showAutoAssign, inBreakoutRoom, isBreakoutRoomsSupported, rooms ])
+    ), [ showAutoAssign, inBreakoutRoom, isBreakoutRoomsSupported, rooms ]);
 
     return (
         <JitsiScreen
