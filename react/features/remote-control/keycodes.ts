@@ -40,7 +40,7 @@ export const KEYS = {
     ALT: 'alt',
     CONTROL: 'control',
     SHIFT: 'shift',
-    CAPS_LOCK: 'caps_lock', // not supported by robotjs
+    CAPS_LOCK: 'capslock',
     SPACE: 'space',
     PRINTSCREEN: 'printscreen',
     INSERT: 'insert',
