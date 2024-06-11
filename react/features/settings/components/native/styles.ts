@@ -108,10 +108,10 @@ export default {
      * Field container style for all but last row {@code View}.
      */
     fieldSeparator: {
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[4],
         borderBottomWidth: 1,
         borderColor: BaseTheme.palette.ui05,
-        marginBottom: BaseTheme.spacing[3]
+        marginVertical: BaseTheme.spacing[3]
     },
 
     /**
