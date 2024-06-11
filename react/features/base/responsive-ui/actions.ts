@@ -35,6 +35,10 @@ const REDUCED_UI_THRESHOLD = 300;
  */
 export function clientResized(clientWidth: number, clientHeight: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (!clientWidth && !clientHeight) {
+            return;
+        }
+
         let availableWidth = clientWidth;
 
         if (navigator.product !== 'ReactNative') {
