@@ -83,13 +83,18 @@ class LocalVideoMenu extends PureComponent<IProps> {
             styles: bottomSheetStyles.buttons
         };
 
+        const connectionStatusButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
+        };
+
         return (
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
                 { _showDemote && <DemoteToVisitorButton { ...buttonProps } /> }
-                <ConnectionStatusButton { ...buttonProps } />
+                <ConnectionStatusButton { ...connectionStatusButtonProps } />
             </BottomSheet>
         );
     }
