@@ -29,12 +29,16 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED: {
-        const {
-            innerHeight,
-            innerWidth
-        } = window;
+        const { clientHeight = 0, clientWidth = 0 } = store.getState()['features/base/responsive-ui'];
 
-        store.dispatch(clientResized(innerWidth, innerHeight));
+        if (!clientHeight && !clientWidth) {
+            const {
+                innerHeight,
+                innerWidth
+            } = window;
+
+            store.dispatch(clientResized(innerWidth, innerHeight));
+        }
         break;
     }
     }
