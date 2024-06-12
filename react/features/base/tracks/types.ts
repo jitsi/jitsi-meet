@@ -44,6 +44,7 @@ export interface ITrackOptions {
  * any.
  */
 export interface ITrack {
+    codec: string;
     getOriginalStream: Function;
     isReceivingData: boolean;
     jitsiTrack: any;
