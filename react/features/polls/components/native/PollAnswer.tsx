@@ -12,7 +12,7 @@ import { editPoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
-import { chatStyles, dialogStyles } from './styles';
+import { dialogStyles, pollsStyles } from './styles';
 
 const PollAnswer = (props: AbstractProps) => {
     const {
@@ -39,17 +39,17 @@ const PollAnswer = (props: AbstractProps) => {
                 t('polls.by', { name: localParticipant?.name })
             }
             </Text>
-            <View style = { chatStyles.answerContent as ViewStyle }>
+            <View style = { pollsStyles.answerContent as ViewStyle }>
                 {
                     poll.answers.map((answer, index: number) => (
                         <View
                             key = { index }
-                            style = { chatStyles.switchRow as ViewStyle } >
+                            style = { pollsStyles.switchRow as ViewStyle } >
                             <Switch
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
                                 onChange = { state => setCheckbox(index, state) } />
-                            <Text style = { chatStyles.switchLabel as TextStyle }>
+                            <Text style = { pollsStyles.switchLabel as TextStyle }>
                                 { answer.name }
                             </Text>
                         </View>
@@ -58,7 +58,7 @@ const PollAnswer = (props: AbstractProps) => {
             </View>
             {
                 pollSaved
-                    ? <View style = { chatStyles.buttonRow as ViewStyle }>
+                    ? <View style = { pollsStyles.buttonRow as ViewStyle }>
                         <Button
                             accessibilityLabel = 'polls.answer.edit'
                             labelKey = 'polls.answer.edit'
@@ -66,28 +66,28 @@ const PollAnswer = (props: AbstractProps) => {
                                 setCreateMode(true);
                                 dispatch(editPoll(pollId, true));
                             } }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
                             accessibilityLabel = 'polls.answer.send'
                             labelKey = 'polls.answer.send'
                             onClick = { sendPoll }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { PRIMARY } />
                     </View>
-                    : <View style = { chatStyles.buttonRow as ViewStyle }>
+                    : <View style = { pollsStyles.buttonRow as ViewStyle }>
                         <Button
                             accessibilityLabel = 'polls.answer.skip'
                             labelKey = 'polls.answer.skip'
                             onClick = { changingVote ? skipChangeVote : skipAnswer }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { SECONDARY } />
                         <Button
                             accessibilityLabel = 'polls.answer.submit'
                             disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                             labelKey = 'polls.answer.submit'
                             onClick = { submitAnswer }
-                            style = { chatStyles.pollCreateButton }
+                            style = { pollsStyles.pollCreateButton }
                             type = { PRIMARY } />
                     </View>
             }

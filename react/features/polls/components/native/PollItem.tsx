@@ -6,7 +6,7 @@ import { shouldShowResults } from '../../functions';
 
 import PollAnswer from './PollAnswer';
 import PollResults from './PollResults';
-import { chatStyles } from './styles';
+import { pollsStyles } from './styles';
 
 interface IProps {
 
@@ -27,7 +27,7 @@ const PollItem = ({ pollId, setCreateMode }: IProps) => {
 
     return (
         <View
-            style = { chatStyles.pollItemContainer as ViewStyle }>
+            style = { pollsStyles.pollItemContainer as ViewStyle }>
             { showResults
                 ? <PollResults
                     key = { pollId }
