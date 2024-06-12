@@ -40,7 +40,7 @@ import {
     getTrackByJitsiTrack
 } from './functions';
 import logger from './logger';
-import { ITrackOptions } from './types';
+import { ITrack, ITrackOptions } from './types';
 
 /**
  * Add a given local track to the conference.
@@ -447,6 +447,32 @@ export function trackAdded(track: any) {
                 videoType: track.videoType
             }
         });
+    };
+}
+
+/**
+ * Create an action for when a track's codec has been signaled to have been changed.
+ *
+ * @param {JitsiLocalTrack} track - JitsiLocalTrack instance.
+ * @param {string} codec - The video codec.
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
+ */
+export function trackCodecChanged(track: ITrack, codec: string): {
+    track: {
+        codec: string;
+        jitsiTrack: any;
+    };
+    type: 'TRACK_UPDATED';
+} {
+    return {
+        type: TRACK_UPDATED,
+        track: {
+            codec,
+            jitsiTrack: track
+        }
     };
 }
 

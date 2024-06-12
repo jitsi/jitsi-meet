@@ -4,6 +4,8 @@ import { IJitsiConference } from '../base/conference/reducer';
 import {
     JitsiConnectionQualityEvents
 } from '../base/lib-jitsi-meet';
+import { trackCodecChanged } from '../base/tracks/actions.any';
+import { getLocalTracks } from '../base/tracks/functions.any';
 
 /**
  * Contains all the callbacks to be notified when stats are updated.
@@ -129,6 +131,10 @@ const statsEmitter = {
             codec: allUserCodecs[localUserId as keyof typeof allUserCodecs]
         });
 
+        modifiedLocalStats.codec
+            && Object.keys(modifiedLocalStats.codec).length
+            && this._updateLocalCodecs(modifiedLocalStats.codec);
+
         this._emitStatsUpdate(localUserId, modifiedLocalStats);
 
         // Get all the unique user ids from the framerate and resolution stats
@@ -162,6 +168,33 @@ const statsEmitter = {
 
                 this._emitStatsUpdate(id, remoteUserStats);
             });
+    },
+
+    /**
+     * Updates the codec associated with the local tracks.
+     * This is currently used for torture tests.
+     *
+     * @param {any} codecs - Codec information per local SSRC.
+     * @returns {void}
+     */
+    _updateLocalCodecs(codecs: any) {
+        if (typeof APP !== 'undefined') {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const localTracks = getLocalTracks(tracks);
+
+            for (const track of localTracks) {
+                const ssrc = track.jitsiTrack?.getSsrc();
+
+                if (ssrc && Object.keys(codecs).find(key => Number(key) === ssrc)) {
+                    const codecsPerSsrc = codecs[ssrc];
+                    const codec = codecsPerSsrc.audio ?? codecsPerSsrc.video;
+
+                    if (track.codec !== codec) {
+                        APP.store.dispatch(trackCodecChanged(track.jitsiTrack, codec));
+                    }
+                }
+            }
+        }
     }
 };
 
