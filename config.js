@@ -1767,7 +1767,7 @@ var config = {
     //     // to control the performance.
     //     userLimit: 25,
     //     // The url for more info about the whiteboard and its usage limitations.
-    //     limitUrl: 'https://example.com/blog/whiteboard-limits,
+    //     limitUrl: 'https://example.com/blog/whiteboard-limits',
     // },
 
     // The watchRTC initialize config params as described :
