@@ -45,3 +45,20 @@ export function toggleChat() {
         VideoLayout.onResize();
     };
 }
+
+/**
+ * Adds a reaction to a message.
+ *
+ * @param {string} participantID - The ID of the participant to whom the reaction is directed.
+ * @param {string} reactionType - The type of reaction (e.g., 'like').
+ * @returns {Function}
+ */
+export function addReaction(participantID: string, reactionType: string) {
+    return function(dispatch: IStore['dispatch']) {
+        dispatch({
+            type: 'ADD_REACTION',
+            participantID,
+            reactionType
+        });
+    };
+}

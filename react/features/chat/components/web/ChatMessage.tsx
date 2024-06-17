@@ -18,44 +18,41 @@ import ReactButton from './ReactButton.tsx';
 
 interface IProps extends IChatMessageProps {
     type: string;
-
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
-    return {
+const useStyles = makeStyles()((theme: Theme) => ({
+    chatMessageFooter: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: theme.spacing(1)
+    },
+    chatMessageFooterLeft: {
+        display: 'flex',
+        flexGrow: 1,
+        overflow: 'hidden'
+    },
+    chatMessageWrapper: {
+        maxWidth: '100%',
+    },
+    chatMessage: {
+        display: 'inline-flex',
+        padding: '12px',
+        backgroundColor: theme.palette.ui02,
+        borderRadius: '4px 12px 12px 12px',
+        maxWidth: '100%',
+        marginTop: '4px',
+        boxSizing: 'border-box' as const,
 
-        chatMessageFooter: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: theme.spacing(1)
+        '&.privatemessage': {
+            backgroundColor: theme.palette.support05
         },
+        '&.local': {
+            backgroundColor: theme.palette.ui04,
+            borderRadius: '12px 4px 12px 12px',
 
-        chatMessageFooterLeft: {
-            display: 'flex',
-            flexGrow: 1,
-            overflow: 'hidden'
-        },
-
-        chatMessageWrapper: {
-            maxWidth: '100%'
-
-            // Intended to make the icons faintly visible when the message is hovered, but does not work.
-            // '&:hover $reactButton, &:hover $kebabButton': {
-            //     opacity: 0.5
-            // },
-        },
-
-        chatMessage: {
-            display: 'inline-flex',
-            padding: '12px',
-            backgroundColor: theme.palette.ui02,
-            borderRadius: '4px 12px 12px 12px',
-            maxWidth: '100%',
-            marginTop: '4px',
-            boxSizing: 'border-box' as const,
-
+<<<<<<< HEAD
         '&.privatemessage': {
             backgroundColor: theme.palette.support05
         },
@@ -75,90 +72,88 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '&.lobbymessage': {
+=======
+            '&.privatemessage': {
+>>>>>>> f5a372911 (Add reaction button and kebab menu)
                 backgroundColor: theme.palette.support05
             }
         },
-
-        sideBySideContainer: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'left',
-            alignItems: 'center',
-            marginLeft: theme.spacing(1)
+        '&.error': {
+            backgroundColor: theme.palette.actionDanger,
+            borderRadius: 0,
+            fontWeight: 100
         },
-
-        reactionBox: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: theme.spacing(1),
-            backgroundColor: theme.palette.grey[800],
-            borderRadius: theme.shape.borderRadius,
-            padding: theme.spacing(0, 1)
-        },
-
-        reactionCount: {
-            fontSize: '0.8rem',
-            color: theme.palette.grey[400]
-        },
-
-        replyButton: {
-            padding: '2px'
-        },
-
-        replyWrapper: {
-            display: 'flex',
-            flexDirection: 'row' as const,
-            alignItems: 'center',
-            maxWidth: '100%'
-        },
-
-        messageContent: {
-            maxWidth: '100%',
-            overflow: 'hidden',
-            flex: 1
-        },
-
-        optionsButtonContainer: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: theme.spacing(1)
-
-        },
-
-        displayName: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text02,
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            marginBottom: theme.spacing(1)
-        },
-
-        userMessage: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01,
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word'
-        },
-
-        privateMessageNotice: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text02,
-            marginTop: theme.spacing(1)
-        },
-
-        timestamp: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text03,
-            marginTop: theme.spacing(1),
-            marginLeft: theme.spacing(1),
-            whiteSpace: 'nowrap',
-            flexShrink: 0
+        '&.lobbymessage': {
+            backgroundColor: theme.palette.support05
         }
-
-    };
-});
+    },
+    sideBySideContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'left',
+        alignItems: 'center',
+        marginLeft: theme.spacing(1)
+    },
+    reactionBox: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing(1),
+        backgroundColor: theme.palette.grey[800],
+        borderRadius: theme.shape.borderRadius,
+        padding: theme.spacing(0, 1)
+    },
+    reactionCount: {
+        fontSize: '0.8rem',
+        color: theme.palette.grey[400]
+    },
+    replyButton: {
+        padding: '2px'
+    },
+    replyWrapper: {
+        display: 'flex',
+        flexDirection: 'row' as const,
+        alignItems: 'center',
+        maxWidth: '100%'
+    },
+    messageContent: {
+        maxWidth: '100%',
+        overflow: 'hidden',
+        flex: 1
+    },
+    optionsButtonContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: theme.spacing(1)
+    },
+    displayName: {
+        ...withPixelLineHeight(theme.typography.labelBold),
+        color: theme.palette.text02,
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        marginBottom: theme.spacing(1)
+    },
+    userMessage: {
+        ...withPixelLineHeight(theme.typography.bodyShortRegular),
+        color: theme.palette.text01,
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word'
+    },
+    privateMessageNotice: {
+        ...withPixelLineHeight(theme.typography.labelRegular),
+        color: theme.palette.text02,
+        marginTop: theme.spacing(1)
+    },
+    timestamp: {
+        ...withPixelLineHeight(theme.typography.labelRegular),
+        color: theme.palette.text03,
+        marginTop: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        whiteSpace: 'nowrap',
+        flexShrink: 0
+    }
+}));
 
 /**
  * Renders a single chat message.
@@ -167,7 +162,7 @@ const useStyles = makeStyles()((theme: Theme) => {
  * @returns {JSX}
  */
 const ChatMessage = ({
-    // canReply,
+    canReply,
     canReact,
     kebabMenuSelfVisible,
     kebabMenuVisible,
@@ -217,15 +212,12 @@ const ChatMessage = ({
         return (
             <>
                 {message.reactions && message.reactions.length > 0 && (
-                    <div className = { classes.reactionBox }>
+                    <div className={classes.reactionBox}>
                         {message.reactions.slice(0, 3).map((reaction, index) => (
-                            <span
-                                key = { index }>
-                                {reaction}
-                            </span>
+                            <span key={index}>{reaction}</span>
                         ))}
                         {message.reactions.length > 3 && (
-                            <span className = { classes.reactionCount }>
+                            <span className={classes.reactionCount}>
                                 +{message.reactions.length - 3}
                             </span>
                         )}
@@ -250,30 +242,35 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, type) }
-            id = { message.messageId }
-            tabIndex = { -1 }>
-            <div className = { classes.sideBySideContainer }>
-                { kebabMenuSelfVisible
-                    && <div className = { classes.optionsButtonContainer }>
+            className={cx(classes.chatMessageWrapper, type)}
+            id={message.messageId}
+            tabIndex={-1}>
+            <div className={classes.sideBySideContainer}>
+                {kebabMenuSelfVisible && (
+                    <div className={classes.optionsButtonContainer}>
                         <KebabMenu />
                     </div>
-                }
+                )}
                 <div
-                    className = { cx('chatmessage', classes.chatMessage, type,
+                    className={cx(
+                        'chatmessage',
+                        classes.chatMessage,
+                        type,
                         message.privateMessage && 'privatemessage',
-                        message.lobbyChat && !knocking && 'lobbymessage') }>
-                    <div className = { classes.replyWrapper }>
-                        <div className = { cx('messagecontent', classes.messageContent) }>
+                        message.lobbyChat && !knocking && 'lobbymessage'
+                    )}>
+                    <div className={classes.replyWrapper}>
+                        <div className={cx('messagecontent', classes.messageContent)}>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
-                                <span className = 'sr-only'>
+                            <div className={cx('usermessage', classes.userMessage)}>
+                                <span className="sr-only">
                                     {message.displayName === message.recipient
                                         ? t('chat.messageAccessibleTitleMe')
-                                        : t('chat.messageAccessibleTitle',
-                                            { user: message.displayName })}
+                                        : t('chat.messageAccessibleTitle', {
+                                            user: message.displayName
+                                        })}
                                 </span>
-                                <Message text = { getMessageText(message) } />
+                                <Message text={getMessageText(message)} />
                                 <div className={classes.chatMessageFooter}>
                                     <div className={classes.chatMessageFooterLeft}>
                                         {message.reactions && message.reactions.length > 0 && (
@@ -284,48 +281,46 @@ const ChatMessage = ({
                                     </div>
                                     {_renderTimestamp()}
                                 </div>
-                    {canReply
-                        && (
-                            <div
-                                className = { classes.replyButtonContainer }>
-                                <PrivateMessageButton
-                                    isLobbyMessage = { message.lobbyChat }
-                                    participantID = { message.participantId } />
+                                {canReply && (
+                                    <div className={classes.replyButton}>
+                                        <PrivateMessageButton
+                                            isLobbyMessage={message.lobbyChat}
+                                            participantID={message.participantId}
+                                        />
+                                    </div>
+                                )}
+                                {(message.privateMessage || (message.lobbyChat && !knocking)) &&
+                                    _renderPrivateNotice()}
                             </div>
-                            {(message.privateMessage || (message.lobbyChat && !knocking))
-                                && _renderPrivateNotice()}
                         </div>
                     </div>
+                    {(canReact || kebabMenuVisible) && (
+                        <div className={classes.sideBySideContainer}>
+                            <div>
+                                {canReact && (
+                                    <div className={classes.optionsButtonContainer}>
+                                        <ReactButton
+                                            messageId={message.messageId}
+                                            receiverId={''}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                {kebabMenuVisible && (
+                                    <div className={classes.optionsButtonContainer}>
+                                        <KebabMenu
+                                            isLobbyMessage={message.lobbyChat}
+                                            message={message.message}
+                                            messageId={message.messageId}
+                                            participantId={message.messageId}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
-                {(canReact || kebabMenuVisible)
-                    && <div
-                        className = { classes.sideBySideContainer }>
-                        <div>
-                            {canReact
-                            && (
-                                <div
-                                    className = { classes.optionsButtonContainer }>
-                                    <ReactButton
-                                        messageId = { message.id }
-                                        receiverId = { '' } />
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            {kebabMenuVisible
-                            && (
-                                <div
-                                    className = { classes.optionsButtonContainer }>
-                                    <KebabMenu
-                                        isLobbyMessage = { message.lobbyChat }
-                                        message = { message.message }
-                                        messageId = { message.messageId }
-                                        participantId = { message.id } />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                }
             </div>
         </div>
     );
@@ -344,7 +339,7 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
     return {
         canReply: getCanReplyToMessage(state, message),
         canReact: message.id !== localParticipantId,
-        kebabMenuSelfVisible: message.id == localParticipantId,
+        kebabMenuSelfVisible: message.id === localParticipantId,
         kebabMenuVisible: message.id !== localParticipantId,
         knocking
     };
