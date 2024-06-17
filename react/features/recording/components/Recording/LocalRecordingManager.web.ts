@@ -41,10 +41,10 @@ interface ILocalRecordingManager {
 
 const getMimeType = (): string => {
     const possibleTypes = [
-        'video/mp4;codecs=h264',
-        'video/webm;codecs=h264',
         'video/webm;codecs=vp9',
-        'video/webm;codecs=vp8'
+        'video/webm;codecs=vp8',
+        'video/webm;codecs=h264',
+        'video/mp4;codecs=h264'
     ];
 
     for (const type of possibleTypes) {
@@ -55,7 +55,7 @@ const getMimeType = (): string => {
     throw new Error('No MIME Type supported by MediaRecorder');
 };
 
-const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
+const VIDEO_BIT_RATE = 1200000; // 2.5Mbps in bits
 const MAX_SIZE = 1073741824; // 1GB in bytes
 
 // Lazily initialize.
