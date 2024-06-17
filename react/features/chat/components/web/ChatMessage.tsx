@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material';
 import React from 'react';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -7,20 +8,27 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { sendReaction } from '../../actions.any.ts';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
+import KebabMenu from './KebabMenu.tsx';
 import PrivateMessageButton from './PrivateMessageButton';
+import ReactButton from './ReactButton.tsx';
+import KebabMenu from './KebabMenu.tsx';
 
 interface IProps extends IChatMessageProps {
-
     type: string;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         chatMessageWrapper: {
-            maxWidth: '100%'
+            maxWidth: '100%',
+            // Intended to make the icons faintly visible when the message is hovered, but does not work.
+            // '&:hover $reactButton, &:hover $kebabButton': {
+            //     opacity: 0.5
+            // },
         },
 
         chatMessage: {
@@ -32,13 +40,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: '4px',
             boxSizing: 'border-box' as const,
 
-            '&.privatemessage': {
-                backgroundColor: theme.palette.support05
-            },
-
-            '&.local': {
-                backgroundColor: theme.palette.ui04,
-                borderRadius: '12px 4px 12px 12px',
+        '&.privatemessage': {
+            backgroundColor: theme.palette.support05
+        },
+        '&.local': {
+            backgroundColor: theme.palette.ui04,
+            borderRadius: '12px 4px 12px 12px',
 
                 '&.privatemessage': {
                     backgroundColor: theme.palette.support05
@@ -56,6 +63,14 @@ const useStyles = makeStyles()((theme: Theme) => {
             }
         },
 
+        sideBySideContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'left',
+            alignItems: 'center',
+            marginLeft: theme.spacing(1)
+        },
+
         replyWrapper: {
             display: 'flex',
             flexDirection: 'row' as const,
@@ -69,10 +84,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             flex: 1
         },
 
-        replyButtonContainer: {
+        optionsButtonContainer: {
             display: 'flex',
-            alignItems: 'flex-start',
-            height: '100%'
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: theme.spacing(1)
+
         },
 
         replyButton: {
@@ -116,7 +133,10 @@ const useStyles = makeStyles()((theme: Theme) => {
  * @returns {JSX}
  */
 const ChatMessage = ({
-    canReply,
+    // canReply,
+    canReact,
+    kebabMenuSelfVisible,
+    kebabMenuVisible,
     knocking,
     message,
     showDisplayName,
@@ -134,8 +154,8 @@ const ChatMessage = ({
     function _renderDisplayName() {
         return (
             <div
-                aria-hidden = { true }
-                className = { cx('display-name', classes.displayName) }>
+                aria-hidden={true}
+                className={cx('display-name', classes.displayName)}>
                 {message.displayName}
             </div>
         );
@@ -148,9 +168,33 @@ const ChatMessage = ({
      */
     function _renderPrivateNotice() {
         return (
-            <div className = { classes.privateMessageNotice }>
+            <div className={classes.privateMessageNotice}>
                 {getPrivateNoticeMessage(message)}
             </div>
+        );
+    }
+
+    /**
+     * Renders the message reactions.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderReactions() {
+        return (
+            <>
+                {message.reactions && message.reactions.length > 0 && (
+                    <div className={classes.reactionBox}>
+                        {message.reactions.slice(0, 3).map((reaction, index) => (
+                            <span key={index}>{reaction}</span>
+                        ))}
+                        {message.reactions.length > 3 && (
+                            <span className={classes.reactionCount}>
+                                +{message.reactions.length - 3}
+                            </span>
+                        )}
+                    </div>
+                )}
+            </>
         );
     }
 
@@ -161,7 +205,7 @@ const ChatMessage = ({
      */
     function _renderTimestamp() {
         return (
-            <div className = { cx('timestamp', classes.timestamp) }>
+            <div className={cx('timestamp', classes.timestamp)}>
                 {getFormattedTimestamp(message)}
             </div>
         );
@@ -172,37 +216,57 @@ const ChatMessage = ({
             className = { cx(classes.chatMessageWrapper, type) }
             id = { message.messageId }
             tabIndex = { -1 }>
-            <div
-                className = { cx('chatmessage', classes.chatMessage, type,
-                    message.privateMessage && 'privatemessage',
-                    message.lobbyChat && !knocking && 'lobbymessage') }>
-                <div className = { classes.replyWrapper }>
-                    <div className = { cx('messagecontent', classes.messageContent) }>
-                        {showDisplayName && _renderDisplayName()}
-                        <div className = { cx('usermessage', classes.userMessage) }>
-                            <span className = 'sr-only'>
-                                {message.displayName === message.recipient
-                                    ? t('chat.messageAccessibleTitleMe')
-                                    : t('chat.messageAccessibleTitle',
-                                        { user: message.displayName })}
-                            </span>
-                            <Message text = { getMessageText(message) } />
-                        </div>
-                        {(message.privateMessage || (message.lobbyChat && !knocking))
-                            && _renderPrivateNotice()}
+            <div className = { classes.sideBySideContainer }>
+                { kebabMenuSelfVisible && 
+                    <div className = { classes.optionsButtonContainer }>
+                        <KebabMenu />
                     </div>
-                    {canReply
-                        && (
-                            <div
-                                className = { classes.replyButtonContainer }>
-                                <PrivateMessageButton
-                                    isLobbyMessage = { message.lobbyChat }
-                                    participantID = { message.participantId } />
+                }
+                <div
+                    className = { cx('chatmessage', classes.chatMessage, type,
+                        message.privateMessage && 'privatemessage',
+                        message.lobbyChat && !knocking && 'lobbymessage') }>
+                    <div className = { classes.replyWrapper }>
+                        <div className = { cx('messagecontent', classes.messageContent) }>
+                            {showDisplayName && _renderDisplayName()}
+                            <div className = { cx('usermessage', classes.userMessage) }>
+                                <span className = 'sr-only'>
+                                    {message.displayName === message.recipient
+                                        ? t('chat.messageAccessibleTitleMe')
+                                        : t('chat.messageAccessibleTitle',
+                                            { user: message.displayName })}
+                                </span>
+                                <Message text = { getMessageText(message) } />
                             </div>
-                        )}
+                            {(message.privateMessage || (message.lobbyChat && !knocking))
+                                && _renderPrivateNotice()}
+                        </div>
+                    </div>
                 </div>
+                {(canReact || kebabMenuVisible) &&
+                    <div
+                        className= { classes.sideBySideContainer }>
+                        <div>
+                        {canReact
+                            && (
+                                <div
+                                className = { classes.optionsButtonContainer }>
+                                    <ReactButton />
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                        {kebabMenuVisible
+                            && (
+                                <div
+                                    className = { classes.optionsButtonContainer }>
+                                    <KebabMenu />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                }
             </div>
-            {showTimestamp && _renderTimestamp()}
         </div>
     );
 };
@@ -215,9 +279,13 @@ const ChatMessage = ({
  */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
+    const localParticipantId = state['features/base/participants'].local?.id;
 
     return {
         canReply: getCanReplyToMessage(state, message),
+        canReact: message.id !== localParticipantId,
+        kebabMenuSelfVisible: message.id == localParticipantId,
+        kebabMenuVisible: message.id !== localParticipantId,
         knocking
     };
 }
