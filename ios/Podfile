@@ -45,7 +45,7 @@ target 'JitsiMeetSDK' do
   # Native pod dependencies
   #
 
-  pod 'CocoaLumberjack', '3.7.2'
+  pod 'CocoaLumberjack', '3.7.4'
   pod 'ObjectiveDropboxOfficial', '6.2.3'
 end
 
@@ -70,7 +70,7 @@ target 'JitsiMeetSDKLite' do
     # Native pod dependencies
     #
 
-    pod 'CocoaLumberjack', '3.7.2'
+    pod 'CocoaLumberjack', '3.7.4'
 end
 
 post_install do |installer|
