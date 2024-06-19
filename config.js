@@ -1689,7 +1689,7 @@ var config = {
     // },
 
     // Application logo url
-    // defaultLogoUrl: 'images/watermark.svg',
+    defaultLogoUrl: 'images/watermark-2.svg',
 
     // Settings for the Excalidraw whiteboard integration.
     // whiteboard: {
