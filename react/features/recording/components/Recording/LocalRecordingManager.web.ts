@@ -39,7 +39,11 @@ interface ILocalRecordingManager {
     totalSize: number;
 }
 
+const VIDEO_BIT_RATE = 1200000; // 2.5Mbps in bits
+const MAX_SIZE = 1073741824; // 1GB in bytes
+
 const getMimeType = (): string => {
+    // CacDi modified the order of mime type
     const possibleTypes = [
         'video/webm;codecs=vp9',
         'video/webm;codecs=vp8',
@@ -47,16 +51,20 @@ const getMimeType = (): string => {
         'video/mp4;codecs=h264'
     ];
 
+    // test to console
+    console.log('==========CACDI CONSOLE===========');
+    console.log('Bit rate setting: ', VIDEO_BIT_RATE);
+    console.log('Possible types array: ', possibleTypes.join(', '));
+
     for (const type of possibleTypes) {
         if (MediaRecorder.isTypeSupported(type)) {
+            console.log('Final support type: ', type);
+
             return type;
         }
     }
     throw new Error('No MIME Type supported by MediaRecorder');
 };
-
-const VIDEO_BIT_RATE = 1200000; // 2.5Mbps in bits
-const MAX_SIZE = 1073741824; // 1GB in bytes
 
 // Lazily initialize.
 let preferredMediaType: string;
