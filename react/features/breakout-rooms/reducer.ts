@@ -10,10 +10,12 @@ import { IRooms } from './types';
 
 const DEFAULT_STATE = {
     rooms: {},
-    roomCounter: 0
+    roomCounter: 0,
+    published: true
 };
 
 export interface IBreakoutRoomsState {
+    published: boolean;
     roomCounter: number;
     rooms: IRooms;
 }
@@ -29,12 +31,13 @@ ReducerRegistry.register<IBreakoutRoomsState>(FEATURE_KEY, (state = DEFAULT_STAT
             roomCounter: action.roomCounter
         };
     case UPDATE_BREAKOUT_ROOMS: {
-        const { roomCounter, rooms } = action;
+        const { roomCounter, rooms, published } = action;
 
         return {
             ...state,
             roomCounter,
-            rooms
+            rooms,
+            published
         };
     }
     case _RESET_BREAKOUT_ROOMS: {

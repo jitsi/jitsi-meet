@@ -214,3 +214,12 @@ export const isAutoAssignParticipantsVisible = (stateful: IStateful) => {
         && Object.keys(rooms).length > 1
         && !hideAutoAssignButton;
 };
+
+/**
+ * Determines whether breakout rooms are published to the participants.
+ *
+ * @param {IStateful} stateful - Global state.
+ * @returns {boolean}
+ */
+export const breakoutRoomsPublished = (stateful: IStateful) =>
+    toState(stateful)[FEATURE_KEY].published;
