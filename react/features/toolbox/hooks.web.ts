@@ -56,6 +56,7 @@ import { useTileViewButton } from '../video-layout/hooks';
 import VideoQualityButton from '../video-quality/components/VideoQualityButton.web';
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
+import { useGoLiveButtonButton } from '../visitors/hooks.web';
 import { useWhiteboardButton } from '../whiteboard/hooks';
 
 import { setFullScreen } from './actions.web';
@@ -283,6 +284,7 @@ export function useToolboxButtons(
     const participants = useParticipantPaneButton();
     const tileview = useTileViewButton();
     const cc = useClosedCaptionButton();
+    const golive = useGoLiveButtonButton();
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
     const linktosalesforce = useLinkToSalesforceButton();
@@ -313,6 +315,7 @@ export function useToolboxButtons(
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        golive,
         recording,
         livestreaming: liveStreaming,
         linktosalesforce,

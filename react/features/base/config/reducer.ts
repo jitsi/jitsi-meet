@@ -64,7 +64,6 @@ export interface IConfigState extends IConfig {
         obfuscateRoomName?: boolean;
     };
     disableRemoteControl?: boolean;
-    enableGoLive?: boolean;
     error?: Error;
     oldConfig?: {
         bosh?: string;

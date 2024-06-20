@@ -138,7 +138,6 @@ export default [
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableEncodedTransformSupport',
-    'enableGoLive',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLobbyChat',

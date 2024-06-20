@@ -1324,10 +1324,6 @@ var config = {
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html',
     // },
 
-    // Enables go live option, where main participants can click Go Live button
-    // that will let in the meeting all visitors that are waiting for it to start
-    // enableGoLive: false,
-
     // Options related to the remote participant menu.
     // remoteVideoMenu: {
     //     // Whether the remote video context menu to be rendered or not.
