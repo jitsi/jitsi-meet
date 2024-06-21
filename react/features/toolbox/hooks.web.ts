@@ -5,7 +5,7 @@ import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/Ana
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
 import { toggleDialog } from '../base/dialog/actions';
-import { isIosMobileBrowser } from '../base/environment/utils';
+import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
 import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -71,6 +71,7 @@ import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
+
 
 const microphone = {
     key: 'microphone',
@@ -207,7 +208,7 @@ function getDesktopSharingButton() {
  *  @returns {Object | undefined}
  */
 function getFullscreenButton() {
-    if (!isIosMobileBrowser()) {
+    if (!isIosMobileBrowser() || isIpadMobileBrowser()) {
         return fullscreen;
     }
 }
