@@ -1,9 +1,4 @@
 --- activate under main vhost
---- In /etc/hosts add:
---- vm1-ip-address visitors1.domain.com
---- vm1-ip-address conference.visitors1.domain.com
---- vm2-ip-address visitors2.domain.com
---- vm2-ip-address conference.visitors2.domain.com
 --- Enable in global modules: 's2s_bidi' and 'certs_all'
 --- Make sure 's2s' is not in modules_disabled
 --- Open port 5269 on the provider side and on the firewall on the machine (iptables -I INPUT 4 -p tcp -m tcp --dport 5269 -j ACCEPT)
