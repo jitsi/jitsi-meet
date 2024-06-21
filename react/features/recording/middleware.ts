@@ -101,7 +101,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             (recorderSession: any) => {
                 if (recorderSession) {
                     recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
-                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
+                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch, getState);
                 }
 
                 return;
@@ -133,7 +133,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(true, 'local');
+                APP.API.notifyRecordingStatusChanged(
+                    true, 'local', undefined, isRecorderTranscriptionsRunning(getState()));
             }
         } catch (err: any) {
             logger.error('Capture failed', err);
@@ -154,7 +155,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             };
 
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(false, 'local', err.message);
+                APP.API.notifyRecordingStatusChanged(
+                    false, 'local', err.message, isRecorderTranscriptionsRunning(getState()));
             }
 
             dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
@@ -172,7 +174,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(false, 'local');
+                APP.API.notifyRecordingStatusChanged(
+                    false, 'local', undefined, isRecorderTranscriptionsRunning(getState()));
             }
         }
         break;
@@ -237,7 +240,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                     }
 
                     if (typeof APP !== 'undefined') {
-                        APP.API.notifyRecordingStatusChanged(true, mode);
+                        APP.API.notifyRecordingStatusChanged(
+                            true, mode, undefined, isRecorderTranscriptionsRunning(state));
                     }
                 }
             } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
@@ -269,7 +273,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 }
 
                 if (typeof APP !== 'undefined') {
-                    APP.API.notifyRecordingStatusChanged(false, mode);
+                    APP.API.notifyRecordingStatusChanged(
+                        false, mode, undefined, isRecorderTranscriptionsRunning(state));
                 }
             }
         }
@@ -312,14 +317,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
  * in recording session.
  *
  * @private
- * @param {Object} recorderSession - The recorder session model from the
+ * @param {Object} session - The recorder session model from the
  * lib.
  * @param {Dispatch} dispatch - The Redux Dispatch function.
+ * @param {Function} getState - The Redux getState function.
  * @returns {void}
  */
-function _showRecordingErrorNotification(recorderSession: any, dispatch: IStore['dispatch']) {
-    const mode = recorderSession.getMode();
-    const error = recorderSession.getError();
+function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    const mode = session.getMode();
+    const error = session.getError();
     const isStreamMode = mode === JitsiMeetJS.constants.recording.mode.STREAM;
 
     switch (error) {
@@ -367,6 +373,6 @@ function _showRecordingErrorNotification(recorderSession: any, dispatch: IStore[
     }
 
     if (typeof APP !== 'undefined') {
-        APP.API.notifyRecordingStatusChanged(false, mode, error);
+        APP.API.notifyRecordingStatusChanged(false, mode, error, isRecorderTranscriptionsRunning(getState()));
     }
 }
