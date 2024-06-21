@@ -1446,6 +1446,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param { string } options.youtubeStreamKey - The youtube stream key.
      * @param { string } options.youtubeBroadcastID - The youtube broadcast ID.
      * @param {Object } options.extraMetadata - Any extra metadata params for file recording.
+     * @param { boolean } arg.transcription - Whether a transcription should be started or not.
      * @returns {void}
      */
     startRecording(options) {
@@ -1456,10 +1457,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Stops a recording or streaming session that is in progress.
      *
      * @param {string} mode - `file` or `stream`.
+     * @param {boolean} transcription - Whether the transcription needs to be stopped.
      * @returns {void}
      */
-    stopRecording(mode) {
-        this.executeCommand('stopRecording', mode);
+    stopRecording(mode, transcription) {
+        this.executeCommand('stopRecording', mode, transcription);
     }
 
     /**
