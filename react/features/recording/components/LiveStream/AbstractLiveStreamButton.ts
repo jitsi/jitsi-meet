@@ -2,13 +2,12 @@ import { IReduxState } from '../../../app/types';
 import { IconSites } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
-import { getActiveSession, isCloudRecordingRunning, isLiveStreamingButtonVisible } from '../../functions';
+import { isCloudRecordingRunning, isLiveStreamingButtonVisible, isLiveStreamingRunning } from '../../functions';
 
 import { getLiveStreaming } from './functions';
 
@@ -154,7 +153,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
 
     return {
         _disabled,
-        _isLiveStreamRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _isLiveStreamRunning: isLiveStreamingRunning(state),
         _tooltip,
         visible
     };

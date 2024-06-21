@@ -5,8 +5,8 @@ import { IReduxState } from '../../app/types';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { isRecorderTranscriptionsRunning } from '../../transcribing/functions';
 import {
-    getActiveSession,
     getSessionStatusToShow,
+    isLiveStreamingRunning,
     isRecordingRunning,
     isRemoteParticipantRecordingLocally
 } from '../functions';
@@ -81,9 +81,9 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
     const isLiveStreamingLabel = mode === JitsiRecordingConstants.mode.STREAM;
     const _isTranscribing = isRecorderTranscriptionsRunning(state);
-    const isLivestreamingRunning = Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+    const _isLivestreamingRunning = isLiveStreamingRunning(state);
     const _isVisible = isLiveStreamingLabel
-        ? isLivestreamingRunning // this is the livestreaming label
+        ? _isLivestreamingRunning // this is the livestreaming label
         : isRecordingRunning(state) || isRemoteParticipantRecordingLocally(state)
             || _isTranscribing; // this is the recording label
 

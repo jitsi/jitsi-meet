@@ -169,6 +169,16 @@ export function isCloudRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if there is a live streaming running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isLiveStreamingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+}
+
+/**
  * Returns true if there is a recording session running.
  *
  * @param {Object} state - The redux state to search in.
@@ -262,7 +272,7 @@ export function getRecordButtonProps(state: IReduxState) {
     }
 
     // disable the button if the livestreaming is running.
-    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+    if (visible && isLiveStreamingRunning(state)) {
         disabled = true;
         tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }
