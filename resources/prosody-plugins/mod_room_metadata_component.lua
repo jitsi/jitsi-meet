@@ -86,7 +86,9 @@ function room_created(event)
         return ;
     end
 
-    room.jitsiMetadata = {};
+    if not room.jitsiMetadata then
+        room.jitsiMetadata = {};
+    end
 end
 
 function on_message(event)
@@ -171,6 +173,10 @@ function process_main_muc_loaded(main_muc, host_module)
         local room = event.room;
 
         table.insert(event.form, getFormData(room));
+    end);
+    -- The room metadata was updated internally (from another module).
+    host_module:hook("room-metadata-changed", function(event)
+        broadcastMetadata(event.room);
     end);
 end
 
