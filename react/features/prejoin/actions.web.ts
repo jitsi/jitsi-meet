@@ -7,7 +7,7 @@ import { connect } from '../base/connection/actions';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
-import { replaceLocalTrack, trackAdded } from '../base/tracks/actions';
+import { replaceLocalTrack } from '../base/tracks/actions';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
@@ -20,7 +20,6 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 
 import {
-    PREJOIN_INITIALIZED,
     PREJOIN_JOINING_IN_PROGRESS,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -36,7 +35,7 @@ import {
     getDialOutCountry,
     getFullDialOutNumber,
     isJoinByPhoneDialogVisible
-} from './functions';
+} from './functions.any';
 import logger from './logger';
 
 const dialOutStatusToKeyMap = {
@@ -186,23 +185,6 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 }
 
 /**
- * Adds all the newly created tracks to store on init.
- *
- * @param {Object[]} tracks - The newly created tracks.
- * @param {Object} errors - The errors from creating the tracks.
- *
- * @returns {Function}
- */
-export function initPrejoin(tracks: Object[], errors: Object) {
-    return function(dispatch: IStore['dispatch']) {
-        dispatch(setPrejoinDeviceErrors(errors));
-        dispatch(prejoinInitialized());
-
-        tracks.forEach(track => dispatch(trackAdded(track)));
-    };
-}
-
-/**
  * Action used to start the conference.
  *
  * @param {Object} options - The config options that override the default ones (if any).
@@ -291,17 +273,6 @@ export function openDialInPage() {
         const dialInPage = getDialInfoPageURL(getState());
 
         openURLInBrowser(dialInPage, true);
-    };
-}
-
-/**
- * Action used to signal that the prejoin page has been initialized.
- *
- * @returns {Object}
- */
-function prejoinInitialized() {
-    return {
-        type: PREJOIN_INITIALIZED
     };
 }
 

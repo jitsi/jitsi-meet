@@ -155,8 +155,7 @@ import {
 import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
 import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin } from './react/features/prejoin/actions';
-import { isPrejoinPageVisible } from './react/features/prejoin/functions';
+import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
 import { isScreenAudioShared } from './react/features/screen-share/functions';
@@ -618,7 +617,7 @@ export default {
 
                 // Note: Not sure if initPrejoin needs to be async. But let's wait for it just to be sure the
                 // tracks are added.
-                await dispatch(initPrejoin(tracks, errors));
+                initPrejoin(tracks, errors, dispatch);
             } else {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
                 setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
