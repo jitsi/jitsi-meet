@@ -25,6 +25,7 @@ export const PARTICIPANT_MENU_BUTTONS = {
     GRANT_MODERATOR: 'grant-moderator',
     HIDE_SELF_VIEW: 'hide-self-view',
     KICK: 'kick',
+    LOWER_PARTICIPANT_HAND: 'lower-participant-hand',
     MUTE: 'mute',
     MUTE_OTHERS: 'mute-others',
     MUTE_OTHERS_VIDEO: 'mute-others-video',
