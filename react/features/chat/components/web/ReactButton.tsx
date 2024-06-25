@@ -6,7 +6,8 @@ import { IconFaceSmile } from "../../../base/icons/svg";
 import Button from "../../../base/ui/components/web/Button";
 import { BUTTON_TYPES } from "../../../base/ui/constants.any";
 import { addReaction } from "../../actions.web";
-import AddReaction from "./SmileysPanel";
+import EmojiSelector from "./EmojiSelector";
+import Popover from "../../../base/popover/components/Popover.web"; // Adjust the import path as needed
 
 const useStyles = makeStyles()((theme) => ({
     reactButton: {
@@ -22,7 +23,6 @@ const useStyles = makeStyles()((theme) => ({
         flexDirection: "row",
         position: "absolute",
         zIndex: 10,
-        marginTop: "-50px",
         backgroundColor: theme.palette.ui02,
         borderRadius: theme.shape.borderRadius,
         boxShadow: theme.shadows[3],
@@ -31,13 +31,19 @@ const useStyles = makeStyles()((theme) => ({
         position: "relative",
         display: "inline-block",
     },
+    popoverContainer: {
+        position: "absolute",
+        top: "100%", // Adjust this value to control the distance from the button
+        left: "50%",
+        transform: "translateX(-50%)",
+    },
 }));
 
-const ReactButton = ({ participantID, className }: IProps) => {
+const ReactButton = ({ participantID, className }) => {
     const { classes, cx } = useStyles();
     const dispatch = useDispatch();
     const [showSmileysPanel, setShowSmileysPanel] = useState(false);
-    const buttonRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef(null);
     const { t } = useTranslation();
 
     const handleReactClick = useCallback(() => {
@@ -45,7 +51,7 @@ const ReactButton = ({ participantID, className }: IProps) => {
     }, [showSmileysPanel]);
 
     const handleSmileySelect = useCallback(
-        (smiley: string) => {
+        (smiley) => {
             if (smiley) {
                 dispatch(addReaction(participantID, smiley));
             }
@@ -55,17 +61,29 @@ const ReactButton = ({ participantID, className }: IProps) => {
     );
 
     return (
-        <div ref = { buttonRef } className = { cx(classes.reactionPanelContainer, className) } >
+        <div ref={buttonRef} className={cx(classes.reactionPanelContainer, className)}>
             <Button
-                accessibilityLabel = { t("toolbar.accessibilityLabel.react") }
-                className = { classes.reactButton }
-                icon = { IconFaceSmile }
-                onClick = { handleReactClick }
-                type = { BUTTON_TYPES.TERTIARY }
+                accessibilityLabel={t("toolbar.accessibilityLabel.react")}
+                className={classes.reactButton}
+                icon={IconFaceSmile}
+                onClick={handleReactClick}
+                type={BUTTON_TYPES.TERTIARY}
             />
-            { showSmileysPanel && (
-                <div className = { classes.reactionPanel } >
-                    <AddReaction onSmileySelect = { handleSmileySelect } />
+            {showSmileysPanel && (
+                <div className={classes.popoverContainer}>
+                    <Popover
+                        className={classes.reactionPanel}
+                        content={<EmojiSelector onSmileySelect={handleSmileySelect} />}
+                        disablePopover={false}
+                        headingLabel={t("toolbar.react")}
+                        id="emoji-selector-popover"
+                        onPopoverClose={() => setShowSmileysPanel(false)}
+                        onPopoverOpen={() => setShowSmileysPanel(true)}
+                        position="top"
+                        visible={showSmileysPanel}
+                    >
+                        <div />
+                    </Popover>
                 </div>
             )}
         </div>
