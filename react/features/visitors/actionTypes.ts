@@ -40,6 +40,16 @@ export const VISITOR_PROMOTION_REQUEST = 'VISITOR_PROMOTION_REQUEST';
 export const CLEAR_VISITOR_PROMOTION_REQUEST = 'CLEAR_VISITOR_PROMOTION_REQUEST';
 
 /**
+ * The type of (redux) action which sets in visitor's queue.
+ *
+ * {
+ *     type: SET_IN_VISITORS_QUEUE,
+ *     value: boolean
+ * }
+ */
+export const SET_IN_VISITORS_QUEUE = 'SET_IN_VISITORS_QUEUE';
+
+/**
  * The type of (redux) action which sets visitor demote actor.
  *
  * {

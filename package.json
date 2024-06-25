@@ -41,6 +41,7 @@
     "@react-navigation/material-top-tabs": "6.6.3",
     "@react-navigation/native": "6.1.7",
     "@react-navigation/stack": "6.3.17",
+    "@stomp/stompjs": "7.0.0",
     "@svgr/webpack": "6.3.1",
     "@tensorflow/tfjs-backend-wasm": "3.13.0",
     "@tensorflow/tfjs-core": "3.13.0",

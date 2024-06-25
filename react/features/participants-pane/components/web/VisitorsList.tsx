@@ -67,8 +67,18 @@ const useStyles = makeStyles()(theme => {
 export default function VisitorsList() {
     const requests = useSelector(getPromotionRequests);
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const isLive = useSelector(
+        (state: IReduxState) => state['features/base/conference'].metadata?.visitorsLive);
 
     const { t } = useTranslation();
+    let visititorsHeading = t('participantsPane.headings.visitors', { count: visitorsCount });
+
+    if (isLive === false) {
+        let visitorsWaiting = t('visitors.waiting');
+
+        visititorsHeading = `${visititorsHeading} ${visitorsWaiting}`;
+    }
+
     const { classes, cx } = useStyles();
     const dispatch = useDispatch();
 
@@ -84,7 +94,7 @@ export default function VisitorsList() {
         <>
             <div className = { classes.headingContainer }>
                 <div className = { cx(classes.heading, classes.headingW) }>
-                    { t('participantsPane.headings.visitors', { count: visitorsCount })}
+                    { visititorsHeading }
                     { requests.length > 0
                         && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
                 </div>

@@ -8,11 +8,13 @@ import { getLocalParticipant } from '../base/participants/functions';
 import {
     CLEAR_VISITOR_PROMOTION_REQUEST,
     I_AM_VISITOR_MODE,
+    SET_IN_VISITORS_QUEUE,
     SET_VISITORS_SUPPORTED,
     SET_VISITOR_DEMOTE_ACTOR,
     UPDATE_VISITORS_COUNT,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
+import { VISITORS_LIVE_ID } from './constants';
 import { IPromotionRequest } from './types';
 
 /**
@@ -151,6 +153,21 @@ export function setIAmVisitor(enabled: boolean) {
 }
 
 /**
+ * Sets in visitor's queue.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {{
+ *     type: SET_IN_VISITORS_QUEUE,
+ * }}
+ */
+export function setInVisitorsQueue(value: boolean) {
+    return {
+        type: SET_IN_VISITORS_QUEUE,
+        value
+    };
+}
+
+/**
  * Sets visitor demote actor.
  *
  * @param {string|undefined} displayName - The display name of the participant.
@@ -205,6 +222,6 @@ export function goLive() {
     return (_: IStore['dispatch'], getState: IStore['getState']) => {
         const { conference } = getState()['features/base/conference'];
 
-        conference?.getMetadataHandler().setMetadata('visitorsLive', true);
+        conference?.getMetadataHandler().setMetadata(VISITORS_LIVE_ID, true);
     };
 }

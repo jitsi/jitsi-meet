@@ -1497,7 +1497,9 @@
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
             "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"
-        }
+        },
+        "waiting": "*waiting",
+        "waitingMessage": "You'll join the meeting as soon as it is live!"
     },
     "volumeSlider": "Volume slider",
     "welcomepage": {

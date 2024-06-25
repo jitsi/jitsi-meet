@@ -67,3 +67,14 @@ export function isVisitorsSupported(stateful: IStateful) {
 export function isVisitorsLive(stateful: IStateful) {
     return toState(stateful)['features/base/conference'].metadata?.visitorsLive;
 }
+
+/**
+ * Whether to show visitor queue screen.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {boolean} Whether current participant is visitor and is in queue.
+ */
+export function showVisitorsQueue(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].inVisitorsQueue;
+}

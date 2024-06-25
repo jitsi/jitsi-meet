@@ -197,6 +197,7 @@ export default [
     'participantsPane',
     'pcStatsInterval',
     'preferBosh',
+    'preferVisitor',
     'prejoinConfig',
     'prejoinPageEnabled',
     'recordingService',

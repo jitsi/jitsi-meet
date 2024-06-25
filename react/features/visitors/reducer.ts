@@ -4,6 +4,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     CLEAR_VISITOR_PROMOTION_REQUEST,
     I_AM_VISITOR_MODE,
+    SET_IN_VISITORS_QUEUE,
     SET_VISITORS_SUPPORTED,
     SET_VISITOR_DEMOTE_ACTOR,
     UPDATE_VISITORS_COUNT,
@@ -14,6 +15,7 @@ import { IPromotionRequest } from './types';
 const DEFAULT_STATE = {
     count: -1,
     iAmVisitor: false,
+    inVisitorsQueue: false,
     showNotification: false,
     supported: false,
     promotionRequests: []
@@ -23,6 +25,7 @@ export interface IVisitorsState {
     count?: number;
     demoteActorDisplayName?: string;
     iAmVisitor: boolean;
+    inVisitorsQueue: boolean;
     promotionRequests: IPromotionRequest[];
     supported: boolean;
 }
@@ -53,6 +56,12 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
         return {
             ...state,
             iAmVisitor: action.enabled
+        };
+    }
+    case SET_IN_VISITORS_QUEUE: {
+        return {
+            ...state,
+            inVisitorsQueue: action.value
         };
     }
     case SET_VISITOR_DEMOTE_ACTOR: {

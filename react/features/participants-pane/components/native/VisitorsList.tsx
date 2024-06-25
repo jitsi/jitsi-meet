@@ -14,6 +14,8 @@ import styles from './styles';
 
 const VisitorsList = () => {
     const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const isLive = useSelector(
+        (state: IReduxState) => state['features/base/conference'].metadata?.visitorsLive);
 
     const dispatch = useDispatch();
 
@@ -30,7 +32,9 @@ const VisitorsList = () => {
 
     let title = t('participantsPane.headings.visitors', { count: visitorsCount });
 
-    if (requests.length > 0) {
+    if (isLive === false) {
+        title = `${title} ${t('visitors.waiting')}`;
+    } else if (requests.length > 0) {
         title += t('participantsPane.headings.visitorRequests', { count: requests.length });
     }
 
