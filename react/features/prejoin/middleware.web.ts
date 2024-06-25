@@ -21,7 +21,7 @@ import {
     setDeviceStatusWarning,
     setJoiningInProgress
 } from './actions';
-import { isPrejoinPageVisible } from './functions';
+import { isPrejoinPageVisible } from './functions.any';
 import logger from './logger';
 
 /**
