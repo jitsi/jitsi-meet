@@ -23,12 +23,14 @@ import {
     navigationContainerTheme,
     preJoinScreenOptions,
     unsafeMeetingScreenOptions,
+    visitorsScreenOptions,
     welcomeScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
+import VisitorsQueueNavigationContainer from './visitors/components/VisitorsQueueNavigationContainer';
 
 const RootStack = createStackNavigator();
 
@@ -105,6 +107,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
                 }
+                <RootStack.Screen
+                    component = { VisitorsQueueNavigationContainer }
+                    name = { screen.visitors.queue }
+                    options = { visitorsScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }

@@ -104,11 +104,18 @@ export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
 export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
 
 /**
- * The identifier of the lobby notification.
+ * The identifier of the visitors promotion notification.
  *
  * @type {string}
  */
 export const VISITORS_PROMOTION_NOTIFICATION_ID = 'VISITORS_PROMOTION_NOTIFICATION';
+
+/**
+ * The identifier of the visitors notification indicating the meeting is not live.
+ *
+ * @type {string}
+ */
+export const VISITORS_NOT_LIVE_NOTIFICATION_ID = 'VISITORS_NOT_LIVE_NOTIFICATION_ID';
 
 /**
  * Amount of participants beyond which no join notification will be emitted.

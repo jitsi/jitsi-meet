@@ -478,6 +478,7 @@ export interface IConfig {
     peopleSearchQueryTypes?: string[];
     peopleSearchUrl?: string;
     preferBosh?: boolean;
+    preferVisitor?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;

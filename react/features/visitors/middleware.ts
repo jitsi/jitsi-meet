@@ -2,38 +2,56 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
+import { IStateful } from '../base/app/types';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
-    ENDPOINT_MESSAGE_RECEIVED
+    ENDPOINT_MESSAGE_RECEIVED,
+    UPDATE_CONFERENCE_METADATA
 } from '../base/conference/actionTypes';
+import { SET_CONFIG } from '../base/config/actionTypes';
+import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiConnectionErrors } from '../base/lib-jitsi-meet';
+import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { raiseHand } from '../base/participants/actions';
-import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isLocalParticipantModerator,
+    isParticipantModerator
+} from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { toState } from '../base/redux/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { hideNotification, showNotification } from '../notifications/actions';
 import {
     NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
+    VISITORS_NOT_LIVE_NOTIFICATION_ID,
     VISITORS_PROMOTION_NOTIFICATION_ID
 } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
+import { joinConference } from '../prejoin/actions';
 
+import { UPDATE_VISITORS_IN_QUEUE_COUNT } from './actionTypes';
 import {
     approveRequest,
     clearPromotionRequest,
     denyRequest,
+    goLive,
     promotionRequestReceived,
+    setInVisitorsQueue,
     setVisitorDemoteActor,
     setVisitorsSupported,
-    updateVisitorsCount
+    updateVisitorsCount,
+    updateVisitorsInQueueCount
 } from './actions';
 import { getPromotionRequests } from './functions';
 import logger from './logger';
+import { WebsocketClient } from './websocket-client';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
@@ -130,16 +148,168 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         if (data?.action === 'promotion-response' && data.approved) {
             const request = getPromotionRequests(getState())
-                .find(r => r.from === data.id);
+                .find((r: any) => r.from === data.id);
 
             request && dispatch(clearPromotionRequest(request));
         }
+        break;
+    }
+    case CONNECTION_FAILED: {
+        const { error } = action;
+
+        if (error?.name !== JitsiConnectionErrors.NOT_LIVE_ERROR) {
+            break;
+        }
+
+        const { hosts, preferVisitor, visitors: visitorsConfig } = getState()['features/base/config'];
+        const { locationURL } = getState()['features/base/connection'];
+
+        if (!visitorsConfig?.queueService || !locationURL || !preferVisitor) {
+            break;
+        }
+
+        // let's subscribe for visitor waiting queue
+        const { room } = getState()['features/base/conference'];
+        const conferenceJid = `${room}@${hosts?.muc}`;
+
+        WebsocketClient.getInstance()
+            .connect(`wss://${visitorsConfig?.queueService}/visitor/websocket`,
+                `/secured/conference/visitor/topic.${conferenceJid}`,
+                msg => {
+                    if ('status' in msg && msg.status === 'live') {
+                        logger.info('The conference is now live!');
+
+                        WebsocketClient.getInstance().disconnect();
+
+                        let delay = 0;
+
+                        // now let's connect to meeting
+                        if ('randomDelayMs' in msg) {
+                            delay = msg.randomDelayMs;
+                        }
+
+                        setTimeout(() => {
+                            dispatch(joinConference());
+                            dispatch(setInVisitorsQueue(false));
+                        }, delay);
+                    }
+                },
+
+                getState()['features/base/jwt'].jwt,
+                () => {
+                    dispatch(setInVisitorsQueue(true));
+                });
+
+        break;
+    }
+    case PARTICIPANT_UPDATED: {
+        const { participant } = action;
+        const { local } = participant;
+
+        if (local && isParticipantModerator(participant)) {
+
+            const { metadata } = getState()['features/base/conference'];
+
+            if (metadata?.visitors?.live === false) {
+                // when go live is available and false, we should subscribe
+                // to the service if available to listen for waiting visitors
+                _subscribeQueueStats(getState(), dispatch);
+            }
+        }
+
+        break;
+    }
+    case SET_CONFIG: {
+        const result = next(action);
+        const { preferVisitor } = action.config;
+
+        if (preferVisitor !== undefined) {
+            setPreferVisitor(preferVisitor);
+        }
+
+        return result;
+    }
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+        if (isLocalParticipantModerator(getState)) {
+            if (metadata?.visitors?.live === false) {
+                // if metadata go live changes to goLive false and local is moderator
+                // we should subscribe to the service if available to listen for waiting visitors
+                _subscribeQueueStats(getState(), dispatch);
+
+                _showNotLiveNotification(dispatch, getState()['features/visitors'].inQueueCount || 0);
+            } else if (metadata?.visitors?.live) {
+                dispatch(hideNotification(VISITORS_NOT_LIVE_NOTIFICATION_ID));
+                WebsocketClient.getInstance().disconnect();
+            }
+        }
+
+        break;
+    }
+    case UPDATE_VISITORS_IN_QUEUE_COUNT: {
+        _showNotLiveNotification(dispatch, action.count);
+
         break;
     }
     }
 
     return next(action);
 });
+
+/**
+ * Shows a notification that the meeting is not live.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {number} count - The count of visitors waiting.
+ * @returns {void}
+ */
+function _showNotLiveNotification(dispatch: IStore['dispatch'], count: number): void {
+    // let's show notification
+    dispatch(showNotification({
+        titleKey: 'notify.waitingVisitorsTitle',
+        descriptionKey: 'notify.waitingVisitors',
+        descriptionArguments: {
+            waitingVisitors: count
+        },
+        disableClosing: true,
+        uid: VISITORS_NOT_LIVE_NOTIFICATION_ID,
+        customActionNameKey: [ 'participantsPane.actions.goLive' ],
+        customActionType: [ BUTTON_TYPES.PRIMARY ],
+        customActionHandler: [ () => batch(() => {
+            dispatch(hideNotification(VISITORS_NOT_LIVE_NOTIFICATION_ID));
+            dispatch(goLive());
+        }) ],
+        icon: NOTIFICATION_ICON.PARTICIPANTS
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+}
+
+/**
+ * Subscribe for moderator stats.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @returns {void}
+ */
+function _subscribeQueueStats(stateful: IStateful, dispatch: IStore['dispatch']) {
+    const { hosts } = toState(stateful)['features/base/config'];
+    const { room } = toState(stateful)['features/base/conference'];
+    const conferenceJid = `${room}@${hosts?.muc}`;
+
+    const { visitors: visitorsConfig } = toState(stateful)['features/base/config'];
+
+    WebsocketClient.getInstance()
+        .connect(`wss://${visitorsConfig?.queueService}/visitor/websocket`,
+            `/secured/conference/state/topic.${conferenceJid}`,
+            msg => {
+                if ('visitorsWaiting' in msg) {
+                    dispatch(updateVisitorsInQueueCount(msg.visitorsWaiting));
+                }
+            },
+
+            toState(stateful)['features/base/jwt'].jwt);
+}
 
 /**
  * Function to handle the promotion notification.

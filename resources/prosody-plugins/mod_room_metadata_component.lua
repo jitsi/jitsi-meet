@@ -36,6 +36,7 @@ local breakout_rooms_component_host = module:get_option_string('breakout_rooms_c
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
+local main_muc_module;
 
 -- Utility functions
 
@@ -148,6 +149,9 @@ function on_message(event)
 
     broadcastMetadata(room);
 
+    -- fire and event for the change
+    main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
+
     return true;
 end
 
@@ -158,6 +162,8 @@ module:hook("message/host", on_message);
 
 -- operates on already loaded main muc module
 function process_main_muc_loaded(main_muc, host_module)
+    main_muc_module = host_module;
+
     module:log('debug', 'Main muc loaded');
     module:log("info", "Hook to muc events on %s", muc_component_host);
 

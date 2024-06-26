@@ -822,6 +822,8 @@
         "viewLobby": "View lobby",
         "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
+        "waitingVisitors": "Visitors waiting in queue: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "The meeting is not live yet!",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
         "whiteboardLimitTitle": "Whiteboard usage"
     },
@@ -835,6 +837,7 @@
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "breakoutRooms": "Breakout rooms",
+            "goLive": "Go live",
             "invite": "Invite Someone",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
@@ -852,6 +855,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
+            "visitorInQueue": " (waiting {{count}})",
             "visitorRequests": " (requests {{count}})",
             "visitors": "Visitors {{count}}",
             "waitingLobby": "Waiting in lobby ({{count}})"
@@ -1495,7 +1499,8 @@
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
             "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"
-        }
+        },
+        "waitingMessage": "You'll join the meeting as soon as it is live!"
     },
     "volumeSlider": "Volume slider",
     "welcomepage": {

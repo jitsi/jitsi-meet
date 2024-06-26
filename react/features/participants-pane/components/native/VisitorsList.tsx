@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { admitMultiple } from '../../../visitors/actions';
-import { getPromotionRequests } from '../../../visitors/functions';
+import { admitMultiple, goLive } from '../../../visitors/actions';
+import { getPromotionRequests, isVisitorsLive } from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
 import styles from './styles';
@@ -22,9 +22,16 @@ const VisitorsList = () => {
     const admitAll = useCallback(() => {
         dispatch(admitMultiple(requests));
     }, [ dispatch, requests ]);
+    const goLiveCb = useCallback(() => {
+        dispatch(goLive());
+    }, [ dispatch ]);
     const { t } = useTranslation();
 
-    if (visitorsCount <= 0) {
+    const visitorsInQueueCount = useSelector((state: IReduxState) => state['features/visitors'].inQueueCount || 0);
+    const isLive = useSelector(isVisitorsLive);
+    const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
+
+    if (visitorsCount <= 0 && !showVisitorsInQueue) {
         return null;
     }
 
@@ -34,6 +41,10 @@ const VisitorsList = () => {
         title += t('participantsPane.headings.visitorRequests', { count: requests.length });
     }
 
+    if (showVisitorsInQueue) {
+        title += t('participantsPane.headings.visitorInQueue', { count: visitorsInQueueCount });
+    }
+
     return (
         <>
             <View style = { styles.listDetails as ViewStyle } >
@@ -41,12 +52,22 @@ const VisitorsList = () => {
                     { title }
                 </Text>
                 {
-                    requests.length > 1 && (
+                    requests.length > 1 && !showVisitorsInQueue && (
                         <Button
                             accessibilityLabel = 'participantsPane.actions.admitAll'
                             labelKey = 'participantsPane.actions.admitAll'
                             mode = { BUTTON_MODES.TEXT }
                             onClick = { admitAll }
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    )
+                }
+                {
+                    showVisitorsInQueue && (
+                        <Button
+                            accessibilityLabel = 'participantsPane.actions.goLive'
+                            labelKey = 'participantsPane.actions.goLive'
+                            mode = { BUTTON_MODES.TEXT }
+                            onClick = { goLiveCb }
                             type = { BUTTON_TYPES.PRIMARY } />
                     )
                 }
