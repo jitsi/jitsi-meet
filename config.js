@@ -88,8 +88,8 @@ var config = {
         // issues related to insertable streams.
         // disableE2EE: false,
 
-        // Enables supports for AV1 codec.
-        // enableAv1Support: false,
+        // Enables the use of the codec selection API supported by the browsers .
+        // enableCodecSelectionAPI: false,
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
@@ -457,6 +457,10 @@ var config = {
     //
     //    // Provides a way to set the codec preference on desktop based endpoints.
     //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264' ],
+    //
+    //    // Provides a way to set the codec for screenshare.
+    //    screenshareCodec: 'AV1',
+    //    mobileScreenshareCodec: 'VP8',
     //
     //    // Codec specific settings for scalability modes and max bitrates.
     //    av1: {
@@ -1046,6 +1050,10 @@ var config = {
         //
         // Provides a way to set the codec preference on desktop based endpoints.
         // codecPreferenceOrder: [ 'VP9', 'VP8', 'H264 ],
+
+        // Provides a way to set the codec for screenshare.
+        // screenshareCodec: 'AV1',
+        // mobileScreenshareCodec: 'VP8',
 
         // How long we're going to wait, before going back to P2P after the 3rd
         // participant has left the conference (to filter out page reload).
