@@ -1,4 +1,13 @@
 /**
+ * Create an action to mark the participant as notified to speak next.
+ *
+ * {
+ *     type: NOTIFIED_TO_SPEAK
+ * }
+ */
+export const NOTIFIED_TO_SPEAK = 'NOTIFIED_TO_SPEAK';
+
+/**
  * Create an action for when dominant speaker changes.
  *
  * {

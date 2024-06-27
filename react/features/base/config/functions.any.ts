@@ -6,6 +6,7 @@ import { safeJsonParse } from '@jitsi/js-utils/json';
 import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
+import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -182,6 +183,31 @@ export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', con
 export function isNameReadOnly(state: IReduxState): boolean {
     return Boolean(state['features/base/config'].disableProfile
         || state['features/base/config'].readOnlyName);
+}
+
+/**
+ * Selector for determining if the participant is the next one in the queue to speak.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNextToSpeak(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue || [];
+    const participantId = getLocalParticipant(state)?.id;
+
+    return participantId === raisedHandsQueue[0]?.id;
+}
+
+/**
+ * Selector for determining if the next to speak participant in the queue has been notified.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function hasBeenNotified(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue;
+
+    return Boolean(raisedHandsQueue[0]?.hasBeenNotified);
 }
 
 /**
