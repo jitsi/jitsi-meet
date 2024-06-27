@@ -18,11 +18,9 @@ export * from './actions.any';
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(participant: IParticipant | undefined | Object, disablePolls?: boolean) {
-    if (disablePolls) {
-        navigate(screen.conference.chat);
-    }
-    navigate(screen.conference.chatandpolls.main);
+export function openChat(participant: IParticipant | undefined | Object, disablePolls: boolean) {
+
+    disablePolls ? navigate(screen.conference.chat) : navigate(screen.conference.chatandpolls.main);
 
     return {
         participant,
