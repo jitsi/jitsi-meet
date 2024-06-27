@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { CHAT_ENABLED } from '../../../base/flags/constants';
+import { CHAT_CUSTOM_OPEN_ENABLED, CHAT_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconChatUnread, IconMessage } from '../../../base/icons/svg';
@@ -10,9 +10,15 @@ import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
+import { openChat } from '../../actions.any';
 import { getUnreadCount } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
+
+    /**
+     * True if one redefines chat opening.
+     */
+    _chatCustomActionEnabled: boolean;
 
     /**
      * True if the polls feature is disabled.
@@ -41,9 +47,15 @@ class ChatButton extends AbstractButton<IProps> {
      * @returns {void}
      */
     _handleClick() {
-        this.props._isPollsDisabled
-            ? navigate(screen.conference.chat)
-            : navigate(screen.conference.chatandpolls.main);
+
+        if (this.props._chatCustomActionEnabled) {
+            this.props.dispatch(openChat());
+        }
+        else {
+            this.props._isPollsDisabled
+                ? navigate(screen.conference.chat)
+                : navigate(screen.conference.chatandpolls.main);
+        }
     }
 
     /**
@@ -68,8 +80,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
+    const chatCustomActionEnabled = Boolean(getFeatureFlag(state, CHAT_CUSTOM_OPEN_ENABLED, false));
+
     return {
         _isPollsDisabled: arePollsDisabled(state),
+        _chatCustomActionEnabled: chatCustomActionEnabled,
 
         // The toggled icon should also be available for new polls
         _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state),
