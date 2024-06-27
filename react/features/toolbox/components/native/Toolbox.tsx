@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import Platform from '../../../base/react/Platform.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
@@ -43,6 +45,11 @@ interface IProps {
     _shouldDisplayReactionsButtons: boolean;
 
     /**
+     * The indicator which determines whether the screen sharing button is visible in portrait toolbar.
+     */
+    _screenSharingAlwaysVisible: boolean;
+
+    /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: any;
@@ -65,7 +72,7 @@ interface IProps {
  * @returns {React$Element}
  */
 function Toolbox(props: IProps) {
-    const { _endConferenceSupported, _shouldDisplayReactionsButtons, _styles, _visible, _iAmVisitor, _width } = props;
+    const { _endConferenceSupported, _shouldDisplayReactionsButtons, _styles, _visible, _iAmVisitor, _width, _screenSharingAlwaysVisible } = props;
 
     if (!_visible) {
         return null;
@@ -112,7 +119,7 @@ function Toolbox(props: IProps) {
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />
                 }
-                {!_iAmVisitor && additionalButtons.has('screensharing')
+                {!_iAmVisitor && (additionalButtons.has('screensharing') || _screenSharingAlwaysVisible)
                     && <ScreenSharingButton styles = { buttonStylesBorderless } />}
                 {additionalButtons.has('raisehand') && (_shouldDisplayReactionsButtons
                     ? <ReactionsMenuButton
@@ -149,13 +156,17 @@ function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
 
+    const screenSharingAlwaysVisible = Boolean(getFeatureFlag(state,
+        SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE, false));
+
     return {
         _endConferenceSupported: Boolean(endConferenceSupported),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _iAmVisitor: iAmVisitor(state),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
+        _screenSharingAlwaysVisible: screenSharingAlwaysVisible
     };
 }
 

@@ -226,6 +226,12 @@ export const REPLACE_PARTICIPANT = 'replace.participant';
 export const RESOLUTION = 'resolution';
 
 /**
+ * Flag indicating if screen sharing button should be shown in portrait toolbar.
+ * Default: disabled (false).
+ */
+export const SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE = 'screensharing-in-portrait-toolbar.alwaysVisible';
+
+/**
  * Flag indicating if the security options button should be enabled.
  * Default: enabled (true).
  */
