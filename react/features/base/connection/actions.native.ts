@@ -19,7 +19,7 @@ export function connect(id?: string, password?: string) {
     return (dispatch: IStore['dispatch']) => dispatch(_connectInternal(id, password))
         .catch(error => {
             if (error === JitsiConnectionErrors.NOT_LIVE_ERROR) {
-                navigateRoot(screen.visitors.queue);
+                navigateRoot(screen.visitorsQueue);
             }
         });
 }
