@@ -105,7 +105,7 @@ export class WebsocketClient {
                 }
             });
         };
-        logger.info('cccccc');
+
         this.stompClient.activate();
     }
 
