@@ -38,7 +38,7 @@ local ASAPKeyPath = module:get_option_string('asap_key_path', '/etc/prosody/cert
 
 local ASAPKey;
 local f = io.open(ASAPKeyPath, 'r');
-module:log()
+
 if f then
     ASAPKey = f:read('*all');
     f:close();
