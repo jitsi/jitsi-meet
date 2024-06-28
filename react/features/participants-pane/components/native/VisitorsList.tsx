@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Text, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { admitMultiple, goLive } from '../../../visitors/actions';

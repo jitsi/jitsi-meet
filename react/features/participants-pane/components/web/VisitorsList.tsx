@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple, goLive } from '../../../visitors/actions';
 import {
