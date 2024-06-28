@@ -205,8 +205,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case PARTICIPANT_UPDATED: {
         const { participant } = action;
         const { local } = participant;
+        const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
 
-        if (local && isParticipantModerator(participant)) {
+        if (local && visitorsConfig?.queueService && isParticipantModerator(participant)) {
 
             const { metadata } = getState()['features/base/conference'];
 
@@ -231,6 +232,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
+        const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
+
+        if (!visitorsConfig?.queueService) {
+            break;
+        }
 
         if (isLocalParticipantModerator(getState)) {
             if (metadata?.visitors?.live === false) {
