@@ -7,13 +7,18 @@ import { IReduxState } from '../../../app/types';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { admitMultiple, goLive } from '../../../visitors/actions';
-import { getPromotionRequests, isVisitorsLive } from '../../../visitors/functions';
+import {
+    getPromotionRequests,
+    getVisitorsCount,
+    getVisitorsInQueueCount,
+    isVisitorsLive
+} from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
 import styles from './styles';
 
 const VisitorsList = () => {
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const visitorsCount = useSelector(getVisitorsCount);
 
     const dispatch = useDispatch();
 
@@ -27,7 +32,7 @@ const VisitorsList = () => {
     }, [ dispatch ]);
     const { t } = useTranslation();
 
-    const visitorsInQueueCount = useSelector((state: IReduxState) => state['features/visitors'].inQueueCount || 0);
+    const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
     const isLive = useSelector(isVisitorsLive);
     const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
 

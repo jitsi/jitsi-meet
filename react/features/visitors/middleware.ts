@@ -49,7 +49,7 @@ import {
     updateVisitorsCount,
     updateVisitorsInQueueCount
 } from './actions';
-import { getPromotionRequests } from './functions';
+import { getPromotionRequests, getVisitorsCount, getVisitorsInQueueCount } from './functions';
 import logger from './logger';
 import { WebsocketClient } from './websocket-client';
 
@@ -61,7 +61,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         conference.on(JitsiConferenceEvents.PROPERTIES_CHANGED, (properties: { 'visitor-count': number; }) => {
             const visitorCount = Number(properties?.['visitor-count']);
 
-            if (!isNaN(visitorCount) && getState()['features/visitors'].count !== visitorCount) {
+            if (!isNaN(visitorCount) && getVisitorsCount(getState) !== visitorCount) {
                 dispatch(updateVisitorsCount(visitorCount));
             }
         });
@@ -238,7 +238,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 // we should subscribe to the service if available to listen for waiting visitors
                 _subscribeQueueStats(getState(), dispatch);
 
-                _showNotLiveNotification(dispatch, getState()['features/visitors'].inQueueCount || 0);
+                _showNotLiveNotification(dispatch, getVisitorsInQueueCount(getState));
             } else if (metadata?.visitors?.live) {
                 dispatch(hideNotification(VISITORS_NOT_LIVE_NOTIFICATION_ID));
                 WebsocketClient.getInstance().disconnect();

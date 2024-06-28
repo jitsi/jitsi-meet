@@ -47,6 +47,17 @@ export function getVisitorsCount(stateful: IStateful) {
 }
 
 /**
+ * Returns the number of visitors that are waiting in queue.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {number} - The number of visitors in queue.
+ */
+export function getVisitorsInQueueCount(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].inQueueCount ?? 0;
+}
+
+/**
  * Whether visitor mode is supported.
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}

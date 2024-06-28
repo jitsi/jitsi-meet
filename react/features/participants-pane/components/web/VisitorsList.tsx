@@ -6,7 +6,12 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple, goLive } from '../../../visitors/actions';
-import { getPromotionRequests, isVisitorsLive } from '../../../visitors/functions';
+import {
+    getPromotionRequests,
+    getVisitorsCount,
+    getVisitorsInQueueCount,
+    isVisitorsLive
+} from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
 
@@ -66,8 +71,8 @@ const useStyles = makeStyles()(theme => {
  */
 export default function VisitorsList() {
     const requests = useSelector(getPromotionRequests);
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
-    const visitorsInQueueCount = useSelector((state: IReduxState) => state['features/visitors'].inQueueCount || 0);
+    const visitorsCount = useSelector(getVisitorsCount);
+    const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
     const isLive = useSelector(isVisitorsLive);
     const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
 
