@@ -54,6 +54,9 @@ export interface IConferenceMetadata {
     recording?: {
         isTranscribingEnabled: boolean;
     };
+    visitors?: {
+        live: boolean;
+    };
     whiteboard?: {
         collabDetails: {
             roomId: string;

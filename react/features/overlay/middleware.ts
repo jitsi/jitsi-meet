@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConnectionErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
@@ -7,7 +7,6 @@ import {
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { openPageReloadDialog } from './actions';
-
 
 /**
  * Error type. Basically like Error, but augmented with a recoverable property.
@@ -34,6 +33,7 @@ type ErrorType = {
  * List of errors that are not fatal (or handled differently) so then the page reload dialog won't kick in.
  */
 const RN_NO_RELOAD_DIALOG_ERRORS = [
+    JitsiConnectionErrors.NOT_LIVE_ERROR,
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
     JitsiConferenceErrors.CONNECTION_ERROR,

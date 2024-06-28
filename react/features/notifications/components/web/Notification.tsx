@@ -178,6 +178,7 @@ const Notification = ({
     description,
     descriptionArguments,
     descriptionKey,
+    disableClosing,
     hideErrorSupportLink,
     icon,
     onDismissed,
@@ -336,14 +337,16 @@ const Notification = ({
                         ))}
                     </div>
                 </div>
-                <Icon
-                    className = { classes.closeIcon }
-                    color = { theme.palette.icon04 }
-                    id = 'close-notification'
-                    onClick = { onDismiss }
-                    size = { 20 }
-                    src = { IconCloseLarge }
-                    testId = { `${titleKey || descriptionKey}-dismiss` } />
+                { !disableClosing && (
+                    <Icon
+                        className = { classes.closeIcon }
+                        color = { theme.palette.icon04 }
+                        id = 'close-notification'
+                        onClick = { onDismiss }
+                        size = { 20 }
+                        src = { IconCloseLarge }
+                        testId = { `${titleKey || descriptionKey}-dismiss` } />
+                )}
             </div>
         </div>
     );

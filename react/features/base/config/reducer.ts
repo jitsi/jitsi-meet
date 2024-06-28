@@ -80,6 +80,7 @@ export interface IConfigState extends IConfig {
             audio?: boolean;
             video?: boolean;
         };
+        queueService: string;
     };
 }
 

@@ -9,6 +9,7 @@ import DialInSummary from '../../../invite/components/dial-in-summary/native/Dia
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
 import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
+import VisitorsQueue from '../../../visitors/components/native/VisitorsQueue';
 // eslint-disable-next-line
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
@@ -23,6 +24,7 @@ import {
     navigationContainerTheme,
     preJoinScreenOptions,
     unsafeMeetingScreenOptions,
+    visitorsScreenOptions,
     welcomeScreenOptions
 } from '../screenOptions';
 
@@ -105,6 +107,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
                 }
+                <RootStack.Screen
+                    component = { VisitorsQueue }
+                    name = { screen.visitorsQueue }
+                    options = { visitorsScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }

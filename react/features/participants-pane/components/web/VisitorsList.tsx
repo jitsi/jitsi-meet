@@ -3,10 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { admitMultiple } from '../../../visitors/actions';
-import { getPromotionRequests } from '../../../visitors/functions';
+import { admitMultiple, goLive } from '../../../visitors/actions';
+import {
+    getPromotionRequests,
+    getVisitorsCount,
+    getVisitorsInQueueCount,
+    isVisitorsLive
+} from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
 
@@ -66,7 +70,10 @@ const useStyles = makeStyles()(theme => {
  */
 export default function VisitorsList() {
     const requests = useSelector(getPromotionRequests);
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const visitorsCount = useSelector(getVisitorsCount);
+    const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
+    const isLive = useSelector(isVisitorsLive);
+    const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
 
     const { t } = useTranslation();
     const { classes, cx } = useStyles();
@@ -76,7 +83,11 @@ export default function VisitorsList() {
         dispatch(admitMultiple(requests));
     }, [ dispatch, requests ]);
 
-    if (visitorsCount <= 0) {
+    const goLiveCb = useCallback(() => {
+        dispatch(goLive());
+    }, [ dispatch ]);
+
+    if (visitorsCount <= 0 && !showVisitorsInQueue) {
         return null;
     }
 
@@ -87,12 +98,20 @@ export default function VisitorsList() {
                     { t('participantsPane.headings.visitors', { count: visitorsCount })}
                     { requests.length > 0
                         && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
+                    { showVisitorsInQueue
+                        && t('participantsPane.headings.visitorInQueue', { count: visitorsInQueueCount }) }
                 </div>
                 {
-                    requests.length > 1
+                    requests.length > 1 && !showVisitorsInQueue // Go live button is with higher priority
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
+                        onClick = { admitAll }>{ t('participantsPane.actions.admitAll') }</div>
+                }
+                {
+                    showVisitorsInQueue
+                    && <div
+                        className = { classes.link }
+                        onClick = { goLiveCb }>{ t('participantsPane.actions.goLive') }</div>
                 }
             </div>
             <div
