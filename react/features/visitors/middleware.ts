@@ -211,7 +211,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             const { metadata } = getState()['features/base/conference'];
 
-            if (metadata?.visitors?.live === false) {
+            if (metadata?.visitors?.live === false && !WebsocketClient.getInstance().isActive()) {
                 // when go live is available and false, we should subscribe
                 // to the service if available to listen for waiting visitors
                 _subscribeQueueStats(getState(), dispatch);
@@ -239,7 +239,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         if (isLocalParticipantModerator(getState)) {
-            if (metadata?.visitors?.live === false) {
+            if (metadata?.visitors?.live === false && !WebsocketClient.getInstance().isActive()) {
                 // if metadata go live changes to goLive false and local is moderator
                 // we should subscribe to the service if available to listen for waiting visitors
                 _subscribeQueueStats(getState(), dispatch);

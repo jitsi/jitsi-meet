@@ -126,4 +126,13 @@ export class WebsocketClient {
             this.stompClient = undefined;
         });
     }
+
+    /**
+     * Checks whether the instance is created and connected or in connecting state.
+     *
+     * @returns {boolean} Whether the connect method was executed.
+     */
+    isActive() {
+        return this.stompClient !== undefined;
+    }
 }
