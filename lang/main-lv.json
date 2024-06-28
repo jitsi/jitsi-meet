@@ -263,7 +263,8 @@
         "Remove": "Noņemt",
         "Share": "Kopīgot",
         "Submit": "Iesniegt",
-        "WaitForHostMsg": "Sapulce vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Pretējā gadījumā, lūdzu, uzgaidiet.",
+        "WaitForHostMsg": "Sapulce vēl nav sākusies, jo vēl nav ieradies neviens moderators. Lūdzu, autorizējieties, lai kļūtu par moderatoru. Pretējā gadījumā, lūdzu, uzgaidiet.",
+        "WaitForHostNoAuthMsg": "Sapulce vēl nav sākusies, jo vēl nav ieradies neviens moderators. Lūdzu, uzgaidiet.",
         "WaitingForHostButton": "Gaidīt rīkotāju",
         "WaitingForHostTitle": "Gaida rīkotāju...",
         "Yes": "Jā",
@@ -864,6 +865,8 @@
     "pinnedParticipant": "Dalībnieks ir piesprausts",
     "polls": {
         "answer": {
+            "edit": "Labot",
+            "send": "Nosūtīt",
             "skip": "Izlaist",
             "submit": "Iesniegt"
         },
@@ -877,6 +880,7 @@
             "pollQuestion": "Aptaujas Jautājums",
             "questionPlaceholder": "Uzdod jautājumu",
             "removeOption": "Noņemt opciju",
+            "save": "Saglabāt",
             "send": "Nosūtīt"
         },
         "errors": {
