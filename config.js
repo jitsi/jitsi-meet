@@ -121,6 +121,9 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Disables demote button from self-view
+    // disableSelfDemote: false,
+
     // Disables self-view tile. (hides it from tile view and from filmstrip)
     // disableSelfView: false,
 
