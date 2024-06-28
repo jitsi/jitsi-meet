@@ -69,17 +69,28 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                     = defaultLocation.pathname + location.pathname.substr(1);
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
-            } else {
+            } else if (uri !== undefined) {
                 location = defaultLocation;
             }
+        }
+
+        logger.info(`location ${location}`);
+
+        if (!location) {
+
+            dispatch(disconnect());
+
+            goBackToRoot(getState(), dispatch);
+            return;
         }
 
         location.protocol || (location.protocol = 'https:');
         const { contextRoot, host, hostname, pathname, room } = location;
         const locationURL = new URL(location.toString());
-        const { conference } = getConferenceState(getState());
 
         if (room) {
+            const { conference } = getConferenceState(getState());
+
             if (conference) {
 
                 // We need to check if the location is the same with the previous one.
