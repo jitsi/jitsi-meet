@@ -111,12 +111,9 @@ const Dialog = ({
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        if (onSubmit && (
-            (document.activeElement && !operatesWithEnterKey(document.activeElement))
-            || !document.activeElement
-        )) {
+        if ((document.activeElement && !operatesWithEnterKey(document.activeElement)) || !document.activeElement) {
             !disableAutoHideOnSubmit && dispatch(hideDialog());
-            onSubmit();
+            onSubmit?.();
         }
     }, [ onSubmit ]);
 
