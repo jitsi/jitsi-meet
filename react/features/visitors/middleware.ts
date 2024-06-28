@@ -19,8 +19,7 @@ import { raiseHand } from '../base/participants/actions';
 import {
     getLocalParticipant,
     getParticipantById,
-    isLocalParticipantModerator,
-    isParticipantModerator
+    isLocalParticipantModerator
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { toState } from '../base/redux/functions';
@@ -203,12 +202,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case PARTICIPANT_UPDATED: {
-        const { participant } = action;
-        const { local } = participant;
         const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
 
-        if (local && visitorsConfig?.queueService && isParticipantModerator(participant)) {
-
+        if (visitorsConfig?.queueService && isLocalParticipantModerator(getState)) {
             const { metadata } = getState()['features/base/conference'];
 
             if (metadata?.visitors?.live === false && !WebsocketClient.getInstance().isActive()) {
@@ -239,10 +235,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         if (isLocalParticipantModerator(getState)) {
-            if (metadata?.visitors?.live === false && !WebsocketClient.getInstance().isActive()) {
-                // if metadata go live changes to goLive false and local is moderator
-                // we should subscribe to the service if available to listen for waiting visitors
-                _subscribeQueueStats(getState(), dispatch);
+            if (metadata?.visitors?.live === false) {
+                if (!WebsocketClient.getInstance().isActive()) {
+                    // if metadata go live changes to goLive false and local is moderator
+                    // we should subscribe to the service if available to listen for waiting visitors
+                    _subscribeQueueStats(getState(), dispatch);
+                }
 
                 _showNotLiveNotification(dispatch, getVisitorsInQueueCount(getState));
             } else if (metadata?.visitors?.live) {
@@ -313,7 +311,6 @@ function _subscribeQueueStats(stateful: IStateful, dispatch: IStore['dispatch'])
                     dispatch(updateVisitorsInQueueCount(msg.visitorsWaiting));
                 }
             },
-
             toState(stateful)['features/base/jwt'].jwt);
 }
 
