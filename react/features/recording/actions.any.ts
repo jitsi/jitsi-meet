@@ -32,7 +32,10 @@ import {
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
-import { START_RECORDING_NOTIFICATION_ID } from './constants';
+import {
+    RECORDING_METADATA_ID,
+    START_RECORDING_NOTIFICATION_ID
+} from './constants';
 import {
     getRecordButtonProps,
     getRecordingLink,
@@ -451,6 +454,9 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     });
 
                     if (autoTranscribeOnRecord) {
+                        conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                            isTranscribingEnabled: true
+                        });
                         dispatch(setRequestingSubtitles(true, false, null));
                     }
                 } else {
