@@ -88,6 +88,29 @@ paths:
             type: array
             items:
               $ref: "#/definitions/PhoneNumberListAnswer"
+  /waiting-queue/golive:
+    post:
+      tags:
+      - waitingQueueGoLive
+      summary: Post a go live request
+      description: Mark the conference as live, notify all visitors waiting.
+      operationId: goLive
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Go Live Request"
+        required: true
+        schema:
+          "$ref": "#/definitions/GoLiveRequest"
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Missing conference
+        '500':
+          description: Failed operation
 securityDefinitions:
   token:
     type: "apiKey"
@@ -143,6 +166,12 @@ definitions:
       - {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
       - {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
 
+  GoLiveRequest:
+      type: object
+      properties:
+        conference:
+          type: string
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
   url: "https://jitsi.org/CloudAPI"
+  
