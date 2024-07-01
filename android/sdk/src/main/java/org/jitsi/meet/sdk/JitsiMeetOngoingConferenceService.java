@@ -103,6 +103,7 @@ public class JitsiMeetOngoingConferenceService extends Service
         PermissionListener listener = new PermissionListener() {
             @Override
             public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+
                 if (results.length > 0) {
 
                     if (results[0] == PackageManager.PERMISSION_GRANTED
