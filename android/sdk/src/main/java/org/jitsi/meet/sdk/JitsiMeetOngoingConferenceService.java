@@ -103,18 +103,16 @@ public class JitsiMeetOngoingConferenceService extends Service
         PermissionListener listener = new PermissionListener() {
             @Override
             public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                boolean allPermissionsGranted = false;
+                int counter = 0;
 
                 if (results.length > 0) {
-                    for (int index = 1; index < results.length; index++) {
-
-                        if (results[index] == results[0]) {
-                            allPermissionsGranted = true;
-                            break;
+                    for (int result : results) {
+                        if (result == PackageManager.PERMISSION_GRANTED) {
+                            counter++;
                         }
                     }
 
-                    if (allPermissionsGranted){
+                    if (counter == results.length){
                         doLaunch(context, extraData);
                         JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
                     } else {
