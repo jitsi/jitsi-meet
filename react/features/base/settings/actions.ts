@@ -11,6 +11,7 @@ import { ISettingsState } from './reducer';
  *         audioOutputDeviceId: string,
  *         avatarURL: string,
  *         cameraDeviceId: string,
+ *         disableSelfView: boolean,
  *         displayName: string,
  *         email: string,
  *         localFlipX: boolean,
