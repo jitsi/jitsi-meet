@@ -10,6 +10,7 @@ declare global {
         API: any;
         conference: any;
         debugLogs: any;
+        connect: any;
     };
     const interfaceConfig: any;
 
@@ -25,6 +26,7 @@ declare global {
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };
+        XMPPAttachInfo: any;
     }
 
     interface Document {
