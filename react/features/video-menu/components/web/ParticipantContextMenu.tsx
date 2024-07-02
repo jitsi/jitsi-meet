@@ -214,7 +214,7 @@ const ParticipantContextMenu = ({
 
     if (_isModerator) {
         if (isModerationSupported) {
-            if (_isAudioMuted
+            if (_isAudioMuted && !participant.isSilent
                 && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ASK_TO_UNMUTE)) {
                 buttons.push(<AskToUnmuteButton
                     { ...getButtonProps(BUTTONS.ASK_UNMUTE) }
@@ -230,7 +230,7 @@ const ParticipantContextMenu = ({
             }
         }
 
-        if (!disableRemoteMute) {
+        if (!disableRemoteMute && !participant.isSilent) {
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
                 buttons.push(<MuteButton { ...getButtonProps(BUTTONS.MUTE) } />);
             }

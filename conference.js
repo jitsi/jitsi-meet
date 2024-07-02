@@ -1676,6 +1676,18 @@ export default {
                 });
             }
         );
+
+        room.on(
+            JitsiConferenceEvents.SILENT_STATUS_CHANGED,
+            (id, isSilent) => {
+                APP.store.dispatch(participantUpdated({
+                    conference: room,
+                    id,
+                    isSilent
+                }));
+            }
+        );
+
         room.on(
             JitsiConferenceEvents.BOT_TYPE_CHANGED,
             (id, botType) => {

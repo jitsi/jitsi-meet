@@ -19,7 +19,7 @@ import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
-import { CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
@@ -200,6 +200,28 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+
+    case CONFERENCE_JOINED: {
+        const result = next(action);
+
+        const state = store.getState();
+        const { startSilent } = state['features/base/config'];
+
+        if (startSilent) {
+            const localId = getLocalParticipant(store.getState())?.id;
+
+            if (localId) {
+                store.dispatch(participantUpdated({
+                    id: localId,
+                    local: true,
+                    isSilent: startSilent
+                }));
+            }
+        }
+
+        return result;
+    }
+
 
     case SET_LOCAL_PARTICIPANT_RECORDING_STATUS: {
         const state = store.getState();

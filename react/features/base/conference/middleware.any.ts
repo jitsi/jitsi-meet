@@ -706,6 +706,10 @@ function _updateLocalParticipantInConference({ dispatch, getState }: IStore, nex
             conference.setDisplayName(participant.name);
         }
 
+        if ('isSilent' in participant) {
+            conference.setIsSilent(participant.isSilent);
+        }
+
         if ('role' in participant && participant.role === PARTICIPANT_ROLE.MODERATOR) {
             const { pendingSubjectChange, subject } = getState()['features/base/conference'];
 
