@@ -1,3 +1,5 @@
+import { batch } from 'react-redux';
+
 import { IStore } from '../app/types';
 import { APP_WILL_NAVIGATE } from '../base/app/actionTypes';
 import {
@@ -13,7 +15,9 @@ import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
+import { gumPending, setInitialGUMPromise } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
+import { IGUMPendingState } from '../base/media/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { parseURIString } from '../base/util/uri';
@@ -143,7 +147,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED: {
         const { error } = action;
-        const state = store.getState();
+        const { dispatch, getState } = store;
+        const state = getState();
         const { jwt } = state['features/base/jwt'];
 
         if (error
@@ -153,6 +158,11 @@ MiddlewareRegistry.register(store => next => action => {
             error.recoverable = true;
 
             _handleLogin(store);
+        } else {
+            batch(() => {
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                dispatch(setInitialGUMPromise());
+            });
         }
 
         break;
@@ -264,6 +274,11 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
     if (!room) {
+        batch(() => {
+            dispatch(setInitialGUMPromise());
+            dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+        });
+
         logger.warn('Cannot handle login, room is undefined!');
 
         return;
@@ -274,6 +289,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
 
         return;
     }
+
+    dispatch(setInitialGUMPromise());
 
     getTokenAuthUrl(
         config,

@@ -373,7 +373,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  * @returns {Function}
  */
 export function trackAdded(track: any) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
@@ -400,7 +400,7 @@ export function trackAdded(track: any) {
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
-                    const notificationAction = await dispatch(showNotification({
+                    const notificationAction = dispatch(showNotification({
                         descriptionKey: 'dialog.micNotSendingData',
                         titleKey: 'dialog.micNotSendingDataTitle'
                     }, NOTIFICATION_TIMEOUT_TYPE.LONG));
