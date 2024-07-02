@@ -2,10 +2,11 @@ import i18next from 'i18next';
 
 import { ENDPOINT_MESSAGE_RECEIVED, KICKED_OUT } from '../base/conference/actionTypes';
 import { hangup } from '../base/connection/actions.web';
+import { raiseHand } from '../base/participants/actions';
 import { getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { openAllowToggleCameraDialog, setCameraFacingMode } from '../base/tracks/actions.web';
-import { CAMERA_FACING_MODE_MESSAGE } from '../base/tracks/constants';
+import { CAMERA_FACING_MODE_MESSAGE, LOWER_HAND } from '../base/tracks/constants';
 
 import './middleware.any';
 
@@ -19,6 +20,8 @@ MiddlewareRegistry.register(store => next => action => {
                 /* onAllow */ () => APP.store.dispatch(setCameraFacingMode(data.facingMode)),
                 /* initiatorId */ participant.getId()
             ));
+        } else if (data?.name === LOWER_HAND && data?.isModerator) {
+            APP.store.dispatch(raiseHand(false));
         }
         break;
     }

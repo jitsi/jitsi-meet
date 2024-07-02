@@ -32,6 +32,7 @@ import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { shouldShowModeratorSettings } from '../../../settings/functions.web';
+import LowerHandButton from '../../../video-menu/components/web/LowerHandButton';
 import MuteEveryonesVideoDialog from '../../../video-menu/components/web/MuteEveryonesVideoDialog';
 
 const useStyles = makeStyles()(theme => {
@@ -85,6 +86,9 @@ interface IProps {
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const raisedHandsQueue = useSelector(
+        (state: IReduxState) => state['features/base/participants'].raisedHandsQueue || []);
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);
@@ -147,6 +151,9 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
                     onClick: muteAllVideo,
                     text: t('participantsPane.actions.stopEveryonesVideo')
                 } ] } />
+            {raisedHandsQueue.length !== 0 && (<LowerHandButton
+                conference = { conference }
+                participantID = '' />)}
             {!isBreakoutRoom && isModerationSupported && (participantCount === 1 || !allModerators) && (
                 <ContextMenuItemGroup actions = { actions }>
                     <div className = { classes.text }>
