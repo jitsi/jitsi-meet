@@ -67,6 +67,12 @@ export const CONFERENCE_TIMER_ENABLED = 'conference-timer.enabled';
 export const CHAT_ENABLED = 'chat.enabled';
 
 /**
+ * Flag indicating if chat button should have a custom action.
+ * Default: disabled (false).
+ */
+export const CHAT_CUSTOM_OPEN_ENABLED = 'chat-custom-open.enabled';
+
+/**
  * Flag indicating if the filmstrip should be enabled.
  * Default: enabled (true).
  */
@@ -224,6 +230,12 @@ export const REPLACE_PARTICIPANT = 'replace.participant';
  * Default: (unset).
  */
 export const RESOLUTION = 'resolution';
+
+/**
+ * Flag indicating if screen sharing button should be shown in portrait toolbar.
+ * Default: disabled (false).
+ */
+export const SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE = 'screensharing-in-portrait-toolbar.alwaysVisible';
 
 /**
  * Flag indicating if the security options button should be enabled.

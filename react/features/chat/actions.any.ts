@@ -9,6 +9,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SET_IS_POLL_TAB_FOCUSED,
@@ -76,6 +77,19 @@ export function editMessage(message: Object) {
 export function clearMessages() {
     return {
         type: CLEAR_MESSAGES
+    };
+}
+
+/**
+ * Action to signal the opening of the chat dialog.
+ *
+ * @returns {{
+*     type: OPEN_CHAT
+* }}
+*/
+export function openChat() {
+    return {
+        type: OPEN_CHAT
     };
 }
 

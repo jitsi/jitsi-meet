@@ -10,8 +10,7 @@ const button = {
 };
 
 const buttonLabel = {
-    ...BaseTheme.typography.bodyShortBold,
-    textTransform: 'capitalize'
+    ...BaseTheme.typography.bodyShortBold
 };
 
 export default {

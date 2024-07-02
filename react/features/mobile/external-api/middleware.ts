@@ -85,7 +85,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 /**
  * Event which will be emitted on the native side to indicate that the custom overflow menu button was pressed.
  */
-const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_MENU_BUTTON_PRESSED';
+const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED';
 
 
 /**
@@ -402,7 +402,9 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }: any) => {
         const participant = getParticipantById(store, to);
 
-        dispatch(openChat(participant));
+        const { disablePolls } = getState()['features/base/config'];
+
+        dispatch(openChat(participant, disablePolls ?? false));
     });
 
     eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {

@@ -259,9 +259,9 @@ public class JitsiMeetActivity extends AppCompatActivity
 //        JitsiMeetLogger.i("Transcription chunk received: " + extraData);
 //    }
 
-//    protected void onCustomOverflowMenuButtonPressed(HashMap<String, Object> extraData) {
-//        JitsiMeetLogger.i("Custom overflow menu button pressed: " + extraData);
-//    }
+   protected void onCustomOverflowMenuButtonPressed(HashMap<String, Object> extraData) {
+       JitsiMeetLogger.i("Custom overflow menu button pressed: " + extraData);
+   }
 
     // Activity lifecycle methods
     //
@@ -349,9 +349,9 @@ public class JitsiMeetActivity extends AppCompatActivity
 //                case TRANSCRIPTION_CHUNK_RECEIVED:
 //                    onTranscriptionChunkReceived(event.getData());
 //                    break;
-//                case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED:
-//                    onCustomOverflowMenuButtonPressed(event.getData());
-//                    break;
+                case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED:
+                    onCustomOverflowMenuButtonPressed(event.getData());
+                    break;
             }
         }
     }
