@@ -1,16 +1,24 @@
 import React from 'react';
 
 const EmojiSelector = ({ onSelect }) => {
-    const emojis = ['😀', '😁', '😂', '🤣', '😃']; // Example emojis
-    
+    const emojiMap = {
+        grin: '😀',
+        smile: '😁',
+        laugh: '😂',
+        rofl: '🤣',
+        happy: '😃'
+    };
+
+    const emojiNames = Object.keys(emojiMap);
+
     return (
         <div className="emoji-selector" style={{ display: 'flex', flexDirection: 'row' }}>
-            {emojis.map(emoji => (
+            {emojiNames.map(name => (
                 <span 
-                    key={emoji} 
-                    onClick={() => onSelect(emoji)} 
+                    key={name} 
+                    onClick={() => onSelect(emojiMap[name])} 
                     style={{ cursor: 'pointer', padding: '5px', fontSize: '1.5em' }}>
-                    {emoji}
+                    {emojiMap[name]}
                 </span>
             ))}
         </div>
