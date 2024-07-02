@@ -106,12 +106,13 @@ public class JitsiMeetOngoingConferenceService extends Service
 
                 if (results.length > 0) {
 
-                    if (results[0] == PackageManager.PERMISSION_GRANTED
-                        && results[1] == PackageManager.PERMISSION_GRANTED) {
-                        doLaunch(context, extraData);
-                        JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
-                    } else {
-                        JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+                    for (int result : results) {
+                        if (result == PackageManager.PERMISSION_GRANTED) {
+                            doLaunch(context, extraData);
+                            JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
+                        } else {
+                            JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+                        }
                     }
                 }
 
@@ -154,16 +155,12 @@ public class JitsiMeetOngoingConferenceService extends Service
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, notification);
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-            }
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            } else {
+                startForeground(NOTIFICATION_ID, notification);
             }
         }
 
