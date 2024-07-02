@@ -248,7 +248,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const isParticipantAvailable = getParticipantById(state, participantId);
+    const participant = getParticipantById(state, participantId);
     const { disableKick, disablePrivateChat } = remoteVideoMenu;
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
@@ -263,8 +263,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _disablePrivateChat: Boolean(disablePrivateChat) || _iAmVisitor,
         _isBreakoutRoom,
-        _isParticipantAvailable: Boolean(isParticipantAvailable),
-        _isParticipantSilent: Boolean(isParticipantAvailable?.isSilent),
+        _isParticipantAvailable: Boolean(participant),
+        _isParticipantSilent: Boolean(participant?.isSilent),
         _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
         _rooms,
