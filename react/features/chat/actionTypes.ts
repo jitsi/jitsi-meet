@@ -63,6 +63,18 @@ export const OPEN_CHAT = 'OPEN_CHAT';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 /**
+ * The type of the action which signals a reaction to a message.
+ *
+ * {
+ *     type: SEND_REACTION,
+ *     reaction: string,
+ *     messageID: string,
+ *     receiverID: string
+ * }
+ */
+export const SEND_REACTION = 'SEND_REACTION';
+
+/**
  * The type of action which signals the initiation of sending of as private message to the
  * supplied recipient.
  *

@@ -11,6 +11,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { sendReaction } from '../../actions.any.ts';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
+import { sendReaction } from '../../actions.any.ts';
 
 import KebabMenu from './KebabMenu.tsx';
 import PrivateMessageButton from './PrivateMessageButton';
@@ -19,6 +20,13 @@ import KebabMenu from './KebabMenu.tsx';
 
 interface IProps extends IChatMessageProps {
     type: string;
+
+    /**
+     * Function to send a reaction to a message.
+     *
+     * @protected
+     */
+    _onSendReaction: Function;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -139,6 +147,7 @@ const ChatMessage = ({
     kebabMenuVisible,
     knocking,
     message,
+    _onSendReaction,
     showDisplayName,
     showTimestamp,
     type,
@@ -260,7 +269,9 @@ const ChatMessage = ({
                             && (
                                 <div
                                     className = { classes.optionsButtonContainer }>
-                                    <KebabMenu />
+                                    <KebabMenu
+                                        isLobbyMessage = { message.lobbyChat }
+                                        participantID = { message.id } />
                                 </div>
                             )}
                         </div>

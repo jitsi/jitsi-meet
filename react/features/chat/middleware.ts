@@ -36,7 +36,7 @@ import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/f
 import { showToolbox } from '../toolbox/actions';
 
 
-import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
+import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SEND_REACTION, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, clearMessages, closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
@@ -208,6 +208,17 @@ MiddlewareRegistry.register(store => next => action => {
             }
         }
         break;
+    }
+
+    case SEND_REACTION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            const { messageID, receiverID, reaction } = action;
+
+            conference.sendReaction(reaction, messageID, receiverID);
+        }
     }
 
     case ADD_REACTION_MESSAGE: {

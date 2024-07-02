@@ -11,6 +11,7 @@ import {
     EDIT_MESSAGE,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_REACTION,
     SET_IS_POLL_TAB_FOCUSED,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -108,6 +109,24 @@ export function sendMessage(message: string, ignorePrivacy = false) {
         type: SEND_MESSAGE,
         ignorePrivacy,
         message
+    };
+}
+/**
+ * Sends a reaction to a message.
+ * 
+ * @param {string} reaction - The reaction to send.
+ * @param {string} messageID - The message ID to react to.
+ * @param {string} receiverID - The receiver ID of the reaction.
+ * @returns {Function}
+ * 
+ */
+export function sendReaction(reaction: string, messageID: string, receiverID?: string) {
+    console.log('sendReaction')
+    return {
+        type: SEND_REACTION,
+        reaction,
+        messageID,
+        receiverID
     };
 }
 
