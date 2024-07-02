@@ -31,7 +31,7 @@
     "@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.3.tgz",
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.12.1",
-    "@react-native-async-storage/async-storage": "1.19.4",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "11.1.0",
     "@react-native-community/slider": "4.4.3",
