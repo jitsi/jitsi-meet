@@ -258,10 +258,8 @@ MiddlewareRegistry.register(store => next => action => {
         let queue = getRaiseHandsQueue(store.getState());
 
         if (participant.raisedHandTimestamp) {
-            queue.push({
-                id: participant.id,
-                raisedHandTimestamp: participant.raisedHandTimestamp
-            });
+            queue = [ ...queue, { id: participant.id,
+                raisedHandTimestamp: participant.raisedHandTimestamp } ];
 
             // sort the queue before adding to store.
             queue = queue.sort(({ raisedHandTimestamp: a }, { raisedHandTimestamp: b }) => a - b);
