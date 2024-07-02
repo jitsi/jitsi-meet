@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
+import static android.Manifest.permission.RECORD_AUDIO;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -38,7 +39,9 @@ import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -57,7 +60,7 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
-    private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
+    private static final int PERMISSIONS_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
 
     private boolean isAudioMuted;
 
@@ -95,26 +98,50 @@ public class JitsiMeetOngoingConferenceService extends Service
 
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            PermissionListener listener = new PermissionListener() {
-                @Override
-                public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                    if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-                        doLaunch(context, extraData);
+        List<String> permissionsList = new ArrayList<>();
+
+        PermissionListener listener = new PermissionListener() {
+            @Override
+            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                int counter = 0;
+
+                if (results.length > 0) {
+                    for (int result : results) {
+                        if (result == PackageManager.PERMISSION_GRANTED) {
+                            counter++;
+                        }
                     }
 
-                    return true;
+                    if (counter == results.length){
+                        doLaunch(context, extraData);
+                        JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
+                    } else {
+                        JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+                    }
                 }
-            };
 
+                return true;
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsList.add(POST_NOTIFICATIONS);
+            permissionsList.add(RECORD_AUDIO);
+        }
+
+        String[] permissionsArray = new String[ permissionsList.size() ];
+        permissionsArray = permissionsList.toArray( permissionsArray );
+
+        if (permissionsArray.length > 0) {
             JitsiMeetActivityDelegate.requestPermissions(
                 (Activity) context,
-                new String[]{POST_NOTIFICATIONS},
-                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
+                permissionsArray,
+                PERMISSIONS_REQUEST_CODE,
                 listener
             );
         } else {
             doLaunch(context, extraData);
+            JitsiMeetLogger.w(TAG + " Service launched");
         }
     }
 
@@ -132,8 +159,10 @@ public class JitsiMeetOngoingConferenceService extends Service
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
             } else {
                 startForeground(NOTIFICATION_ID, notification);
             }
