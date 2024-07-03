@@ -4,7 +4,8 @@ import {
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../../base/conference/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
@@ -52,6 +53,15 @@ const externalAPIEnabled = isExternalAPIAvailable();
     case ENTER_PICTURE_IN_PICTURE:
         rnSdkHandlers?.onEnterPictureInPicture && rnSdkHandlers?.onEnterPictureInPicture();
         break;
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { data, participant } = action;
+
+        rnSdkHandlers?.onEndpointTextMessageReceived && rnSdkHandlers?.onEndpointTextMessageReceived({
+            message: data.text,
+            senderId: participant.getId()
+        });
+        break;
+    }
     case PARTICIPANT_JOINED: {
         const { participant } = action;
         const participantInfo = participantToParticipantInfo(participant);
