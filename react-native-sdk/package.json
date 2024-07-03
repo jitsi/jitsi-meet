@@ -61,6 +61,7 @@
         "@react-native-community/netinfo": "0.0.0",
         "@react-native-community/slider": "0.0.0",
         "@react-native-google-signin/google-signin": "0.0.0",
+        "@stomp/stompjs": "0.0.0",
         "react-native": "*",
         "react": "*",
         "react-native-background-timer": "0.0.0",
