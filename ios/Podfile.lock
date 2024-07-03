@@ -579,7 +579,8 @@ PODS:
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
     - React-Core
-  - RNScreens (3.24.0):
+  - RNScreens (3.32.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
   - RNSound (0.11.2):
@@ -908,7 +909,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNGoogleSignin: a6a612cce56a45ab701c5c5c6e36f5390522d100
-  RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
+  RNScreens: ad1c105ac9107cf1a613bf80889485458eb20bd7
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
   RNWatch: fd30ca40a5b5ef58dcbc195638e68219bc455236
