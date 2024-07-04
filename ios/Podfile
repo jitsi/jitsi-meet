@@ -10,6 +10,10 @@ workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
 
+def cocoa_utilities
+    pod 'CocoaLumberjack', '3.7.4'
+end
+
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
@@ -45,7 +49,7 @@ target 'JitsiMeetSDK' do
   # Native pod dependencies
   #
 
-  pod 'CocoaLumberjack', '3.7.4'
+  cocoa_utilities
   pod 'ObjectiveDropboxOfficial', '6.2.3'
 end
 
@@ -70,7 +74,7 @@ target 'JitsiMeetSDKLite' do
     # Native pod dependencies
     #
 
-    pod 'CocoaLumberjack', '3.7.4'
+    cocoa_utilities
 end
 
 post_install do |installer|
@@ -79,7 +83,6 @@ post_install do |installer|
     use_native_modules![:reactNativePath],
     :mac_catalyst_enabled => false
   )
-  __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
