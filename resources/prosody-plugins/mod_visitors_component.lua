@@ -491,14 +491,19 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     if visitors_queue_service then
         host_module:hook('muc-room-created', function (event)
             local room = event.room;
-            if room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
+
+            if is_healthcheck_room(room.jid) then
+                return;
+            end
+
+            if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
                 go_live(room);
             end
         end, -2); -- metadata hook on -1
         host_module:hook('jitsi-metadata-updated', function (event)
             if event.key == 'visitors' then
                 local room = event.room;
-                if room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
+                if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
                     go_live(room);
                 end
             end
