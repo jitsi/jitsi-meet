@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Platform, View, ViewStyle } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { FlatList, Platform, TextInput, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
