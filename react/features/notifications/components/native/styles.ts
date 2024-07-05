@@ -14,10 +14,9 @@ const notification = {
     display: 'flex',
     flexDirection: 'row',
     height: 'auto',
-    paddingBottom: BaseTheme.spacing[2],
-    paddingHorizontal: BaseTheme.spacing[2],
-    maxWidth: 432,
-    width: 'auto'
+    marginVertical: BaseTheme.spacing[1],
+    maxWidth: 416,
+    width: '100%'
 };
 
 /**
