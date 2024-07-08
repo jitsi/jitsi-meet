@@ -16,7 +16,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "@amplitude/react-native": "2.7.0",
+    "@amplitude/react-native": "2.17.3",
     "@braintree/sanitize-url": "7.0.0",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
@@ -78,7 +78,7 @@
     "punycode": "2.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-emoji-render": "1.2.4",
+    "react-emoji-render": "2.0.1",
     "react-focus-on": "3.8.1",
     "react-i18next": "10.11.4",
     "react-linkify": "1.0.0-alpha",

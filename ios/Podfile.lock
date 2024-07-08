@@ -1,8 +1,10 @@
 PODS:
-  - Amplitude (8.7.1)
-  - amplitude-react-native (2.7.0):
-    - Amplitude (= 8.7.1)
+  - Amplitude (8.18.0):
+    - AnalyticsConnector (~> 1.0.0)
+  - amplitude-react-native (2.17.3):
+    - Amplitude (= 8.18.0)
     - React-Core
+  - AnalyticsConnector (1.0.3)
   - AppAuth (1.7.5):
     - AppAuth/Core (= 1.7.5)
     - AppAuth/ExternalUserAgent (= 1.7.5)
@@ -1321,6 +1323,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Amplitude
+    - AnalyticsConnector
     - AppAuth
     - CocoaLumberjack
     - Firebase
@@ -1495,8 +1498,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Amplitude: 834c7332dfb9640a751e21c13efb22a07c0c12d4
-  amplitude-react-native: 0ed8cab759aafaa94961b82122bf56297da607ad
+  Amplitude: 184def4f87aa26f94a93a7faa334e06b1cae704d
+  amplitude-react-native: 9e5e0f4609366a2f714ab05dd7924f3c3073c075
+  AnalyticsConnector: a53214d38ae22734c6266106c0492b37832633a9
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
