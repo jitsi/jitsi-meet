@@ -304,7 +304,12 @@ local function process_promotion_response(room, id, approved)
             allow = approved }):up());
 end
 
+-- if room metadata does not have visitors.live set to `true` it will skip calling goLive endpoint
 local function go_live(room)
+    if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
+        return;
+    end
+
     -- let's inform the queue service
     local function cb(content_, code_, response_, request_)
         local room = room;
@@ -496,17 +501,16 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 return;
             end
 
-            if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
-                go_live(room);
-            end
+            go_live(room);
         end, -2); -- metadata hook on -1
         host_module:hook('jitsi-metadata-updated', function (event)
             if event.key == 'visitors' then
-                local room = event.room;
-                if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
-                    go_live(room);
-                end
+                go_live(event.room);
             end
+        end);
+        -- when metadata changed internally from another module
+        host_module:hook('room-metadata-changed', function (event)
+            go_live(event.room);
         end);
     end
 
