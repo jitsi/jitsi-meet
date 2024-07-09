@@ -305,7 +305,7 @@ local function process_promotion_response(room, id, approved)
             allow = approved }):up());
 end
 
--- if room metadata does not have visitors.live set to `true` and no moderator in the meeting
+-- if room metadata does not have visitors.live set to `true` and there are no occupants in the meeting
 -- it will skip calling goLive endpoint
 local function go_live(room)
     if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
@@ -316,16 +316,16 @@ local function go_live(room)
         return;
     end
 
-    local has_moderator = false;
+    local has_occupant = false;
     for _, occupant in room:each_occupant() do
-        if occupant.role == 'moderator' then
-            has_moderator = true;
+        if not is_admin(occupant.bare_jid) then
+            has_occupant = true;
             break;
         end
     end
 
-    -- when there is a moderator then go live
-    if not has_moderator then
+    -- when there is an occupant then go live
+    if not has_occupant then
         return;
     end
 
