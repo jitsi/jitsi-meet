@@ -53,10 +53,9 @@ const externalAPIEnabled = isExternalAPIAvailable();
     case ENTER_PICTURE_IN_PICTURE:
         rnSdkHandlers?.onEnterPictureInPicture?.();
         break;
-    case ENDPOINT_MESSAGE_RECEIVED: {
-        rnSdkHandlers?.onEndpointTextMessageReceived?.(action.data);
+    case ENDPOINT_MESSAGE_RECEIVED:
+        rnSdkHandlers?.onEndpointMessageReceived?.(action.data);
         break;
-    }
     case PARTICIPANT_JOINED: {
         const { participant } = action;
         const participantInfo = participantToParticipantInfo(participant);
