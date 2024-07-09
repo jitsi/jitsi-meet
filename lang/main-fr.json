@@ -128,6 +128,7 @@
         "privateNotice": "Message privé à {{recipient}}",
         "sendButton": "Envoyer",
         "smileysPanel": "Panneaux des Émojis",
+        "systemDisplayName": "Système",
         "tabs": {
             "chat": "Chat",
             "polls": "Sondages"
@@ -219,7 +220,9 @@
         "joinInBrowser": "Rejoindre depuis le navigateur",
         "launchMeetingLabel": "Comment voulez-vous rejoindre la réunion ?",
         "launchWebButton": "Lancer dans le navigateur",
+        "noDesktopApp": "Vous n'avez pas l'application ?",
         "noMobileApp": "Vous n’avez pas l’application ?",
+        "or": "OU",
         "termsAndConditions": "En continuant, vous acceptez nos  <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>conditions générales d’utilisation.</a>",
         "title": "Lancement de votre réunion dans {{app}} en cours ...",
         "titleNew": "Lancement de votre réunion ...",
@@ -261,6 +264,7 @@
         "Share": "Partager",
         "Submit": "Soumettre",
         "WaitForHostMsg": "La conférence n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "WaitForHostNoAuthMsg": "La conférence n'a pas encore commencé car aucun modérateur n'est encore arrivé. Veuillez patienter.",
         "WaitingForHostButton": "Attendre l'hôte",
         "WaitingForHostTitle": "En attente de l'hôte ...",
         "Yes": "Oui",
@@ -303,6 +307,8 @@
         "contactSupport": "Contacter le support",
         "copied": "Copié",
         "copy": "Copier",
+        "demoteParticipantDialog": "Êtes-vous sûr de vouloir déplacer ce participant en visiteur ?",
+        "demoteParticipantTitle": "Déplacer en visiteur",
         "dismiss": "Rejeter",
         "displayNameRequired": "Bonjour ! Quel est votre nom ?",
         "done": "Terminé",
@@ -314,6 +320,7 @@
         "embedMeeting": "Intégrer la réunion",
         "enterDisplayName": "Merci de saisir votre nom ici",
         "error": "Erreur",
+        "errorRoomCreationRestriction": "Vous avez essayé de rejoindre trop rapidement, veuillez revenir dans un moment.",
         "gracefulShutdown": "Notre service est actuellement en maintenance. Veuillez réessayer plus tard.",
         "grantModeratorDialog": "Êtes-vous sûr de vouloir rendre ce participant modérateur ?",
         "grantModeratorTitle": "Nommer modérateur",
@@ -558,6 +565,7 @@
         "noNumbers": "Numéros non trouvés",
         "noPassword": "Aucun",
         "noRoom": "Aucune réunion n'a été spécifiée pour l'appel entrant.",
+        "noWhiteboard": "Impossible de charger le tableau blanc.",
         "numbers": "Numéros d'appel",
         "password": "$t(lockRoomPasswordUppercase) :",
         "reachedLimit": "Vous avez atteint la limite de votre abonnement.",
@@ -565,7 +573,8 @@
         "sipAudioOnly": "Adresse SIP en audio uniquement",
         "title": "Partager",
         "tooltip": "Partager le lien et les informations de connexion pour cette conférence",
-        "upgradeOptions": "Veuillez vérifier les options de mise à niveau"
+        "upgradeOptions": "Veuillez vérifier les options de mise à niveau",
+        "whiteboardError": "Erreur de chargement du tableau blanc. Veuillez réessayer plus tard."
     },
     "inlineDialogFailure": {
         "msg": "Il y a eu un petit problème.",
@@ -729,6 +738,8 @@
         "connectedTwoMembers": "{{first}} et {{second}} ont rejoint la réunion",
         "dataChannelClosed": "Qualité vidéo dégradée",
         "dataChannelClosedDescription": "Le canal de communication avec le Bridge a été interrompu, la qualité vidéo se trouve limitée à sa valeur la plus faible.",
+        "dataChannelClosedDescriptionWithAudio": "Le canal de pont est fermé, ce qui peut entraîner des perturbations de l'audio et de la vidéo.",
+        "dataChannelClosedWithAudio": "La qualité de l'audio et de la vidéo peut être altérée",
         "disabledIframe": "L'intégration Iframe est uniquement destinée à des démos, cet appel se terminera dans {{timeout}} minutes.",
         "disabledIframeSecondary": "L'intégration Iframe de {{domaine}} est uniquement destinée à des démos, cet appel se terminera dans {{timeout}} minutes.",
         "disconnected": "déconnecté",
@@ -800,13 +811,19 @@
         "startSilentTitle": "Vous avez rejoint sans sortie audio !",
         "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit pas idéale ici. Nous cherchons des moyens d'améliorer cela, mais d'ici-là, essayez d'utiliser l'un des <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigateurs supportés</a>.",
         "suboptimalExperienceTitle": "Avertissement du navigateur",
+        "suggestRecordingAction": "Démarrer",
+        "suggestRecordingDescription": "Souhaitez-vous démarrer un enregistrement ?",
+        "suggestRecordingTitle": "Enregistrer cette réunion",
         "unmute": "Rétablir le son",
         "videoMutedRemotelyDescription": "Vous pouvez toujours la réactiver.",
         "videoMutedRemotelyTitle": "Votre caméra a été coupée par {{participantDisplayName}}!",
         "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système.",
         "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !",
         "viewLobby": "Voir la salle d'attente",
+        "viewVisitors": "Voir les visiteurs",
         "waitingParticipants": "{{waitingParticipants}} personnes",
+        "waitingVisitors": "Visiteurs en attente dans la file : {{waitingVisitors}}",
+        "waitingVisitorsTitle": "La réunion n'est pas encore en direct !",
         "whiteboardLimitDescription": "Veuillez sauvegarder votre progression, car la limite d’utilisation du tableau blanc sera bientôt atteinte et celui-ci sera fermé.",
         "whiteboardLimitTitle": "Utiilisation du tableau blanc"
     },
@@ -820,6 +837,7 @@
             "audioModeration": "Rouvrir leur micro",
             "blockEveryoneMicCamera": "Bloquer tous les micros et caméras",
             "breakoutRooms": "Salles annexes",
+            "goLive": "Passer en direct",
             "invite": "Inviter quelqu'un",
             "moreModerationActions": "Options de modération supplémentaires",
             "moreModerationControls": "Options de modération supplémentaires",
@@ -837,6 +855,7 @@
         "headings": {
             "lobby": "Salle d'attente ({{count}})",
             "participantsList": "Participants de la réunion ({{count}})",
+            "visitorInQueue": " (en attente {{count}})",
             "visitorRequests": "(Demande {{count}} )",
             "visitors": "Visiteurs {{count}}",
             "waitingLobby": "Dans la salle d'attente ({{count}})"
@@ -850,6 +869,8 @@
     "pinnedParticipant": "Participant toujours affiché",
     "polls": {
         "answer": {
+            "edit": "Modifier",
+            "send": "Envoyer",
             "skip": "Passer",
             "submit": "Envoyer"
         },
@@ -863,6 +884,7 @@
             "pollQuestion": "Question du sondage",
             "questionPlaceholder": "Poser une question",
             "removeOption": "Supprimer l'option",
+            "save": "Enregistrer",
             "send": "Envoyer"
         },
         "errors": {
@@ -935,6 +957,7 @@
         "or": "ou",
         "premeeting": "Pré-séance",
         "proceedAnyway": "Continuer quand même",
+        "recordingWarning": "D'autres participants peuvent enregistrer cet appel",
         "screenSharingError": "Erreur de partage d'écran:",
         "showScreen": "Activer l'écran de pré-séance",
         "startWithPhone": "Commencez avec l'audio du téléphone",
@@ -1356,13 +1379,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Activer / Désactiver les sous-titres",
-        "error": "Échec de la transcription. Veuillez réessayer.",
         "expandedLabel": "La transcription est actuellement activée",
         "failedToStart": "Échec de démarrage de la transcription",
         "labelToolTip": "La transcription de la réunion est en cours",
-        "off": "La transcription est désactivée",
-        "on": "La transcription est activée",
-        "pending": "Préparation de la transcription de la réunion ...",
         "sourceLanguageDesc": "Actuellement, la langue de la réunion est sélectionnée à <b>{{sourceLanguage}}</b>. <br/> Vous pouvez la changer à partir de ",
         "sourceLanguageHere": "ici",
         "start": "Activer les sous-titres",
@@ -1418,6 +1437,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Informations de la connexion",
+        "demote": "Déplacer en visiteur",
         "domute": "Couper le micro",
         "domuteOthers": "Couper le micro de tous les autres",
         "domuteVideo": "Couper la caméra",
@@ -1472,9 +1492,15 @@
         "chatIndicator": "(visiteur)",
         "labelTooltip": "Nombre de Visiteurs",
         "notification": {
+            "demoteDescription": "Envoyé ici par {{actor}}, levez la main pour participer",
             "description": "Pour participer lever la main.",
+            "noMainParticipantsDescription": "Un participant doit démarrer la réunion. Veuillez réessayer dans un moment.",
+            "noMainParticipantsTitle": "Cette réunion n'a pas encore commencé.",
+            "noVisitorLobby": "Vous ne pouvez pas rejoindre tant qu'une salle d'attente est activée pour la réunion.",
+            "notAllowedPromotion": "Un participant doit d'abord autoriser votre demande.",
             "title": "Vous êtes visiteur dans cette réunion"
-        }
+        },
+        "waitingMessage": "Vous rejoindrez la réunion dès qu'elle sera en direct !"
     },
     "volumeSlider": "Curseur de volume",
     "welcomepage": {
@@ -1532,6 +1558,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Tableau blanc"
-        }
+        },
+        "screenTitle": "Tableau blanc"
     }
 }
