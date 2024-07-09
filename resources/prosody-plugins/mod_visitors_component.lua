@@ -19,7 +19,8 @@ local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
-local token_util = module:require 'token/util'.new(module);
+-- will be initialized once the main virtual host module is initialized
+local token_util;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -337,6 +338,10 @@ local function go_live(room)
 end
 
 module:hook('iq/host', stanza_handler, 10);
+
+process_host_module(muc_domain_base, function(host_module, host)
+    token_util = module:require "token/util".new(host_module);
+end);
 
 process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_module, host)
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access
