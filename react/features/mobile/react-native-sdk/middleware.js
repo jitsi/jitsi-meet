@@ -55,6 +55,7 @@ const externalAPIEnabled = isExternalAPIAvailable();
         break;
     case ENDPOINT_MESSAGE_RECEIVED: {
         const { data, participant } = action;
+
         rnSdkHandlers?.onEndpointMessageReceived?.({
             data,
             participant
