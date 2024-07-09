@@ -305,9 +305,27 @@ local function process_promotion_response(room, id, approved)
             allow = approved }):up());
 end
 
--- if room metadata does not have visitors.live set to `true` it will skip calling goLive endpoint
+-- if room metadata does not have visitors.live set to `true` and no moderator in the meeting
+-- it will skip calling goLive endpoint
 local function go_live(room)
     if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
+        return;
+    end
+
+    if room._jitsi_go_live_sent then
+        return;
+    end
+
+    local has_moderator = false;
+    for _, occupant in room:each_occupant() do
+        if occupant.role == 'moderator' then
+            has_moderator = true;
+            break;
+        end
+    end
+
+    -- when there is a moderator then go live
+    if not has_moderator then
         return;
     end
 
@@ -329,6 +347,8 @@ local function go_live(room)
     local ev = {
         conference = internal_room_jid_match_rewrite(room.jid)
     };
+
+    room._jitsi_go_live_sent = true;
 
     http.request(visitors_queue_service..'/golive', {
         headers = headers,
@@ -515,6 +535,9 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         end);
         -- when metadata changed internally from another module
         host_module:hook('room-metadata-changed', function (event)
+            go_live(event.room);
+        end);
+        host_module:hook('muc-occupant-joined', function (event)
             go_live(event.room);
         end);
     end
