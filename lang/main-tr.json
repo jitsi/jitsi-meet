@@ -263,7 +263,8 @@
         "Remove": "Kaldır",
         "Share": "Paylaş",
         "Submit": "Gönder",
-        "WaitForHostMsg": "Toplantısı henüz başlamadı. Toplantı sahibi sizseniz, lütfen kimlik doğrulaması yapın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
+        "WaitForHostMsg": "Toplantı sahibi gelmediğinden toplantı henüz başlamadı. Toplantı sahibi sizseniz, lütfen kimlik doğrulaması yapın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
+        "WaitForHostNoAuthMsg": "Toplantı sahibi gelmediğinden toplantı henüz başlamadı. Lütfen bekleyin.",
         "WaitingForHostButton": "Toplantı sahibini bekle",
         "WaitingForHostTitle": "Toplantı sahibi bekleniyor ...",
         "Yes": "Evet",
@@ -319,6 +320,7 @@
         "embedMeeting": "Toplantıyı yerleştir",
         "enterDisplayName": "Lütfen adınızı buraya girin...",
         "error": "Hata",
+        "errorRoomCreationRestriction": "Çok hızlı katılmaya çalıştınız, lütfen biraz sonra tekrar gelin.",
         "gracefulShutdown": "Hizmetimiz şu anda bakım için devre dışı. Lütfen daha sonra tekrar deneyiniz.",
         "grantModeratorDialog": "{{participantName}} için moderatör hakları vermek istediğinize emin misiniz?",
         "grantModeratorTitle": "Moderatör hakları ver",
@@ -820,6 +822,8 @@
         "viewLobby": "Lobiyi göster",
         "viewVisitors": "Ziyaretçileri görüntüle",
         "waitingParticipants": "{{waitingParticipants}} kişi",
+        "waitingVisitors": "Sırada bekleyen ziyaretçiler: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "Toplantı henüz canlı değil!",
         "whiteboardLimitDescription": "Kullanıcı sınırına yakında ulaşılacağından ve beyaz tahta kapanacağından lütfen ilerlemenizi kaydedin.",
         "whiteboardLimitTitle": "Beyaz tahta kullanımı"
     },
@@ -833,6 +837,7 @@
             "audioModeration": "Seslerini aç",
             "blockEveryoneMicCamera": "Herkesin mikrofonunu ve kamerasını blokla",
             "breakoutRooms": "Alt odalar",
+            "goLive": "Canlı yayına geç",
             "invite": "Birini davet et",
             "moreModerationActions": "Daha fazla denetleme seçeneği",
             "moreModerationControls": "Daha fazla denetleme kontrolü",
@@ -850,6 +855,7 @@
         "headings": {
             "lobby": "Lobi ({{count}})",
             "participantsList": "Toplantı Katılımcıları ({{count}})",
+            "visitorInQueue": "(waiting {{count}})",
             "visitorRequests": "(requests {{count}})",
             "visitors": "Ziyaretçiler {{count}}",
             "waitingLobby": "Lobide bekleyen ({{count}})"
@@ -863,6 +869,8 @@
     "pinnedParticipant": "Katılımcı sabitlendi",
     "polls": {
         "answer": {
+            "edit": "Düzenle",
+            "send": "Gönder",
             "skip": "Geç",
             "submit": "Gönder"
         },
@@ -876,6 +884,7 @@
             "pollQuestion": "Anket Sorusu",
             "questionPlaceholder": "Soru sor",
             "removeOption": "Seçeneği sil",
+            "save": "Kaydet",
             "send": "Gönder"
         },
         "errors": {
@@ -1485,8 +1494,13 @@
         "notification": {
             "demoteDescription": "Buraya {{actor}} tarafından gönderildi, katılmak için elinizi kaldırın",
             "description": "Katılmak için elinizi kaldırın",
+            "noMainParticipantsDescription": "Bir katılımcının toplantıyı başlatması gerekiyor. Lütfen biraz sonra tekrar deneyin.",
+            "noMainParticipantsTitle": "Bu toplantı henüz başlamadı.",
+            "noVisitorLobby": "Toplantı için etkinleştirilmiş bir lobi varken katılamazsınız.",
+            "notAllowedPromotion": "Bir katılımcının öncelikle isteğinize izin vermesi gerekiyor.",
             "title": "Toplantıda ziyaretçisiniz"
-        }
+        },
+        "waitingMessage": "Toplantı canlı yayınlanır yayınlanmaz katılacaksınız!"
     },
     "volumeSlider": "Ses kaydırıcısı",
     "welcomepage": {
