@@ -187,6 +187,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                                     delay = msg.randomDelayMs;
                                 }
 
+                                if (delay === 0 && WebsocketClient.getInstance().connectCount > 1) {
+                                    // if we keep connecting/disconnecting, let's slow it down
+                                    delay = 30 * 1000;
+                                }
+
                                 setTimeout(() => {
                                     dispatch(joinConference());
                                     dispatch(setInVisitorsQueue(false));

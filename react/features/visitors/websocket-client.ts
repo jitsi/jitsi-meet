@@ -26,6 +26,8 @@ export class WebsocketClient {
 
     private retriesCount = 0;
 
+    private _connectCount = 0;
+
     /**
      *  WebsocketClient getInstance.
      *
@@ -95,6 +97,7 @@ export class WebsocketClient {
             this.retriesCount = 0;
 
             logger.info(`Connected to:${endpoint}`);
+            this._connectCount++;
             connectCallback?.();
 
             this.stompClient.subscribe(endpoint, message => {
@@ -134,5 +137,14 @@ export class WebsocketClient {
      */
     isActive() {
         return this.stompClient !== undefined;
+    }
+
+    /**
+     * Returns the number of connections.
+     *
+     * @returns {number} The number of connections for the life of the app.
+     */
+    get connectCount(): number {
+        return this._connectCount;
     }
 }
