@@ -112,16 +112,16 @@ export class WebsocketClient {
     /**
      * Disconnects the current stomp  client instance and clears it.
      *
-     * @returns {void}
+     * @returns {Promise}
      */
-    disconnect(): void {
+    disconnect(): Promise<any> {
         if (!this.stompClient) {
-            return;
+            return Promise.resolve();
         }
 
         const url = this.stompClient.brokerURL;
 
-        this.stompClient.deactivate().then(() => {
+        return this.stompClient.deactivate().then(() => {
             logger.info(`disconnected from: ${url}`);
             this.stompClient = undefined;
         });
