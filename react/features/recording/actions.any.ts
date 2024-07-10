@@ -138,7 +138,7 @@ export function setLiveStreamKey(streamKey: string) {
  * @returns {Function}
  */
 export function showPendingRecordingNotification(streamType: string) {
-    return async (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore['dispatch']) => {
         const isLiveStreaming
             = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
         const dialogProps = isLiveStreaming ? {
@@ -148,7 +148,7 @@ export function showPendingRecordingNotification(streamType: string) {
             descriptionKey: 'recording.pending',
             titleKey: 'dialog.recording'
         };
-        const notification = await dispatch(showNotification({
+        const notification = dispatch(showNotification({
             ...dialogProps
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 

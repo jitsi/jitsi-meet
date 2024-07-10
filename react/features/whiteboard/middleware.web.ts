@@ -59,7 +59,7 @@ const focusWhiteboard = (store: IStore) => {
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: AnyAction) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state);
@@ -78,21 +78,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
         }
 
         if (!existingCollabDetails) {
-            const collabLinkData = await generateCollaborationLinkData();
-            const collabServerUrl = generateCollabServerUrl(state);
-            const roomId = getCurrentRoomId(state);
-            const collabData = {
-                collabDetails: {
-                    roomId,
-                    roomKey: collabLinkData.roomKey
-                },
-                collabServerUrl
-            };
-
-            focusWhiteboard(store);
-            dispatch(setupWhiteboard(collabData));
-            conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
-            raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
+            setNewWhiteboardOpen(store);
 
             return next(action);
         }
@@ -146,3 +132,29 @@ function raiseWhiteboardNotification(status: WhiteboardStatus) {
     }
 }
 
+/**
+ * Sets a new whiteboard open.
+ *
+ * @param {IStore} store - The redux store.
+ * @returns {Promise}
+ */
+async function setNewWhiteboardOpen(store: IStore) {
+    const { dispatch, getState } = store;
+    const collabLinkData = await generateCollaborationLinkData();
+    const state = getState();
+    const conference = getCurrentConference(state);
+    const collabServerUrl = generateCollabServerUrl(state);
+    const roomId = getCurrentRoomId(state);
+    const collabData = {
+        collabDetails: {
+            roomId,
+            roomKey: collabLinkData.roomKey
+        },
+        collabServerUrl
+    };
+
+    focusWhiteboard(store);
+    dispatch(setupWhiteboard(collabData));
+    conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
+    raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
+}

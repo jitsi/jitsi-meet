@@ -875,7 +875,7 @@ export function setPassword(
         password?: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!conference) {
-            return;
+            return Promise.reject();
         }
         switch (method) {
         case conference.join: {
@@ -981,7 +981,7 @@ export function setStartMutedPolicy(
             video: startVideoMuted
         });
 
-        return dispatch(
+        dispatch(
             onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
 }
@@ -1058,14 +1058,20 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             return;
         }
 
-        dispatch(overwriteConfig(newConfig)) // @ts-ignore
-            .then(() => dispatch(disconnect(true)))
-            .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
+        dispatch(overwriteConfig(newConfig));
 
-            // we do not clear local tracks on error, so we need to manually clear them
-            .then(() => dispatch(destroyLocalTracks()))
-            .then(() => dispatch(conferenceWillInit()))
-            .then(() => dispatch(connect()))
+        dispatch(disconnect(true))
+            .then(() => {
+                dispatch(setIAmVisitor(Boolean(vnode)));
+
+                // we do not clear local tracks on error, so we need to manually clear them
+                return dispatch(destroyLocalTracks());
+            })
+            .then(() => {
+                dispatch(conferenceWillInit());
+
+                return dispatch(connect());
+            })
             .then(() => {
                 const media: Array<MediaType> = [];
 

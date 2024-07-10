@@ -14,8 +14,8 @@ import { IVirtualBackground } from './reducer';
  */
 export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: any) {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
-        await dispatch(backgroundEnabled(options.backgroundEffectEnabled));
-        await dispatch(setVirtualBackground(options));
+        dispatch(backgroundEnabled(options.backgroundEffectEnabled));
+        dispatch(setVirtualBackground(options));
         const state = getState();
         const virtualBackground = state['features/virtual-background'];
 

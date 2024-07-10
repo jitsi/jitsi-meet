@@ -33,7 +33,7 @@ let updateDeviceListener: (e: any) => void;
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => next => async action => {
+MiddlewareRegistry.register((store: IStore) => next => action => {
     const { dispatch, getState } = store;
 
     if (!getWebHIDFeatureConfig(getState())) {
@@ -88,33 +88,7 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
         break;
     }
     case REQUEST_HID_DEVICE: {
-        const hidManager = getWebHidInstance();
-
-        const availableDevices = await hidManager.requestHidDevices();
-
-        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-        if (!availableDevices || !availableDevices.length) {
-            logger.info('HID device not available');
-            break;
-        }
-
-        const _initDeviceListener = (e: CustomEvent<{ deviceInfo: IDeviceInfo; }>) =>
-            dispatch(initDeviceInfo(e.detail.deviceInfo));
-        const _updateDeviceListener
-            = (e: CustomEvent<{ actionResult: { eventName: string; }; deviceInfo: IDeviceInfo; }>) => {
-                handleUpdateHidDevice(dispatch, e);
-            };
-
-        initDeviceListener = _initDeviceListener;
-        updateDeviceListener = _updateDeviceListener;
-
-        attachHidEventListeners(initDeviceListener, updateDeviceListener);
-        await hidManager.listenToConnectedHid();
-
-        // sync headset to mute if participant is already muted.
-        if (isAudioMuted(store.getState())) {
-            hidManager.sendDeviceReport({ command: COMMANDS.MUTE_ON });
-        }
+        _onRequestHIDDevice(store);
 
         break;
     }
@@ -132,3 +106,40 @@ MiddlewareRegistry.register((store: IStore) => next => async action => {
 
     return next(action);
 });
+
+/**
+ * Handles HID device requests.
+ *
+ * @param {IStore} store - The redux store.
+ * @returns {Promise}
+ */
+async function _onRequestHIDDevice(store: IStore) {
+    const { dispatch } = store;
+    const hidManager = getWebHidInstance();
+    const availableDevices = await hidManager.requestHidDevices();
+
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    if (!availableDevices || !availableDevices.length) {
+        logger.info('HID device not available');
+
+        return;
+    }
+
+    const _initDeviceListener = (e: CustomEvent<{ deviceInfo: IDeviceInfo; }>) =>
+        dispatch(initDeviceInfo(e.detail.deviceInfo));
+    const _updateDeviceListener
+        = (e: CustomEvent<{ actionResult: { eventName: string; }; deviceInfo: IDeviceInfo; }>) => {
+            handleUpdateHidDevice(dispatch, e);
+        };
+
+    initDeviceListener = _initDeviceListener;
+    updateDeviceListener = _updateDeviceListener;
+
+    attachHidEventListeners(initDeviceListener, updateDeviceListener);
+    await hidManager.listenToConnectedHid();
+
+    // sync headset to mute if participant is already muted.
+    if (isAudioMuted(store.getState())) {
+        hidManager.sendDeviceReport({ command: COMMANDS.MUTE_ON });
+    }
+}

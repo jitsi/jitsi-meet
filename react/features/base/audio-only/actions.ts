@@ -46,6 +46,6 @@ export function toggleAudioOnly() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { enabled } = getState()['features/base/audio-only'];
 
-        return dispatch(setAudioOnly(!enabled));
+        dispatch(setAudioOnly(!enabled));
     };
 }

@@ -12,7 +12,7 @@ import logger from './logger';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case I18NEXT_INITIALIZED:
     case LANGUAGE_CHANGED:
@@ -23,11 +23,10 @@ MiddlewareRegistry.register(store => next => async action => {
             : store.getState()['features/dynamic-branding'];
 
         if (language && labels && labels[language]) {
-            try {
-                await changeLanguageBundle(language, labels[language]);
-            } catch (err) {
+            changeLanguageBundle(language, labels[language])
+            .catch(err => {
                 logger.log('Error setting dynamic language bundle', err);
-            }
+            });
         }
         break;
     }
