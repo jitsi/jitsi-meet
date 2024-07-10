@@ -110,8 +110,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (localParticipant && localParticipant.id === msg.id) {
                     // handle demote
                     dispatch(disconnect(true))
-                        .then(() => dispatch(setPreferVisitor(true)))
                         .then(() => {
+                            dispatch(setPreferVisitor(true));
+
                             // we need to set the name, so we can use it later in the notification
                             if (participantById) {
                                 dispatch(setVisitorDemoteActor(participantById.name));

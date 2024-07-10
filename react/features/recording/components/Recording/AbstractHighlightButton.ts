@@ -77,9 +77,9 @@ export default class AbstractHighlightButton<P extends IProps, S={}> extends Com
                 titleKey: 'recording.highlightMoment',
                 uid: PROMPT_RECORDING_NOTIFICATION_ID,
                 customActionNameKey: [ 'localRecording.start' ],
-                customActionHandler: [ async () => {
+                customActionHandler: [ () => {
                     dispatch(hideNotification(PROMPT_RECORDING_NOTIFICATION_ID));
-                    const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+                    const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
                     if (!dialogShown) {
                         dispatch(openDialog(StartRecordingDialog));

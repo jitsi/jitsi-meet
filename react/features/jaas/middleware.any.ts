@@ -13,7 +13,7 @@ import { getVpaasTenant, isVpaasMeeting } from './functions';
  * @returns {Function}
  */
 
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
         _maybeTrackVpaasConferenceJoin(store.getState());

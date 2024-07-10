@@ -7,7 +7,7 @@ interface ILocalRecordingManager {
         on: boolean;
         withVideo: boolean;
     };
-    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    startLocalRecording: (store: IStore, onlySelf: boolean) => Promise<void>;
     stopLocalRecording: () => void;
 }
 

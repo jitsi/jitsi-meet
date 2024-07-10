@@ -197,7 +197,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
  * @returns {Function}
  */
 export function initPrejoin(tracks: Object[], errors: Object) {
-    return async function(dispatch: IStore['dispatch']) {
+    return function(dispatch: IStore['dispatch']) {
         dispatch(setPrejoinDeviceErrors(errors));
         dispatch(prejoinInitialized());
 
@@ -216,7 +216,7 @@ export function initPrejoin(tracks: Object[], errors: Object) {
  */
 export function joinConference(options?: Object, ignoreJoiningInProgress = false,
         jid?: string, password?: string) {
-    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         if (!ignoreJoiningInProgress) {
             const state = getState();
             const { joiningInProgress } = state['features/prejoin'];

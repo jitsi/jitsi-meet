@@ -1165,10 +1165,11 @@ export default {
             APP.store.dispatch(gumPending(mutedTrackTypes, IGUMPendingState.NONE));
         }
 
-        this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
 
         APP.store.dispatch(_conferenceWillJoin(room));
+
+        this._setLocalAudioVideoStreams(tracks);
 
         sendLocalParticipant(APP.store, room);
 

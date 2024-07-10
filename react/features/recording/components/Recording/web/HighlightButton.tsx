@@ -133,9 +133,9 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
     *
     * @returns {void}
     */
-    async _onOpenDialog() {
+    _onOpenDialog() {
         const { dispatch } = this.props;
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             dispatch(openDialog(StartRecordingDialog));

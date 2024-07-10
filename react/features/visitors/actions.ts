@@ -93,8 +93,11 @@ export function demoteRequest(id: string) {
 
         if (id === localParticipant?.id) {
             dispatch(disconnect(true))
-                .then(() => dispatch(setPreferVisitor(true)))
-                .then(() => dispatch(connect()));
+                .then(() => {
+                    dispatch(setPreferVisitor(true));
+
+                    return dispatch(connect());
+                });
         } else {
             conference?.sendMessage({
                 type: 'visitors',
