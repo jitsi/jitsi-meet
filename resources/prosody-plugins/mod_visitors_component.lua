@@ -308,11 +308,11 @@ end
 -- if room metadata does not have visitors.live set to `true` and there are no occupants in the meeting
 -- it will skip calling goLive endpoint
 local function go_live(room)
-    if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
+    if room._jitsi_go_live_sent then
         return;
     end
 
-    if room._jitsi_go_live_sent then
+    if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
         return;
     end
 
@@ -332,10 +332,7 @@ local function go_live(room)
     -- let's inform the queue service
     local function cb(content_, code_, response_, request_)
         local room = room;
-        if code_ == 200 then
-            -- meeting went live ???
-            module:log('info', 'live')
-        else
+        if code_ ~= 200 then
             module:log('warn', 'External call to visitors_queue_service/golive failed. Code %s, Content %s',
                 code_, content_)
         end
