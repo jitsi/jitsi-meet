@@ -19,7 +19,8 @@ local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
-local token_util = module:require 'token/util'.new(module);
+-- will be initialized once the main virtual host module is initialized
+local token_util;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -304,14 +305,34 @@ local function process_promotion_response(room, id, approved)
             allow = approved }):up());
 end
 
+-- if room metadata does not have visitors.live set to `true` and there are no occupants in the meeting
+-- it will skip calling goLive endpoint
 local function go_live(room)
+    if room._jitsi_go_live_sent then
+        return;
+    end
+
+    if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
+        return;
+    end
+
+    local has_occupant = false;
+    for _, occupant in room:each_occupant() do
+        if not is_admin(occupant.bare_jid) then
+            has_occupant = true;
+            break;
+        end
+    end
+
+    -- when there is an occupant then go live
+    if not has_occupant then
+        return;
+    end
+
     -- let's inform the queue service
     local function cb(content_, code_, response_, request_)
         local room = room;
-        if code_ == 200 then
-            -- meeting went live ???
-            module:log('info', 'live')
-        else
+        if code_ ~= 200 then
             module:log('warn', 'External call to visitors_queue_service/golive failed. Code %s, Content %s',
                 code_, content_)
         end
@@ -324,6 +345,8 @@ local function go_live(room)
         conference = internal_room_jid_match_rewrite(room.jid)
     };
 
+    room._jitsi_go_live_sent = true;
+
     http.request(visitors_queue_service..'/golive', {
         headers = headers,
         method = 'POST',
@@ -332,6 +355,10 @@ local function go_live(room)
 end
 
 module:hook('iq/host', stanza_handler, 10);
+
+process_host_module(muc_domain_base, function(host_module, host)
+    token_util = module:require "token/util".new(host_module);
+end);
 
 process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_module, host)
     -- if visitor mode is started, then you are not allowed to join without request/response exchange of iqs -> deny access
@@ -496,17 +523,19 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 return;
             end
 
-            if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
-                go_live(room);
-            end
+            go_live(room);
         end, -2); -- metadata hook on -1
         host_module:hook('jitsi-metadata-updated', function (event)
             if event.key == 'visitors' then
-                local room = event.room;
-                if room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live then
-                    go_live(room);
-                end
+                go_live(event.room);
             end
+        end);
+        -- when metadata changed internally from another module
+        host_module:hook('room-metadata-changed', function (event)
+            go_live(event.room);
+        end);
+        host_module:hook('muc-occupant-joined', function (event)
+            go_live(event.room);
         end);
     end
 

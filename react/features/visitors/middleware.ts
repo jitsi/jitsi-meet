@@ -178,19 +178,25 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     if ('status' in msg && msg.status === 'live') {
                         logger.info('The conference is now live!');
 
-                        WebsocketClient.getInstance().disconnect();
+                        WebsocketClient.getInstance().disconnect()
+                            .then(() => {
+                                let delay = 0;
 
-                        let delay = 0;
+                                // now let's connect to meeting
+                                if ('randomDelayMs' in msg) {
+                                    delay = msg.randomDelayMs;
+                                }
 
-                        // now let's connect to meeting
-                        if ('randomDelayMs' in msg) {
-                            delay = msg.randomDelayMs;
-                        }
+                                if (WebsocketClient.getInstance().connectCount > 1) {
+                                    // if we keep connecting/disconnecting, let's slow it down
+                                    delay = 30 * 1000;
+                                }
 
-                        setTimeout(() => {
-                            dispatch(joinConference());
-                            dispatch(setInVisitorsQueue(false));
-                        }, delay);
+                                setTimeout(() => {
+                                    dispatch(joinConference());
+                                    dispatch(setInVisitorsQueue(false));
+                                }, Math.random() * delay);
+                            });
                     }
                 },
 

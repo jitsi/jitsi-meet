@@ -247,13 +247,8 @@ end
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
--- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers;
-    end
-
+function Util:process_and_verify_token(session)
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -310,7 +305,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         session.auth_token,
         self.signatureAlgorithm,
         key,
-        acceptedIssuers,
+        self.acceptedIssuers,
         self.acceptedAudiences
     )
     if claims ~= nil then
