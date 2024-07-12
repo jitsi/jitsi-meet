@@ -445,7 +445,6 @@ export function invitePeopleAndChatRooms(
 
     // Parse all the query strings of the search directory endpoint
     const params = new URLSearchParams();
-    params.append('jwt', jwt);
 
     // Authentication params for external entities (e. g. email)
     if (peopleSearchTokenLocation && peopleSearchTokenKey) {
@@ -590,7 +589,6 @@ export function searchDirectory( // eslint-disable-line max-params
     const params = new URLSearchParams();
     params.append('query', query);
     params.append('queryTypes', queryTypesString);
-    params.append('jwt', jwt);
 
     if (peopleSearchTokenLocation && peopleSearchTokenKey) {
         const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
