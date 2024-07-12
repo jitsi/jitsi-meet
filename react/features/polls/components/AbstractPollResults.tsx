@@ -69,9 +69,9 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         // Getting every voters ID that participates to the poll
         for (const answer of pollDetails.answers) {
             // checking if the voters is an array for supporting old structure model
-            const voters = answer.voters?.length ? answer.voters : Object.keys(answer.voters);
+            const voters: string[] = answer.voters.length ? answer.voters : Object.keys(answer.voters);
 
-            voters.forEach(voter => allVoters.add(voter));
+            voters.forEach((voter: string) => allVoters.add(voter));
         }
 
         return pollDetails.answers.map(answer => {

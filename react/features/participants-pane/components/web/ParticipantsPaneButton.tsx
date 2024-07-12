@@ -9,6 +9,7 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions.web';
+import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
 import { isParticipantsPaneEnabled } from '../../functions';
 
 import ParticipantsCounter from './ParticipantsCounter';
@@ -61,6 +62,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
     _handleClick() {
         const { dispatch, _isOpen } = this.props;
 
+        dispatch(closeOverflowMenuIfOpen());
         if (_isOpen) {
             dispatch(closeParticipantsPane());
         } else {

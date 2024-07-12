@@ -68,6 +68,7 @@ local function send_visitors_iq(conference_service, room, type)
         password = type ~= 'disconnect' and room:get_password() or '',
         lobby = room._data.lobbyroom and 'true' or 'false',
         meetingId = room._data.meetingId,
+        moderatorId = room._data.moderator_id, -- can be used from external modules to set single moderator for meetings
         createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
       }):up();
 

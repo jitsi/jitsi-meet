@@ -2,9 +2,12 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { getSsrcRewritingFeatureFlag } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getLocalParticipant,
+    getMutedStateByParticipantAndMediaType,
     getParticipantById,
     getParticipantDisplayName,
     hasRaisedHand,
@@ -166,8 +169,12 @@ function mapStateToProps(state: IReduxState, ownProps: any) {
     const { participant } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
-    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
-    const _isVideoMuted = isParticipantVideoMuted(participant, state);
+    const _isAudioMuted = getSsrcRewritingFeatureFlag(state)
+        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.AUDIO))
+        : Boolean(participant && isParticipantAudioMuted(participant, state));
+    const _isVideoMuted = getSsrcRewritingFeatureFlag(state)
+        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.VIDEO))
+        : isParticipantVideoMuted(participant, state);
     const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const { disableModeratorIndicator } = state['features/base/config'];

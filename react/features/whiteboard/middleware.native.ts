@@ -17,13 +17,12 @@ import {
 } from './actions';
 import WhiteboardLimitDialog from './components/native/WhiteboardLimitDialog';
 import {
+    generateCollabServerUrl,
     getCollabDetails,
-    getCollabServerUrl,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
 } from './functions';
 import './middleware.any';
-
 
 /**
  * Middleware which intercepts whiteboard actions to handle changes to the related state.
@@ -65,7 +64,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
             }
 
             const collabDetails = getCollabDetails(state);
-            const collabServerUrl = getCollabServerUrl(state);
+            const collabServerUrl = generateCollabServerUrl(state);
             const localParticipantName = getLocalParticipant(state)?.name;
 
             navigate(screen.conference.whiteboard, {

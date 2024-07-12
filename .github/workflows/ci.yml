@@ -7,11 +7,15 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version-file: '.nvmrc'
         cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v41
@@ -34,21 +38,25 @@ jobs:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version-file: '.nvmrc'
         cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
     - run: npm install
     - run: make
   macos-ci:
     name: Build Frontend (macOS)
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         cache: 'npm'
     - run: npm install
     - run: make
@@ -56,23 +64,41 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version-file: '.nvmrc'
         cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
     - run: npm install
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
   ios-build:
     name: Build mobile bundle (iOS)
-    runs-on: macOS-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14]
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version-file: '.nvmrc'
         cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
     - run: npm install
+    - name: setup Xcode
+      run: |
+        uname -a
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+        xcodebuild -version
     - name: setup-cocoapods
       uses: maxim-lobanov/setup-cocoapods@v1
       with:
@@ -89,11 +115,15 @@ jobs:
     name: Test Debian packages build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version-file: '.nvmrc'
         cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
     - run: npm install
     - run: make
     - run: sudo apt-get install -y debhelper

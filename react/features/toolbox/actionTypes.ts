@@ -60,6 +60,16 @@ export const SET_FULL_SCREEN = 'SET_FULL_SCREEN';
 export const SET_HANGUP_MENU_VISIBLE = 'SET_HANGUP_MENU_VISIBLE';
 
 /**
+ * The type of the (redux) action which sets the main toolbar thresholds.
+ *
+ * {
+ *     type: SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
+ *     mainToolbarButtonsThresholds: IMainToolbarButtonThresholds
+ * }
+ */
+export const SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS = 'SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS';
+
+/**
  * The type of the redux action that toggles whether the overflow menu(s) should be shown as drawers.
  */
 export const SET_OVERFLOW_DRAWER = 'SET_OVERFLOW_DRAWER';

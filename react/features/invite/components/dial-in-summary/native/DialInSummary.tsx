@@ -83,7 +83,8 @@ class DialInSummary extends PureComponent<IProps> {
                     setSupportMultipleWindows = { false }
                     source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) ?? '' }}
                     startInLoadingState = { true }
-                    style = { styles.webView } />
+                    style = { styles.webView }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }

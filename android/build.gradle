@@ -44,7 +44,7 @@ ext {
     googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
     //React Native Version
-    rnVersion = "0.72.9"
+    rnVersion = "0.73.8"
 }
 
 allprojects {

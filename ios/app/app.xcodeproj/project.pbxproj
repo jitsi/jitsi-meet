@@ -151,6 +151,7 @@
 		4EB0603A260E09D000F524C5 /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		4EB0603B260E09D000F524C5 /* SampleUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleUploader.swift; sourceTree = "<group>"; };
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -293,6 +294,7 @@
 				0BEA5C351F7B8F73000D0AB4 /* WatchKit extension */,
 				4EB06025260E026600F524C5 /* JitsiMeetBroadcast Extension */,
 				CDD71F5E1157E9F283DF92A8 /* Pods */,
+				6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -367,13 +369,13 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				0B26BE701EC5BC3C00EEFB41 /* Embed Frameworks */,
-				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
-				DEF4813D224925A2002AD03A /* Copy Google Plist file */,
-				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
-				DE4F6D6E22005C0400DE699E /* Setup Dropbox */,
-				4E81688528A408E600F8FA9E /* Update App Entitlements */,
 				0BEA5C491F7B8F73000D0AB4 /* Embed Watch Content */,
 				4EC49B9025BED71300E76218 /* Embed App Extensions */,
+				4E81688528A408E600F8FA9E /* Update App Entitlements */,
+				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
+				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
+				DE4F6D6E22005C0400DE699E /* Setup Dropbox */,
+				E9D850368D253EFA8AB3B8D1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -411,7 +413,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = Facebook;
+				ORGANIZATIONNAME = Jitsi;
 				TargetAttributes = {
 					0BEA5C241F7B8F73000D0AB4 = {
 						CreatedOnToolsVersion = 9.0;
@@ -499,10 +501,12 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0BB7DA181EC9E695007AAE98 /* Adjust ATS */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
 			);
 			name = "Adjust ATS";
 			outputPaths = (
@@ -513,6 +517,7 @@
 		};
 		0BBA83C41EC9F7600075A103 /* Run React packager */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -527,12 +532,14 @@
 		};
 		4E81688528A408E600F8FA9E /* Update App Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$PROJECT_DIR/app.entitlements",
 			);
 			name = "Update App Entitlements";
 			outputFileListPaths = (
@@ -567,12 +574,14 @@
 		};
 		DE11877A21EE09640078D059 /* Setup Google reverse URL handler */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
 			);
 			name = "Setup Google reverse URL handler";
 			outputFileListPaths = (
@@ -581,16 +590,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nGOOGLE_PLIST=\"$PROJECT_DIR/GoogleService-Info.plist\"\n\nif [[ -f $GOOGLE_PLIST ]]; then\n    REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c \"Print :REVERSED_CLIENT_ID:\" $GOOGLE_PLIST)\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleURLTypes:1:CFBundleURLSchemes:0 $REVERSED_CLIENT_ID\" $INFO_PLIST\nfi\n";
+			shellScript = "GOOGLE_PLIST_NAME=\"GoogleService-Info.plist\"\nGOOGLE_PLIST=\"$PROJECT_DIR/$GOOGLE_PLIST_NAME\"\nBUILD_APP_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\nINFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\n\nif [[ -f $GOOGLE_PLIST ]]; then\n    cp $GOOGLE_PLIST \"$BUILD_APP_DIR/$GOOGLE_PLIST_NAME\"\n    REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c \"Print :REVERSED_CLIENT_ID:\" $GOOGLE_PLIST)\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleURLTypes:1:CFBundleURLSchemes:0 $REVERSED_CLIENT_ID\" $INFO_PLIST\nfi\n";
 		};
 		DE4F6D6E22005C0400DE699E /* Setup Dropbox */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
 			);
 			name = "Setup Dropbox";
 			outputFileListPaths = (
@@ -601,23 +612,22 @@
 			shellPath = /bin/sh;
 			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nDROPBOX_KEY_FILE=\"$PROJECT_DIR/dropbox.key\"\n\nif [[ -f $DROPBOX_KEY_FILE ]]; then\n    /usr/libexec/PlistBuddy -c \"Delete :LSApplicationQueriesSchemes\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes array\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes:0 string 'dbapi-2'\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes:1 string 'dbapi-8-emm'\" $INFO_PLIST\n\n    DROPBOX_KEY=$(head -n 1 $DROPBOX_KEY_FILE)\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLName string dropbox\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLSchemes array\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLSchemes:0 string $DROPBOX_KEY\" $INFO_PLIST\nfi\n";
 		};
-		DEF4813D224925A2002AD03A /* Copy Google Plist file */ = {
+		E9D850368D253EFA8AB3B8D1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
-			name = "Copy Google Plist file";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GOOGLE_PLIST_NAME=\"GoogleService-Info.plist\"\nGOOGLE_PLIST=\"$PROJECT_DIR/$GOOGLE_PLIST_NAME\"\nBUILD_APP_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n\nif [[ -f $GOOGLE_PLIST ]]; then\n    cp $GOOGLE_PLIST \"$BUILD_APP_DIR/$GOOGLE_PLIST_NAME\"\nfi\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -976,7 +986,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1029,13 +1039,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HERMES = false;
 			};
 			name = Debug;
 		};
@@ -1044,7 +1052,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1092,14 +1100,12 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HERMES = false;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

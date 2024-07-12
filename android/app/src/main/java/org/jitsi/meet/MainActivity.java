@@ -37,7 +37,6 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -73,7 +72,6 @@ public class MainActivity extends JitsiMeetActivity {
      * Default URL as could be obtained from RestrictionManager
      */
     private String defaultURL;
-
 
     // JitsiMeetActivity overrides
     //
@@ -146,12 +144,12 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     private void setJitsiMeetConferenceDefaultOptions() {
+
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setServerURL(buildURL(defaultURL))
             .setFeatureFlag("welcomepage.enabled", true)
-            .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);

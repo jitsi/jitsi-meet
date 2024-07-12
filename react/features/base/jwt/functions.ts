@@ -3,6 +3,7 @@ import jwtDecode from 'jwt-decode';
 
 import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../participants/functions';
+import { IParticipantFeatures } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
@@ -19,7 +20,11 @@ import logger from './logger';
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    const jwt = parseURLParams(url, false, 'hash').jwt;
+
+    // TODO: eventually remove the search param and only pull from the hash
+    // @ts-ignore
+    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
 }
 
 /**
@@ -45,12 +50,45 @@ export function getJwtName(state: IReduxState) {
  */
 export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
     const { jwt } = state['features/base/jwt'];
+    const { features } = getLocalParticipant(state) || {};
 
+    return isJwtFeatureEnabledStateless({
+        jwt,
+        localParticipantFeatures: features,
+        feature,
+        ifNoToken,
+        ifNotInFeatures
+    });
+}
+
+interface IIsJwtFeatureEnabledStatelessParams {
+    feature: string;
+    ifNoToken?: boolean;
+    ifNotInFeatures?: boolean;
+    jwt?: string;
+    localParticipantFeatures?: IParticipantFeatures;
+}
+
+/**
+ * Check if the given JWT feature is enabled.
+ *
+ * @param {string | undefined} jwt - The jwt token.
+ * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
+ * @param {string} feature - The feature we want to check.
+ * @param {boolean} ifNoToken - Default value if there is no token.
+ * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
+ * @returns {bolean}
+ */
+export function isJwtFeatureEnabledStateless({
+    jwt,
+    localParticipantFeatures: features,
+    feature,
+    ifNoToken = false,
+    ifNotInFeatures = false
+}: IIsJwtFeatureEnabledStatelessParams) {
     if (!jwt) {
         return ifNoToken;
     }
-
-    const { features } = getLocalParticipant(state) || {};
 
     // If `features` is undefined, act as if everything is enabled.
     if (typeof features === 'undefined') {
@@ -138,10 +176,12 @@ export function validateJwt(jwt: string) {
             }
         }
 
-        if (!isValidUnixTimestamp(nbf)) {
-            errors.push({ key: JWT_VALIDATION_ERRORS.NBF_INVALID });
-        } else if (currentTimestamp < nbf * 1000) {
-            errors.push({ key: JWT_VALIDATION_ERRORS.NBF_FUTURE });
+        if (nbf) { // nbf value is optional
+            if (!isValidUnixTimestamp(nbf)) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_INVALID });
+            } else if (currentTimestamp < nbf * 1000) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_FUTURE });
+            }
         }
 
         if (!isValidUnixTimestamp(exp)) {

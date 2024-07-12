@@ -2,8 +2,6 @@ import i18n from 'i18next';
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { IStore } from '../../app/types';
 import { approveParticipant } from '../../av-moderation/actions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
@@ -21,7 +19,7 @@ import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
-import { CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
@@ -41,7 +39,6 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     OVERWRITE_PARTICIPANTS_NAMES,
     OVERWRITE_PARTICIPANT_NAME,
-    PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
@@ -204,6 +201,28 @@ MiddlewareRegistry.register(store => next => action => {
         return result;
     }
 
+    case CONFERENCE_JOINED: {
+        const result = next(action);
+
+        const state = store.getState();
+        const { startSilent } = state['features/base/config'];
+
+        if (startSilent) {
+            const localId = getLocalParticipant(store.getState())?.id;
+
+            if (localId) {
+                store.dispatch(participantUpdated({
+                    id: localId,
+                    local: true,
+                    isSilent: startSilent
+                }));
+            }
+        }
+
+        return result;
+    }
+
+
     case SET_LOCAL_PARTICIPANT_RECORDING_STATUS: {
         const state = store.getState();
         const { recording, onlySelf } = action;
@@ -234,29 +253,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    // TODO Remove this middleware when the local display name update flow is
-    // fully brought into redux.
-    case PARTICIPANT_DISPLAY_NAME_CHANGED: {
-        if (typeof APP !== 'undefined') {
-            const participant = getLocalParticipant(store.getState());
-
-            if (participant && participant.id === action.id) {
-                APP.UI.emitEvent(UIEvents.NICKNAME_CHANGED, action.name);
-            }
-        }
-
-        break;
-    }
-
     case RAISE_HAND_UPDATED: {
         const { participant } = action;
         let queue = getRaiseHandsQueue(store.getState());
 
         if (participant.raisedHandTimestamp) {
-            queue.push({
-                id: participant.id,
-                raisedHandTimestamp: participant.raisedHandTimestamp
-            });
+            queue = [ ...queue, { id: participant.id,
+                raisedHandTimestamp: participant.raisedHandTimestamp } ];
 
             // sort the queue before adding to store.
             queue = queue.sort(({ raisedHandTimestamp: a }, { raisedHandTimestamp: b }) => a - b);

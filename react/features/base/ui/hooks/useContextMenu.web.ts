@@ -39,7 +39,7 @@ const useContextMenu = <T>(): [(force?: boolean | Object) => void,
                 return;
             }
 
-            if (raiseContext !== initialState) {
+            if (raiseContext !== initialState || force) {
                 setRaiseContext(initialState);
             }
         });

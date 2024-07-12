@@ -12,13 +12,14 @@
 --      breakout_rooms_component = "breakout.jitmeet.example.com"
 
 local jid_node = require 'util.jid'.node;
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local st = require 'util.stanza';
 
 local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -35,14 +36,21 @@ local breakout_rooms_component_host = module:get_option_string('breakout_rooms_c
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
+local main_muc_module;
 
 -- Utility functions
 
 function getMetadataJSON(room)
-    return json.encode({
+    local res, error = json.encode({
         type = COMPONENT_IDENTITY_TYPE,
         metadata = room.jitsiMetadata or {}
     });
+
+    if not res then
+        module:log('error', 'Error encoding data room:%s', room.jid, error);
+    end
+
+    return res;
 end
 
 -- Putting the information on the config form / disco-info allows us to save
@@ -60,7 +68,7 @@ function broadcastMetadata(room)
     local json_msg = getMetadataJSON(room);
 
     for _, occupant in room:each_occupant() do
-        send_json_msg(occupant.jid, room.jid, json_msg)
+        send_json_msg(occupant.jid, internal_room_jid_match_rewrite(room.jid), json_msg)
     end
 end
 
@@ -79,7 +87,9 @@ function room_created(event)
         return ;
     end
 
-    room.jitsiMetadata = {};
+    if not room.jitsiMetadata then
+        room.jitsiMetadata = {};
+    end
 end
 
 function on_message(event)
@@ -124,9 +134,9 @@ function on_message(event)
         return false;
     end
 
-    local jsonData = json.decode(messageText);
+    local jsonData, error = json.decode(messageText);
     if jsonData == nil then -- invalid JSON
-        module:log("error", "Invalid JSON message: %s", messageText);
+        module:log("error", "Invalid JSON message: %s error:%s", messageText, error);
         return false;
     end
 
@@ -139,6 +149,9 @@ function on_message(event)
 
     broadcastMetadata(room);
 
+    -- fire and event for the change
+    main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
+
     return true;
 end
 
@@ -149,6 +162,8 @@ module:hook("message/host", on_message);
 
 -- operates on already loaded main muc module
 function process_main_muc_loaded(main_muc, host_module)
+    main_muc_module = host_module;
+
     module:log('debug', 'Main muc loaded');
     module:log("info", "Hook to muc events on %s", muc_component_host);
 
@@ -164,6 +179,10 @@ function process_main_muc_loaded(main_muc, host_module)
         local room = event.room;
 
         table.insert(event.form, getFormData(room));
+    end);
+    -- The room metadata was updated internally (from another module).
+    host_module:hook("room-metadata-changed", function(event)
+        broadcastMetadata(event.room);
     end);
 end
 

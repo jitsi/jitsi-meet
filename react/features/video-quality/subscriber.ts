@@ -3,10 +3,11 @@ import debounce from 'lodash/debounce';
 import { IReduxState, IStore } from '../app/types';
 import { _handleParticipantError } from '../base/conference/functions';
 import { getSsrcRewritingFeatureFlag } from '../base/config/functions.any';
-import { MEDIA_TYPE } from '../base/media/constants';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 import {
     getLocalParticipant,
-    getSourceNamesByMediaType
+    getSourceNamesByMediaTypeAndParticipant,
+    getSourceNamesByVideoTypeAndParticipant
 } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks/functions';
@@ -321,10 +322,10 @@ function _getSourceNames(participantList: Array<string>, state: IReduxState): Ar
 
     participantList.forEach(participantId => {
         if (getSsrcRewritingFeatureFlag(state)) {
-            const sourceNames: string[] | undefined
-                = getSourceNamesByMediaType(state, participantId, MEDIA_TYPE.VIDEO);
+            const sourceNames: string[]
+                = getSourceNamesByMediaTypeAndParticipant(state, participantId, MEDIA_TYPE.VIDEO);
 
-            sourceNames?.length && sourceNamesList.push(...sourceNames);
+            sourceNames.length && sourceNamesList.push(...sourceNames);
         } else {
             let sourceName: string;
 
@@ -428,8 +429,9 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         if (remoteScreenShares.includes(largeVideoParticipantId)) {
             largeVideoSourceName = largeVideoParticipantId;
         } else {
-            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
+            largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
+                ? getSourceNamesByVideoTypeAndParticipant(state, largeVideoParticipantId, VIDEO_TYPE.CAMERA)[0]
+                : getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
         }
     }
 

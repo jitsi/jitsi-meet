@@ -2,10 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { getSsrcRewritingFeatureFlag } from '../../../base/config/functions.any';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getLocalParticipant,
+    getMutedStateByParticipantAndMediaType,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
@@ -299,15 +301,15 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
-
     const participant = getParticipantByIdOrUndefined(state, participantID);
-
     const _displayName = getParticipantDisplayName(state, participant?.id ?? '');
-
     const _matchesSearch = participantMatchesSearch(participant, searchString);
-
-    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
-    const _isVideoMuted = isParticipantVideoMuted(participant, state);
+    const _isAudioMuted = getSsrcRewritingFeatureFlag(state)
+        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.AUDIO))
+        : Boolean(participant && isParticipantAudioMuted(participant, state));
+    const _isVideoMuted = getSsrcRewritingFeatureFlag(state)
+        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.VIDEO))
+        : isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state);

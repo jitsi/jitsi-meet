@@ -11,7 +11,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
-import { isInBreakoutRoom } from '../breakout-rooms/functions';
+import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
@@ -169,6 +169,16 @@ export function isCloudRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if there is a live streaming running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isLiveStreamingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+}
+
+/**
  * Returns true if there is a recording session running.
  *
  * @param {Object} state - The redux state to search in.
@@ -262,13 +272,13 @@ export function getRecordButtonProps(state: IReduxState) {
     }
 
     // disable the button if the livestreaming is running.
-    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+    if (visible && isLiveStreamingRunning(state)) {
         disabled = true;
         tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }
 
     // disable the button if we are in a breakout room.
-    if (isInBreakoutRoom(state)) {
+    if (isInBreakoutRoomF(state)) {
         disabled = true;
         visible = false;
     }
@@ -403,4 +413,32 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
     dispatch(registerSound(
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
+}
+
+/**
+ * Returns true if the live streaming button should be visible.
+ *
+ * @param {boolean} localParticipantIsModerator - True if the local participant is moderator.
+ * @param {boolean} liveStreamingEnabled - True if the live streaming is enabled.
+ * @param {boolean} liveStreamingEnabledInJwt - True if the lives treaming feature is enabled in JWT.
+ * @returns {boolean}
+ */
+export function isLiveStreamingButtonVisible({
+    localParticipantIsModerator,
+    liveStreamingEnabled,
+    liveStreamingEnabledInJwt,
+    isInBreakoutRoom
+}: {
+    isInBreakoutRoom: boolean;
+    liveStreamingEnabled: boolean;
+    liveStreamingEnabledInJwt: boolean;
+    localParticipantIsModerator: boolean;
+}) {
+    let visible = false;
+
+    if (localParticipantIsModerator && !isInBreakoutRoom) {
+        visible = liveStreamingEnabled ? liveStreamingEnabledInJwt : false;
+    }
+
+    return visible;
 }

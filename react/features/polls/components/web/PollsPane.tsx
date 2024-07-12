@@ -35,7 +35,7 @@ const PollsPane = ({ createMode, onCreate, setCreateMode, t }: AbstractProps) =>
         ? <PollCreate setCreateMode = { setCreateMode } />
         : <div className = { classes.container }>
             <div className = { classes.listContainer } >
-                <PollsList />
+                <PollsList setCreateMode = { setCreateMode } />
             </div>
             <div className = { classes.footer }>
                 <Button

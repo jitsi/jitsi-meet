@@ -43,3 +43,8 @@ export const CHAT_TABS = {
  * Formatter string to display the message timestamp.
  */
 export const TIMESTAMP_FORMAT = 'H:mm';
+
+/**
+ * The namespace for system messages.
+ */
+export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';

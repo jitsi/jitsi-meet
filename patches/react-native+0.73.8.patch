@@ -18,7 +18,7 @@ index e4f7e15..6f05fb3 100644
 +        = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground
 +          || [UIDevice currentDevice].proximityState;
    });
- 
+
 +  _inBackground = initialInBackground;
 +
    for (NSString *name in @[
@@ -34,12 +34,12 @@ index e4f7e15..6f05fb3 100644
 +                                               name:UIDeviceProximityStateDidChangeNotification
 +                                             object:nil];
  }
- 
+
  - (void)dealloc
 @@ -187,6 +195,16 @@ RCT_EXPORT_MODULE()
    [self startTimers];
  }
- 
+
 +- (void)proximityChanged
 +{
 +  BOOL isClose = [UIDevice currentDevice].proximityState;

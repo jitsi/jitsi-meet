@@ -1,10 +1,14 @@
+/* eslint-disable react/jsx-no-bind */
+
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { editPoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
@@ -53,13 +57,18 @@ const PollAnswer = ({
     creatorName,
     checkBoxStates,
     poll,
+    pollId,
     setCheckbox,
+    setCreateMode,
     skipAnswer,
     skipChangeVote,
+    sendPoll,
     submitAnswer,
     t
 }: AbstractProps) => {
-    const { changingVote } = poll;
+    const { changingVote, saved: pollSaved } = poll;
+    const dispatch = useDispatch();
+
     const { classes } = useStyles();
 
     return (
@@ -74,32 +83,50 @@ const PollAnswer = ({
             </div>
             <ul className = { classes.answerList }>
                 {
-                    poll.answers.map((answer: any, index: number) => (
+                    poll.answers.map((answer, index: number) => (
                         <li
                             className = { classes.answer }
                             key = { index }>
                             <Checkbox
                                 checked = { checkBoxStates[index] }
+                                disabled = { poll.saved }
                                 key = { index }
                                 label = { answer.name }
-                                // eslint-disable-next-line react/jsx-no-bind
                                 onChange = { ev => setCheckbox(index, ev.target.checked) } />
                         </li>
                     ))
                 }
             </ul>
             <div className = { classes.footer } >
-                <Button
-                    accessibilityLabel = { t('polls.answer.skip') }
-                    className = { classes.buttonMargin }
-                    labelKey = { 'polls.answer.skip' }
-                    onClick = { changingVote ? skipChangeVote : skipAnswer }
-                    type = { BUTTON_TYPES.SECONDARY } />
-                <Button
-                    accessibilityLabel = { t('polls.answer.submit') }
-                    disabled = { isSubmitAnswerDisabled(checkBoxStates) }
-                    labelKey = { 'polls.answer.submit' }
-                    onClick = { submitAnswer } />
+                {
+                    pollSaved ? <>
+                        <Button
+                            accessibilityLabel = { t('polls.answer.edit') }
+                            className = { classes.buttonMargin }
+                            labelKey = { 'polls.answer.edit' }
+                            onClick = { () => {
+                                setCreateMode(true);
+                                dispatch(editPoll(pollId, true));
+                            } }
+                            type = { BUTTON_TYPES.SECONDARY } />
+                        <Button
+                            accessibilityLabel = { t('polls.answer.send') }
+                            labelKey = { 'polls.answer.send' }
+                            onClick = { sendPoll } />
+                    </> : <>
+                        <Button
+                            accessibilityLabel = { t('polls.answer.skip') }
+                            className = { classes.buttonMargin }
+                            labelKey = { 'polls.answer.skip' }
+                            onClick = { changingVote ? skipChangeVote : skipAnswer }
+                            type = { BUTTON_TYPES.SECONDARY } />
+                        <Button
+                            accessibilityLabel = { t('polls.answer.submit') }
+                            disabled = { isSubmitAnswerDisabled(checkBoxStates) }
+                            labelKey = { 'polls.answer.submit' }
+                            onClick = { submitAnswer } />
+                    </>
+                }
             </div>
         </div>
     );

@@ -6,7 +6,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
-import { chatStyles, dialogStyles, resultsStyles } from './styles';
+import { dialogStyles, pollsStyles, resultsStyles } from './styles';
 
 /**
  * Component that renders the poll results.
@@ -100,14 +100,14 @@ const PollResults = (props: AbstractProps) => {
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
                 renderItem = { answer => renderRow(answer.item) } />
-            <View style = { chatStyles.bottomLinks as ViewStyle }>
+            <View style = { pollsStyles.bottomLinks as ViewStyle }>
                 <Button
                     labelKey = {
                         showDetails
                             ? 'polls.results.hideDetailedResults'
                             : 'polls.results.showDetailedResults'
                     }
-                    labelStyle = { chatStyles.toggleText }
+                    labelStyle = { pollsStyles.toggleText }
                     onClick = { toggleIsDetailed }
                     type = { BUTTON_TYPES.TERTIARY } />
                 <Button
@@ -116,7 +116,7 @@ const PollResults = (props: AbstractProps) => {
                             ? 'polls.results.changeVote'
                             : 'polls.results.vote'
                     }
-                    labelStyle = { chatStyles.toggleText }
+                    labelStyle = { pollsStyles.toggleText }
                     onClick = { changeVote }
                     type = { BUTTON_TYPES.TERTIARY } />
             </View>

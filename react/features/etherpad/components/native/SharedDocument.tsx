@@ -60,7 +60,8 @@ class SharedDocument extends PureComponent<IProps> {
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl ?? '' }}
                     startInLoadingState = { true }
-                    style = { styles.sharedDoc } />
+                    style = { styles.sharedDoc }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }

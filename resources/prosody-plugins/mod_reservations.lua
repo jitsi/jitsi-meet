@@ -72,7 +72,7 @@
 
 local jid = require 'util.jid';
 local http = require "net.http";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local st = require "util.stanza";
 local timer = require 'util.timer';
 local datetime = require 'util.datetime';
@@ -396,10 +396,10 @@ end
 --  Ref: https://github.com/jitsi/jicofo/blob/master/doc/reservation.md
 --  @return nil if invalid, or table with payload parsed from JSON response
 function RoomReservation:parse_conference_response(response_body)
-    local data = json.decode(response_body);
+    local data, error = json.decode(response_body);
 
     if data == nil then  -- invalid JSON payload
-        module:log("error", "Invalid JSON response from API - %s", response_body);
+        module:log("error", "Invalid JSON response from API - %s error:%s", response_body, error);
         return;
     end
 

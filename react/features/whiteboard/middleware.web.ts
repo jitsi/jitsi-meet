@@ -21,8 +21,8 @@ import {
 import WhiteboardLimitDialog from './components/web/WhiteboardLimitDialog';
 import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
 import {
+    generateCollabServerUrl,
     getCollabDetails,
-    getCollabServerUrl,
     isWhiteboardPresent,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
@@ -79,19 +79,19 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action
 
         if (!existingCollabDetails) {
             const collabLinkData = await generateCollaborationLinkData();
-            const collabServerUrl = getCollabServerUrl(state);
+            const collabServerUrl = generateCollabServerUrl(state);
             const roomId = getCurrentRoomId(state);
-            const collabDetails = {
-                roomId,
-                roomKey: collabLinkData.roomKey
+            const collabData = {
+                collabDetails: {
+                    roomId,
+                    roomKey: collabLinkData.roomKey
+                },
+                collabServerUrl
             };
 
             focusWhiteboard(store);
-            dispatch(setupWhiteboard({ collabDetails }));
-            conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, {
-                collabServerUrl,
-                collabDetails
-            });
+            dispatch(setupWhiteboard(collabData));
+            conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
             raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 
             return next(action);

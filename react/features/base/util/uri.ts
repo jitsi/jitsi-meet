@@ -537,6 +537,7 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     const search = new URLSearchParams(url.search);
 
+    // TODO: once all available versions are updated to support the jwt in the hash, remove this
     if (jwt) {
         search.set('jwt', jwt);
     }
@@ -560,6 +561,14 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
     // fragment/hash
 
     let { hash } = url;
+
+    if (jwt) {
+        if (hash.length) {
+            hash = `${hash}&jwt=${JSON.stringify(jwt)}`;
+        } else {
+            hash = `#jwt=${JSON.stringify(jwt)}`;
+        }
+    }
 
     for (const urlPrefix of [ 'config', 'iceServers', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray

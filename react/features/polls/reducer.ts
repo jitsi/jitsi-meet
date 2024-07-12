@@ -3,11 +3,13 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
+    EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
     RESET_NB_UNREAD_POLLS,
-    RETRACT_VOTE
+    RETRACT_VOTE,
+    SAVE_POLL
 } from './actionTypes';
 import { IAnswer, IPoll } from './types';
 
@@ -51,20 +53,17 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         };
     }
 
-    // Reducer triggered when a poll is received
-    case RECEIVE_POLL: {
-        const newState = {
+    // Reducer triggered when a poll is received or saved.
+    case RECEIVE_POLL:
+    case SAVE_POLL: {
+        return {
             ...state,
             polls: {
                 ...state.polls,
-
-                // The poll is added to the dictionary of received polls
                 [action.pollId]: action.poll
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
         };
-
-        return newState;
     }
 
     // Reducer triggered when an answer is received
@@ -159,6 +158,19 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         return {
             ...state,
             nbUnreadPolls: 0
+        };
+    }
+
+    case EDIT_POLL: {
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: {
+                    ...state.polls[action.pollId],
+                    editing: action.editing
+                }
+            }
         };
     }
 

@@ -152,15 +152,16 @@ const Notification = ({
         if (descriptionArray?.length) {
             return (
                 <>
-                    <Text style = { styles.contentTextTitle as TextStyle }>
-                        {titleText}
+                    <Text
+                        style = { styles.contentTextTitle as TextStyle }>
+                        { titleText }
                     </Text>
                     {
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
                                 style = { styles.contentText }>
-                                {replaceNonUnicodeEmojis(line)}
+                                { replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))
                     }
@@ -170,7 +171,7 @@ const Notification = ({
 
         return (
             <Text style = { styles.contentTextTitle as TextStyle }>
-                {titleText}
+                { titleText }
             </Text>
         );
     };
@@ -199,10 +200,10 @@ const Notification = ({
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.contentContainer }>
-                    {_renderContent()}
+                    { _renderContent() }
                 </View>
                 <View style = { styles.btnContainer as ViewStyle }>
-                    {mapAppearanceToButtons()}
+                    { mapAppearanceToButtons() }
                 </View>
             </View>
             <IconButton

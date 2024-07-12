@@ -31,6 +31,15 @@ function init_session(event)
     local session, request = event.session, event.request;
     local query = request.url.query;
 
+    local token = nil;
+
+    -- extract token from Authorization header
+    if request.headers["authorization"] then
+        -- assumes the header value starts with "Bearer "
+        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
+    end
+
+    -- allow override of token via query parameter
     if query ~= nil then
         local params = formdecode(query);
 
@@ -39,8 +48,13 @@ function init_session(event)
         -- After validating auth_token will be cleaned in case of error and few
         -- other fields will be extracted from the token and set in the session
 
-        session.auth_token = query and params.token or nil;
+        if query and params.token then
+            token = params.token;
+        end
     end
+
+    -- in either case set auth_token in the session
+    session.auth_token = token;
 end
 
 module:hook_global("bosh-session", init_session);
@@ -87,7 +101,8 @@ function provider.get_sasl_handler(session)
         local res, error, reason = token_util:process_and_verify_token(session);
         if res == false then
             module:log("warn",
-                "Error verifying token err:%s, reason:%s", error, reason);
+                "Error verifying token err:%s, reason:%s tenant:%s room:%s",
+                    error, reason, session.jitsi_web_query_prefix, session.jitsi_web_query_room);
             session.auth_token = nil;
             measure_verify_fail(1);
             return res, error, reason;

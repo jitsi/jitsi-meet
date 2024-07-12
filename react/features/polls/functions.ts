@@ -1,5 +1,7 @@
 import { IReduxState } from '../app/types';
 
+import { IAnswerData } from './types';
+
 /**
  * Selector creator for determining if poll results should be displayed or not.
  *
@@ -49,14 +51,14 @@ export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
 /**
  * Check if the input array has identical answers.
  *
- * @param {Array<string>} currentAnswers - The array of current answers to compare.
+ * @param {Array<IAnswerData>} currentAnswers - The array of current answers to compare.
  * @returns {boolean} - Returns true if the answers are identical.
  */
-export function hasIdenticalAnswers(currentAnswers: Array<string>): boolean {
+export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean {
 
-    const nonEmptyCurrentAnswers = currentAnswers.filter((answer: string): boolean => answer !== '');
+    const nonEmptyCurrentAnswers = currentAnswers.filter((answer): boolean => answer.name !== '');
 
-    const currentAnswersSet = new Set(nonEmptyCurrentAnswers);
+    const currentAnswersSet = new Set(nonEmptyCurrentAnswers.map(answer => answer.name));
 
     return currentAnswersSet.size !== nonEmptyCurrentAnswers.length;
 }

@@ -3,6 +3,8 @@ import { AnyAction } from 'redux';
 import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { ISpeakerStats } from '../../speaker-stats/reducer';
+import { SET_CONFIG } from '../config/actionTypes';
+import { IConfig } from '../config/configType';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -18,6 +20,8 @@ import {
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
+    DATA_CHANNEL_CLOSED,
+    DATA_CHANNEL_OPENED,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_ASSUMED_BANDWIDTH_BPS,
@@ -35,6 +39,7 @@ import { isRoomValid } from './functions';
 const DEFAULT_STATE = {
     assumedBandwidthBps: undefined,
     conference: undefined,
+    dataChannelOpen: undefined,
     e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
@@ -48,6 +53,9 @@ const DEFAULT_STATE = {
 export interface IConferenceMetadata {
     recording?: {
         isTranscribingEnabled: boolean;
+    };
+    visitors?: {
+        live: boolean;
     };
     whiteboard?: {
         collabDetails: {
@@ -127,6 +135,7 @@ export interface IJitsiConference {
     setAssumedBandwidthBps: (value: number) => void;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
+    setIsSilent: Function;
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
     setReceiverConstraints: Function;
@@ -146,6 +155,7 @@ export interface IConferenceState {
     authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
+    dataChannelOpen?: boolean;
     e2eeSupported?: boolean;
     error?: Error;
     followMeEnabled?: boolean;
@@ -219,6 +229,12 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
         case CONNECTION_WILL_CONNECT:
             return set(state, 'authRequired', undefined);
 
+        case DATA_CHANNEL_CLOSED:
+            return set(state, 'dataChannelOpen', false);
+
+        case DATA_CHANNEL_OPENED:
+            return set(state, 'dataChannelOpen', true);
+
         case LOCK_STATE_CHANGED:
             return _lockStateChanged(state, action);
 
@@ -268,10 +284,32 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
                 ...state,
                 metadata: action.metadata
             };
+
+        case SET_CONFIG:
+            return _setConfig(state, action);
         }
 
         return state;
     });
+
+/**
+ * Processes subject and local subject of the conference based on the new config.
+ *
+ * @param {Object} state - The Redux state of feature base/conference.
+ * @param {Action} action - The Redux action SET_CONFIG to reduce.
+ * @private
+ * @returns {Object} The new state after the reduction of the specified action.
+ */
+function _setConfig(state: IConferenceState, { config }: { config: IConfig; }) {
+    const { localSubject, subject } = config;
+
+    return {
+        ...state,
+        localSubject,
+        pendingSubjectChange: subject,
+        subject: undefined
+    };
+}
 
 /**
  * Reduces a specific Redux action AUTH_STATUS_CHANGED of the feature
@@ -596,10 +634,7 @@ function _setRoom(state: IConferenceState, action: AnyAction) {
      */
     return assign(state, {
         error: undefined,
-        localSubject: undefined,
-        pendingSubjectChange: undefined,
-        room,
-        subject: undefined
+        room
     });
 }
 

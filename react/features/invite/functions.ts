@@ -453,6 +453,11 @@ export function invitePeopleAndChatRooms(
         params.append(peopleSearchTokenKey, peopleSearchToken);
     }
 
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        'Content-Type': 'application/json'
+    };
+
     return fetch(
         `${inviteServiceUrl}?${params.toString()}`,
         {
@@ -461,9 +466,7 @@ export function invitePeopleAndChatRooms(
                 'url': inviteUrl
             }),
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers
         }
     );
 }
@@ -594,7 +597,15 @@ export function searchDirectory( // eslint-disable-line max-params
         params.append(peopleSearchTokenKey, peopleSearchToken);
     }
 
-    return fetch(`${serviceUrl}?${params.toString()}`)
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {}
+    };
+
+    return fetch(`${serviceUrl}?${params.toString()}`,
+            {
+                method: 'GET',
+                headers
+            })
             .then(response => {
                 const jsonify = response.json();
 

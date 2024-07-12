@@ -9,6 +9,7 @@ export interface INotificationProps {
     description?: string | React.ReactNode;
     descriptionArguments?: Object;
     descriptionKey?: string;
+    disableClosing?: boolean;
     hideErrorSupportLink?: boolean;
     icon?: string;
     maxLines?: number;

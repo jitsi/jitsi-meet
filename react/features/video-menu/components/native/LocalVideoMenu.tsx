@@ -83,13 +83,18 @@ class LocalVideoMenu extends PureComponent<IProps> {
             styles: bottomSheetStyles.buttons
         };
 
+        const connectionStatusButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
+        };
+
         return (
             <BottomSheet
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
                 { _showDemote && <DemoteToVisitorButton { ...buttonProps } /> }
-                <ConnectionStatusButton { ...buttonProps } />
+                <ConnectionStatusButton { ...connectionStatusButtonProps } />
             </BottomSheet>
         );
     }
@@ -136,12 +141,13 @@ class LocalVideoMenu extends PureComponent<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { disableSelfDemote } = state['features/base/config'];
     const participant = getLocalParticipant(state);
 
     return {
         _participant: participant,
         _participantDisplayName: getParticipantDisplayName(state, participant?.id ?? ''),
-        _showDemote: getParticipantCount(state) > 1
+        _showDemote: !disableSelfDemote && getParticipantCount(state) > 1
     };
 }
 

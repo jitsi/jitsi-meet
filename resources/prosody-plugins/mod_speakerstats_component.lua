@@ -6,7 +6,7 @@ local process_host_module = util.process_host_module;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local um_is_admin = require "core.usermanager".is_admin;
 local jid_split = require 'util.jid'.split;
 
@@ -264,13 +264,19 @@ function occupant_joined(event)
                 body_json.type = 'speakerstats';
                 body_json.users = users_json;
 
-                local stanza = st.message({
-                    from = module.host;
-                    to = occupant.jid; })
-                :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
-                :text(json.encode(body_json)):up();
+                local json_msg_str, error = json.encode(body_json);
 
-                room:route_stanza(stanza);
+                if json_msg_str then
+                    local stanza = st.message({
+                        from = module.host;
+                        to = occupant.jid; })
+                    :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+                    :text(json_msg_str):up();
+
+                    room:route_stanza(stanza);
+                else
+                    module:log('error', 'Error encoding room:%s error:%s', room.jid, error);
+                end
             end
         end
 

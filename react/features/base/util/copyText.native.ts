@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 /**
  * Tries to copy a given text to the clipboard.

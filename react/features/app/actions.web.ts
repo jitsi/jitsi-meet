@@ -74,7 +74,7 @@ export function appNavigate(uri?: string) {
         const config = await loadConfig();
 
         dispatch(setLocationURL(locationURL));
-        dispatch(setConfig(config, locationURL));
+        dispatch(setConfig(config));
         dispatch(setRoom(room));
     };
 }

@@ -314,6 +314,7 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
         customActionType,
         description,
         icon,
+        maxLines: 1,
         title,
         uid
     }, NOTIFICATION_TIMEOUT_TYPE.STICKY));

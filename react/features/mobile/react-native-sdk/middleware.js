@@ -4,7 +4,8 @@ import {
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN
+    CONFERENCE_WILL_JOIN,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../../base/conference/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
@@ -29,34 +30,43 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
     switch (type) {
     case SET_AUDIO_MUTED:
-        rnSdkHandlers?.onAudioMutedChanged && rnSdkHandlers?.onAudioMutedChanged(action.muted);
+        rnSdkHandlers?.onAudioMutedChanged?.(action.muted);
         break;
     case SET_VIDEO_MUTED:
-        rnSdkHandlers?.onVideoMutedChanged && rnSdkHandlers?.onVideoMutedChanged(Boolean(action.muted));
+        rnSdkHandlers?.onVideoMutedChanged?.(Boolean(action.muted));
         break;
     case CONFERENCE_BLURRED:
-        rnSdkHandlers?.onConferenceBlurred && rnSdkHandlers?.onConferenceBlurred();
+        rnSdkHandlers?.onConferenceBlurred?.();
         break;
     case CONFERENCE_FOCUSED:
-        rnSdkHandlers?.onConferenceFocused && rnSdkHandlers?.onConferenceFocused();
+        rnSdkHandlers?.onConferenceFocused?.();
         break;
     case CONFERENCE_JOINED:
-        rnSdkHandlers?.onConferenceJoined && rnSdkHandlers?.onConferenceJoined();
+        rnSdkHandlers?.onConferenceJoined?.();
         break;
     case CONFERENCE_LEFT:
         //  Props are torn down at this point, perhaps need to leave this one out
         break;
     case CONFERENCE_WILL_JOIN:
-        rnSdkHandlers?.onConferenceWillJoin && rnSdkHandlers?.onConferenceWillJoin();
+        rnSdkHandlers?.onConferenceWillJoin?.();
         break;
     case ENTER_PICTURE_IN_PICTURE:
-        rnSdkHandlers?.onEnterPictureInPicture && rnSdkHandlers?.onEnterPictureInPicture();
+        rnSdkHandlers?.onEnterPictureInPicture?.();
         break;
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { data, participant } = action;
+
+        rnSdkHandlers?.onEndpointMessageReceived?.({
+            data,
+            participant
+        });
+        break;
+    }
     case PARTICIPANT_JOINED: {
         const { participant } = action;
         const participantInfo = participantToParticipantInfo(participant);
 
-        rnSdkHandlers?.onParticipantJoined && rnSdkHandlers?.onParticipantJoined(participantInfo);
+        rnSdkHandlers?.onParticipantJoined?.(participantInfo);
         break;
     }
     case PARTICIPANT_LEFT: {
@@ -64,11 +74,11 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
         const { id } = participant ?? {};
 
-        rnSdkHandlers?.onParticipantLeft && rnSdkHandlers?.onParticipantLeft({ id });
+        rnSdkHandlers?.onParticipantLeft?.({ id });
         break;
     }
     case READY_TO_CLOSE:
-        rnSdkHandlers?.onReadyToClose && rnSdkHandlers?.onReadyToClose();
+        rnSdkHandlers?.onReadyToClose?.();
         break;
     }
 

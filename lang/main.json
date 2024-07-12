@@ -128,6 +128,7 @@
         "privateNotice": "Private message to {{recipient}}",
         "sendButton": "Send",
         "smileysPanel": "Emoji panel",
+        "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
             "polls": "Polls"
@@ -263,6 +264,7 @@
         "Share": "Share",
         "Submit": "Submit",
         "WaitForHostMsg": "The conference has not yet started because no moderators have yet arrived. If you'd like to become a moderator please log-in. Otherwise, please wait.",
+        "WaitForHostNoAuthMsg": "The conference has not yet started because no moderators have yet arrived. Please wait.",
         "WaitingForHostButton": "Wait for moderator",
         "WaitingForHostTitle": "Waiting for a moderator...",
         "Yes": "Yes",
@@ -318,6 +320,7 @@
         "embedMeeting": "Embed meeting",
         "enterDisplayName": "Enter your name",
         "error": "Error",
+        "errorRoomCreationRestriction": "You tried to join too quickly, please come back in a bit.",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator rights",
@@ -733,8 +736,10 @@
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
-        "dataChannelClosed": "Video quality impaired",
-        "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
+        "dataChannelClosed": "Video quality may be impaired",
+        "dataChannelClosedDescription": "The bridge channel is down and thus video quality may be limited to its lowest setting.",
+        "dataChannelClosedDescriptionWithAudio": "The bridge channel is down and thus disruptions to audio and video may occur.",
+        "dataChannelClosedWithAudio": "Audio and video quality may be impaired",
         "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondary": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
         "disconnected": "disconnected",
@@ -817,6 +822,8 @@
         "viewLobby": "View lobby",
         "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
+        "waitingVisitors": "Visitors waiting in queue: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "The meeting is not live yet!",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
         "whiteboardLimitTitle": "Whiteboard usage"
     },
@@ -830,6 +837,7 @@
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "breakoutRooms": "Breakout rooms",
+            "goLive": "Go live",
             "invite": "Invite Someone",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
@@ -847,6 +855,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
+            "visitorInQueue": " (waiting {{count}})",
             "visitorRequests": " (requests {{count}})",
             "visitors": "Visitors {{count}}",
             "waitingLobby": "Waiting in lobby ({{count}})"
@@ -860,6 +869,8 @@
     "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
+            "edit": "Edit",
+            "send": "Send",
             "skip": "Skip",
             "submit": "Submit"
         },
@@ -873,6 +884,7 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
+            "save": "Save",
             "send": "Send"
         },
         "errors": {
@@ -1482,8 +1494,13 @@
         "notification": {
             "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
             "description": "To participate raise your hand",
+            "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
+            "noMainParticipantsTitle": "This meeting hasn’t started yet.",
+            "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
+            "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"
-        }
+        },
+        "waitingMessage": "You'll join the meeting as soon as it is live!"
     },
     "volumeSlider": "Volume slider",
     "welcomepage": {

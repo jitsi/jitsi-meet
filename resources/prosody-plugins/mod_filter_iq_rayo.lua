@@ -5,6 +5,7 @@ local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
+local is_sip_jigasi = util.is_sip_jigasi;
 local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
@@ -166,7 +167,7 @@ function get_concurrent_outgoing_count(context_user, context_group)
         for _, occupant in room:each_occupant() do
             for _, presence in occupant:each_session() do
 
-                local initiator = presence:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
+                local initiator = is_sip_jigasi(presence);
 
                 local found_user = false;
                 local found_group = false;
