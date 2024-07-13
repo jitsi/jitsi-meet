@@ -62,9 +62,9 @@ export interface IProps {
     _peopleSearchQueryTypes: Array<string>;
 
     /**
-     * The URL pointing to the service allowing for people search.
+     * The key used to pass the alternative token for people directory.
      */
-    _peopleSearchUrl: string;
+    _peopleSearchTokenKey: string;
 
     /**
      * The localStorage key holding the alternative token for people directory.
@@ -72,9 +72,9 @@ export interface IProps {
     _peopleSearchTokenLocation: string;
 
     /**
-     * The key used to pass the alternative token for people directory.
+     * The URL pointing to the service allowing for people search.
      */
-    _peopleSearchTokenKey: string;
+    _peopleSearchUrl: string;
 
     /**
      * The region where we connected to.
@@ -311,7 +311,7 @@ export function _mapStateToProps(state: IReduxState) {
         peopleSearchQueryTypes,
         peopleSearchUrl,
         peopleSearchTokenLocation,
-        peopleSearchTokenKey,
+        peopleSearchTokenKey
     } = state['features/base/config'];
 
     return {

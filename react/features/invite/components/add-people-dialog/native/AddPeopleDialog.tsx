@@ -19,8 +19,8 @@ import Icon from '../../../../base/icons/components/Icon';
 import {
     IconCheck,
     IconCloseCircle,
-    IconPhoneRinging,
     IconEnvelope,
+    IconPhoneRinging,
     IconSearch,
     IconShare
 } from '../../../../base/icons/svg';
@@ -280,9 +280,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {string}
      */
     _keyExtractor(item: any) {
-        if (item.type === INVITE_TYPES.USER || item.type === INVITE_TYPES.EMAIL ) {
+        if (item.type === INVITE_TYPES.USER || item.type === INVITE_TYPES.EMAIL) {
             return item.id || item.user_id;
         }
+
         return item.number;
     }
 

@@ -144,9 +144,9 @@ export type GetInviteResultsOptions = {
     peopleSearchQueryTypes: Array<string>;
 
     /**
-     * The url to query for people.
+     * Key used to pass alternative token for people directory.
      */
-    peopleSearchUrl: string;
+    peopleSearchTokenKey?: string;
 
     /**
      * Key in localStorage holding the alternative token for people directory.
@@ -154,9 +154,9 @@ export type GetInviteResultsOptions = {
     peopleSearchTokenLocation?: string;
 
     /**
-     * Key used to pass alternative token for people directory.
+     * The url to query for people.
      */
-    peopleSearchTokenKey?: string;
+    peopleSearchUrl: string;
 
     /**
      * The region we are connected to.
@@ -425,18 +425,16 @@ export function getInviteTypeCounts(inviteItems: IInvitee[] = []) {
  * @param {string} inviteServiceUrl - The invite service that generates the
  * invitation.
  * @param {string} inviteUrl - The url to the conference.
- * @param {string} jwt - The jwt token to pass to the search service.
  * @param {Immutable.List} inviteItems - The list of the "user" or "room" type
  * items to invite.
+ * @param {IReduxState} state - Global state.
  * @returns {Promise} - The promise created by the request.
  */
 export function invitePeopleAndChatRooms(
         inviteServiceUrl: string,
         inviteUrl: string,
-        jwt: string,
         inviteItems: Array<Object>,
-        peopleSearchTokenLocation?: string,
-        peopleSearchTokenKey?: string,
+        state: IReduxState
 ): Promise<any> {
 
     if (!inviteItems || inviteItems.length === 0) {
@@ -445,10 +443,13 @@ export function invitePeopleAndChatRooms(
 
     // Parse all the query strings of the search directory endpoint
     const params = new URLSearchParams();
+    const { jwt = '' } = state['features/base/jwt'];
+    const { peopleSearchTokenLocation, peopleSearchTokenKey } = state['features/base/config'];
 
     // Authentication params for external entities (e. g. email)
     if (peopleSearchTokenLocation && peopleSearchTokenKey) {
-        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
+        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? '';
+
         params.append(peopleSearchTokenKey, peopleSearchToken);
     }
 
@@ -477,7 +478,12 @@ export function invitePeopleAndChatRooms(
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: IReduxState): boolean {
-    const { peopleSearchUrl, peopleSearchQueryTypes, peopleSearchTokenLocation, peopleSearchTokenKey } = state['features/base/config'];
+    const {
+        peopleSearchUrl,
+        peopleSearchQueryTypes,
+        peopleSearchTokenLocation,
+        peopleSearchTokenKey
+    } = state['features/base/config'];
 
     // If sending mere invitation emails, we just need the token expected by the email directory
     if (
@@ -485,7 +491,7 @@ export function isAddPeopleEnabled(state: IReduxState): boolean {
         && Boolean(peopleSearchTokenKey)
         && peopleSearchQueryTypes
         && peopleSearchQueryTypes.length === 1
-        && peopleSearchQueryTypes[0] === "email"
+        && peopleSearchQueryTypes[0] === 'email'
     ) {
         return true;
     }
@@ -571,6 +577,8 @@ function isPhoneNumberRegex(): RegExp {
  * @param {string} text - Text to search.
  * @param {Array<string>} queryTypes - Array with the query types that will be
  * executed - "conferenceRooms" | "user" | "room" | "email".
+ * @param {string} peopleSearchTokenLocation - The localStorage key holding the token value for alternate auth.
+ * @param {string} peopleSearchTokenKey - The key expected to hold the alternate auth token value.
  * @returns {Promise} - The promise created by the request.
  */
 export function searchDirectory( // eslint-disable-line max-params
@@ -579,7 +587,7 @@ export function searchDirectory( // eslint-disable-line max-params
         text: string,
         queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room', 'email' ],
         peopleSearchTokenLocation?: string,
-        peopleSearchTokenKey?: string,
+        peopleSearchTokenKey?: string
 ): Promise<Array<{ type: string; }>> {
 
     const query = encodeURIComponent(text);
@@ -587,11 +595,13 @@ export function searchDirectory( // eslint-disable-line max-params
 
     // Parse all the query strings of the search directory endpoint
     const params = new URLSearchParams();
+
     params.append('query', query);
     params.append('queryTypes', queryTypesString);
 
     if (peopleSearchTokenLocation && peopleSearchTokenKey) {
-        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? "";
+        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? '';
+
         params.append(peopleSearchTokenKey, peopleSearchToken);
     }
 

@@ -1557,7 +1557,7 @@ var config = {
     // Endpoint which is called to send invitation requests
     // inviteServiceUrl: https://myservice.com/api/invite",
 
-    // For external entities (e. g. email), the localStorage key holding the token value for directory endpoint authentication
+    // For external entities (e. g. email), the localStorage key holding the token value for directory authentication
     // peopleSearchTokenLocation: "mytoken",
     // For external entities (e. g. email), the key expected to hold the authentication token value
     // peopleSearchTokenKey: "mytoken",

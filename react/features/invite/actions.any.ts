@@ -103,9 +103,7 @@ export function invite(
         const {
             callFlowsEnabled,
             inviteServiceUrl,
-            inviteServiceCallFlowsUrl,
-            peopleSearchTokenLocation,
-            peopleSearchTokenKey,
+            inviteServiceCallFlowsUrl
         } = state['features/base/config'];
         const inviteUrl = getInviteURL(state);
         const { sipInviteUrl } = state['features/base/config'];
@@ -119,10 +117,11 @@ export function invite(
 
         // For each number, dial out. On success, remove the number from
         // {@link invitesLeftToSend}.
-        const phoneInvitePromises = phoneNumbers.map(item => {
-            const numberToInvite = item.number;
+        const phoneInvitePromises = typeof conference === 'undefined'
+            ? []
+            : phoneNumbers.map(item => {
+                const numberToInvite = item.number;
 
-            if (typeof conference !== "undefined") {
                 return conference.dial(numberToInvite)
                 .then(() => {
                     invitesLeftToSend
@@ -131,8 +130,7 @@ export function invite(
                 })
                 .catch((error: Error) =>
                     logger.error('Error inviting phone number:', error));
-            }
-        });
+            });
 
         allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
 
@@ -148,10 +146,8 @@ export function invite(
                     (callFlowsEnabled
                         ? inviteServiceCallFlowsUrl : inviteServiceUrl) ?? '',
                     inviteUrl,
-                    jwt,
                     usersAndRooms,
-                    peopleSearchTokenLocation,
-                    peopleSearchTokenKey)
+                    state)
                 .then(() => {
                     invitesLeftToSend
                         = invitesLeftToSend.filter(

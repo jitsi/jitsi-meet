@@ -48,12 +48,12 @@ export const SIP_ADDRESS_REGEX = /^[+a-zA-Z0-9]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)
  * Different invite types mapping.
  */
 export const INVITE_TYPES = {
+    EMAIL: 'email',
     PHONE: 'phone',
     ROOM: 'room',
     SIP: 'sip',
     USER: 'user',
-    VIDEO_ROOM: 'videosipgw',
-    EMAIL: 'email',
+    VIDEO_ROOM: 'videosipgw'
 };
 
 export const UPGRADE_OPTIONS_TEXT = 'jaas.8x8.vc';

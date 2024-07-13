@@ -302,14 +302,15 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {ReactElement}
      */
     _getAvatar(user: any, className = 'avatar-small') {
-        const defaultIcon = user.type == INVITE_TYPES.EMAIL ? IconEnvelope : IconUser;
+        const defaultIcon = user.type === INVITE_TYPES.EMAIL ? IconEnvelope : IconUser;
+
         return (
             <Avatar
                 className = { className }
+                defaultIcon = { defaultIcon }
                 size = { 32 }
                 status = { user.status }
-                url = { user.avatar }
-                defaultIcon = { defaultIcon } />
+                url = { user.avatar } />
         );
     }
 

@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { IconUser } from '../../icons/svg';
 import { getParticipantById } from '../../participants/functions';
 import { IParticipant } from '../../participants/types';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
@@ -49,6 +48,11 @@ export interface IProps {
     colorBase?: string;
 
     /**
+     * Indicates the default icon for the avatar.
+     */
+    defaultIcon?: string;
+
+    /**
      * Display name of the entity to render an avatar for (if any). This is handy when we need
      * an avatar for a non-participant entity (e.g. A recent list item).
      */
@@ -93,11 +97,6 @@ export interface IProps {
      * Indicates whether to load the avatar using CORS or not.
      */
     useCORS?: boolean;
-
-    /**
-     * Indicates the default icon for the avatar.
-     */
-    defaultIcon?: string;
 }
 
 interface IState {
@@ -131,8 +130,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
         const {
             _corsAvatarURLs,
             url,
-            useCORS,
-            defaultIcon = IconUser,
+            useCORS
         } = props;
 
         this.state = {
@@ -178,13 +176,13 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             _loadableAvatarUrlUseCORS,
             className,
             colorBase,
+            defaultIcon,
             dynamicColor,
             id,
             size,
             status,
             testId,
-            url,
-            defaultIcon,
+            url
         } = this.props;
         const { avatarFailed, isUsingCORS } = this.state;
 
