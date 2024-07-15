@@ -1555,7 +1555,7 @@ var config = {
     // Directory endpoint which is called for invite dialog autocomplete
     // peopleSearchUrl: "https://myservice.com/api/people",
     // Endpoint which is called to send invitation requests
-    // inviteServiceUrl: https://myservice.com/api/invite",
+    // inviteServiceUrl: "https://myservice.com/api/invite",
 
     // For external entities (e. g. email), the localStorage key holding the token value for directory authentication
     // peopleSearchTokenLocation: "mytoken",
