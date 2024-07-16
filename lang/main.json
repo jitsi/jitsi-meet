@@ -839,6 +839,8 @@
             "breakoutRooms": "Breakout rooms",
             "goLive": "Go live",
             "invite": "Invite Someone",
+            "lowerAllHands": "Lower all hands",
+            "lowerHand": "Lower the hand",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
             "moreParticipantOptions": "More participant options",
