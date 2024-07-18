@@ -6,6 +6,7 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
+    ADD_MESSAGE_REACTION,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -31,7 +32,7 @@ import {
  * "error" or "local" or "remote".
  * @param {string} messageDetails.timestamp - A timestamp to display for when
  * the message was received.
- * @param {string} messageDetails.isReaction - Whether or not the
+ * @param {string} memssageDetails.isReaction - Whether or not the
  * message is a reaction message.
  * @returns {{
  *     type: ADD_MESSAGE,
@@ -47,6 +48,27 @@ export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Adds a reaction to a chat message.
+ *
+ * @param {Object} reactionDetails - The reaction to add.
+ * @param {string} reactionDetails.messageId - The ID of the message to react to.
+ * @param {string} reactionDetails.reaction - The reaction to add.
+ * @param {string} reactionDetails.receiverID - The receiver ID of the reaction.
+ * @returns {{
+ *     type: ADD_MESSAGE_REACTION,
+ *     messageId: string,
+ *     reaction: string[],
+ *     receiverID: string
+ * }}
+ */
+export function addMessageReaction(reactionDetails: Object) {
+    return {
+        type: ADD_MESSAGE_REACTION,
+        ...reactionDetails
     };
 }
 
