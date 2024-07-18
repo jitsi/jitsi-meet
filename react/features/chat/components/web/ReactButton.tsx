@@ -22,9 +22,9 @@ interface IProps extends AbstractProps {
 
     reaction: string;
 
-    messageID: string;
+    messageId: string;
 
-    receiverID: string;
+    receiverId: string;
 
 }
 
@@ -59,10 +59,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 const ReactButton = ({
-    reaction,
-    message,
-    messageID,
-    receiverID,
+    messageId,
+    receiverId
 }: IProps) => {
     const { classes, cx } = useStyles();
     const dispatch = useDispatch(); 
@@ -70,13 +68,16 @@ const ReactButton = ({
     /**
      * Sends a reaction to a message.
      *
-     * @param {string} reaction - The reaction to send.
+     * @param {string} emoji - The reaction to send.
      * @param {string} messageID - The message ID to react to.
      * @param {string} receiverID - The receiver ID of the reaction.
      * @returns {Function}
      */
-    const onSendReaction = useCallback((reaction: string, messageID: string, receiverID?: string) => {
-        dispatch(sendReaction(reaction, messageID, receiverID));
+    const onSendReaction = useCallback((emoji) => {
+        console.log(emoji);
+        console.log(messageId);
+        console.log(receiverId);
+        dispatch(sendReaction(emoji, messageId, ""));
     }, []);
 
     const [showSmileysPanel, setShowSmileysPanel] = useState(false);
@@ -103,7 +104,7 @@ const ReactButton = ({
                 <div className={classes.popoverContainer}>
                     <Popover
                         className={classes.reactionPanel}
-                        content={<EmojiSelector onSelect={(emoji) => onSendReaction(emoji, "test")} />}
+                        content={<EmojiSelector onSelect={(emoji) => onSendReaction(emoji)} />}
                         disablePopover={false}
                         headingLabel={("toolbar.react")}
                         id="emoji-selector-popover"

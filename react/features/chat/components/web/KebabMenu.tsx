@@ -7,6 +7,7 @@ import { IconDotsHorizontal } from "../../../base/icons/svg";
 import Popover from "@mui/material/Popover";
 import { useDispatch, useSelector } from 'react-redux';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import { sendReaction } from '../../actions.any.ts'
 import { getParticipantById } from "../../../base/participants/functions";
 import { IReduxState } from "../../../app/types";
 
@@ -16,6 +17,10 @@ export interface IProps {
     onCopy: () => void;
     className?: string;
 
+    message: string;
+
+    messageId: string;
+
     /**
     * True if the message is a lobby chat message.
     */
@@ -24,7 +29,7 @@ export interface IProps {
     /**
      * The ID of the participant that the message is to be sent.
      */
-    participantID: string;
+    participantId: string;
 
     /**
      * Whether the button should be visible or not.
@@ -57,33 +62,41 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const KebabMenu = ({ isLobbyMessage, participantID, onCopy, className }: IProps) => {
+const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, className }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantID));
+    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
     const handleMenuClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     }, []);
 
     const handleReplyClick = useCallback(() => {
-        // Actions
+        
     }, []);
 
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
-            dispatch(handleLobbyChatInitialized(participantID));
+            dispatch(handleLobbyChatInitialized(participantId));
         } else {
             dispatch(openChat(participant));
         }
-    }, [dispatch, isLobbyMessage, participant, participantID]);
+    }, [dispatch, isLobbyMessage, participant, participantId]);
 
     const handleCopyClick = useCallback(() => {
-        // Actions
-    }, []);
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(message).then(() => {
+                console.log("Message copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy message: ", err);
+            });
+        } else {
+            console.error("Clipboard API not available");
+        }
+    }, [message]);
 
     const handleMenuItemClick = useCallback((action: () => void) => {
         action();
@@ -121,13 +134,13 @@ const KebabMenu = ({ isLobbyMessage, participantID, onCopy, className }: IProps)
                 }}
             >
                 <div className={classes.menuPanel}>
-                    <div className={classes.menuItem} onClick={() => handleMenuItemClick(handleReplyClick)}>
+                    <div className={classes.menuItem} onClick={() => handleReplyClick()}>
                         {t("Reply")}
                     </div>
-                    <div className={classes.menuItem} onClick={() => handleMenuItemClick(handlePrivateClick)}>
+                    <div className={classes.menuItem} onClick={() => handlePrivateClick()}>
                         {t("Private Message")}
                     </div>
-                    <div className={classes.menuItem} onClick={() => handleMenuItemClick(handleCopyClick)}>
+                    <div className={classes.menuItem} onClick={() => handleCopyClick()}>
                         {t("Copy")}
                     </div>
                 </div>
