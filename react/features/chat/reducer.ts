@@ -3,6 +3,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_MESSAGE,
+    ADD_MESSAGE_REACTION,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -20,6 +21,7 @@ const DEFAULT_STATE = {
     isPollsTabFocused: false,
     lastReadMessage: undefined,
     messages: [],
+    reactions: [],
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
@@ -51,6 +53,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messageId: action.messageId,
             messageType: action.messageType,
             message: action.message,
+            reactions: action.reactions,
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
@@ -76,6 +79,29 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messages
         };
     }
+
+    case ADD_MESSAGE_REACTION: {
+        const { from, messageId, reactionList } = action;
+        const messages = state.messages.map(message => {
+            console.log(message)
+            if (messageId === message.id) {
+                console.log("FROM: " + from)
+                console.log("MESSAGE_ID: " + messageId);
+                console.log("REACTION: " + reactionList);
+                return {
+                    ...message,
+                    reactions: [...(message.reactions || []), reactionList]
+                };
+            }
+            return message;
+        });
+    
+        return {
+            ...state,
+            messages
+        };
+    }
+    
 
     case CLEAR_MESSAGES:
         return {

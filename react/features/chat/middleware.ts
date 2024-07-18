@@ -37,7 +37,7 @@ import { showToolbox } from '../toolbox/actions';
 
 
 import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SEND_REACTION, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
-import { addMessage, clearMessages, closeChat } from './actions.any';
+import { addMessage, addMessageReaction, clearMessages, closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     INCOMING_MSG_SOUND_ID,
@@ -219,6 +219,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             conference.sendReaction(reaction, messageID, receiverID);
         }
+        break;
     }
 
     case ADD_REACTION_MESSAGE: {
@@ -302,6 +303,18 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     );
 
     conference.on(
+        JitsiConferenceEvents.REACTION_RECEIVED,
+        (id: string, reactionList: string[], messageId: string, receiverId: string) => {
+            _onReactionReceived(store, {
+                id: id,
+                reactionList,
+                messageId,
+                receiverId: receiverId || ""
+            });
+        }
+    )
+
+    conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (participantId: string, message: string, timestamp: number, messageId: string) => {
             _onConferenceMessageReceived(store, {
@@ -351,6 +364,21 @@ function _onConferenceMessageReceived(store: IStore,
         timestamp,
         messageId
     }, true, isGif);
+}
+
+function _onReactionReceived(store: IStore, { from, reactionList, messageId }: {
+    from: string; reactionList: string[]; messageId: string; }) {
+    const state = store.getState();
+
+    console.log('REACTION HAS BEEN RECEIVED IN _onReactionReceived', from, reactionList, messageId);
+
+    const reactionPayload = ({
+        from,
+        reactionList,
+        messageId,
+    });
+
+    store.dispatch(addMessageReaction(reactionPayload));
 }
 
 /**
