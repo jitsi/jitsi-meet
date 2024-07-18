@@ -24,7 +24,7 @@
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
 #import "RNSplashScreen.h"
-#import "ScheenshareEventEmiter.h"
+#import "ScreenShareEventEmitter.h"
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
 
@@ -36,7 +36,7 @@
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
-    ScheenshareEventEmiter *_screenshareEventEmiter;
+    ScreenShareEventEmitter *_screenShareEventEmitter;
 }
 
 #pragma mak - This class is a singleton
@@ -64,7 +64,7 @@
         _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
 
         // Initialize the listener for handling start/stop screensharing notifications.
-        _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
+        _screenShareEventEmitter = [[ScreenShareEventEmitter alloc] init];
 
         // Register a fatal error handler for React.
         registerReactFatalErrorHandler();

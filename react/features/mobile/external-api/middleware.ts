@@ -8,7 +8,6 @@ import { AnyAction } from 'redux';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_BLURRED,
     CONFERENCE_FAILED,
@@ -128,12 +127,6 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     const { type } = action;
 
     switch (type) {
-    case APP_WILL_MOUNT:
-        _registerForNativeEvents(store);
-        break;
-    case APP_WILL_UNMOUNT:
-        _unregisterForNativeEvents();
-        break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
 
@@ -371,10 +364,6 @@ function _registerForNativeEvents(store: IStore) {
         } catch (error) {
             logger.warn('Cannot send endpointMessage', error);
         }
-    });
-
-    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }: any) => {
-        dispatch(toggleScreensharing(enabled));
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }: any) => {

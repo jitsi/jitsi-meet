@@ -126,10 +126,6 @@ copyFolderRecursiveSync(
     `${iosSrcPath}/dropbox`,
     iosDestPath
 );
-copyFolderRecursiveSync(
-    `${iosSrcPath}/screen-share`,
-    iosDestPath
-);
 fs.copyFileSync(
     `${iosSrcPath}/AppInfo.m`,
     `${iosDestPath}/AppInfo.m`
@@ -165,6 +161,14 @@ fs.copyFileSync(
 fs.copyFileSync(
     `${iosSrcPath}/LocaleDetector.m`,
     `${iosDestPath}/LocaleDetector.m`
+);
+fs.copyFileSync(
+    `${iosSrcPath}/ScreenShareEventEmitter.m`,
+    `${iosDestPath}/ScreenShareEventEmitter.m`
+);
+fs.copyFileSync(
+    `${iosSrcPath}/ScreenShareEventEmitter.h`,
+    `${iosDestPath}/ScreenShareEventEmitter.h`
 );
 fs.copyFileSync(
     `${iosSrcPath}/POSIX.m`,
