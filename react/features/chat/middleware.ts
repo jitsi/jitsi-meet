@@ -309,7 +309,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 id,
                 reactionList,
                 messageId,
-                receiverId: receiverId || ''
+                receiverId
             });
         }
     );
