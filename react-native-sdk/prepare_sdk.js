@@ -126,6 +126,10 @@ copyFolderRecursiveSync(
     `${iosSrcPath}/dropbox`,
     iosDestPath
 );
+copyFolderRecursiveSync(
+    `${iosSrcPath}/screen-share`,
+    iosDestPath
+);
 fs.copyFileSync(
     `${iosSrcPath}/AppInfo.m`,
     `${iosDestPath}/AppInfo.m`

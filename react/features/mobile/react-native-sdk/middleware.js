@@ -1,3 +1,6 @@
+import { NativeEventEmitter, NativeModules } from 'react-native';
+
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -10,14 +13,26 @@ import {
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 
-import { isExternalAPIAvailable } from './functions';
+import { isExternalAPIAvailable, isScreenShareAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
+const screenShareApi = isScreenShareAPIAvailable();
 
+let screenShareEventEmitter;
+
+// Get the native module
+const { ScreenShareEventEmitter } = NativeModules;
+
+// Create an event emitter
+
+if (screenShareApi) {
+    screenShareEventEmitter = new NativeEventEmitter(ScreenShareEventEmitter);
+}
 
 /**
  * Check if native modules are being used or not.
@@ -29,6 +44,12 @@ const externalAPIEnabled = isExternalAPIAvailable();
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case APP_WILL_MOUNT:
+        _registerForNativeEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForNativeEvents();
+        break;
     case SET_AUDIO_MUTED:
         rnSdkHandlers?.onAudioMutedChanged?.(action.muted);
         break;
@@ -84,3 +105,28 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
     return result;
 });
+
+/**
+ * Registers for events sent from the native side via NativeEventEmitter.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _registerForNativeEvents(store) {
+    const { dispatch } = store;
+
+    screenShareEventEmitter.addListener(ScreenShareEventEmitter.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
+        dispatch(toggleScreensharing(enabled));
+    });
+}
+
+/**
+ * Unregister for events sent from the native side via NativeEventEmitter.
+ *
+ * @private
+ * @returns {void}
+ */
+function _unregisterForNativeEvents() {
+    screenShareEventEmitter.removeAllListeners(ScreenShareEventEmitter.TOGGLE_SCREEN_SHARE);
+}
