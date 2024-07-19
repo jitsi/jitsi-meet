@@ -83,6 +83,14 @@ export const initKeyboardShortcuts = () =>
         const pttDelay = 50;
         let pttTimeout: number | undefined;
 
+        // Used to chain the push to talk operations in order to fix an issue when on press we actually need to create
+        // a new track and the release happens before the track is created. In this scenario the release is ignored.
+        // The chaining would also prevent creating multiple new tracks if the space bar is pressed and released
+        // multiple times before the new track creation finish.
+        // TODO: Revisit the fix once we have better track management in LJM. It is possible that we would not need the
+        // chaining at all.
+        let mutePromise = Promise.resolve();
+
         window.addEventListener('keyup', (e: KeyboardEvent) => {
             const state = getState();
             const enabled = areKeyboardShortcutsEnabled(state);
@@ -99,7 +107,7 @@ export const initKeyboardShortcuts = () =>
                 pttTimeout = window.setTimeout(() => {
                     sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_RELEASED));
                     logger.log('Talk shortcut released');
-                    APP.conference.muteAudio(true);
+                    mutePromise = mutePromise.then(() => APP.conference.muteAudio(true));
                 }, pttDelay);
             }
 
@@ -123,7 +131,7 @@ export const initKeyboardShortcuts = () =>
                 clearTimeout(pttTimeout);
                 sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_PRESSED));
                 logger.log('Talk shortcut pressed');
-                APP.conference.muteAudio(false);
+                mutePromise = mutePromise.then(() => APP.conference.muteAudio(false));
             } else if (key === 'ESCAPE') {
                 focusedElement?.blur();
             }
