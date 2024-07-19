@@ -10,6 +10,7 @@ import {
 import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { openDialog } from '../base/dialog/actions';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -33,6 +34,7 @@ import {
     updateVisitorsCount
 } from './actions';
 import { getPromotionRequests } from './functions';
+import { JoinMeetingDialog } from './components';
 import logger from './logger';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
@@ -53,6 +55,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         if (getState()['features/visitors'].iAmVisitor) {
+            dispatch(openDialog(JoinMeetingDialog));
+
             const { demoteActorDisplayName } = getState()['features/visitors'];
 
             dispatch(setVisitorDemoteActor(undefined));
