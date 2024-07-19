@@ -41,6 +41,11 @@ interface IProps extends AbstractButtonProps {
     _raisedHand: boolean;
 
     /**
+     * Whether or not the click is disabled.
+     */
+    disableClick?: boolean;
+
+    /**
      * Used to close the overflow menu after raise hand is clicked.
      */
     onCancel: Function;
@@ -75,8 +80,14 @@ class RaiseHandButton extends Component<IProps> {
      * @returns {void}
      */
     _onClick() {
+        const { disableClick, onCancel } = this.props;
+
+        if (disableClick) {
+            return;
+        }
+
         this._toggleRaisedHand();
-        this.props.onCancel();
+        onCancel();
     }
 
     /**
@@ -158,5 +169,24 @@ function _mapStateToProps(state: IReduxState) {
         _raisedHand: hasRaisedHand(_localParticipant)
     };
 }
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {IProps}
+ */
+function _standaloneMapStateToProps(state: IReduxState) {
+    const _enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
+
+    return {
+        _enabled
+    };
+}
+
+const StandaloneRaiseHandButton = translate(connect(_standaloneMapStateToProps)(RaiseHandButton));
+
+export { StandaloneRaiseHandButton };
 
 export default translate(connect(_mapStateToProps)(RaiseHandButton));

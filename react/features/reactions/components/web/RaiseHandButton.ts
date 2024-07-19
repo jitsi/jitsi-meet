@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconRaiseHand } from '../../../base/icons/svg';
 import { raiseHand } from '../../../base/participants/actions';
@@ -14,6 +14,16 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
  */
 interface IProps extends AbstractButtonProps {
+
+    /**
+     * Whether or not the click is disabled.
+     */
+    disableClick?: boolean;
+
+    /**
+     * Redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not the hand is raised.
@@ -51,7 +61,11 @@ class RaiseHandButton extends AbstractButton<IProps> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, raisedHand } = this.props;
+        const { disableClick, dispatch, raisedHand } = this.props;
+
+        if (disableClick) {
+            return;
+        }
 
         sendAnalytics(createToolbarEvent(
             'raise.hand',
@@ -75,5 +89,7 @@ const mapStateToProps = (state: IReduxState) => {
         raisedHand: hasRaisedHand(localParticipant)
     };
 };
+
+export { RaiseHandButton };
 
 export default translate(connect(mapStateToProps)(RaiseHandButton));

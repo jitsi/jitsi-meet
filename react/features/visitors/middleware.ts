@@ -13,6 +13,7 @@ import { SET_CONFIG } from '../base/config/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { connect, setPreferVisitor } from '../base/connection/actions';
 import { disconnect } from '../base/connection/actions.any';
+import { openDialog } from '../base/dialog/actions';
 import { JitsiConferenceEvents, JitsiConnectionErrors } from '../base/lib-jitsi-meet';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { raiseHand } from '../base/participants/actions';
@@ -48,6 +49,7 @@ import {
     updateVisitorsCount,
     updateVisitorsInQueueCount
 } from './actions';
+import { JoinMeetingDialog } from './components';
 import { getPromotionRequests, getVisitorsCount, getVisitorsInQueueCount } from './functions';
 import logger from './logger';
 import { WebsocketClient } from './websocket-client';
@@ -70,6 +72,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         if (getState()['features/visitors'].iAmVisitor) {
+            dispatch(openDialog(JoinMeetingDialog));
+
             const { demoteActorDisplayName } = getState()['features/visitors'];
 
             dispatch(setVisitorDemoteActor(undefined));
