@@ -22,7 +22,7 @@ if (screenShareApi) {
 }
 
 /**
- * Middleware that captures Redux actions and uses the ExternalAPI module to
+ * Middleware that captures Redux actions and uses the ScreenShareEventEmitter module to
  * turn them into native events so the application knows about them.
  *
  * @param {Store} store - Redux store.
@@ -51,12 +51,15 @@ screenShareEventEmitter && MiddlewareRegistry.register(store => next => action =
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents(store) {
+function _registerForNativeEvents(store: any) {
     const { dispatch } = store;
 
-    screenShareEventEmitter.addListener(ScreenShareEventEmitter.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
-        dispatch(toggleScreensharing(enabled));
-    });
+    screenShareEventEmitter.addListener(
+        ScreenShareEventEmitter.TOGGLE_SCREEN_SHARE,
+        ({ enabled }: { enabled: boolean; }
+        ) => {
+            dispatch(toggleScreensharing(enabled));
+        });
 }
 
 /**
