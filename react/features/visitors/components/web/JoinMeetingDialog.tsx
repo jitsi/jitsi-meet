@@ -47,7 +47,7 @@ export default function JoinMeetingDialog() {
     return (
         <Dialog
             cancel = {{ hidden: true }}
-            ok = {{ translationKey: 'dialog.Understood' }}
+            ok = {{ translationKey: 'dialog.Ok' }}
             titleKey = 'visitors.joinMeeting.title'>
             <div className = 'join-meeting-dialog'>
                 <p>{t('visitors.joinMeeting.description')}</p>

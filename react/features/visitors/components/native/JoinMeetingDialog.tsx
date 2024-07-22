@@ -33,7 +33,7 @@ export default function JoinMeetingDialog() {
             </Dialog.Description>
             <Dialog.Description>{t('visitors.joinMeeting.wishToSpeak')}</Dialog.Description>
             <Dialog.Button
-                label = { t('dialog.Understood') }
+                label = { t('dialog.Ok') }
                 onPress = { closeDialog } />
         </Dialog.Container>
     );
