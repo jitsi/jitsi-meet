@@ -263,7 +263,6 @@
         "Remove": "Remove",
         "Share": "Share",
         "Submit": "Submit",
-        "Understood": "Understood",
         "WaitForHostMsg": "The conference has not yet started because no moderators have yet arrived. If you'd like to become a moderator please log-in. Otherwise, please wait.",
         "WaitForHostNoAuthMsg": "The conference has not yet started because no moderators have yet arrived. Please wait.",
         "WaitingForHostButton": "Wait for moderator",
