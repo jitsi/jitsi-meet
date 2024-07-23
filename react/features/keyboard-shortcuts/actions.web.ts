@@ -107,7 +107,8 @@ export const initKeyboardShortcuts = () =>
                 pttTimeout = window.setTimeout(() => {
                     sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_RELEASED));
                     logger.log('Talk shortcut released');
-                    mutePromise = mutePromise.then(() => APP.conference.muteAudio(true));
+                    mutePromise = mutePromise.then(() =>
+                        APP.conference.muteAudio(true).catch(() => { /* nothing to be done */ }));
                 }, pttDelay);
             }
 
@@ -131,7 +132,8 @@ export const initKeyboardShortcuts = () =>
                 clearTimeout(pttTimeout);
                 sendAnalytics(createShortcutEvent('push.to.talk', ACTION_SHORTCUT_PRESSED));
                 logger.log('Talk shortcut pressed');
-                mutePromise = mutePromise.then(() => APP.conference.muteAudio(false));
+                mutePromise = mutePromise.then(() =>
+                    APP.conference.muteAudio(false).catch(() => { /* nothing to be done */ }));
             } else if (key === 'ESCAPE') {
                 focusedElement?.blur();
             }
