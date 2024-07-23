@@ -821,6 +821,7 @@
         "videoUnmuteBlockedDescription": "Camera unmute and desktop sharing operation have been temporarily blocked because of system limits.",
         "videoUnmuteBlockedTitle": "Camera unmute and desktop sharing blocked!",
         "viewLobby": "View lobby",
+        "viewParticipants": "View participants",
         "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
         "waitingVisitors": "Visitors waiting in queue: {{waitingVisitors}}",

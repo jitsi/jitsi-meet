@@ -14,6 +14,7 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     RAISE_HAND_NOTIFICATION_ID
 } from '../../notifications/constants';
+import { open as openParticipantsPane } from '../../participants-pane/actions';
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
@@ -783,10 +784,19 @@ function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiCon
             || isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
     }
 
-    const action = shouldDisplayAllowAction ? {
-        customActionNameKey: [ 'notify.allowAction' ],
-        customActionHandler: [ () => dispatch(approveParticipant(participantId)) ]
-    } : {};
+    let action;
+
+    if (shouldDisplayAllowAction) {
+        action = {
+            customActionNameKey: [ 'notify.allowAction' ],
+            customActionHandler: [ () => dispatch(approveParticipant(participantId)) ]
+        };
+    } else {
+        action = {
+            customActionNameKey: [ 'notify.viewParticipants' ],
+            customActionHandler: [ () => dispatch(openParticipantsPane()) ]
+        };
+    }
 
     if (raisedHandTimestamp) {
         let notificationTitle;
@@ -810,7 +820,7 @@ function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiCon
             concatText: true,
             uid: RAISE_HAND_NOTIFICATION_ID,
             ...action
-        }, shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT_TYPE.MEDIUM : NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }
