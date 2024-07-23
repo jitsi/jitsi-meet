@@ -705,11 +705,13 @@ export default {
 
     /**
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
+     *
      * @param {boolean} mute true for mute and false for unmute.
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
+     * @returns {Promise}
      */
-    muteAudio(mute, showUI = true) {
+    async muteAudio(mute, showUI = true) {
         const state = APP.store.getState();
 
         if (!mute
@@ -749,7 +751,8 @@ export default {
             };
 
             APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
-            createLocalTracksF({ devices: [ 'audio' ] })
+
+            await createLocalTracksF({ devices: [ 'audio' ] })
                 .then(([ audioTrack ]) => audioTrack)
                 .catch(error => {
                     maybeShowErrorDialog(error);
@@ -1277,8 +1280,7 @@ export default {
                     return;
                 }
 
-                APP.store.dispatch(
-                replaceLocalTrack(oldTrack, newTrack, room))
+                APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
                         this.updateAudioIconEnabled();
                     })
