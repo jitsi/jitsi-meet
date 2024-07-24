@@ -25,6 +25,15 @@ interface IProps extends IChatMessageProps {
 
 const useStyles = makeStyles()((theme: Theme) => {
     return {
+
+        chatMessageFooter: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: theme.spacing(1),
+        },
+
         chatMessageWrapper: {
             maxWidth: '100%',
             // Intended to make the icons faintly visible when the message is hovered, but does not work.
@@ -73,6 +82,21 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginLeft: theme.spacing(1)
         },
 
+        reactionBox: {
+            display: 'inline-block',
+            backgroundColor: 'gray',
+            padding: "2px 8px",
+            borderRadius: theme.shape.borderRadius,
+            cursor: 'pointer',
+            transition: 'background-color 0.3s',
+            '&:hover': {
+                backgroundColor: 'lightgray',
+            },
+            '&:press': {
+                backgroundColor: 'blue',
+            },
+        },
+
         replyWrapper: {
             display: 'flex',
             flexDirection: 'row' as const,
@@ -101,8 +125,8 @@ const useStyles = makeStyles()((theme: Theme) => {
         reactions: {
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '4px',
-            marginTop: '8px',
+            gap: theme.spacing(1),
+            marginRight: theme.spacing(1),
             color: theme.palette.text02,
         },
 
@@ -131,7 +155,9 @@ const useStyles = makeStyles()((theme: Theme) => {
         timestamp: {
             ...withPixelLineHeight(theme.typography.labelRegular),
             color: theme.palette.text03,
-            marginTop: theme.spacing(1)
+            marginTop: theme.spacing(1),
+            marginLeft: theme.spacing(1),
+            whiteSpace: 'nowrap'
         },
 
     };
@@ -248,6 +274,10 @@ const ChatMessage = ({
                                             { user: message.displayName })}
                                 </span>
                                 <Message text = { getMessageText(message) } />
+                                <div className = { classes.chatMessageFooter }>
+                                    {_renderReactions()}
+                                    {showTimestamp && _renderTimestamp()}
+                                </div>
                             </div>
                             {(message.privateMessage || (message.lobbyChat && !knocking))
                                 && _renderPrivateNotice()}

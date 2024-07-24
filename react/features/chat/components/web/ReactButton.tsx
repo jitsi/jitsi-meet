@@ -121,6 +121,5 @@ const ReactButton = ({
     );
     
 }
-// onClick = { () => onSendReaction('like', message.messageId, message.id)} 
 
 export default ReactButton;
