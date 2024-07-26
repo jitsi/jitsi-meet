@@ -4,11 +4,13 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
-import { editPoll } from '../../actions';
+import { editPoll, removePoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
@@ -20,6 +22,10 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui02,
             borderRadius: '8px',
             wordBreak: 'break-word'
+        },
+        closeBtn: {
+            cursor: 'pointer',
+            float: 'right'
         },
         header: {
             marginBottom: '24px'
@@ -73,6 +79,15 @@ const PollAnswer = ({
 
     return (
         <div className = { classes.container }>
+            {
+                pollSaved && <Icon
+                    ariaLabel = { t('polls.closeButton') }
+                    className = { classes.closeBtn }
+                    onClick = { () => dispatch(removePoll(pollId, poll)) }
+                    role = 'button'
+                    src = { IconCloseLarge }
+                    tabIndex = { 0 } />
+            }
             <div className = { classes.header }>
                 <div className = { classes.question }>
                     { poll.question }

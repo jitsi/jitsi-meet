@@ -7,8 +7,9 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
-import { editPoll, registerVote, setVoteChanging } from '../actions';
+import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL, COMMAND_NEW_POLL } from '../constants';
+import { getPoll } from '../functions';
 import { IPoll } from '../types';
 
 /**
@@ -48,9 +49,9 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const { pollId, setCreateMode } = props;
 
-    const conference: any = useSelector((state: IReduxState) => state['features/base/conference'].conference);
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
-    const poll: IPoll = useSelector((state: IReduxState) => state['features/polls'].polls[pollId]);
+    const poll: IPoll = useSelector(getPoll(pollId));
 
     const { answers, lastVote, question, senderId } = poll;
 
@@ -75,7 +76,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        conference.sendMessage({
+        conference?.sendMessage({
             type: COMMAND_ANSWER_POLL,
             pollId,
             answers: checkBoxStates
@@ -95,8 +96,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
             answers: answers.map(answer => answer.name)
         });
 
-        dispatch(editPoll(pollId, false));
-
+        dispatch(removePoll(pollId, poll));
     }, [ conference, question, answers ]);
 
     const skipAnswer = useCallback(() => {

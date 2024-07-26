@@ -10,7 +10,7 @@ export const CHANGE_VOTE = 'CHANGE_VOTE';
 
 /**
  * The type of the action which signals that we need to clear all polls from the state.
- * For example we are moving to another conference.
+ * For example, we are moving to another conference.
  *
  * {
  *     type: CLEAR_POLLS
@@ -65,14 +65,15 @@ export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
 export const REGISTER_VOTE = 'REGISTER_VOTE';
 
 /**
- * The type of the action which retracts a vote.
+ * The type of the action which signals that we need to remove poll.
  *
  * {
- *     type: RETRACT_VOTE,
+ *     type: REMOVE_POLL,
  *     pollId: string,
+ *     poll: IPoll
  * }
  */
-export const RETRACT_VOTE = 'RETRACT_VOTE';
+export const REMOVE_POLL = 'REMOVE_POLL';
 
 /**
  * The type of the action triggered when the poll tab in chat pane is closed

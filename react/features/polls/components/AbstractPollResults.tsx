@@ -10,6 +10,7 @@ import { getParticipantById, getParticipantDisplayName } from '../../base/partic
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
+import { IPoll } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -53,8 +54,8 @@ export type AbstractProps = {
 const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
-    const pollDetails = useSelector(getPoll(pollId));
-    const participant = useBoundSelector(getParticipantById, pollDetails.senderId);
+    const poll: IPoll = useSelector(getPoll(pollId));
+    const participant = useBoundSelector(getParticipantById, poll.senderId);
     const reduxState = useSelector((state: IReduxState) => state);
 
     const [ showDetails, setShowDetails ] = useState(false);
@@ -67,14 +68,14 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         const allVoters = new Set();
 
         // Getting every voters ID that participates to the poll
-        for (const answer of pollDetails.answers) {
+        for (const answer of poll.answers) {
             // checking if the voters is an array for supporting old structure model
             const voters: string[] = answer.voters.length ? answer.voters : Object.keys(answer.voters);
 
             voters.forEach((voter: string) => allVoters.add(voter));
         }
 
-        return pollDetails.answers.map(answer => {
+        return poll.answers.map(answer => {
             const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
@@ -98,7 +99,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
                 voterCount: nrOfVotersPerAnswer
             };
         });
-    }, [ pollDetails.answers, showDetails ]);
+    }, [ poll.answers, showDetails ]);
 
     const dispatch = useDispatch();
     const changeVote = useCallback(() => {
@@ -113,8 +114,8 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             answers = { answers }
             changeVote = { changeVote }
             creatorName = { participant ? participant.name : '' }
-            haveVoted = { pollDetails.lastVote !== null }
-            question = { pollDetails.question }
+            haveVoted = { poll.lastVote !== null }
+            question = { poll.question }
             showDetails = { showDetails }
             t = { t }
             toggleIsDetailed = { toggleIsDetailed } />
