@@ -50,7 +50,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             error: action.error,
             id: action.id,
             isReaction: action.isReaction,
-            messageId: uuidv4(),
+            messageId: action.messageId,
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
