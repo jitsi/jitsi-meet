@@ -37,7 +37,7 @@ MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
 
         if (isPrejoinPageVisible(getState())) {
-            const { initialGUMPromise = Promise.resolve() } = getState()['features/base/media'].common;
+            const { initialGUMPromise = Promise.resolve() } = getState()['features/base/media'];
 
             initialGUMPromise.then(() => {
                 const state = getState();

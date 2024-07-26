@@ -138,7 +138,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     case CONNECTION_DISCONNECTED: {
-        const { initialGUMPromise } = getState()['features/base/media'].common;
+        const { initialGUMPromise } = getState()['features/base/media'];
 
         if (initialGUMPromise) {
             store.dispatch(setInitialGUMPromise());
@@ -150,7 +150,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = getState();
 
         if (!isPrejoinPageVisible(state)) {
-            const { initialGUMPromise = Promise.resolve({ tracks: [] }) } = state['features/base/media'].common;
+            const { initialGUMPromise = Promise.resolve({ tracks: [] }) } = state['features/base/media'];
 
             initialGUMPromise.then(({ tracks }) => {
                 let tracksToUse = tracks ?? [];
