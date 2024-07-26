@@ -96,9 +96,9 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
  * @param {string} action.type - Type of action.
  * @returns {ICommonState}
  */
-function _initialGUMPromise(state: initialGUMPromise | undefined, action: AnyAction) {
+function _initialGUMPromise(state: initialGUMPromise | null = null, action: AnyAction) {
     if (action.type === SET_INITIAL_GUM_PROMISE) {
-        return action.promise;
+        return action.promise ?? null;
     }
 
     return state;
@@ -265,9 +265,9 @@ interface IAudioState {
 }
 
 type initialGUMPromise = Promise<{
-        errors: any;
+        errors?: any;
         tracks: Array<any>;
-    }> | undefined;
+    }> | null;
 
 interface IScreenshareState {
     available: boolean;
