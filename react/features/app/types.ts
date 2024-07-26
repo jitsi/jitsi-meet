@@ -60,6 +60,7 @@ import { INotificationsState } from '../notifications/reducer';
 import { IOverlayState } from '../overlay/reducer';
 import { IParticipantsPaneState } from '../participants-pane/reducer';
 import { IPollsState } from '../polls/reducer';
+import { IPollsHistoryState } from '../polls-history/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
 import { IReactionsState } from '../reactions/reducer';
@@ -149,6 +150,7 @@ export interface IReduxState {
     'features/overlay': IOverlayState;
     'features/participants-pane': IParticipantsPaneState;
     'features/polls': IPollsState;
+    'features/polls-history': IPollsHistoryState;
     'features/power-monitor': IPowerMonitorState;
     'features/prejoin': IPrejoinState;
     'features/reactions': IReactionsState;

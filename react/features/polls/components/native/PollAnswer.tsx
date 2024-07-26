@@ -4,11 +4,13 @@ import React from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
+import IconButton from '../../../base/ui/components/native/IconButton';
 import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { editPoll } from '../../actions';
+import { editPoll, removePoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
 
@@ -34,11 +36,20 @@ const PollAnswer = (props: AbstractProps) => {
 
     return (
         <>
-            <Text style = { dialogStyles.questionText as TextStyle } >{ poll.question }</Text>
-            <Text style = { dialogStyles.questionOwnerText as TextStyle } >{
-                t('polls.by', { name: localParticipant?.name })
-            }
-            </Text>
+            <View style = { dialogStyles.headerContainer as ViewStyle }>
+                <View>
+                    <Text style = { dialogStyles.questionText as TextStyle } >{ poll.question }</Text>
+                    <Text style = { dialogStyles.questionOwnerText as TextStyle } >{
+                        t('polls.by', { name: localParticipant?.name })
+                    }
+                    </Text>
+                </View>
+                {
+                    pollSaved && <IconButton
+                        onPress = { () => dispatch(removePoll(pollId, poll)) }
+                        src = { IconCloseLarge } />
+                }
+            </View>
             <View style = { pollsStyles.answerContent as ViewStyle }>
                 {
                     poll.answers.map((answer, index: number) => (

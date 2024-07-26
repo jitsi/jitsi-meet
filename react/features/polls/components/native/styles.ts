@@ -4,6 +4,12 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const dialogStyles = createStyleSheet({
 
+    headerContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
     customContainer: {
         marginBottom: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[3],

@@ -25,10 +25,8 @@ import { IAnswer, IPoll, IPollData } from './types';
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference, { dispatch }, previousConference) => {
+    (conference, { dispatch }, previousConference): void => {
         if (conference !== previousConference) {
-            // conference changed, left or failed...
-            // clean old polls
             dispatch(clearPolls());
         }
     });
@@ -101,7 +99,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
         break;
     }
-
     }
 
     return result;
@@ -122,6 +119,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
     }
 
     switch (data.type) {
+
     case COMMAND_NEW_POLL: {
         const { pollId, answers, senderId, question } = data;
 
