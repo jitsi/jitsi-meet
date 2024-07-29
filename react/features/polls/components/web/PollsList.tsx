@@ -46,8 +46,8 @@ interface IPollListProps {
 const PollsList = ({ setCreateMode }: IPollListProps) => {
     const { t } = useTranslation();
     const { classes, theme } = useStyles();
+    const { polls } = useSelector((state: IReduxState) => state['features/polls']);
 
-    const polls = useSelector((state: IReduxState) => state['features/polls'].polls);
     const pollListEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = useCallback(() => {

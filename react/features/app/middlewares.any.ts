@@ -39,6 +39,7 @@ import '../notifications/middleware';
 import '../overlay/middleware';
 import '../participants-pane/middleware';
 import '../polls/middleware';
+import '../polls-history/middleware';
 import '../reactions/middleware';
 import '../recent-list/middleware';
 import '../recording/middleware';

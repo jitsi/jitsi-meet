@@ -121,7 +121,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         setAnswers(newAnswers);
     }, [ answers ]);
 
-    const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
     const dispatch = useDispatch();
 
@@ -147,14 +147,14 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             lastVote: null,
             question,
             answers: filteredAnswers,
-            saved: false,
+            saved: true,
             editing: false
         };
 
         if (editingPoll) {
-            dispatch(savePoll(editingPoll[0], poll, true));
+            dispatch(savePoll(editingPoll[0], poll));
         } else {
-            dispatch(savePoll(pollId, poll, true));
+            dispatch(savePoll(pollId, poll));
         }
 
         sendAnalytics(createPollEvent('created'));
