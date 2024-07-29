@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
@@ -48,7 +46,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage: IMessage = {
             displayName: action.displayName,
             error: action.error,
-            id: action.id,
+            participantId: action.participantId,
             isReaction: action.isReaction,
             messageId: action.messageId,
             messageType: action.messageType,

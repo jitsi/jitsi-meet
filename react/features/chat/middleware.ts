@@ -125,7 +125,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(pushReactions(data.reactions));
 
             _handleReceivedMessage(store, {
-                id: participant.getId(),
+                participantId: participant.getId(),
                 message: getReactionMessageFromBuffer(data.reactions),
                 privateMessage: false,
                 lobbyChat: false,
@@ -137,12 +137,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
-        const { id, json: data } = action;
+        const { participantId, json: data } = action;
 
         if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
             _handleReceivedMessage(store, {
                 displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
-                id,
+                participantId,
                 lobbyChat: false,
                 message: data.message,
                 privateMessage: true,
@@ -213,7 +213,7 @@ MiddlewareRegistry.register(store => next => action => {
     case ADD_REACTION_MESSAGE: {
         if (localParticipant?.id) {
             _handleReceivedMessage(store, {
-                id: localParticipant.id,
+                participantId: localParticipant.id,
                 message: action.message,
                 privateMessage: false,
                 timestamp: Date.now(),
@@ -275,9 +275,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         // eslint-disable-next-line max-params
-        (id: string, message: string, timestamp: number, displayName: string, isGuest: boolean, messageId: string) => {
+        (participantId: string, message: string, timestamp: number, displayName: string, isGuest: boolean, messageId: string) => {
             _onConferenceMessageReceived(store, {
-                id: id || displayName, // in case of messages coming from visitors we can have unknown id
+                participantId: participantId || displayName, // in case of messages coming from visitors we can have unknown id
                 message,
                 timestamp,
                 displayName,
@@ -289,9 +289,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
-        (id: string, message: string, timestamp: number) => {
+        (participantId: string, message: string, timestamp: number) => {
             _onConferenceMessageReceived(store, {
-                id,
+                participantId,
                 message,
                 timestamp,
                 privateMessage: true
@@ -312,20 +312,20 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @param {Object} message - The message object.
  * @returns {void}
  */
-function _onConferenceMessageReceived(store: IStore, { displayName, id, isGuest, message, timestamp, privateMessage, messageId }: {
-    displayName?: string; id: string; isGuest?: boolean; message: string; 
+function _onConferenceMessageReceived(store: IStore, { displayName, participantId, isGuest, message, timestamp, privateMessage, messageId }: {
+    displayName?: string; participantId: string; isGuest?: boolean; message: string; 
     privateMessage: boolean; timestamp: number; messageId?: string; }) {
     const isGif = isGifMessage(message);
 
     if (isGif) {
-        _handleGifMessageReceived(store, id, message);
+        _handleGifMessageReceived(store, participantId, message);
         if (getGifDisplayMode(store.getState()) === 'tile') {
             return;
         }
     }
     _handleReceivedMessage(store, {
         displayName,
-        id,
+        participantId,
         isGuest,
         message,
         privateMessage,
@@ -339,14 +339,14 @@ function _onConferenceMessageReceived(store: IStore, { displayName, id, isGuest,
  * Handles a received gif message.
  *
  * @param {Object} store - Redux store.
- * @param {string} id - Id of the participant that sent the message.
+ * @param {string} participantId - Id of the participant that sent the message.
  * @param {string} message - The message sent.
  * @returns {void}
  */
-function _handleGifMessageReceived(store: IStore, id: string, message: string) {
+function _handleGifMessageReceived(store: IStore, participantId: string, message: string) {
     const url = message.substring(GIF_PREFIX.length, message.length - 1);
 
-    store.dispatch(addGif(id, url));
+    store.dispatch(addGif(participantId, url));
 }
 
 /**
@@ -376,7 +376,7 @@ function _handleChatError({ dispatch }: IStore, error: Error) {
 export function handleLobbyMessageReceived(message: string, participantId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         _handleReceivedMessage({ dispatch,
-            getState }, { id: participantId,
+            getState }, { participantId: participantId,
             message,
             privateMessage: false,
             lobbyChat: true,
@@ -389,18 +389,18 @@ export function handleLobbyMessageReceived(message: string, participantId: strin
  * Function to get lobby chat user display name.
  *
  * @param {Store} state - The Redux store.
- * @param {string} id - The knocking participant id.
+ * @param {string} participantId - The knocking participant id.
  * @returns {string}
  */
-function getLobbyChatDisplayName(state: IReduxState, id: string) {
+function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
     const { knockingParticipants } = state['features/lobby'];
     const { lobbyMessageRecipient } = state['features/chat'];
 
-    if (id === lobbyMessageRecipient?.id) {
+    if (participantId === lobbyMessageRecipient?.id) {
         return lobbyMessageRecipient.name;
     }
 
-    const knockingParticipant = knockingParticipants.find(p => p.id === id);
+    const knockingParticipant = knockingParticipants.find(p => p.id === participantId);
 
     if (knockingParticipant) {
         return knockingParticipant.name;
@@ -419,8 +419,8 @@ function getLobbyChatDisplayName(state: IReduxState, id: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, id, isGuest, message, privateMessage, timestamp, lobbyChat, messageId }: {
-        displayName?: string; id: string; isGuest?: boolean; lobbyChat: boolean; 
+        { displayName, participantId, isGuest, message, privateMessage, timestamp, lobbyChat, messageId }: {
+        displayName?: string; participantId: string; isGuest?: boolean; lobbyChat: boolean; 
         message: string; privateMessage: boolean; timestamp: number; messageId?: string; },
         shouldPlaySound = true,
         isReaction = false
@@ -436,12 +436,12 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     // Provide a default for the case when a message is being
     // backfilled for a participant that has left the conference.
-    const participant = getParticipantById(state, id) || { local: undefined };
+    const participant = getParticipantById(state, participantId) || { local: undefined };
 
     const localParticipant = getLocalParticipant(getState);
     let displayNameToShow = lobbyChat
-        ? getLobbyChatDisplayName(state, id)
-        : displayName || getParticipantDisplayName(state, id);
+        ? getLobbyChatDisplayName(state, participantId)
+        : displayName || getParticipantDisplayName(state, participantId);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
@@ -457,7 +457,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     dispatch(addMessage({
         displayName: displayNameToShow,
         hasRead,
-        id,
+        participantId,
         messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
         message,
         privateMessage,
@@ -480,7 +480,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
         APP.API.notifyReceivedChatMessage({
             body: message,
-            id,
+            participantId,
             nick: displayNameToShow,
             privateMessage,
             ts: timestamp
@@ -515,7 +515,7 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
     dispatch(addMessage({
         displayName,
         hasRead: true,
-        id: localParticipant.id,
+        participantId: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
         privateMessage: !isLobbyPrivateMessage,
@@ -565,7 +565,7 @@ function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
 
     if (lastMessage.privateMessage) {
         // We show the notice if the last received message was private.
-        return lastMessage.id;
+        return lastMessage.participantId;
     }
 
     // But messages may come rapidly, we want to protect our users from mis-sending a message
@@ -580,7 +580,7 @@ function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
         ? recentPrivateMessages[0] : recentPrivateMessages[recentPrivateMessages.length - 1];
 
     if (recentPrivateMessage) {
-        return recentPrivateMessage.id;
+        return recentPrivateMessage.participantId;
     }
 
     return undefined;
