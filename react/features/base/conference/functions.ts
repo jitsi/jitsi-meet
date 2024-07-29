@@ -38,14 +38,6 @@ import { IJitsiConference } from './reducer';
 export const getConferenceState = (state: IReduxState) => state['features/base/conference'];
 
 /**
- * Is the conference joined or not.
- *
- * @param {IReduxState} state - Global state.
- * @returns {boolean}
- */
-export const getIsConferenceJoined = (state: IReduxState) => Boolean(getConferenceState(state).conference);
-
-/**
  * Attach a set of local tracks to a conference.
  *
  * @param {JitsiConference} conference - Conference instance.

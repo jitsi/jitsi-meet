@@ -513,7 +513,7 @@ var config = {
     //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
-    //    }
+    //    },
     //
     //    DEPRECATED! Use `codec specific settings` instead.
     //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for

@@ -16,6 +16,7 @@ import { translate } from '../../../base/i18n/functions';
 import {
     getParticipantById,
     getParticipantDisplayName,
+    hasRaisedHand,
     isLocalParticipantModerator
 } from '../../../base/participants/functions';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
@@ -27,6 +28,7 @@ import ConnectionStatusButton from './ConnectionStatusButton';
 import DemoteToVisitorButton from './DemoteToVisitorButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
+import LowerHandButton from './LowerHandButton';
 import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
@@ -94,6 +96,11 @@ interface IProps {
     _participantDisplayName: string;
 
     /**
+     * Whether the targeted participant raised hand or not.
+     */
+    _raisedHand: boolean;
+
+    /**
      * Array containing the breakout rooms.
      */
     _rooms: Array<IRoom>;
@@ -150,6 +157,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
             _isParticipantAvailable,
             _isParticipantSilent,
             _moderator,
+            _raisedHand,
             _rooms,
             _showDemote,
             _currentRoomId,
@@ -175,6 +183,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 {!_isParticipantSilent && <AskUnmuteButton { ...buttonProps } />}
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
                 <MuteEveryoneElseButton { ...buttonProps } />
+                { _moderator && _raisedHand && <LowerHandButton { ...buttonProps } /> }
                 { !_disableRemoteMute && !_isParticipantSilent && <MuteVideoButton { ...buttonProps } /> }
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
@@ -256,6 +265,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const moderator = isLocalParticipantModerator(state);
     const _iAmVisitor = state['features/visitors'].iAmVisitor;
     const _isBreakoutRoom = isInBreakoutRoom(state);
+    const raisedHand = hasRaisedHand(participant);
 
     return {
         _currentRoomId,
@@ -267,6 +277,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _isParticipantSilent: Boolean(participant?.isSilent),
         _moderator: moderator,
         _participantDisplayName: getParticipantDisplayName(state, participantId),
+        _raisedHand: raisedHand,
         _rooms,
         _showDemote: moderator
     };

@@ -9,7 +9,8 @@ import { IReduxState, IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
@@ -19,10 +20,11 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import { translateToHTML } from '../base/i18n/functions';
 import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
-import { pinParticipant, raiseHandClear } from '../base/participants/actions';
+import { pinParticipant, raiseHand, raiseHandClear } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
+import { LOWER_HAND_MESSAGE } from '../base/tracks/constants';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { inIframe } from '../base/util/iframeUtils';
 import { isCalendarEnabled } from '../calendar-sync/functions';
@@ -69,6 +71,15 @@ MiddlewareRegistry.register(store => next => action => {
         clearInterval(intervalID);
         intervalID = null;
 
+        break;
+    }
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+        const { dispatch } = store;
+
+        if (data.name === LOWER_HAND_MESSAGE && participant.isModerator()) {
+            dispatch(raiseHand(false));
+        }
         break;
     }
     }

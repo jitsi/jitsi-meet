@@ -205,9 +205,10 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         const newConfig = restoreConferenceOptions(getState);
 
         if (newConfig) {
-            dispatch(overwriteConfig(newConfig)) // @ts-ignore
-                .then(() => dispatch(conferenceWillLeave(conference)))
-                .then(() => conference.leave())
+            dispatch(overwriteConfig(newConfig));
+            dispatch(conferenceWillLeave(conference));
+
+            conference.leave()
                 .then(() => dispatch(disconnect()))
                 .then(() => dispatch(connect()))
                 .then(() => {

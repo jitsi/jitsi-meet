@@ -15,12 +15,16 @@ import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
+import { getCurrentConference } from '../../../base/conference/functions';
 import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconVideoOff } from '../../../base/icons/svg';
+import { IconCheck, IconRaiseHand, IconVideoOff } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import { getParticipantCount, isEveryoneModerator } from '../../../base/participants/functions';
+import { raiseHand } from '../../../base/participants/actions';
+import { getParticipantCount, getRaiseHandsQueue, isEveryoneModerator, isLocalParticipantModerator }
+    from '../../../base/participants/functions';
+import { LOWER_HAND_MESSAGE } from '../../../base/tracks/constants';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
@@ -30,6 +34,14 @@ export const ContextMenuMore = () => {
     const dispatch = useDispatch();
     const muteAllVideo = useCallback(() => {
         dispatch(openDialog(MuteEveryonesVideoDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
+    const conference = useSelector(getCurrentConference);
+    const raisedHandsQueue = useSelector(getRaiseHandsQueue);
+    const moderator = useSelector(isLocalParticipantModerator);
+    const lowerAllHands = useCallback(() => {
+        dispatch(raiseHand(false));
+        conference?.sendEndpointMessage('', { name: LOWER_HAND_MESSAGE });
         dispatch(hideSheet());
     }, [ dispatch ]);
     const { t } = useTranslation();
@@ -59,6 +71,14 @@ export const ContextMenuMore = () => {
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
+            { moderator && raisedHandsQueue.length !== 0 && <TouchableOpacity
+                onPress = { lowerAllHands }
+                style = { styles.contextMenuItem as ViewStyle }>
+                <Icon
+                    size = { 24 }
+                    src = { IconRaiseHand } />
+                <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.lowerAllHands')}</Text>
+            </TouchableOpacity> }
             {isModerationSupported && ((participantCount === 1 || !allModerators)) && <>
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider } />

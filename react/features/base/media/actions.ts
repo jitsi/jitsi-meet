@@ -122,7 +122,7 @@ export function setScreenshareMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
             ensureTrack,
@@ -180,7 +180,7 @@ export function setVideoMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_VIDEO_MUTED,
             authority,
             ensureTrack,

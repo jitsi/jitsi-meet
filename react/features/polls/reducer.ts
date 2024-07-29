@@ -7,8 +7,8 @@ import {
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
+    REMOVE_POLL,
     RESET_NB_UNREAD_POLLS,
-    RETRACT_VOTE,
     SAVE_POLL
 } from './actionTypes';
 import { IAnswer, IPoll } from './types';
@@ -27,7 +27,9 @@ export interface IPollsState {
     };
 }
 
-ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, action): IPollsState => {
+const STORE_NAME = 'features/polls';
+
+ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action): IPollsState => {
     switch (action.type) {
 
     case CHANGE_VOTE: {
@@ -54,8 +56,7 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
     }
 
     // Reducer triggered when a poll is received or saved.
-    case RECEIVE_POLL:
-    case SAVE_POLL: {
+    case RECEIVE_POLL: {
         return {
             ...state,
             polls: {
@@ -63,6 +64,16 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
                 [action.pollId]: action.poll
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
+        };
+    }
+
+    case SAVE_POLL: {
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: action.poll
+            }
         };
     }
 
@@ -139,21 +150,6 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
         };
     }
 
-    case RETRACT_VOTE: {
-        const { pollId }: { pollId: string; } = action;
-
-        return {
-            ...state,
-            polls: {
-                ...state.polls,
-                [pollId]: {
-                    ...state.polls[pollId],
-                    showResults: false
-                }
-            }
-        };
-    }
-
     case RESET_NB_UNREAD_POLLS: {
         return {
             ...state,
@@ -170,6 +166,25 @@ ReducerRegistry.register<IPollsState>('features/polls', (state = INITIAL_STATE, 
                     ...state.polls[action.pollId],
                     editing: action.editing
                 }
+            }
+        };
+    }
+
+    case REMOVE_POLL: {
+        if (Object.keys(state.polls ?? {})?.length === 1) {
+            return {
+                ...state,
+                ...INITIAL_STATE
+            };
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [action.pollId]: _removedPoll, ...newState } = state.polls;
+
+        return {
+            ...state,
+            polls: {
+                ...newState
             }
         };
     }
