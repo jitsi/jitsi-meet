@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
@@ -48,7 +50,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             error: action.error,
             participantId: action.participantId,
             isReaction: action.isReaction,
-            messageId: action.messageId,
+            messageId: action.messageId || uuidv4(),
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
