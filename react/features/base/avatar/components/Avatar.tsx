@@ -118,7 +118,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      */
     static defaultProps = {
         defaultIcon: IconUser,
-        dynamicColor: true,
+        dynamicColor: true
     };
 
     /**

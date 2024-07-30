@@ -458,8 +458,15 @@ export function invitePeopleAndChatRooms(
         'Content-Type': 'application/json'
     };
 
+    const queryParams = params.toString();
+    let inviteEndpoint = inviteServiceUrl;
+
+    if (queryParams.length > 0) {
+        inviteEndpoint += `?${queryParams}`;
+    }
+
     return fetch(
-        `${inviteServiceUrl}?${params.toString()}`,
+        inviteEndpoint,
         {
             body: JSON.stringify({
                 'invited': inviteItems,
