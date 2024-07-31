@@ -1126,7 +1126,12 @@ class API {
         this.notifyBrowserSupport(isSupportedBrowser());
 
         // Let the embedder know we are ready.
-        this._sendEvent({ name: 'ready' });
+        this._sendEvent({
+            name: 'ready',
+
+            // XXX: Here we are using window.config since this is fired really early.
+            info: window.config.deploymentInfo
+        });
     }
 
     /**
