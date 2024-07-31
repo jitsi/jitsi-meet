@@ -36,13 +36,13 @@ export default class AbstractMessageContainer<P extends IProps, S> extends Compo
         for (let i = 0; i < messagesCount; i++) {
             const message = this.props.messages[i];
 
-            if (message.id === currentGroupParticipantId) {
+            if (message.participantId === currentGroupParticipantId) {
                 currentGrouping.push(message);
             } else {
                 currentGrouping.length && groups.push(currentGrouping);
 
                 currentGrouping = [ message ];
-                currentGroupParticipantId = message.id;
+                currentGroupParticipantId = message.participantId;
             }
         }
 
