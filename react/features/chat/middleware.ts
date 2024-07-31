@@ -274,10 +274,13 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
-        // eslint-disable-next-line max-params
-        (participantId: string, message: string, timestamp: number, displayName: string, isGuest: boolean, messageId: string) => {
+        /* eslint-disable max-params */
+        (participantId: string, message: string, timestamp: number,
+                displayName: string, isGuest: boolean, messageId: string) => {
+        /* eslint-enable max-params */
             _onConferenceMessageReceived(store, {
-                participantId: participantId || displayName, // in case of messages coming from visitors we can have unknown id
+                // in case of messages coming from visitors we can have unknown id
+                participantId: participantId || displayName,
                 message,
                 timestamp,
                 displayName,
@@ -289,11 +292,12 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
-        (participantId: string, message: string, timestamp: number) => {
+        (participantId: string, message: string, timestamp: number, messageId: string) => {
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
                 timestamp,
+                messageId,
                 privateMessage: true
             });
         }
@@ -312,9 +316,12 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @param {Object} message - The message object.
  * @returns {void}
  */
-function _onConferenceMessageReceived(store: IStore, { displayName, participantId, isGuest, message, timestamp, privateMessage, messageId }: {
-    displayName?: string; participantId: string; isGuest?: boolean; message: string; 
-    privateMessage: boolean; timestamp: number; messageId?: string; }) {
+function _onConferenceMessageReceived(store: IStore,
+        { displayName, isGuest, message, messageId, participantId, privateMessage, timestamp }: {
+        displayName?: string; isGuest?: boolean; message: string; messageId?: string;
+        participantId: string; privateMessage: boolean; timestamp: number; }
+) {
+
     const isGif = isGifMessage(message);
 
     if (isGif) {
@@ -325,8 +332,8 @@ function _onConferenceMessageReceived(store: IStore, { displayName, participantI
     }
     _handleReceivedMessage(store, {
         displayName,
-        participantId,
         isGuest,
+        participantId,
         message,
         privateMessage,
         lobbyChat: false,
@@ -376,7 +383,7 @@ function _handleChatError({ dispatch }: IStore, error: Error) {
 export function handleLobbyMessageReceived(message: string, participantId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         _handleReceivedMessage({ dispatch,
-            getState }, { participantId: participantId,
+            getState }, { participantId,
             message,
             privateMessage: false,
             lobbyChat: true,
@@ -419,9 +426,9 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, participantId, isGuest, message, privateMessage, timestamp, lobbyChat, messageId }: {
-        displayName?: string; participantId: string; isGuest?: boolean; lobbyChat: boolean; 
-        message: string; privateMessage: boolean; timestamp: number; messageId?: string; },
+        { displayName, isGuest, lobbyChat, message, messageId, participantId, privateMessage, timestamp }: {
+        displayName?: string; isGuest?: boolean; lobbyChat: boolean; message: string;
+        messageId?: string; participantId: string; privateMessage: boolean; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
 ) {

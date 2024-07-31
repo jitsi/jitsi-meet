@@ -5,12 +5,12 @@ import { IStore } from '../app/types';
 export interface IMessage {
     displayName: string;
     error?: Object;
-    participantId: string;
     isReaction: boolean;
     lobbyChat: boolean;
     message: string;
     messageId: string;
     messageType: string;
+    participantId: string;
     privateMessage: boolean;
     recipient: string;
     timestamp: number;
