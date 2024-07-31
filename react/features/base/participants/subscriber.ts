@@ -1,11 +1,16 @@
+
 import _ from 'lodash';
+import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
-import { getSsrcRewritingFeatureFlag } from '../config/functions.any';
+import { getSsrcRewritingFeatureFlag, hasBeenNotified, isNextToSpeak } from '../config/functions.any';
 import { VIDEO_TYPE } from '../media/constants';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
+import { NOTIFIED_TO_SPEAK } from './actionTypes';
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
 import {
     getParticipantById,
@@ -23,6 +28,15 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].remoteVideoSources,
     /* listener */(remoteVideoSources, store) => getSsrcRewritingFeatureFlag(store.getState())
         && _updateScreenshareParticipantsBasedOnPresence(store)
+);
+
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].raisedHandsQueue,
+    /* listener */ (raisedHandsQueue, store) => {
+        if (isNextToSpeak(store.getState()) && !hasBeenNotified(store.getState())) {
+            _notifyNextSpeakerInRaisedHandQueue(store);
+        }
+    }
 );
 
 /**
@@ -120,4 +134,24 @@ function _updateScreenshareParticipantsBasedOnPresence(store: IStore): void {
     const currentScreenshareSourceNames = getRemoteScreensharesBasedOnPresence(state);
 
     _createOrRemoveVirtualParticipants(previousScreenshareSourceNames, currentScreenshareSourceNames, store);
+}
+
+/**
+ * Handles notifying the next speaker in the raised hand queue.
+ *
+ * @param {*} store - The redux store.
+ * @returns {void}
+ */
+function _notifyNextSpeakerInRaisedHandQueue(store: IStore): void {
+    const { dispatch } = store;
+
+    batch(() => {
+        dispatch(showNotification({
+            titleKey: 'notify.nextToSpeak',
+            maxLines: 2
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        dispatch({
+            type: NOTIFIED_TO_SPEAK
+        });
+    });
 }

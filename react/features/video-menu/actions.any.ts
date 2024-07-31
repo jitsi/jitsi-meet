@@ -108,4 +108,3 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MediaType
         });
     };
 }
-
