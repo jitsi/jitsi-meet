@@ -69,6 +69,11 @@
 
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+        window.addEventListener('load', function() {
+            window.loadedEventTime = window.performance.now();
+            console.log("(TIME) window loaded event:\t", loadedEventTime);
+        });
+
         // XXX the code below listeners for errors and displays an error message
         // in the document body when any of the required files fails to load.
         // The intention is to prevent from displaying broken page.
