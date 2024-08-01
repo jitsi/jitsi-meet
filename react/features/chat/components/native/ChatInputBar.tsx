@@ -11,6 +11,8 @@ import IconButton from '../../../base/ui/components/native/IconButton';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
+import { CHAR_LIMIT } from '../../constants';
+
 import styles from './styles';
 
 
@@ -91,6 +93,7 @@ class ChatInputBar extends Component<IProps, IState> {
                 <Input
                     blurOnSubmit = { false }
                     customStyles = {{ container: styles.customInputContainer }}
+                    maxLength = { CHAR_LIMIT }
                     multiline = { false }
                     onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }

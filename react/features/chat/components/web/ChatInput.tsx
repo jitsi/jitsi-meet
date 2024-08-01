@@ -8,6 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
+import { CHAR_LIMIT } from '../../constants';
 import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
@@ -137,6 +138,7 @@ class ChatInput extends Component<IProps, IState> {
                         iconClick = { this._toggleSmileysPanel }
                         id = 'chat-input-messagebox'
                         maxRows = { 5 }
+                        maxLength = { CHAR_LIMIT }
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
