@@ -62,11 +62,6 @@ export interface IProps {
     _peopleSearchQueryTypes: Array<string>;
 
     /**
-     * The key used to pass the alternative token for people directory.
-     */
-    _peopleSearchTokenKey: string;
-
-    /**
      * The localStorage key holding the alternative token for people directory.
      */
     _peopleSearchTokenLocation: string;
@@ -265,7 +260,6 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
             _peopleSearchQueryTypes: peopleSearchQueryTypes,
             _peopleSearchUrl: peopleSearchUrl,
             _peopleSearchTokenLocation: peopleSearchTokenLocation,
-            _peopleSearchTokenKey: peopleSearchTokenKey,
             _region: region,
             _sipInviteEnabled: sipInviteEnabled
         } = this.props;
@@ -279,7 +273,6 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
             peopleSearchQueryTypes,
             peopleSearchUrl,
             peopleSearchTokenLocation,
-            peopleSearchTokenKey,
             region,
             sipInviteEnabled
         };
@@ -310,8 +303,7 @@ export function _mapStateToProps(state: IReduxState) {
         dialOutRegionUrl,
         peopleSearchQueryTypes,
         peopleSearchUrl,
-        peopleSearchTokenLocation,
-        peopleSearchTokenKey
+        peopleSearchTokenLocation
     } = state['features/base/config'];
 
     return {
@@ -325,7 +317,6 @@ export function _mapStateToProps(state: IReduxState) {
         _peopleSearchQueryTypes: peopleSearchQueryTypes ?? [],
         _peopleSearchUrl: peopleSearchUrl ?? '',
         _peopleSearchTokenLocation: peopleSearchTokenLocation ?? '',
-        _peopleSearchTokenKey: peopleSearchTokenKey ?? '',
         _region: getMeetingRegion(state),
         _sipInviteEnabled: isSipInviteEnabled(state)
     };

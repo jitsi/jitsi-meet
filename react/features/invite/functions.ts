@@ -1,3 +1,5 @@
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { getRoomName } from '../base/conference/functions';
@@ -144,11 +146,6 @@ export type GetInviteResultsOptions = {
     peopleSearchQueryTypes: Array<string>;
 
     /**
-     * Key used to pass alternative token for people directory.
-     */
-    peopleSearchTokenKey?: string;
-
-    /**
      * Key in localStorage holding the alternative token for people directory.
      */
     peopleSearchTokenLocation?: string;
@@ -192,7 +189,6 @@ export function getInviteResultsForQuery(
         peopleSearchQueryTypes,
         peopleSearchUrl,
         peopleSearchTokenLocation,
-        peopleSearchTokenKey,
         region,
         sipInviteEnabled,
         jwt
@@ -206,8 +202,7 @@ export function getInviteResultsForQuery(
             jwt,
             text,
             peopleSearchQueryTypes,
-            peopleSearchTokenLocation,
-            peopleSearchTokenKey);
+            peopleSearchTokenLocation);
     } else {
         peopleSearchPromise = Promise.resolve([]);
     }
@@ -442,31 +437,23 @@ export function invitePeopleAndChatRooms(
     }
 
     // Parse all the query strings of the search directory endpoint
-    const params = new URLSearchParams();
     const { jwt = '' } = state['features/base/jwt'];
-    const { peopleSearchTokenLocation, peopleSearchTokenKey } = state['features/base/config'];
+    const { peopleSearchTokenLocation } = state['features/base/config'];
 
-    // Authentication params for external entities (e. g. email)
-    if (peopleSearchTokenLocation && peopleSearchTokenKey) {
-        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? '';
+    let token = jwt;
 
-        params.append(peopleSearchTokenKey, peopleSearchToken);
+    // If token is empty, check for alternate token
+    if (!token && peopleSearchTokenLocation) {
+        token = jitsiLocalStorage.getItem(peopleSearchTokenLocation) ?? '';
     }
 
     const headers = {
-        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        ...token ? { 'Authorization': `Bearer ${token}` } : {},
         'Content-Type': 'application/json'
     };
 
-    const queryParams = params.toString();
-    let inviteEndpoint = inviteServiceUrl;
-
-    if (queryParams.length > 0) {
-        inviteEndpoint += `?${queryParams}`;
-    }
-
     return fetch(
-        inviteEndpoint,
+        inviteServiceUrl,
         {
             body: JSON.stringify({
                 'invited': inviteItems,
@@ -487,23 +474,12 @@ export function invitePeopleAndChatRooms(
 export function isAddPeopleEnabled(state: IReduxState): boolean {
     const {
         peopleSearchUrl,
-        peopleSearchQueryTypes,
-        peopleSearchTokenLocation,
-        peopleSearchTokenKey
+        peopleSearchTokenLocation
     } = state['features/base/config'];
 
-    // If sending mere invitation emails, we just need the token expected by the email directory
-    if (
-        Boolean(peopleSearchTokenLocation)
-        && Boolean(peopleSearchTokenKey)
-        && peopleSearchQueryTypes
-        && peopleSearchQueryTypes.length === 1
-        && peopleSearchQueryTypes[0] === 'email'
-    ) {
-        return true;
-    }
+    const hasToken = Boolean(state['features/base/jwt'].jwt || Boolean(peopleSearchTokenLocation));
 
-    return Boolean(state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state));
+    return Boolean(hasToken && Boolean(peopleSearchUrl) && !isVpaasMeeting(state));
 }
 
 /**
@@ -585,7 +561,6 @@ function isPhoneNumberRegex(): RegExp {
  * @param {Array<string>} queryTypes - Array with the query types that will be
  * executed - "conferenceRooms" | "user" | "room" | "email".
  * @param {string} peopleSearchTokenLocation - The localStorage key holding the token value for alternate auth.
- * @param {string} peopleSearchTokenKey - The key expected to hold the alternate auth token value.
  * @returns {Promise} - The promise created by the request.
  */
 export function searchDirectory( // eslint-disable-line max-params
@@ -593,30 +568,25 @@ export function searchDirectory( // eslint-disable-line max-params
         jwt: string,
         text: string,
         queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room', 'email' ],
-        peopleSearchTokenLocation?: string,
-        peopleSearchTokenKey?: string
+        peopleSearchTokenLocation?: string
 ): Promise<Array<{ type: string; }>> {
 
     const query = encodeURIComponent(text);
     const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
 
-    // Parse all the query strings of the search directory endpoint
-    const params = new URLSearchParams();
+    let token = jwt;
 
-    params.append('query', query);
-    params.append('queryTypes', queryTypesString);
-
-    if (peopleSearchTokenLocation && peopleSearchTokenKey) {
-        const peopleSearchToken = localStorage.getItem(peopleSearchTokenLocation) ?? '';
-
-        params.append(peopleSearchTokenKey, peopleSearchToken);
+    // If token is empty, check for alternate token
+    if (!token && peopleSearchTokenLocation) {
+        token = jitsiLocalStorage.getItem(peopleSearchTokenLocation) ?? '';
     }
 
     const headers = {
-        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {}
+        ...token ? { 'Authorization': `Bearer ${token}` } : {}
     };
 
-    return fetch(`${serviceUrl}?${params.toString()}`,
+    return fetch(`${serviceUrl}?query=${query}&queryTypes=${
+        queryTypesString}`,
             {
                 method: 'GET',
                 headers

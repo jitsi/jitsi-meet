@@ -1559,8 +1559,6 @@ var config = {
 
     // For external entities (e. g. email), the localStorage key holding the token value for directory authentication
     // peopleSearchTokenLocation: "mytoken",
-    // For external entities (e. g. email), the key expected to hold the authentication token value
-    // peopleSearchTokenKey: "mytoken",
 
     // List of undocumented settings used in jitsi-meet
     /**
