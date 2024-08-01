@@ -48,6 +48,7 @@ export const SIP_ADDRESS_REGEX = /^[+a-zA-Z0-9]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)
  * Different invite types mapping.
  */
 export const INVITE_TYPES = {
+    EMAIL: 'email',
     PHONE: 'phone',
     ROOM: 'room',
     SIP: 'sip',

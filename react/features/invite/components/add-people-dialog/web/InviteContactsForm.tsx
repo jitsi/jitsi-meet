@@ -7,7 +7,7 @@ import { IReduxState, IStore } from '../../../../app/types';
 import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconPhoneRinging } from '../../../../base/icons/svg';
+import { IconEnvelope, IconPhoneRinging, IconUser } from '../../../../base/icons/svg';
 import MultiSelectAutocomplete from '../../../../base/react/components/web/MultiSelectAutocomplete';
 import Button from '../../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.any';
@@ -302,9 +302,12 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {ReactElement}
      */
     _getAvatar(user: any, className = 'avatar-small') {
+        const defaultIcon = user.type === INVITE_TYPES.EMAIL ? IconEnvelope : IconUser;
+
         return (
             <Avatar
                 className = { className }
+                defaultIcon = { defaultIcon }
                 size = { 32 }
                 status = { user.status }
                 url = { user.avatar } />
@@ -325,7 +328,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
     _parseQueryResults(response: IInvitee[] = []) {
         const { t, _dialOutEnabled } = this.props;
 
-        const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
+        const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.EMAIL, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
         const users = response.filter(item => userTypes.includes(item.type));
         const userDisplayItems: any = [];
 
