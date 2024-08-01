@@ -1,3 +1,4 @@
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IReduxState } from '../app/types';
