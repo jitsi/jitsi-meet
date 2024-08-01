@@ -118,13 +118,13 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
     case NOTIFIED_TO_SPEAK: {
         return {
             ...state,
-            raisedHandsQueue: [
+            raisedHandsQueue: state.raisedHandsQueue.length ? [
                 {
                     ...state.raisedHandsQueue[0],
                     hasBeenNotified: true
                 },
                 ...state.raisedHandsQueue.slice(1)
-            ]
+            ] : []
         };
     }
 
