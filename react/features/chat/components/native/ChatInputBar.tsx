@@ -10,7 +10,6 @@ import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-
 import { CHAR_LIMIT } from '../../constants';
 
 import styles from './styles';
