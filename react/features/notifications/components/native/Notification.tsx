@@ -153,6 +153,7 @@ const Notification = ({
             return (
                 <>
                     <Text
+                        numberOfLines = { 1 }
                         style = { styles.contentTextTitle as TextStyle }>
                         { titleText }
                     </Text>
@@ -160,6 +161,7 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
+                                numberOfLines = { 3 }
                                 style = { styles.contentText }>
                                 { replaceNonUnicodeEmojis(line) }
                             </Text>
@@ -170,7 +172,9 @@ const Notification = ({
         }
 
         return (
-            <Text style = { styles.contentTextTitle as TextStyle }>
+            <Text
+                numberOfLines = { 1 }
+                style = { styles.contentTextTitle as TextStyle }>
                 { titleText }
             </Text>
         );

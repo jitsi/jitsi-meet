@@ -13,7 +13,6 @@ const notification = {
     borderLeftWidth: BaseTheme.spacing[1],
     display: 'flex',
     flexDirection: 'row',
-    height: 'auto',
     marginVertical: BaseTheme.spacing[1],
     maxWidth: 416,
     width: '100%'
