@@ -51,6 +51,10 @@ globalNS.connectionTimes = {
     'index.loaded': window.indexLoadedTime
 };
 
+window.addEventListener('load', () => {
+    globalNS.connectionTimes['window.loaded'] = window.loadedEventTime;
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
 
