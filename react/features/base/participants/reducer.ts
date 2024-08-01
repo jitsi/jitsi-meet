@@ -6,6 +6,7 @@ import { set } from '../redux/functions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    NOTIFIED_TO_SPEAK,
     OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -92,7 +93,7 @@ export interface IParticipantsState {
     numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
-    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
+    raisedHandsQueue: Array<{ hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
@@ -114,6 +115,19 @@ export interface IParticipantsState {
 ReducerRegistry.register<IParticipantsState>('features/base/participants',
 (state = DEFAULT_STATE, action): IParticipantsState => {
     switch (action.type) {
+    case NOTIFIED_TO_SPEAK: {
+        return {
+            ...state,
+            raisedHandsQueue: [
+                {
+                    ...state.raisedHandsQueue[0],
+                    hasBeenNotified: true
+                },
+                ...state.raisedHandsQueue.slice(1)
+            ]
+        };
+    }
+
     case PARTICIPANT_ID_CHANGED: {
         const { local } = state;
 

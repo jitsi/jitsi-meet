@@ -29,7 +29,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
                 if (etherpadBaseUrl) {
-                    url = new URL(value, etherpadBaseUrl.toString()).toString();
+                    const urlObj = new URL(value, etherpadBaseUrl.toString());
+
+                    // Merge query string parameters on top of internal ones
+                    if (etherpadBaseUrl.search) {
+                        const searchParams = new URLSearchParams(urlObj.search);
+
+                        for (const [ key, val ] of new URLSearchParams(etherpadBaseUrl.search)) {
+                            searchParams.set(key, val);
+                        }
+                        urlObj.search = searchParams.toString();
+                    }
+                    url = urlObj.toString();
                 }
 
                 dispatch(setDocumentUrl(url));

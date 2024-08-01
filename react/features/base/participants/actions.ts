@@ -544,23 +544,27 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  */
 export function participantKicked(kicker: any, kicked: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+        const kickedId = kicked.getId();
+        const kickerId = kicker.getId();
 
         dispatch({
             type: PARTICIPANT_KICKED,
-            kicked: kicked.getId(),
-            kicker: kicker?.getId()
+            kicked: kickedId,
+            kicker: kickerId
         });
 
-        if (kicked.isReplaced?.()) {
+        if (kicked.isReplaced?.() || kickerId === localParticipant?.id) {
             return;
         }
 
         dispatch(showNotification({
             titleArguments: {
                 kicked:
-                    getParticipantDisplayName(getState, kicked.getId()),
+                    getParticipantDisplayName(state, kickedId),
                 kicker:
-                    getParticipantDisplayName(getState, kicker.getId())
+                    getParticipantDisplayName(state, kickerId)
             },
             titleKey: 'notify.kickParticipant'
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

@@ -16,7 +16,7 @@ import {
     setDeviceStatusWarning,
     setJoiningInProgress
 } from './actions';
-import { isPrejoinPageVisible } from './functions';
+import { isPrejoinPageVisible } from './functions.any';
 
 /**
  * The redux middleware for {@link PrejoinPage}.

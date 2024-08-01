@@ -69,10 +69,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         const existingCollabDetails = getCollabDetails(state);
         const enforceUserLimit = shouldEnforceUserLimit(state);
         const notifyUserLimit = shouldNotifyUserLimit(state);
+        const iAmRecorder = Boolean(state['features/base/config'].iAmRecorder);
 
         if (enforceUserLimit) {
             dispatch(restrictWhiteboard(false));
             dispatch(openDialog(WhiteboardLimitDialog));
+            iAmRecorder && setTimeout(() => dispatch(hideDialog(WhiteboardLimitDialog)), 3000);
 
             return next(action);
         }

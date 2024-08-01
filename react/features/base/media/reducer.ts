@@ -10,6 +10,7 @@ import {
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
+    SET_INITIAL_GUM_PROMISE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
@@ -85,6 +86,22 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
     default:
         return state;
     }
+}
+
+/**
+ * Reducer fot the common properties in media state.
+ *
+ * @param {ICommonState} state - Common media state.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @returns {ICommonState}
+ */
+function _initialGUMPromise(state: initialGUMPromise | null = null, action: AnyAction) {
+    if (action.type === SET_INITIAL_GUM_PROMISE) {
+        return action.promise ?? null;
+    }
+
+    return state;
 }
 
 /**
@@ -247,6 +264,11 @@ interface IAudioState {
     unmuteBlocked: boolean;
 }
 
+type initialGUMPromise = Promise<{
+        errors?: any;
+        tracks: Array<any>;
+    }> | null;
+
 interface IScreenshareState {
     available: boolean;
     muted: number;
@@ -264,6 +286,7 @@ interface IVideoState {
 
 export interface IMediaState {
     audio: IAudioState;
+    initialGUMPromise: initialGUMPromise;
     screenshare: IScreenshareState;
     video: IVideoState;
 }
@@ -280,6 +303,7 @@ export interface IMediaState {
  */
 ReducerRegistry.register<IMediaState>('features/base/media', combineReducers({
     audio: _audio,
+    initialGUMPromise: _initialGUMPromise,
     screenshare: _screenshare,
     video: _video
 }));
