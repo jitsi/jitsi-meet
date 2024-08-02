@@ -20,7 +20,7 @@ import { useFeedbackButton } from '../feedback/hooks.web';
 import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
-import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions.any';
+import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions.web';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks.web';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
@@ -51,7 +51,7 @@ import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
 import { useSpeakerStatsButton } from '../speaker-stats/hooks.web';
 import { useClosedCaptionButton } from '../subtitles/hooks.web';
 import { toggleTileView } from '../video-layout/actions.any';
-import { shouldDisplayTileView } from '../video-layout/functions.any';
+import { shouldDisplayTileView } from '../video-layout/functions.web';
 import { useTileViewButton } from '../video-layout/hooks';
 import VideoQualityButton from '../video-quality/components/VideoQualityButton.web';
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
