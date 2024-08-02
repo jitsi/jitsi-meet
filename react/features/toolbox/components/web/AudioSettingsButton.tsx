@@ -9,10 +9,10 @@ import { IconArrowUp } from '../../../base/icons/svg';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { IGUMPendingState } from '../../../base/media/types';
 import ToolboxButtonWithIcon from '../../../base/toolbox/components/web/ToolboxButtonWithIcon';
-import { toggleAudioSettings } from '../../../settings/actions';
+import { toggleAudioSettings } from '../../../settings/actions.web';
 import AudioSettingsPopup from '../../../settings/components/web/audio/AudioSettingsPopup';
-import { getAudioSettingsVisibility } from '../../../settings/functions';
-import { isAudioSettingsButtonDisabled } from '../../functions';
+import { getAudioSettingsVisibility } from '../../../settings/functions.web';
+import { isAudioSettingsButtonDisabled } from '../../functions.web';
 
 import AudioMuteButton from './AudioMuteButton';
 
