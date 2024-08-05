@@ -100,6 +100,11 @@ export const initKeyboardShortcuts = () =>
                 return;
             }
 
+            if (e.ctrlKey || e.metaKey) {
+                // We should ignore shortcut events with active ctrl modifier.
+                return;
+            }
+
             const key = getKeyboardKey(e).toUpperCase();
 
             if (key === ' ') {
