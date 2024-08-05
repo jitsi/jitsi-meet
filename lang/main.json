@@ -1503,7 +1503,6 @@
         "labelTooltip": "Number of visitors: {{count}}",
         "notification": {
             "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
-            "description": "To participate raise your hand",
             "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
             "noMainParticipantsTitle": "This meeting hasn’t started yet.",
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
