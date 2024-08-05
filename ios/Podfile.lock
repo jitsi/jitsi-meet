@@ -1022,7 +1022,7 @@ PODS:
     - React-Core
   - react-native-performance (5.0.0):
     - React-Core
-  - react-native-safe-area-context (4.7.1):
+  - react-native-safe-area-context (4.10.8):
     - React-Core
   - react-native-slider (4.4.3):
     - React-Core
@@ -1214,7 +1214,7 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.9.0):
     - React-Core
-  - RNGestureHandler (2.17.1):
+  - RNGestureHandler (2.18.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1558,7 +1558,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: 4409c5b12b65f942e75449872b4f078b6f27af81
   react-native-pager-view: 0ccb8bf60e2ebd38b1f3669fa3650ecce81db2df
   react-native-performance: 47ac22ebf2aa24f324a96a5825581f6ce18c09e8
-  react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
+  react-native-safe-area-context: b7daa1a8df36095a032dff095a1ea8963cb48371
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: 472b7c366eaaaa0207e546d9a50410df89790bcf
@@ -1589,7 +1589,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNDefaultPreference: 08bdb06cfa9188d5da97d4642dac745218d7fb31
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
-  RNGestureHandler: 67d3f1f69d4d0c98d6e83f4229e3bbf997d1dc72
+  RNGestureHandler: 1155b1898ceddefeebf77792927360d44fe11e77
   RNGoogleSignin: a6a612cce56a45ab701c5c5c6e36f5390522d100
   RNScreens: e842cdccb23c0a084bd6307f6fa83fd1c1738029
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
