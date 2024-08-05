@@ -48,5 +48,3 @@ export const TIMESTAMP_FORMAT = 'H:mm';
  * The namespace for system messages.
  */
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
-
-export const CHAR_LIMIT = 500;
