@@ -5,12 +5,12 @@ import { connect as reduxConnect } from 'react-redux';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { IConfig } from '../../../base/config/configType';
+import { connect } from '../../../base/connection/actions.web';
 import { toJid } from '../../../base/connection/functions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import { joinConference } from '../../../prejoin/actions.web';
 import {
     authenticateAndUpgradeRole,
     cancelLogin
@@ -134,9 +134,7 @@ class LoginDialog extends Component<IProps, IState> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            // dispatch(connect(jid, password));
-            // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
-            dispatch(joinConference(undefined, false, jid, password));
+            dispatch(connect(jid, password));
         }
     }
 

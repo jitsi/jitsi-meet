@@ -83,6 +83,7 @@ import {
     setAudioAvailable,
     setAudioMuted,
     setAudioUnmutePermissions,
+    setInitialGUMPromise,
     setVideoAvailable,
     setVideoMuted,
     setVideoUnmutePermissions
@@ -154,8 +155,7 @@ import {
 import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay/actions';
 import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin } from './react/features/prejoin/actions';
-import { isPrejoinPageVisible } from './react/features/prejoin/functions';
+import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
 import { isScreenAudioShared } from './react/features/screen-share/functions';
@@ -591,7 +591,7 @@ export default {
         const handleInitialTracks = (options, tracks) => {
             let localTracks = tracks;
 
-            if (options.startWithAudioMuted || room?.isStartAudioMuted()) {
+            if (options.startWithAudioMuted) {
                 // Always add the track on Safari because of a known issue where audio playout doesn't happen
                 // if the user joins audio and video muted, i.e., if there is no local media capture.
                 if (browser.isWebKitBased()) {
@@ -600,58 +600,38 @@ export default {
                     localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
                 }
             }
-            if (room?.isStartVideoMuted()) {
-                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
-            }
 
             return localTracks;
         };
-
-        if (isPrejoinPageVisible(state)) {
-            const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
-            const localTracks = await tryCreateLocalTracks;
-
-            // Initialize device list a second time to ensure device labels get populated in case of an initial gUM
-            // acceptance; otherwise they may remain as empty strings.
-            this._initDeviceList(true);
-
-            if (isPrejoinPageVisible(state)) {
-                APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
-
-                return APP.store.dispatch(initPrejoin(localTracks, errors));
-            }
-
-            logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
-
-            APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
-
-            const tracks = handleInitialTracks(initialOptions, localTracks);
-
-            setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
-
-            return this._setLocalAudioVideoStreams(tracks);
-        }
-
+        const { dispatch, getState } = APP.store;
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
 
-        return Promise.all([
-            tryCreateLocalTracks.then(tr => {
+        dispatch(setInitialGUMPromise(tryCreateLocalTracks.then(async tr => {
+            const tracks = handleInitialTracks(initialOptions, tr);
+
+            this._initDeviceList(true);
+
+            if (isPrejoinPageVisible(getState())) {
+                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                dispatch(setInitialGUMPromise());
+
+                // Note: Not sure if initPrejoin needs to be async. But let's wait for it just to be sure the
+                // tracks are added.
+                initPrejoin(tracks, errors, dispatch);
+            } else {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
+                setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
+            }
 
-                return tr;
-            }).then(tr => {
-                this._initDeviceList(true);
+            return {
+                tracks,
+                errors
+            };
+        })));
 
-                const filteredTracks = handleInitialTracks(initialOptions, tr);
-
-                setGUMPendingStateOnFailedTracks(filteredTracks, APP.store.dispatch);
-
-                return filteredTracks;
-            }),
-            APP.store.dispatch(connect())
-        ]).then(([ tracks, _ ]) => {
-            this.startConference(tracks).catch(logger.error);
-        });
+        if (!isPrejoinPageVisible(getState())) {
+            dispatch(connect());
+        }
     },
 
     /**

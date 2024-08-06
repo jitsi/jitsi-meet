@@ -19,6 +19,7 @@ import Icon from '../../../../base/icons/components/Icon';
 import {
     IconCheck,
     IconCloseCircle,
+    IconEnvelope,
     IconPhoneRinging,
     IconSearch,
     IconShare
@@ -260,6 +261,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                 key: item.id || item.user_id,
                 title: item.name
             };
+        case INVITE_TYPES.EMAIL:
+            return {
+                avatar: item.avatar || IconEnvelope,
+                key: item.id || item.user_id,
+                title: item.name
+            };
         default:
             return null;
         }
@@ -273,7 +280,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {string}
      */
     _keyExtractor(item: any) {
-        return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
+        if (item.type === INVITE_TYPES.USER || item.type === INVITE_TYPES.EMAIL) {
+            return item.id || item.user_id;
+        }
+
+        return item.number;
     }
 
     /**
@@ -451,6 +462,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
             selected = inviteItems.find(_.matchesProperty('number', item.number));
             break;
         case INVITE_TYPES.USER:
+        case INVITE_TYPES.EMAIL:
             selected = item.id
                 ? inviteItems.find(_.matchesProperty('id', item.id))
                 : inviteItems.find(_.matchesProperty('user_id', item.user_id));
