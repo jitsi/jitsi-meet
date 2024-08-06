@@ -32,6 +32,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: theme.spacing(1)
         },
 
+        chatMessageFooterLeft: {
+            display: 'flex',
+            flexGrow: 1,
+            overflow: 'hidden'
+        },
+
         chatMessageWrapper: {
             maxWidth: '100%'
 
@@ -91,7 +97,8 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         reactionCount: {
-            fontSize: '0.8rem'
+            fontSize: '0.8rem',
+            color: theme.palette.grey[400]
         },
 
         replyButton: {
@@ -146,7 +153,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             color: theme.palette.text03,
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            flexShrink: 0
         }
 
     };
@@ -266,9 +274,14 @@ const ChatMessage = ({
                                             { user: message.displayName })}
                                 </span>
                                 <Message text = { getMessageText(message) } />
-                                <div className = { classes.chatMessageFooter }>
-                                    {_renderReactions()}
-                                    {/* showTimestamp && _renderTimestamp to turn off timestamp render for every message */}
+                                <div className={classes.chatMessageFooter}>
+                                    <div className={classes.chatMessageFooterLeft}>
+                                        {message.reactions && message.reactions.length > 0 && (
+                                            <>
+                                                {_renderReactions()}
+                                            </>
+                                        )}
+                                    </div>
                                     {_renderTimestamp()}
                                 </div>
                             </div>
