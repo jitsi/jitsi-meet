@@ -366,16 +366,17 @@ function _onConferenceMessageReceived(store: IStore,
     }, true, isGif);
 }
 
-function _onReactionReceived(store: IStore, { from, reactionList, messageId }: {
-    from: string; reactionList: string[]; messageId: string; }) {
+function _onReactionReceived(store: IStore, { id, reactionList, messageId, receiverId }: {
+    id: string; reactionList: string[]; messageId: string; receiverId: string; }) {
     const state = store.getState();
 
-    console.log('REACTION HAS BEEN RECEIVED IN _onReactionReceived', from, reactionList, messageId);
+    console.log('REACTION HAS BEEN RECEIVED IN _onReactionReceived', id, reactionList, messageId);
 
     const reactionPayload = ({
-        from,
+        id,
         reactionList,
         messageId,
+        receiverId
     });
 
     store.dispatch(addMessageReaction(reactionPayload));
