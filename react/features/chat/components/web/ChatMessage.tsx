@@ -197,7 +197,7 @@ const ChatMessage = ({
                                 className = { classes.replyButtonContainer }>
                                 <PrivateMessageButton
                                     isLobbyMessage = { message.lobbyChat }
-                                    participantID = { message.id } />
+                                    participantID = { message.participantId } />
                             </div>
                         )}
                 </div>
