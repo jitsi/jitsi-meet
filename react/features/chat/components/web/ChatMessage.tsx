@@ -82,19 +82,25 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginLeft: theme.spacing(1)
         },
 
+        reaction: {
+            marginRight: theme.spacing(1),
+        },
+
         reactionBox: {
-            display: 'inline-block',
-            backgroundColor: 'gray',
-            padding: "2px 8px",
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: theme.palette.grey[800],
             borderRadius: theme.shape.borderRadius,
-            cursor: 'pointer',
-            transition: 'background-color 0.3s',
-            '&:hover': {
-                backgroundColor: 'lightgray',
-            },
-            '&:press': {
-                backgroundColor: 'blue',
-            },
+            padding: theme.spacing(0, 1),
+        },
+
+        reactionCount: {
+            fontSize: '0.8rem',
+            // marginLeft: theme.spacing(0.5),
+        },
+
+        replyButton: {
+            padding: '2px'
         },
 
         replyWrapper: {
@@ -116,18 +122,6 @@ const useStyles = makeStyles()((theme: Theme) => {
             alignItems: 'center',
             gap: theme.spacing(1)
 
-        },
-
-        replyButton: {
-            padding: '2px'
-        },
-
-        reactions: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: theme.spacing(1),
-            marginRight: theme.spacing(1),
-            color: theme.palette.text02,
         },
 
         displayName: {
@@ -276,7 +270,8 @@ const ChatMessage = ({
                                 <Message text = { getMessageText(message) } />
                                 <div className = { classes.chatMessageFooter }>
                                     {_renderReactions()}
-                                    {showTimestamp && _renderTimestamp()}
+                                    {/* showTimestamp && _renderTimestamp to turn off timestamp render for every message */}
+                                    {_renderTimestamp()}
                                 </div>
                             </div>
                             {(message.privateMessage || (message.lobbyChat && !knocking))
