@@ -487,7 +487,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
         APP.API.notifyReceivedChatMessage({
             body: message,
-            participantId,
+            from: participantId,
             nick: displayNameToShow,
             privateMessage,
             ts: timestamp
