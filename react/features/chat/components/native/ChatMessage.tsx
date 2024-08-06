@@ -113,7 +113,7 @@ class ChatMessage extends Component<IChatMessageProps> {
             <View style = { styles.avatarWrapper }>
                 { this.props.showAvatar && <Avatar
                     displayName = { message.displayName }
-                    participantId = { message.id }
+                    participantId = { message.participantId }
                     size = { styles.avatarWrapper.width } />
                 }
             </View>
@@ -175,7 +175,7 @@ class ChatMessage extends Component<IChatMessageProps> {
             <View style = { styles.replyContainer as ViewStyle }>
                 <PrivateMessageButton
                     isLobbyMessage = { lobbyChat }
-                    participantID = { message.id }
+                    participantID = { message.participantId }
                     reply = { true }
                     showLabel = { false }
                     toggledStyles = { styles.replyStyles } />
