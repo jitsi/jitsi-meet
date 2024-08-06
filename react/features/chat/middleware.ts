@@ -367,17 +367,17 @@ function _onConferenceMessageReceived(store: IStore,
 }
 
 function _onReactionReceived(store: IStore, { id, reactionList, messageId, receiverId }: {
-    id: string; messageId: string; reactionList: string[]; receiverId: string; }) {
+    id: string; reactionList: string[]; messageId: string; receiverId: string; }) {
     const state = store.getState();
 
     console.log('REACTION HAS BEEN RECEIVED IN _onReactionReceived', id, reactionList, messageId);
 
-    const reactionPayload = {
+    const reactionPayload = ({
         id,
         reactionList,
         messageId,
         receiverId
-    };
+    });
 
     store.dispatch(addMessageReaction(reactionPayload));
 }

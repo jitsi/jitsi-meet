@@ -81,11 +81,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     }
 
     case ADD_MESSAGE_REACTION: {
-        const { from, messageId, reactionList } = action;
+        const { id, messageId, reactionList } = action;
         const messages = state.messages.map(message => {
             console.log(message)
             if (messageId === message.messageId) {
-                console.log("FROM: " + from)
+                console.log("FROM: " + id);
                 console.log("MESSAGE_ID: " + messageId);
                 console.log("REACTION: " + reactionList);
                 return {
