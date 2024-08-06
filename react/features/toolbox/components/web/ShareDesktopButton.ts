@@ -10,17 +10,17 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { startScreenShareFlow } from '../../../screen-share/actions.web';
 import { isScreenVideoShared } from '../../../screen-share/functions';
 import { closeOverflowMenuIfOpen } from '../../actions.web';
-import { isDesktopShareButtonDisabled } from '../../functions';
+import { isDesktopShareButtonDisabled } from '../../functions.web';
 
 interface IProps extends AbstractButtonProps {
 
     /**
-     * Whether or not screensharing is initialized.
+     * Whether or not screen-sharing is initialized.
      */
     _desktopSharingEnabled: boolean;
 
     /**
-     * Whether or not the local participant is screensharing.
+     * Whether or not the local participant is screen-sharing.
      */
     _screensharing: boolean;
 }
@@ -101,7 +101,7 @@ class ShareDesktopButton extends AbstractButton<IProps> {
  * @returns {Object}
  */
 const mapStateToProps = (state: IReduxState) => {
-    // Disable the screenshare button if the video sender limit is reached and there is no video or media share in
+    // Disable the screen-share button if the video sender limit is reached and there is no video or media share in
     // progress.
     const desktopSharingEnabled
         = JitsiMeetJS.isDesktopSharingEnabled() && !isDesktopShareButtonDisabled(state);
