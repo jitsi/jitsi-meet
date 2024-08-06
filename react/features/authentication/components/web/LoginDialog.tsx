@@ -240,8 +240,8 @@ class LoginDialog extends Component<IProps, IState> {
                 onSubmit = { this._onLogin }
                 titleKey = { t('dialog.authenticationRequired') }>
                 <Input
-                    autocomplete = 'username'
                     autoFocus = { true }
+                    autocomplete = 'username'
                     id = 'login-dialog-username'
                     label = { t('dialog.user') }
                     name = 'username'
