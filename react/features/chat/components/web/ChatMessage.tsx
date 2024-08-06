@@ -284,6 +284,13 @@ const ChatMessage = ({
                                     </div>
                                     {_renderTimestamp()}
                                 </div>
+                    {canReply
+                        && (
+                            <div
+                                className = { classes.replyButtonContainer }>
+                                <PrivateMessageButton
+                                    isLobbyMessage = { message.lobbyChat }
+                                    participantID = { message.participantId } />
                             </div>
                             {(message.privateMessage || (message.lobbyChat && !knocking))
                                 && _renderPrivateNotice()}

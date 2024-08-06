@@ -346,7 +346,7 @@ function _onConferenceMessageReceived(store: IStore,
         participantId: string; privateMessage: boolean; timestamp: number; }
 ) {
 
-    const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
+    const isGif = isGifMessage(message);
 
     if (isGif) {
         _handleGifMessageReceived(store, participantId, message);
