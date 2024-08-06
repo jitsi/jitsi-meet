@@ -90,12 +90,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 console.log("REACTION: " + reactionList);
                 return {
                     ...message,
-                    reactions: [...(message.reactions || []), reactionList]
+                    reactions: [ ...message.reactions || [], reactionList ]
                 };
             }
+
             return message;
         });
-    
+
         return {
             ...state,
             messages
