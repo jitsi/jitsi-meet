@@ -41,11 +41,6 @@ export interface IChatProps extends WithTranslation {
 export interface IChatMessageProps extends WithTranslation {
 
     /**
-     * Whether the message can be replied to.
-     */
-    canReply?: boolean;
-
-    /**
      * Whether the message can be reacted to.
      */
     canReact?: boolean;

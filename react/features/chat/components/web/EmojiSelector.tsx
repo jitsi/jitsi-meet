@@ -12,12 +12,17 @@ const EmojiSelector = ({ onSelect }) => {
     const emojiNames = Object.keys(emojiMap);
 
     return (
-        <div className="emoji-selector" style={{ display: 'flex', flexDirection: 'row' }}>
+        <div
+            className = 'emoji-selector'
+            style = {{ display: 'flex',
+                flexDirection: 'row' }}>
             {emojiNames.map(name => (
-                <span 
-                    key={name} 
-                    onClick={() => onSelect(emojiMap[name])} 
-                    style={{ cursor: 'pointer', padding: '5px', fontSize: '1.5em' }}>
+                <span
+                    key = { name }
+                    onClick = { () => onSelect(emojiMap[name]) }
+                    style = {{ cursor: 'pointer',
+                        padding: '5px',
+                        fontSize: '1.5em' }}>
                     {emojiMap[name]}
                 </span>
             ))}

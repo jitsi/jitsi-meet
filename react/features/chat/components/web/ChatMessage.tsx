@@ -11,12 +11,10 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { sendReaction } from '../../actions.any.ts';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
-import { sendReaction } from '../../actions.any.ts';
 
 import KebabMenu from './KebabMenu.tsx';
 import PrivateMessageButton from './PrivateMessageButton';
 import ReactButton from './ReactButton.tsx';
-import KebabMenu from './KebabMenu.tsx';
 
 interface IProps extends IChatMessageProps {
     type: string;
@@ -31,11 +29,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginTop: theme.spacing(1),
+            marginTop: theme.spacing(1)
         },
 
         chatMessageWrapper: {
-            maxWidth: '100%',
+            maxWidth: '100%'
+
             // Intended to make the icons faintly visible when the message is hovered, but does not work.
             // '&:hover $reactButton, &:hover $kebabButton': {
             //     opacity: 0.5
@@ -83,7 +82,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         reaction: {
-            marginRight: theme.spacing(1),
+            marginRight: theme.spacing(1)
         },
 
         reactionBox: {
@@ -91,11 +90,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             alignItems: 'center',
             backgroundColor: theme.palette.grey[800],
             borderRadius: theme.shape.borderRadius,
-            padding: theme.spacing(0, 1),
+            padding: theme.spacing(0, 1)
         },
 
         reactionCount: {
-            fontSize: '0.8rem',
+            fontSize: '0.8rem'
+
             // marginLeft: theme.spacing(0.5),
         },
 
@@ -152,7 +152,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap'
-        },
+        }
 
     };
 });
@@ -214,12 +214,16 @@ const ChatMessage = ({
         return (
             <>
                 {message.reactions && message.reactions.length > 0 && (
-                    <div className={classes.reactionBox}>
+                    <div className = { classes.reactionBox }>
                         {message.reactions.slice(0, 3).map((reaction, index) => (
-                            <span key={index}>{reaction}</span>
+                            <span
+                                className = { classes.reaction }
+                                key = { index }>
+                                {reaction}
+                            </span>
                         ))}
                         {message.reactions.length > 3 && (
-                            <span className={classes.reactionCount}>
+                            <span className = { classes.reactionCount }>
                                 +{message.reactions.length - 3}
                             </span>
                         )}
@@ -248,8 +252,8 @@ const ChatMessage = ({
             id = { message.messageId }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                { kebabMenuSelfVisible && 
-                    <div className = { classes.optionsButtonContainer }>
+                { kebabMenuSelfVisible
+                    && <div className = { classes.optionsButtonContainer }>
                         <KebabMenu />
                     </div>
                 }
@@ -279,29 +283,29 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {(canReact || kebabMenuVisible) &&
-                    <div
-                        className= { classes.sideBySideContainer }>
+                {(canReact || kebabMenuVisible)
+                    && <div
+                        className = { classes.sideBySideContainer }>
                         <div>
-                        {canReact
+                            {canReact
                             && (
                                 <div
-                                className = { classes.optionsButtonContainer }>
-                                    <ReactButton 
+                                    className = { classes.optionsButtonContainer }>
+                                    <ReactButton
                                         messageId = { message.id }
-                                        receiverId = { "" }/>
+                                        receiverId = { '' } />
                                 </div>
                             )}
                         </div>
                         <div>
-                        {kebabMenuVisible
+                            {kebabMenuVisible
                             && (
                                 <div
                                     className = { classes.optionsButtonContainer }>
                                     <KebabMenu
-                                        messageId = { message.messageId }
-                                        message = { message.message }
                                         isLobbyMessage = { message.lobbyChat }
+                                        message = { message.message }
+                                        messageId = { message.messageId }
                                         participantId = { message.id } />
                                 </div>
                             )}

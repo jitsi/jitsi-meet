@@ -1,30 +1,32 @@
-import React, { useState, useCallback, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { makeStyles } from "tss-react/mui";
-import Button from "../../../base/ui/components/web/Button";
-import { BUTTON_TYPES } from "../../../base/ui/constants.any";
-import { IconDotsHorizontal } from "../../../base/icons/svg";
-import Popover from "@mui/material/Popover";
+import Popover from '@mui/material/Popover';
+import React, { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+
+import { IReduxState } from '../../../app/types';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
+import { getParticipantById } from '../../../base/participants/functions';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
+import { sendReaction } from '../../actions.any.ts';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
-import { sendReaction } from '../../actions.any.ts'
-import { getParticipantById } from "../../../base/participants/functions";
-import { IReduxState } from "../../../app/types";
 
 export interface IProps {
-    onReply: () => void;
-    onPrivateMessage: () => void;
-    onCopy: () => void;
     className?: string;
-
-    message: string;
-
-    messageId: string;
 
     /**
     * True if the message is a lobby chat message.
     */
     isLobbyMessage: boolean;
+    message: string;
+    messageId: string;
+
+    onCopy: () => void;
+
+    onPrivateMessage: () => void;
+
+    onReply: () => void;
 
     /**
      * The ID of the participant that the message is to be sent.
@@ -37,36 +39,38 @@ export interface IProps {
     visible?: boolean;
 }
 
-const useStyles = makeStyles()((theme) => ({
-    kebabButton: {
-        padding: "2px",
-        opacity: 0,
-        transition: "opacity 0.3s ease",
-        "&:hover": {
-            backgroundColor: theme.palette.action03,
-            opacity: 1,
+const useStyles = makeStyles()(theme => {
+    return {
+        kebabButton: {
+            padding: '2px',
+            opacity: 0,
+            transition: 'opacity 0.3s ease',
+            '&:hover': {
+                backgroundColor: theme.palette.action03,
+                opacity: 1
+            }
         },
-    },
-    menuItem: {
-        padding: "8px 16px",
-        cursor: "pointer",
-        color: "white", // Set text color to white
-        "&:hover": {
-            backgroundColor: theme.palette.action03,
+        menuItem: {
+            padding: '8px 16px',
+            cursor: 'pointer',
+            color: 'white', // Set text color to white
+            '&:hover': {
+                backgroundColor: theme.palette.action03
+            }
         },
-    },
-    menuPanel: {
-        backgroundColor: theme.palette.ui02,
-        borderRadius: theme.shape.borderRadius,
-        boxShadow: theme.shadows[3],
-    },
-}));
+        menuPanel: {
+            backgroundColor: theme.palette.ui02,
+            borderRadius: theme.shape.borderRadius,
+            boxShadow: theme.shadows[3]
+        }
+    };
+});
 
 const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, className }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
@@ -75,7 +79,7 @@ const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, 
     }, []);
 
     const handleReplyClick = useCallback(() => {
-        
+
     }, []);
 
     const handlePrivateClick = useCallback(() => {
@@ -84,19 +88,20 @@ const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, 
         } else {
             dispatch(openChat(participant));
         }
-    }, [dispatch, isLobbyMessage, participant, participantId]);
+    }, [ dispatch, isLobbyMessage, participant, participantId ]);
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(message).then(() => {
-                console.log("Message copied to clipboard!");
-            }).catch(err => {
-                console.error("Failed to copy message: ", err);
-            });
+                console.log('Message copied to clipboard!');
+            })
+.catch(err => {
+    console.error('Failed to copy message: ', err);
+});
         } else {
-            console.error("Clipboard API not available");
+            console.error('Clipboard API not available');
         }
-    }, [message]);
+    }, [ message ]);
 
     const handleMenuItemClick = useCallback((action: () => void) => {
         action();
@@ -108,40 +113,44 @@ const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, 
     };
 
     const open = Boolean(anchorEl);
-    const id = open ? "kebab-menu-popover" : undefined;
+    const id = open ? 'kebab-menu-popover' : undefined;
 
     return (
-        <div className={cx(className)}>
+        <div className = { cx(className) }>
             <Button
-                accessibilityLabel={t("toolbar.accessibilityLabel.moreOptions")}
-                className={classes.kebabButton}
-                icon={IconDotsHorizontal}
-                onClick={handleMenuClick}
-                type={BUTTON_TYPES.TERTIARY}
-            />
+                accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
+                className = { classes.kebabButton }
+                icon = { IconDotsHorizontal }
+                onClick = { handleMenuClick }
+                type = { BUTTON_TYPES.TERTIARY } />
             <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
+                anchorEl = { anchorEl }
+                anchorOrigin = {{
+                    vertical: 'bottom',
+                    horizontal: 'center'
                 }}
-                transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                }}
-            >
-                <div className={classes.menuPanel}>
-                    <div className={classes.menuItem} onClick={() => handleReplyClick()}>
-                        {t("Reply")}
+                id = { id }
+                onClose = { handleClose }
+                open = { open }
+                transformOrigin = {{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }}>
+                <div className = { classes.menuPanel }>
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { () => handleReplyClick() }>
+                        {t('Reply')}
                     </div>
-                    <div className={classes.menuItem} onClick={() => handlePrivateClick()}>
-                        {t("Private Message")}
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { () => handlePrivateClick() }>
+                        {t('Private Message')}
                     </div>
-                    <div className={classes.menuItem} onClick={() => handleCopyClick()}>
-                        {t("Copy")}
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { () => handleCopyClick() }>
+                        {t('Copy')}
                     </div>
                 </div>
             </Popover>
