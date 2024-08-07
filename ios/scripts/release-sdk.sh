@@ -58,6 +58,7 @@ cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
 # Add all files to git
 git add -A .
 git commit -m "${SDK_VERSION}"
+git tag ${SDK_VERSION}
 
 popd
 
