@@ -144,6 +144,7 @@ class ChatMessage extends Component<IChatMessageProps> {
         if (messageText.length >= CHAR_LIMIT) {
             return (
                 <Text
+                    selectable = { true }
                     style = { styles.chatMessage }>
                     { messageText }
                 </Text>

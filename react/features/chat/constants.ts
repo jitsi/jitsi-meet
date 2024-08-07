@@ -1,4 +1,9 @@
 /**
+ * Maximum number of characters allowed.
+ */
+export const CHAR_LIMIT = 500;
+
+/**
  * The size of the chat. Equal to $sidebarWidth SCSS variable.
  */
 export const CHAT_SIZE = 315;
@@ -48,5 +53,3 @@ export const TIMESTAMP_FORMAT = 'H:mm';
  * The namespace for system messages.
  */
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
-
-export const CHAR_LIMIT = 500;
