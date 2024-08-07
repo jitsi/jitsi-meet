@@ -6,21 +6,14 @@ local update_presence_identity = module:require "util".update_presence_identity;
 -- for that session.
 function on_message(event)
     if event and event["stanza"] then
-      if event.origin then
-          local user;
-          local group;
-          if event.origin.jitsi_meet_context_user then
-              user = event.origin.jitsi_meet_context_user;
-              group = event.origin.jitsi_meet_context_group;
-          else
-              user = { id = event.origin.username }; -- when using auth similar to internal_hashed
-          end
+      if event.origin and event.origin.jitsi_meet_context_user then
 
           update_presence_identity(
               event.stanza,
-              user,
-              group
+              event.origin.jitsi_meet_context_user,
+              event.origin.jitsi_meet_context_group
           );
+
       end
     end
 end
