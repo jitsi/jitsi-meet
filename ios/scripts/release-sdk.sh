@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -u
+set -e -u -x
 
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 PROJECT_REPO=$(realpath ${THIS_DIR}/../..)
@@ -57,8 +57,8 @@ cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
 
 # Add all files to git
 git add -A .
-git commit -m "${SDK_VERSION}"
-git tag ${SDK_VERSION}
+git commit --allow-empty -m "${SDK_VERSION}"
+git tag "${SDK_VERSION}"
 
 popd
 
