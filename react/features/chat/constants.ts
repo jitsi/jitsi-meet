@@ -1,4 +1,9 @@
 /**
+ * Maximum number of characters allowed.
+ */
+export const CHAR_LIMIT = 500;
+
+/**
  * The size of the chat. Equal to $sidebarWidth SCSS variable.
  */
 export const CHAT_SIZE = 315;
