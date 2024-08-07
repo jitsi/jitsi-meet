@@ -36,7 +36,7 @@ export function generateDeepLinkingURL(state: IReduxState) {
     // https://developer.chrome.com/multidevice/android/intents
     if (Platform.OS === 'android') {
         // https://meet.jit.si/foo -> meet.jit.si/foo
-        const url = href.replace(regex, '').substr(2);
+        const url = href.replace(regex, '').slice(2);
 
         return `intent://${url}#Intent;scheme=${appScheme};package=${appPackage};end`;
     }
