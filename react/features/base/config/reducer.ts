@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { merge, union } from 'lodash-es';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { TOOLBAR_BUTTONS } from '../../toolbox/constants';
@@ -194,7 +194,7 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
         });
     }
 
-    const newState = _.merge(
+    const newState = merge(
         {},
         config,
         hdAudioOptions,
@@ -397,7 +397,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
                     = (newValue.conferenceInfo?.alwaysVisible ?? [])
                     .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+                    = union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
             } else {
                 newValue.conferenceInfo.alwaysVisible
                     = (newValue.conferenceInfo.alwaysVisible ?? [])
@@ -599,7 +599,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _updateConfig(state: IConfig, { config }: { config: IConfig; }) {
-    const newState = _.merge({}, state, config);
+    const newState = merge({}, state, config);
 
     _cleanupConfig(newState);
 

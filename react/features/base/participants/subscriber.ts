@@ -1,5 +1,5 @@
 
-import _ from 'lodash';
+import { difference } from 'lodash-es';
 import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
@@ -64,8 +64,8 @@ function _createOrRemoveVirtualParticipants(
         store: IStore): void {
     const { dispatch, getState } = store;
     const conference = getCurrentConference(getState());
-    const removedScreenshareSourceNames = _.difference(oldScreenshareSourceNames, newScreenshareSourceNames);
-    const addedScreenshareSourceNames = _.difference(newScreenshareSourceNames, oldScreenshareSourceNames);
+    const removedScreenshareSourceNames = difference(oldScreenshareSourceNames, newScreenshareSourceNames);
+    const addedScreenshareSourceNames = difference(newScreenshareSourceNames, oldScreenshareSourceNames);
 
     if (removedScreenshareSourceNames.length) {
         removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { union } from 'lodash-es';
 
 import { IJitsiConference } from '../base/conference/reducer';
 import {
@@ -143,7 +143,7 @@ const statsEmitter = {
         const resolutionUserIds = Object.keys(allUserResolutions);
         const codecUserIds = Object.keys(allUserCodecs);
 
-        _.union(framerateUserIds, resolutionUserIds, codecUserIds)
+        union(framerateUserIds, resolutionUserIds, codecUserIds)
             .filter(id => id !== localUserId)
             .forEach(id => {
                 const remoteUserStats: IStats = {};
