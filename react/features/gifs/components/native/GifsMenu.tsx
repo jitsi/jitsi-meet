@@ -9,7 +9,7 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import Input from '../../../base/ui/components/native/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { formatGifUrlMessage, getGifRating, getGifUrl, getGiphyProxyUrl } from '../../functions.native';
+import { formatGifUrlMessage, getGifRating, getGifUrl } from '../../functions.native';
 
 import GifsMenuFooter from './GifsMenuFooter';
 import styles from './styles';
@@ -19,8 +19,6 @@ const GifsMenu = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const rating = useSelector(getGifRating) as GiphyRating;
-    const proxyUrl = useSelector(getGiphyProxyUrl);
-
     const options = {
         mediaType: GiphyMediaType.Gif,
         limit: 20,
@@ -35,7 +33,7 @@ const GifsMenu = () => {
         });
 
     const sendGif = useCallback(e => {
-        const url = getGifUrl(e.nativeEvent.media, proxyUrl);
+        const url = getGifUrl(e.nativeEvent.media);
 
         sendAnalytics(createGifSentEvent());
 
