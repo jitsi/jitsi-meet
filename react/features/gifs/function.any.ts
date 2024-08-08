@@ -33,15 +33,6 @@ export function getGifRating(state: IReduxState) {
     return getGifConfig(state).rating || GIF_DEFAULT_RATING;
 }
 
-/**
- * Get the Giphy proxy url.
- *
- * @param {IReduxState} state - Redux state.
- * @returns {string}
- */
-export function getGiphyProxyUrl(state: IReduxState) {
-    return getGifConfig(state).proxyUrl;
-}
 
 /**
  * Gets the URL of the GIF for the given participant or null if there's none.
@@ -69,17 +60,12 @@ export function isGifMessage(message: string) {
  * Returns the url of the gif selected in the gifs menu.
  *
  * @param {Object} gif - The gif data.
- * @param {string} proxyUrl - The proxy server url.
  * @returns {boolean}
  */
-export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }, proxyUrl?: string) {
+export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }) {
     const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
     const id = embedUrl.substr(idx + 1);
-
-    if (proxyUrl) {
-        return `${proxyUrl}gifs/id/${id}`;
-    }
 
     return `https://i.giphy.com/media/${id}/giphy.gif`;
 }
