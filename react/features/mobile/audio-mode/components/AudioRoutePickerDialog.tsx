@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { sortBy } from 'lodash-es';
 import React, { Component } from 'react';
 import { NativeModules, Text, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
@@ -201,7 +201,7 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
         // Make sure devices is alphabetically sorted.
         return {
-            devices: _.sortBy(audioDevices, 'text')
+            devices: sortBy(audioDevices, 'text')
         };
     }
 
