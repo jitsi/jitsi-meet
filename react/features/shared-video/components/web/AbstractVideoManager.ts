@@ -210,7 +210,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
     }
 
     /**
-     * Handle video error.
+     * Handle video error. Test 123.
      *
      * @param {Object|undefined} e - The error returned by the API or none.
      * @returns {void}
