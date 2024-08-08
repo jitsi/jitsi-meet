@@ -25,7 +25,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { addGif } from '../gifs/actions';
 import { GIF_PREFIX } from '../gifs/constants';
-import { getGifDisplayMode, isGifMessage } from '../gifs/function.any';
+import { getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
@@ -322,7 +322,7 @@ function _onConferenceMessageReceived(store: IStore,
         participantId: string; privateMessage: boolean; timestamp: number; }
 ) {
 
-    const isGif = isGifMessage(message);
+    const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
 
     if (isGif) {
         _handleGifMessageReceived(store, participantId, message);

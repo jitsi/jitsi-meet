@@ -1,13 +1,20 @@
 import React, { Component, ReactNode } from 'react';
 import { toArray } from 'react-emoji-render';
+import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import GifMessage from '../../../../chat/components/web/GifMessage';
 import { GIF_PREFIX } from '../../../../gifs/constants';
-import { isGifMessage } from '../../../../gifs/functions.web';
+import { isGifEnabled, isGifMessage } from '../../../../gifs/functions.web';
 
 import Linkify from './Linkify';
 
 interface IProps {
+
+    /**
+     * Whether the gifs are enabled or not.
+     */
+    gifEnabled: boolean;
 
     /**
      * The body of the message.
@@ -43,11 +50,11 @@ class Message extends Component<IProps> {
 
         // Tokenize the text in order to avoid emoji substitution for URLs
         const tokens = text ? text.split(' ') : [];
-
         const content = [];
+        const { gifEnabled } = this.props;
 
         // check if the message is a GIF
-        if (isGifMessage(text)) {
+        if (gifEnabled && isGifMessage(text)) {
             const url = text.substring(GIF_PREFIX.length, text.length - 1);
 
             content.push(<GifMessage
@@ -93,4 +100,16 @@ class Message extends Component<IProps> {
     }
 }
 
-export default Message;
+/**
+ * Maps part of the redux state to the props of this component.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {IProps}
+ */
+function _mapStateToProps(state: IReduxState) {
+    return {
+        gifEnabled: isGifEnabled(state)
+    };
+}
+
+export default connect(_mapStateToProps)(Message);
