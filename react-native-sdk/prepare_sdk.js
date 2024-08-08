@@ -163,6 +163,14 @@ fs.copyFileSync(
     `${iosDestPath}/LocaleDetector.m`
 );
 fs.copyFileSync(
+    `${iosSrcPath}/ScreenShareEventEmitter.m`,
+    `${iosDestPath}/ScreenShareEventEmitter.m`
+);
+fs.copyFileSync(
+    `${iosSrcPath}/ScreenShareEventEmitter.h`,
+    `${iosDestPath}/ScreenShareEventEmitter.h`
+);
+fs.copyFileSync(
     `${iosSrcPath}/POSIX.m`,
     `${iosDestPath}/POSIX.m`
 );
