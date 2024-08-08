@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isEqual, sortBy } from 'lodash-es';
 
 import { MEDIA_TYPE } from '../media/constants';
 import { getScreenshareParticipantIds } from '../participants/functions';
@@ -16,7 +16,7 @@ StateListenerRegistry.register(
             return;
         }
 
-        if (!_.isEqual(_.sortBy(participantIDs), _.sortBy(previousParticipantIDs))) {
+        if (!isEqual(sortBy(participantIDs), sortBy(previousParticipantIDs))) {
             APP.API.notifySharingParticipantsChanged(participantIDs);
         }
     }

@@ -1,5 +1,5 @@
 import GraphemeSplitter from 'grapheme-splitter';
-import _ from 'lodash';
+import { split } from 'lodash-es';
 
 const AVATAR_COLORS = [
     '#6A50D3',
@@ -63,7 +63,7 @@ function getFirstGraphemeUpper(word: string) {
  */
 export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
-    const initialsBasis = _.split(s, '@')[0];
+    const initialsBasis = split(s, '@')[0];
     const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
     return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);

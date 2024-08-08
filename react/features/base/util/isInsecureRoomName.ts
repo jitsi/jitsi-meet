@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isEqual } from 'lodash-es';
 import { NIL, parse as parseUUID } from 'uuid';
 import zxcvbn from 'zxcvbn';
 
@@ -22,7 +22,7 @@ function isValidUUID(str: string) {
         return false;
     }
 
-    return !_.isEqual(uuid, NIL_UUID);
+    return !isEqual(uuid, NIL_UUID);
 }
 
 /**

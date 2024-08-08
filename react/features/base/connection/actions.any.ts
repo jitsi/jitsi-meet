@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { IReduxState, IStore } from '../../app/types';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
@@ -113,7 +113,7 @@ export function connectionFailed(
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options: IOptions = _.cloneDeep(state['features/base/config']);
+    const options: IOptions = cloneDeep(state['features/base/config']);
 
     const { locationURL, preferVisitor } = state['features/base/connection'];
     const params = parseURLParams(locationURL || '');

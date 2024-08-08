@@ -1,6 +1,6 @@
 // @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+import { escape } from 'lodash-es';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
@@ -154,8 +154,8 @@ function _initSettings(featureState: ISettingsState) {
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
-    const email = savedEmail === null ? undefined : _.escape(savedEmail);
+    const displayName = savedDisplayName === null ? undefined : escape(savedDisplayName);
+    const email = savedEmail === null ? undefined : escape(savedEmail);
 
     settings = assignIfDefined({
         displayName,

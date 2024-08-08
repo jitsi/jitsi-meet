@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import _ from 'lodash';
+import { chunk, filter, shuffle } from 'lodash-es';
 
 import { createBreakoutRoomsEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -129,14 +129,14 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
 export function autoAssignToBreakoutRooms() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const rooms = getBreakoutRooms(getState);
-        const breakoutRooms = _.filter(rooms, room => !room.isMainRoom);
+        const breakoutRooms = filter(rooms, room => !room.isMainRoom);
 
         if (breakoutRooms) {
             sendAnalytics(createBreakoutRoomsEvent('auto.assign'));
             const participantIds = Array.from(getRemoteParticipants(getState).keys());
             const length = Math.ceil(participantIds.length / breakoutRooms.length);
 
-            _.chunk(_.shuffle(participantIds), length).forEach((group, index) =>
+            chunk(shuffle(participantIds), length).forEach((group, index) =>
                 group.forEach(participantId => {
                     dispatch(sendParticipantToRoom(participantId, breakoutRooms[index].id));
                 })
