@@ -46,14 +46,36 @@ export function getGifForParticipant(state: IReduxState, participantId: string):
 }
 
 /**
+ * Returns true if a given URL is allowed to be rendered as gif and false otherwise.
+ *
+ * @param {string} url - The URL to be validated.
+ * @returns {boolean} - True if a given URL is allowed to be rendered as gif and false otherwise.
+ */
+export function isGifUrlAllowed(url: string) {
+    let hostname: string | undefined;
+
+    try {
+        const urlObject = new URL(url);
+
+        hostname = urlObject?.hostname;
+    } catch (_error) {
+        return false;
+    }
+
+    return hostname === 'i.giphy.com';
+}
+
+/**
  * Whether or not the message is a GIF message.
  *
  * @param {string} message - Message to check.
  * @returns {boolean}
  */
 export function isGifMessage(message: string) {
+    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+
     return message.trim().toLowerCase()
-        .startsWith(GIF_PREFIX);
+        .startsWith(GIF_PREFIX) && isGifUrlAllowed(url);
 }
 
 /**

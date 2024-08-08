@@ -6,7 +6,7 @@ import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n/functions';
 import Linkify from '../../../base/react/components/native/Linkify';
-import { isGifMessage } from '../../../gifs/functions.native';
+import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
     getCanReplyToMessage,
@@ -32,7 +32,7 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @inheritdoc
      */
     render() {
-        const { message, knocking } = this.props;
+        const { gifEnabled, message, knocking } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
         const { privateMessage, lobbyChat } = message;
 
@@ -82,7 +82,7 @@ class ChatMessage extends Component<IChatMessageProps> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper as ViewStyle } >
                             { this._renderDisplayName() }
-                            { isGifMessage(messageText)
+                            { gifEnabled && isGifMessage(messageText)
                                 ? <GifMessage message = { messageText } />
                                 : (
                                     <Linkify
@@ -210,6 +210,7 @@ class ChatMessage extends Component<IChatMessageProps> {
 function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
     return {
         canReply: getCanReplyToMessage(state, message),
+        gifEnabled: isGifEnabled(state),
         knocking: state['features/lobby'].knocking
     };
 }
