@@ -285,6 +285,7 @@ export interface IConfig {
     disableRecordAudioNotification?: boolean;
     disableRemoteMute?: boolean;
     disableRemoveRaisedHandOnFocus?: boolean;
+    disableRemoveRaisedHandOnFocusNotification?: boolean;
     disableResponsiveTiles?: boolean;
     disableRtx?: boolean;
     disableSelfDemote?: boolean;
