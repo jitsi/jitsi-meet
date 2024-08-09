@@ -50,7 +50,9 @@ const PollAnswer = (props: AbstractProps) => {
                         src = { IconCloseLarge } />
                 }
             </View>
-            <View style = { pollsStyles.answerContent as ViewStyle }>
+            <View
+                id = 'answer-content'
+                style = { pollsStyles.answerContent as ViewStyle }>
                 {
                     poll.answers.map((answer, index: number) => (
                         <View
@@ -59,6 +61,7 @@ const PollAnswer = (props: AbstractProps) => {
                             <Switch
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
+                                id = 'answer-switch'
                                 onChange = { state => setCheckbox(index, state) } />
                             <Text style = { pollsStyles.switchLabel as TextStyle }>
                                 { answer.name }
@@ -72,6 +75,7 @@ const PollAnswer = (props: AbstractProps) => {
                     ? <View style = { pollsStyles.buttonRow as ViewStyle }>
                         <Button
                             accessibilityLabel = 'polls.answer.edit'
+                            id = { t('polls.answer.edit') }
                             labelKey = 'polls.answer.edit'
                             onClick = { () => {
                                 setCreateMode(true);
@@ -81,6 +85,7 @@ const PollAnswer = (props: AbstractProps) => {
                             type = { SECONDARY } />
                         <Button
                             accessibilityLabel = 'polls.answer.send'
+                            id = { t('polls.answer.send') }
                             labelKey = 'polls.answer.send'
                             onClick = { sendPoll }
                             style = { pollsStyles.pollCreateButton }
@@ -89,6 +94,7 @@ const PollAnswer = (props: AbstractProps) => {
                     : <View style = { pollsStyles.buttonRow as ViewStyle }>
                         <Button
                             accessibilityLabel = 'polls.answer.skip'
+                            id = { t('polls.answer.skip') }
                             labelKey = 'polls.answer.skip'
                             onClick = { changingVote ? skipChangeVote : skipAnswer }
                             style = { pollsStyles.pollCreateButton }
@@ -96,6 +102,7 @@ const PollAnswer = (props: AbstractProps) => {
                         <Button
                             accessibilityLabel = 'polls.answer.submit'
                             disabled = { isSubmitAnswerDisabled(checkBoxStates) }
+                            id = { t('polls.answer.submit') }
                             labelKey = 'polls.answer.submit'
                             onClick = { submitAnswer }
                             style = { pollsStyles.pollCreateButton }

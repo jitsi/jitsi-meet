@@ -57,6 +57,7 @@ const PollsPane = (props: AbstractProps) => {
                         <PollsList setCreateMode = { setCreateMode } />
                         <Button
                             accessibilityLabel = 'polls.create.create'
+                            id = { t('polls.create.create') }
                             labelKey = 'polls.create.create'
                             onClick = { onCreate }
                             style = { createPollButtonStyles }
