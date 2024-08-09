@@ -13,6 +13,7 @@ import {
     ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { getDisableLowerHandByModerator } from '../base/config/functions.any';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -75,9 +76,11 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case ENDPOINT_MESSAGE_RECEIVED: {
         const { participant, data } = action;
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
 
-        if (data.name === LOWER_HAND_MESSAGE && participant.isModerator()) {
+        if (data.name === LOWER_HAND_MESSAGE
+            && participant.isModerator()
+            && !getDisableLowerHandByModerator(getState())) {
             dispatch(raiseHand(false));
         }
         break;

@@ -201,6 +201,7 @@ export default [
     'preferVisitor',
     'prejoinConfig',
     'prejoinPageEnabled',
+    'raisedHands',
     'recordingService',
     'requireDisplayName',
     'remoteVideoMenu',

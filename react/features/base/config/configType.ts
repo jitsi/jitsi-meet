@@ -488,6 +488,12 @@ export interface IConfig {
         hideExtraJoinButtons?: Array<string>;
     };
     prejoinPageEnabled?: boolean;
+    raisedHands?: {
+        disableLowerHandByModerator?: boolean;
+        disableLowerHandNotification?: boolean;
+        disableNextSpeakerNotification?: boolean;
+        disableRemoveRaisedHandOnFocus?: boolean;
+    };
     readOnlyName?: boolean;
     recordingLimit?: {
         appName?: string;
