@@ -26,7 +26,7 @@ local function get_poll_message(stanza)
         return nil;
     end
     if string.len(json_data) >= POLL_PAYLOAD_LIMIT then
-        module:log('error', 'Poll payload too large, discarding. Sender: %s', stanza.attr.from);
+        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
         return nil;
     end
     local data, error = json.decode(json_data);
