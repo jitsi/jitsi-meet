@@ -47,7 +47,9 @@ const PollsList = ({ setCreateMode }: IPollListProps) => {
                         color = { BaseTheme.palette.icon03 }
                         size = { 160 }
                         src = { IconMessage } />
-                    <Text style = { pollsStyles.noPollText as TextStyle } >
+                    <Text
+                        id = 'no-polls-text'
+                        style = { pollsStyles.noPollText as TextStyle } >
                         {
                             t('polls.results.empty')
                         }

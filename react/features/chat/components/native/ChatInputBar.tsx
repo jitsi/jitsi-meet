@@ -84,6 +84,7 @@ class ChatInputBar extends Component<IProps, IState> {
 
         return (
             <View
+                id = 'chat-input'
                 style = { [
                     inputBarStyles,
                     this.state.addPadding ? styles.extraBarPadding : null
@@ -91,6 +92,7 @@ class ChatInputBar extends Component<IProps, IState> {
                 <Input
                     blurOnSubmit = { false }
                     customStyles = {{ container: styles.customInputContainer }}
+                    id = 'chat-input-messagebox'
                     multiline = { false }
                     onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }
@@ -101,6 +103,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     value = { this.state.message } />
                 <IconButton
                     disabled = { !this.state.message }
+                    id = { this.props.t('chat.sendButton') }
                     onPress = { this._onSubmit }
                     src = { IconSend }
                     type = { BUTTON_TYPES.PRIMARY } />

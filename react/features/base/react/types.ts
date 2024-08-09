@@ -5,6 +5,7 @@ export interface IIconButtonProps {
     accessibilityLabel?: string;
     color?: string;
     disabled?: boolean;
+    id?: string;
     onPress?: (e?: GestureResponderEvent) => void;
     size?: number | string;
     src: Function;

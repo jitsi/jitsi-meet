@@ -27,6 +27,7 @@ const PollItem = ({ pollId, setCreateMode }: IProps) => {
 
     return (
         <View
+            id = 'poll-item-container'
             style = { pollsStyles.pollItemContainer as ViewStyle }>
             { showResults
                 ? <PollResults
