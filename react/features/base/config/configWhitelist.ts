@@ -122,6 +122,7 @@ export default [
     'disableShortcuts',
     'disableShowMoreStats',
     'disableRemoveRaisedHandOnFocus',
+    'disableRemoveRaisedHandOnFocusNotification',
     'disableSpeakerStatsSearch',
     'speakerStatsOrder',
     'disableSimulcast',

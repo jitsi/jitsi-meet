@@ -93,6 +93,16 @@ export function getDisableRemoveRaisedHandOnFocus(state: IReduxState) {
 }
 
 /**
+ * Selector used to get the disableRemoveRaisedHandOnFocusNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRemoveRaisedHandOnFocusNotification(state: IReduxState) {
+    return state['features/base/config']?.disableRemoveRaisedHandOnFocusNotification || false;
+}
+
+/**
  * Selector used to get the endpoint used for fetching the recording.
  *
  * @param {Object} state - The global state.

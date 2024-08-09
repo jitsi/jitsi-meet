@@ -235,6 +235,10 @@ var config = {
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
 
+    // Specifies whether there is a notification before hiding the raised hand
+    // when someone becomes the dominant speaker.
+    // disableRemoveRaisedHandOnFocusNotification: false,
+
     // speakerStats: {
     //     // Specifies whether the speaker stats is enable or not.
     //     disabled: false,
