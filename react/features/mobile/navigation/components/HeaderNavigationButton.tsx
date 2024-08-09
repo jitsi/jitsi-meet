@@ -22,7 +22,7 @@ interface IProps {
     disabled?: boolean;
 
     /**
-     * Id of the header navigation button
+     * ID of the header navigation button.
      */
     id?: string;
 

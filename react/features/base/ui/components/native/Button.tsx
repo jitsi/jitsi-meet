@@ -8,7 +8,6 @@ import BaseTheme from '../BaseTheme.native';
 import { IButtonProps } from '../types';
 
 import styles from './buttonStyles';
-import {IconSource} from "react-native-paper/lib/typescript/components/Icon";
 
 
 export interface IProps extends IButtonProps {
