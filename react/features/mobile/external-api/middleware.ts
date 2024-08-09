@@ -52,15 +52,13 @@ import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
+import { CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED } from '../../toolbox/actionTypes';
 import { muteLocal } from '../../video-menu/actions.native';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
 import { isExternalAPIAvailable } from '../react-native-sdk/functions';
 
-import {
-    CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
-    READY_TO_CLOSE
-} from './actionTypes';
+import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
@@ -81,12 +79,6 @@ const CHAT_TOGGLED = 'CHAT_TOGGLED';
  * has ended either by user request or because an error was produced.
  */
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
-
-/**
- * Event which will be emitted on the native side to indicate that the custom overflow menu button was pressed.
- */
-const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_MENU_BUTTON_PRESSED';
-
 
 /**
  * Event which will be emitted on the native side to indicate a message was received
@@ -199,7 +191,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
 
         sendEvent(
             store,
-            CUSTOM_MENU_BUTTON_PRESSED,
+            CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
             {
                 id,
                 text

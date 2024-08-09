@@ -11,7 +11,6 @@ import SettingsButton from '../../../base/settings/components/native/SettingsBut
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
-import { customOverflowMenuButtonPressed } from '../../../mobile/external-api/actions';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
@@ -25,6 +24,7 @@ import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCapt
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
+import { customOverflowMenuButtonPressed } from '../../actions.native';
 import { getMovableButtons } from '../../functions.native';
 
 import AudioOnlyButton from './AudioOnlyButton';
