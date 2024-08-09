@@ -249,7 +249,7 @@ var config = {
     //     disableNextSpeakerNotification: false,
 
     //     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not.
-    //     disableRemoveRaisedHandOnFocus: false
+    //     disableRemoveRaisedHandOnFocus: false,
     // },
 
     // speakerStats: {
