@@ -53,7 +53,7 @@ const Switch = ({
         onValueChange = { onChange }
         style = { style as StyleProp<object> }
         thumbColor = { thumbColor }
-        trackColor = { trackColor as ColorValue }
+        trackColor = { trackColor }
         value = { checked } />
 );
 
