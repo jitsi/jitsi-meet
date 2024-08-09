@@ -89,7 +89,37 @@ export function getFeatureFlag(state: IReduxState, featureFlag: string) {
  * @returns {boolean}
  */
 export function getDisableRemoveRaisedHandOnFocus(state: IReduxState) {
-    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+    return state['features/base/config']?.raisedHands?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandByModerator.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandByModerator(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandByModerator || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandNotification || true;
+}
+
+/**
+ * Selector used to get the disableNextSpeakerNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableNextSpeakerNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableNextSpeakerNotification || false;
 }
 
 /**

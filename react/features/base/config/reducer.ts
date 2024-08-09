@@ -442,6 +442,12 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
     }
 
+    newValue.raisedHands = newValue.raisedHands || {};
+
+    if (oldValue.disableRemoveRaisedHandOnFocus) {
+        newValue.raisedHands.disableRemoveRaisedHandOnFocus = oldValue.disableRemoveRaisedHandOnFocus;
+    }
+
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
         newValue.audioQuality = {
             opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,

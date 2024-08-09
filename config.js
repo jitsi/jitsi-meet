@@ -232,8 +232,25 @@ var config = {
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     // resolution: 720,
 
+    // DEPRECATED. Please use raisedHands.disableRemoveRaisedHandOnFocus instead.
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
+
+    // Specifies which raised hand related config should be set.
+    // raisedHands: {
+    //     // Specifies whether the raised hand can be lowered by moderator.
+    //     disableLowerHandByModerator: false,
+
+    //     // Specifies whether there is a notification before hiding the raised hand
+    //     // when someone becomes the dominant speaker.
+    //     disableLowerHandNotification: true,
+
+    //     // Specifies whether there is a notification when you are the next speaker in line.
+    //     disableNextSpeakerNotification: false,
+
+    //     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not.
+    //     disableRemoveRaisedHandOnFocus: false,
+    // },
 
     // speakerStats: {
     //     // Specifies whether the speaker stats is enable or not.

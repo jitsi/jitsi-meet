@@ -6,7 +6,11 @@ import { IStore } from '../../app/types';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, RAISE_HAND_NOTIFICATION_ID } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
-import { getSsrcRewritingFeatureFlag, hasBeenNotified, isNextToSpeak } from '../config/functions.any';
+import {
+    getDisableNextSpeakerNotification,
+    getSsrcRewritingFeatureFlag,
+    hasBeenNotified,
+    isNextToSpeak } from '../config/functions.any';
 import { VIDEO_TYPE } from '../media/constants';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
@@ -33,7 +37,10 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].raisedHandsQueue,
     /* listener */ (raisedHandsQueue, store) => {
-        if (raisedHandsQueue.length && isNextToSpeak(store.getState()) && !hasBeenNotified(store.getState())) {
+        if (raisedHandsQueue.length
+            && isNextToSpeak(store.getState())
+            && !hasBeenNotified(store.getState())
+            && !getDisableNextSpeakerNotification(store.getState())) {
             _notifyNextSpeakerInRaisedHandQueue(store);
         }
         if (!raisedHandsQueue[0]) {
