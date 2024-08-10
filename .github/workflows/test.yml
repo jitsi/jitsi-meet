@@ -1,0 +1,37 @@
+name: CI for Jitsi Meet
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install selenium-standalone@latest -g
+          selenium-standalone install
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Start Selenium Server
+        run: selenium-standalone start &
+        
+      - name: Run E2E Tests
+        run: |
+          npx cypress install
+          npx cypress run
