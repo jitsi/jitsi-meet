@@ -52,7 +52,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
             backgroundColor: theme.palette.ui04,
             borderRadius: '12px 4px 12px 12px',
 
-<<<<<<< HEAD
         '&.privatemessage': {
             backgroundColor: theme.palette.support05
         },
@@ -72,9 +71,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
             },
 
             '&.lobbymessage': {
-=======
-            '&.privatemessage': {
->>>>>>> f5a372911 (Add reaction button and kebab menu)
                 backgroundColor: theme.palette.support05
             }
         },
