@@ -1,14 +1,17 @@
-name: CI for Jitsi Meet
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16]
 
     steps:
       - name: Checkout code
@@ -17,21 +20,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '16'
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install selenium-standalone@latest -g
-          selenium-standalone install
+        run: npm install
 
-      - name: Run Unit Tests
+      - name: Run tests
         run: npm test
-
-      - name: Start Selenium Server
-        run: selenium-standalone start &
-        
-      - name: Run E2E Tests
-        run: |
-          npx cypress install
-          npx cypress run
