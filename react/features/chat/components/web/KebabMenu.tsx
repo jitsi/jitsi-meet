@@ -1,5 +1,5 @@
 import Popover from '@mui/material/Popover';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -9,7 +9,6 @@ import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
-import { sendReaction } from '../../actions.any.ts';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
 export interface IProps {

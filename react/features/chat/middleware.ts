@@ -35,7 +35,6 @@ import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { showToolbox } from '../toolbox/actions';
 
-
 import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SEND_REACTION, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, addMessageReaction, clearMessages, closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
@@ -215,7 +214,7 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
 
         if (conference) {
-            const { reaction, messageId , receiverId } = action;
+            const { reaction, messageId, receiverId } = action;
 
             conference.sendReaction(reaction, messageId, receiverId);
         }
@@ -368,9 +367,6 @@ function _onConferenceMessageReceived(store: IStore,
 
 function _onReactionReceived(store: IStore, { id, reactionList, messageId, receiverId }: {
     id: string; messageId: string; reactionList: string[]; receiverId: string; }) {
-    const state = store.getState();
-
-    console.log('REACTION HAS BEEN RECEIVED IN _onReactionReceived', id, reactionList, messageId);
 
     const reactionPayload = {
         id,

@@ -1,6 +1,5 @@
 import { Theme } from '@mui/material';
 import React from 'react';
-import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -8,7 +7,6 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { sendReaction } from '../../actions.any.ts';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
@@ -20,136 +18,138 @@ interface IProps extends IChatMessageProps {
     type: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => ({
-    chatMessageFooter: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: theme.spacing(1)
-    },
-    chatMessageFooterLeft: {
-        display: 'flex',
-        flexGrow: 1,
-        overflow: 'hidden'
-    },
-    chatMessageWrapper: {
-        maxWidth: '100%',
-    },
-    chatMessage: {
-        display: 'inline-flex',
-        padding: '12px',
-        backgroundColor: theme.palette.ui02,
-        borderRadius: '4px 12px 12px 12px',
-        maxWidth: '100%',
-        marginTop: '4px',
-        boxSizing: 'border-box' as const,
-
-        '&.privatemessage': {
-            backgroundColor: theme.palette.support05
+const useStyles = makeStyles()((theme: Theme) => {
+    return {
+        chatMessageFooter: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: theme.spacing(1)
         },
-        '&.local': {
-            backgroundColor: theme.palette.ui04,
-            borderRadius: '12px 4px 12px 12px',
-
-        '&.privatemessage': {
-            backgroundColor: theme.palette.support05
+        chatMessageFooterLeft: {
+            display: 'flex',
+            flexGrow: 1,
+            overflow: 'hidden'
         },
-        '&.local': {
-            backgroundColor: theme.palette.ui04,
-            borderRadius: '12px 4px 12px 12px',
+        chatMessageWrapper: {
+            maxWidth: '100%'
+        },
+        chatMessage: {
+            display: 'inline-flex',
+            padding: '12px',
+            backgroundColor: theme.palette.ui02,
+            borderRadius: '4px 12px 12px 12px',
+            maxWidth: '100%',
+            marginTop: '4px',
+            boxSizing: 'border-box' as const,
+
+            '&.privatemessage': {
+                backgroundColor: theme.palette.support05
+            },
+            '&.local': {
+                backgroundColor: theme.palette.ui04,
+                borderRadius: '12px 4px 12px 12px',
 
                 '&.privatemessage': {
                     backgroundColor: theme.palette.support05
+                },
+                '&.local': {
+                    backgroundColor: theme.palette.ui04,
+                    borderRadius: '12px 4px 12px 12px',
+
+                    '&.privatemessage': {
+                        backgroundColor: theme.palette.support05
+                    }
+                },
+
+                '&.error': {
+                    backgroundColor: theme.palette.actionDanger,
+                    borderRadius: 0,
+                    fontWeight: 100
+                },
+
+                '&.lobbymessage': {
+                    backgroundColor: theme.palette.support05
                 }
             },
-
             '&.error': {
                 backgroundColor: theme.palette.actionDanger,
                 borderRadius: 0,
                 fontWeight: 100
             },
-
             '&.lobbymessage': {
                 backgroundColor: theme.palette.support05
             }
         },
-        '&.error': {
-            backgroundColor: theme.palette.actionDanger,
-            borderRadius: 0,
-            fontWeight: 100
+        sideBySideContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'left',
+            alignItems: 'center',
+            marginLeft: theme.spacing(1)
         },
-        '&.lobbymessage': {
-            backgroundColor: theme.palette.support05
+        reactionBox: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: theme.spacing(1),
+            backgroundColor: theme.palette.grey[800],
+            borderRadius: theme.shape.borderRadius,
+            padding: theme.spacing(0, 1)
+        },
+        reactionCount: {
+            fontSize: '0.8rem',
+            color: theme.palette.grey[400]
+        },
+        replyButton: {
+            padding: '2px'
+        },
+        replyWrapper: {
+            display: 'flex',
+            flexDirection: 'row' as const,
+            alignItems: 'center',
+            maxWidth: '100%'
+        },
+        messageContent: {
+            maxWidth: '100%',
+            overflow: 'hidden',
+            flex: 1
+        },
+        optionsButtonContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: theme.spacing(1)
+        },
+        displayName: {
+            ...withPixelLineHeight(theme.typography.labelBold),
+            color: theme.palette.text02,
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            marginBottom: theme.spacing(1)
+        },
+        userMessage: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.text01,
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
+        },
+        privateMessageNotice: {
+            ...withPixelLineHeight(theme.typography.labelRegular),
+            color: theme.palette.text02,
+            marginTop: theme.spacing(1)
+        },
+        timestamp: {
+            ...withPixelLineHeight(theme.typography.labelRegular),
+            color: theme.palette.text03,
+            marginTop: theme.spacing(1),
+            marginLeft: theme.spacing(1),
+            whiteSpace: 'nowrap',
+            flexShrink: 0
         }
-    },
-    sideBySideContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'left',
-        alignItems: 'center',
-        marginLeft: theme.spacing(1)
-    },
-    reactionBox: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.spacing(1),
-        backgroundColor: theme.palette.grey[800],
-        borderRadius: theme.shape.borderRadius,
-        padding: theme.spacing(0, 1)
-    },
-    reactionCount: {
-        fontSize: '0.8rem',
-        color: theme.palette.grey[400]
-    },
-    replyButton: {
-        padding: '2px'
-    },
-    replyWrapper: {
-        display: 'flex',
-        flexDirection: 'row' as const,
-        alignItems: 'center',
-        maxWidth: '100%'
-    },
-    messageContent: {
-        maxWidth: '100%',
-        overflow: 'hidden',
-        flex: 1
-    },
-    optionsButtonContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: theme.spacing(1)
-    },
-    displayName: {
-        ...withPixelLineHeight(theme.typography.labelBold),
-        color: theme.palette.text02,
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        marginBottom: theme.spacing(1)
-    },
-    userMessage: {
-        ...withPixelLineHeight(theme.typography.bodyShortRegular),
-        color: theme.palette.text01,
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word'
-    },
-    privateMessageNotice: {
-        ...withPixelLineHeight(theme.typography.labelRegular),
-        color: theme.palette.text02,
-        marginTop: theme.spacing(1)
-    },
-    timestamp: {
-        ...withPixelLineHeight(theme.typography.labelRegular),
-        color: theme.palette.text03,
-        marginTop: theme.spacing(1),
-        marginLeft: theme.spacing(1),
-        whiteSpace: 'nowrap',
-        flexShrink: 0
-    }
-}));
+    };
+});
 
 /**
  * Renders a single chat message.
@@ -165,7 +165,7 @@ const ChatMessage = ({
     knocking,
     message,
     showDisplayName,
-    showTimestamp,
+    // showTimestamp,
     type,
     t
 }: IProps) => {
@@ -179,8 +179,8 @@ const ChatMessage = ({
     function _renderDisplayName() {
         return (
             <div
-                aria-hidden={true}
-                className={cx('display-name', classes.displayName)}>
+                aria-hidden = { true }
+                className = { cx('display-name', classes.displayName) }>
                 {message.displayName}
             </div>
         );
@@ -193,7 +193,7 @@ const ChatMessage = ({
      */
     function _renderPrivateNotice() {
         return (
-            <div className={classes.privateMessageNotice}>
+            <div className = { classes.privateMessageNotice }>
                 {getPrivateNoticeMessage(message)}
             </div>
         );
@@ -208,12 +208,12 @@ const ChatMessage = ({
         return (
             <>
                 {message.reactions && message.reactions.length > 0 && (
-                    <div className={classes.reactionBox}>
-                        {message.reactions.slice(0, 3).map((reaction, index) => (
-                            <span key={index}>{reaction}</span>
-                        ))}
+                    <div className = { classes.reactionBox }>
+                        {message.reactions.slice(0, 3).map((reaction, index) =>
+                            <span key = { index }>{reaction}</span>
+                        )}
                         {message.reactions.length > 3 && (
-                            <span className={classes.reactionCount}>
+                            <span className = { classes.reactionCount }>
                                 +{message.reactions.length - 3}
                             </span>
                         )}
@@ -230,7 +230,7 @@ const ChatMessage = ({
      */
     function _renderTimestamp() {
         return (
-            <div className={cx('timestamp', classes.timestamp)}>
+            <div className = { cx('timestamp', classes.timestamp) }>
                 {getFormattedTimestamp(message)}
             </div>
         );
@@ -238,37 +238,37 @@ const ChatMessage = ({
 
     return (
         <div
-            className={cx(classes.chatMessageWrapper, type)}
-            id={message.messageId}
-            tabIndex={-1}>
-            <div className={classes.sideBySideContainer}>
+            className = { cx(classes.chatMessageWrapper, type) }
+            id = { message.messageId }
+            tabIndex = { -1 }>
+            <div className = { classes.sideBySideContainer }>
                 {kebabMenuSelfVisible && (
-                    <div className={classes.optionsButtonContainer}>
+                    <div className = { classes.optionsButtonContainer }>
                         <KebabMenu />
                     </div>
                 )}
                 <div
-                    className={cx(
+                    className = { cx(
                         'chatmessage',
                         classes.chatMessage,
                         type,
                         message.privateMessage && 'privatemessage',
                         message.lobbyChat && !knocking && 'lobbymessage'
-                    )}>
-                    <div className={classes.replyWrapper}>
-                        <div className={cx('messagecontent', classes.messageContent)}>
+                    ) }>
+                    <div className = { classes.replyWrapper }>
+                        <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
-                            <div className={cx('usermessage', classes.userMessage)}>
-                                <span className="sr-only">
+                            <div className = { cx('usermessage', classes.userMessage) }>
+                                <span className = 'sr-only'>
                                     {message.displayName === message.recipient
                                         ? t('chat.messageAccessibleTitleMe')
                                         : t('chat.messageAccessibleTitle', {
                                             user: message.displayName
                                         })}
                                 </span>
-                                <Message text={getMessageText(message)} />
-                                <div className={classes.chatMessageFooter}>
-                                    <div className={classes.chatMessageFooterLeft}>
+                                <Message text = { getMessageText(message) } />
+                                <div className = { classes.chatMessageFooter }>
+                                    <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.length > 0 && (
                                             <>
                                                 {_renderReactions()}
@@ -278,39 +278,36 @@ const ChatMessage = ({
                                     {_renderTimestamp()}
                                 </div>
                                 {canReply && (
-                                    <div className={classes.replyButton}>
+                                    <div className = { classes.replyButton }>
                                         <PrivateMessageButton
-                                            isLobbyMessage={message.lobbyChat}
-                                            participantID={message.participantId}
-                                        />
+                                            isLobbyMessage = { message.lobbyChat }
+                                            participantID = { message.participantId } />
                                     </div>
                                 )}
-                                {(message.privateMessage || (message.lobbyChat && !knocking)) &&
-                                    _renderPrivateNotice()}
+                                {(message.privateMessage || (message.lobbyChat && !knocking))
+                                    && _renderPrivateNotice()}
                             </div>
                         </div>
                     </div>
                     {(canReact || kebabMenuVisible) && (
-                        <div className={classes.sideBySideContainer}>
+                        <div className = { classes.sideBySideContainer }>
                             <div>
                                 {canReact && (
-                                    <div className={classes.optionsButtonContainer}>
+                                    <div className = { classes.optionsButtonContainer }>
                                         <ReactButton
-                                            messageId={message.messageId}
-                                            receiverId={''}
-                                        />
+                                            messageId = { message.messageId }
+                                            receiverId = { '' } />
                                     </div>
                                 )}
                             </div>
                             <div>
                                 {kebabMenuVisible && (
-                                    <div className={classes.optionsButtonContainer}>
+                                    <div className = { classes.optionsButtonContainer }>
                                         <KebabMenu
-                                            isLobbyMessage={message.lobbyChat}
-                                            message={message.message}
-                                            messageId={message.messageId}
-                                            participantId={message.messageId}
-                                        />
+                                            isLobbyMessage = { message.lobbyChat }
+                                            message = { message.message }
+                                            messageId = { message.messageId }
+                                            participantId = { message.messageId } />
                                     </div>
                                 )}
                             </div>
