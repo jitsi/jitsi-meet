@@ -334,9 +334,9 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
 
     return {
         canReply: getCanReplyToMessage(state, message),
-        canReact: message.id !== localParticipantId,
-        kebabMenuSelfVisible: message.id === localParticipantId,
-        kebabMenuVisible: message.id !== localParticipantId,
+        canReact: message.participantId !== localParticipantId,
+        kebabMenuSelfVisible: message.participantId === localParticipantId,
+        kebabMenuVisible: message.participantId !== localParticipantId,
         knocking
     };
 }

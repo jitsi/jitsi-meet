@@ -215,9 +215,9 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
 
         if (conference) {
-            const { messageID, receiverID, reaction } = action;
+            const { reaction, messageId , receiverId } = action;
 
-            conference.sendReaction(reaction, messageID, receiverID);
+            conference.sendReaction(reaction, messageId, receiverId);
         }
         break;
     }
