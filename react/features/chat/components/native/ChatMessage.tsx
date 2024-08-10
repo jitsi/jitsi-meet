@@ -76,7 +76,9 @@ class ChatMessage extends Component<IChatMessageProps> {
         const messageText = getMessageText(this.props.message);
 
         return (
-            <View style = { styles.messageWrapper as ViewStyle } >
+            <View
+                id = { message.messageId }
+                style = { styles.messageWrapper as ViewStyle } >
                 { this._renderAvatar() }
                 <View style = { detailsWrapperStyle }>
                     <View style = { messageBubbleStyle }>
