@@ -46,6 +46,11 @@ export interface IChatMessageProps extends WithTranslation {
     canReact?: boolean;
 
     /**
+     * Whether the message can be replied to.
+     */
+    canReply?: boolean;
+
+    /**
      * Whether gifs are enabled or not.
      */
     gifEnabled?: boolean;
