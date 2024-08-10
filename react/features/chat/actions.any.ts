@@ -138,18 +138,18 @@ export function sendMessage(message: string, ignorePrivacy = false) {
  * Sends a reaction to a message.
  *
  * @param {string} reaction - The reaction to send.
- * @param {string} messageID - The message ID to react to.
- * @param {string} receiverID - The receiver ID of the reaction.
+ * @param {string} messageId - The message ID to react to.
+ * @param {string} receiverId - The receiver ID of the reaction.
  * @returns {Function}
  */
-export function sendReaction(reaction: string, messageID: string, receiverID?: string) {
+export function sendReaction(reaction: string, messageId: string, receiverId?: string) {
     console.log('sendReaction');
 
     return {
         type: SEND_REACTION,
         reaction,
-        messageID,
-        receiverID
+        messageId,
+        receiverId
     };
 }
 

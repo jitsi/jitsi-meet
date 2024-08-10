@@ -289,31 +289,31 @@ const ChatMessage = ({
                             </div>
                         </div>
                     </div>
-                    {(canReact || kebabMenuVisible) && (
-                        <div className = { classes.sideBySideContainer }>
-                            <div>
-                                {canReact && (
-                                    <div className = { classes.optionsButtonContainer }>
-                                        <ReactButton
-                                            messageId = { message.messageId }
-                                            receiverId = { '' } />
-                                    </div>
-                                )}
-                            </div>
-                            <div>
-                                {kebabMenuVisible && (
-                                    <div className = { classes.optionsButtonContainer }>
-                                        <KebabMenu
-                                            isLobbyMessage = { message.lobbyChat }
-                                            message = { message.message }
-                                            messageId = { message.messageId }
-                                            participantId = { message.messageId } />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
                 </div>
+                {(canReact || kebabMenuVisible) && (
+                    <div className = { classes.sideBySideContainer }>
+                        <div>
+                            {canReact && (
+                                <div className = { classes.optionsButtonContainer }>
+                                    <ReactButton
+                                        messageId = { message.messageId }
+                                        receiverId = { '' } />
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            {kebabMenuVisible && (
+                                <div className = { classes.optionsButtonContainer }>
+                                    <KebabMenu
+                                        isLobbyMessage = { message.lobbyChat }
+                                        message = { message.message }
+                                        messageId = { message.messageId }
+                                        participantId = { message.messageId } />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
