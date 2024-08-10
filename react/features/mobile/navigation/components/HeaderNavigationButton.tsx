@@ -22,6 +22,11 @@ interface IProps {
     disabled?: boolean;
 
     /**
+     * ID of the header navigation button.
+     */
+    id?: string;
+
+    /**
      * Label of the button.
      */
     label?: string;
@@ -47,7 +52,7 @@ interface IProps {
     twoActions?: boolean;
 }
 
-const HeaderNavigationButton = ({ color, disabled, label, onPress, src, style, twoActions }: IProps) => {
+const HeaderNavigationButton = ({ color, id, disabled, label, onPress, src, style, twoActions }: IProps) => {
 
     let btnStyle;
     let labelStyle;
@@ -70,6 +75,7 @@ const HeaderNavigationButton = ({ color, disabled, label, onPress, src, style, t
                 src ? (
                     <IconButton
                         color = { color }
+                        id = { id }
                         onPress = { onPress }
                         size = { 24 }
                         src = { src }
@@ -80,6 +86,7 @@ const HeaderNavigationButton = ({ color, disabled, label, onPress, src, style, t
                 ) : (
                     <Button
                         disabled = { disabled }
+                        id = { id }
                         labelKey = { label }
                         labelStyle = { labelStyle }
                         onClick = { onPress }

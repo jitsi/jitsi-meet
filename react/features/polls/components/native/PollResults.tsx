@@ -92,8 +92,12 @@ const PollResults = (props: AbstractProps) => {
     /* eslint-disable react/jsx-no-bind */
     return (
         <View>
-            <Text style = { dialogStyles.questionText as TextStyle } >{ question }</Text>
-            <Text style = { dialogStyles.questionOwnerText as TextStyle } >
+            <Text
+                id = 'question-text'
+                style = { dialogStyles.questionText as TextStyle } >{ question }</Text>
+            <Text
+                id = 'poll-owner-text'
+                style = { dialogStyles.questionOwnerText as TextStyle } >
                 { t('polls.by', { name: creatorName }) }
             </Text>
             <FlatList
@@ -102,6 +106,11 @@ const PollResults = (props: AbstractProps) => {
                 renderItem = { answer => renderRow(answer.item) } />
             <View style = { pollsStyles.bottomLinks as ViewStyle }>
                 <Button
+                    id = {
+                        showDetails
+                            ? t('polls.results.hideDetailedResults')
+                            : t('polls.results.showDetailedResults')
+                    }
                     labelKey = {
                         showDetails
                             ? 'polls.results.hideDetailedResults'
@@ -111,6 +120,11 @@ const PollResults = (props: AbstractProps) => {
                     onClick = { toggleIsDetailed }
                     type = { BUTTON_TYPES.TERTIARY } />
                 <Button
+                    id = {
+                        haveVoted
+                            ? t('polls.results.changeVote')
+                            : t('polls.results.vote')
+                    }
                     labelKey = {
                         haveVoted
                             ? 'polls.results.changeVote'
