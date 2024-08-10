@@ -168,6 +168,7 @@
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-native": "4.0.0",
     "eslint-plugin-typescript-sort-keys": "2.3.0",
+    "jest": "^27.5.1",
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.77.0",
     "patch-package": "6.4.7",
@@ -204,7 +205,8 @@
     "validate": "npm ls",
     "tsc-test:web": "tsc --project tsconfig.web.json --listFilesOnly | grep -v node_modules | grep native",
     "tsc-test:native": "tsc --project tsconfig.native.json --listFilesOnly | grep -v node_modules | grep web",
-    "start": "make dev"
+    "start": "make dev",
+    "test": "jest"
   },
   "resolutions": {
     "@types/react": "17.0.14",
