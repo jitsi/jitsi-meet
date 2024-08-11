@@ -165,6 +165,7 @@ const ChatMessage = ({
     knocking,
     message,
     showDisplayName,
+
     // showTimestamp,
     type,
     t
@@ -205,23 +206,33 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function _renderReactions() {
+        if (!message.reactions || message.reactions.size === 0) {
+            return null;
+        }
+
+        const reactionsArray = Array.from(message.reactions.entries())
+            .map(([ reaction, participants ]) => {
+                return { reaction,
+                    count: participants.size };
+            })
+            .sort((a, b) => b.count - a.count);
+
         return (
-            <>
-                {message.reactions && message.reactions.length > 0 && (
-                    <div className = { classes.reactionBox }>
-                        {message.reactions.slice(0, 3).map((reaction, index) =>
-                            <span key = { index }>{reaction}</span>
-                        )}
-                        {message.reactions.length > 3 && (
-                            <span className = { classes.reactionCount }>
-                                +{message.reactions.length - 3}
-                            </span>
-                        )}
-                    </div>
+            <div className = { classes.reactionBox }>
+                {reactionsArray.slice(0, 3).map(({ reaction, count }, index) => (
+                    <span key = { index }>
+                        {reaction}
+                    </span>
+                ))}
+                {reactionsArray.length > 3 && (
+                    <span className = { classes.reactionCount }>
+                        +{reactionsArray.length - 3}
+                    </span>
                 )}
-            </>
+            </div>
         );
     }
+
 
     /**
      * Renders the time at which the message was sent.
@@ -269,7 +280,7 @@ const ChatMessage = ({
                                 <Message text = { getMessageText(message) } />
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
-                                        {message.reactions && message.reactions.length > 0 && (
+                                        {message.reactions && message.reactions.size > 0 && (
                                             <>
                                                 {_renderReactions()}
                                             </>

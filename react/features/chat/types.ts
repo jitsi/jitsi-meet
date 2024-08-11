@@ -12,7 +12,7 @@ export interface IMessage {
     messageType: string;
     participantId: string;
     privateMessage: boolean;
-    reactions: Array<String>;
+    reactions: Map<string, Set<string>>;
     recipient: string;
     timestamp: number;
 }

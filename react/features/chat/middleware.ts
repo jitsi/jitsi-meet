@@ -303,9 +303,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.REACTION_RECEIVED,
-        (id: string, reactionList: string[], messageId: string, receiverId: string) => {
+        (participantId: string, reactionList: string[], messageId: string, receiverId: string) => {
             _onReactionReceived(store, {
-                id,
+                participantId,
                 reactionList,
                 messageId,
                 receiverId
@@ -365,11 +365,11 @@ function _onConferenceMessageReceived(store: IStore,
     }, true, isGif);
 }
 
-function _onReactionReceived(store: IStore, { id, reactionList, messageId, receiverId }: {
-    id: string; messageId: string; reactionList: string[]; receiverId: string; }) {
+function _onReactionReceived(store: IStore, { participantId, reactionList, messageId, receiverId }: {
+    messageId: string; participantId: string; reactionList: string[]; receiverId: string; }) {
 
     const reactionPayload = {
-        id,
+        participantId,
         reactionList,
         messageId,
         receiverId
