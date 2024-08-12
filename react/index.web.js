@@ -7,6 +7,7 @@ import Platform from './features/base/react/Platform.web';
 import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
 import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
+import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
 
 const logger = getLogger('index.web');
 
@@ -50,6 +51,10 @@ globalNS.connectionTimes = {
     'index.loaded': window.indexLoadedTime
 };
 
+window.addEventListener('load', () => {
+    globalNS.connectionTimes['window.loaded'] = window.loadedEventTime;
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
 
@@ -60,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
 globalNS.entryPoints = {
     APP: App,
     PREJOIN: PrejoinApp,
-    DIALIN: DialInSummaryApp
+    DIALIN: DialInSummaryApp,
+    WHITEBOARD: WhiteboardApp
 };
 
 globalNS.renderEntryPoint = ({

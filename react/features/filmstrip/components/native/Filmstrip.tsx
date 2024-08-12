@@ -81,7 +81,7 @@ interface IProps {
 class Filmstrip extends PureComponent<IProps> {
     /**
      * Whether the local participant should be rendered separately from the
-     * remote participants ie outside of their {@link ScrollView}.
+     * remote participants i.e. outside of their {@link ScrollView}.
      */
     _separateLocalThumbnail: boolean;
 
@@ -280,6 +280,8 @@ class Filmstrip extends PureComponent<IProps> {
                 <FlatList
                     bounces = { false }
                     data = { participants }
+
+                    /* @ts-ignore */
                     getItemLayout = { this._getItemLayout }
                     horizontal = { isNarrowAspectRatio }
                     initialNumToRender = { initialNumToRender }

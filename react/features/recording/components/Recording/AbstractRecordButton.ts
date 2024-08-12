@@ -6,9 +6,7 @@ import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { getActiveSession, getRecordButtonProps } from '../../functions';
-
-import LocalRecordingManager from './LocalRecordingManager';
+import { canStopRecording, getRecordButtonProps } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -71,7 +69,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @protected
      * @returns {void}
      */
-    async _handleClick() {
+    _handleClick() {
         const { _isRecordingRunning, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(
@@ -80,7 +78,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
                 'is_recording': _isRecordingRunning,
                 type: JitsiRecordingConstants.mode.FILE
             }));
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._onHandleClick();
@@ -133,8 +131,7 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         _disabled,
-        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
-            || LocalRecordingManager.isRecordingLocally(),
+        _isRecordingRunning: canStopRecording(state),
         _tooltip,
         visible
     };

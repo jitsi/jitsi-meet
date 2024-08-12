@@ -60,7 +60,10 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
             };
         }
 
-        return state;
+        return {
+            ...state,
+            knocking: false
+        };
     }
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:

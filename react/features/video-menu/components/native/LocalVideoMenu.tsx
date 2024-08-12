@@ -4,17 +4,20 @@ import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n/functions';
 import {
     getLocalParticipant,
+    getParticipantCount,
     getParticipantDisplayName
 } from '../../../base/participants/functions';
 import { ILocalParticipant } from '../../../base/participants/types';
 import ToggleSelfViewButton from '../../../toolbox/components/native/ToggleSelfViewButton';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
+import DemoteToVisitorButton from './DemoteToVisitorButton';
 import styles from './styles';
 
 /**
@@ -33,6 +36,11 @@ interface IProps {
      * Display name of the participant retrieved from Redux.
      */
     _participantDisplayName: string;
+
+    /**
+     * Shows/hides the local switch to visitor button.
+     */
+    _showDemote: boolean;
 
     /**
      * The Redux dispatch function.
@@ -57,6 +65,7 @@ class LocalVideoMenu extends PureComponent<IProps> {
     constructor(props: IProps) {
         super(props);
 
+        this._onCancel = this._onCancel.bind(this);
         this._renderMenuHeader = this._renderMenuHeader.bind(this);
     }
 
@@ -66,11 +75,17 @@ class LocalVideoMenu extends PureComponent<IProps> {
      * @inheritdoc
      */
     render() {
-        const { _participant } = this.props;
+        const { _participant, _showDemote } = this.props;
         const buttonProps = {
+            afterClick: this._onCancel,
             showLabel: true,
             participantID: _participant?.id ?? '',
             styles: bottomSheetStyles.buttons
+        };
+
+        const connectionStatusButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
         };
 
         return (
@@ -78,7 +93,8 @@ class LocalVideoMenu extends PureComponent<IProps> {
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { true }>
                 <ToggleSelfViewButton { ...buttonProps } />
-                <ConnectionStatusButton { ...buttonProps } />
+                { _showDemote && <DemoteToVisitorButton { ...buttonProps } /> }
+                <ConnectionStatusButton { ...connectionStatusButtonProps } />
             </BottomSheet>
         );
     }
@@ -105,6 +121,16 @@ class LocalVideoMenu extends PureComponent<IProps> {
             </View>
         );
     }
+
+    /**
+     * Callback to hide the {@code RemoteVideoMenu}.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _onCancel() {
+        this.props.dispatch(hideSheet());
+    }
 }
 
 /**
@@ -115,11 +141,13 @@ class LocalVideoMenu extends PureComponent<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { disableSelfDemote } = state['features/base/config'];
     const participant = getLocalParticipant(state);
 
     return {
         _participant: participant,
-        _participantDisplayName: getParticipantDisplayName(state, participant?.id ?? '')
+        _participantDisplayName: getParticipantDisplayName(state, participant?.id ?? ''),
+        _showDemote: !disableSelfDemote && getParticipantCount(state) > 1
     };
 }
 

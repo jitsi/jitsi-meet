@@ -11,9 +11,10 @@ import {
     isLocalParticipantModerator
 } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
-import { isInBreakoutRoom } from '../breakout-rooms/functions';
+import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -139,9 +140,8 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
             }
         }
     }
-    if ((!Array.isArray(recordingSessions) || recordingSessions.length === 0)
-        && mode === JitsiRecordingConstants.mode.FILE
-        && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+    if (!status && mode === JitsiRecordingConstants.mode.FILE
+            && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
 
@@ -156,6 +156,81 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
 export function supportsLocalRecording() {
     return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
         && navigator.product !== 'ReactNative';
+}
+
+/**
+ * Returns true if there is a cloud recording running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isCloudRecordingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE));
+}
+
+/**
+ * Returns true if there is a live streaming running.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isLiveStreamingRunning(state: IReduxState) {
+    return Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+}
+
+/**
+ * Returns true if there is a recording session running.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingRunning(state: IReduxState) {
+    return (
+        isCloudRecordingRunning(state)
+        || LocalRecordingManager.isRecordingLocally()
+    );
+}
+
+/**
+ * Returns true if the participant can stop recording.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function canStopRecording(state: IReduxState) {
+    if (LocalRecordingManager.isRecordingLocally()) {
+        return true;
+    }
+
+    if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
+        return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
+    }
+
+    return false;
+}
+
+/**
+ * Returns whether the transcription should start automatically when recording starts.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function shouldAutoTranscribeOnRecord(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return (transcription?.autoTranscribeOnRecord ?? true) && canAddTranscriber(state);
+}
+
+/**
+ * Returns whether the recording should be shared.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isRecordingSharingEnabled(state: IReduxState) {
+    const { recordingService } = state['features/base/config'];
+
+    return recordingService?.sharingEnabled ?? false;
 }
 
 /**
@@ -188,22 +263,22 @@ export function getRecordButtonProps(state: IReduxState) {
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
-    const recordingEnabled = recordingService?.enabled || localRecordingEnabled || dropboxEnabled;
+    const recordingEnabled = recordingService?.enabled || dropboxEnabled;
 
-    if (isModerator) {
+    if (localRecordingEnabled) {
+        visible = true;
+    } else if (isModerator) {
         visible = recordingEnabled ? isJwtFeatureEnabled(state, 'recording', true) : false;
-    } else {
-        visible = navigator.product !== 'ReactNative' && localRecordingEnabled;
     }
 
     // disable the button if the livestreaming is running.
-    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+    if (visible && isLiveStreamingRunning(state)) {
         disabled = true;
         tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }
 
     // disable the button if we are in a breakout room.
-    if (isInBreakoutRoom(state)) {
+    if (isInBreakoutRoomF(state)) {
         disabled = true;
         visible = false;
     }
@@ -283,7 +358,7 @@ export async function sendMeetingHighlight(state: IReduxState) {
  * @param {Object} state - Redux state.
  * @returns {boolean}
  */
-function isRemoteParticipantRecordingLocally(state: IReduxState) {
+export function isRemoteParticipantRecordingLocally(state: IReduxState) {
     const participants = getRemoteParticipants(state);
 
     // eslint-disable-next-line prefer-const
@@ -338,4 +413,32 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
     dispatch(registerSound(
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
+}
+
+/**
+ * Returns true if the live streaming button should be visible.
+ *
+ * @param {boolean} localParticipantIsModerator - True if the local participant is moderator.
+ * @param {boolean} liveStreamingEnabled - True if the live streaming is enabled.
+ * @param {boolean} liveStreamingEnabledInJwt - True if the lives treaming feature is enabled in JWT.
+ * @returns {boolean}
+ */
+export function isLiveStreamingButtonVisible({
+    localParticipantIsModerator,
+    liveStreamingEnabled,
+    liveStreamingEnabledInJwt,
+    isInBreakoutRoom
+}: {
+    isInBreakoutRoom: boolean;
+    liveStreamingEnabled: boolean;
+    liveStreamingEnabledInJwt: boolean;
+    localParticipantIsModerator: boolean;
+}) {
+    let visible = false;
+
+    if (localParticipantIsModerator && !isInBreakoutRoom) {
+        visible = liveStreamingEnabled ? liveStreamingEnabledInJwt : false;
+    }
+
+    return visible;
 }

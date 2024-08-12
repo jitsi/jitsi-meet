@@ -714,6 +714,9 @@
             "removeOption": "Suprimir l'opcion",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "Las opcions devon èsser unicas"
+        },
         "notification": {
             "description": "Dobrissètz l’onglet dels sondatge per votar",
             "title": "Un sondatge novèl es estat apondut a la conferéncia"
@@ -935,6 +938,7 @@
         "neutral": "Neutre",
         "sad": "Trist",
         "search": "Recercar",
+        "searchHint": "Cercar participants",
         "seconds": "{{count}} segondas",
         "speakerStats": "Estatisticas orator",
         "speakerTime": "Temps de paraula",

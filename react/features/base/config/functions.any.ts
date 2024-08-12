@@ -6,8 +6,7 @@ import { safeJsonParse } from '@jitsi/js-utils/json';
 import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
-import { browser } from '../lib-jitsi-meet';
-import { IMediaState } from '../media/reducer';
+import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -61,23 +60,13 @@ export function getMeetingRegion(state: IReduxState) {
 }
 
 /**
- * Selector for determining if sending multiple stream support is enabled.
- *
- * @param {Object} _state - The global state.
- * @returns {boolean}
- */
-export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState | IMediaState) {
-    return browser.supportsUnifiedPlan();
-}
-
-/**
  * Selector used to get the SSRC-rewriting feature flag.
  *
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
 export function getSsrcRewritingFeatureFlag(state: IReduxState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING) ?? true;
 }
 
 /**
@@ -100,7 +89,37 @@ export function getFeatureFlag(state: IReduxState, featureFlag: string) {
  * @returns {boolean}
  */
 export function getDisableRemoveRaisedHandOnFocus(state: IReduxState) {
-    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+    return state['features/base/config']?.raisedHands?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandByModerator.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandByModerator(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandByModerator || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandNotification || true;
+}
+
+/**
+ * Selector used to get the disableNextSpeakerNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableNextSpeakerNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableNextSpeakerNotification || false;
 }
 
 /**
@@ -194,6 +213,31 @@ export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', con
 export function isNameReadOnly(state: IReduxState): boolean {
     return Boolean(state['features/base/config'].disableProfile
         || state['features/base/config'].readOnlyName);
+}
+
+/**
+ * Selector for determining if the participant is the next one in the queue to speak.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNextToSpeak(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue || [];
+    const participantId = getLocalParticipant(state)?.id;
+
+    return participantId === raisedHandsQueue[0]?.id;
+}
+
+/**
+ * Selector for determining if the next to speak participant in the queue has been notified.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function hasBeenNotified(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue;
+
+    return Boolean(raisedHandsQueue[0]?.hasBeenNotified);
 }
 
 /**

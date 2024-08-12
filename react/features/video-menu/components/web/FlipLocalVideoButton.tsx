@@ -6,7 +6,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 
 /**
  * The type of the React {@code Component} props of {@link FlipLocalVideoButton}.

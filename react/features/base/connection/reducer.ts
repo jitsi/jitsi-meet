@@ -10,6 +10,7 @@ import {
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
+    SET_PREFER_VISITOR,
     SHOW_CONNECTION_INFO
 } from './actionTypes';
 import { ConnectionFailedError } from './types';
@@ -56,6 +57,11 @@ ReducerRegistry.register<IConnectionState>(
 
         case SET_LOCATION_URL:
             return _setLocationURL(state, action);
+
+        case SET_PREFER_VISITOR:
+            return assign(state, {
+                preferVisitor: action.preferVisitor
+            });
 
         case SET_ROOM:
             return _setRoom(state);
@@ -141,6 +147,13 @@ function _connectionFailed(
         return state;
     }
 
+    let preferVisitor;
+
+    if (error.name === JitsiConnectionErrors.NOT_LIVE_ERROR) {
+        // we want to keep the state for the moment when the meeting is live
+        preferVisitor = state.preferVisitor;
+    }
+
     return assign(state, {
         connecting: undefined,
         connection: undefined,
@@ -148,7 +161,7 @@ function _connectionFailed(
         passwordRequired:
             error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 ? connection : undefined,
-        preferVisitor: undefined
+        preferVisitor
     });
 }
 

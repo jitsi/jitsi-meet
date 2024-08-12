@@ -1,10 +1,9 @@
 rootProject.name = 'jitsi-meet'
 
 include ':app', ':sdk'
-includeBuild('../node_modules/react-native-gradle-plugin')
 
 include ':react-native-amplitude'
-project(':react-native-amplitude').projectDir = new File(rootProject.projectDir, '../node_modules/@amplitude/react-native//android')
+project(':react-native-amplitude').projectDir = new File(rootProject.projectDir, '../node_modules/@amplitude/react-native/android')
 include ':react-native-async-storage'
 project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
 include ':react-native-background-timer'
@@ -12,7 +11,7 @@ project(':react-native-background-timer').projectDir = new File(rootProject.proj
 include ':react-native-calendar-events'
 project(':react-native-calendar-events').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-calendar-events/android')
 include ':react-native-community_clipboard'
-project(':react-native-community_clipboard').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/clipboard/android')
+project(':react-native-community_clipboard').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-clipboard/clipboard/android')
 include ':react-native-community_netinfo'
 project(':react-native-community_netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
 include ':react-native-default-preference'

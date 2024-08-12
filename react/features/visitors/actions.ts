@@ -1,10 +1,18 @@
+import { createRemoteVideoMenuButtonEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
+import { connect, disconnect, setPreferVisitor } from '../base/connection/actions';
+import { getLocalParticipant } from '../base/participants/functions';
 
 import {
     CLEAR_VISITOR_PROMOTION_REQUEST,
     I_AM_VISITOR_MODE,
+    SET_IN_VISITORS_QUEUE,
+    SET_VISITORS_SUPPORTED,
+    SET_VISITOR_DEMOTE_ACTOR,
     UPDATE_VISITORS_COUNT,
+    UPDATE_VISITORS_IN_QUEUE_COUNT,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
 import { IPromotionRequest } from './types';
@@ -19,13 +27,11 @@ export function admitMultiple(requests: Array<IPromotionRequest>): Function {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
-        requests.forEach(r => {
-            conference?.sendMessage({
-                type: 'visitors',
-                action: 'promotion-response',
-                approved: true,
-                id: r.from
-            });
+        conference?.sendMessage({
+            type: 'visitors',
+            action: 'promotion-response',
+            approved: true,
+            ids: requests.map(r => r.from)
         });
     };
 }
@@ -36,7 +42,7 @@ export function admitMultiple(requests: Array<IPromotionRequest>): Function {
  * @param {IPromotionRequest} request - The request from the visitor.
  * @returns {Function}
  */
-export function approveRequest(request: IPromotionRequest): Function {
+export function approveRequest(request: IPromotionRequest) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
@@ -57,7 +63,7 @@ export function approveRequest(request: IPromotionRequest): Function {
  * @param {IPromotionRequest} request - The request from the visitor.
  * @returns {Function}
  */
-export function denyRequest(request: IPromotionRequest): Function {
+export function denyRequest(request: IPromotionRequest) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getCurrentConference(getState);
 
@@ -69,6 +75,37 @@ export function denyRequest(request: IPromotionRequest): Function {
         });
 
         dispatch(clearPromotionRequest(request));
+    };
+}
+
+/**
+ * Sends a demote request to a main participant to join the meeting as a visitor.
+ *
+ * @param {string} id - The ID for the participant.
+ * @returns {Function}
+ */
+export function demoteRequest(id: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState);
+        const localParticipant = getLocalParticipant(getState());
+
+        sendAnalytics(createRemoteVideoMenuButtonEvent('demote.button', { 'participant_id': id }));
+
+        if (id === localParticipant?.id) {
+            dispatch(disconnect(true))
+                .then(() => {
+                    dispatch(setPreferVisitor(true));
+
+                    return dispatch(connect());
+                });
+        } else {
+            conference?.sendMessage({
+                type: 'visitors',
+                action: 'demote-request',
+                id,
+                actor: localParticipant?.id
+            });
+        }
     };
 }
 
@@ -119,6 +156,51 @@ export function setIAmVisitor(enabled: boolean) {
 }
 
 /**
+ * Sets in visitor's queue.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {{
+ *     type: SET_IN_VISITORS_QUEUE,
+ * }}
+ */
+export function setInVisitorsQueue(value: boolean) {
+    return {
+        type: SET_IN_VISITORS_QUEUE,
+        value
+    };
+}
+
+/**
+ * Sets visitor demote actor.
+ *
+ * @param {string|undefined} displayName - The display name of the participant.
+ * @returns {{
+ *     type: SET_VISITOR_DEMOTE_ACTOR,
+ * }}
+ */
+export function setVisitorDemoteActor(displayName: string | undefined) {
+    return {
+        type: SET_VISITOR_DEMOTE_ACTOR,
+        displayName
+    };
+}
+
+/**
+ * Visitors count has been updated.
+ *
+ * @param {boolean} value - The new value whether visitors are supported.
+ * @returns {{
+ *     type: SET_VISITORS_SUPPORTED,
+ * }}
+ */
+export function setVisitorsSupported(value: boolean) {
+    return {
+        type: SET_VISITORS_SUPPORTED,
+        value
+    };
+}
+
+/**
  * Visitors count has been updated.
  *
  * @param {number} count - The new visitors count.
@@ -130,5 +212,36 @@ export function updateVisitorsCount(count: number) {
     return {
         type: UPDATE_VISITORS_COUNT,
         count
+    };
+}
+
+/**
+ * Visitors in queue count has been updated.
+ *
+ * @param {number} count - The new visitors in queue count.
+ * @returns {{
+ *     type: UPDATE_VISITORS_IN_QUEUE_COUNT,
+ * }}
+ */
+export function updateVisitorsInQueueCount(count: number) {
+    return {
+        type: UPDATE_VISITORS_IN_QUEUE_COUNT,
+        count
+    };
+}
+
+/**
+ * Closes the overflow menu if opened.
+ *
+ * @private
+ * @returns {void}
+ */
+export function goLive() {
+    return (_: IStore['dispatch'], getState: IStore['getState']) => {
+        const { conference } = getState()['features/base/conference'];
+
+        conference?.getMetadataHandler().setMetadata('visitors', {
+            live: true
+        });
     };
 }

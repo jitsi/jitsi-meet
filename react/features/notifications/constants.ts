@@ -11,12 +11,12 @@ export const NOTIFICATION_TIMEOUT = {
 /**
  * Notification timeout type.
  */
-export const NOTIFICATION_TIMEOUT_TYPE = {
-    SHORT: 'short',
-    MEDIUM: 'medium',
-    LONG: 'long',
-    STICKY: 'sticky'
-};
+export enum NOTIFICATION_TIMEOUT_TYPE {
+    LONG = 'long',
+    MEDIUM = 'medium',
+    SHORT = 'short',
+    STICKY = 'sticky'
+}
 
 /**
  * The set of possible notification types.
@@ -104,6 +104,20 @@ export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
 export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
 
 /**
+ * The identifier of the visitors promotion notification.
+ *
+ * @type {string}
+ */
+export const VISITORS_PROMOTION_NOTIFICATION_ID = 'VISITORS_PROMOTION_NOTIFICATION';
+
+/**
+ * The identifier of the visitors notification indicating the meeting is not live.
+ *
+ * @type {string}
+ */
+export const VISITORS_NOT_LIVE_NOTIFICATION_ID = 'VISITORS_NOT_LIVE_NOTIFICATION_ID';
+
+/**
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;
@@ -112,3 +126,10 @@ export const SILENT_JOIN_THRESHOLD = 30;
  * Amount of participants beyond which no left notification will be emitted.
  */
 export const SILENT_LEFT_THRESHOLD = 30;
+
+/**
+ * The identifier for the transcriber notifications.
+ *
+ * @type {string}
+ */
+export const TRANSCRIBING_NOTIFICATION_ID = 'TRANSCRIBING_NOTIFICATION';

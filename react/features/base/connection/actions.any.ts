@@ -15,8 +15,10 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_PROPERTIES_UPDATED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    SET_PREFER_VISITOR
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
@@ -121,15 +123,8 @@ export function constructOptions(state: IReduxState) {
         options.iceServersOverride = iceServersOverride;
     }
 
-    const { bosh, preferBosh } = options;
+    const { bosh, preferBosh, flags } = options;
     let { websocket } = options;
-
-    // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === 'ReactNative') {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
-            websocket = undefined;
-        }
-    }
 
     if (preferBosh) {
         websocket = undefined;
@@ -160,6 +155,16 @@ export function constructOptions(state: IReduxState) {
         options.preferVisitor = true;
     }
 
+    // Enable ssrc-rewriting by default.
+    if (typeof flags?.ssrcRewritingEnabled === 'undefined') {
+        const { ...otherFlags } = flags ?? {};
+
+        options.flags = {
+            ...otherFlags,
+            ssrcRewritingEnabled: true
+        };
+    }
+
     return options;
 }
 
@@ -177,6 +182,22 @@ export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
         locationURL
+    };
+}
+
+/**
+ * To change prefer visitor in the store. Used later to decide what to request from jicofo on connection.
+ *
+ * @param {boolean} preferVisitor - The value to set.
+ * @returns {{
+ *     type: SET_PREFER_VISITOR,
+ *     preferVisitor: boolean
+ * }}
+ */
+export function setPreferVisitor(preferVisitor: boolean) {
+    return {
+        type: SET_PREFER_VISITOR,
+        preferVisitor
     };
 }
 
@@ -213,6 +234,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.CONNECTION_REDIRECTED,
                 _onConnectionRedirected);
+            connection.addEventListener(
+                JitsiConnectionEvents.PROPERTIES_UPDATED,
+                _onPropertiesUpdate);
 
             /**
              * Unsubscribe the connection instance from
@@ -224,6 +248,7 @@ export function _connectInternal(id?: string, password?: string) {
                 connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
+                connection.removeEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
             }
 
             /**
@@ -282,7 +307,7 @@ export function _connectInternal(id?: string, password?: string) {
             }
 
             /**
-             * Rejects external promise when connection fails.
+             * Connection was redirected.
              *
              * @param {string|undefined} vnode - The vnode to connect to.
              * @param {string} focusJid - The focus jid to use.
@@ -294,6 +319,17 @@ export function _connectInternal(id?: string, password?: string) {
             function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
                 dispatch(redirect(vnode, focusJid, username));
+            }
+
+            /**
+             * Connection properties were updated.
+             *
+             * @param {Object} properties - The properties which were updated.
+             * @private
+             * @returns {void}
+             */
+            function _onPropertiesUpdate(properties: object) {
+                dispatch(_propertiesUpdate(properties));
             }
 
             // in case of configured http url for conference request we need the room name
@@ -327,11 +363,30 @@ function _connectionWillConnect(connection: Object) {
 }
 
 /**
+ * Create an action for when connection properties are updated.
+ *
+ * @param {Object} properties - The properties which were updated.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_PROPERTIES_UPDATED,
+ *     properties: Object
+ * }}
+ */
+function _propertiesUpdate(properties: object) {
+    return {
+        type: CONNECTION_PROPERTIES_UPDATED,
+        properties
+    };
+}
+
+/**
  * Closes connection.
+ *
+ * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
  *
  * @returns {Function}
  */
-export function disconnect() {
+export function disconnect(isRedirect?: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 
@@ -348,7 +403,7 @@ export function disconnect() {
             // (and the respective Redux action) which is fired after the
             // conference has been left, notify the application about the
             // intention to leave the conference.
-            dispatch(conferenceWillLeave(conference_));
+            dispatch(conferenceWillLeave(conference_, isRedirect));
 
             promise
                 = conference_.leave()

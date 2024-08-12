@@ -17,7 +17,7 @@ import type { AbstractProps } from '../AbstractPollsPane';
 
 import PollCreate from './PollCreate';
 import PollsList from './PollsList';
-import { chatStyles } from './styles';
+import { pollsStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
     const { createMode, onCreate, setCreateMode, t } = props;
@@ -42,31 +42,31 @@ const PollsPane = (props: AbstractProps) => {
     }, [ isPollsTabFocused, nbUnreadPolls ]);
 
     const createPollButtonStyles = Platform.OS === 'android'
-        ? chatStyles.createPollButtonAndroid : chatStyles.createPollButtonIos;
+        ? pollsStyles.createPollButtonAndroid : pollsStyles.createPollButtonIos;
 
     return (
         <JitsiScreen
-            contentContainerStyle = { chatStyles.pollPane as StyleType }
+            contentContainerStyle = { pollsStyles.pollPane as StyleType }
             disableForcedKeyboardDismiss = { true }
             hasExtraHeaderHeight = { true }
-            style = { chatStyles.pollPaneContainer as StyleType }>
+            style = { pollsStyles.pollPaneContainer as StyleType }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
-                    : <PollsList />
-            }
-            {
-                !createMode && <Button
-                    accessibilityLabel = 'polls.create.create'
-                    labelKey = 'polls.create.create'
-                    onClick = { onCreate }
-                    style = { createPollButtonStyles }
-                    type = { BUTTON_TYPES.PRIMARY } />
+                    : <>
+                        <PollsList setCreateMode = { setCreateMode } />
+                        <Button
+                            accessibilityLabel = 'polls.create.create'
+                            id = { t('polls.create.create') }
+                            labelKey = 'polls.create.create'
+                            onClick = { onCreate }
+                            style = { createPollButtonStyles }
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    </>
             }
         </JitsiScreen>
     );
 };
-
 
 /*
  * We apply AbstractPollsPane to fill in the AbstractProps common

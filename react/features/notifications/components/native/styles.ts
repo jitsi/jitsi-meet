@@ -3,22 +3,19 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const contentColumn = {
     flex: 1,
     flexDirection: 'column',
-    marginLeft: BaseTheme.spacing[2]
+    paddingLeft: BaseTheme.spacing[2]
 };
 
 const notification = {
-    display: 'flex',
     backgroundColor: BaseTheme.palette.ui10,
     borderRadius: BaseTheme.shape.borderRadius,
     borderLeftColor: BaseTheme.palette.link01Active,
-    borderLeftWidth: 4,
+    borderLeftWidth: BaseTheme.spacing[1],
+    display: 'flex',
     flexDirection: 'row',
-    maxHeight: 120,
-    height: 'auto',
-    marginBottom: BaseTheme.spacing[2],
-    marginHorizontal: BaseTheme.spacing[2],
-    maxWidth: 400,
-    width: 'auto'
+    marginVertical: BaseTheme.spacing[1],
+    maxWidth: 416,
+    width: '100%'
 };
 
 /**
@@ -43,20 +40,20 @@ export default {
      */
 
     contentContainer: {
-        marginTop: BaseTheme.spacing[2]
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     contentText: {
         color: BaseTheme.palette.text04,
-        marginLeft: BaseTheme.spacing[6],
-        marginTop: BaseTheme.spacing[1]
+        paddingLeft: BaseTheme.spacing[5],
+        paddingTop: BaseTheme.spacing[1]
     },
 
     contentTextTitle: {
         color: BaseTheme.palette.text04,
-        marginLeft: BaseTheme.spacing[6],
         fontWeight: 'bold',
-        marginTop: BaseTheme.spacing[1]
+        paddingLeft: BaseTheme.spacing[5],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     /**
@@ -90,19 +87,20 @@ export default {
     },
 
     iconContainer: {
-        left: BaseTheme.spacing[1],
         position: 'absolute',
-        top: BaseTheme.spacing[2]
+        left: BaseTheme.spacing[2],
+        top: 12
     },
 
     btn: {
-        marginLeft: BaseTheme.spacing[4]
+        paddingLeft: BaseTheme.spacing[3]
     },
 
     btnContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[1]
+        paddingLeft: BaseTheme.spacing[4],
+        paddingTop: BaseTheme.spacing[1]
     },
 
     withToolbox: {

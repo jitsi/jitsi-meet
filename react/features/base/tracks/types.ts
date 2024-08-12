@@ -44,6 +44,7 @@ export interface ITrackOptions {
  * any.
  */
 export interface ITrack {
+    codec: string;
     getOriginalStream: Function;
     isReceivingData: boolean;
     jitsiTrack: any;
@@ -71,4 +72,17 @@ export interface IShareOptions {
     desktopSharingSourceDevice?: string;
     desktopSharingSources?: string[];
     desktopStream?: any;
+}
+
+export interface ICreateInitialTracksOptions {
+    devices: Array<MediaType>;
+    firePermissionPromptIsShownEvent?: boolean;
+    timeout?: number;
+}
+
+export interface IInitialTracksErrors {
+    audioAndVideoError?: Error;
+    audioOnlyError: Error;
+    screenSharingError: Error;
+    videoOnlyError: Error;
 }

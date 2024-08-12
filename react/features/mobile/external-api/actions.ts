@@ -1,7 +1,5 @@
-import {
-    READY_TO_CLOSE,
-    SCREEN_SHARE_PARTICIPANTS_UPDATED
-} from './actionTypes';
+import { READY_TO_CLOSE, SCREEN_SHARE_PARTICIPANTS_UPDATED } from './actionTypes';
+
 
 /**
  * Creates a (redux) action which signals that the SDK is ready to be closed.

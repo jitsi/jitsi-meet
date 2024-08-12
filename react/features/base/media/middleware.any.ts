@@ -17,7 +17,6 @@ import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { setAudioOnly } from '../audio-only/actions';
 import { SET_ROOM } from '../conference/actionTypes';
 import { isRoomValid } from '../conference/functions';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { getLocalParticipant } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { getPropertyValue } from '../settings/functions.any';
@@ -186,17 +185,14 @@ function _appStateChanged({ dispatch, getState }: IStore, next: Function, action
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAudioOnly({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+function _setAudioOnly({ dispatch }: IStore, next: Function, action: AnyAction) {
     const { audioOnly } = action;
-    const state = getState();
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
     dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
-    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
-    }
+    dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
 
     return next(action);
 }

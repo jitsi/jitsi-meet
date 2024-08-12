@@ -12,6 +12,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
     accessibilityLabel,
     color: iconColor,
     disabled,
+    id,
     onPress,
     size,
     src,
@@ -52,6 +53,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
         <TouchableHighlight
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
+            id = { id }
             onPress = { onPress }
             style = { [
                 iconButtonContainerStyles,

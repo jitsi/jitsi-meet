@@ -9,7 +9,7 @@
         "loading": "מחפש אנשים ומספרי טלפון",
         "loadingNumber": "מאמת מספר טלפון",
         "loadingPeople": "מחפש אנשים להזמין",
-        "noResults": "לא נמצאו תואצות מתאימות",
+        "noResults": "לא נמצאו תוצאות מתאימות",
         "noValidNumbers": "אנא הזן מסםר טלפון",
         "searchNumbers": "הוסף מספר טלפון",
         "searchPeople": "חפש אנשים",
@@ -47,7 +47,7 @@
     },
     "chat": {
         "error": "שגיאה: ההודעה שלך \"{{originalText}}\" לא נשלחה. סיבה: {{error}}",
-        "fieldPlaceHolder": "הקלד הודעתך כאו",
+        "fieldPlaceHolder": "הקלד הודעתך כאן",
         "messageTo": "הודעה פרטית אל {{recipient}}",
         "messagebox": "הקלד הודעה",
         "nickname": {
@@ -442,7 +442,7 @@
     "me": "אני",
     "notify": {
         "OldElectronAPPTitle": "פגיעות אבטחה!",
-        "connectedOneMember": "{{name}} הצטרף למפדש",
+        "connectedOneMember": "{{name}} הצטרף למפגש",
         "connectedThreePlusMembers": "{{name}} ו-{{count}} אחרים הצטרפו למפגש",
         "connectedTwoMembers": "{{first}} ו-{{second}} הצטרפו למפגש",
         "disconnected": "מנותק",
@@ -477,6 +477,11 @@
     },
     "passwordDigitsOnly": "עד {{number}} ספרות",
     "passwordSetRemotely": "נקבע על ידי חבר אחר",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "האפשרויות חייבות להיות ייחודיות"
+        }
+    },
     "poweredby": "מופעל על ידי",
     "presenceStatus": {
         "busy": "עסוק",
@@ -583,6 +588,8 @@
         "hours": "{{count}} שעות",
         "minutes": "{{count}} דקות",
         "name": "שם",
+        "search": "לחפש",
+        "searchHint": "חפש משתתפים",
         "seconds": "{{count}} שניות",
         "speakerStats": "סטטיסטיקות דיבורים",
         "speakerTime": "זמן דיבור"

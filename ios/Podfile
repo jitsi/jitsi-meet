@@ -1,10 +1,18 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-platform :ios, '12.4'
+platform :ios, '13.4'
 workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
+
+def cocoa_utilities
+    pod 'CocoaLumberjack', '3.7.4'
+end
 
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
@@ -41,7 +49,7 @@ target 'JitsiMeetSDK' do
   # Native pod dependencies
   #
 
-  pod 'CocoaLumberjack', '3.7.2'
+  cocoa_utilities
   pod 'ObjectiveDropboxOfficial', '6.2.3'
 end
 
@@ -66,12 +74,15 @@ target 'JitsiMeetSDKLite' do
     # Native pod dependencies
     #
 
-    pod 'CocoaLumberjack', '3.7.2'
+    cocoa_utilities
 end
 
 post_install do |installer|
-  react_native_post_install(installer, :mac_catalyst_enabled => false)
-  __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  react_native_post_install(
+    installer,
+    use_native_modules![:reactNativePath],
+    :mac_catalyst_enabled => false
+  )
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
@@ -81,7 +92,7 @@ post_install do |installer|
     end
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
       config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
   end

@@ -184,6 +184,7 @@
         "Share": "Megosztás",
         "Submit": "Elküldés",
         "WaitForHostMsg": "A konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
+        "WaitForHostNoAuthMsg": "A konferencia még nem kezdődött el, mert nincs elérhető moderátor. Kérlek várj.",
         "WaitingForHost": "Várakozás a házigazdára…",
         "Yes": "Igen",
         "accessibilityLabel": {
@@ -623,6 +624,9 @@
             "removeOption": "Opció eltávolítása",
             "send": "Küldés"
         },
+        "errors": {
+            "notUniqueOption": "Az opcióknak egyedinek kell lenniük"
+        },
         "notification": {
             "description": "Szavazás megnyitása",
             "title": "Új szavazás létrehozva"
@@ -824,6 +828,7 @@
         "neutral": "Semleges",
         "sad": "Szomorú",
         "search": "Keresés",
+        "searchHint": "Résztvevők keresése",
         "seconds": "{{count}} mp",
         "speakerStats": "Beszélő statisztika",
         "speakerTime": "Beszélő ideje",

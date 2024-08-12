@@ -4,7 +4,7 @@ import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
-import { canStartTranscribing } from '../functions';
+import { canStartSubtitles } from '../functions.any';
 
 export interface IAbstractProps extends AbstractButtonProps {
 
@@ -49,7 +49,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {void}
      */
-    async _handleClick() {
+    _handleClick() {
         const { _requestingSubtitles, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('transcribing.ccButton',
@@ -57,7 +57,7 @@ export class AbstractClosedCaptionButton
                 'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._handleClickOpenLanguageSelector();
@@ -106,7 +106,7 @@ export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstract
 
     // if the participant is moderator, it can enable transcriptions and if
     // transcriptions are already started for the meeting, guests can just show them
-    const { visible = canStartTranscribing(state) } = ownProps;
+    const { visible = canStartSubtitles(state) } = ownProps;
 
     return {
         _requestingSubtitles,

@@ -10,6 +10,7 @@ import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
+import { isPrejoinEnabledInConfig } from '../prejoin/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
@@ -114,7 +115,7 @@ export function getMoreTabProps(stateful: IStateful) {
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
+        showPrejoinSettings: isPrejoinEnabledInConfig(state),
         stageFilmstripEnabled
     };
 }
@@ -208,6 +209,7 @@ export function getNotificationsTabProps(stateful: IStateful, showSoundsSettings
         soundsTalkWhileMuted,
         soundsReactions
     } = state['features/base/settings'];
+
     const enableReactions = isReactionsEnabled(state);
     const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
     const enabledNotifications = getNotificationsMap(stateful);

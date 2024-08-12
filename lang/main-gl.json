@@ -454,6 +454,11 @@
     },
     "passwordDigitsOnly": "Ata {{number}} díxitos",
     "passwordSetRemotely": "estabelecida por outro participante",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "As opcións deben ser únicas"
+        }
+    },
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",
@@ -558,6 +563,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
+        "search": "Procurar",
+        "searchHint": "Procurar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas do falante",
         "speakerTime": "Tempo do falante"

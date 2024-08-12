@@ -864,6 +864,9 @@
             "removeOption": "Remover opção",
             "send": "Enviar"
         },
+        "errors": {
+            "notUniqueOption": "As opções devem ser exclusivas"
+        },
         "notification": {
             "description": "Abra a aba das votações para votar",
             "title": "Uma nova votação foi iniciada nesta conferência"
@@ -1141,6 +1144,7 @@
         "neutral": "Neutro",
         "sad": "Triste",
         "search": "Busca",
+        "searchHint": "Buscar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas do apresentador",
         "speakerTime": "Tempo do apresentador",

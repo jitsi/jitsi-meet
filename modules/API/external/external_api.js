@@ -108,6 +108,7 @@ const events = {
     'camera-error': 'cameraError',
     'chat-updated': 'chatUpdated',
     'compute-pressure-changed': 'computePressureChanged',
+    'conference-created-timestamp': 'conferenceCreatedTimestamp',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
     'data-channel-closed': 'dataChannelClosed',
     'data-channel-opened': 'dataChannelOpened',
@@ -160,6 +161,7 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
+    'transcribing-status-changed': 'transcribingStatusChanged',
     'transcription-chunk-received': 'transcriptionChunkReceived',
     'whiteboard-status-changed': 'whiteboardStatusChanged'
 };
@@ -1229,6 +1231,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Return the conference`s sessionId.
+     *
+     * @returns {Promise} - Resolves with the conference`s sessionId.
+     */
+    getSessionId() {
+        return this._transport.sendRequest({
+            name: 'session-id'
+        });
+    }
+
+    /**
      * Returns array of commands supported by executeCommand().
      *
      * @returns {Array<string>} Array of commands.
@@ -1433,6 +1446,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param { string } options.youtubeStreamKey - The youtube stream key.
      * @param { string } options.youtubeBroadcastID - The youtube broadcast ID.
      * @param {Object } options.extraMetadata - Any extra metadata params for file recording.
+     * @param { boolean } arg.transcription - Whether a transcription should be started or not.
      * @returns {void}
      */
     startRecording(options) {
@@ -1443,10 +1457,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Stops a recording or streaming session that is in progress.
      *
      * @param {string} mode - `file` or `stream`.
+     * @param {boolean} transcription - Whether the transcription needs to be stopped.
      * @returns {void}
      */
-    stopRecording(mode) {
-        this.executeCommand('stopRecording', mode);
+    stopRecording(mode, transcription) {
+        this.executeCommand('stopRecording', mode, transcription);
     }
 
     /**

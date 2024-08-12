@@ -28,7 +28,7 @@ interface ILocalRecordingManager {
     roomName: string;
     saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: ISelfRecording;
-    startLocalRecording: (store: IStore, onlySelf: boolean) => void;
+    startLocalRecording: (store: IStore, onlySelf: boolean) => Promise<void>;
     stopLocalRecording: () => void;
     stream: MediaStream | undefined;
     totalSize: number;
@@ -36,9 +36,6 @@ interface ILocalRecordingManager {
 
 const getMimeType = (): string => {
     const possibleTypes = [
-        'video/mp4;codecs=h264',
-        'video/webm;codecs=h264',
-        'video/webm;codecs=vp9',
         'video/webm;codecs=vp8'
     ];
 
@@ -164,7 +161,11 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.audioContext = undefined;
             this.audioDestination = undefined;
             this.totalSize = MAX_SIZE;
-            setTimeout(() => this.saveRecording(this.recordingData, this.getFilename()), 1000);
+            setTimeout(() => {
+                if (this.recordingData.length > 0) {
+                    this.saveRecording(this.recordingData, this.getFilename());
+                }
+            }, 1000);
         }
     },
 

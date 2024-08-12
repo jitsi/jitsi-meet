@@ -4,9 +4,17 @@ import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
 } from '../../prejoin/actions.web';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { iAmVisitor } from '../../visitors/functions';
+import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED } from '../connection/actionTypes';
 import { hangup } from '../connection/actions.web';
-import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, browser } from '../lib-jitsi-meet';
+import { gumPending, setInitialGUMPromise } from '../media/actions';
+import { MEDIA_TYPE } from '../media/constants';
+import { IGUMPendingState } from '../media/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { replaceLocalTrack } from '../tracks/actions.any';
+import { getLocalTracks } from '../tracks/functions.any';
 
 import {
     CONFERENCE_FAILED,
@@ -131,6 +139,75 @@ MiddlewareRegistry.register(store => next => action => {
         releaseScreenLock();
 
         break;
+    case CONNECTION_DISCONNECTED: {
+        const { initialGUMPromise } = getState()['features/base/media'];
+
+        if (initialGUMPromise) {
+            store.dispatch(setInitialGUMPromise());
+        }
+
+        break;
+    }
+    case CONNECTION_ESTABLISHED: {
+        if (isPrejoinPageVisible(getState())) {
+            let { initialGUMPromise } = getState()['features/base/media'];
+
+            initialGUMPromise = initialGUMPromise || Promise.resolve({ tracks: [] });
+
+            initialGUMPromise.then(() => {
+                const state = getState();
+                let localTracks = getLocalTracks(state['features/base/tracks']);
+                const trackReplacePromises = [];
+
+                // Do not signal audio/video tracks if the user joins muted.
+                for (const track of localTracks) {
+                    // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
+                    // if the user joins audio and video muted.
+                    if ((track.muted && !(browser.isWebKitBased() && track.jitsiTrack
+                            && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) || iAmVisitor(state)) {
+                        trackReplacePromises.push(dispatch(replaceLocalTrack(track.jitsiTrack, null))
+                            .catch((error: any) => {
+                                logger.error(`Failed to replace local track (${track.jitsiTrack}) with null: ${error}`);
+                            }));
+                    }
+                }
+
+                Promise.allSettled(trackReplacePromises).then(() => {
+
+                    // Re-fetch the local tracks after muted tracks have been removed above.
+                    // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should
+                    // not be used anymore.
+                    localTracks = getLocalTracks(getState()['features/base/tracks']);
+
+                    const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
+
+
+                    return APP.conference.startConference(jitsiTracks);
+                });
+            });
+        } else {
+            let { initialGUMPromise } = getState()['features/base/media'];
+
+            initialGUMPromise = initialGUMPromise || Promise.resolve({ tracks: [] });
+
+            initialGUMPromise.then(({ tracks }) => {
+                let tracksToUse = tracks ?? [];
+
+                if (iAmVisitor(getState())) {
+                    tracksToUse = [];
+                    tracks.forEach(track => track.dispose().catch(logger.error));
+                    dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+                }
+
+                dispatch(setInitialGUMPromise());
+
+                return APP.conference.startConference(tracksToUse);
+            })
+            .catch(logger.error);
+        }
+
+        break;
+    }
     }
 
     return next(action);

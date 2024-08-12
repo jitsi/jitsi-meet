@@ -1,6 +1,6 @@
-import { ClassNameMap, withStyles } from '@mui/styles';
 import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, AUDIO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -31,16 +31,16 @@ const styles = () => {
  */
 interface IProps extends AbstractAudioMuteButtonProps {
 
-
   /**
    * The gumPending state from redux.
    */
   _gumPending: IGUMPendingState;
 
   /**
-   * The @mui/styles classes.
+   * An object containing the CSS classes.
    */
-  classes: ClassNameMap<string>;
+  classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+
 }
 
 /**
@@ -168,7 +168,8 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
      * @returns {ReactElement | null}
      */
     _getElementAfter(): ReactElement | null {
-        const { _gumPending, classes } = this.props;
+        const { _gumPending } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return _gumPending === IGUMPendingState.NONE ? null
             : (
@@ -201,4 +202,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(AudioMuteButton)));
+export default withStyles(translate(connect(_mapStateToProps)(AudioMuteButton)), styles);

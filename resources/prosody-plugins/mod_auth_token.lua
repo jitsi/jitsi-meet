@@ -15,6 +15,12 @@ end
 
 module:depends("jitsi_session");
 
+local measure_pre_fetch_fail = module:measure('pre_fetch_fail', 'counter');
+local measure_verify_fail = module:measure('verify_fail', 'counter');
+local measure_success = module:measure('success', 'counter');
+local measure_ban = module:measure('ban', 'counter');
+local measure_post_auth_fail = module:measure('post_auth_fail', 'counter');
+
 -- define auth provider
 local provider = {};
 
@@ -25,6 +31,15 @@ function init_session(event)
     local session, request = event.session, event.request;
     local query = request.url.query;
 
+    local token = nil;
+
+    -- extract token from Authorization header
+    if request.headers["authorization"] then
+        -- assumes the header value starts with "Bearer "
+        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
+    end
+
+    -- allow override of token via query parameter
     if query ~= nil then
         local params = formdecode(query);
 
@@ -33,8 +48,13 @@ function init_session(event)
         -- After validating auth_token will be cleaned in case of error and few
         -- other fields will be extracted from the token and set in the session
 
-        session.auth_token = query and params.token or nil;
+        if query and params.token then
+            token = params.token;
+        end
     end
+
+    -- in either case set auth_token in the session
+    session.auth_token = token;
 end
 
 module:hook_global("bosh-session", init_session);
@@ -74,29 +94,31 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
             session.auth_token = nil;
+            measure_pre_fetch_fail(1);
             return pre_event_result.res, pre_event_result.error, pre_event_result.reason;
         end
 
         local res, error, reason = token_util:process_and_verify_token(session);
         if res == false then
             module:log("warn",
-                "Error verifying token err:%s, reason:%s", error, reason);
+                "Error verifying token err:%s, reason:%s tenant:%s room:%s",
+                    error, reason, session.jitsi_web_query_prefix, session.jitsi_web_query_room);
             session.auth_token = nil;
+            measure_verify_fail(1);
             return res, error, reason;
         end
 
         local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
         if shouldAllow == false then
             module:log("warn", "user is banned")
+            measure_ban(1);
             return false, "not-allowed", "user is banned";
         end
 
-        local customUsername
-            = prosody.events.fire_event("pre-jitsi-authentication", session);
-
-        if (customUsername) then
+        local customUsername = prosody.events.fire_event("pre-jitsi-authentication", session);
+        if customUsername then
             self.username = customUsername;
-        elseif (session.previd ~= nil) then
+        elseif session.previd ~= nil then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
@@ -112,9 +134,11 @@ function provider.get_sasl_handler(session)
             module:log("warn",
                 "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
             session.auth_token = nil;
+            measure_post_auth_fail(1);
             return post_event_result.res, post_event_result.error, post_event_result.reason;
         end
 
+        measure_success(1);
         return res;
     end
 

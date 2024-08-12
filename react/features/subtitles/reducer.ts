@@ -2,14 +2,16 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
-    SET_REQUESTING_SUBTITLES, TOGGLE_REQUESTING_SUBTITLES, UPDATE_TRANSCRIPT_MESSAGE
+    SET_REQUESTING_SUBTITLES,
+    TOGGLE_REQUESTING_SUBTITLES,
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
 /**
  * Default State for 'features/transcription' feature.
  */
 const defaultState = {
-    _displaySubtitles: true,
+    _displaySubtitles: false,
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
     _language: null

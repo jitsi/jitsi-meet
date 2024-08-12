@@ -11,6 +11,7 @@ import { IDeeplinkingConfig } from '../../base/config/configType';
 import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
 import { translate, translateToHTML } from '../../base/i18n/functions';
+import Platform from '../../base/react/Platform.web';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
@@ -85,6 +86,14 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
     const deeplinkingCfg = useSelector((state: IReduxState) =>
         state['features/base/config']?.deeplinking || {} as IDeeplinkingConfig);
 
+    const generateDownloadURL = useCallback(() => {
+        const downloadCfg = deeplinkingCfg.desktop?.download;
+
+        if (downloadCfg) {
+            return downloadCfg[Platform.OS as keyof typeof downloadCfg];
+        }
+    }, [ deeplinkingCfg ]);
+
     const legalUrls = useSelector(getLegalUrls);
 
     const { hideLogo, desktop } = deeplinkingCfg;
@@ -133,6 +142,16 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
                             ? translateToHTML(t, `${_TNS}.descriptionNew`, { app: desktop?.appName })
                             : t(`${_TNS}.descriptionWithoutWeb`, { app: desktop?.appName })
                     }
+                </div>
+                <div className = { styles.descriptionLabel }>
+                    {
+                        t(`${_TNS}.noDesktopApp`)
+                    } &nbsp;
+                    <a href = { generateDownloadURL() }>
+                        {
+                            t(`${_TNS}.downloadApp`)
+                        }
+                    </a>
                 </div>
                 <div className = { styles.buttonsContainer }>
                     <Button

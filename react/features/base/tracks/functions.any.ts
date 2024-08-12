@@ -1,7 +1,4 @@
 import { IReduxState, IStore } from '../../app/types';
-import {
-    getMultipleVideoSendingSupportFeatureFlag
-} from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending } from '../media/actions';
 import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
@@ -400,8 +397,7 @@ export function setTrackMuted(track: any, muted: boolean, state: IReduxState | I
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
-    if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
+    if (track.isMuted() === muted && track.getVideoType() !== VIDEO_TYPE.DESKTOP) {
         return Promise.resolve();
     }
 

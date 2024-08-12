@@ -59,7 +59,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
-        if (!this._canStartTranscribing()) {
+        const { selectedRecordingService } = this.props;
+
+        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
             return null;
         }
 

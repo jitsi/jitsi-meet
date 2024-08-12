@@ -6,6 +6,18 @@
 export const DEFAULT_LAST_N = 20;
 
 /**
+ * The supported video codecs.
+ *
+ * @type {enum}
+ */
+export enum VIDEO_CODEC {
+    AV1 = 'av1',
+    H264 = 'h264',
+    VP8 = 'vp8',
+    VP9 = 'vp9'
+}
+
+/**
  * The supported remote video resolutions. The values are currently based on
  * available simulcast layers.
  *

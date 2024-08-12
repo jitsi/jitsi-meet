@@ -31,7 +31,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&::after': {
-                content: '',
+                content: '""',
                 backgroundColor: theme.palette.ui01,
                 marginBottom: 'env(safe-area-inset-bottom, 0)'
             }

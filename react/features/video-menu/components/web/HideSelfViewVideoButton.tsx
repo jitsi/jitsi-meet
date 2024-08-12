@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n/functions';
 import { updateSettings } from '../../../base/settings/actions';
 import { getHideSelfView } from '../../../base/settings/functions';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 
 /**
  * The type of the React {@code Component} props of {@link HideSelfViewVideoButton}.
@@ -109,7 +109,7 @@ class HideSelfViewVideoButton extends PureComponent<IProps> {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code FlipLocalVideoButton}'s props.
+ * Maps (parts of) the Redux state to the associated {@code HideSelfViewVideoButton}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private

@@ -2,12 +2,12 @@ import { IReduxState } from '../../../app/types';
 import { IconSites } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { getActiveSession } from '../../functions';
+import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import { isCloudRecordingRunning, isLiveStreamingButtonVisible, isLiveStreamingRunning } from '../../functions';
 
 import { getLiveStreaming } from './functions';
 
@@ -72,10 +72,10 @@ export default class AbstractLiveStreamButton<P extends IProps> extends Abstract
      * @protected
      * @returns {void}
      */
-    async _handleClick() {
+    _handleClick() {
         const { dispatch } = this.props;
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._onHandleClick();
@@ -132,15 +132,16 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
-        if (isModerator) {
-            visible = liveStreaming.enabled ? isJwtFeatureEnabled(state, 'livestreaming', true) : false;
-        } else {
-            visible = false;
-        }
+        visible = isLiveStreamingButtonVisible({
+            localParticipantIsModerator: isModerator,
+            liveStreamingEnabled: liveStreaming?.enabled,
+            liveStreamingEnabledInJwt: isJwtFeatureEnabled(state, 'livestreaming', true),
+            isInBreakoutRoom: isInBreakoutRoom(state)
+        });
     }
 
     // disable the button if the recording is running.
-    if (visible && getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
+    if (visible && (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state))) {
         _disabled = true;
         _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }
@@ -148,12 +149,11 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     // disable the button if we are in a breakout room.
     if (isInBreakoutRoom(state)) {
         _disabled = true;
-        visible = false;
     }
 
     return {
         _disabled,
-        _isLiveStreamRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _isLiveStreamRunning: isLiveStreamingRunning(state),
         _tooltip,
         visible
     };

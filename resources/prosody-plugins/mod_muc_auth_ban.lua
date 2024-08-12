@@ -9,6 +9,7 @@ end
 
 local json = require "cjson.safe";
 local http = require "net.http";
+local inspect = require 'inspect';
 
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
@@ -38,7 +39,7 @@ local function shouldAllow(session)
     local token = session.auth_token;
 
     if token ~= nil then
-        module:log("debug", "Checking whether user should be banned ")
+        -- module:log("debug", "Checking whether user should be banned ")
 
         -- cached tokens are banned
         if cache:get(token) then
@@ -52,7 +53,9 @@ local function shouldAllow(session)
 
                 local r = json.decode(content)
                 if r['access'] ~= nil and r['access'] == false then
-                    module:log("debug", "user is banned")
+                    module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
+                        session.jitsi_meet_room, session.jitsi_web_query_prefix,
+                        inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
 
                     ban_check_users_banned_count();
 

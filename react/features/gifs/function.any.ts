@@ -33,15 +33,6 @@ export function getGifRating(state: IReduxState) {
     return getGifConfig(state).rating || GIF_DEFAULT_RATING;
 }
 
-/**
- * Get the Giphy proxy url.
- *
- * @param {IReduxState} state - Redux state.
- * @returns {string}
- */
-export function getGiphyProxyUrl(state: IReduxState) {
-    return getGifConfig(state).proxyUrl;
-}
 
 /**
  * Gets the URL of the GIF for the given participant or null if there's none.
@@ -55,31 +46,48 @@ export function getGifForParticipant(state: IReduxState, participantId: string):
 }
 
 /**
+ * Returns true if a given URL is allowed to be rendered as gif and false otherwise.
+ *
+ * @param {string} url - The URL to be validated.
+ * @returns {boolean} - True if a given URL is allowed to be rendered as gif and false otherwise.
+ */
+export function isGifUrlAllowed(url: string) {
+    let hostname: string | undefined;
+
+    try {
+        const urlObject = new URL(url);
+
+        hostname = urlObject?.hostname;
+    } catch (_error) {
+        return false;
+    }
+
+    return hostname === 'i.giphy.com';
+}
+
+/**
  * Whether or not the message is a GIF message.
  *
  * @param {string} message - Message to check.
  * @returns {boolean}
  */
 export function isGifMessage(message: string) {
+    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+
     return message.trim().toLowerCase()
-        .startsWith(GIF_PREFIX);
+        .startsWith(GIF_PREFIX) && isGifUrlAllowed(url);
 }
 
 /**
  * Returns the url of the gif selected in the gifs menu.
  *
  * @param {Object} gif - The gif data.
- * @param {string} proxyUrl - The proxy server url.
  * @returns {boolean}
  */
-export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }, proxyUrl?: string) {
+export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }) {
     const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
     const id = embedUrl.substr(idx + 1);
-
-    if (proxyUrl) {
-        return `${proxyUrl}gifs/id/${id}`;
-    }
 
     return `https://i.giphy.com/media/${id}/giphy.gif`;
 }

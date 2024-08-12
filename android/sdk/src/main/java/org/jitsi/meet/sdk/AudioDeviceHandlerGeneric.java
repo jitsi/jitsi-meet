@@ -87,6 +87,7 @@ class AudioDeviceHandlerGeneric implements
                         devices.add(AudioModeModule.DEVICE_EARPIECE);
                         break;
                     case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+                    case AudioDeviceInfo.TYPE_HDMI:
                         devices.add(AudioModeModule.DEVICE_SPEAKER);
                         break;
                     case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:

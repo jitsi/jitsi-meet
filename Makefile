@@ -24,9 +24,9 @@ else
 	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
 endif
 
-all: compile deploy clean
+all: compile deploy
 
-compile:
+compile: clean
 	NODE_OPTIONS=--max-old-space-size=8192 \
 	$(WEBPACK)
 
@@ -48,7 +48,6 @@ deploy-appbundle:
 		$(BUILD_DIR)/external_api.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.js.map \
-		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
@@ -123,7 +122,7 @@ deploy-local:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
-source-package:
+source-package: compile deploy
 	mkdir -p source_package/jitsi-meet/css && \
 	cp -r *.js *.html resources/*.txt fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \

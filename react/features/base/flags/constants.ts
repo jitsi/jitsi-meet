@@ -91,6 +91,12 @@ export const HELP_BUTTON_ENABLED = 'help.enabled';
 export const INVITE_ENABLED = 'invite.enabled';
 
 /**
+ * Flag indicating if dial-in invite functionality should be enabled.
+ * Default: enabled (true).
+ */
+export const INVITE_DIAL_IN_ENABLED = 'invite-dial-in.enabled';
+
+/**
  * Flag indicating if recording should be enabled in iOS.
  * Default: disabled (false).
  */
@@ -157,6 +163,12 @@ export const NOTIFICATIONS_ENABLED = 'notifications.enabled';
  * Default: enabled (true).
  */
 export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
+
+/**
+ * Flag indicating if participants should be enabled.
+ * Default: enabled (true).
+ */
+export const PARTICIPANTS_ENABLED = 'participants.enabled';
 
 /**
  * Flag indicating if Picture-in-Picture should be enabled.

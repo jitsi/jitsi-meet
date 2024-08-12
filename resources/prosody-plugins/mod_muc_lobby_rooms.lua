@@ -27,12 +27,16 @@ module:depends("jitsi_session");
 
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
-local json = require 'util.json';
+local jid_prep = require "util.jid".prep;
+local jid_resource = require "util.jid".resource;
+local resourceprep = require "util.encodings".stringprep.resourceprep;
+local json = require 'cjson.safe';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 local muc_util = module:require "muc/util";
 local valid_affiliations = muc_util.valid_affiliations;
 local MUC_NS = 'http://jabber.org/protocol/muc';
+local MUC_USER_NS = 'http://jabber.org/protocol/muc#user';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
 local LOBBY_IDENTITY_TYPE = 'lobbyrooms';
@@ -46,6 +50,7 @@ local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -75,10 +80,17 @@ function broadcast_json_msg(room, from, json_msg)
 
     local occupant = room:get_occupant_by_real_jid(from);
     if occupant then
+        local json_msg_str, error = json.encode(json_msg);
+
+        if not json_msg_str then
+            module:log('error', 'Error broadcasting message room:%s', room.jid, error);
+            return;
+        end
+
         room:broadcast_message(
             st.message({ type = 'groupchat', from = occupant.nick })
               :tag('json-message', {xmlns='http://jitsi.org/jitmeet'})
-              :text(json.encode(json_msg)):up());
+              :text(json_msg_str):up());
     end
 end
 
@@ -234,23 +246,135 @@ function destroy_lobby_room(room, newjid, message)
     end
 end
 
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
+-- This is a copy of the function(handle_admin_query_set_command) from prosody 12 (d7857ef7843a)
+function handle_admin_query_set_command_item(self, origin, stanza, item)
+    if not item then
+        origin.send(st.error_reply(stanza, "cancel", "bad-request"));
+        return true;
+    end
+    if item.attr.jid then -- Validate provided JID
+        item.attr.jid = jid_prep(item.attr.jid);
+        if not item.attr.jid then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed"));
+            return true;
+        elseif jid_resource(item.attr.jid) then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed", "Bare JID expected, got full JID"));
+            return true;
         end
     end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
+    if item.attr.nick then -- Validate provided nick
+        item.attr.nick = resourceprep(item.attr.nick);
+        if not item.attr.nick then
+            origin.send(st.error_reply(stanza, "modify", "jid-malformed", "invalid nickname"));
+            return true;
+        end
+    end
+    if not item.attr.jid and item.attr.nick then
+        -- COMPAT Workaround for Miranda sending 'nick' instead of 'jid' when changing affiliation
+        local occupant = self:get_occupant_by_nick(self.jid.."/"..item.attr.nick);
+        if occupant then item.attr.jid = occupant.bare_jid; end
+    elseif item.attr.role and not item.attr.nick and item.attr.jid then
+        -- Role changes should use nick, but we have a JID so pull the nick from that
+        local nick = self:get_occupant_jid(item.attr.jid);
+        if nick then item.attr.nick = jid_resource(nick); end
+    end
+    local actor = stanza.attr.from;
+    local reason = item:get_child_text("reason");
+    local success, errtype, err
+    if item.attr.affiliation and item.attr.jid and not item.attr.role then
+        local registration_data;
+        if item.attr.nick then
+            local room_nick = self.jid.."/"..item.attr.nick;
+            local existing_occupant = self:get_occupant_by_nick(room_nick);
+            if existing_occupant and existing_occupant.bare_jid ~= item.attr.jid then
+                module:log("debug", "Existing occupant for %s: %s does not match %s", room_nick, existing_occupant.bare_jid, item.attr.jid);
+                self:set_role(true, room_nick, nil, "This nickname is reserved");
+            end
+            module:log("debug", "Reserving %s for %s (%s)", item.attr.nick, item.attr.jid, item.attr.affiliation);
+            registration_data = { reserved_nickname = item.attr.nick };
+        end
+        success, errtype, err = self:set_affiliation(actor, item.attr.jid, item.attr.affiliation, reason, registration_data);
+    elseif item.attr.role and item.attr.nick and not item.attr.affiliation then
+        success, errtype, err = self:set_role(actor, self.jid.."/"..item.attr.nick, item.attr.role, reason);
     else
-        process_host(name);
+        success, errtype, err = nil, "cancel", "bad-request";
+    end
+    self:save(true);
+    if not success then
+        origin.send(st.error_reply(stanza, errtype, err));
+    else
+        origin.send(st.reply(stanza));
     end
 end
+
+-- this is extracted from prosody to handle multiple invites
+function handle_mediated_invite(room, origin, stanza, payload, host_module)
+    local invitee = jid_prep(payload.attr.to);
+    if not invitee then
+        origin.send(st.error_reply(stanza, "cancel", "jid-malformed"));
+        return true;
+    elseif host_module:fire_event("muc-pre-invite", {room = room, origin = origin, stanza = stanza}) then
+        return true;
+    end
+    local invite = muc_util.filter_muc_x(st.clone(stanza));
+    invite.attr.from = room.jid;
+    invite.attr.to = invitee;
+    invite:tag('x', { xmlns = MUC_USER_NS })
+            :tag('invite', {from = stanza.attr.from;})
+                :tag('reason'):text(payload:get_child_text("reason")):up()
+            :up()
+        :up();
+    if not host_module:fire_event("muc-invite", {room = room, stanza = invite, origin = origin, incoming = stanza}) then
+        local join = invite:get_child('x', MUC_USER_NS);
+        -- make sure we filter password added by any module
+        if join then
+            local password = join:get_child('password');
+            if password then
+                join:maptags(
+                    function(tag)
+                        for k, v in pairs(tag) do
+                            if k == 'name' and v == 'password' then
+                                return nil
+                            end
+                        end
+                        return tag
+                    end
+                );
+            end
+        end
+        room:route_stanza(invite);
+    end
+    return true;
+end
+
+local prosody_overrides = {
+    -- handle multiple items at once
+    handle_admin_query_set_command = function(self, origin, stanza)
+        for i=1,#stanza.tags[1] do
+            if handle_admin_query_set_command_item(self, origin, stanza, stanza.tags[1].tags[i]) then
+                return true;
+            end
+        end
+        return true;
+    end,
+    -- this is extracted from prosody to handle multiple invites
+    handle_message_to_room = function(room, origin, stanza, host_module)
+        local type = stanza.attr.type;
+        if type == nil or type == "normal" then
+            local x = stanza:get_child("x", MUC_USER_NS);
+            if x then
+                local handled = false;
+                for _, payload in pairs(x.tags) do
+                    if payload ~= nil and payload.name == "invite" and payload.attr.to then
+                        handled = true;
+                        handle_mediated_invite(room, origin, stanza, payload, host_module)
+                    end
+                end
+                return handled;
+            end
+        end
+    end
+};
 
 -- operates on already loaded lobby muc module
 function process_lobby_muc_loaded(lobby_muc, host_module)
@@ -402,9 +526,15 @@ process_host_module(main_muc_component_config, function(host_module, host)
             if not affiliation or affiliation == 'none' or affiliation == 'member' then
                 occupant.role = 'participant';
                 room:set_affiliation(true, invitee_bare_jid, 'member');
-                    room:save_occupant(occupant);
+                room:save_occupant(occupant);
 
                 return;
+            end
+        elseif room:get_password() then
+            local affiliation = room:get_affiliation(invitee);
+            -- if pre-approved and password is set for the room, add the password to allow joining
+            if affiliation == 'member' and not password then
+                join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
             end
         end
 
@@ -442,7 +572,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-invite', function(event)
         local room, stanza = event.room, event.stanza;
         local invitee = stanza.attr.to;
-        local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
+        local from = stanza:get_child('x', MUC_USER_NS)
             :get_child('invite').attr.from;
 
         if lobby_muc_service and room._data.lobbyroom then
@@ -458,6 +588,26 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end);
+
+    -- listen for admin set
+    for event_name, method in pairs {
+        -- Normal room interactions
+        ["iq-set/bare/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        ["message/bare"] = "handle_message_to_room" ;
+        -- Host room
+        ["iq-set/host/http://jabber.org/protocol/muc#admin:query"] = "handle_admin_query_set_command" ;
+        ["message/host"] = "handle_message_to_room" ;
+    } do
+        host_module:hook(event_name, function (event)
+            local origin, stanza = event.origin, event.stanza;
+            local room_jid = jid_bare(stanza.attr.to);
+            local room = get_room_from_jid(room_jid);
+
+            if room then
+                return prosody_overrides[method](room, origin, stanza, host_module);
+            end
+        end, 1) -- make sure we handle it before prosody that uses priority -2 for this
+    end
 end);
 
 function handle_create_lobby(event)
@@ -482,7 +632,7 @@ function handle_create_lobby(event)
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
         st.message({ type='groupchat', from=room.jid })
-            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+            :tag('x', { xmlns = MUC_USER_NS })
                 :tag('status', { code='104' })
     );
 
@@ -500,7 +650,7 @@ function handle_destroy_lobby(event)
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
         st.message({ type='groupchat', from=room.jid })
-            :tag('x', { xmlns='http://jabber.org/protocol/muc#user' })
+            :tag('x', { xmlns = MUC_USER_NS })
                 :tag('status', { code='104' })
     );
 end

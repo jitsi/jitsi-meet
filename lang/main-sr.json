@@ -447,6 +447,11 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Опције морају бити јединствене"
+        }
+    },
     "poweredby": "",
     "prejoin": {
         "audioAndVideoError": "Грешка звука и видеа:",
@@ -580,6 +585,8 @@
         "hours": "",
         "minutes": "",
         "name": "Имe",
+        "search": "Претрага",
+        "searchHint": "Учесници претраге",
         "seconds": "",
         "speakerStats": "Статистика говорника",
         "speakerTime": "Вријeмe говорника"

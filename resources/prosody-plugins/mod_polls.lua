@@ -2,7 +2,7 @@
 -- by keeping track of the state of polls in each room, and sending
 -- that state to new participants when they join.
 
-local json = require("util.json");
+local json = require 'cjson.safe';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
@@ -10,6 +10,9 @@ local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local is_healthcheck_room = util.is_healthcheck_room;
+
+local POLLS_LIMIT = 128;
+local POLL_PAYLOAD_LIMIT = 1024;
 
 -- Checks if the given stanza contains a JSON message,
 -- and that the message type pertains to the polls feature.
@@ -22,8 +25,15 @@ local function get_poll_message(stanza)
     if json_data == nil then
         return nil;
     end
-    local data = json.decode(json_data);
+    if string.len(json_data) >= POLL_PAYLOAD_LIMIT then
+        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
+        return nil;
+    end
+    local data, error = json.decode(json_data);
     if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        if error then
+            module:log('error', 'Error decoding data error:%s', error);
+        end
         return nil;
     end
     return data;
@@ -69,6 +79,7 @@ module:hook("muc-room-created", function(event)
     room.polls = {
         by_id = {};
         order = {};
+        count = 0;
     };
 end);
 
@@ -97,6 +108,11 @@ module:hook("message/bare", function(event)
             return
         end
 
+        if room.polls.count >= POLLS_LIMIT then
+            module:log("error", "Too many polls created in %s", room.jid)
+            return
+        end
+
         local answers = {}
         local compact_answers = {}
         for i, name in ipairs(data.answers) do
@@ -114,6 +130,7 @@ module:hook("message/bare", function(event)
 
         room.polls.by_id[data.pollId] = poll
         table.insert(room.polls.order, poll)
+        room.polls.count = room.polls.count + 1;
 
         local pollData = {
             event = event,
@@ -192,12 +209,17 @@ module:hook("muc-occupant-joined", function(event)
         };
     end
 
+    local json_msg_str, error = json.encode(data);
+    if not json_msg_str then
+        module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+    end
+
     local stanza = st.message({
         from = room.jid,
         to = event.occupant.jid
     })
     :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
-    :text(json.encode(data))
+    :text(json_msg_str)
     :up();
     room:route_stanza(stanza);
 end);

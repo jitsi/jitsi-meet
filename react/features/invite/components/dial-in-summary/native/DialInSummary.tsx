@@ -76,13 +76,15 @@ class DialInSummary extends PureComponent<IProps> {
             <JitsiScreen
                 style = { styles.backDrop }>
                 <WebView
+                    incognito = { true }
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }
                     setSupportMultipleWindows = { false }
                     source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) ?? '' }}
                     startInLoadingState = { true }
-                    style = { styles.webView } />
+                    style = { styles.webView }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }

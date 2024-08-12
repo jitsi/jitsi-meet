@@ -770,6 +770,9 @@
             "removeOption": "Ukloni opciju",
             "send": "Pošalji"
         },
+        "errors": {
+            "notUniqueOption": "Opcije moraju biti jedinstvene"
+        },
         "notification": {
             "description": "Za glasanje otvori karticu ankete",
             "title": "Ovom sastanku je dodana nova anketa"
@@ -1033,6 +1036,7 @@
         "neutral": "Neutralan",
         "sad": "Žalostan",
         "search": "Traži",
+        "searchHint": "Traži sudionike",
         "seconds": "{{count}} s",
         "speakerStats": "Statistika govornika",
         "speakerTime": "Vrijeme govornika",

@@ -478,6 +478,11 @@
     },
     "passwordDigitsOnly": "Да {{number}} лічбаў",
     "passwordSetRemotely": "устаноўлены іншым удзельнікам",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Варыянты павінны быць унікальнымі"
+        }
+    },
     "poweredby": "працуе на",
     "presenceStatus": {
         "busy": "Заняты",
@@ -584,6 +589,8 @@
         "hours": "{{count}}г",
         "minutes": "{{count}}хв",
         "name": "Імя",
+        "search": "Пошук",
+        "searchHint": "Пошук удзельнікаў",
         "seconds": "{{count}} с",
         "speakerStats": "Статыстыка выступаў",
         "speakerTime": "Час выступленняў"

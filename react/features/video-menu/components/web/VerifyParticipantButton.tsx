@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { IconCheck } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { startVerification } from '../../../e2ee/actions';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 /**

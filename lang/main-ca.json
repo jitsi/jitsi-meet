@@ -772,6 +772,9 @@
             "removeOption": "Elimina l'opció",
             "send": "Envia"
         },
+        "errors": {
+            "notUniqueOption": "Les opcions han de ser úniques"
+        },
         "notification": {
             "description": "Obre la pestanya de les enquestes per a votar",
             "title": "S'ha afegit una nova enquesta en aquesta reunió"
@@ -1036,6 +1039,7 @@
         "neutral": "Neutral",
         "sad": "Tristesa",
         "search": "Cerca",
+        "searchHint": "Cerca participants",
         "seconds": "{{count}}s",
         "speakerStats": "Estadístiques de l'interlocutor",
         "speakerTime": "Temps de l'interlocutor",

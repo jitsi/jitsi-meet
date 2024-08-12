@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -33,6 +33,19 @@ const BreakoutRooms = () => {
         .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
+    const renderListHeaderComponent = useMemo(() => (
+        <>
+            { showAutoAssign && <AutoAssignButton /> }
+            { inBreakoutRoom && <LeaveBreakoutRoomButton /> }
+            {
+                isBreakoutRoomsSupported
+                && rooms.map(room => (<CollapsibleRoom
+                    key = { room.id }
+                    room = { room }
+                    roomId = { room.id } />))
+            }
+        </>
+    ), [ showAutoAssign, inBreakoutRoom, isBreakoutRoomsSupported, rooms ]);
 
     return (
         <JitsiScreen
@@ -42,21 +55,7 @@ const BreakoutRooms = () => {
 
             { /* Fixes warning regarding nested lists */ }
             <FlatList
-
-                /* eslint-disable react/jsx-no-bind */
-                ListHeaderComponent = { () => (
-                    <>
-                        { showAutoAssign && <AutoAssignButton /> }
-                        { inBreakoutRoom && <LeaveBreakoutRoomButton /> }
-                        {
-                            isBreakoutRoomsSupported
-                            && rooms.map(room => (<CollapsibleRoom
-                                key = { room.id }
-                                room = { room }
-                                roomId = { room.id } />))
-                        }
-                    </>
-                ) }
+                ListHeaderComponent = { renderListHeaderComponent }
                 data = { [] as ReadonlyArray<undefined> }
                 keyExtractor = { keyExtractor }
                 renderItem = { null }

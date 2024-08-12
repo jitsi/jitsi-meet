@@ -14,9 +14,14 @@ interface IProps {
      */
     pollId: string;
 
+    /**
+     * Create mode control.
+     */
+    setCreateMode: (mode: boolean) => void;
+
 }
 
-const PollItem = React.forwardRef<HTMLDivElement, IProps>(({ pollId }: IProps, ref) => {
+const PollItem = React.forwardRef<HTMLDivElement, IProps>(({ pollId, setCreateMode }: IProps, ref) => {
     const showResults = useSelector(shouldShowResults(pollId));
 
     return (
@@ -26,7 +31,8 @@ const PollItem = React.forwardRef<HTMLDivElement, IProps>(({ pollId }: IProps, r
                     key = { pollId }
                     pollId = { pollId } />
                 : <PollAnswer
-                    pollId = { pollId } />
+                    pollId = { pollId }
+                    setCreateMode = { setCreateMode } />
             }
 
         </div>

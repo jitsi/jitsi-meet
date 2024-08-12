@@ -14,6 +14,7 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { CHAR_LIMIT } from '../../../chat/constants';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
@@ -152,15 +153,18 @@ const Notification = ({
         if (descriptionArray?.length) {
             return (
                 <>
-                    <Text style = { styles.contentTextTitle as TextStyle }>
-                        {titleText}
+                    <Text
+                        numberOfLines = { 1 }
+                        style = { styles.contentTextTitle as TextStyle }>
+                        { titleText }
                     </Text>
                     {
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
+                                numberOfLines = { 3 }
                                 style = { styles.contentText }>
-                                {replaceNonUnicodeEmojis(line)}
+                                { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))
                     }
@@ -169,8 +173,10 @@ const Notification = ({
         }
 
         return (
-            <Text style = { styles.contentTextTitle as TextStyle }>
-                {titleText}
+            <Text
+                numberOfLines = { 1 }
+                style = { styles.contentTextTitle as TextStyle }>
+                { titleText }
             </Text>
         );
     };
@@ -199,10 +205,10 @@ const Notification = ({
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.contentContainer }>
-                    {_renderContent()}
+                    { _renderContent() }
                 </View>
                 <View style = { styles.btnContainer as ViewStyle }>
-                    {mapAppearanceToButtons()}
+                    { mapAppearanceToButtons() }
                 </View>
             </View>
             <IconButton

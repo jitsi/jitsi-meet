@@ -9,9 +9,7 @@ THE_MVN_REPO=${MVN_REPO:-${1:-$DEFAULT_MVN_REPO}}
 MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
-RN_VERSION=$(jq -r '.version' ${THIS_DIR}/../../node_modules/react-native/package.json)
 JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1 | cut -c 2-)
-DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
     MVN_HTTP=1
@@ -25,23 +23,7 @@ export MVN_REPO=$THE_MVN_REPO
 echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
 echo "Using ${MVN_REPO} as the Maven repo"
 
-if [[ $MVN_HTTP == 1 ]]; then
-    # Push React Native
-    echo "Pushing React Native ${RN_VERSION} to the Maven repo"
-    pushd ${THIS_DIR}/../../node_modules/react-native/android/com/facebook/react/react-native/${RN_VERSION}
-    cat react-native-${RN_VERSION}.pom \
-        | sed "s#<packaging>pom</packaging>#<packaging>aar</packaging>#" \
-        | sed "/<optional>/d" \
-        > react-native-${RN_VERSION}-fixed.pom
-    mvn \
-        deploy:deploy-file \
-        -Durl=${MVN_REPO} \
-        -DrepositoryId=${MVN_REPO_ID} \
-        -Dfile=react-native-${RN_VERSION}-release.aar \
-        -Dpackaging=aar \
-        -DgeneratePom=false \
-        -DpomFile=react-native-${RN_VERSION}-fixed.pom || true
-    popd
+ if [[ $MVN_HTTP == 1 ]]; then
     # Push JSC
     echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
     pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
@@ -55,24 +37,6 @@ if [[ $MVN_HTTP == 1 ]]; then
         -DpomFile=android-jsc-${JSC_VERSION}.pom || true
     popd
 else
-    # Push React Native, if necessary
-    if [[ ! -d ${MVN_REPO}/com/facebook/react/react-native/${RN_VERSION} ]]; then
-        echo "Pushing React Native ${RN_VERSION} to the Maven repo"
-        pushd ${THIS_DIR}/../../node_modules/react-native/android/com/facebook/react/react-native/${RN_VERSION}
-        cat react-native-${RN_VERSION}.pom \
-            | sed "s#<packaging>pom</packaging>#<packaging>aar</packaging>#" \
-            | sed "/<optional>/d" \
-            > react-native-${RN_VERSION}-fixed.pom
-        mvn \
-            deploy:deploy-file \
-            -Durl=${MVN_REPO} \
-            -Dfile=react-native-${RN_VERSION}-release.aar \
-            -Dpackaging=aar \
-            -DgeneratePom=false \
-            -DpomFile=react-native-${RN_VERSION}-fixed.pom
-        popd
-    fi
-
     # Push JSC, if necessary
     if [[ ! -d ${MVN_REPO}/org/webkit/android-jsc/${JSC_VERSION} ]]; then
         echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
@@ -97,20 +61,17 @@ fi
 # Now build and publish the Jitsi Meet SDK and its dependencies
 echo "Building and publishing the Jitsi Meet SDK"
 pushd ${THIS_DIR}/../
-./gradlew clean 
-./gradlew assembleRelease 
+./gradlew clean
+./gradlew assembleRelease
 ./gradlew publish
 popd
 
-if [[ $DO_GIT_TAG == 1 ]]; then
-    # The artifacts are now on the Maven repo, commit them
+# The artifacts are now on the Maven repo, commit them
+if [[ $MVN_HTTP == 0 ]]; then
     pushd ${MVN_REPO_PATH}
     git add -A .
     git commit -m "Jitsi Meet SDK + dependencies: ${SDK_VERSION}"
     popd
-
-    # Tag the release
-    git tag android-sdk-${SDK_VERSION}
 fi
 
 # Done!

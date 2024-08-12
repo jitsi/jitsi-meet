@@ -725,7 +725,7 @@
             "participantsList": "",
             "waitingLobby": ""
         },
-        "search": ""
+        "search": "Hledat účastníky"
     },
     "passwordDigitsOnly": "Až {{number}} číslic",
     "passwordSetRemotely": "nastaveno jiným účastníkem",
@@ -746,6 +746,9 @@
             "questionPlaceholder": "",
             "removeOption": "",
             "send": ""
+        },
+        "errors": {
+            "notUniqueOption": "Možnosti musí být jedinečné"
         },
         "notification": {
             "description": "",
@@ -1008,7 +1011,8 @@
         "name": "Jméno",
         "neutral": "",
         "sad": "",
-        "search": "",
+        "search": "Prohledat",
+        "searchHint": "Hledat účastníky",
         "seconds": "{{count}} s",
         "speakerStats": "Statistika řečníků",
         "speakerTime": "Mluvil/a již",

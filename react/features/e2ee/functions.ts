@@ -50,7 +50,7 @@ export function doesEveryoneSupportE2EE(stateful: IStateful) {
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}
  * function.
- * @returns {boolean}.
+ * @returns {boolean}
  */
 export function isMaxModeReached(stateful: IStateful) {
     const participantCount = getParticipantCount(toState(stateful));
@@ -63,7 +63,7 @@ export function isMaxModeReached(stateful: IStateful) {
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}
  * function.
- * @returns {boolean}.
+ * @returns {boolean}
  */
 export function isMaxModeThresholdReached(stateful: IStateful) {
     const participantCount = getParticipantCount(toState(stateful));

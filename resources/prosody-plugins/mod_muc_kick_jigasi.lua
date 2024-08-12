@@ -4,11 +4,12 @@
 
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local is_sip_jigasi = util.is_sip_jigasi;
 local starts_with = util.starts_with;
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
-local json = require "util.json";
+local json = require 'cjson.safe';
 
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -107,9 +108,9 @@ function handle_kick_participant (event)
         return { status_code = 400; }
     end
 
-    local params = json.decode(request.body);
+    local params, error = json.decode(request.body);
     if not params then
-        module:log("warn", "Missing params");
+        module:log("warn", "Missing params error:%s", error);
         return { status_code = 400; }
     end
 
@@ -135,9 +136,8 @@ function handle_kick_participant (event)
         local pr = occupant:get_presence();
         local displayName = pr:get_child_text(
                 'nick', 'http://jabber.org/protocol/nick');
-        local initiator = pr:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 
-        if initiator and displayName and starts_with(displayName, number) then
+        if is_sip_jigasi(pr) and displayName and starts_with(displayName, number) then
             room:set_role(true, occupant.nick, nil);
             module:log('info', 'Occupant kicked %s from %s', occupant.nick, room.jid);
             return { status_code = 200; }

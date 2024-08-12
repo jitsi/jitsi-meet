@@ -48,7 +48,9 @@ export const CollapsibleRoom = ({ room, roomId }: IProps) => {
             <FlatList
                 data = { Object.values(room.participants || {}) }
                 keyExtractor = { _keyExtractor }
-                listKey = { roomId }
+
+                /* @ts-ignore */
+                listKey = { roomId as String }
 
                 // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                 renderItem = { ({ item: participant }) => (

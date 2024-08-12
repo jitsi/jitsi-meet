@@ -6,6 +6,7 @@ import { set } from '../redux/functions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    NOTIFIED_TO_SPEAK,
     OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -92,7 +93,7 @@ export interface IParticipantsState {
     numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
-    raisedHandsQueue: Array<{ id: string; raisedHandTimestamp: number; }>;
+    raisedHandsQueue: Array<{ hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
@@ -114,6 +115,23 @@ export interface IParticipantsState {
 ReducerRegistry.register<IParticipantsState>('features/base/participants',
 (state = DEFAULT_STATE, action): IParticipantsState => {
     switch (action.type) {
+    case NOTIFIED_TO_SPEAK: {
+        return {
+            ...state,
+            raisedHandsQueue: state.raisedHandsQueue.map((item, index) => {
+                if (index === 0) {
+
+                    return {
+                        ...item,
+                        hasBeenNotified: true
+                    };
+                }
+
+                return item;
+            })
+        };
+    }
+
     case PARTICIPANT_ID_CHANGED: {
         const { local } = state;
 
@@ -374,23 +392,6 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         let oldParticipant = remote.get(id);
         let isLocalScreenShare = false;
 
-        if (oldParticipant?.sources?.size) {
-            const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
-            const newRemoteVideoSources = new Set(state.remoteVideoSources);
-
-            if (videoSources?.size) {
-                for (const source of videoSources.keys()) {
-                    newRemoteVideoSources.delete(source);
-                }
-            }
-            state.remoteVideoSources = newRemoteVideoSources;
-        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
-            const newRemoteVideoSources = new Set(state.remoteVideoSources);
-
-            newRemoteVideoSources.delete(id);
-            state.remoteVideoSources = newRemoteVideoSources;
-        }
-
         if (oldParticipant && oldParticipant.conference === conference) {
             remote.delete(id);
         } else if (local?.id === id) {
@@ -403,6 +404,26 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         } else {
             // no participant found
             return state;
+        }
+
+        if (oldParticipant?.sources?.size) {
+            const videoSources: Map<string, ISourceInfo> | undefined = oldParticipant.sources.get(MEDIA_TYPE.VIDEO);
+
+            if (videoSources?.size) {
+                const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+                for (const source of videoSources.keys()) {
+                    newRemoteVideoSources.delete(source);
+                }
+
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
+        } else if (oldParticipant?.fakeParticipant === FakeParticipant.RemoteScreenShare) {
+            const newRemoteVideoSources = new Set(state.remoteVideoSources);
+
+            if (newRemoteVideoSources.delete(id)) {
+                state.remoteVideoSources = newRemoteVideoSources;
+            }
         }
 
         state.sortedRemoteParticipants.delete(id);

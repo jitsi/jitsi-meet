@@ -16,7 +16,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 // @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
-import { getDisablePolls } from '../../../../../conference/functions';
+import { arePollsDisabled } from '../../../../../conference/functions';
 // @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
@@ -43,6 +43,7 @@ import SpeakerStats
 import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
+import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
@@ -62,7 +63,8 @@ import {
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions,
-    subtitlesScreenOptions
+    subtitlesScreenOptions,
+    whiteboardScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
 // @ts-ignore
@@ -81,7 +83,7 @@ const ConferenceStack = createStackNavigator();
 
 
 const ConferenceNavigationContainer = () => {
-    const isPollsDisabled = useSelector(getDisablePolls);
+    const isPollsDisabled = useSelector(arePollsDisabled);
     let ChatScreen;
     let chatScreenName;
     let chatTitleString;
@@ -213,6 +215,14 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...breakoutRoomsScreenOptions,
                         title: t('breakoutRooms.title')
+                    }} />
+                <ConferenceStack.Screen
+                    // @ts-ignore
+                    component = { Whiteboard }
+                    name = { screen.conference.whiteboard }
+                    options = {{
+                        ...whiteboardScreenOptions,
+                        title: t('whiteboard.screenTitle')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>

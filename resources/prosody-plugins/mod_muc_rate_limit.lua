@@ -57,7 +57,7 @@ end
 -- process join_rate_presence_queue in the room and pops element passing them to handle_normal_presence
 -- returns 1 if we want to reschedule it after 1 second
 local function timer_process_queue_elements (rate, queue, process, queue_empty_cb)
-    if not queue or queue:count() == 0 then
+    if not queue or queue:count() == 0 or queue.empty then
         return;
     end
 
@@ -152,7 +152,12 @@ end, 9); -- as we will rate limit joins we need to be the first to execute
 
 -- clear queue on room destroy so timer will skip next run if any
 module:hook('muc-room-destroyed',function(event)
-    event.room.join_rate_presence_queue = nil;
+    if event.room.join_rate_presence_queue then
+        event.room.join_rate_presence_queue.empty = true;
+    end
+    if event.room.leave_rate_presence_queue then
+        event.room.leave_rate_presence_queue.empty = true;
+    end
 end);
 
 module:hook('muc-occupant-pre-leave', function (event)

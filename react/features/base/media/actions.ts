@@ -9,6 +9,7 @@ import {
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
+    SET_INITIAL_GUM_PROMISE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
@@ -94,6 +95,22 @@ export function setCameraFacingMode(cameraFacingMode: string) {
 }
 
 /**
+ * Sets the initial GUM promise.
+ *
+ * @param {Promise<Array<Object>> | undefined} promise - The promise.
+ * @returns {{
+ *     type: SET_INITIAL_GUM_PROMISE,
+ *     promise: Promise
+ * }}
+ */
+export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Array<any>; }> | null = null) {
+    return {
+        type: SET_INITIAL_GUM_PROMISE,
+        promise
+    };
+}
+
+/**
  * Action to set the muted state of the local screenshare.
  *
  * @param {boolean} muted - True if the local screenshare is to be enabled or false otherwise.
@@ -122,7 +139,7 @@ export function setScreenshareMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
             ensureTrack,
@@ -180,7 +197,7 @@ export function setVideoMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_VIDEO_MUTED,
             authority,
             ensureTrack,
