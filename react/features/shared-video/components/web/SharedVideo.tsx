@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
+import { isSharedVideoEnabled } from '../../functions';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
@@ -32,6 +33,11 @@ interface IProps {
      * The width of the vertical filmstrip.
      */
     filmstripWidth: number;
+
+    /**
+     * Whether the shared video is enabled or not.
+     */
+    isEnabled: boolean;
 
     /**
      * Is the video shared by the local user.
@@ -118,7 +124,12 @@ class SharedVideo extends Component<IProps> {
      * @returns {React$Element}
      */
     render() {
-        const { isOwner, isResizing } = this.props;
+        const { isEnabled, isOwner, isResizing } = this.props;
+
+        if (!isEnabled) {
+            return null;
+        }
+
         const className = !isResizing && isOwner ? '' : 'disable-pointer';
 
         return (
@@ -152,6 +163,7 @@ function _mapStateToProps(state: IReduxState) {
         clientWidth,
         filmstripVisible: visible,
         filmstripWidth: getVerticalViewMaxWidth(state),
+        isEnabled: isSharedVideoEnabled(state),
         isOwner: ownerId === localParticipant?.id,
         isResizing,
         videoUrl
