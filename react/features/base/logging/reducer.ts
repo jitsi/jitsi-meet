@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { merge } from 'lodash-es';
 import { AnyAction } from 'redux';
 
 import ReducerRegistry from '../redux/ReducerRegistry';
@@ -95,7 +95,7 @@ ReducerRegistry.register<ILoggingState>(
  * reduction of the specified action.
  */
 function _setLoggingConfig(state: ILoggingState, action: AnyAction) {
-    const newConfig = _.merge({}, DEFAULT_STATE.config, action.config);
+    const newConfig = merge({}, DEFAULT_STATE.config, action.config);
 
     if (equals(state.config, newConfig)) {
         return state;

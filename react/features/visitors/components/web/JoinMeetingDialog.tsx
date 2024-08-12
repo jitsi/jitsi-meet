@@ -1,4 +1,4 @@
-import { noop } from 'lodash';
+import { noop } from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
