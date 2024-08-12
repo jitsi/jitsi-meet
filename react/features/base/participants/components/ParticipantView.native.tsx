@@ -8,6 +8,7 @@ import {
     isTrackStreamingStatusInactive
 } from '../../../connection-indicator/functions';
 import SharedVideo from '../../../shared-video/components/native/SharedVideo';
+import { isSharedVideoEnabled } from '../../../shared-video/functions';
 import { IStateful } from '../../app/types';
 import Avatar from '../../avatar/components/Avatar';
 import { translate } from '../../i18n/functions';
@@ -236,7 +237,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _isConnectionInactive: isTrackStreamingStatusInactive(videoTrack),
         _isSharedVideoParticipant: isSharedVideoParticipant(participant),
         _participantName: getParticipantDisplayName(state, participantId),
-        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
+        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo
+            && isSharedVideoEnabled(state),
         _videoTrack: videoTrack
     };
 }

@@ -4,6 +4,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { setDisableButton } from './actions.web';
 import { SHARED_VIDEO } from './constants';
+import { isSharedVideoEnabled } from './functions';
 
 import './middleware.any';
 
@@ -13,6 +14,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
+        if (!isSharedVideoEnabled(state)) {
+            break;
+        }
+
         const { conference } = action;
 
         conference.addCommandListener(SHARED_VIDEO, ({ attributes }: { attributes:

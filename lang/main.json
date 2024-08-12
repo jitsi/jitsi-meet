@@ -443,7 +443,7 @@
         "shareVideoTitle": "Share video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
-        "sharedVideoDialogError": "Error: Invalid URL",
+        "sharedVideoDialogError": "Error: Invalid or forbidden URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "show": "Show",
         "start": "Start ",
