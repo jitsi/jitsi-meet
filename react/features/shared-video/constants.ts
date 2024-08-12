@@ -28,3 +28,13 @@ export const PLAYBACK_STATUSES = {
     PAUSED: 'pause',
     STOPPED: 'stop'
 };
+
+/**
+ * The domain for youtube URLs.
+ */
+export const YOUTUBE_URL_DOMAIN = 'youtube.com';
+
+/**
+ * The white listed domains for shared video.
+ */
+export const URL_WHITELIST = [ YOUTUBE_URL_DOMAIN ];
