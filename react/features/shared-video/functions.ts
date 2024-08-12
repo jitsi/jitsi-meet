@@ -1,7 +1,13 @@
 import { IStateful } from '../base/app/types';
 import { getFakeParticipants } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
 
-import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
+import {
+    URL_WHITELIST,
+    VIDEO_PLAYER_PARTICIPANT_NAME,
+    YOUTUBE_PLAYER_PARTICIPANT_NAME,
+    YOUTUBE_URL_DOMAIN
+} from './constants';
 
 /**
  * Validates the entered video url.
@@ -70,16 +76,22 @@ export function extractYoutubeIdOrURL(input: string) {
         return;
     }
 
-    const youtubeId = getYoutubeId(trimmedLink);
+    if (areYoutubeURLsAllowedForSharedVideo()) {
+        const youtubeId = getYoutubeId(trimmedLink);
 
-    if (youtubeId) {
-        return youtubeId;
+        if (youtubeId) {
+            return youtubeId;
+        }
     }
 
     // Check if the URL is valid, native may crash otherwise.
     try {
         // eslint-disable-next-line no-new
-        new URL(trimmedLink);
+        const url = new URL(trimmedLink);
+
+        if (!URL_WHITELIST.includes(url?.hostname)) {
+            return;
+        }
     } catch (_) {
         return;
     }
@@ -87,3 +99,48 @@ export function extractYoutubeIdOrURL(input: string) {
     return trimmedLink;
 }
 
+/**
+ * Returns true if shared video functionality is enabled and false otherwise.
+ *
+ * @param {IStateful} stateful - - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isSharedVideoEnabled(stateful: IStateful) {
+    const state = toState(stateful);
+    const { disableThirdPartyRequests = false } = state['features/base/config'];
+
+    return !disableThirdPartyRequests && URL_WHITELIST.length > 0;
+}
+
+/**
+ * Checks if you youtube URLs should be allowed for shared videos.
+ *
+ * @returns {boolean}
+ */
+export function areYoutubeURLsAllowedForSharedVideo() {
+    return URL_WHITELIST.includes(YOUTUBE_URL_DOMAIN);
+}
+
+/**
+ * Returns true if the passed url is allowed to be used for shared video or not.
+ *
+ * @param {string} url - The URL.
+ * @returns {boolean}
+ */
+export function isURLAllowedForSharedVideo(url: string) {
+    if (!url) {
+        return false;
+    }
+
+    try {
+        const urlObject = new URL(url);
+
+        if ([ 'http:', 'https:' ].includes(urlObject?.protocol?.toLowerCase())) {
+            return URL_WHITELIST.includes(urlObject?.hostname);
+        }
+    } catch (_e) { // it should be youtube id.
+        return areYoutubeURLsAllowedForSharedVideo();
+    }
+
+    return false;
+}
