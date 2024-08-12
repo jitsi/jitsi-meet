@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
+import { getParticipantCount } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import {
     close as closeParticipantsPane,
@@ -29,13 +30,17 @@ interface IProps extends AbstractButtonProps {
      * Whether participants feature is enabled or not.
      */
     _isParticipantsPaneEnabled: boolean;
+
+    /**
+     * Participants count.
+     */
+    _particioantsCount: number;
 }
 
 /**
  * Implementation of a button for accessing participants pane.
  */
 class ParticipantsPaneButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.participants';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
     icon = IconUsers;
     label = 'toolbar.participants';
@@ -68,6 +73,21 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
         } else {
             dispatch(openParticipantsPane());
         }
+    }
+
+
+    /**
+     * Override the _getAccessibilityLabel method to incorporate the dynamic participant count.
+     *
+     * @override
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        const { t, _particioantsCount } = this.props;
+
+        return t('toolbar.accessibilityLabel.participants', {
+            participantsCount: _particioantsCount
+        });
     }
 
     /**
@@ -105,7 +125,8 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         _isOpen: isOpen,
-        _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state)
+        _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
+        _particioantsCount: getParticipantCount(state)
     };
 }
 
