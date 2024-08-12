@@ -1,4 +1,4 @@
-import { differenceWith, isEqual } from 'lodash-es';
+import _ from 'lodash';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
@@ -184,9 +184,9 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
             oldStageParticipants = JSON.parse(oldState.pinnedStageParticipants);
         }
 
-        if (!isEqual(stageParticipants, oldStageParticipants)) {
-            const toRemove = differenceWith(oldStageParticipants, stageParticipants, isEqual);
-            const toAdd = differenceWith(stageParticipants, oldStageParticipants, isEqual);
+        if (!_.isEqual(stageParticipants, oldStageParticipants)) {
+            const toRemove = _.differenceWith(oldStageParticipants, stageParticipants, _.isEqual);
+            const toAdd = _.differenceWith(stageParticipants, oldStageParticipants, _.isEqual);
 
             toRemove.forEach((p: { participantId: string; }) =>
                 store.dispatch(removeStageParticipant(p.participantId)));

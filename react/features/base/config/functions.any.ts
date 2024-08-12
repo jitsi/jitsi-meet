@@ -3,7 +3,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
-import { isEmpty, mergeWith, pick } from 'lodash-es';
+import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../participants/functions';
@@ -166,11 +166,13 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
             const configJSON
                 = getWhitelistedJSON(configName as 'interfaceConfig' | 'config', json[configName]);
 
-            if (!isEmpty(configJSON)) {
-                logger.info(`Extending ${configName} with: ${JSON.stringify(configJSON)}`);
+            if (!_.isEmpty(configJSON)) {
+                logger.info(
+                    `Extending ${configName} with: ${
+                        JSON.stringify(configJSON)}`);
 
                 // eslint-disable-next-line arrow-body-style
-                mergeWith(configObj, configJSON, (oldValue, newValue) => {
+                _.mergeWith(configObj, configJSON, (oldValue, newValue) => {
 
                     // XXX We don't want to merge the arrays, we want to
                     // overwrite them.
@@ -194,9 +196,9 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
  */
 export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', configJSON: any): Object {
     if (configName === 'interfaceConfig') {
-        return pick(configJSON, INTERFACE_CONFIG_WHITELIST);
+        return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {
-        return pick(configJSON, CONFIG_WHITELIST);
+        return _.pick(configJSON, CONFIG_WHITELIST);
     }
 
     return configJSON;

@@ -1,4 +1,4 @@
-import { isEqual, merge } from 'lodash-es';
+import _ from 'lodash';
 
 import ReducerRegistry from '../redux/ReducerRegistry';
 
@@ -25,9 +25,9 @@ export interface IFlagsState {
 ReducerRegistry.register<IFlagsState>('features/base/flags', (state = DEFAULT_STATE, action): IFlagsState => {
     switch (action.type) {
     case UPDATE_FLAGS: {
-        const newState = merge({}, state, action.flags);
+        const newState = _.merge({}, state, action.flags);
 
-        return isEqual(state, newState) ? state : newState;
+        return _.isEqual(state, newState) ? state : newState;
     }
     }
 

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { throttle } from 'lodash-es';
+import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -286,7 +286,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         this._onDragMouseUp = this._onDragMouseUp.bind(this);
         this._onFilmstripResize = this._onFilmstripResize.bind(this);
 
-        this._throttledResize = throttle(
+        this._throttledResize = _.throttle(
             this._onFilmstripResize,
             50,
             {

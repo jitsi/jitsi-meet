@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash-es';
+import _ from 'lodash';
 
 import { IReduxState, IStore } from '../../app/types';
 import { IStateful } from '../app/types';
@@ -36,7 +36,7 @@ export function assign<T extends Object>(target: T, source: Partial<T>): T {
  * comparison); false, otherwise.
  */
 export function equals(a: any, b: any) {
-    return isEqual(a, b);
+    return _.isEqual(a, b);
 }
 
 /**

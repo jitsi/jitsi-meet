@@ -1,7 +1,7 @@
 /* eslint-disable lines-around-comment*/
 
 import Slider from '@react-native-community/slider';
-import { throttle } from 'lodash-es';
+import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
@@ -88,7 +88,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
 
         this._originalVolumeChange = this._onVolumeChange;
 
-        this._onVolumeChange = throttle(
+        this._onVolumeChange = _.throttle(
             volumeLevel => this._originalVolumeChange(volumeLevel), 500
         );
     }

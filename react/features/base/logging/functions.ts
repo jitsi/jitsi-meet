@@ -1,6 +1,6 @@
 // @ts-expect-error
 import Logger, { getLogger as _getLogger } from '@jitsi/logger';
-import { once } from 'lodash-es';
+import _ from 'lodash';
 
 import LogTransport from './LogTransport';
 
@@ -26,7 +26,7 @@ export function getLogger(id: string) {
 /**
  * Initializes native logging. This operations must be done as early as possible.
  */
-export const _initLogging = once(() => {
+export const _initLogging = _.once(() => {
     if (navigator.product !== 'ReactNative') {
         return;
     }

@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import { throttle } from 'lodash';
 
 import { IReduxState, IStore } from '../app/types';
 import { getParticipantCount } from '../base/participants/functions';

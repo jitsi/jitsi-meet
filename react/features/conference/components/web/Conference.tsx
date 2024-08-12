@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import _ from 'lodash';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect as reactReduxConnect } from 'react-redux';
@@ -133,7 +133,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._originalOnShowToolbar = this._onShowToolbar;
         this._originalOnMouseMove = this._onMouseMove;
 
-        this._onShowToolbar = throttle(
+        this._onShowToolbar = _.throttle(
             () => this._originalOnShowToolbar(),
             100,
             {
@@ -141,7 +141,7 @@ class Conference extends AbstractConference<IProps, any> {
                 trailing: false
             });
 
-        this._onMouseMove = throttle(
+        this._onMouseMove = _.throttle(
             event => this._originalOnMouseMove(event),
             _mouseMoveCallbackInterval,
             {

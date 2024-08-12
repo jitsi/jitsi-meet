@@ -1,4 +1,4 @@
-import { assign } from 'lodash-es';
+import _ from 'lodash';
 
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { FaceLandmarks } from '../face-landmarks/types';
@@ -141,7 +141,11 @@ ReducerRegistry.register<ISpeakerStatsState>('features/speaker-stats',
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _updateCriteria(state: ISpeakerStatsState, { criteria }: { criteria: string | null; }) {
-    return assign({}, state, { criteria });
+    return _.assign(
+        {},
+        state,
+        { criteria }
+    );
 }
 
 /**
@@ -184,5 +188,9 @@ function _updateSortedSpeakerStats(state: ISpeakerStatsState, { participantIds }
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _initReorderStats(state: ISpeakerStatsState) {
-    return assign({}, state, { pendingReorder: true });
+    return _.assign(
+        {},
+        state,
+        { pendingReorder: true }
+    );
 }

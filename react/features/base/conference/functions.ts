@@ -1,5 +1,5 @@
 import { sha512_256 as sha512 } from 'js-sha512';
-import { upperFirst, words } from 'lodash-es';
+import _ from 'lodash';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
@@ -571,7 +571,7 @@ export function sendLocalParticipant(
  * @returns {string}
  */
 function safeStartCase(s = '') {
-    return words(`${s}`.replace(/['\u2019]/g, '')).reduce(
-        (result, word, index) => result + (index ? ' ' : '') + upperFirst(word)
+    return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
+        (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
         , '');
 }

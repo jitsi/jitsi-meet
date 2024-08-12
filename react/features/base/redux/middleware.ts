@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import _ from 'lodash';
 
 import MiddlewareRegistry from './MiddlewareRegistry';
 import PersistenceRegistry from './PersistenceRegistry';
@@ -13,7 +13,10 @@ const PERSIST_STATE_DELAY = 2000;
 /**
  * A throttled function to avoid repetitive state persisting.
  */
-const throttledPersistState = throttle(state => PersistenceRegistry.persistState(state), PERSIST_STATE_DELAY);
+const throttledPersistState
+    = _.throttle(
+        state => PersistenceRegistry.persistState(state),
+        PERSIST_STATE_DELAY);
 
 // Web only code.
 // We need the <tt>if</tt> because it appears that on mobile the polyfill is not

@@ -1,4 +1,4 @@
-import { find } from 'lodash-es';
+import _ from 'lodash';
 
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
@@ -33,7 +33,7 @@ export const getBreakoutRooms = (stateful: IStateful): IRooms => toState(statefu
 export const getMainRoom = (stateful: IStateful) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return find(rooms, room => Boolean(room.isMainRoom));
+    return _.find(rooms, room => Boolean(room.isMainRoom));
 };
 
 /**
@@ -135,7 +135,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
 export const getRoomByJid = (stateful: IStateful, roomJid: string) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return find(rooms, (room: IRoom) => room.jid === roomJid);
+    return _.find(rooms, (room: IRoom) => room.jid === roomJid);
 };
 
 /**
