@@ -211,11 +211,6 @@ public class MainActivity extends JitsiMeetActivity {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
 
         Log.d(TAG, "Is in picture-in-picture mode: " + isInPictureInPictureMode);
-
-        if (!isInPictureInPictureMode) {
-            this.startActivity(new Intent(this, getClass())
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-        }
     }
 
     // Helper methods
