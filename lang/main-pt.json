@@ -128,6 +128,7 @@
         "privateNotice": "Mensagem privada para {{recipient}}",
         "sendButton": "Enviar",
         "smileysPanel": "Painel de Emojis",
+        "systemDisplayName": "Sistema",
         "tabs": {
             "chat": "Chat",
             "polls": "Sondagens"
@@ -263,6 +264,7 @@
         "Share": "Partilhar",
         "Submit": "Submeter",
         "WaitForHostMsg": "A conferência ainda não começou porque ainda não chegaram moderadores. Se quiser ser um moderador, inicie a sessão. Caso contrário, aguarde.",
+        "WaitForHostNoAuthMsg": "A conferência ainda não começou porque ainda não chegaram os moderadores. Por favor, aguarde.",
         "WaitingForHostButton": "Esperar pelo moderador",
         "WaitingForHostTitle": "À espera de um moderador...",
         "Yes": "Sim",
@@ -318,6 +320,7 @@
         "embedMeeting": "Embutir reunião",
         "enterDisplayName": "Digite o seu nome",
         "error": "Erro",
+        "errorRoomCreationRestriction": "Tentou juntar-se demasiado depressa, por favor volte mais tarde.",
         "gracefulShutdown": "O nosso serviço está atualmente em manutenção. Por favor, tente novamente mais tarde.",
         "grantModeratorDialog": "Tem a certeza que quer conceder direitos de moderador a {{participantName}}?",
         "grantModeratorTitle": "Conceder direitos de moderador",
@@ -733,8 +736,10 @@
         "connectedOneMember": "{{name}} entrou na reunião",
         "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
-        "dataChannelClosed": "Deficiência na qualidade do vídeo",
-        "dataChannelClosedDescription": "O canal de ponte foi desconectado e, portanto, a qualidade do vídeo está limitada à sua configuração mais baixa.",
+        "dataChannelClosed": "A qualidade do vídeo pode ser afetada",
+        "dataChannelClosedDescription": "O canal de ponte está em baixo e, por isso, a qualidade de vídeo pode estar limitada à sua definição mais baixa.",
+        "dataChannelClosedDescriptionWithAudio": "O canal de ponte está em baixo, pelo que podem ocorrer interrupções no áudio e no vídeo.",
+        "dataChannelClosedWithAudio": "A qualidade do áudio e do vídeo pode ser afetada",
         "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
         "disabledIframeSecondary": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Por favor, use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
@@ -781,6 +786,7 @@
         "newDeviceAction": "Usar",
         "newDeviceAudioTitle": "Novo dispositivo de áudio detetado",
         "newDeviceCameraTitle": "Nova câmara detetada",
+        "nextToSpeak": "É o próximo na fila para falar",
         "noiseSuppressionDesktopAudioDescription": "A supressão de ruído não pode ser ativada enquanto se partilha o áudio do ambiente de trabalho, por favor desative-o e tente novamente.",
         "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído",
         "noiseSuppressionStereoDescription": "A supressão do ruído de áudio estéreo não é atualmente suportada.",
@@ -815,8 +821,11 @@
         "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema.",
         "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
         "viewLobby": "Ver sala de espera",
+        "viewParticipants": "Ver participantes",
         "viewVisitors": "Ver visitantes",
         "waitingParticipants": "{{waitingParticipants}} pessoas",
+        "waitingVisitors": "Visitantes em fila de espera: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "A reunião ainda não está em direto!",
         "whiteboardLimitDescription": "Guarde o seu progresso, pois o limite de utilizadores será atingido em breve e o quadro branco será encerrado.",
         "whiteboardLimitTitle": "Utilização do quadro branco"
     },
@@ -830,7 +839,10 @@
             "audioModeration": "Ligar o microfone deles",
             "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
             "breakoutRooms": "Salas simultâneas",
+            "goLive": "Aceder ao vivo",
             "invite": "Convidar alguém",
+            "lowerAllHands": "Baixar todas as mãos",
+            "lowerHand": "Baixar a mão",
             "moreModerationActions": "Mais opções de moderação",
             "moreModerationControls": "Mais controlos de moderação",
             "moreParticipantOptions": "Mais opções de participantes",
@@ -847,6 +859,7 @@
         "headings": {
             "lobby": "Sala de espera ({{count}})",
             "participantsList": "Participantes da reunião ({{count}})",
+            "visitorInQueue": " (à espera {{count}})",
             "visitorRequests": " (pedidos {{count}})",
             "visitors": "Visitantes ({{count}})",
             "waitingLobby": "Aguardam na sala de espera ({{count}})"
@@ -860,10 +873,13 @@
     "pinnedParticipant": "O participante está afixado",
     "polls": {
         "answer": {
+            "edit": "Editar",
+            "send": "Enviar",
             "skip": "Ignorar",
             "submit": "Submeter"
         },
         "by": "Por {{ name }}",
+        "closeButton": "Fechar sondagem",
         "create": {
             "addOption": "Adicionar opção",
             "answerPlaceholder": "Opção {{index}}",
@@ -873,6 +889,7 @@
             "pollQuestion": "Pergunta de Sondagem",
             "questionPlaceholder": "Faça uma pergunta",
             "removeOption": "Remover opção",
+            "save": "Guardar",
             "send": "Enviar"
         },
         "errors": {
@@ -1478,12 +1495,22 @@
     },
     "visitors": {
         "chatIndicator": "(visitante)",
+        "joinMeeting": {
+            "description": "Atualmente, é um observador nesta conferência.",
+            "raiseHand": "Levantar a mão",
+            "title": "Participar na reunião",
+            "wishToSpeak": "Se deseja intervir, levante a mão e aguarde a aprovação do moderador."
+        },
         "labelTooltip": "Número de visitantes: {{count}}",
         "notification": {
             "demoteDescription": "Enviado aqui pelo {{actor}}, levante a mão para participar",
-            "description": "Para participar levante a sua mão",
+            "noMainParticipantsDescription": "Um participante precisa de iniciar a reunião. Tente novamente daqui a pouco.",
+            "noMainParticipantsTitle": "Esta reunião ainda não começou.",
+            "noVisitorLobby": "Não é possível aderir enquanto houver uma sala de espera activada para a reunião.",
+            "notAllowedPromotion": "É necessário que um participante autorize primeiro o seu pedido.",
             "title": "É um visitante na reunião"
-        }
+        },
+        "waitingMessage": "Participará na reunião assim que esta estiver em direto!"
     },
     "volumeSlider": "Controlo de volume",
     "welcomepage": {
