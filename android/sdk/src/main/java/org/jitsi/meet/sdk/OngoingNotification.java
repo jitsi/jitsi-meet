@@ -73,14 +73,13 @@ class OngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context) {
-
+    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context, Class tapBackActivity) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
         }
 
-        Intent notificationIntent = new Intent(context, context.getClass());
+        Intent notificationIntent = new Intent(context, tapBackActivity == null ? context.getClass() : tapBackActivity);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);
