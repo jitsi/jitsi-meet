@@ -1,13 +1,19 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import { Config, FaceResult, Human } from '@vladmandic/human';
+import { Config, FaceResult, HandResult, Human } from '@vladmandic/human';
 
-import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
+import {
+    DETECTION_TYPES,
+    FACE_DETECTION_SCORE_THRESHOLD,
+    FACE_EXPRESSIONS_NAMING_MAPPING,
+    HAND_DETECTION_SCORE_THRESHOLD
+} from './constants';
 import { DetectInput, DetectOutput, FaceBox, FaceExpression, InitInput } from './types';
 
 export interface IFaceLandmarksHelper {
     detect: ({ image, threshold }: DetectInput) => Promise<DetectOutput>;
     getDetectionInProgress: () => boolean;
-    getDetections: (image: ImageBitmap | ImageData) => Promise<Array<FaceResult>>;
+    getDetections: (image: ImageBitmap | ImageData) =>
+        Promise<{ faceDetections: FaceResult[]; handDetections: HandResult[]; }>;
     getFaceBox: (detections: Array<FaceResult>, threshold: number) => FaceBox | undefined;
     getFaceCount: (detections: Array<FaceResult>) => number;
     getFaceExpression: (detections: Array<FaceResult>) => FaceExpression | undefined;
@@ -19,7 +25,7 @@ export interface IFaceLandmarksHelper {
  */
 export class HumanHelper implements IFaceLandmarksHelper {
     protected human: Human | undefined;
-    protected faceDetectionTypes: string[];
+    protected detectionTypes: string[];
     protected baseUrl: string;
     private detectionInProgress = false;
     private lastValidFaceBox: FaceBox | undefined;
@@ -52,7 +58,17 @@ export class HumanHelper implements IFaceLandmarksHelper {
             },
             description: { enabled: false }
         },
-        hand: { enabled: false },
+        hand: {
+            enabled: false,
+            rotation: false,
+            maxDetected: 1,
+            detector: {
+                modelPath: 'handtrack.json'
+            },
+            skeleton: {
+                modelPath: 'handlandmark-lite.json'
+            }
+        },
         gesture: { enabled: false },
         body: { enabled: false },
         segmentation: { enabled: false }
@@ -65,7 +81,7 @@ export class HumanHelper implements IFaceLandmarksHelper {
      * @returns {void}
      */
     constructor({ baseUrl, detectionTypes }: InitInput) {
-        this.faceDetectionTypes = detectionTypes;
+        this.detectionTypes = detectionTypes;
         this.baseUrl = baseUrl;
         this.init();
     }
@@ -85,16 +101,22 @@ export class HumanHelper implements IFaceLandmarksHelper {
                 setWasmPaths(this.baseUrl);
             }
 
-            if (this.faceDetectionTypes.length > 0 && this.config.face) {
+            if ((this.detectionTypes.includes(DETECTION_TYPES.FACE_BOX)
+                || this.detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS))
+                && this.config.face) {
                 this.config.face.enabled = true;
             }
 
-            if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
+            if (this.detectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
                 this.config.face.detector.enabled = true;
             }
 
-            if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && this.config.face?.emotion) {
+            if (this.detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && this.config.face?.emotion) {
                 this.config.face.emotion.enabled = true;
+            }
+
+            if (this.detectionTypes.includes(DETECTION_TYPES.RAISED_HAND) && this.config.hand) {
+                this.config.hand.enabled = true;
             }
 
             const initialHuman = new Human(this.config);
@@ -160,6 +182,34 @@ export class HumanHelper implements IFaceLandmarksHelper {
     }
 
     /**
+     * Check whether the hand is raised from the hand detection result.
+     *
+     * @param {Array<HandResult>} handDetections - The array with the hand detections.
+     * @returns {boolean}
+     */
+    isRaisedHand(handDetections: Array<HandResult>): boolean {
+        // Only take the fingers with the hand of the max confidence score
+        const [ { landmarks: fingers = undefined, label: handLabel = undefined } = {} ] = handDetections;
+
+        if (handLabel !== 'hand') {
+            return false;
+        }
+
+        const validDirections = [ 'verticalUp', 'diagonalUpRight', 'diagonalUpLeft' ];
+        let counter = 0;
+
+        if (fingers) {
+            Object.values(fingers).forEach(value => {
+                if (value.curl === 'none' && validDirections.includes(value.direction)) {
+                    counter += 1;
+                }
+            });
+        }
+
+        return counter > 3;
+    }
+
+    /**
      * Gets the face count from the detections, which is the number of detections.
      *
      * @param {Array<FaceResult>} detections - The array with the detections.
@@ -178,21 +228,29 @@ export class HumanHelper implements IFaceLandmarksHelper {
      *
      * @param {ImageBitmap | ImageData} image - The image captured from the track,
      * if OffscreenCanvas available it will be ImageBitmap, otherwise it will be ImageData.
-     * @returns {Promise<Array<FaceResult>>}
+     * @returns {Promise<{ faceDetections: Array<FaceResult>, handDetections: Array<HandResult> }>}
      */
-    async getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>> {
-        if (!this.human || !this.faceDetectionTypes.length) {
-            return [];
+    async getDetections(image: ImageBitmap | ImageData):
+    Promise<{ faceDetections: Array<FaceResult>; handDetections: Array<HandResult>; } > {
+        if (!this.human || !this.detectionTypes.length) {
+            return { faceDetections: [],
+                handDetections: [] };
         }
 
         this.human.tf.engine().startScope();
 
         const imageTensor = this.human.tf.browser.fromPixels(image);
-        const { face: detections } = await this.human.detect(imageTensor, this.config);
+        const { face: faceDetections, hand: handDetections } = await this.human.detect(imageTensor, this.config);
 
         this.human.tf.engine().endScope();
 
-        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
+        const faceDetection = faceDetections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
+        const handDetection = handDetections.filter(detection => detection.score > HAND_DETECTION_SCORE_THRESHOLD);
+
+        return {
+            faceDetections: faceDetection,
+            handDetections: handDetection
+        };
     }
 
     /**
@@ -204,19 +262,20 @@ export class HumanHelper implements IFaceLandmarksHelper {
     public async detect({ image, threshold }: DetectInput): Promise<DetectOutput> {
         let faceExpression;
         let faceBox;
+        let raisedHand;
 
         this.detectionInProgress = true;
 
-        const detections = await this.getDetections(image);
+        const { faceDetections, handDetections } = await this.getDetections(image);
 
-        if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-            faceExpression = this.getFaceExpression(detections);
+        if (this.detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
+            faceExpression = this.getFaceExpression(faceDetections);
         }
 
-        if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
+        if (this.detectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
             // if more than one face is detected the face centering will be disabled.
-            if (this.getFaceCount(detections) > 1) {
-                this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
+            if (this.getFaceCount(faceDetections) > 1) {
+                this.detectionTypes.splice(this.detectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
 
                 // face-box for re-centering
                 faceBox = {
@@ -225,9 +284,13 @@ export class HumanHelper implements IFaceLandmarksHelper {
                     width: 100
                 };
             } else {
-                faceBox = this.getFaceBox(detections, threshold);
+                faceBox = this.getFaceBox(faceDetections, threshold);
             }
 
+        }
+
+        if (this.detectionTypes.includes(DETECTION_TYPES.RAISED_HAND)) {
+            raisedHand = this.isRaisedHand(handDetections);
         }
 
         this.detectionInProgress = false;
@@ -235,7 +298,8 @@ export class HumanHelper implements IFaceLandmarksHelper {
         return {
             faceExpression,
             faceBox,
-            faceCount: this.getFaceCount(detections)
+            faceCount: this.getFaceCount(faceDetections),
+            raisedHand
         };
     }
 

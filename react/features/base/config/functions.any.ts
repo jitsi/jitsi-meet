@@ -123,6 +123,16 @@ export function getDisableNextSpeakerNotification(state: IReduxState) {
 }
 
 /**
+ * Selector used to get the disableRaisedHandRecognition.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRaisedHandRecognition(state: IReduxState) {
+    return Boolean(state['features/base/config']?.raisedHands?.disableRaisedHandRecognition);
+}
+
+/**
  * Selector used to get the endpoint used for fetching the recording.
  *
  * @param {Object} state - The global state.

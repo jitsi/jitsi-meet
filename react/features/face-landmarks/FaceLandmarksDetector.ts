@@ -1,7 +1,10 @@
 import 'image-capture';
 import './createImageBitmap';
 import { IStore } from '../app/types';
+import { getDisableRaisedHandRecognition } from '../base/config/functions.any';
 import { isMobileBrowser } from '../base/environment/utils';
+import { raiseHand } from '../base/participants/actions';
+import { getLocalParticipant, hasRaisedHand } from '../base/participants/functions';
 import { getLocalVideoTrack } from '../base/tracks/functions';
 import { getBaseUrl } from '../base/util/helpers';
 
@@ -11,12 +14,13 @@ import {
     newFaceBox
 } from './actions';
 import {
+    DETECT,
     DETECTION_TYPES,
-    DETECT_FACE,
     FACE_LANDMARKS_DETECTION_ERROR_THRESHOLD,
     INIT_WORKER,
     NO_DETECTION,
     NO_FACE_DETECTION_THRESHOLD,
+    RAISED_HAND_DURATION,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import {
@@ -35,6 +39,7 @@ class FaceLandmarksDetector {
     private worker: Worker | null = null;
     private lastFaceExpression: string | null = null;
     private lastFaceExpressionTimestamp: number | null = null;
+    private lastRaisedHandTimestamp: number | null = null;
     private webhookSendInterval: number | null = null;
     private detectionInterval: number | null = null;
     private recognitionActive = false;
@@ -107,8 +112,21 @@ class FaceLandmarksDetector {
         workerUrl = window.URL.createObjectURL(workerBlob);
         this.worker = new Worker(workerUrl, { name: 'Face Landmarks Worker' });
         this.worker.onmessage = ({ data }: MessageEvent<any>) => {
-            const { faceExpression, faceBox, faceCount } = data;
+            const { faceExpression, faceBox, faceCount, raisedHand } = data;
             const messageTimestamp = Date.now();
+            const localParticipant = getLocalParticipant(getState());
+
+            if (raisedHand && !hasRaisedHand(localParticipant)) {
+                if (!this.lastRaisedHandTimestamp) {
+                    this.lastRaisedHandTimestamp = messageTimestamp;
+                }
+                if (messageTimestamp - this.lastRaisedHandTimestamp >= RAISED_HAND_DURATION) {
+                    dispatch(raiseHand(true));
+                    this.lastRaisedHandTimestamp = null;
+                }
+            } else {
+                this.lastRaisedHandTimestamp = null;
+            }
 
             // if the number of faces detected is different from 1 we do not take into consideration that detection
             if (faceCount !== 1) {
@@ -155,7 +173,8 @@ class FaceLandmarksDetector {
         const { faceLandmarks } = state['features/base/config'];
         const detectionTypes = [
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
-            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS
+            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
+            !getDisableRaisedHandRecognition(getState()) && DETECTION_TYPES.RAISED_HAND
         ].filter(Boolean);
 
         this.worker.postMessage({
@@ -341,7 +360,7 @@ class FaceLandmarksDetector {
         }
 
         this.worker.postMessage({
-            type: DETECT_FACE,
+            type: DETECT,
             image,
             threshold: faceCenteringThreshold
         });
