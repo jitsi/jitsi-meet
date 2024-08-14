@@ -76,7 +76,7 @@ export const _getTokenAuthState = (
 
     for (const key of Object.keys(params)) {
         // we allow only config and interfaceConfig overrides in the state
-        if (key.startsWith('config.') || key.startsWith('interfaceConfig.')) {
+        if (key.startsWith('config.') || key.startsWith('interfaceConfig.') || key.startsWith('iceServers.')) {
             // @ts-ignore
             state[key] = params[key];
         }
