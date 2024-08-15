@@ -1,6 +1,6 @@
 // @ts-expect-error
 import Logger from '@jitsi/logger';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import { PureComponent } from 'react';
 
 import { createSharedVideoEvent as createEvent } from '../../../analytics/AnalyticsEvents';

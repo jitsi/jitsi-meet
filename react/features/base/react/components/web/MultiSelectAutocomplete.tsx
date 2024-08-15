@@ -1,4 +1,4 @@
-import _debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import React, { Component } from 'react';
 
 import { MultiSelectItem } from '../../../ui/components/types';
@@ -145,7 +145,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
         this._onFilterChange = this._onFilterChange.bind(this);
         this._onRetry = this._onRetry.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
-        this._sendQuery = _debounce(this._sendQuery.bind(this), 200);
+        this._sendQuery = debounce(this._sendQuery.bind(this), 200);
     }
 
     /**
