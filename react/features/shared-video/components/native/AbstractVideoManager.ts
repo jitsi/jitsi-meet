@@ -1,4 +1,4 @@
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import { PureComponent } from 'react';
 
 import { IReduxState, IStore } from '../../../app/types';

@@ -1,4 +1,4 @@
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
