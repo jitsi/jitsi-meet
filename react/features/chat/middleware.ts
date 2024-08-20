@@ -303,12 +303,11 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.REACTION_RECEIVED,
-        (participantId: string, reactionList: string[], messageId: string, receiverId: string) => {
+        (participantId: string, reactionList: string[], messageId: string) => {
             _onReactionReceived(store, {
                 participantId,
                 reactionList,
-                messageId,
-                receiverId
+                messageId
             });
         }
     );
@@ -365,14 +364,13 @@ function _onConferenceMessageReceived(store: IStore,
     }, true, isGif);
 }
 
-function _onReactionReceived(store: IStore, { participantId, reactionList, messageId, receiverId }: {
-    messageId: string; participantId: string; reactionList: string[]; receiverId: string; }) {
+function _onReactionReceived(store: IStore, { participantId, reactionList, messageId }: {
+    messageId: string; participantId: string; reactionList: string[] }) {
 
     const reactionPayload = {
         participantId,
         reactionList,
-        messageId,
-        receiverId
+        messageId
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
