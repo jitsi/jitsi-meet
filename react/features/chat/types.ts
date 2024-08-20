@@ -41,29 +41,19 @@ export interface IChatProps extends WithTranslation {
 export interface IChatMessageProps extends WithTranslation {
 
     /**
-     * Whether the message can be reacted to.
-     */
-    canReact?: boolean;
-
-    /**
      * Whether the message can be replied to.
      */
     canReply?: boolean;
 
     /**
+     * Whether the chat message menu is visible or not.
+     */
+    chatMessageMenu?: boolean;
+
+    /**
      * Whether gifs are enabled or not.
      */
     gifEnabled?: boolean;
-
-    /**
-     * Whether the kebab menu is visible from one's own chat message.
-     */
-    kebabMenuSelfVisible?: boolean;
-
-    /**
-     * Whether the kebab menu is visible from someone else's message.
-     */
-    kebabMenuVisible?: boolean;
 
     /**
      * Whether current participant is currently knocking in the lobby room.

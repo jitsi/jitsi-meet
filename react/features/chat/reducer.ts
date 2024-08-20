@@ -89,7 +89,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             if (messageId === message.messageId) {
                 const newReactions = new Map(message.reactions);
 
-                reactionList.forEach(reaction => {
+                reactionList.forEach((reaction: string) => {
                     let participants = newReactions.get(reaction);
 
                     if (!participants) {

@@ -12,15 +12,13 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
-import KebabMenu from './KebabMenu.tsx';
+import KebabMenu from './KebabMenu';
 import PrivateMessageButton from './PrivateMessageButton';
-import ReactButton from './ReactButton.tsx';
+import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    canReact: boolean;
     canReply: boolean;
-    kebabMenuSelfVisible: boolean;
-    kebabMenuVisible: boolean;
+    chatMessageMenu: boolean;
     knocking: boolean;
     state: IReduxState;
     type: string;
@@ -180,9 +178,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
 const ChatMessage = ({
     canReply,
-    canReact,
-    kebabMenuSelfVisible,
-    kebabMenuVisible,
+    chatMessageMenu,
     knocking,
     message,
     showDisplayName,
@@ -300,7 +296,7 @@ const ChatMessage = ({
             onMouseLeave = { () => setIsHovered(false) }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                {kebabMenuSelfVisible && (
+                {!chatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <KebabMenu />}
                     </div>
@@ -348,27 +344,23 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {!kebabMenuSelfVisible && (
+                {chatMessageMenu && (
                     <div className = { classes.sideBySideContainer }>
                         <div>
-                            {canReact && (
-                                <div className = { classes.optionsButtonContainer }>
-                                    {isHovered && <ReactButton
-                                        messageId = { message.messageId }
-                                        receiverId = { '' } />}
-                                </div>
-                            )}
+                            <div className = { classes.optionsButtonContainer }>
+                                {isHovered && <ReactButton
+                                    messageId = { message.messageId }
+                                    receiverId = { '' } />}
+                            </div>
                         </div>
                         <div>
-                            {kebabMenuVisible && (
-                                <div className = { classes.optionsButtonContainer }>
-                                    {isHovered && <KebabMenu
-                                        isLobbyMessage = { message.lobbyChat }
-                                        message = { message.message }
-                                        messageId = { message.messageId }
-                                        participantId = { message.messageId } />}
-                                </div>
-                            )}
+                            <div className = { classes.optionsButtonContainer }>
+                                {isHovered && <KebabMenu
+                                    isLobbyMessage = { message.lobbyChat }
+                                    message = { message.message }
+                                    messageId = { message.messageId }
+                                    participantId = { message.messageId } />}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -383,9 +375,7 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
 
     return {
         canReply: getCanReplyToMessage(state, message),
-        canReact: message.participantId !== localParticipantId,
-        kebabMenuSelfVisible: message.participantId === localParticipantId,
-        kebabMenuVisible: message.participantId !== localParticipantId,
+        chatMessageMenu: message.participantId !== localParticipantId,
         knocking,
         state
     };
