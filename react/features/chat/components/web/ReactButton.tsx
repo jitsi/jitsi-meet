@@ -33,7 +33,8 @@ interface IProps extends AbstractProps {
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         reactButton: {
-            padding: '2px',
+            paddingTop: '0px',
+            paddingBottom: '0px',
             opacity: 0,
             transition: 'opacity 0.3s ease',
             '&:hover': {
@@ -41,13 +42,8 @@ const useStyles = makeStyles()((theme: Theme) => {
                 opacity: 1
             }
         },
-        reactionPanel: {
-            flexDirection: 'row',
-            position: 'absolute',
-            zIndex: 10,
-            backgroundColor: theme.palette.ui02,
-            borderRadius: theme.shape.borderRadius,
-            boxShadow: theme.shadows[3]
+        reactButtonVisible: {
+            opacity: 1
         },
         reactionPanelContainer: {
             position: 'relative',
@@ -55,9 +51,8 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         popoverContainer: {
             position: 'absolute',
-            top: '100%', // Adjust this value to control the distance from the button
+            top: '10%',
             left: '50%',
-            transform: 'translateX(-50%)'
         }
     };
 });
@@ -69,20 +64,9 @@ const ReactButton = ({
     const { classes, cx } = useStyles();
     const dispatch = useDispatch();
 
-    /**
-     * Sends a reaction to a message.
-     *
-     * @param {string} emoji - The reaction to send.
-     * @param {string} messageID - The message ID to react to.
-     * @param {string} receiverID - The receiver ID of the reaction.
-     * @returns {Function}
-     */
     const onSendReaction = useCallback(emoji => {
-        console.log(emoji);
-        console.log(messageId);
-        console.log(receiverId);
-        dispatch(sendReaction(emoji, messageId, ''));
-    }, []);
+        dispatch(sendReaction(emoji, messageId, receiverId));
+    }, [ dispatch, messageId, receiverId ]);
 
     const [ showSmileysPanel, setShowSmileysPanel ] = useState(false);
 
@@ -92,21 +76,21 @@ const ReactButton = ({
         setShowSmileysPanel(!showSmileysPanel);
     }, [ showSmileysPanel ]);
 
-
     return (
         <div
             className = { classes.reactionPanelContainer }
             ref = { buttonRef }>
             <Button
                 accessibilityLabel = { ('toolbar.accessibilityLabel.react') }
-                className = { classes.reactButton }
+                className = { cx(classes.reactButton, {
+                    [classes.reactButtonVisible]: showSmileysPanel
+                }) }
                 icon = { IconFaceSmile }
                 onClick = { handleReactClick }
                 type = { BUTTON_TYPES.TERTIARY } />
             {showSmileysPanel && (
                 <div className = { classes.popoverContainer }>
                     <Popover
-                        className = { classes.reactionPanel }
                         content = { <EmojiSelector onSelect = { emoji => onSendReaction(emoji) } /> }
                         disablePopover = { false }
                         headingLabel = { ('toolbar.react') }

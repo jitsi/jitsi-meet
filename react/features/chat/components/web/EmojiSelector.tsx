@@ -13,9 +13,10 @@ const EmojiSelector = ({ onSelect }) => {
 
     return (
         <div
-            className = 'emoji-selector'
             style = {{ display: 'flex',
-                flexDirection: 'row' }}>
+                flexDirection: 'row',
+                borderRadius: '4px',
+                backgroundColor: '#3D3D3D' }}>
             {emojiNames.map(name => (
                 <span
                     key = { name }
