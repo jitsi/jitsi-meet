@@ -41,7 +41,7 @@ export interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         kebabButton: {
-            padding: '2px',
+            padding: '2px'
         },
 
         menuItem: {

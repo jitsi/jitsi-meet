@@ -1,29 +1,29 @@
 import { Theme } from '@mui/material';
+import Popover from '@mui/material/Popover';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
-import Popover from '@mui/material/Popover';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
+import { getParticipantDisplayName } from '../../../base/participants/functions';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
-import { getParticipantDisplayName } from '../../../base/participants/functions';
 
 import KebabMenu from './KebabMenu.tsx';
 import PrivateMessageButton from './PrivateMessageButton';
 import ReactButton from './ReactButton.tsx';
 
 interface IProps extends IChatMessageProps {
-    type: string;
-    state: IReduxState;
-    canReply: boolean;
     canReact: boolean;
+    canReply: boolean;
     kebabMenuSelfVisible: boolean;
     kebabMenuVisible: boolean;
     knocking: boolean;
+    state: IReduxState;
+    type: string;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -191,8 +191,8 @@ const ChatMessage = ({
     state
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [isHovered, setIsHovered] = useState(false);
-    const [reactionsAnchorEl, setReactionsAnchorEl] = useState<null | HTMLElement>(null);
+    const [ isHovered, setIsHovered ] = useState(false);
+    const [ reactionsAnchorEl, setReactionsAnchorEl ] = useState<null | HTMLElement>(null);
 
     function _renderDisplayName() {
         return (
@@ -219,7 +219,8 @@ const ChatMessage = ({
 
         const reactionsArray = Array.from(message.reactions.entries())
             .map(([ reaction, participants ]) => {
-                return { reaction, participants };
+                return { reaction,
+                    participants };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
@@ -236,44 +237,44 @@ const ChatMessage = ({
 
         return (
             <>
-                <div 
-                    className={classes.reactionBox} 
-                    onClick={handleReactionsClick}
-                >
+                <div
+                    className = { classes.reactionBox }
+                    onClick = { handleReactionsClick }>
                     {reactionsArray.slice(0, 3).map(({ reaction }, index) => (
-                        <span key={index}>
+                        <span key = { index }>
                             {reaction}
                         </span>
                     ))}
                     {reactionsArray.length > 3 && (
-                        <span className={classes.reactionCount}>
+                        <span className = { classes.reactionCount }>
                             +{reactionsArray.length - 3}
                         </span>
                     )}
                 </div>
                 <Popover
-                    id={reactionsId}
-                    open={openReactions}
-                    anchorEl={reactionsAnchorEl}
-                    onClose={handleReactionsClose}
-                    anchorOrigin={{
+                    anchorEl = { reactionsAnchorEl }
+                    anchorOrigin = {{
                         vertical: 'bottom',
-                        horizontal: 'left',
+                        horizontal: 'left'
                     }}
-                    transformOrigin={{
+                    id = { reactionsId }
+                    onClose = { handleReactionsClose }
+                    open = { openReactions }
+                    transformOrigin = {{
                         vertical: 'top',
-                        horizontal: 'left',
-                    }}
-                >
-                    <div className={classes.reactionsPopover}>
+                        horizontal: 'left'
+                    }}>
+                    <div className = { classes.reactionsPopover }>
                         {reactionsArray.map(({ reaction, participants }) => (
-                            <div key={reaction} className={classes.reactionItem}>
+                            <div
+                                className = { classes.reactionItem }
+                                key = { reaction }>
                                 <span>{reaction}</span>
                                 <span>{participants.size}</span>
-                                <div className={classes.participantList}>
-                                    {Array.from(participants).map(participantId => (
-                                        <div key={participantId}>{getParticipantDisplayName(state, participantId)}</div>
-                                    ))}
+                                <div className = { classes.participantList }>
+                                    {Array.from(participants).map(participantId =>
+                                        <div key = { participantId }>{getParticipantDisplayName(state, participantId)}</div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -295,9 +296,9 @@ const ChatMessage = ({
         <div
             className = { cx(classes.chatMessageWrapper, type) }
             id = { message.messageId }
-            tabIndex = { -1 }
             onMouseEnter = { () => setIsHovered(true) }
-            onMouseLeave = { () => setIsHovered(false) }>
+            onMouseLeave = { () => setIsHovered(false) }
+            tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {kebabMenuSelfVisible && (
                     <div className = { classes.optionsButtonContainer }>
@@ -347,7 +348,7 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {(!kebabMenuSelfVisible) && (
+                {!kebabMenuSelfVisible && (
                     <div className = { classes.sideBySideContainer }>
                         <div>
                             {canReact && (
