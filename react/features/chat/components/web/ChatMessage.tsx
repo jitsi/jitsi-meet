@@ -2,6 +2,7 @@ import { Theme } from '@mui/material';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import Popover from '@mui/material/Popover';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -9,6 +10,7 @@ import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
+import { getParticipantDisplayName } from '../../../base/participants/functions';
 
 import KebabMenu from './KebabMenu.tsx';
 import PrivateMessageButton from './PrivateMessageButton';
@@ -16,6 +18,12 @@ import ReactButton from './ReactButton.tsx';
 
 interface IProps extends IChatMessageProps {
     type: string;
+    state: IReduxState;
+    canReply: boolean;
+    canReact: boolean;
+    kebabMenuSelfVisible: boolean;
+    kebabMenuVisible: boolean;
+    knocking: boolean;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -95,7 +103,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             gap: theme.spacing(1),
             backgroundColor: theme.palette.grey[800],
             borderRadius: theme.shape.borderRadius,
-            padding: theme.spacing(0, 1)
+            padding: theme.spacing(0, 1),
+            cursor: 'pointer'
         },
         reactionCount: {
             fontSize: '0.8rem',
@@ -149,16 +158,26 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap',
             flexShrink: 0
+        },
+        reactionsPopover: {
+            padding: theme.spacing(2),
+            maxWidth: '300px',
+            maxHeight: '400px',
+            overflowY: 'auto'
+        },
+        reactionItem: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: theme.spacing(1)
+        },
+        participantList: {
+            marginLeft: theme.spacing(1),
+            fontSize: '0.8rem',
+            color: theme.palette.text.secondary
         }
     };
 });
 
-/**
- * Renders a single chat message.
- *
- * @param {IProps} props - Component's props.
- * @returns {JSX}
- */
 const ChatMessage = ({
     canReply,
     canReact,
@@ -167,18 +186,14 @@ const ChatMessage = ({
     knocking,
     message,
     showDisplayName,
-
-    // showTimestamp,
     type,
-    t
+    t,
+    state
 }: IProps) => {
     const { classes, cx } = useStyles();
+    const [isHovered, setIsHovered] = useState(false);
+    const [reactionsAnchorEl, setReactionsAnchorEl] = useState<null | HTMLElement>(null);
 
-    /**
-     * Renders the display name of the sender.
-     *
-     * @returns {React$Element<*>}
-     */
     function _renderDisplayName() {
         return (
             <div
@@ -189,11 +204,6 @@ const ChatMessage = ({
         );
     }
 
-    /**
-     * Renders the message privacy notice.
-     *
-     * @returns {React$Element<*>}
-     */
     function _renderPrivateNotice() {
         return (
             <div className = { classes.privateMessageNotice }>
@@ -202,11 +212,6 @@ const ChatMessage = ({
         );
     }
 
-    /**
-     * Renders the message reactions.
-     *
-     * @returns {React$Element<*>}
-     */
     function _renderReactions() {
         if (!message.reactions || message.reactions.size === 0) {
             return null;
@@ -214,33 +219,70 @@ const ChatMessage = ({
 
         const reactionsArray = Array.from(message.reactions.entries())
             .map(([ reaction, participants ]) => {
-                return { reaction,
-                    count: participants.size };
+                return { reaction, participants };
             })
-            .sort((a, b) => b.count - a.count);
+            .sort((a, b) => b.participants.size - a.participants.size);
+
+        const handleReactionsClick = (event: React.MouseEvent<HTMLDivElement>) => {
+            setReactionsAnchorEl(event.currentTarget);
+        };
+
+        const handleReactionsClose = () => {
+            setReactionsAnchorEl(null);
+        };
+
+        const openReactions = Boolean(reactionsAnchorEl);
+        const reactionsId = openReactions ? 'reactions-popover' : undefined;
 
         return (
-            <div className = { classes.reactionBox }>
-                {reactionsArray.slice(0, 3).map(({ reaction, count }, index) => (
-                    <span key = { index }>
-                        {reaction}
-                    </span>
-                ))}
-                {reactionsArray.length > 3 && (
-                    <span className = { classes.reactionCount }>
-                        +{reactionsArray.length - 3}
-                    </span>
-                )}
-            </div>
+            <>
+                <div 
+                    className={classes.reactionBox} 
+                    onClick={handleReactionsClick}
+                >
+                    {reactionsArray.slice(0, 3).map(({ reaction }, index) => (
+                        <span key={index}>
+                            {reaction}
+                        </span>
+                    ))}
+                    {reactionsArray.length > 3 && (
+                        <span className={classes.reactionCount}>
+                            +{reactionsArray.length - 3}
+                        </span>
+                    )}
+                </div>
+                <Popover
+                    id={reactionsId}
+                    open={openReactions}
+                    anchorEl={reactionsAnchorEl}
+                    onClose={handleReactionsClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                >
+                    <div className={classes.reactionsPopover}>
+                        {reactionsArray.map(({ reaction, participants }) => (
+                            <div key={reaction} className={classes.reactionItem}>
+                                <span>{reaction}</span>
+                                <span>{participants.size}</span>
+                                <div className={classes.participantList}>
+                                    {Array.from(participants).map(participantId => (
+                                        <div key={participantId}>{getParticipantDisplayName(state, participantId)}</div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Popover>
+            </>
         );
     }
 
-
-    /**
-     * Renders the time at which the message was sent.
-     *
-     * @returns {React$Element<*>}
-     */
     function _renderTimestamp() {
         return (
             <div className = { cx('timestamp', classes.timestamp) }>
@@ -248,8 +290,6 @@ const ChatMessage = ({
             </div>
         );
     }
-
-    const [isHovered, setIsHovered] = useState(false);
 
     return (
         <div
@@ -336,12 +376,6 @@ const ChatMessage = ({
     );
 };
 
-/**
- * Maps part of the Redux store to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {IProps}
- */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
     const localParticipantId = state['features/base/participants'].local?.id;
@@ -351,7 +385,8 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
         canReact: message.participantId !== localParticipantId,
         kebabMenuSelfVisible: message.participantId === localParticipantId,
         kebabMenuVisible: message.participantId !== localParticipantId,
-        knocking
+        knocking,
+        state
     };
 }
 
