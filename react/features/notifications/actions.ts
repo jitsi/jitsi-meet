@@ -1,4 +1,4 @@
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 
 import { IStore } from '../app/types';
 import { NOTIFICATIONS_ENABLED } from '../base/flags/constants';

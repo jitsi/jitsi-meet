@@ -820,8 +820,11 @@
         "videoUnmuteBlockedDescription": "Die Kamera und Bildschirmfreigabe kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden.",
         "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!",
         "viewLobby": "Lobby ansehen",
+        "viewParticipants": "Personen anzeigen",
         "viewVisitors": "Gäste anzeigen",
         "waitingParticipants": "{{waitingParticipants}} Personen",
+        "waitingVisitors": "In der Lobby wartende Gäste: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "Die Konferenz wurde noch nicht gestartet!",
         "whiteboardLimitDescription": "Bitte speichern Sie Ihre Inhalte, da das Nutzungslimit bald erreicht wird und dann Ihr Whiteboard geschlossen wird.",
         "whiteboardLimitTitle": "Whiteboard-Nutzung"
     },
@@ -835,7 +838,10 @@
             "audioModeration": "Für sich selbst die Stummschaltung aufzuheben",
             "blockEveryoneMicCamera": "Kamera und Mikrofon von allen sperren",
             "breakoutRooms": "Breakout-Räume",
+            "goLive": "Live gehen",
             "invite": "Person einladen",
+            "lowerAllHands": "Alle Hände senken",
+            "lowerHand": "Hand senken",
             "moreModerationActions": "Weitere Moderationsoptionen",
             "moreModerationControls": "Weitere Moderationsoptionen",
             "moreParticipantOptions": "Mehr Optionen für Anwesende",
@@ -852,6 +858,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Anwesende ({{count}})",
+            "visitorInQueue": " (Wartende Gäste {{count}})",
             "visitorRequests": " (Anfragen {{count}})",
             "visitors": "Gäste ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
@@ -865,10 +872,13 @@
     "pinnedParticipant": "Die Person ist angeheftet",
     "polls": {
         "answer": {
+            "edit": "Bearbeiten",
+            "send": "Senden",
             "skip": "Überspringen",
             "submit": "Speichern"
         },
         "by": "Von {{ name }}",
+        "closeButton": "Umfrage schließen",
         "create": {
             "addOption": "Antwort hinzufügen",
             "answerPlaceholder": "Antwort {{index}}",
@@ -878,7 +888,8 @@
             "pollQuestion": "Frage",
             "questionPlaceholder": "Eine Frage stellen",
             "removeOption": "Antwort entfernen",
-            "send": "Erstellen"
+            "save": "Erstellen",
+            "send": "Senden"
         },
         "errors": {
             "notUniqueOption": "Optionen müssen einzigartig sein"
@@ -1483,16 +1494,22 @@
     },
     "visitors": {
         "chatIndicator": "(Gast)",
+        "joinMeeting": {
+            "description": "Sie beobachten derzeit diese Konferenz.",
+            "raiseHand": "Hand heben",
+            "title": "Konferenz wird beigetreten",
+            "wishToSpeak": "Wenn Sie sprechen möchten, heben Sie bitte unten Ihre Hand und warten Sie auf die Zustimmung der Moderation"
+        },
         "labelTooltip": "Anzahl Gäste: {{count}}",
         "notification": {
             "demoteDescription": "Hierhin verschoben von {{actor}}, bitte melden Sie sich um teilzunehmen",
-            "description": "Bitte melden Sie sich um teilzunehmen",
             "noMainParticipantsDescription": "Eine Person muss die Konferenz starten. Bitte versuchen Sie es gleich noch einmal.",
             "noMainParticipantsTitle": "Diese Konferenz wurde noch nicht gestartet.",
             "noVisitorLobby": "Sie können nicht teilnehmen, solange die Lobby für diese Konferenz aktiviert ist.",
             "notAllowedPromotion": "Eine Person muss Ihre Anfrage erst erlauben.",
             "title": "Sie sind Gast in der Konferenz"
-        }
+        },
+        "waitingMessage": "Sie werden der Konferenz beitreten, sobald sie gestartet ist!"
     },
     "volumeSlider": "Lautstärkeregler",
     "welcomepage": {

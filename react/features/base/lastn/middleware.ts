@@ -1,4 +1,4 @@
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
@@ -11,7 +11,6 @@ import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
-import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
 import logger from './logger';
@@ -45,9 +44,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 3. -1 as the default value.
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
-    if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
-    } else if (carMode) {
+    if (appState === 'background' || carMode) {
         lastNSelected = 0;
     } else if (audioOnly) {
         const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];

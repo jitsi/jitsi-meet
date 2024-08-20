@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
 import clsx from 'clsx';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

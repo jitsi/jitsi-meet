@@ -1,4 +1,4 @@
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 

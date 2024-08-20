@@ -170,8 +170,8 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     public void join(JitsiMeetConferenceOptions options) {
-        if (this.jitsiView  != null) {
-            this.jitsiView .join(options);
+        if (this.jitsiView != null) {
+            this.jitsiView.join(options);
         } else {
             JitsiMeetLogger.w("Cannot join, view is null");
         }

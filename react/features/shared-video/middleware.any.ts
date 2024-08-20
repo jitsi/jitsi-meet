@@ -17,7 +17,7 @@ import {
     setSharedVideoStatus
 } from './actions.any';
 import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
-import { isSharingStatus } from './functions';
+import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo } from './functions';
 import logger from './logger';
 
 
@@ -32,6 +32,10 @@ MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
 
+    if (!isSharedVideoEnabled(state)) {
+        return next(action);
+    }
+
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
@@ -40,6 +44,12 @@ MiddlewareRegistry.register(store => next => action => {
         conference.addCommandListener(SHARED_VIDEO,
             ({ value, attributes }: { attributes: {
                 from: string; muted: string; state: string; time: string; }; value: string; }) => {
+
+                if (!isURLAllowedForSharedVideo(value)) {
+                    logger.debug(`Shared Video: Received a not allowed URL ${value}`);
+
+                    return;
+                }
 
                 const { from } = attributes;
                 const sharedVideoStatus = attributes.state;

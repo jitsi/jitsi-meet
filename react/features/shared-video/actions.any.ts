@@ -5,6 +5,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import { SharedVideoDialog } from './components';
+import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
 
 /**
  * Resets the status of the shared video.
@@ -89,6 +90,9 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (!isSharedVideoEnabled(getState()) || !isURLAllowedForSharedVideo(videoUrl)) {
+            return;
+        }
         const conference = getCurrentConference(getState());
 
         if (conference) {

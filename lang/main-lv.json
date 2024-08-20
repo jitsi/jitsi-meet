@@ -341,7 +341,7 @@
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Nav iespējams, kamēr ir aktīva ierakstīšana",
         "localUserControls": "Lokālo lietotāju kontroles",
         "lockMessage": "Neizdevās aizslēgt sapulci.",
-        "lockRoom": "Pievienot sapulci $t(lockRoomPasswordUppercase)",
+        "lockRoom": "Iestatīt sapulces $t(lockRoomPasswordUppercase)",
         "lockTitle": "Aizslēgšāna neizdevās",
         "login": "Pierakstīties",
         "loginQuestion": "Vai tiešām vēlaties pierakstīties un pamest sapulci?",
@@ -382,9 +382,9 @@
         "noDropboxToken": "Nav derīga Dropbox tokena",
         "password": "Parole",
         "passwordLabel": "Dalībnieks ir aizslēdzis sapulci. Lūdzu, ievadiet $t(lockRoomPassword), lai pievienotos.",
-        "passwordNotSupported": "Sapulces $t(lockRoomPassword) iestatīšana netiek atbalstīta.",
-        "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) netiek atbalstīts",
-        "passwordRequired": "Nepieciešams $t(lockRoomPasswordUppercase)",
+        "passwordNotSupported": "Sapulces slēgšana ar $t(lockRoomPassword) netiek atbalstīta.",
+        "passwordNotSupportedTitle": "Slēgšana ar $t(lockRoomPasswordUppercase) netiek atbalstīta",
+        "passwordRequired": "Nepieciešams ievadīt $t(lockRoomPasswordUppercase)",
         "permissionCameraRequiredError": "Lai piedalītos konferencēs ar video, ir nepieciešama kameras atļauja. Lūdzu, piešķiriet to Iestatījumos",
         "permissionErrorTitle": "Nepieciešama atļauja",
         "permissionMicRequiredError": "Lai piedalītos konferencēs ar audio, nepieciešama mikrofona atļauja. Lūdzu, piešķiriet to Iestatījumos",
@@ -567,7 +567,7 @@
         "noRoom": "Iezvana numuram nav piesaistīta neviena sapulces telpa.",
         "noWhiteboard": "Nevarēja ielādēt tāfeli.",
         "numbers": "Iezvana numuri",
-        "password": "$t(lockRoomPasswordUppercase):",
+        "password": "Ievadiet $t(lockRoomPasswordUppercase):",
         "reachedLimit": "Jūs esat sasniedzis sava plāna limitu.",
         "sip": "SIP adrese",
         "sipAudioOnly": "Tikai SIP audio adrese",
@@ -604,7 +604,7 @@
         "showSpeakerStats": "Rādīt prezentētāja statistiku",
         "toggleChat": "Tērzētava (čats) (atvērt/aizvērt)",
         "toggleFilmstrip": "Kinolente (rādīt/nerādīt)",
-        "toggleParticipantsPane": "Rādīt vai paslēpt dalībnieku paneli",
+        "toggleParticipantsPane": "Rādīt/paslēpt dalībnieku paneli",
         "toggleScreensharing": "Pārslēgties starp kameru un ekrāna rādīšanu",
         "toggleShortcuts": "Atrās piekļuves taustiņi (rādīt/nerādīt)",
         "videoMute": "Kamera (iesl./izsl.)"
@@ -659,7 +659,7 @@
         "emailField": "Ievadiet savu e-pasta adresi",
         "enableDialogPasswordField": "Iestatīt paroli (neobligāti)",
         "enableDialogSubmit": "Iespējot",
-        "enableDialogText": "Vestibila režīms ļauj aizsargāt sapulci, ļaujot cilvēkiem tajā iekļūt tikai pēc oficiāla moderatora apstiprinājuma.",
+        "enableDialogText": "Vestibila režīms ļauj aizsargāt sapulci, ļaujot cilvēkiem tajā iekļūt tikai pēc moderatora apstiprinājuma.",
         "enterPasswordButton": "Ievadiet sapulces paroli",
         "enterPasswordTitle": "Ievadiet paroli, lai pievienotos sapulcei",
         "errorMissingPassword": "Lūdzu, ievadiet sapulces paroli",
@@ -719,8 +719,8 @@
         "wait": "Lūdzu, uzgaidiet, kamēr jūsu ieraksts tiek saglabāts",
         "yes": "Jā"
     },
-    "lockRoomPassword": "parole",
-    "lockRoomPasswordUppercase": "Parole",
+    "lockRoomPassword": "paroli",
+    "lockRoomPasswordUppercase": "Paroli",
     "lonelyMeetingExperience": {
         "button": "Uzaiciniet citus",
         "youAreAlone": "Jūs esat vienīgais sapulcē"
@@ -786,6 +786,7 @@
         "newDeviceAction": "Izmantot",
         "newDeviceAudioTitle": "Atrasta jauna audio ierīce",
         "newDeviceCameraTitle": "Atrasta jauna kamera",
+        "nextToSpeak": "Jūs esat nākamais runātājs rindā",
         "noiseSuppressionDesktopAudioDescription": "Darbvirsmas audio koplietošanas laikā nevar iespējot trokšņu slāpēšanu. Lūdzu, atspējojiet to un mēģiniet vēlreiz.",
         "noiseSuppressionFailedTitle": "Neizdevās sākt trokšņu slāpēšanu",
         "noiseSuppressionStereoDescription": "Stereo audio trokšņu slāpēšana pašlaik netiek atbalstīta.",
@@ -820,8 +821,11 @@
         "videoUnmuteBlockedDescription": "Kameras ieslēgšanas un darbvirsmas koplietošanas darbība ir īslaicīgi bloķēta sistēmas ierobežojumu dēļ.",
         "videoUnmuteBlockedTitle": "Kameras ieslēgšana un darbvirsmas koplietošana ir bloķēta!",
         "viewLobby": "Skatīt vestibilu",
+        "viewParticipants": "Skatīt dalībniekus",
         "viewVisitors": "Skatīt apmeklētājus",
         "waitingParticipants": "{{waitingParticipants}} personas",
+        "waitingVisitors": "Apmeklētāji gaida rindā: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "Sanāksme vēl nav sākusies!",
         "whiteboardLimitDescription": "Lūdzu, saglabājiet savu progresu, jo drīz tiks sasniegts lietotāju limits un tāfele tiks aizvērta.",
         "whiteboardLimitTitle": "Tāfeles lietošana"
     },
@@ -835,7 +839,10 @@
             "audioModeration": "Ieslēgt savu skaņu",
             "blockEveryoneMicCamera": "Bloķēt visiem mikrofonu un kameru",
             "breakoutRooms": "Grupu istabas",
+            "goLive": "Sākt",
             "invite": "Uzaicināt",
+            "lowerAllHands": "Nolaist visas paceltās rokas",
+            "lowerHand": "Nolaist roku",
             "moreModerationActions": "Vairāk moderēšanas iespēju",
             "moreModerationControls": "Vairāk moderēšanas iespēju",
             "moreParticipantOptions": "Vairāk dalībnieku iespēju",
@@ -852,6 +859,7 @@
         "headings": {
             "lobby": "Vestibils ({{count}})",
             "participantsList": "Sapulces dalībnieki ({{count}})",
+            "visitorInQueue": " (gaida {{count}})",
             "visitorRequests": " (pieprasījumi {{count}})",
             "visitors": "Apmeklētāji ({{count}})",
             "waitingLobby": "Gaida vestibilā ({{count}})"
@@ -871,6 +879,7 @@
             "submit": "Iesniegt"
         },
         "by": "Pēc {{ name }} iniciatīvas",
+        "closeButton": "Slēgt aptauju",
         "create": {
             "addOption": "Pievienot opciju",
             "answerPlaceholder": "Opcija {{index}}",
@@ -1026,7 +1035,7 @@
         "localRecordingStartWarningTitle": "Apturiet ierakstīšanu, lai to saglabātu",
         "localRecordingVideoStop": "Apturot vide, tiks apturēta arī lokālā ierakstīšana. Vai tiešām vēlaties turpināt?",
         "localRecordingVideoWarning": "Lai ierakstītu video, tas ir jāieslēdz, uzsākot ierakstīšanu",
-        "localRecordingWarning": "Noteikti atlasiet pašreizējo cilni, lai izmantotu pareizo video un audio. Ieraksts pašlaik ir ierobežots līdz 1 GB, kas ir aptuveni 100 minūtes.",
+        "localRecordingWarning": "Noteikti izvēlieties pašreizējo cilni, lai izmantotu pareizo video un audio. Ieraksts pašlaik ir ierobežots līdz 1 GB, kas ir aptuveni 100 minūtes.",
         "loggedIn": "Pierakstījies kā {{userName}}",
         "noMicPermission": "Mikrofona ierakstu nevarēja izveidot. Lūdzu, piešķiriet atļauju lietot mikrofonu.",
         "noStreams": "Nav konstatēta audio vai video straume.",
@@ -1058,8 +1067,8 @@
         "pullToRefresh": "Pavilkt, lai atsvaidzinātu"
     },
     "security": {
-        "about": "Savai sapulcei pievienojiet $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
-        "aboutReadOnly": "Moderatora dalībnieki sapulcei var pievienot $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
+        "about": "Iestatiet sapulcei $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
+        "aboutReadOnly": "Moderatora dalībnieki sapulcei var iestatīt $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
         "insecureRoomNameWarningNative": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par tikšanās nodrošināšanu",
         "insecureRoomNameWarningWeb": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par to, kā nodrošināt atbilstību prasībām <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">šeit</a>.",
         "title": "Drošības iespējas",
@@ -1083,7 +1092,7 @@
         "desktopShareHighFpsWarning": "Lielāks kadru nomaiņas ātrums darbvirsmas koplietošanai var ietekmēt joslas platumu. Lai jaunie iestatījumi stātos spēkā, ir jārestartē ekrāna kopīgošana.",
         "desktopShareWarning": "Lai jaunie iestatījumi stātos spēkā, ir jārestartē ekrāna kopīgošana.",
         "devices": "Ierīces",
-        "followMe": "Visi man seko",
+        "followMe": "Visi seko man",
         "framesPerSecond": "kadri sekundē",
         "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
@@ -1108,7 +1117,7 @@
         "selfView": "Pašskats",
         "shortcuts": "Īsceļi",
         "speakers": "Skaļruņi",
-        "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu skaņu",
+        "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu mikrofonu",
         "startReactionsMuted": "Izslēgt reakcijas skaņas visiem",
         "startVideoMuted": "Dalībnieki pievienojas ar izslēgtu kameru",
         "talkWhileMuted": "Runā, kad izslēgta skaņa",
@@ -1486,16 +1495,22 @@
     },
     "visitors": {
         "chatIndicator": "(apmeklētājs)",
+        "joinMeeting": {
+            "description": "Jūs pašlaik esat novērotājs šajā konferencē.",
+            "raiseHand": "Pacelt roku",
+            "title": "Pievienošanās sapulcei",
+            "wishToSpeak": "Ja vēlaties runāt, lūdzu, paceliet roku zemāk un gaidiet moderatora apstiprinājumu."
+        },
         "labelTooltip": "Apmeklētāju skaits: {{count}}",
         "notification": {
             "demoteDescription": "{{actor}} pārveidoja par apmeklētāju, paceliet roku, lai piedalītos",
-            "description": "Paceliet roku, lai piedalītos",
             "noMainParticipantsDescription": "Dalībniekam ir jāsāk sapulce. Lūdzu, pēc brīža mēģiniet vēlreiz.",
             "noMainParticipantsTitle": "Šī sapulce vēl nav sākusies.",
             "noVisitorLobby": "Jūs nevarat pievienoties, kamēr sapulcei ir iespējots vestibils.",
             "notAllowedPromotion": "Dalībniekam vispirms ir jāatļauj jūsu pieprasījums.",
             "title": "Jūs esat sapulces apmeklētājs"
-        }
+        },
+        "waitingMessage": "Jūs pievienosities sapulcei, tiklīdz tā sāksies!"
     },
     "volumeSlider": "Skaļuma slīdnis",
     "welcomepage": {
