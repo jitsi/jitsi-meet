@@ -55,14 +55,14 @@ export function addMessage(messageDetails: Object) {
  * Adds a reaction to a chat message.
  *
  * @param {Object} reactionDetails - The reaction to add.
- * @param {string} reactionDetails.messageId - The ID of the message to react to.
- * @param {string} reactionDetails.reaction - The reaction to add.
- * @param {string} reactionDetails.receiverID - The receiver ID of the reaction.
+ * @param {string} reactionDetails.participantId - The ID of the message to react to.
+ * @param {string} reactionDetails.reactionList - The reaction to add.
+ * @param {string} reactionDetails.messageId - The receiver ID of the reaction.
  * @returns {{
  *     type: ADD_MESSAGE_REACTION,
- *     messageId: string,
- *     reaction: string[],
- *     receiverID: string
+ *     participantId: string,
+ *     reactionList: string[],
+ *     messageId: string
  * }}
  */
 export function addMessageReaction(reactionDetails: Object) {
