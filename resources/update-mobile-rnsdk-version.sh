@@ -10,10 +10,11 @@ fi
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 VERSION=$1
 
-npm version --prefix ${THIS_DIR}/../react-native-sdk "${VERSION}" --no-git-tag-version
+pushd ${THIS_DIR}/../react-native-sdk
 
-npm install --prefix ${THIS_DIR}/../react-native-sdk
+npm version "${VERSION}" --no-git-tag-version --allow-same-version
+node update_sdk_dependencies.js
+npm install
+npm audit fix
 
-# Run it once more in case dependencies were updated.
-npm install --prefix ${THIS_DIR}/../react-native-sdk
-
+popd
