@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -119,7 +119,9 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: theme.spacing(1)
+            gap: theme.spacing(1),
+            minWidth: '32px',
+            minHeight: '32px'
         },
         displayName: {
             ...withPixelLineHeight(theme.typography.labelBold),
@@ -247,15 +249,19 @@ const ChatMessage = ({
         );
     }
 
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <div
             className = { cx(classes.chatMessageWrapper, type) }
             id = { message.messageId }
-            tabIndex = { -1 }>
+            tabIndex = { -1 }
+            onMouseEnter = { () => setIsHovered(true) }
+            onMouseLeave = { () => setIsHovered(false) }>
             <div className = { classes.sideBySideContainer }>
                 {kebabMenuSelfVisible && (
                     <div className = { classes.optionsButtonContainer }>
-                        <KebabMenu />
+                        {isHovered && <KebabMenu />}
                     </div>
                 )}
                 <div
@@ -301,25 +307,25 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {(canReact || kebabMenuVisible) && (
+                {(!kebabMenuSelfVisible) && (
                     <div className = { classes.sideBySideContainer }>
                         <div>
                             {canReact && (
                                 <div className = { classes.optionsButtonContainer }>
-                                    <ReactButton
+                                    {isHovered && <ReactButton
                                         messageId = { message.messageId }
-                                        receiverId = { '' } />
+                                        receiverId = { '' } />}
                                 </div>
                             )}
                         </div>
                         <div>
                             {kebabMenuVisible && (
                                 <div className = { classes.optionsButtonContainer }>
-                                    <KebabMenu
+                                    {isHovered && <KebabMenu
                                         isLobbyMessage = { message.lobbyChat }
                                         message = { message.message }
                                         messageId = { message.messageId }
-                                        participantId = { message.messageId } />
+                                        participantId = { message.messageId } />}
                                 </div>
                             )}
                         </div>

@@ -42,13 +42,8 @@ const useStyles = makeStyles()(theme => {
     return {
         kebabButton: {
             padding: '2px',
-            opacity: 0,
-            transition: 'opacity 0.3s ease',
-            '&:hover': {
-                backgroundColor: theme.palette.action03,
-                opacity: 1
-            }
         },
+
         menuItem: {
             padding: '8px 16px',
             cursor: 'pointer',

@@ -1,11 +1,10 @@
-import { Theme } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import Popover from '@mui/material/Popover';
 
 import { IconFaceSmile } from '../../../base/icons/svg';
-import Popover from '../../../base/popover/components/Popover.web'; // Adjust the import path as needed
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { sendReaction } from '../../actions.any';
@@ -14,95 +13,81 @@ import { IChatProps as AbstractProps } from '../../types';
 import EmojiSelector from './EmojiSelector';
 
 interface IProps extends AbstractProps {
-
-    /**
-     * Function to send a reaction to a message.
-     *
-     * @protected
-     */
-    _onSendReaction: Function;
-
     messageId: string;
-
     reaction: string;
-
     receiverId: string;
-
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         reactButton: {
-            paddingTop: '0px',
-            paddingBottom: '0px',
-            opacity: 0,
-            transition: 'opacity 0.3s ease',
-            '&:hover': {
-                backgroundColor: theme.palette.action03,
-                opacity: 1
-            }
-        },
-        reactButtonVisible: {
-            opacity: 1
+            padding: '2px'
         },
         reactionPanelContainer: {
             position: 'relative',
             display: 'inline-block'
         },
-        popoverContainer: {
-            position: 'absolute',
-            top: '10%',
-            left: '50%',
+        popoverPaper: {
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: theme.shape.borderRadius,
+            boxShadow: theme.shadows[3]
         }
     };
 });
 
-const ReactButton = ({
-    messageId,
-    receiverId
-}: IProps) => {
-    const { classes, cx } = useStyles();
+const ReactButton = ({ messageId, receiverId }: IProps) => {
+    const { classes } = useStyles();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
-    const onSendReaction = useCallback(emoji => {
+    const onSendReaction = useCallback((emoji) => {
         dispatch(sendReaction(emoji, messageId, receiverId));
-    }, [ dispatch, messageId, receiverId ]);
+    }, [dispatch, messageId, receiverId]);
 
-    const [ showSmileysPanel, setShowSmileysPanel ] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const buttonRef = useRef(null);
+    const handleReactClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-    const handleReactClick = useCallback(() => {
-        setShowSmileysPanel(!showSmileysPanel);
-    }, [ showSmileysPanel ]);
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'react-popover' : undefined;
 
     return (
-        <div
-            className = { classes.reactionPanelContainer }
-            ref = { buttonRef }>
+        <div className={classes.reactionPanelContainer}>
             <Button
-                accessibilityLabel = { ('toolbar.accessibilityLabel.react') }
-                className = { cx(classes.reactButton, {
-                    [classes.reactButtonVisible]: showSmileysPanel
-                }) }
-                icon = { IconFaceSmile }
-                onClick = { handleReactClick }
-                type = { BUTTON_TYPES.TERTIARY } />
-            {showSmileysPanel && (
-                <div className = { classes.popoverContainer }>
-                    <Popover
-                        content = { <EmojiSelector onSelect = { emoji => onSendReaction(emoji) } /> }
-                        disablePopover = { false }
-                        headingLabel = { ('toolbar.react') }
-                        id = 'emoji-selector-popover'
-                        onPopoverClose = { () => setShowSmileysPanel(false) }
-                        onPopoverOpen = { () => setShowSmileysPanel(true) }
-                        position = 'top'
-                        visible = { showSmileysPanel }>
-                        <div />
-                    </Popover>
-                </div>
-            )}
+                accessibilityLabel={t('toolbar.accessibilityLabel.react')}
+                className={classes.reactButton}
+                icon={IconFaceSmile}
+                onClick={handleReactClick}
+                type={BUTTON_TYPES.TERTIARY}
+            />
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                PaperProps={{
+                    className: classes.popoverPaper
+                }}
+            >
+                <EmojiSelector onSelect={(emoji) => {
+                    onSendReaction(emoji);
+                    handleClose();
+                }} />
+            </Popover>
         </div>
     );
 };
