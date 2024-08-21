@@ -40,7 +40,8 @@ StateListenerRegistry.register(
         if (raisedHandsQueue.length
             && isNextToSpeak(store.getState())
             && !hasBeenNotified(store.getState())
-            && !getDisableNextSpeakerNotification(store.getState())) {
+            && !getDisableNextSpeakerNotification(store.getState())
+            && !store.getState()['features/visitors'].iAmVisitor) { // visitors raise hand to be promoted
             _notifyNextSpeakerInRaisedHandQueue(store);
         }
         if (!raisedHandsQueue[0]) {
