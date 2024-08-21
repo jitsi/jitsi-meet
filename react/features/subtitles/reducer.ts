@@ -6,6 +6,7 @@ import {
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
+import { ITranscriptMessage } from './types';
 
 /**
  * Default State for 'features/transcription' feature.
@@ -17,18 +18,11 @@ const defaultState = {
     _language: null
 };
 
-interface ITranscriptMessage {
-    final: string;
-    participantName: string;
-    stable: string;
-    unstable: string;
-}
-
 export interface ISubtitlesState {
     _displaySubtitles: boolean;
     _language: string | null;
     _requestingSubtitles: boolean;
-    _transcriptMessages: Map<string, ITranscriptMessage> | any;
+    _transcriptMessages: Map<string, ITranscriptMessage>;
 }
 
 /**
