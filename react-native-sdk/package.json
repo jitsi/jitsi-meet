@@ -11,7 +11,7 @@
         "url": "git+https://github.com/jitsi/jitsi-meet.git"
     },
     "dependencies": {
-        "@braintree/sanitize-url": "0.0.0",
+        "@braintree/sanitize-url": "6.0.1",
         "@jitsi/js-utils": "0.0.0",
         "@jitsi/logger": "0.0.0",
         "@jitsi/rtcstats": "0.0.0",
