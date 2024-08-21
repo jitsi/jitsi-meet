@@ -33,7 +33,8 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].raisedHandsQueue,
     /* listener */ (raisedHandsQueue, store) => {
-        if (raisedHandsQueue.length && isNextToSpeak(store.getState()) && !hasBeenNotified(store.getState())) {
+        if (raisedHandsQueue.length && isNextToSpeak(store.getState()) && !hasBeenNotified(store.getState())
+            && !store.getState()['features/visitors'].iAmVisitor) { // visitors raise hand to be promoted
             _notifyNextSpeakerInRaisedHandQueue(store);
         }
     }
