@@ -311,6 +311,8 @@ const Notification = ({
 
     return (
         <div
+            aria-atomic = 'false'
+            aria-live = 'polite'
             className = { cx(classes.container, unmounting.get(uid ?? '') && 'unmount') }
             data-testid = { titleKey || descriptionKey }
             id = { uid }>
