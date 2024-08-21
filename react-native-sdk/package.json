@@ -11,6 +11,7 @@
         "url": "git+https://github.com/jitsi/jitsi-meet.git"
     },
     "dependencies": {
+        "@braintree/sanitize-url": "0.0.0",
         "@jitsi/js-utils": "0.0.0",
         "@jitsi/logger": "0.0.0",
         "@jitsi/rtcstats": "0.0.0",
@@ -19,6 +20,7 @@
         "@react-navigation/material-top-tabs": "0.0.0",
         "@react-navigation/native": "0.0.0",
         "@react-navigation/stack": "0.0.0",
+        "@stomp/stompjs": "0.0.0",
         "@xmldom/xmldom": "0.0.0",
         "base64-js": "0.0.0",
         "grapheme-splitter": "0.0.0",
@@ -29,7 +31,7 @@
         "js-sha512": "0.0.0",
         "jwt-decode": "0.0.0",
         "lib-jitsi-meet": "0.0.0",
-        "lodash": "0.0.0",
+        "lodash-es": "0.0.0",
         "moment": "0.0.0",
         "moment-duration-format": "0.0.0",
         "optional-require": "0.0.0",
@@ -39,6 +41,7 @@
         "react-i18next": "0.0.0",
         "react-linkify": "0.0.0",
         "react-native-dialog": "0.0.0",
+        "react-native-paper": "0.0.0",
         "react-native-svg-transformer": "0.0.0",
         "react-native-tab-view": "0.0.0",
         "react-native-url-polyfill": "0.0.0",
@@ -46,6 +49,7 @@
         "react-redux": "0.0.0",
         "redux": "0.0.0",
         "redux-thunk": "0.0.0",
+        "text-encoding": "0.0.0",
         "unorm": "0.0.0",
         "util": "0.0.0",
         "uuid": "0.0.0",
@@ -53,7 +57,6 @@
     },
     "peerDependencies": {
         "@amplitude/react-native": "0.0.0",
-        "@braintree/sanitize-url": "0.0.0",
         "@giphy/react-native-sdk": "0.0.0",
         "@react-native/metro-config": "*",
         "@react-native-async-storage/async-storage": "0.0.0",
@@ -61,7 +64,6 @@
         "@react-native-community/netinfo": "0.0.0",
         "@react-native-community/slider": "0.0.0",
         "@react-native-google-signin/google-signin": "0.0.0",
-        "@stomp/stompjs": "0.0.0",
         "react-native": "*",
         "react": "*",
         "react-native-background-timer": "0.0.0",
@@ -73,7 +75,6 @@
         "react-native-immersive-mode": "0.0.0",
         "react-native-keep-awake": "0.0.0",
         "react-native-pager-view": "0.0.0",
-        "react-native-paper": "0.0.0",
         "react-native-performance": "0.0.0",
         "react-native-orientation-locker": "0.0.0",
         "react-native-safe-area-context": "0.0.0",
@@ -84,8 +85,7 @@
         "react-native-video": "0.0.0",
         "react-native-watch-connectivity": "0.0.0",
         "react-native-webrtc": "0.0.0",
-        "react-native-webview": "0.0.0",
-        "text-encoding": "0.0.0"
+        "react-native-webview": "0.0.0"
     },
     "overrides": {
         "@xmldom/xmldom": "0.0.0"
