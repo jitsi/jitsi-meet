@@ -84,7 +84,6 @@ export const ZINDEX_DIALOG_PORTAL = 302;
  */
 export const SPINNER_COLOR = '#929292';
 
-
 /**
  * The list of all possible UI buttons.
  *
