@@ -12,7 +12,7 @@ import {
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { isToolboxVisible } from '../../../toolbox/functions.web';
+import { getTransitionParamsForElementsAboveToolbox, isToolboxVisible } from '../../../toolbox/functions.web';
 import { isLayoutTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
@@ -26,7 +26,7 @@ const useStyles = makeStyles()(theme => {
             display: 'inline-flex',
             justifyContent: 'center',
             marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, false),
-            transition: 'margin-bottom 0.3s',
+            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(false)}`,
             pointerEvents: 'none',
             position: 'absolute',
             bottom: 0,
@@ -35,7 +35,8 @@ const useStyles = makeStyles()(theme => {
             zIndex: 1
         },
         containerElevated: {
-            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, true)
+            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, true),
+            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(true)}`
         }
     };
 });

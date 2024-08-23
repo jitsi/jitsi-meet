@@ -249,3 +249,17 @@ export function getVisibleButtons({
 export function getParticipantMenuButtonsWithNotifyClick(state: IReduxState): Map<string, NOTIFY_CLICK_MODE> {
     return state['features/toolbox'].participantMenuButtonsWithNotifyClick;
 }
+
+
+/**
+ * Returns the time, timing function and delay for elements that are position above the toolbar and need to move along
+ * with the toolbar.
+ *
+ * @param {boolean} isToolbarVisible - Whether the toolbar is visible or not.
+ * @returns {string}
+ */
+export function getTransitionParamsForElementsAboveToolbox(isToolbarVisible: boolean) {
+    // The transistion time and delay is different to account for the time when the toolbar is about to hide/show but
+    // the elements don't have to move.
+    return isToolbarVisible ? '0.15s ease-in 0.15s' : '0.24s ease-in 0s';
+}
