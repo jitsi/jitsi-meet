@@ -1,7 +1,6 @@
-/* global APP  */
+/* global APP */
 
 import Logger from '@jitsi/logger';
-
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media/constants';
 import {
     getParticipantById,
@@ -21,7 +20,8 @@ let largeVideo;
 
 const VideoLayout = {
     /**
-     * Handler for local flip X changed event.
+     * Handles local flip X change event.
+     * @param {boolean} localFlipX - The new flip X value.
      */
     onLocalFlipXChanged(localFlipX) {
         if (largeVideo) {
@@ -30,17 +30,17 @@ const VideoLayout = {
     },
 
     /**
-     * Cleans up state of this singleton {@code VideoLayout}.
-     *
-     * @returns {void}
+     * Resets the state of the VideoLayout.
      */
     reset() {
         this._resetLargeVideo();
     },
 
+    /**
+     * Initializes the large video manager.
+     */
     initLargeVideo() {
         this._resetLargeVideo();
-
         largeVideo = new LargeVideoManager();
 
         const { store } = APP;
@@ -53,10 +53,9 @@ const VideoLayout = {
     },
 
     /**
-     * Sets the audio level of the video elements associated to the given id.
-     *
-     * @param id the video identifier in the form it comes from the library
-     * @param lvl the new audio level to update to
+     * Updates the audio level of the large video if the id matches.
+     * @param {string} id - The video identifier.
+     * @param {number} lvl - The new audio level.
      */
     setAudioLevel(id, lvl) {
         if (largeVideo && id === largeVideo.id) {
@@ -65,24 +64,20 @@ const VideoLayout = {
     },
 
     /**
-     * FIXME get rid of this method once muted indicator are reactified (by
-     * making sure that user with no tracks is displayed as muted )
-     *
-     * If participant has no tracks will make the UI display muted status.
-     * @param {string} participantId
+     * Updates the large video if a participant has no video tracks.
+     * @param {string} participantId - The participant ID.
      */
     updateVideoMutedForNoTracks(participantId) {
         const participant = APP.conference.getParticipantById(participantId);
-
         if (participant && !participant.getTracksByMediaType('video').length) {
-            VideoLayout._updateLargeVideoIfDisplayed(participantId, true);
+            this._updateLargeVideoIfDisplayed(participantId, true);
         }
     },
 
     /**
-     * Return the type of the remote video.
-     * @param id the id for the remote video
-     * @returns {String} the video type video or screen.
+     * Gets the remote video type based on the id.
+     * @param {string} id - The remote video id.
+     * @returns {string} The video type.
      */
     getRemoteVideoType(id) {
         const state = APP.store.getState();
@@ -98,29 +93,23 @@ const VideoLayout = {
         }
 
         const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
-
         return videoTrack?.videoType;
     },
 
     getPinnedId() {
         const { id } = getPinnedParticipant(APP.store.getState()) || {};
-
         return id || null;
     },
 
     /**
-     * On last N change event.
-     *
-     * @param endpointsLeavingLastN the list currently leaving last N
-     * endpoints
-     * @param endpointsEnteringLastN the list currently entering last N
-     * endpoints
+     * Handles changes in last N endpoints.
+     * @param {Array} endpointsLeavingLastN - Endpoints leaving last N.
+     * @param {Array} endpointsEnteringLastN - Endpoints entering last N.
      */
     onLastNEndpointsChanged(endpointsLeavingLastN, endpointsEnteringLastN) {
         if (endpointsLeavingLastN) {
             endpointsLeavingLastN.forEach(this._updateLargeVideoIfDisplayed, this);
         }
-
         if (endpointsEnteringLastN) {
             endpointsEnteringLastN.forEach(this._updateLargeVideoIfDisplayed, this);
         }
@@ -141,8 +130,8 @@ const VideoLayout = {
     },
 
     /**
-     * @return {LargeContainer} the currently displayed container on large
-     * video.
+     * Gets the currently displayed container on large video.
+     * @returns {LargeContainer} The large video container.
      */
     getCurrentlyOnLargeContainer() {
         return largeVideo.getCurrentContainer();
@@ -152,12 +141,18 @@ const VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
+    /**
+     * Updates the large video with a new stream if necessary.
+     * @param {string} id - The participant id.
+     * @param {boolean} forceUpdate - Whether to force an update.
+     * @param {boolean} forceStreamToReattach - Whether to force the stream to reattach.
+     */
     updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
             logger.debug(`Ignoring large video update with user id ${id}: large video not initialized yet!`);
-
             return;
         }
+
         const currentContainer = largeVideo.getCurrentContainer();
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
@@ -176,7 +171,6 @@ const VideoLayout = {
             const currentStreamId = currentContainer.getStreamID();
             const newStreamId = videoStream?.getId() || null;
 
-            // FIXME it might be possible to get rid of 'forceUpdate' argument
             if (currentStreamId !== newStreamId) {
                 logger.debug('Enforcing large video update for stream change');
                 forceUpdate = true; // eslint-disable-line no-param-reassign
@@ -185,14 +179,10 @@ const VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
-
-            largeVideo.updateLargeVideo(
-                id,
-                videoStream,
-                videoType || VIDEO_TYPE.CAMERA
-            ).catch(() => {
-                // do nothing
-            });
+            largeVideo.updateLargeVideo(id, videoStream, videoType || VIDEO_TYPE.CAMERA)
+                .catch(error => {
+                    logger.error('Failed to update large video', error);
+                });
         }
     },
 
@@ -205,11 +195,14 @@ const VideoLayout = {
     },
 
     /**
-     * @returns Promise
+     * Shows or hides the large video container based on type.
+     * @param {string} type - The container type.
+     * @param {boolean} show - Whether to show or hide.
+     * @returns {Promise} Resolves when done.
      */
     showLargeVideoContainer(type, show) {
         if (!largeVideo) {
-            return Promise.reject();
+            return Promise.reject(new Error('Large video not initialized'));
         }
 
         const isVisible = this.isLargeContainerTypeVisible(type);
@@ -220,13 +213,8 @@ const VideoLayout = {
 
         let containerTypeToShow = type;
 
-        // if we are hiding a container and there is focusedVideo
-        // (pinned remote video) use its video type,
-        // if not then use default type - large video
-
         if (!show) {
             const pinnedId = this.getPinnedId();
-
             if (pinnedId) {
                 containerTypeToShow = this.getRemoteVideoType(pinnedId);
             } else {
@@ -242,62 +230,52 @@ const VideoLayout = {
     },
 
     /**
-     * Returns the id of the current video shown on large.
-     * Currently used by tests (torture).
+     * Gets the id of the current large video.
+     * @returns {string|null} The large video id.
      */
     getLargeVideoID() {
         return largeVideo && largeVideo.id;
     },
 
     /**
-     * Returns the the current video shown on large.
-     * Currently used by tests (torture).
+     * Gets the current large video instance.
+     * @returns {LargeVideoManager|null} The large video instance.
      */
     getLargeVideo() {
         return largeVideo;
     },
 
     /**
-     * Returns the wrapper jquery selector for the largeVideo
-     * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
+     * Gets the wrapper jquery selector for the large video.
+     * @returns {JQuerySelector} The large video wrapper selector.
      */
     getLargeVideoWrapper() {
         return this.getCurrentlyOnLargeContainer().$wrapper;
     },
 
     /**
-     * Helper method to invoke when the video layout has changed and elements
-     * have to be re-arranged and resized.
-     *
-     * @returns {void}
+     * Refreshes the video layout.
      */
     refreshLayout() {
-        VideoLayout.resizeVideoArea();
+        this.resizeVideoArea();
     },
 
     /**
-     * Cleans up any existing largeVideo instance.
-     *
+     * Resets the large video instance.
      * @private
-     * @returns {void}
      */
     _resetLargeVideo() {
         if (largeVideo) {
             largeVideo.destroy();
         }
-
         largeVideo = null;
     },
 
     /**
-     * Triggers an update of large video if the passed in participant is
-     * currently displayed on large video.
-     *
-     * @param {string} participantId - The participant ID that should trigger an
-     * update of large video if displayed.
-     * @param {boolean} force - Whether or not the large video update should
-     * happen no matter what.
-     * @returns {void}
+     * Updates the large video if the participant is displayed on large video.
+     * @param {string} participantId - The participant ID.
+     * @param {boolean} force - Whether to force an update.
+     * @private
      */
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
@@ -306,10 +284,10 @@ const VideoLayout = {
     },
 
     /**
-     * Handles window resizes.
+     * Handles window resize events.
      */
     onResize() {
-        VideoLayout.resizeVideoArea();
+        this.resizeVideoArea();
     }
 };
 
