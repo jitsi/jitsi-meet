@@ -6,11 +6,6 @@ import { MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED } from './actionTypes';
 
 export interface IOverlayState {
     browser?: string;
-    fatalError?: {
-        details: Object;
-        message?: string;
-        name?: string;
-    };
     isMediaPermissionPromptVisible?: boolean;
 }
 
