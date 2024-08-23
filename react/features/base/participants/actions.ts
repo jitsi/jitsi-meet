@@ -547,7 +547,7 @@ export function participantKicked(kicker: any, kicked: any) {
         const state = getState();
         const localParticipant = getLocalParticipant(state);
         const kickedId = kicked.getId();
-        const kickerId = kicker.getId();
+        const kickerId = kicker?.getId();
 
         dispatch({
             type: PARTICIPANT_KICKED,
@@ -555,7 +555,7 @@ export function participantKicked(kicker: any, kicked: any) {
             kicker: kickerId
         });
 
-        if (kicked.isReplaced?.() || kickerId === localParticipant?.id) {
+        if (kicked.isReplaced?.() || !kickerId || kickerId === localParticipant?.id) {
             return;
         }
 
