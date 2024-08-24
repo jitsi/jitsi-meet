@@ -43,7 +43,6 @@ import {
     p2pStatusChanged
 } from './react/features/base/conference/actions';
 import {
-    AVATAR_URL_COMMAND,
     CONFERENCE_LEAVE_REASONS,
     EMAIL_COMMAND
 } from './react/features/base/conference/constants';
@@ -182,7 +181,6 @@ window.JitsiMeetScreenObtainer = {
  * Known custom conference commands.
  */
 const commands = {
-    AVATAR_URL: AVATAR_URL_COMMAND,
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad'
@@ -1771,17 +1769,6 @@ export default {
                 email: data.value
             }));
         });
-
-        room.addCommandListener(
-            this.commands.defaults.AVATAR_URL,
-            (data, from) => {
-                APP.store.dispatch(
-                    participantUpdated({
-                        conference: room,
-                        id: from,
-                        avatarURL: data.value
-                    }));
-            });
 
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,

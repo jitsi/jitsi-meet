@@ -72,7 +72,6 @@ import {
 } from './actionTypes';
 import { setupVisitorStartupMedia } from './actions';
 import {
-    AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
@@ -275,13 +274,6 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
             botType
         })));
 
-    conference.addCommandListener(
-        AVATAR_URL_COMMAND,
-        (data: { value: string; }, id: string) => dispatch(participantUpdated({
-            conference,
-            id,
-            avatarURL: data.value
-        })));
     conference.addCommandListener(
         EMAIL_COMMAND,
         (data: { value: string; }, id: string) => dispatch(participantUpdated({

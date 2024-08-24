@@ -489,9 +489,8 @@ function initCommands() {
             sendAnalytics(createApiEvent('email.changed'));
             APP.conference.changeLocalEmail(email);
         },
-        'avatar-url': avatarUrl => {
-            sendAnalytics(createApiEvent('avatar.url.changed'));
-            APP.conference.changeLocalAvatarUrl(avatarUrl);
+        'avatar-url': () => {
+            console.warn('Setting avatar url is available when using jwt via context.user.avatar');
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
             if (to) {

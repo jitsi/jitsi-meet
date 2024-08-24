@@ -22,7 +22,6 @@ import {
 
 import { setObfuscatedRoom } from './actions';
 import {
-    AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
@@ -90,7 +89,9 @@ export function commonUserJoinedHandling(
     } else {
         const isReplacing = user?.isReplacing();
 
+        // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
+            avatarURL: user.getIdentity()?.user?.avatar,
             botType: user.getBotType(),
             conference,
             id,
@@ -540,15 +541,11 @@ export function sendLocalParticipant(
         stateful: IStateful,
         conference?: IJitsiConference) {
     const {
-        avatarURL,
         email,
         features,
         name
     } = getLocalParticipant(stateful) ?? {};
 
-    avatarURL && conference?.sendCommand(AVATAR_URL_COMMAND, {
-        value: avatarURL
-    });
     email && conference?.sendCommand(EMAIL_COMMAND, {
         value: email
     });
