@@ -11,6 +11,11 @@ import { extractYoutubeIdOrURL } from '../functions';
 export interface IProps extends WithTranslation {
 
     /**
+     * The allowed URL domains for shared video.
+     */
+    _allowedUrlDomains: Array<string>;
+
+    /**
      * Invoked to update the shared video link.
      */
     dispatch: IStore['dispatch'];
@@ -48,9 +53,9 @@ export default class AbstractSharedVideoDialog<S> extends Component < IProps, S 
      * @returns {boolean}
      */
     _onSetVideoLink(link: string) {
-        const { onPostSubmit } = this.props;
+        const { _allowedUrlDomains, onPostSubmit } = this.props;
 
-        const id = extractYoutubeIdOrURL(link);
+        const id = extractYoutubeIdOrURL(link, _allowedUrlDomains);
 
         if (!id) {
             return false;

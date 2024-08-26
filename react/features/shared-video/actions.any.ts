@@ -3,7 +3,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_URL_WHITELIST } from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_ALLOWED_URL_DOMAINS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import { SharedVideoDialog } from './components';
 import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
 
@@ -90,7 +90,8 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isSharedVideoEnabled(getState()) || !isURLAllowedForSharedVideo(getState(), videoUrl)) {
+        if (!isSharedVideoEnabled(getState())
+            || !isURLAllowedForSharedVideo(videoUrl, getState()['features/shared-video'].allowedUrlDomains, true)) {
             return;
         }
         const conference = getCurrentConference(getState());
@@ -128,16 +129,17 @@ export function toggleSharedVideo() {
 }
 
 /**
- * Resets the status of the shared video.
+ * Sets the allowed URL domains of the shared video.
  *
- *@param {Array<string>} urlWhitelist - The new whitelist to be set.
+ * @param {Array<string>} allowedUrlDomains - The new whitelist to be set.
  * @returns {{
- *     type: SET_SHARED_VIDEO_STATUS,
+ *     type: SET_ALLOWED_URL_DOMAINS,
+ *     allowedUrlDomains: Array<string>
  * }}
  */
-export function setUrlWhitelist(urlWhitelist: Array<string>) {
+export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
     return {
-        type: SET_URL_WHITELIST,
-        urlWhitelist
+        type: SET_ALLOWED_URL_DOMAINS,
+        allowedUrlDomains
     };
 }
