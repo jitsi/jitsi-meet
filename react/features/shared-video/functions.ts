@@ -107,9 +107,11 @@ export function extractYoutubeIdOrURL(input: string) {
  */
 export function isSharedVideoEnabled(stateful: IStateful) {
     const state = toState(stateful);
+
+    const { urlWhitelist } = toState(stateful)['features/shared-video'];
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
-    return !disableThirdPartyRequests && URL_WHITELIST.length > 0;
+    return !disableThirdPartyRequests && urlWhitelist.length > 0;
 }
 
 /**
@@ -124,10 +126,14 @@ export function areYoutubeURLsAllowedForSharedVideo() {
 /**
  * Returns true if the passed url is allowed to be used for shared video or not.
  *
+ * @param {IStateful} stateful - The redux store, state, or
+ * {@code getState} function.
  * @param {string} url - The URL.
  * @returns {boolean}
  */
-export function isURLAllowedForSharedVideo(url: string) {
+export function isURLAllowedForSharedVideo(stateful: IStateful, url: string) {
+    const { urlWhitelist } = toState(stateful)['features/shared-video'];
+
     if (!url) {
         return false;
     }
@@ -136,10 +142,10 @@ export function isURLAllowedForSharedVideo(url: string) {
         const urlObject = new URL(url);
 
         if ([ 'http:', 'https:' ].includes(urlObject?.protocol?.toLowerCase())) {
-            return URL_WHITELIST.includes(urlObject?.hostname);
+            return urlWhitelist?.includes(urlObject?.hostname);
         }
-    } catch (_e) { // it should be youtube id.
-        return areYoutubeURLsAllowedForSharedVideo();
+    } catch (_e) { // it should be YouTube id.
+        return urlWhitelist?.includes(YOUTUBE_URL_DOMAIN);
     }
 
     return false;

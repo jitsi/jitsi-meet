@@ -1426,6 +1426,9 @@ var config = {
     */
     // dynamicBrandingUrl: '',
 
+    // Own url domains list added to the white listed domains for shared video
+    // ownVideoURLDomains: [ '' ],
+
     // Options related to the participants pane.
     // participantsPane: {
     //     // Enables feature
