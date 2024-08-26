@@ -3,7 +3,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+import {RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_URL_WHITELIST} from './actionTypes';
 import { SharedVideoDialog } from './components';
 import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
 
@@ -90,7 +90,7 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isSharedVideoEnabled(getState()) || !isURLAllowedForSharedVideo(videoUrl)) {
+        if (!isSharedVideoEnabled(getState()) || !isURLAllowedForSharedVideo(getState(), videoUrl)) {
             return;
         }
         const conference = getCurrentConference(getState());
@@ -124,5 +124,19 @@ export function toggleSharedVideo() {
         } else {
             dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
         }
+    };
+}
+
+/**
+ * Resets the status of the shared video.
+ *
+ * @returns {{
+ *     type: SET_SHARED_VIDEO_STATUS,
+ * }}
+ */
+export function setUrlWhitelist(urlWhitelist: Array<string>) {
+    return {
+        type: SET_URL_WHITELIST,
+        urlWhitelist
     };
 }

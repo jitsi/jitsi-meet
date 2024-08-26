@@ -45,7 +45,7 @@ MiddlewareRegistry.register(store => next => action => {
             ({ value, attributes }: { attributes: {
                 from: string; muted: string; state: string; time: string; }; value: string; }) => {
 
-                if (!isURLAllowedForSharedVideo(value)) {
+                if (!isURLAllowedForSharedVideo(state, value)) {
                     logger.debug(`Shared Video: Received a not allowed URL ${value}`);
 
                     return;
