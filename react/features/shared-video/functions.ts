@@ -89,7 +89,7 @@ export function extractYoutubeIdOrURL(input: string) {
         // eslint-disable-next-line no-new
         const url = new URL(trimmedLink);
 
-        if (!URL_WHITELIST.includes(url?.hostname)) {
+        if (!URL_WHITELIST.includes(url?.hostname) && !URL_WHITELIST.includes('*')) {
             return;
         }
     } catch (_) {
@@ -136,7 +136,7 @@ export function isURLAllowedForSharedVideo(url: string) {
         const urlObject = new URL(url);
 
         if ([ 'http:', 'https:' ].includes(urlObject?.protocol?.toLowerCase())) {
-            return URL_WHITELIST.includes(urlObject?.hostname);
+            return URL_WHITELIST.includes(urlObject?.hostname) || URL_WHITELIST.includes('*');
         }
     } catch (_e) { // it should be youtube id.
         return areYoutubeURLsAllowedForSharedVideo();

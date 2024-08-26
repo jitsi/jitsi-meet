@@ -7,17 +7,18 @@ import { IJitsiConference } from '../base/conference/reducer';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
-import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
     resetSharedVideoStatus,
-    setSharedVideoStatus
-} from './actions.any';
+    setSharedVideoStatus,
+    showConfirmPlayingDialog
+} from './actions';
 import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
-import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo } from './functions';
+import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo, isVideoPlaying } from './functions';
 import logger from './logger';
 
 
@@ -163,30 +164,46 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     const localParticipantId = getLocalParticipant(getState())?.id;
     const oldStatus = getState()['features/shared-video']?.status ?? '';
 
+    const _updateStatus = () => {
+        if (isVideoPlaying(getState()) && localParticipantId !== from) {
+            dispatch(setSharedVideoStatus({
+                muted: muted === 'true',
+                ownerId: from,
+                status: state,
+                time: Number(time),
+                videoUrl
+            }));
+        }
+    };
+
     if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
         const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
 
-        dispatch(participantJoined({
-            conference,
-            fakeParticipant: FakeParticipant.SharedVideo,
-            id: videoUrl,
-            avatarURL,
-            name: VIDEO_PLAYER_PARTICIPANT_NAME
-        }));
+        const handleSubmit = () => {
+            dispatch(participantJoined({
+                conference,
+                fakeParticipant: FakeParticipant.SharedVideo,
+                id: videoUrl,
+                avatarURL,
+                name: VIDEO_PLAYER_PARTICIPANT_NAME
+            }));
 
-        dispatch(pinParticipant(videoUrl));
+            dispatch(pinParticipant(videoUrl));
+
+            _updateStatus();
+
+            return true; // on mobile this is used to close the dialog
+        };
+
+        if (localParticipantId === from || youtubeId) {
+            handleSubmit();
+        } else {
+            dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), handleSubmit));
+        }
     }
 
-    if (localParticipantId !== from) {
-        dispatch(setSharedVideoStatus({
-            muted: muted === 'true',
-            ownerId: from,
-            status: state,
-            time: Number(time),
-            videoUrl
-        }));
-    }
+    _updateStatus();
 }
 
 /* eslint-disable max-params */

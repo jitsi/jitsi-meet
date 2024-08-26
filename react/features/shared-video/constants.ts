@@ -37,4 +37,4 @@ export const YOUTUBE_URL_DOMAIN = 'youtube.com';
 /**
  * The white listed domains for shared video.
  */
-export const URL_WHITELIST = [ YOUTUBE_URL_DOMAIN ];
+export const URL_WHITELIST = [ YOUTUBE_URL_DOMAIN, '*' ];
