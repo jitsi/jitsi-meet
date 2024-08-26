@@ -1,7 +1,12 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import {RESET_SHARED_VIDEO_STATUS, SET_DISABLE_BUTTON, SET_SHARED_VIDEO_STATUS, SET_URL_WHITELIST} from './actionTypes';
-import {YOUTUBE_URL_DOMAIN} from "./constants";
+import {
+    RESET_SHARED_VIDEO_STATUS,
+    SET_DISABLE_BUTTON,
+    SET_SHARED_VIDEO_STATUS,
+    SET_URL_WHITELIST
+} from './actionTypes';
+import { YOUTUBE_URL_DOMAIN } from './constants';
 
 const initialState = {};
 
@@ -11,9 +16,9 @@ export interface ISharedVideoState {
     ownerId?: string;
     status?: string;
     time?: number;
+    urlWhitelist?: Array<string>;
     videoUrl?: string;
     volume?: number;
-    urlWhitelist?: Array<string>
 }
 
 /**
@@ -47,7 +52,7 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
         return {
             ...state,
             urlWhitelist: [ YOUTUBE_URL_DOMAIN, ...action.urlWhitelist ]
-        }
+        };
     }
 
     default:

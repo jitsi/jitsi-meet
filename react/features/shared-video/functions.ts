@@ -108,7 +108,7 @@ export function extractYoutubeIdOrURL(input: string) {
 export function isSharedVideoEnabled(stateful: IStateful) {
     const state = toState(stateful);
 
-    const { urlWhitelist } = toState(stateful)['features/shared-video'];
+    const { urlWhitelist = [] } = toState(stateful)['features/shared-video'];
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
     return !disableThirdPartyRequests && urlWhitelist.length > 0;
