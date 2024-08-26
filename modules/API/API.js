@@ -547,7 +547,7 @@ function initCommands() {
         },
         'start-share-video': url => {
             sendAnalytics(createApiEvent('share.video.start'));
-            const id = extractYoutubeIdOrURL(url);
+            const id = extractYoutubeIdOrURL(url, APP.store.getState()['features/shared-video'].allowedUrlDomains);
 
             if (id) {
                 APP.store.dispatch(playSharedVideo(id));

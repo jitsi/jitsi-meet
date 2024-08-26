@@ -2,21 +2,23 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     RESET_SHARED_VIDEO_STATUS,
+    SET_ALLOWED_URL_DOMAINS,
     SET_DISABLE_BUTTON,
-    SET_SHARED_VIDEO_STATUS,
-    SET_URL_WHITELIST
+    SET_SHARED_VIDEO_STATUS
 } from './actionTypes';
-import { YOUTUBE_URL_DOMAIN } from './constants';
+import { DEFAULT_ALLOWED_URL_DOMAINS } from './constants';
 
-const initialState = {};
+const initialState = {
+    allowedUrlDomains: DEFAULT_ALLOWED_URL_DOMAINS
+};
 
 export interface ISharedVideoState {
+    allowedUrlDomains: Array<string>;
     disabled?: boolean;
     muted?: boolean;
     ownerId?: string;
     status?: string;
     time?: number;
-    urlWhitelist?: Array<string>;
     videoUrl?: string;
     volume?: number;
 }
@@ -30,7 +32,10 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
 
     switch (action.type) {
     case RESET_SHARED_VIDEO_STATUS:
-        return initialState;
+        return {
+            ...initialState,
+            allowedUrlDomains: state.allowedUrlDomains
+        };
     case SET_SHARED_VIDEO_STATUS:
         return {
             ...state,
@@ -48,10 +53,10 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             disabled
         };
 
-    case SET_URL_WHITELIST: {
+    case SET_ALLOWED_URL_DOMAINS: {
         return {
             ...state,
-            urlWhitelist: [ YOUTUBE_URL_DOMAIN, ...action.urlWhitelist ]
+            allowedUrlDomains: action.allowedUrlDomains
         };
     }
 

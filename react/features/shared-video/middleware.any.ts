@@ -4,19 +4,27 @@ import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
+import { SET_CONFIG } from '../base/config/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
 import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { SET_DYNAMIC_BRANDING_DATA } from '../dynamic-branding/actionTypes';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
     resetSharedVideoStatus,
+    setAllowedUrlDomians,
     setSharedVideoStatus
 } from './actions.any';
-import { PLAYBACK_STATUSES, SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import {
+    DEFAULT_ALLOWED_URL_DOMAINS,
+    PLAYBACK_STATUSES,
+    SHARED_VIDEO,
+    VIDEO_PLAYER_PARTICIPANT_NAME
+} from './constants';
 import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo } from './functions';
 import logger from './logger';
 
@@ -30,22 +38,22 @@ import logger from './logger';
  */
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
-    const state = getState();
 
-    if (!isSharedVideoEnabled(state)) {
+    if (!isSharedVideoEnabled(getState())) {
         return next(action);
     }
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
-        const localParticipantId = getLocalParticipant(state)?.id;
+        const localParticipantId = getLocalParticipant(getState())?.id;
 
         conference.addCommandListener(SHARED_VIDEO,
             ({ value, attributes }: { attributes: {
                 from: string; muted: string; state: string; time: string; }; value: string; }) => {
+                const state = getState();
 
-                if (!isURLAllowedForSharedVideo(state, value)) {
+                if (!isURLAllowedForSharedVideo(value, getState()['features/shared-video'].allowedUrlDomains, true)) {
                     logger.debug(`Shared Video: Received a not allowed URL ${value}`);
 
                     return;
@@ -72,9 +80,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_LEFT:
+        dispatch(setAllowedUrlDomians(DEFAULT_ALLOWED_URL_DOMAINS));
         dispatch(resetSharedVideoStatus());
         break;
     case PARTICIPANT_LEFT: {
+        const state = getState();
         const conference = getCurrentConference(state);
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
@@ -86,7 +96,23 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+    case SET_CONFIG:
+    case SET_DYNAMIC_BRANDING_DATA: {
+        const result = next(action);
+        const state = getState();
+        const { sharedVideoAllowedURLDomains: allowedURLDomainsFromConfig = [] } = state['features/base/config'];
+        const { sharedVideoAllowedURLDomains: allowedURLDomainsFromBranding = [] } = state['features/dynamic-branding'];
+
+        dispatch(setAllowedUrlDomians([
+            ...DEFAULT_ALLOWED_URL_DOMAINS,
+            ...allowedURLDomainsFromBranding,
+            ...allowedURLDomainsFromConfig
+        ]));
+
+        return result;
+    }
     case SET_SHARED_VIDEO_STATUS: {
+        const state = getState();
         const conference = getCurrentConference(state);
         const localParticipantId = getLocalParticipant(state)?.id;
         const { videoUrl, status, ownerId, time, muted, volume } = action;
@@ -112,6 +138,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case RESET_SHARED_VIDEO_STATUS: {
+        const state = getState();
         const localParticipantId = getLocalParticipant(state)?.id;
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
