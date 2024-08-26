@@ -90,7 +90,9 @@ export function commonUserJoinedHandling(
     } else {
         const isReplacing = user?.isReplacing();
 
+        // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
+            avatarURL: user.getIdentity()?.user?.avatar,
             botType: user.getBotType(),
             conference,
             id,
