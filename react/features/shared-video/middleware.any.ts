@@ -8,7 +8,7 @@ import { SET_CONFIG } from '../base/config/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
-import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SET_DYNAMIC_BRANDING_DATA } from '../dynamic-branding/actionTypes';
@@ -17,8 +17,9 @@ import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionType
 import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
-    setSharedVideoStatus
-} from './actions.any';
+    setSharedVideoStatus,
+    showConfirmPlayingDialog
+} from './actions';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
     PLAYBACK_STATUSES,
@@ -53,18 +54,29 @@ MiddlewareRegistry.register(store => next => action => {
                 from: string; muted: string; state: string; time: string; }; value: string; }) => {
                 const state = getState();
 
-                if (!isURLAllowedForSharedVideo(value, getState()['features/shared-video'].allowedUrlDomains, true)) {
-                    logger.debug(`Shared Video: Received a not allowed URL ${value}`);
-
-                    return;
-                }
-
                 const { from } = attributes;
                 const sharedVideoStatus = attributes.state;
 
                 if (isSharingStatus(sharedVideoStatus)) {
-                    handleSharingVideoStatus(store, value, attributes, conference);
-                } else if (sharedVideoStatus === 'stop') {
+                    if (getState()['features/shared-video'].dialogInProgress) {
+                        return;
+                    }
+
+                    if (isURLAllowedForSharedVideo(value) || localParticipantId === from
+                        || getState()['features/shared-video'].dialogShown) {
+                        handleSharingVideoStatus(store, value, attributes, conference);
+                    } else {
+                        dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), () => {
+                            handleSharingVideoStatus(store, value, attributes, conference);
+
+                            return true; // on mobile this is used to close the dialog
+                        }));
+                    }
+
+                    return;
+                }
+
+                if (sharedVideoStatus === 'stop') {
                     const videoParticipant = getParticipantById(state, value);
 
                     dispatch(participantLeft(value, conference, {

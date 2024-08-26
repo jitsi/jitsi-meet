@@ -3,9 +3,42 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_ALLOWED_URL_DOMAINS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+import {
+    RESET_SHARED_VIDEO_STATUS,
+    SET_ALLOWED_URL_DOMAINS, SET_DIALOG_IN_PROGRESS,
+    SET_DIALOG_SHOWN,
+    SET_SHARED_VIDEO_STATUS
+} from './actionTypes';
 import { SharedVideoDialog } from './components';
-import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
+import { isSharedVideoEnabled } from './functions';
+
+/**
+ * Marks dialog is in progress.
+ *
+ * @param {boolean} value - The value to set.
+ * @returns {{
+ *     type: SET_DIALOG_IN_PROGRESS,
+ * }}
+ */
+export function setDialogInProgress(value: boolean) {
+    return {
+        type: SET_DIALOG_IN_PROGRESS,
+        value
+    };
+}
+
+/**
+ * Marks that dialog was shown.
+ *
+ * @returns {{
+ *     type: SET_DIALOG_SHOWN,
+ * }}
+ */
+export function setDialogShown() {
+    return {
+        type: SET_DIALOG_SHOWN
+    };
+}
 
 /**
  * Resets the status of the shared video.
@@ -90,8 +123,7 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isSharedVideoEnabled(getState())
-            || !isURLAllowedForSharedVideo(videoUrl, getState()['features/shared-video'].allowedUrlDomains, true)) {
+        if (!isSharedVideoEnabled(getState())) {
             return;
         }
         const conference = getCurrentConference(getState());
