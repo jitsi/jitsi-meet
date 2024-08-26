@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import InputDialog from '../../../base/dialog/components/native/InputDialog';
 import { translate } from '../../../base/i18n/functions';
 import AbstractSharedVideoDialog, { IProps } from '../AbstractSharedVideoDialog';
@@ -67,4 +68,19 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
     }
 }
 
-export default translate(connect()(SharedVideoDialog));
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {IProps}
+ */
+function mapStateToProps(state: IReduxState) {
+    const { allowedUrlDomains } = state['features/shared-video'];
+
+    return {
+        _allowedUrlDomains: allowedUrlDomains
+    };
+}
+
+export default translate(connect(mapStateToProps)(SharedVideoDialog));

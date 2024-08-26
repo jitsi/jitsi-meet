@@ -456,7 +456,6 @@ export interface IConfig {
     notifications?: Array<string>;
     openSharedDocumentOnJoin?: boolean;
     opusMaxAverageBitrate?: number;
-    ownVideoURLDomains?: Array<string>;
     p2p?: {
         backToP2PDelay?: number;
         codecPreferenceOrder?: Array<string>;
@@ -532,6 +531,7 @@ export interface IConfig {
         hideLobbyButton?: boolean;
     };
     serviceUrl?: string;
+    sharedVideoAllowedURLDomains?: Array<string>;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;

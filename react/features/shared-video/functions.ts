@@ -3,7 +3,7 @@ import { getFakeParticipants } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import {
-    URL_WHITELIST,
+    ALLOW_ALL_URL_DOMAINS,
     VIDEO_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_URL_DOMAIN
@@ -63,9 +63,10 @@ export function isVideoPlaying(stateful: IStateful): boolean {
  * Extracts a Youtube id or URL from the user input.
  *
  * @param {string} input - The user input.
+ * @param {Array<string>} allowedUrlDomains - The allowed URL domains for shared video.
  * @returns {string|undefined}
  */
-export function extractYoutubeIdOrURL(input: string) {
+export function extractYoutubeIdOrURL(input: string, allowedUrlDomains?: Array<string>) {
     if (!input) {
         return;
     }
@@ -76,7 +77,7 @@ export function extractYoutubeIdOrURL(input: string) {
         return;
     }
 
-    if (areYoutubeURLsAllowedForSharedVideo()) {
+    if (areYoutubeURLsAllowedForSharedVideo(allowedUrlDomains)) {
         const youtubeId = getYoutubeId(trimmedLink);
 
         if (youtubeId) {
@@ -84,15 +85,7 @@ export function extractYoutubeIdOrURL(input: string) {
         }
     }
 
-    // Check if the URL is valid, native may crash otherwise.
-    try {
-        // eslint-disable-next-line no-new
-        const url = new URL(trimmedLink);
-
-        if (!URL_WHITELIST.includes(url?.hostname)) {
-            return;
-        }
-    } catch (_) {
+    if (!isURLAllowedForSharedVideo(trimmedLink, allowedUrlDomains)) {
         return;
     }
 
@@ -108,32 +101,33 @@ export function extractYoutubeIdOrURL(input: string) {
 export function isSharedVideoEnabled(stateful: IStateful) {
     const state = toState(stateful);
 
-    const { urlWhitelist = [] } = toState(stateful)['features/shared-video'];
+    const { allowedUrlDomains = [] } = toState(stateful)['features/shared-video'];
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
-    return !disableThirdPartyRequests && urlWhitelist.length > 0;
+    return !disableThirdPartyRequests && allowedUrlDomains.length > 0;
 }
 
 /**
  * Checks if you youtube URLs should be allowed for shared videos.
  *
+ * @param {Array<string>} allowedUrlDomains - The allowed URL domains for shared video.
  * @returns {boolean}
  */
-export function areYoutubeURLsAllowedForSharedVideo() {
-    return URL_WHITELIST.includes(YOUTUBE_URL_DOMAIN);
+export function areYoutubeURLsAllowedForSharedVideo(allowedUrlDomains?: Array<string>) {
+    return Boolean(allowedUrlDomains?.includes(YOUTUBE_URL_DOMAIN));
 }
 
 /**
  * Returns true if the passed url is allowed to be used for shared video or not.
  *
- * @param {IStateful} stateful - The redux store, state, or
- * {@code getState} function.
  * @param {string} url - The URL.
+ * @param {Array<string>} allowedUrlDomains - The allowed url domains.
+ * @param {boolean} considerNonURLsAllowedForYoututbe - If true, the invalid URLs will be considered youtube IDs
+ * and if youtube is allowed the function will return true.
  * @returns {boolean}
  */
-export function isURLAllowedForSharedVideo(stateful: IStateful, url: string) {
-    const { urlWhitelist } = toState(stateful)['features/shared-video'];
-
+export function isURLAllowedForSharedVideo(url: string,
+        allowedUrlDomains: Array<string> = [], considerNonURLsAllowedForYoututbe = false) {
     if (!url) {
         return false;
     }
@@ -142,10 +136,10 @@ export function isURLAllowedForSharedVideo(stateful: IStateful, url: string) {
         const urlObject = new URL(url);
 
         if ([ 'http:', 'https:' ].includes(urlObject?.protocol?.toLowerCase())) {
-            return urlWhitelist?.includes(urlObject?.hostname);
+            return allowedUrlDomains.includes(ALLOW_ALL_URL_DOMAINS) || allowedUrlDomains.includes(urlObject?.hostname);
         }
     } catch (_e) { // it should be YouTube id.
-        return urlWhitelist?.includes(YOUTUBE_URL_DOMAIN);
+        return considerNonURLsAllowedForYoututbe && allowedUrlDomains.includes(YOUTUBE_URL_DOMAIN);
     }
 
     return false;

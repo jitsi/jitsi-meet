@@ -33,7 +33,7 @@ export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
  * The type of the action which sets an array of whitelisted urls.
  *
  * {
- *     type: SET_URL_WHITELIST
+ *     type: SET_ALLOWED_URL_DOMAINS
  * }
  */
-export const SET_URL_WHITELIST = 'SET_URL_WHITELIST';
+export const SET_ALLOWED_URL_DOMAINS = 'SET_ALLOWED_URL_DOMAINS';

@@ -35,6 +35,11 @@ export const PLAYBACK_STATUSES = {
 export const YOUTUBE_URL_DOMAIN = 'youtube.com';
 
 /**
- * The white listed domains for shared video.
+ * The constant to allow URL domains.
  */
-export const URL_WHITELIST = [ YOUTUBE_URL_DOMAIN ];
+export const ALLOW_ALL_URL_DOMAINS = '*';
+
+/**
+ * The default white listed domains for shared video.
+ */
+export const DEFAULT_ALLOWED_URL_DOMAINS = [ YOUTUBE_URL_DOMAIN ];
