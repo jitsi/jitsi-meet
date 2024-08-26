@@ -28,3 +28,12 @@ export const RESET_SHARED_VIDEO_STATUS = 'RESET_SHARED_VIDEO_STATUS';
  * }
  */
 export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
+
+/**
+ * The type of the action which sets an array of whitelisted urls.
+ *
+ * {
+ *     type: SET_URL_WHITELIST
+ * }
+ */
+export const SET_URL_WHITELIST = 'SET_URL_WHITELIST';
