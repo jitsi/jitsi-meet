@@ -158,7 +158,7 @@ export interface IDynamicBrandingState {
     muiBrandedTheme?: boolean;
     premeetingBackground: string;
     showGiphyIntegration?: boolean;
-    urlWhitelist?: Array<string>
+    urlWhitelist?: Array<string>;
     useDynamicBrandingData: boolean;
     virtualBackgrounds: Array<Image>;
 }

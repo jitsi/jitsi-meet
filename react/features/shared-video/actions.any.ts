@@ -3,7 +3,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import {RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_URL_WHITELIST} from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_URL_WHITELIST } from './actionTypes';
 import { SharedVideoDialog } from './components';
 import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
 
@@ -130,6 +130,7 @@ export function toggleSharedVideo() {
 /**
  * Resets the status of the shared video.
  *
+ *@param {Array<string>} urlWhitelist - The new whitelist to be set.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
  * }}
