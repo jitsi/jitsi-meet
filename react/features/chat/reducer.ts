@@ -83,8 +83,6 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
 
-        console.log('REDUCER IS CALLED', action);
-
         const messages = state.messages.map(message => {
             if (messageId === message.messageId) {
                 const newReactions = new Map(message.reactions);
@@ -99,8 +97,6 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
                     participants.add(participantId);
                 });
-
-                console.log('newReactions', newReactions);
 
                 return {
                     ...message,

@@ -143,7 +143,6 @@ export function sendMessage(message: string, ignorePrivacy = false) {
  * @returns {Function}
  */
 export function sendReaction(reaction: string, messageId: string, receiverId?: string) {
-    console.log('sendReaction');
 
     return {
         type: SEND_REACTION,
