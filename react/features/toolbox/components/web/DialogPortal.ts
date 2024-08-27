@@ -8,8 +8,8 @@ import { ZINDEX_DIALOG_PORTAL } from '../../constants';
 interface IProps {
 
     /**
-     * The component(s) to be displayed within the drawer portal.
-     */
+    * The component(s) to be displayed within the drawer portal.
+    */
     children: ReactNode;
 
     /**
@@ -43,6 +43,24 @@ interface IProps {
      */
     targetSelector?: string;
 }
+
+/**
+ * Utility function to debounce the execution of a callback function.
+ *
+ * @param {Function} callback - The callback to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {Function} - A debounced function that delays the execution of the callback.
+ */
+const debounce = (callback: (...args: any[]) => void, delay: number) => {
+    let timerId: any;
+
+    return (...args: any[]) => {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => callback(...args), delay);
+    };
+};
 
 /**
  * Component meant to render a drawer at the bottom of the screen,
@@ -86,7 +104,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
             width: 1,
             height: 1
         };
-        const observer = new ResizeObserver(entries => {
+        const debouncedResizeCallback = debounce((entries: ResizeObserverEntry[]) => {
             const { contentRect } = entries[0];
 
             if (contentRect.width !== size.width || contentRect.height !== size.height) {
@@ -97,8 +115,10 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
                     onVisible?.();
                 }, 100);
             }
-        });
+        }, 20); // 20ms delay
 
+        // Create and observe ResizeObserver
+        const observer = new ResizeObserver(debouncedResizeCallback);
         const target = targetSelector ? portalTarget.querySelector(targetSelector) : portalTarget;
 
         if (document.body) {
