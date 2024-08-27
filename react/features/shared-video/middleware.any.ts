@@ -207,8 +207,7 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     const localParticipantId = getLocalParticipant(getState())?.id;
     const oldStatus = getState()['features/shared-video']?.status ?? '';
 
-    if (state === PLAYBACK_START
-        || ![ PLAYBACK_STATUSES.PLAYING, PLAYBACK_STATUSES.PAUSED, PLAYBACK_START ].includes(oldStatus)) {
+    if (state === PLAYBACK_START && !isSharingStatus(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
         const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
 
