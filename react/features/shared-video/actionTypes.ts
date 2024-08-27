@@ -20,22 +20,13 @@ export const SET_SHARED_VIDEO_STATUS = 'SET_SHARED_VIDEO_STATUS';
 export const RESET_SHARED_VIDEO_STATUS = 'RESET_SHARED_VIDEO_STATUS';
 
 /**
- * The type of the action which signals to mark that dialog for asking whether to load shared video is currently shown.
+ * The type of the action which marks that the user had confirmed to play video.
  *
  * {
- *     type: SET_DIALOG_IN_PROGRESS
+ *     type: SET_CONFIRM_SHOW_VIDEO
  * }
  */
-export const SET_DIALOG_IN_PROGRESS = 'SET_DIALOG_IN_PROGRESS';
-
-/**
- * The type of the action which signals to mark that dialog for asking whether to load shared video is shown.
- *
- * {
- *     type: SET_DIALOG_SHOWN
- * }
- */
-export const SET_DIALOG_SHOWN = 'SET_DIALOG_SHOWN';
+export const SET_CONFIRM_SHOW_VIDEO = 'SET_CONFIRM_SHOW_VIDEO';
 
 
 /**

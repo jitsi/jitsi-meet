@@ -5,8 +5,8 @@ import { getLocalParticipant } from '../base/participants/functions';
 
 import {
     RESET_SHARED_VIDEO_STATUS,
-    SET_ALLOWED_URL_DOMAINS, SET_DIALOG_IN_PROGRESS,
-    SET_DIALOG_SHOWN,
+    SET_ALLOWED_URL_DOMAINS,
+    SET_CONFIRM_SHOW_VIDEO,
     SET_SHARED_VIDEO_STATUS
 } from './actionTypes';
 import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
@@ -14,30 +14,17 @@ import { isSharedVideoEnabled } from './functions';
 
 
 /**
- * Marks dialog is in progress.
+ * Marks that user confirmed or not to play video.
  *
  * @param {boolean} value - The value to set.
  * @returns {{
- *     type: SET_DIALOG_IN_PROGRESS,
+ *     type: SET_CONFIRM_SHOW_VIDEO,
  * }}
  */
-export function setDialogInProgress(value: boolean) {
+export function setConfirmShowVideo(value: boolean) {
     return {
-        type: SET_DIALOG_IN_PROGRESS,
+        type: SET_CONFIRM_SHOW_VIDEO,
         value
-    };
-}
-
-/**
- * Marks that dialog was shown.
- *
- * @returns {{
- *     type: SET_DIALOG_SHOWN,
- * }}
- */
-export function setDialogShown() {
-    return {
-        type: SET_DIALOG_SHOWN
     };
 }
 
@@ -187,12 +174,15 @@ export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
  */
 export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
     return (dispatch: IStore['dispatch']) => {
-        dispatch(setDialogInProgress(true));
-        dispatch(setDialogShown());
+        // shows only one dialog at a time
+        dispatch(setConfirmShowVideo(false));
+
         dispatch(openDialog(ShareVideoConfirmDialog, {
             actorName: actor,
-            onCancel: () => dispatch(setDialogInProgress(false)),
-            onSubmit: () => onSubmit()
+            onSubmit: () => {
+                dispatch(setConfirmShowVideo(true));
+                onSubmit();
+            }
         }));
     };
 }

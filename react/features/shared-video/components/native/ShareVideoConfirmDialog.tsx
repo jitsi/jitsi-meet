@@ -12,11 +12,6 @@ interface IProps extends DialogProps {
     actorName: string;
 
     /**
-     * The function to execute when canceled.
-     */
-    onCancel: () => void;
-
-    /**
      * The function to execute when confirmed.
      */
     onSubmit: () => void;
@@ -27,7 +22,7 @@ interface IProps extends DialogProps {
  *
  * @returns {JSX.Element}
  */
-export default function ShareVideoConfirmDialog({ actorName, onCancel, onSubmit }: IProps): JSX.Element {
+export default function ShareVideoConfirmDialog({ actorName, onSubmit }: IProps): JSX.Element {
     const { t } = useTranslation();
 
     return (
@@ -35,7 +30,6 @@ export default function ShareVideoConfirmDialog({ actorName, onCancel, onSubmit 
             cancelLabel = 'dialog.Cancel'
             confirmLabel = 'dialog.Ok'
             descriptionKey = 'dialog.shareVideoConfirmPlay'
-            onCancel = { onCancel }
             onSubmit = { onSubmit }
             title = { t('dialog.shareVideoConfirmPlayTitle', {
                 name: actorName

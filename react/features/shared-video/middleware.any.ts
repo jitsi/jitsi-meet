@@ -17,7 +17,6 @@ import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionType
 import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
-    setDialogInProgress,
     setSharedVideoStatus,
     showConfirmPlayingDialog
 } from './actions.any';
@@ -59,16 +58,18 @@ MiddlewareRegistry.register(store => next => action => {
                 const sharedVideoStatus = attributes.state;
 
                 if (isSharingStatus(sharedVideoStatus)) {
-                    if (getState()['features/shared-video'].dialogInProgress) {
+                    // confirmShowVideo is undefined the first time we receive
+                    // when confirmShowVideo is false we ignore everything except stop that resets it
+                    if (getState()['features/shared-video'].confirmShowVideo === false) {
                         return;
                     }
 
-                    if (isURLAllowedForSharedVideo(value) || localParticipantId === from
-                        || getState()['features/shared-video'].dialogShown) {
+                    if (isURLAllowedForSharedVideo(value)
+                        || localParticipantId === from
+                        || getState()['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
                         handleSharingVideoStatus(store, value, attributes, conference);
                     } else {
                         dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), () => {
-                            dispatch(setDialogInProgress(false));
 
                             handleSharingVideoStatus(store, value, attributes, conference);
 
