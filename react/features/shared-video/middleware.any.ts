@@ -17,9 +17,10 @@ import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionType
 import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
+    setDialogInProgress,
     setSharedVideoStatus,
     showConfirmPlayingDialog
-} from './actions';
+} from './actions.any';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
     PLAYBACK_STATUSES,
@@ -67,6 +68,8 @@ MiddlewareRegistry.register(store => next => action => {
                         handleSharingVideoStatus(store, value, attributes, conference);
                     } else {
                         dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), () => {
+                            dispatch(setDialogInProgress(false));
+
                             handleSharingVideoStatus(store, value, attributes, conference);
 
                             return true; // on mobile this is used to close the dialog

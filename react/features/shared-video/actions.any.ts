@@ -9,8 +9,9 @@ import {
     SET_DIALOG_SHOWN,
     SET_SHARED_VIDEO_STATUS
 } from './actionTypes';
-import { SharedVideoDialog } from './components';
+import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
 import { isSharedVideoEnabled } from './functions';
+
 
 /**
  * Marks dialog is in progress.
@@ -173,5 +174,25 @@ export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
     return {
         type: SET_ALLOWED_URL_DOMAINS,
         allowedUrlDomains
+    };
+}
+
+/**
+ * Shows a confirmation dialog whether to play the external video link.
+ *
+ * @param {string} actor - The actor's name.
+ * @param {Function} onSubmit - The function to execute when confirmed.
+ *
+ * @returns {Function}
+ */
+export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
+    return (dispatch: IStore['dispatch']) => {
+        dispatch(setDialogInProgress(true));
+        dispatch(setDialogShown());
+        dispatch(openDialog(ShareVideoConfirmDialog, {
+            actorName: actor,
+            onCancel: () => dispatch(setDialogInProgress(false)),
+            onSubmit: () => onSubmit()
+        }));
     };
 }
