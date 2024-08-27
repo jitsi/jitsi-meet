@@ -206,6 +206,14 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState())?.id;
     const oldStatus = getState()['features/shared-video']?.status ?? '';
+    const oldVideoUrl = getState()['features/shared-video'].videoUrl;
+
+    if (oldVideoUrl && oldVideoUrl !== videoUrl) {
+        logger.warn(
+            `User with id: ${localParticipantId} sent videoUrl: ${videoUrl} while we are playing: ${oldVideoUrl}`);
+
+        return;
+    }
 
     if (state === PLAYBACK_START && !isSharingStatus(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
