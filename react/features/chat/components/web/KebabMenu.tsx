@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import logger from '../../../base/react/logger.ts';
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
@@ -91,20 +92,14 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
         setAnchorEl(null);
     };
 
-    const handleReplyClick = useCallback(() => {
-        console.log('handleReplyClick');
-        handleClose();
-    }, [ handleClose ]);
-
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
             dispatch(handleLobbyChatInitialized(participantId));
         } else {
-            console.log('handlePrivateClick');
             dispatch(openChat(participant));
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, participantId ]);
+    }, [ dispatch, handleClose, isLobbyMessage, participant, participantId ]);
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
@@ -122,11 +117,8 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
                     setShowCopiedMessage(false);
                 }, 2000);
             })
-            .catch(err => {
-                console.error('Failed to copy message: ', err);
-            });
         } else {
-            console.error('Clipboard not available');
+            logger.error('Clipboard not available');
         }
         handleClose();
     }, [ handleClose, message ]);
@@ -169,11 +161,6 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
                     horizontal: 'center'
                 }}>
                 <div className = { classes.menuPanel }>
-                    <div
-                        className = { classes.menuItem }
-                        onClick = { handleReplyClick }>
-                        {t('Reply')}
-                    </div>
                     <div
                         className = { classes.menuItem }
                         onClick = { handlePrivateClick }>
