@@ -30,6 +30,11 @@ export const PLAYBACK_STATUSES = {
 };
 
 /**
+ * Playback start state.
+ */
+export const PLAYBACK_START = 'start';
+
+/**
  * The domain for youtube URLs.
  */
 export const YOUTUBE_URL_DOMAIN = 'youtube.com';

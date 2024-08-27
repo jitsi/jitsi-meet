@@ -53,9 +53,9 @@ export default class AbstractSharedVideoDialog<S> extends Component < IProps, S 
      * @returns {boolean}
      */
     _onSetVideoLink(link: string) {
-        const { _allowedUrlDomains, onPostSubmit } = this.props;
+        const { onPostSubmit } = this.props;
 
-        const id = extractYoutubeIdOrURL(link, _allowedUrlDomains);
+        const id = extractYoutubeIdOrURL(link);
 
         if (!id) {
             return false;

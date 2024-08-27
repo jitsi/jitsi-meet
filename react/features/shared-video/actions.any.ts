@@ -3,9 +3,31 @@ import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_ALLOWED_URL_DOMAINS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
-import { SharedVideoDialog } from './components';
-import { isSharedVideoEnabled, isURLAllowedForSharedVideo } from './functions';
+import {
+    RESET_SHARED_VIDEO_STATUS,
+    SET_ALLOWED_URL_DOMAINS,
+    SET_CONFIRM_SHOW_VIDEO,
+    SET_SHARED_VIDEO_STATUS
+} from './actionTypes';
+import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
+import { PLAYBACK_START, PLAYBACK_STATUSES } from './constants';
+import { isSharedVideoEnabled } from './functions';
+
+
+/**
+ * Marks that user confirmed or not to play video.
+ *
+ * @param {boolean} value - The value to set.
+ * @returns {{
+ *     type: SET_CONFIRM_SHOW_VIDEO,
+ * }}
+ */
+export function setConfirmShowVideo(value: boolean) {
+    return {
+        type: SET_CONFIRM_SHOW_VIDEO,
+        value
+    };
+}
 
 /**
  * Resets the status of the shared video.
@@ -90,8 +112,7 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isSharedVideoEnabled(getState())
-            || !isURLAllowedForSharedVideo(videoUrl, getState()['features/shared-video'].allowedUrlDomains, true)) {
+        if (!isSharedVideoEnabled(getState())) {
             return;
         }
         const conference = getCurrentConference(getState());
@@ -101,7 +122,7 @@ export function playSharedVideo(videoUrl: string) {
 
             dispatch(setSharedVideoStatus({
                 videoUrl,
-                status: 'start',
+                status: PLAYBACK_START,
                 time: 0,
                 ownerId: localParticipant?.id
             }));
@@ -120,7 +141,7 @@ export function toggleSharedVideo() {
         const state = getState();
         const { status = '' } = state['features/shared-video'];
 
-        if ([ 'playing', 'start', 'pause' ].includes(status)) {
+        if ([ PLAYBACK_STATUSES.PLAYING, PLAYBACK_START, PLAYBACK_STATUSES.PAUSED ].includes(status)) {
             dispatch(stopSharedVideo());
         } else {
             dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
@@ -141,5 +162,28 @@ export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
     return {
         type: SET_ALLOWED_URL_DOMAINS,
         allowedUrlDomains
+    };
+}
+
+/**
+ * Shows a confirmation dialog whether to play the external video link.
+ *
+ * @param {string} actor - The actor's name.
+ * @param {Function} onSubmit - The function to execute when confirmed.
+ *
+ * @returns {Function}
+ */
+export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
+    return (dispatch: IStore['dispatch']) => {
+        // shows only one dialog at a time
+        dispatch(setConfirmShowVideo(false));
+
+        dispatch(openDialog(ShareVideoConfirmDialog, {
+            actorName: actor,
+            onSubmit: () => {
+                dispatch(setConfirmShowVideo(true));
+                onSubmit();
+            }
+        }));
     };
 }
