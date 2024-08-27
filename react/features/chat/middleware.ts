@@ -24,8 +24,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { addGif } from '../gifs/actions';
-import { GIF_PREFIX } from '../gifs/constants';
-import { getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
+import { extractGifURL, getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
@@ -351,7 +350,7 @@ function _onConferenceMessageReceived(store: IStore,
  * @returns {void}
  */
 function _handleGifMessageReceived(store: IStore, participantId: string, message: string) {
-    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+    const url = extractGifURL(message);
 
     store.dispatch(addGif(participantId, url));
 }
