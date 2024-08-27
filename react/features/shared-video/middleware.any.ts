@@ -22,6 +22,7 @@ import {
 } from './actions.any';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
+    PLAYBACK_START,
     PLAYBACK_STATUSES,
     SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME
@@ -206,7 +207,8 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     const localParticipantId = getLocalParticipant(getState())?.id;
     const oldStatus = getState()['features/shared-video']?.status ?? '';
 
-    if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
+    if (state === PLAYBACK_START
+        || ![ PLAYBACK_STATUSES.PLAYING, PLAYBACK_STATUSES.PAUSED, PLAYBACK_START ].includes(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
         const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
 

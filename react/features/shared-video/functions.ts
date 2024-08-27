@@ -4,6 +4,8 @@ import { toState } from '../base/redux/functions';
 
 import {
     ALLOW_ALL_URL_DOMAINS,
+    PLAYBACK_START,
+    PLAYBACK_STATUSES,
     VIDEO_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_URL_DOMAIN
@@ -35,7 +37,7 @@ function getYoutubeId(url: string) {
  * @returns {boolean}
  */
 export function isSharingStatus(status: string) {
-    return [ 'playing', 'pause', 'start' ].includes(status);
+    return [ PLAYBACK_STATUSES.PLAYING, PLAYBACK_STATUSES.PAUSED, PLAYBACK_START ].includes(status);
 }
 
 

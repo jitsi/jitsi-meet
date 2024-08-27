@@ -10,6 +10,7 @@ import {
     SET_SHARED_VIDEO_STATUS
 } from './actionTypes';
 import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
+import { PLAYBACK_START, PLAYBACK_STATUSES } from './constants';
 import { isSharedVideoEnabled } from './functions';
 
 
@@ -121,7 +122,7 @@ export function playSharedVideo(videoUrl: string) {
 
             dispatch(setSharedVideoStatus({
                 videoUrl,
-                status: 'start',
+                status: PLAYBACK_START,
                 time: 0,
                 ownerId: localParticipant?.id
             }));
@@ -140,7 +141,7 @@ export function toggleSharedVideo() {
         const state = getState();
         const { status = '' } = state['features/shared-video'];
 
-        if ([ 'playing', 'start', 'pause' ].includes(status)) {
+        if ([ PLAYBACK_STATUSES.PLAYING, PLAYBACK_START, PLAYBACK_STATUSES.PAUSED ].includes(status)) {
             dispatch(stopSharedVideo());
         } else {
             dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
