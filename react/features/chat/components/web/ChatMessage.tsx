@@ -13,7 +13,6 @@ import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivate
 import { IChatMessageProps } from '../../types';
 
 import KebabMenu from './KebabMenu';
-import PrivateMessageButton from './PrivateMessageButton';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
@@ -159,6 +158,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         reactionsPopover: {
             padding: theme.spacing(2),
+            backgroundColor: theme.palette.ui03,
             maxWidth: '300px',
             maxHeight: '400px',
             overflowY: 'auto'
@@ -298,7 +298,10 @@ const ChatMessage = ({
             <div className = { classes.sideBySideContainer }>
                 {!chatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <KebabMenu />}
+                        {isHovered && <KebabMenu 
+                            message = { message.message }
+                            participantId = { message.participantId }
+                            isLobbyMessage = { message.lobbyChat } />}
                     </div>
                 )}
                 <div
@@ -331,13 +334,6 @@ const ChatMessage = ({
                                     </div>
                                     {_renderTimestamp()}
                                 </div>
-                                {canReply && (
-                                    <div className = { classes.replyButton }>
-                                        <PrivateMessageButton
-                                            isLobbyMessage = { message.lobbyChat }
-                                            participantID = { message.participantId } />
-                                    </div>
-                                )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                             </div>
@@ -356,10 +352,9 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <KebabMenu
-                                    isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
-                                    messageId = { message.messageId }
-                                    participantId = { message.messageId } />}
+                                    participantId = { message.participantId }
+                                    isLobbyMessage = { message.lobbyChat } />}
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 import Popover from '@mui/material/Popover';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -18,24 +19,16 @@ export interface IProps {
     * True if the message is a lobby chat message.
     */
     isLobbyMessage: boolean;
+
+    /**
+     * The current chat message.
+    */
     message: string;
-    messageId: string;
-
-    onCopy: () => void;
-
-    onPrivateMessage: () => void;
-
-    onReply: () => void;
 
     /**
      * The ID of the participant that the message is to be sent.
      */
     participantId: string;
-
-    /**
-     * Whether the button should be visible or not.
-     */
-    visible?: boolean;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -47,103 +40,146 @@ const useStyles = makeStyles()(theme => {
         menuItem: {
             padding: '8px 16px',
             cursor: 'pointer',
-            color: 'white', // Set text color to white
+            color: 'white',
             '&:hover': {
                 backgroundColor: theme.palette.action03
             }
         },
+
         menuPanel: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
             boxShadow: theme.shadows[3]
+        },
+
+        copiedMessage: {
+            position: 'fixed',
+            backgroundColor: theme.palette.ui03,
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            zIndex: 1000,
+            opacity: 0,
+            transition: 'opacity 0.3s ease-in-out',
+            pointerEvents: 'none',
+        },
+
+        showCopiedMessage: {
+            opacity: 1,
         }
     };
 });
 
-const KebabMenu = ({ messageId, message, isLobbyMessage, participantId, onCopy, className }: IProps) => {
+const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
-    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [showCopiedMessage, setShowCopiedMessage] = useState(false);
+    const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+    const buttonRef = useRef<HTMLDivElement>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
-
+    
     const handleMenuClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     }, []);
+    
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const handleReplyClick = useCallback(() => {
-
-    }, []);
+        console.log('handleReplyClick');
+        handleClose();
+    }, [handleClose]);
 
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
             dispatch(handleLobbyChatInitialized(participantId));
         } else {
+            console.log('handlePrivateClick');
             dispatch(openChat(participant));
         }
-    }, [ dispatch, isLobbyMessage, participant, participantId ]);
+        handleClose();
+    }, [dispatch, isLobbyMessage, participant, participantId]);
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(message).then(() => {
-                console.log('Message copied to clipboard!');
+            navigator.clipboard.writeText(message)
+            .then(() => {
+                if (buttonRef.current) {
+                    const rect = buttonRef.current.getBoundingClientRect();
+                    setPopupPosition({ top: rect.top - 30, left: rect.left });
+                }
+
+                setShowCopiedMessage(true);
+                setTimeout(() => {
+                    setShowCopiedMessage(false);
+                }, 2000);
             })
-.catch(err => {
-    console.error('Failed to copy message: ', err);
-});
+            .catch(err => {
+                console.error('Failed to copy message: ', err);
+            });
         } else {
-            console.error('Clipboard API not available');
+            console.error('Clipboard not available');
         }
-    }, [ message ]);
-
-    const handleMenuItemClick = useCallback((action: () => void) => {
-        action();
-        setAnchorEl(null);
-    }, []);
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+        handleClose();
+    }, [handleClose, message]);
 
     const open = Boolean(anchorEl);
     const id = open ? 'kebab-menu-popover' : undefined;
 
     return (
-        <div className = { cx(className) }>
-            <Button
-                accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
-                className = { classes.kebabButton }
-                icon = { IconDotsHorizontal }
-                onClick = { handleMenuClick }
-                type = { BUTTON_TYPES.TERTIARY } />
+        <div>
+            <div ref={buttonRef}>
+                <Button
+                    accessibilityLabel={t('toolbar.accessibilityLabel.moreOptions')}
+                    className={classes.kebabButton}
+                    icon={IconDotsHorizontal}
+                    onClick={handleMenuClick}
+                    type={BUTTON_TYPES.TERTIARY}
+                />
+            </div>
+
+            {showCopiedMessage && ReactDOM.createPortal(
+                <div
+                    className={cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage })}
+                    style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px` }}
+                >
+                    {t('Message Copied')}
+                </div>,
+                document.body
+            )}
+
             <Popover
-                anchorEl = { anchorEl }
-                anchorOrigin = {{
+                anchorEl={anchorEl}
+                anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'center'
+                    horizontal: 'center',
                 }}
-                id = { id }
-                onClose = { handleClose }
-                open = { open }
-                transformOrigin = {{
+                id={id}
+                onClose={handleClose}
+                open={open}
+                transformOrigin={{
                     vertical: 'top',
-                    horizontal: 'center'
+                    horizontal: 'center',
                 }}>
-                <div className = { classes.menuPanel }>
+                <div className={classes.menuPanel}>
                     <div
-                        className = { classes.menuItem }
-                        onClick = { () => handleReplyClick() }>
+                        className={classes.menuItem}
+                        onClick={handleReplyClick}>
                         {t('Reply')}
                     </div>
                     <div
-                        className = { classes.menuItem }
-                        onClick = { () => handlePrivateClick() }>
+                        className={classes.menuItem}
+                        onClick={handlePrivateClick}>
                         {t('Private Message')}
                     </div>
                     <div
-                        className = { classes.menuItem }
-                        onClick = { () => handleCopyClick() }>
+                        className={classes.menuItem}
+                        onClick={handleCopyClick}>
                         {t('Copy')}
                     </div>
                 </div>

@@ -12,9 +12,8 @@ import { IChatProps as AbstractProps } from '../../types';
 
 import EmojiSelector from './EmojiSelector';
 
-interface IProps extends AbstractProps {
+interface IProps {
     messageId: string;
-    reaction: string;
     receiverId: string;
 }
 
