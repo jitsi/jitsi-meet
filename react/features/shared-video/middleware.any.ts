@@ -65,7 +65,7 @@ MiddlewareRegistry.register(store => next => action => {
                         return;
                     }
 
-                    if (isURLAllowedForSharedVideo(value)
+                    if (isURLAllowedForSharedVideo(value, getState()['features/shared-video'].allowedUrlDomains, true)
                         || localParticipantId === from
                         || getState()['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
                         handleSharingVideoStatus(store, value, attributes, conference);
