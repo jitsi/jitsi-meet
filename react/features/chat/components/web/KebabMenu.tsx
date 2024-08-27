@@ -1,5 +1,5 @@
 import Popover from '@mui/material/Popover';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -62,11 +62,11 @@ const useStyles = makeStyles()(theme => {
             zIndex: 1000,
             opacity: 0,
             transition: 'opacity 0.3s ease-in-out',
-            pointerEvents: 'none',
+            pointerEvents: 'none'
         },
 
         showCopiedMessage: {
-            opacity: 1,
+            opacity: 1
         }
     };
 });
@@ -75,17 +75,18 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const [showCopiedMessage, setShowCopiedMessage] = useState(false);
-    const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+    const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
+    const [ popupPosition, setPopupPosition ] = useState({ top: 0,
+        left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
-    
+
     const handleMenuClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     }, []);
-    
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -93,7 +94,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
     const handleReplyClick = useCallback(() => {
         console.log('handleReplyClick');
         handleClose();
-    }, [handleClose]);
+    }, [ handleClose ]);
 
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
@@ -103,7 +104,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
             dispatch(openChat(participant));
         }
         handleClose();
-    }, [dispatch, isLobbyMessage, participant, participantId]);
+    }, [ dispatch, isLobbyMessage, participant, participantId ]);
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
@@ -111,7 +112,9 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
             .then(() => {
                 if (buttonRef.current) {
                     const rect = buttonRef.current.getBoundingClientRect();
-                    setPopupPosition({ top: rect.top - 30, left: rect.left });
+
+                    setPopupPosition({ top: rect.top - 30,
+                        left: rect.left });
                 }
 
                 setShowCopiedMessage(true);
@@ -126,60 +129,59 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
             console.error('Clipboard not available');
         }
         handleClose();
-    }, [handleClose, message]);
+    }, [ handleClose, message ]);
 
     const open = Boolean(anchorEl);
     const id = open ? 'kebab-menu-popover' : undefined;
 
     return (
         <div>
-            <div ref={buttonRef}>
+            <div ref = { buttonRef }>
                 <Button
-                    accessibilityLabel={t('toolbar.accessibilityLabel.moreOptions')}
-                    className={classes.kebabButton}
-                    icon={IconDotsHorizontal}
-                    onClick={handleMenuClick}
-                    type={BUTTON_TYPES.TERTIARY}
-                />
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
+                    className = { classes.kebabButton }
+                    icon = { IconDotsHorizontal }
+                    onClick = { handleMenuClick }
+                    type = { BUTTON_TYPES.TERTIARY } />
             </div>
 
             {showCopiedMessage && ReactDOM.createPortal(
                 <div
-                    className={cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage })}
-                    style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px` }}
-                >
+                    className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
+                    style = {{ top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px` }}>
                     {t('Message Copied')}
                 </div>,
                 document.body
             )}
 
             <Popover
-                anchorEl={anchorEl}
-                anchorOrigin={{
+                anchorEl = { anchorEl }
+                anchorOrigin = {{
                     vertical: 'bottom',
-                    horizontal: 'center',
+                    horizontal: 'center'
                 }}
-                id={id}
-                onClose={handleClose}
-                open={open}
-                transformOrigin={{
+                id = { id }
+                onClose = { handleClose }
+                open = { open }
+                transformOrigin = {{
                     vertical: 'top',
-                    horizontal: 'center',
+                    horizontal: 'center'
                 }}>
-                <div className={classes.menuPanel}>
+                <div className = { classes.menuPanel }>
                     <div
-                        className={classes.menuItem}
-                        onClick={handleReplyClick}>
+                        className = { classes.menuItem }
+                        onClick = { handleReplyClick }>
                         {t('Reply')}
                     </div>
                     <div
-                        className={classes.menuItem}
-                        onClick={handlePrivateClick}>
+                        className = { classes.menuItem }
+                        onClick = { handlePrivateClick }>
                         {t('Private Message')}
                     </div>
                     <div
-                        className={classes.menuItem}
-                        onClick={handleCopyClick}>
+                        className = { classes.menuItem }
+                        onClick = { handleCopyClick }>
                         {t('Copy')}
                     </div>
                 </div>

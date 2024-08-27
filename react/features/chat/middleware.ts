@@ -35,7 +35,14 @@ import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { showToolbox } from '../toolbox/actions';
 
-import { ADD_MESSAGE, CLOSE_CHAT, OPEN_CHAT, SEND_MESSAGE, SEND_REACTION, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
+import {
+    ADD_MESSAGE,
+    CLOSE_CHAT,
+    OPEN_CHAT,
+    SEND_MESSAGE,
+    SEND_REACTION,
+    SET_IS_POLL_TAB_FOCUSED
+} from './actionTypes';
 import { addMessage, addMessageReaction, clearMessages, closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
@@ -364,8 +371,17 @@ function _onConferenceMessageReceived(store: IStore,
     }, true, isGif);
 }
 
+/**
+ * Handles a received reaction.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @param {string} reactionList - The list of received reactions.
+ * @param {string} messageId - The id of the message that the reaction is for.
+ * @returns {void}
+ */
 function _onReactionReceived(store: IStore, { participantId, reactionList, messageId }: {
-    messageId: string; participantId: string; reactionList: string[] }) {
+    messageId: string; participantId: string; reactionList: string[]; }) {
 
     const reactionPayload = {
         participantId,

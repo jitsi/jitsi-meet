@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -5,16 +6,22 @@ interface EmojiSelectorProps {
     onSelect: (emoji: string) => void;
 }
 
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
-        emojiMap: {
+        emojiGrid: {
             display: 'flex',
             flexDirection: 'row',
             borderRadius: '4px',
-            backgroundColor: '#3D3D3D'
+            backgroundColor: theme.palette.ui03
+        },
+
+        emojiButton: {
+            cursor: 'pointer',
+            padding: '5px',
+            fontSize: '1.5em'
         }
-    }
-})
+    };
+});
 
 const EmojiSelector: React.FC<EmojiSelectorProps> = ({ onSelect }) => {
     const { classes } = useStyles();
@@ -29,17 +36,12 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({ onSelect }) => {
     const emojiNames = Object.keys(emojiMap);
 
     return (
-        <div className = { classes.emojiMap }>
-            {emojiNames.map((name) => (
+        <div className = { classes.emojiGrid }>
+            {emojiNames.map(name => (
                 <span
-                    key={name}
-                    onClick={() => onSelect(emojiMap[name])}
-                    style={{
-                        cursor: 'pointer',
-                        padding: '5px',
-                        fontSize: '1.5em'
-                    }}
-                >
+                    className = { classes.emojiButton }
+                    key = { name }
+                    onClick = { () => onSelect(emojiMap[name]) }>
                     {emojiMap[name]}
                 </span>
             ))}

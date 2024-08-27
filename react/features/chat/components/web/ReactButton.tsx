@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,6 @@ import { IconFaceSmile } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { sendReaction } from '../../actions.any';
-import { IChatProps as AbstractProps } from '../../types';
 
 import EmojiSelector from './EmojiSelector';
 
@@ -17,7 +17,7 @@ interface IProps {
     receiverId: string;
 }
 
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles()((theme: Theme) => {
     return {
         reactButton: {
             padding: '2px'

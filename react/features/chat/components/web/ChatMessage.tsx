@@ -9,14 +9,13 @@ import { translate } from '../../../base/i18n/functions';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { getCanReplyToMessage, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
+import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
 import KebabMenu from './KebabMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    canReply: boolean;
     chatMessageMenu: boolean;
     knocking: boolean;
     state: IReduxState;
@@ -177,7 +176,6 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const ChatMessage = ({
-    canReply,
     chatMessageMenu,
     knocking,
     message,
@@ -190,6 +188,11 @@ const ChatMessage = ({
     const [ isHovered, setIsHovered ] = useState(false);
     const [ reactionsAnchorEl, setReactionsAnchorEl ] = useState<null | HTMLElement>(null);
 
+    /**
+     * Renders the display name of the sender.
+     *
+     * @returns {React$Element<*>}
+     */
     function _renderDisplayName() {
         return (
             <div
@@ -200,6 +203,11 @@ const ChatMessage = ({
         );
     }
 
+    /**
+     * Renders the message privacy notice.
+     *
+     * @returns {React$Element<*>}
+     */
     function _renderPrivateNotice() {
         return (
             <div className = { classes.privateMessageNotice }>
@@ -208,6 +216,24 @@ const ChatMessage = ({
         );
     }
 
+    /**
+     * Renders the time at which the message was sent.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderTimestamp() {
+        return (
+            <div className = { cx('timestamp', classes.timestamp) }>
+                {getFormattedTimestamp(message)}
+            </div>
+        );
+    }
+
+    /**
+     * Renders the reactions for the message.
+     *
+     * @returns {React$Element<*>}
+     */
     function _renderReactions() {
         if (!message.reactions || message.reactions.size === 0) {
             return null;
@@ -269,7 +295,9 @@ const ChatMessage = ({
                                 <span>{participants.size}</span>
                                 <div className = { classes.participantList }>
                                     {Array.from(participants).map(participantId =>
-                                        <div key = { participantId }>{getParticipantDisplayName(state, participantId)}</div>
+                                        (<div key = { participantId }>
+                                            {getParticipantDisplayName(state, participantId)}
+                                        </div>)
                                     )}
                                 </div>
                             </div>
@@ -277,14 +305,6 @@ const ChatMessage = ({
                     </div>
                 </Popover>
             </>
-        );
-    }
-
-    function _renderTimestamp() {
-        return (
-            <div className = { cx('timestamp', classes.timestamp) }>
-                {getFormattedTimestamp(message)}
-            </div>
         );
     }
 
@@ -298,10 +318,10 @@ const ChatMessage = ({
             <div className = { classes.sideBySideContainer }>
                 {!chatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <KebabMenu 
+                        {isHovered && <KebabMenu
+                            isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
-                            participantId = { message.participantId }
-                            isLobbyMessage = { message.lobbyChat } />}
+                            participantId = { message.participantId } />}
                     </div>
                 )}
                 <div
@@ -352,9 +372,9 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <KebabMenu
+                                    isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
-                                    participantId = { message.participantId }
-                                    isLobbyMessage = { message.lobbyChat } />}
+                                    participantId = { message.participantId } />}
                             </div>
                         </div>
                     </div>
@@ -364,12 +384,17 @@ const ChatMessage = ({
     );
 };
 
+/**
+ * Maps part of the Redux store to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {IProps}
+ */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
     const localParticipantId = state['features/base/participants'].local?.id;
 
     return {
-        canReply: getCanReplyToMessage(state, message),
         chatMessageMenu: message.participantId !== localParticipantId,
         knocking,
         state
