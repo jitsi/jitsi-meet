@@ -8,7 +8,7 @@ import { SET_CONFIG } from '../base/config/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
-import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SET_DYNAMIC_BRANDING_DATA } from '../dynamic-branding/actionTypes';
@@ -17,10 +17,12 @@ import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionType
 import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
-    setSharedVideoStatus
+    setSharedVideoStatus,
+    showConfirmPlayingDialog
 } from './actions.any';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
+    PLAYBACK_START,
     PLAYBACK_STATUSES,
     SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME
@@ -53,18 +55,33 @@ MiddlewareRegistry.register(store => next => action => {
                 from: string; muted: string; state: string; time: string; }; value: string; }) => {
                 const state = getState();
 
-                if (!isURLAllowedForSharedVideo(value, getState()['features/shared-video'].allowedUrlDomains, true)) {
-                    logger.debug(`Shared Video: Received a not allowed URL ${value}`);
-
-                    return;
-                }
-
                 const { from } = attributes;
                 const sharedVideoStatus = attributes.state;
 
                 if (isSharingStatus(sharedVideoStatus)) {
-                    handleSharingVideoStatus(store, value, attributes, conference);
-                } else if (sharedVideoStatus === 'stop') {
+                    // confirmShowVideo is undefined the first time we receive
+                    // when confirmShowVideo is false we ignore everything except stop that resets it
+                    if (getState()['features/shared-video'].confirmShowVideo === false) {
+                        return;
+                    }
+
+                    if (isURLAllowedForSharedVideo(value)
+                        || localParticipantId === from
+                        || getState()['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
+                        handleSharingVideoStatus(store, value, attributes, conference);
+                    } else {
+                        dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), () => {
+
+                            handleSharingVideoStatus(store, value, attributes, conference);
+
+                            return true; // on mobile this is used to close the dialog
+                        }));
+                    }
+
+                    return;
+                }
+
+                if (sharedVideoStatus === 'stop') {
                     const videoParticipant = getParticipantById(state, value);
 
                     dispatch(participantLeft(value, conference, {
@@ -189,8 +206,16 @@ function handleSharingVideoStatus(store: IStore, videoUrl: string,
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState())?.id;
     const oldStatus = getState()['features/shared-video']?.status ?? '';
+    const oldVideoUrl = getState()['features/shared-video'].videoUrl;
 
-    if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
+    if (oldVideoUrl && oldVideoUrl !== videoUrl) {
+        logger.warn(
+            `User with id: ${localParticipantId} sent videoUrl: ${videoUrl} while we are playing: ${oldVideoUrl}`);
+
+        return;
+    }
+
+    if (state === PLAYBACK_START && !isSharingStatus(oldStatus)) {
         const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
         const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
 

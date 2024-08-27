@@ -3,6 +3,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     RESET_SHARED_VIDEO_STATUS,
     SET_ALLOWED_URL_DOMAINS,
+    SET_CONFIRM_SHOW_VIDEO,
     SET_DISABLE_BUTTON,
     SET_SHARED_VIDEO_STATUS
 } from './actionTypes';
@@ -14,6 +15,7 @@ const initialState = {
 
 export interface ISharedVideoState {
     allowedUrlDomains: Array<string>;
+    confirmShowVideo?: boolean;
     disabled?: boolean;
     muted?: boolean;
     ownerId?: string;
@@ -36,6 +38,12 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             ...initialState,
             allowedUrlDomains: state.allowedUrlDomains
         };
+    case SET_CONFIRM_SHOW_VIDEO: {
+        return {
+            ...state,
+            confirmShowVideo: action.value
+        };
+    }
     case SET_SHARED_VIDEO_STATUS:
         return {
             ...state,

@@ -4,6 +4,8 @@ import { toState } from '../base/redux/functions';
 
 import {
     ALLOW_ALL_URL_DOMAINS,
+    PLAYBACK_START,
+    PLAYBACK_STATUSES,
     VIDEO_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_URL_DOMAIN
@@ -35,7 +37,7 @@ function getYoutubeId(url: string) {
  * @returns {boolean}
  */
 export function isSharingStatus(status: string) {
-    return [ 'playing', 'pause', 'start' ].includes(status);
+    return [ PLAYBACK_STATUSES.PLAYING, PLAYBACK_STATUSES.PAUSED, PLAYBACK_START ].includes(status);
 }
 
 
@@ -63,10 +65,9 @@ export function isVideoPlaying(stateful: IStateful): boolean {
  * Extracts a Youtube id or URL from the user input.
  *
  * @param {string} input - The user input.
- * @param {Array<string>} allowedUrlDomains - The allowed URL domains for shared video.
  * @returns {string|undefined}
  */
-export function extractYoutubeIdOrURL(input: string, allowedUrlDomains?: Array<string>) {
+export function extractYoutubeIdOrURL(input: string) {
     if (!input) {
         return;
     }
@@ -77,15 +78,17 @@ export function extractYoutubeIdOrURL(input: string, allowedUrlDomains?: Array<s
         return;
     }
 
-    if (areYoutubeURLsAllowedForSharedVideo(allowedUrlDomains)) {
-        const youtubeId = getYoutubeId(trimmedLink);
+    const youtubeId = getYoutubeId(trimmedLink);
 
-        if (youtubeId) {
-            return youtubeId;
-        }
+    if (youtubeId) {
+        return youtubeId;
     }
 
-    if (!isURLAllowedForSharedVideo(trimmedLink, allowedUrlDomains)) {
+    // Check if the URL is valid, native may crash otherwise.
+    try {
+        // eslint-disable-next-line no-new
+        new URL(trimmedLink);
+    } catch (_) {
         return;
     }
 
@@ -101,10 +104,9 @@ export function extractYoutubeIdOrURL(input: string, allowedUrlDomains?: Array<s
 export function isSharedVideoEnabled(stateful: IStateful) {
     const state = toState(stateful);
 
-    const { allowedUrlDomains = [] } = toState(stateful)['features/shared-video'];
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
-    return !disableThirdPartyRequests && allowedUrlDomains.length > 0;
+    return !disableThirdPartyRequests;
 }
 
 /**
