@@ -1,6 +1,6 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { openDialog } from '../base/dialog/actions';
+import { hideDialog, openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 
 import {
@@ -185,5 +185,16 @@ export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
                 onSubmit();
             }
         }));
+    };
+}
+
+/**
+ * Hides the video play confirmation dialog.
+ *
+ * @returns {Function}
+ */
+export function hideConfirmPlayingDialog() {
+    return (dispatch: IStore['dispatch']) => {
+        dispatch(hideDialog(ShareVideoConfirmDialog));
     };
 }
