@@ -15,6 +15,7 @@ import { SET_DYNAMIC_BRANDING_DATA } from '../dynamic-branding/actionTypes';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
+    hideConfirmPlayingDialog,
     resetSharedVideoStatus,
     setAllowedUrlDomians,
     setSharedVideoStatus,
@@ -83,6 +84,8 @@ MiddlewareRegistry.register(store => next => action => {
 
                 if (sharedVideoStatus === 'stop') {
                     const videoParticipant = getParticipantById(state, value);
+
+                    dispatch(hideConfirmPlayingDialog());
 
                     dispatch(participantLeft(value, conference, {
                         fakeParticipant: videoParticipant?.fakeParticipant
