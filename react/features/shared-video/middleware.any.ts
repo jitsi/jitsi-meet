@@ -12,6 +12,8 @@ import { getLocalParticipant, getParticipantById, getParticipantDisplayName } fr
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SET_DYNAMIC_BRANDING_DATA } from '../dynamic-branding/actionTypes';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
@@ -84,6 +86,15 @@ MiddlewareRegistry.register(store => next => action => {
 
                 if (sharedVideoStatus === 'stop') {
                     const videoParticipant = getParticipantById(state, value);
+
+                    if (getState()['features/shared-video'].confirmShowVideo === false) {
+                        dispatch(showWarningNotification({
+                            titleKey: 'dialog.shareVideoLinkStopped',
+                            titleArguments: {
+                                name: getParticipantDisplayName(getState(), from)
+                            }
+                        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }
 
                     dispatch(hideConfirmPlayingDialog());
 
