@@ -30,6 +30,11 @@ interface IProps extends IAbstractCaptionsProps {
     _isLifted: boolean | undefined;
 
     /**
+     * Whether toolbar is shifted up or not.
+     */
+    _shiftUp: boolean;
+
+    /**
      * Whether the toolbox is visible or not.
      */
     _toolboxVisible: boolean;
@@ -42,24 +47,32 @@ interface IProps extends IAbstractCaptionsProps {
 
 
 const styles = (theme: Theme, props: IProps) => {
-    const { _isLifted = false, _clientHeight, _toolboxVisible = false } = props;
+    const { _isLifted = false, _clientHeight, _shiftUp = false, _toolboxVisible = false } = props;
     const fontSize = calculateSubtitlesFontSize(_clientHeight);
-    const padding = Math.ceil(0.2 * fontSize);
 
-    // Currently the subtitles position are not affected by the toolbar visibility.
-    let bottom = getVideospaceFloatingElementsBottomSpacing(theme, _toolboxVisible);
+    // Normally we would use 0.2 * fontSize in order to cover the background gap from line-height: 1.2 but it seems
+    // the current font is a little bit larger than it is supposed to be.
+    const padding = 0.1 * fontSize;
+    const bottom = getVideospaceFloatingElementsBottomSpacing(theme, _toolboxVisible);
+    let marginBottom = 0;
 
     // This is the case where we display the onstage participant display name
     // below the subtitles.
     if (_isLifted) {
         // 10px is the space between the onstage participant display name label and subtitles. We also need
         // to add the padding of the subtitles because it will decrease the gap between the label and subtitles.
-        bottom += getStageParticipantNameLabelHeight(theme) + 10 + padding;
+        marginBottom += getStageParticipantNameLabelHeight(theme) + 10 + padding;
+    }
+
+    if (_shiftUp) {
+        // The toolbar is shifted up with 30px from the css.
+        marginBottom += 30;
     }
 
     return {
         transcriptionSubtitles: {
             bottom: `${bottom}px`,
+            marginBottom,
             fontSize: `${fontSize}px`,
             left: '50%',
             maxWidth: '50vw',
@@ -81,7 +94,8 @@ const styles = (theme: Theme, props: IProps) => {
                 background: 'black',
 
                 // without this when the text is wrapped on 2+ lines there will be a gap in the background:
-                padding: `${padding}px 0px`
+                padding: `${padding}px 8px`,
+                boxDecorationBreak: 'clone' as const
             }
         }
     };
@@ -148,6 +162,7 @@ function mapStateToProps(state: IReduxState) {
         ..._abstractMapStateToProps(state),
         _isLifted: Boolean(largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView),
         _clientHeight: clientHeight,
+        _shiftUp: state['features/toolbox'].shiftUp,
         _toolboxVisible: isToolboxVisible(state)
     };
 }
