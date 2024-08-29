@@ -312,7 +312,9 @@ local function go_live(room)
         return;
     end
 
-    if not (room.jitsiMetadata and room.jitsiMetadata.visitors and room.jitsiMetadata.visitors.live) then
+    -- if missing we assume room is live, only skip if it is marked explicitly as false
+    if room.jitsiMetadata and room.jitsiMetadata.visitors
+            and room.jitsiMetadata.visitors.live and room.jitsiMetadata.visitors.live == false then
         return;
     end
 
