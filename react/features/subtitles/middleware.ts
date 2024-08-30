@@ -2,6 +2,8 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
@@ -39,6 +41,11 @@ const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
  * preference for translation for a participant.
  */
 const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
+
+/**
+ * The dial command to use for starting a transcriber.
+ */
+const TRANSCRIBER_DIAL_COMMAND = 'jitsi_meet_transcribe';
 
 /**
 * Time after which the rendered subtitles will be removed.
@@ -238,6 +245,17 @@ function _requestingSubtitlesChange(
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
+
+    if (enabled && conference?.getTranscriptionStatus() === 'off') {
+        const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', false, false);
+
+        if (isLocalParticipantModerator(state) || featureAllowed) {
+            conference.dial(TRANSCRIBER_DIAL_COMMAND)
+                .catch((e: any) => {
+                    console.error('some error', e);
+                });
+        }
+    }
 
     if (enabled && language) {
         conference?.setLocalParticipantProperty(
