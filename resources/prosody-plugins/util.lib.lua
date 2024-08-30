@@ -250,10 +250,8 @@ end
 -- Utility function to check whether feature is present and enabled. Allow
 -- a feature if there are features present in the session(coming from
 -- the token) and the value of the feature is true.
--- If features is not present in the token we skip feature detection and allow
--- everything.
 function is_feature_allowed(features, ft)
-    if (features == nil or features[ft] == "true" or features[ft] == true) then
+    if features ~= nil and (features[ft] == "true" or features[ft] == true) then
         return true;
     else
         return false;

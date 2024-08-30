@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
+import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
@@ -28,6 +29,11 @@ export interface IProps extends WithTranslation {
      * Style of the dialogs feature.
      */
     _dialogStyles: any;
+
+    /**
+     * Whether recording feature is enabled.
+     */
+    _hasRecordingFeature: boolean;
 
     /**
      * Whether to hide the storage warning or not.
@@ -412,13 +418,13 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
  */
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
-    const _localRecordingAvailable
-        = !localRecording?.disable && supportsLocalRecording();
+    const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
+        _hasRecordingFeature: isJwtFeatureEnabled(state, 'recording', false, false),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _isModerator: isLocalParticipantModerator(state),
         _localRecordingAvailable,

@@ -492,7 +492,7 @@ export function isAddPeopleEnabled(state: IReduxState): boolean {
 export function isDialOutEnabled(state: IReduxState): boolean {
     const { conference } = state['features/base/conference'];
 
-    return isLocalParticipantModerator(state)
+    return (isLocalParticipantModerator(state) || isJwtFeatureEnabled(state, 'outbound-call', false, false))
         && conference && conference.isSIPCallingSupported();
 }
 
@@ -505,8 +505,7 @@ export function isDialOutEnabled(state: IReduxState): boolean {
 export function isSipInviteEnabled(state: IReduxState): boolean {
     const { sipInviteUrl } = state['features/base/config'];
 
-    return isLocalParticipantModerator(state)
-        && isJwtFeatureEnabled(state, 'sip-outbound-call')
+    return (isLocalParticipantModerator(state) || isJwtFeatureEnabled(state, 'sip-outbound-call', false, false))
         && Boolean(sipInviteUrl);
 }
 
