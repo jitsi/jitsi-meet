@@ -16,9 +16,8 @@ import KebabMenu from './KebabMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    knocking: boolean;
     shouldDisplayChatMessageMenu: boolean;
-    state: IReduxState;
+    state?: IReduxState;
     type: string;
 }
 
@@ -177,12 +176,12 @@ const useStyles = makeStyles()((theme: Theme) => {
 
 const ChatMessage = ({
     shouldDisplayChatMessageMenu,
+    state,
     knocking,
     message,
     showDisplayName,
     type,
-    t,
-    state
+    t
 }: IProps) => {
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
@@ -209,7 +208,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function renderDisplayName() {
+    function _renderDisplayName() {
         return (
             <div
                 aria-hidden = { true }
@@ -224,7 +223,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function renderPrivateNotice() {
+    function _renderPrivateNotice() {
         return (
             <div className = { classes.privateMessageNotice }>
                 {getPrivateNoticeMessage(message)}
@@ -237,7 +236,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function renderTimestamp() {
+    function _renderTimestamp() {
         return (
             <div className = { cx('timestamp', classes.timestamp) }>
                 {getFormattedTimestamp(message)}
@@ -304,7 +303,7 @@ const ChatMessage = ({
                                 <div className = { classes.participantList }>
                                     {Array.from(participants).map(participantId =>
                                         (<div key = { participantId }>
-                                            {getParticipantDisplayName(state, participantId)}
+                                            {state && getParticipantDisplayName(state, participantId)}
                                         </div>)
                                     )}
                                 </div>
@@ -342,7 +341,7 @@ const ChatMessage = ({
                     ) }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
-                            {showDisplayName && renderDisplayName()}
+                            {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
                                 <span className = 'sr-only'>
                                     {message.displayName === message.recipient
@@ -353,7 +352,7 @@ const ChatMessage = ({
                                 </span>
                                 <Message text = { getMessageText(message) } />
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
-                                    && renderPrivateNotice()}
+                                    && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.size > 0 && (
@@ -362,7 +361,7 @@ const ChatMessage = ({
                                             </>
                                         )}
                                     </div>
-                                    {renderTimestamp()}
+                                    {_renderTimestamp()}
                                 </div>
                             </div>
                         </div>

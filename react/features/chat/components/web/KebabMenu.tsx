@@ -8,7 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
-import logger from '../../../base/react/logger.ts';
+import logger from '../../../base/react/logger';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
