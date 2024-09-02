@@ -48,7 +48,7 @@ export interface IChatMessageProps extends WithTranslation {
     /**
      * Whether the chat message menu is visible or not.
      */
-    chatMessageMenu?: boolean;
+    shouldDisplayChatMessageMenu?: boolean;
 
     /**
      * Whether gifs are enabled or not.
