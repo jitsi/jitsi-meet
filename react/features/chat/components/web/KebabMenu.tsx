@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import logger from '../../../base/react/logger.ts';
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
+import logger from '../../../base/react/logger.ts';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
@@ -116,7 +116,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
                 setTimeout(() => {
                     setShowCopiedMessage(false);
                 }, 2000);
-            })
+            });
         } else {
             logger.error('Clipboard not available');
         }

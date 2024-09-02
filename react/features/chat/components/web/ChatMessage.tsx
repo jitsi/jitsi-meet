@@ -16,8 +16,8 @@ import KebabMenu from './KebabMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    shouldDisplayChatMessageMenu: boolean;
     knocking: boolean;
+    shouldDisplayChatMessageMenu: boolean;
     state: IReduxState;
     type: string;
 }
@@ -185,8 +185,24 @@ const ChatMessage = ({
     state
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered,  setIsHovered ] = useState(false);
+    const [ isHovered, setIsHovered ] = useState(false);
     const [ reactionsAnchorEl, setReactionsAnchorEl ] = useState<null | HTMLElement>(null);
+
+    const handleMouseEnter = useCallback(() => {
+        setIsHovered(true);
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+        setIsHovered(false);
+    }, []);
+
+    const handleReactionsClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        setReactionsAnchorEl(event.currentTarget);
+    }, []);
+
+    const handleReactionsClose = useCallback(() => {
+        setReactionsAnchorEl(null);
+    }, []);
 
     /**
      * Renders the display name of the sender.
@@ -246,14 +262,6 @@ const ChatMessage = ({
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const handleReactionsClick = ((event: React.MouseEvent<HTMLDivElement>) => {
-            setReactionsAnchorEl(event.currentTarget);
-        });
-
-        const handleReactionsClose = (() => {
-            setReactionsAnchorEl(null);
-        });
-
         const openReactions = Boolean(reactionsAnchorEl);
         const reactionsId = openReactions ? 'reactions-popover' : undefined;
 
@@ -312,8 +320,8 @@ const ChatMessage = ({
         <div
             className = { cx(classes.chatMessageWrapper, type) }
             id = { message.messageId }
-            onMouseEnter = { () => setIsHovered(true) }
-            onMouseLeave = { () => setIsHovered(false) }
+            onMouseEnter = { handleMouseEnter }
+            onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayChatMessageMenu && (

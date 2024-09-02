@@ -1,9 +1,8 @@
 import { Theme } from '@mui/material';
-import React from 'react';
-import { face_with_open_mouth, face_with_tears_of_joy } from 'react-emoji-render/data/aliases';
+import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-interface EmojiSelectorProps {
+interface IProps {
     onSelect: (emoji: string) => void;
 }
 
@@ -24,17 +23,25 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const EmojiSelector: React.FC<EmojiSelectorProps> = ({ onSelect }) => {
+const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     const { classes } = useStyles();
 
     const emojiMap: Record<string, string> = {
-        thumbs_up: '👍',
-        red_heart: '❤️',
-        face_with_tears_of_joy: '😂',
-        face_with_open_mouth: '😮',
+        thumbsUp: '👍',
+        redHeart: '❤️',
+        faceWithTearsOfJoy: '😂',
+        faceWithOpenMouth: '😮',
         fire: '🔥'
     };
     const emojiNames = Object.keys(emojiMap);
+
+    const handleSelect = useCallback(
+        (emoji: string) => (event: React.MouseEvent<HTMLSpanElement>) => {
+            event.preventDefault();
+            onSelect(emoji);
+        },
+        [ onSelect ]
+    );
 
     return (
         <div className = { classes.emojiGrid }>
@@ -42,7 +49,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({ onSelect }) => {
                 <span
                     className = { classes.emojiButton }
                     key = { name }
-                    onClick = { () => onSelect(emojiMap[name]) }>
+                    onClick = { handleSelect(emojiMap[name]) }>
                     {emojiMap[name]}
                 </span>
             ))}
