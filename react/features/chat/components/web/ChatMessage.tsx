@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
 import Popover from '@mui/material/Popover';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -16,7 +16,7 @@ import KebabMenu from './KebabMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    chatMessageMenu: boolean;
+    shouldDisplayChatMessageMenu: boolean;
     knocking: boolean;
     state: IReduxState;
     type: string;
@@ -176,7 +176,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const ChatMessage = ({
-    chatMessageMenu,
+    shouldDisplayChatMessageMenu,
     knocking,
     message,
     showDisplayName,
@@ -185,7 +185,7 @@ const ChatMessage = ({
     state
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered, setIsHovered ] = useState(false);
+    const [ isHovered,  setIsHovered ] = useState(false);
     const [ reactionsAnchorEl, setReactionsAnchorEl ] = useState<null | HTMLElement>(null);
 
     /**
@@ -193,7 +193,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function _renderDisplayName() {
+    function renderDisplayName() {
         return (
             <div
                 aria-hidden = { true }
@@ -208,7 +208,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function _renderPrivateNotice() {
+    function renderPrivateNotice() {
         return (
             <div className = { classes.privateMessageNotice }>
                 {getPrivateNoticeMessage(message)}
@@ -221,7 +221,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function _renderTimestamp() {
+    function renderTimestamp() {
         return (
             <div className = { cx('timestamp', classes.timestamp) }>
                 {getFormattedTimestamp(message)}
@@ -234,7 +234,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function _renderReactions() {
+    function renderReactions() {
         if (!message.reactions || message.reactions.size === 0) {
             return null;
         }
@@ -246,13 +246,13 @@ const ChatMessage = ({
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const handleReactionsClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        const handleReactionsClick = ((event: React.MouseEvent<HTMLDivElement>) => {
             setReactionsAnchorEl(event.currentTarget);
-        };
+        });
 
-        const handleReactionsClose = () => {
+        const handleReactionsClose = (() => {
             setReactionsAnchorEl(null);
-        };
+        });
 
         const openReactions = Boolean(reactionsAnchorEl);
         const reactionsId = openReactions ? 'reactions-popover' : undefined;
@@ -316,7 +316,7 @@ const ChatMessage = ({
             onMouseLeave = { () => setIsHovered(false) }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                {!chatMessageMenu && (
+                {!shouldDisplayChatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <KebabMenu
                             isLobbyMessage = { message.lobbyChat }
@@ -334,7 +334,7 @@ const ChatMessage = ({
                     ) }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
-                            {showDisplayName && _renderDisplayName()}
+                            {showDisplayName && renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
                                 <span className = 'sr-only'>
                                     {message.displayName === message.recipient
@@ -344,31 +344,31 @@ const ChatMessage = ({
                                         })}
                                 </span>
                                 <Message text = { getMessageText(message) } />
+                                {(message.privateMessage || (message.lobbyChat && !knocking))
+                                    && renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.size > 0 && (
                                             <>
-                                                {_renderReactions()}
+                                                {renderReactions()}
                                             </>
                                         )}
                                     </div>
-                                    {_renderTimestamp()}
+                                    {renderTimestamp()}
                                 </div>
-                                {(message.privateMessage || (message.lobbyChat && !knocking))
-                                    && _renderPrivateNotice()}
                             </div>
                         </div>
                     </div>
                 </div>
-                {chatMessageMenu && (
+                {shouldDisplayChatMessageMenu && (
                     <div className = { classes.sideBySideContainer }>
-                        <div>
+                        {!message.privateMessage && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <ReactButton
                                     messageId = { message.messageId }
                                     receiverId = { '' } />}
                             </div>
-                        </div>
+                        </div>}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <KebabMenu
@@ -395,7 +395,7 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const localParticipantId = state['features/base/participants'].local?.id;
 
     return {
-        chatMessageMenu: message.participantId !== localParticipantId,
+        shouldDisplayChatMessageMenu: message.participantId !== localParticipantId,
         knocking,
         state
     };
