@@ -88,9 +88,9 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
         setAnchorEl(event.currentTarget);
     }, []);
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setAnchorEl(null);
-    };
+    }, []);
 
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
@@ -99,7 +99,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
             dispatch(openChat(participant));
         }
         handleClose();
-    }, [ dispatch, handleClose, isLobbyMessage, participant, participantId ]);
+    }, [ dispatch, isLobbyMessage, participant, participantId ]);
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
@@ -121,7 +121,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
             logger.error('Clipboard not available');
         }
         handleClose();
-    }, [ handleClose, message ]);
+    }, [ message ]);
 
     const open = Boolean(anchorEl);
     const id = open ? 'kebab-menu-popover' : undefined;
