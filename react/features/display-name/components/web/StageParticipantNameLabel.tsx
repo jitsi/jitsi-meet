@@ -10,21 +10,23 @@ import {
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { isToolboxVisible } from '../../../toolbox/functions.web';
+import { getTransitionParamsForElementsAboveToolbox, isToolboxVisible } from '../../../toolbox/functions.web';
 import { isLayoutTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
+import { getStageParticipantTypography } from './styles';
 
 const useStyles = makeStyles()(theme => {
     return {
         badgeContainer: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...withPixelLineHeight(getStageParticipantTypography(theme)),
             alignItems: 'center',
             display: 'inline-flex',
             justifyContent: 'center',
-            marginBottom: theme.spacing(7),
-            transition: 'margin-bottom 0.3s',
+            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, false),
+            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(false)}`,
             pointerEvents: 'none',
             position: 'absolute',
             bottom: 0,
@@ -33,7 +35,8 @@ const useStyles = makeStyles()(theme => {
             zIndex: 1
         },
         containerElevated: {
-            marginBottom: theme.spacing(12)
+            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, true),
+            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(true)}`
         }
     };
 });

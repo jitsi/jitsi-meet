@@ -215,7 +215,7 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
                 }
             }
 
-            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, this, tapBackActivity);
+            Notification notification = OngoingNotification.buildOngoingConferenceNotification(this.isAudioMuted, this, tapBackActivity);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");

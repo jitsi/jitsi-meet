@@ -1,10 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const packageJSON = require('../package.json');
-
-const SDKPackageJSON = require('./package.json');
-
 const androidSourcePath = '../android/sdk/src/main/java/org/jitsi/meet/sdk';
 const androidMainSourcePath = '../android/sdk/src/main/res';
 const androidTargetPath = './android/src/main/java/org/jitsi/meet/sdk';
@@ -55,44 +51,6 @@ function copyFolderRecursiveSync(source, target) {
         });
     }
 }
-
-/**
- * Merges the dependency versions from the root package.json with the dependencies of the SDK package.json.
- */
-function mergeDependencyVersions() {
-
-    // Updates SDK dependencies to match project dependencies.
-    for (const key in SDKPackageJSON.dependencies) {
-        if (SDKPackageJSON.dependencies.hasOwnProperty(key)) {
-            SDKPackageJSON.dependencies[key] = packageJSON.dependencies[key] || packageJSON.devDependencies[key];
-        }
-    }
-
-    // Updates SDK peer dependencies.
-    for (const key in packageJSON.dependencies) {
-        if (SDKPackageJSON.peerDependencies.hasOwnProperty(key)) {
-
-            // Updates all peer dependencies except react and react-native.
-            if (key !== 'react' && key !== 'react-native') {
-                SDKPackageJSON.peerDependencies[key] = packageJSON.dependencies[key];
-            }
-        }
-    }
-
-    // Updates SDK overrides dependencies.
-    for (const key in packageJSON.overrides) {
-        if (SDKPackageJSON.overrides.hasOwnProperty(key)) {
-            SDKPackageJSON.overrides[key] = packageJSON.overrides[key];
-        }
-    }
-
-    const data = JSON.stringify(SDKPackageJSON, null, 4);
-
-    fs.writeFileSync('package.json', data);
-}
-
-// TODO: put this in a seperate step
-mergeDependencyVersions();
 
 copyFolderRecursiveSync(
     '../images',

@@ -205,18 +205,6 @@ class ReactInstanceManagerHolder {
                 ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
-    /**
-     * Gets the current {@link Activity} linked to React Native.
-     *
-     * @return An activity attached to React Native.
-     */
-    static Activity getCurrentActivity() {
-        ReactContext reactContext
-            = reactInstanceManager != null
-            ? reactInstanceManager.getCurrentReactContext() : null;
-        return reactContext != null ? reactContext.getCurrentActivity() : null;
-    }
-
     static ReactInstanceManager getReactInstanceManager() {
         return reactInstanceManager;
     }

@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { IconArrowUp } from '../../../base/icons/svg';
 import ToolboxButtonWithPopup from '../../../base/toolbox/components/web/ToolboxButtonWithPopup';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import { RaiseHandButton } from '../../../reactions/components/web/RaiseHandButton';
@@ -55,8 +54,6 @@ export default function JoinMeetingDialog() {
                     <p className = { classes.raiseHandTooltip }>{t('visitors.joinMeeting.raiseHand')}</p>
                     <div className = { classes.raiseHandButton }>
                         <ToolboxButtonWithPopup
-                            icon = { IconArrowUp }
-                            iconDisabled = { false }
                             onPopoverClose = { noop }
                             onPopoverOpen = { noop }
                             popoverContent = { null }

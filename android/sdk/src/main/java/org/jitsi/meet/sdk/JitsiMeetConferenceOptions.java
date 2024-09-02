@@ -270,11 +270,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     Bundle asProps() {
         Bundle props = new Bundle();
 
-        // Android always has the PiP flag set by default.
-        if (!featureFlags.containsKey("pip.enabled")) {
-            featureFlags.putBoolean("pip.enabled", true);
-        }
-
         props.putBundle("flags", featureFlags);
 
         Bundle urlProps = new Bundle();
