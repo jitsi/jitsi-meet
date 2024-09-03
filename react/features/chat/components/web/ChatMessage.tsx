@@ -328,7 +328,8 @@ const ChatMessage = ({
                         {isHovered && <KebabMenu
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
-                            participantId = { message.participantId } />}
+                            participantId = { message.participantId }
+                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
                     </div>
                 )}
                 <div
@@ -381,7 +382,8 @@ const ChatMessage = ({
                                 {isHovered && <KebabMenu
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
-                                    participantId = { message.participantId } />}
+                                    participantId = { message.participantId }
+                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
                             </div>
                         </div>
                     </div>

@@ -30,6 +30,11 @@ export interface IProps {
      * The ID of the participant that the message is to be sent.
      */
     participantId: string;
+
+    /**
+     * Whether the chat message menu is visible or not.
+     */
+    shouldDisplayChatMessageMenu: boolean;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -72,7 +77,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
+const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -161,11 +166,13 @@ const KebabMenu = ({ message, participantId, isLobbyMessage }: IProps) => {
                     horizontal: 'center'
                 }}>
                 <div className = { classes.menuPanel }>
-                    <div
-                        className = { classes.menuItem }
-                        onClick = { handlePrivateClick }>
-                        {t('Private Message')}
-                    </div>
+                    {shouldDisplayChatMessageMenu && (
+                        <div
+                            className = { classes.menuItem }
+                            onClick = { handlePrivateClick }>
+                            {t('Private Message')}
+                        </div>
+                    )}
                     <div
                         className = { classes.menuItem }
                         onClick = { handleCopyClick }>
