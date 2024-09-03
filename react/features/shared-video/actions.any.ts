@@ -11,7 +11,7 @@ import {
 } from './actionTypes';
 import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
 import { PLAYBACK_START, PLAYBACK_STATUSES } from './constants';
-import { isSharedVideoEnabled } from './functions';
+import { isSharedVideoEnabled, sendShareVideoCommand } from './functions';
 
 
 /**
@@ -120,12 +120,15 @@ export function playSharedVideo(videoUrl: string) {
         if (conference) {
             const localParticipant = getLocalParticipant(getState());
 
-            dispatch(setSharedVideoStatus({
-                videoUrl,
+            // we will send the command and will create local video fake participant
+            // and start playing once we receive ourselves the command
+            sendShareVideoCommand({
+                conference,
+                id: videoUrl,
+                localParticipantId: localParticipant?.id,
                 status: PLAYBACK_START,
-                time: 0,
-                ownerId: localParticipant?.id
-            }));
+                time: 0
+            });
         }
     };
 }
