@@ -88,9 +88,8 @@ module:hook("pre-iq/full", function(event)
                 is_session_allowed = room:get_affiliation(stanza.attr.from) == 'owner';
             end
 
-            if (token == nil
-                or roomName == nil
-                or not token_util:verify_room(session, room_real_jid)
+            if (roomName == nil
+                or (token ~= nil and not token_util:verify_room(session, room_real_jid))
                 or not (is_session_allowed or is_granting_session_allowed))
             then
                 module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
