@@ -159,17 +159,28 @@ const useStyles = makeStyles()((theme: Theme) => {
             backgroundColor: theme.palette.ui03,
             maxWidth: '300px',
             maxHeight: '400px',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            color: theme.palette.text02
         },
         reactionItem: {
             display: 'flex',
             alignItems: 'center',
-            marginBottom: theme.spacing(1)
+            marginBottom: theme.spacing(1),
+            gap: theme.spacing(1),
+            borderBottom: `1px solid ${theme.palette.common.white}`,
+            paddingBottom: theme.spacing(1),
+            '&:last-child': {
+                borderBottom: 'none',
+                paddingBottom: 0
+            }
         },
         participantList: {
             marginLeft: theme.spacing(1),
             fontSize: '0.8rem',
-            color: theme.palette.text.secondary
+            overflow: 'hidden',
+            maxWidth: '180px',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         }
     };
 });
