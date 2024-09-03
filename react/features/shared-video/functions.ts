@@ -1,4 +1,5 @@
 import { IStateful } from '../base/app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import { getFakeParticipants } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
@@ -6,6 +7,7 @@ import {
     ALLOW_ALL_URL_DOMAINS,
     PLAYBACK_START,
     PLAYBACK_STATUSES,
+    SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_URL_DOMAIN
@@ -145,4 +147,30 @@ export function isURLAllowedForSharedVideo(url: string,
     }
 
     return false;
+}
+
+/**
+ * Sends SHARED_VIDEO command.
+ *
+ * @param {string} id - The id of the video.
+ * @param {string} status - The status of the shared video.
+ * @param {JitsiConference} conference - The current conference.
+ * @param {string} localParticipantId - The id of the local participant.
+ * @param {string} time - The seek position of the video.
+ * @returns {void}
+ */
+export function sendShareVideoCommand({ id, status, conference, localParticipantId = '', time, muted, volume }: {
+    conference?: IJitsiConference; id: string; localParticipantId?: string; muted?: boolean;
+    status: string; time: number; volume?: number;
+}) {
+    conference?.sendCommandOnce(SHARED_VIDEO, {
+        value: id,
+        attributes: {
+            from: localParticipantId,
+            muted,
+            state: status,
+            time,
+            volume
+        }
+    });
 }
