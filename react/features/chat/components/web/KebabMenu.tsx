@@ -166,7 +166,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMe
                     vertical: 'bottom',
                     horizontal: 'center'
                 }}
-                className={classes.popover}
+                className = { classes.popover }
                 id = { id }
                 onClose = { handleClose }
                 open = { open }
