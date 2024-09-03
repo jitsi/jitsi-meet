@@ -55,7 +55,15 @@ const useStyles = makeStyles()(theme => {
         menuPanel: {
             backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
-            boxShadow: theme.shadows[3]
+            boxShadow: theme.shadows[3],
+            overflow: 'hidden'
+        },
+
+        popover: {
+            '& .MuiPaper-root': {
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
+            }
         },
 
         copiedMessage: {
@@ -158,6 +166,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMe
                     vertical: 'bottom',
                     horizontal: 'center'
                 }}
+                className={classes.popover}
                 id = { id }
                 onClose = { handleClose }
                 open = { open }

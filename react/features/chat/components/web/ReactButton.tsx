@@ -29,7 +29,15 @@ const useStyles = makeStyles()((theme: Theme) => {
         popoverPaper: {
             backgroundColor: theme.palette.background.paper,
             borderRadius: theme.shape.borderRadius,
-            boxShadow: theme.shadows[3]
+            boxShadow: theme.shadows[3],
+            overflow: 'hidden'
+        },
+
+        popover: {
+            '& .MuiPaper-root': {
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
+            }
         }
     };
 });
@@ -78,6 +86,7 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
                     vertical: 'top',
                     horizontal: 'center'
                 }}
+                className = { classes.popover }
                 id = { id }
                 onClose = { handleClose }
                 open = { open }
