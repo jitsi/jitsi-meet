@@ -82,7 +82,10 @@ class RecentList extends AbstractRecentList<IProps> {
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
                 onItemDelete = { this._onItemDelete }
-                onPress = { this._onPress } />
+                onPress = { this._onPress } 
+                accessibilityRole= "list" 
+                accessible= { true } 
+                />
         );
     }
 }
