@@ -70,27 +70,19 @@ module:hook("pre-iq/full", function(event)
                 end
             end
 
-            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
-            local is_session_allowed = is_feature_allowed(session.jitsi_meet_context_features, feature);
-
-            -- if current user is not allowed, but was granted moderation by a user
-            -- that is allowed by its features we want to allow it
-            local is_granting_session_allowed = false;
-            if session.granted_jitsi_meet_context_features then
-                is_granting_session_allowed = is_feature_allowed(session.granted_jitsi_meet_context_features, feature);
-            end
-
             local room_real_jid = room_jid_match_rewrite(roomName);
+            local room = main_muc_service.get_room_from_jid(room_real_jid);
 
-            if not session.jitsi_meet_context_features and not session.granted_jitsi_meet_context_features then
-                -- if there is no features in the token we need to check whether the participants is moderator
-                local room = main_muc_service.get_room_from_jid(room_real_jid);
-                is_session_allowed = room:get_affiliation(stanza.attr.from) == 'owner';
-            end
+            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local is_session_allowed = is_feature_allowed(
+                feature,
+                session.jitsi_meet_context_features,
+                session.granted_jitsi_meet_context_features,
+                room:get_affiliation(stanza.attr.from) == 'owner');
 
-            if (roomName == nil
+            if roomName == nil
                 or (token ~= nil and not token_util:verify_room(session, room_real_jid))
-                or not (is_session_allowed or is_granting_session_allowed))
+                or not is_session_allowed
             then
                 module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
@@ -275,15 +267,19 @@ module:hook('jitsi-metadata-allow-moderation', function (event)
     local data, key, occupant, session = event.data, event.key, event.actor, event.session;
 
     if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+        -- if it is recording we want to allow setting in metadata if not moderator but features
+        -- are present
         if session.jitsi_meet_context_features
             and occupant.role ~= 'moderator'
-            and is_feature_allowed(session.jitsi_meet_context_features, 'transcription')
-            and is_feature_allowed(session.jitsi_meet_context_features, 'recording') then
+            and is_feature_allowed('transcription', session.jitsi_meet_context_features)
+            and is_feature_allowed('recording', session.jitsi_meet_context_features) then
                 local res = {};
                 res.isTranscribingEnabled = data.isTranscribingEnabled;
                 return res;
-        elseif occupant.role == 'moderator' then
+        elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
             return data;
+        else
+            return nil;
         end
     end
 
