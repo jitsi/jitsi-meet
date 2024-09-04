@@ -7,7 +7,7 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
-import { isCloudRecordingRunning, isLiveStreamingButtonVisible, isLiveStreamingRunning } from '../../functions';
+import { isCloudRecordingRunning, isLiveStreamingRunning } from '../../functions';
 
 import { getLiveStreaming } from './functions';
 
@@ -132,12 +132,9 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
-        visible = isLiveStreamingButtonVisible({
-            localParticipantIsModerator: isModerator,
-            liveStreamingEnabled: liveStreaming?.enabled,
-            liveStreamingEnabledInJwt: isJwtFeatureEnabled(state, 'livestreaming', false, false),
-            isInBreakoutRoom: isInBreakoutRoom(state)
-        });
+        visible = !isInBreakoutRoom(state)
+            && liveStreaming?.enabled
+            && isJwtFeatureEnabled(state, 'livestreaming', isModerator, isModerator);
     }
 
     // disable the button if the recording is running.

@@ -247,9 +247,10 @@ function _requestingSubtitlesChange(
         enabled);
 
     if (enabled && conference?.getTranscriptionStatus() === 'off') {
-        const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', false, false);
+        const isModerator = isLocalParticipantModerator(state);
+        const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', isModerator, isModerator);
 
-        if (isLocalParticipantModerator(state) || featureAllowed) {
+        if (featureAllowed) {
             conference.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     console.error('some error', e);

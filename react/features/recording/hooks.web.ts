@@ -8,7 +8,7 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { getLiveStreaming } from './components/LiveStream/functions';
 import LiveStreamButton from './components/LiveStream/web/LiveStreamButton';
 import RecordButton from './components/Recording/web/RecordButton';
-import { getRecordButtonProps, isLiveStreamingButtonVisible } from './functions';
+import { getRecordButtonProps } from './functions';
 
 
 const recording = {
@@ -47,17 +47,14 @@ export function useLiveStreamingButton() {
     const toolbarButtons = useSelector((state: IReduxState) => state['features/toolbox'].toolbarButtons);
     const localParticipantIsModerator = useSelector(isLocalParticipantModerator);
     const liveStreaming = useSelector(getLiveStreaming);
-    const liveStreamingEnabledInJwt
-        = useSelector((state: IReduxState) => isJwtFeatureEnabled(state, 'livestreaming', true));
+    const liveStreamingAllowed = useSelector((state: IReduxState) =>
+        isJwtFeatureEnabled(state, 'livestreaming', localParticipantIsModerator, localParticipantIsModerator));
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     if (toolbarButtons?.includes('recording')
-            && isLiveStreamingButtonVisible({
-                localParticipantIsModerator,
-                liveStreamingEnabled: liveStreaming?.enabled,
-                liveStreamingEnabledInJwt,
-                isInBreakoutRoom: _isInBreakoutRoom
-            })) {
+            && !_isInBreakoutRoom
+            && liveStreaming?.enabled
+            && liveStreamingAllowed) {
         return livestreaming;
     }
 }
