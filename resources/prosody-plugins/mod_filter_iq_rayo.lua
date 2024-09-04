@@ -274,18 +274,21 @@ end);
 module:hook('jitsi-metadata-allow-moderation', function (event)
     local data, key, occupant, session = event.data, event.key, event.actor, event.session;
 
-    if occupant.role == 'moderator' then
-        return data;
+    if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+        if session.jitsi_meet_context_features
+            and occupant.role ~= 'moderator'
+            and is_feature_allowed(session.jitsi_meet_context_features, 'transcription')
+            and is_feature_allowed(session.jitsi_meet_context_features, 'recording') then
+                local res = {};
+                res.isTranscribingEnabled = data.isTranscribingEnabled;
+                return res;
+        elseif occupant.role == 'moderator' then
+            return data;
+        end
     end
 
-    if key == 'recording' and data and data.isTranscribingEnabled ~= nil
-        and occupant.role ~= 'moderator'
-        and is_feature_allowed(session.jitsi_meet_context_features, 'transcription')
-        and is_feature_allowed(session.jitsi_meet_context_features, 'recording') then
-
-        local res = {};
-        res.isTranscribingEnabled = data.isTranscribingEnabled;
-        return res;
+    if occupant.role == 'moderator' then
+        return data;
     end
 
     return nil;
