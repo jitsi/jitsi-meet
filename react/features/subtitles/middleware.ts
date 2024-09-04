@@ -45,7 +45,7 @@ const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 /**
  * The dial command to use for starting a transcriber.
  */
-const TRANSCRIBER_DIAL_COMMAND = 'jitsi_meet_transcribe';
+const TRANSCRIBER_DIAL_NUMBER = 'jitsi_meet_transcribe';
 
 /**
 * Time after which the rendered subtitles will be removed.
@@ -250,7 +250,7 @@ function _requestingSubtitlesChange(
         const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', false, false);
 
         if (isLocalParticipantModerator(state) || featureAllowed) {
-            conference.dial(TRANSCRIBER_DIAL_COMMAND)
+            conference.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     console.error('some error', e);
                 });
