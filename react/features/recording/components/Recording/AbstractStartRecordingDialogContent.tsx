@@ -31,19 +31,9 @@ export interface IProps extends WithTranslation {
     _dialogStyles: any;
 
     /**
-     * Whether recording feature is enabled.
-     */
-    _hasRecordingFeature: boolean;
-
-    /**
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
-
-    /**
-     * Whether local participant is moderator.
-     */
-    _isModerator: boolean;
 
     /**
      * Whether local recording is available or not.
@@ -64,6 +54,11 @@ export interface IProps extends WithTranslation {
      * Whether self local recording is enabled or not.
      */
     _localRecordingSelfEnabled: boolean;
+
+    /**
+     * Whether to render recording.
+     */
+    _renderRecording: boolean;
 
     /**
      * The color-schemed stylesheet of this component.
@@ -419,14 +414,14 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
+    const isModerator = isLocalParticipantModerator(state);
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
-        _hasRecordingFeature: isJwtFeatureEnabled(state, 'recording', false, false),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
-        _isModerator: isLocalParticipantModerator(state),
+        _renderRecording: isJwtFeatureEnabled(state, 'recording', isModerator, isModerator),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

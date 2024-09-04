@@ -80,5 +80,5 @@ export function canAddTranscriber(state: IReduxState) {
     const isModerator = isLocalParticipantModerator(state);
     const isTranscribingAllowed = isJwtFeatureEnabled(state, 'transcription', isModerator, isModerator);
 
-    return transcription?.enabled && isTranscribingAllowed;
+    return Boolean(transcription?.enabled) && isTranscribingAllowed;
 }

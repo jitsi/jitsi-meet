@@ -37,7 +37,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     render() {
-        const _renderRecording = this.props._isModerator || this.props._hasRecordingFeature;
+        const _renderRecording = this.props._renderRecording;
 
         return (
             <Container className = 'recording-dialog'>
