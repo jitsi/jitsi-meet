@@ -473,6 +473,23 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
+function is_transcriber_jigasi(stanza)
+    local features = stanza:get_child('features');
+    if not features  then
+        return false;
+    end
+
+    for i = 1, #features do
+        local feature = features[i];
+        if feature.attr and feature.attr.var and feature.attr.var == 'http://jitsi.org/protocol/transcriber' then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+
 function get_sip_jibri_email_prefix(email)
     if not email then
         return nil;
@@ -546,6 +563,7 @@ return {
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
+    is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;

@@ -14,6 +14,7 @@ local new_id = require 'util.id'.medium;
 local util = module:require 'util';
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
+local is_transcriber_jigasi = util.is_transcriber_jigasi;
 
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
@@ -185,7 +186,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         -- filter focus and configured domains (used for jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -206,7 +207,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         -- ignore configured domains (jibri and transcribers)
         if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -249,7 +250,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         -- filter focus, ignore configured domains (jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -268,7 +269,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanza, occupant = event.room, event.stanza, event.occupant;
 
         -- filter sending messages from transcribers/jibris to visitors
-        if not visitors_nodes[room.jid] or ignore_list:contains(jid.host(occupant.bare_jid)) then
+        if not visitors_nodes[room.jid] then
             return;
         end
 
