@@ -160,7 +160,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             maxWidth: '300px',
             maxHeight: '400px',
             overflowY: 'auto',
-            color: theme.palette.text02
+            color: theme.palette.text01
         },
         reactionItem: {
             display: 'flex',
