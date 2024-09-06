@@ -119,9 +119,11 @@ module:hook("pre-iq/full", function(event)
 
             -- now lets insert token information if any
             if session and user_id then
+                local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
+
                 -- First remove any 'header' element if it already
                 -- exists, so it cannot be spoofed by a client
-                stanza:maptags(
+                dial:maptags(
                     function(tag)
                         if tag.name == "header"
                                 and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
@@ -132,7 +134,6 @@ module:hook("pre-iq/full", function(event)
                     end
                 )
 
-                local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
                 -- adds initiator user id from token
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
