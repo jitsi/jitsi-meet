@@ -83,11 +83,15 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @returns {string}
      */
     _getAccessibilityLabel() {
-        const { t, _particioantsCount } = this.props;
+        const { t, _particioantsCount, _isOpen } = this.props;
 
-        return t('toolbar.accessibilityLabel.participants', {
-            participantsCount: _particioantsCount
-        });
+        if (_isOpen) {
+            return t('toolbar.accessibilityLabel.closeParticipantsPane');
+        } else {
+            return t('toolbar.accessibilityLabel.participants', {
+                participantsCount: _particioantsCount
+            });
+        }
     }
 
     /**
