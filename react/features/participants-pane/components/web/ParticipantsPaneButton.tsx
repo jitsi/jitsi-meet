@@ -87,11 +87,12 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
 
         if (_isOpen) {
             return t('toolbar.accessibilityLabel.closeParticipantsPane');
-        } else {
-            return t('toolbar.accessibilityLabel.participants', {
-                participantsCount: _particioantsCount
-            });
         }
+
+        return t('toolbar.accessibilityLabel.participants', {
+            participantsCount: _particioantsCount
+        });
+
     }
 
     /**
