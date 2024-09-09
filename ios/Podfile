@@ -5,7 +5,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '13.4'
+platform :ios, '15.1'
 workspace 'jitsi-meet'
 
 install! 'cocoapods', :deterministic_uuids => false
@@ -92,7 +92,7 @@ post_install do |installer|
     end
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
       config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
   end
