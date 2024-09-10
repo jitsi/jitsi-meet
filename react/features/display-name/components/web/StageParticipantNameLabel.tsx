@@ -16,12 +16,35 @@ import { getTransitionParamsForElementsAboveToolbox, isToolboxVisible } from '..
 import { isLayoutTileView } from '../../../video-layout/functions.web';
 
 import DisplayNameBadge from './DisplayNameBadge';
-import { getStageParticipantTypography } from './styles';
+import {
+    getStageParticipantFontSizeRange,
+    getStageParticipantNameLabelLineHeight,
+    getStageParticipantTypography,
+    scaleFontProperty
+} from './styles';
 
-const useStyles = makeStyles()(theme => {
+interface IOptions {
+    clientHeight?: number;
+}
+
+const useStyles = makeStyles<IOptions>()((theme, options: IOptions = {}) => {
+    const typography = {
+        ...getStageParticipantTypography(theme)
+    };
+    const { clientHeight } = options;
+
+    if (typeof clientHeight === 'number' && clientHeight > 0) {
+        // We want to show the fontSize and lineHeight configured in theme on a screen with height 1080px. In this case
+        // the clientHeight will be 960px if there are some titlebars, toolbars, addressbars, etc visible.For any other
+        // screen size we will decrease/increase the font size based on the screen size.
+
+        typography.fontSize = scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme));
+        typography.lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
+    }
+
     return {
         badgeContainer: {
-            ...withPixelLineHeight(getStageParticipantTypography(theme)),
+            ...withPixelLineHeight(typography),
             alignItems: 'center',
             display: 'inline-flex',
             justifyContent: 'center',
@@ -47,7 +70,8 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactElement|null}
  */
 const StageParticipantNameLabel = () => {
-    const { classes, cx } = useStyles();
+    const clientHeight = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientHeight);
+    const { classes, cx } = useStyles({ clientHeight });
     const largeVideoParticipant = useSelector(getLargeVideoParticipant);
     const selectedId = largeVideoParticipant?.id;
     const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, selectedId ?? ''));
@@ -68,7 +92,6 @@ const StageParticipantNameLabel = () => {
         return (
             <div
                 className = { cx(
-                    'stage-participant-label',
                     classes.badgeContainer,
                     toolboxVisible && classes.containerElevated
                 ) }>
