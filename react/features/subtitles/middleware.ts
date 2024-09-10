@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 import { IStore } from '../app/types';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
@@ -246,12 +247,12 @@ function _requestingSubtitlesChange(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
 
-    if (enabled && conference?.getTranscriptionStatus() === 'off') {
+    if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
         const isModerator = isLocalParticipantModerator(state);
         const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', isModerator, isModerator);
 
         if (featureAllowed) {
-            conference.dial(TRANSCRIBER_DIAL_NUMBER)
+            conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     console.error('some error', e);
                 });
