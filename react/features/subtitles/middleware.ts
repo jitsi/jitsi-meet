@@ -12,10 +12,11 @@ import {
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
 import {
-    removeTranscriptMessage,
+    removeTranscriptMessage, setRequestingSubtitles,
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
+import logger from './logger';
 import { ITranscriptMessage } from './types';
 
 
@@ -237,7 +238,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
  * @returns {void}
  */
 function _requestingSubtitlesChange(
-        { getState }: IStore,
+        { dispatch, getState }: IStore,
         enabled: boolean,
         language?: string | null) {
     const state = getState();
@@ -254,7 +255,10 @@ function _requestingSubtitlesChange(
         if (featureAllowed) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
-                    console.error('some error', e);
+                    logger.error('Error dialing', e);
+
+                    // let's back to the correct state
+                    dispatch(setRequestingSubtitles(false, false));
                 });
         }
     }
