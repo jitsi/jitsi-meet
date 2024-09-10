@@ -78,7 +78,6 @@ class RecentList extends AbstractRecentList<IProps> {
         return (
             <MeetingsList
             accessibilityRole = "list"
-            accessible = { true }
             disabled = { Boolean(disabled) }
             hideURL = { true }
             listEmptyComponent = { this._getRenderListEmptyComponent() }
