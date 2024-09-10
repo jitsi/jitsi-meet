@@ -2,6 +2,7 @@ local jid = require "util.jid";
 local timer = require "util.timer";
 local http = require "net.http";
 local cache = require "util.cache";
+local array = require "util.array";
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -554,6 +555,17 @@ function table_shallow_copy(t)
     return t2
 end
 
+-- Splits a string using delimiter
+function split_string(str, delimiter)
+    str = str .. delimiter;
+    local result = array();
+    for w in str:gmatch("(.-)" .. delimiter) do
+        result:push(w);
+    end
+
+    return result;
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
@@ -578,6 +590,7 @@ return {
     update_presence_identity = update_presence_identity;
     http_get_with_retry = http_get_with_retry;
     ends_with = ends_with;
+    split_string = split_string;
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
     table_shallow_copy = table_shallow_copy;
