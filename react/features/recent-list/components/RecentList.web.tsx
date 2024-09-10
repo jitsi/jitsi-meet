@@ -77,15 +77,15 @@ class RecentList extends AbstractRecentList<IProps> {
 
         return (
             <MeetingsList
-                disabled = { Boolean(disabled) }
-                hideURL = { true }
-                listEmptyComponent = { this._getRenderListEmptyComponent() }
-                meetings = { recentList }
-                onItemDelete = { this._onItemDelete }
-                onPress = { this._onPress } 
-                accessibilityRole= "list" 
-                accessible= { true } 
-                />
+            accessibilityRole = "list"
+            accessible = { true }
+            disabled = { Boolean(disabled) }
+            hideURL = { true }
+            listEmptyComponent = { this._getRenderListEmptyComponent() }
+            meetings = { recentList }
+            onItemDelete = { this._onItemDelete }
+            onPress = { this._onPress }
+            />
         );
     }
 }
