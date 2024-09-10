@@ -189,6 +189,13 @@ export const typography = {
         letterSpacing: 0.16
     },
 
+    bodyShortRegularSmall: {
+        fontSize: 10,
+        lineHeight: 16,
+        fontWeight: font.weightRegular,
+        letterSpacing: 0
+    },
+
     bodyShortRegular: {
         fontSize: 14,
         lineHeight: 20,
