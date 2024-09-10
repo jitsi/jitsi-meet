@@ -266,6 +266,34 @@ local function stanza_handler(event)
         end
     end
 
+    -- request to update metadata service for jigasi languages
+    local transcription_languages = visitors_iq:get_child('transcription-languages');
+
+    if transcription_languages
+        and (transcription_languages.attr.langs or transcription_languages.attr.count) then
+        if not room.jitsiMetadata then
+            room.jitsiMetadata = {};
+        end
+        if not room.jitsiMetadata.visitors then
+            room.jitsiMetadata.visitors = {};
+        end
+
+        if room.jitsiMetadata.visitors.transcribingLanguages ~= transcription_languages then
+            room.jitsiMetadata.visitors.transcribingLanguages = transcription_languages.attr.langs;
+            processed = true;
+        end
+
+        if transcription_languages.attr.count then
+            room.jitsiMetadata.visitors.transcribingCount = transcription_languages.attr.count;
+            processed = true;
+        end
+
+        if processed then
+            module:context(muc_domain_prefix..'.'..muc_domain_base)
+                :fire_event('room-metadata-changed', { room = room; });
+        end
+    end
+
     if not processed then
         module:log('warn', 'Unknown iq received for %s: %s', module.host, stanza);
     end

@@ -173,7 +173,7 @@ module:hook("pre-iq/full", function(event)
             end
         end
     end
-end);
+end, 1); -- make sure we run before domain mapper
 
 --- Finds and returns the number of concurrent outgoing calls for a user
 -- @param context_user the user id extracted from the token
