@@ -1,5 +1,4 @@
 import { Theme } from '@mui/material';
-import Popover from '@mui/material/Popover';
 import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -7,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
+import Popover from '../../../base/popover/components/Popover.web.tsx';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
@@ -157,6 +157,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         reactionsPopover: {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.ui03,
+            borderRadius: theme.shape.borderRadius,
             maxWidth: '300px',
             maxHeight: '400px',
             overflowY: 'auto',
@@ -188,17 +189,17 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const ChatMessage = ({
-    shouldDisplayChatMessageMenu,
-    state,
-    knocking,
     message,
+    state,
     showDisplayName,
     type,
+    shouldDisplayChatMessageMenu,
+    knocking,
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
-    const [ reactionsAnchorEl, setReactionsAnchorEl ] = useState<null | HTMLElement>(null);
+    const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -208,12 +209,12 @@ const ChatMessage = ({
         setIsHovered(false);
     }, []);
 
-    const handleReactionsClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-        setReactionsAnchorEl(event.currentTarget);
+    const handleReactionsOpen = useCallback(() => {
+        setIsReactionsOpen(true);
     }, []);
 
     const handleReactionsClose = useCallback(() => {
-        setReactionsAnchorEl(null);
+        setIsReactionsOpen(false);
     }, []);
 
     /**
@@ -262,8 +263,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    function renderReactions() {
-
+    const renderReactions = () => {
         if (!message.reactions || message.reactions.size === 0) {
             return null;
         }
@@ -275,63 +275,52 @@ const ChatMessage = ({
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const openReactions = Boolean(reactionsAnchorEl);
-        const reactionsId = openReactions ? 'reactions-popover' : undefined;
         const totalReactions = reactionsArray.reduce((sum, { participants }) => sum + participants.size, 0);
         const numReactionsDisplayed = 3;
 
+        const reactionsContent = (
+            <div className = { classes.reactionsPopover }>
+                {reactionsArray.map(({ reaction, participants }) => (
+                    <div
+                        className = { classes.reactionItem }
+                        key = { reaction }>
+                        <span>{reaction}</span>
+                        <span>{participants.size}</span>
+                        <div className = { classes.participantList }>
+                            {Array.from(participants).map(participantId => (
+                                <div
+                                    className = { classes.participant }
+                                    key = { participantId }>
+                                    {state && getParticipantDisplayName(state, participantId)}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+
         return (
-            <>
-                <div
-                    className = { classes.reactionBox }
-                    onClick = { handleReactionsClick }>
-                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) => (
-                        <span key = { index }>
-                            {reaction}
-                        </span>
-                    ))}
-                    {reactionsArray.length > 3 && (
+            <Popover
+                content = { reactionsContent }
+                onPopoverClose = { handleReactionsClose }
+                onPopoverOpen = { handleReactionsOpen }
+                position = 'top'
+                trigger = 'click'
+                visible = { isReactionsOpen }>
+                <div className = { classes.reactionBox }>
+                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
+                        <span key = { index }>{reaction}</span>
+                    )}
+                    {reactionsArray.length > numReactionsDisplayed && (
                         <span className = { classes.reactionCount }>
                             +{totalReactions - numReactionsDisplayed}
                         </span>
                     )}
                 </div>
-                <Popover
-                    anchorEl = { reactionsAnchorEl }
-                    anchorOrigin = {{
-                        vertical: 'bottom',
-                        horizontal: 'left'
-                    }}
-                    id = { reactionsId }
-                    onClose = { handleReactionsClose }
-                    open = { openReactions }
-                    transformOrigin = {{
-                        vertical: 'top',
-                        horizontal: 'left'
-                    }}>
-                    <div className = { classes.reactionsPopover }>
-                        {reactionsArray.map(({ reaction, participants }) => (
-                            <div
-                                className = { classes.reactionItem }
-                                key = { reaction }>
-                                <span>{reaction}</span>
-                                <span>{participants.size}</span>
-                                <div className = { classes.participantList }>
-                                    {Array.from(participants).map(participantId =>
-                                        (<div
-                                            className = { classes.participant }
-                                            key = { participantId }>
-                                            {state && getParticipantDisplayName(state, participantId)}
-                                        </div>)
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Popover>
-            </>
+            </Popover>
         );
-    }
+    };
 
     return (
         <div
