@@ -177,8 +177,10 @@ const useStyles = makeStyles()((theme: Theme) => {
         participantList: {
             marginLeft: theme.spacing(1),
             fontSize: '0.8rem',
+            maxWidth: '180px'
+        },
+        participant: {
             overflow: 'hidden',
-            maxWidth: '180px',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
         }
@@ -316,7 +318,9 @@ const ChatMessage = ({
                                 <span>{participants.size}</span>
                                 <div className = { classes.participantList }>
                                     {Array.from(participants).map(participantId =>
-                                        (<div key = { participantId }>
+                                        (<div
+                                            className = { classes.participant }
+                                            key = { participantId }>
                                             {state && getParticipantDisplayName(state, participantId)}
                                         </div>)
                                     )}
