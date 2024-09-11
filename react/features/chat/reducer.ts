@@ -21,7 +21,7 @@ const DEFAULT_STATE = {
     isPollsTabFocused: false,
     lastReadMessage: undefined,
     messages: [],
-    reactions: [],
+    reactions: {},
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,

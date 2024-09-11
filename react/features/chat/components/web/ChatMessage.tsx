@@ -268,7 +268,8 @@ const ChatMessage = ({
 
         const reactionsArray = Array.from(message.reactions.entries())
             .map(([ reaction, participants ]) => {
-                return { reaction, participants };
+                return { reaction,
+                    participants };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
