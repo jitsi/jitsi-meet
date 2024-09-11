@@ -12,7 +12,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
-import KebabMenu from './KebabMenu';
+import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
@@ -336,7 +336,7 @@ const ChatMessage = ({
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayChatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <KebabMenu
+                        {isHovered && <MessageMenu
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
                             participantId = { message.participantId }
@@ -390,7 +390,7 @@ const ChatMessage = ({
                         </div>}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <KebabMenu
+                                {isHovered && <MessageMenu
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
                                     participantId = { message.participantId }

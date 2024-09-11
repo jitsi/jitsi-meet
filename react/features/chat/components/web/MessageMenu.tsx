@@ -11,6 +11,7 @@ import { getParticipantById } from '../../../base/participants/functions';
 import logger from '../../../base/react/logger';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
+import { copyText } from '../../../base/util/copyText.web';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
 export interface IProps {
@@ -39,7 +40,7 @@ export interface IProps {
 
 const useStyles = makeStyles()(theme => {
     return {
-        kebabButton: {
+        messageMenuButton: {
             padding: '2px'
         },
 
@@ -85,7 +86,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
+const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -116,7 +117,7 @@ const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMe
 
     const handleCopyClick = useCallback(() => {
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(message)
+            copyText(message)
             .then(() => {
                 if (buttonRef.current) {
                     const rect = buttonRef.current.getBoundingClientRect();
@@ -137,14 +138,14 @@ const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMe
     }, [ message ]);
 
     const open = Boolean(anchorEl);
-    const id = open ? 'kebab-menu-popover' : undefined;
+    const id = open ? 'message-menu-popover' : undefined;
 
     return (
         <div>
             <div ref = { buttonRef }>
                 <Button
                     accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
-                    className = { classes.kebabButton }
+                    className = { classes.messageMenuButton }
                     icon = { IconDotsHorizontal }
                     onClick = { handleMenuClick }
                     type = { BUTTON_TYPES.TERTIARY } />
@@ -193,4 +194,4 @@ const KebabMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMe
     );
 };
 
-export default KebabMenu;
+export default MessageMenu;
