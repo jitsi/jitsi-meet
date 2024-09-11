@@ -12,7 +12,7 @@ import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
-interface IProps {
+export interface IProps {
 
     /**
     * True if the message is a lobby chat message.
@@ -22,7 +22,7 @@ interface IProps {
     /**
      * The ID of the participant that the message is to be sent.
      */
-    participantId: string;
+    participantID: string;
 
     /**
      * Whether the button should be visible or not.
@@ -42,16 +42,16 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const PrivateMessageButton = ({ participantId, isLobbyMessage, visible }: IProps) => {
+const PrivateMessageButton = ({ participantID, isLobbyMessage, visible }: IProps) => {
     const { classes } = useStyles();
     const dispatch = useDispatch();
-    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
+    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantID));
     const isVisible = useSelector((state: IReduxState) => getFeatureFlag(state, CHAT_ENABLED, true)) ?? visible;
     const { t } = useTranslation();
 
     const handleClick = useCallback(() => {
         if (isLobbyMessage) {
-            dispatch(handleLobbyChatInitialized(participantId));
+            dispatch(handleLobbyChatInitialized(participantID));
         } else {
             dispatch(openChat(participant));
         }
