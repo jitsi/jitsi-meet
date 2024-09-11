@@ -19,15 +19,6 @@ export const MEET_FEATURES = {
 };
 
 /**
- * A mapping between jwt features and toolbar buttons keys.
- * We don't need recording in here, as it will disable the local recording too.
- */
-export const FEATURES_TO_BUTTONS_MAPPING = {
-    'livestreaming': 'livestreaming',
-    'transcription': 'closedcaptions'
-};
-
-/**
  * The JWT validation errors for JaaS.
  */
 export const JWT_VALIDATION_ERRORS = {
