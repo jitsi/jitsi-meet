@@ -99,7 +99,8 @@ export default function Toolbox({
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
     const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
     const localParticipant = useSelector(getLocalParticipant);
-    const jwtDisabledButtons = getJwtDisabledButtons(jwt, localParticipant?.features);
+    const jwtDisabledButtons = useSelector((state: IReduxState) =>
+        getJwtDisabledButtons(state, jwt, localParticipant?.features));
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
     const toolbarVisible = useSelector(isToolboxVisible);
