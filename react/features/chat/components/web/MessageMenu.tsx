@@ -8,7 +8,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
-import logger from '../../../base/react/logger';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
@@ -116,24 +115,28 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
     }, [ dispatch, isLobbyMessage, participant, participantId ]);
 
     const handleCopyClick = useCallback(() => {
-        if (navigator.clipboard) {
-            copyText(message)
-            .then(() => {
-                if (buttonRef.current) {
-                    const rect = buttonRef.current.getBoundingClientRect();
+        copyText(message)
+            .then(success => {
+                if (success) {
+                    if (buttonRef.current) {
+                        const rect = buttonRef.current.getBoundingClientRect();
 
-                    setPopupPosition({ top: rect.top - 30,
-                        left: rect.left });
+                        setPopupPosition({
+                            top: rect.top - 30,
+                            left: rect.left
+                        });
+                    }
+                    setShowCopiedMessage(true);
+                    setTimeout(() => {
+                        setShowCopiedMessage(false);
+                    }, 2000);
+                } else {
+                    console.error('Failed to copy text');
                 }
-
-                setShowCopiedMessage(true);
-                setTimeout(() => {
-                    setShowCopiedMessage(false);
-                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error copying text:', error);
             });
-        } else {
-            logger.error('Clipboard not available');
-        }
         handleClose();
     }, [ message ]);
 
