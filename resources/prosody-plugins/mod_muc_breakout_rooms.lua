@@ -526,7 +526,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
             name = 'muc#roominfo_breakout_main_room';
             label = 'The main room associated with this breakout room';
         });
-        event.formdata['muc#roominfo_breakout_main_room'] = main_room_jid;
+        event.formdata['muc#roominfo_breakout_main_room'] = internal_room_jid_match_rewrite(main_room_jid);
 
         -- If the main room has a lobby, make it so this breakout room also uses it.
         if (main_room and main_room._data.lobbyroom and main_room:get_members_only()) then
@@ -553,7 +553,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
         table.insert(event.form, {
             name = 'muc#roominfo_breakout_main_room';
             label = 'The main room associated with this breakout room';
-            value = main_room_jid;
+            value = internal_room_jid_match_rewrite(main_room_jid);
         });
     end);
 
