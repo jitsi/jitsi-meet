@@ -261,6 +261,10 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function renderReactions() {
+        const openReactions = Boolean(reactionsAnchorEl);
+        const reactionsId = openReactions ? 'reactions-popover' : undefined;
+        const numReactionsDisplayed = 3;
+
         if (!message.reactions || message.reactions.size === 0) {
             return null;
         }
@@ -272,15 +276,12 @@ const ChatMessage = ({
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const openReactions = Boolean(reactionsAnchorEl);
-        const reactionsId = openReactions ? 'reactions-popover' : undefined;
-
         return (
             <>
                 <div
                     className = { classes.reactionBox }
                     onClick = { handleReactionsClick }>
-                    {reactionsArray.slice(0, 3).map(({ reaction }, index) => (
+                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) => (
                         <span key = { index }>
                             {reaction}
                         </span>
