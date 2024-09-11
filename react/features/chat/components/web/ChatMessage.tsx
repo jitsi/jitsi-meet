@@ -261,9 +261,6 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function renderReactions() {
-        const openReactions = Boolean(reactionsAnchorEl);
-        const reactionsId = openReactions ? 'reactions-popover' : undefined;
-        const numReactionsDisplayed = 3;
 
         if (!message.reactions || message.reactions.size === 0) {
             return null;
@@ -271,10 +268,14 @@ const ChatMessage = ({
 
         const reactionsArray = Array.from(message.reactions.entries())
             .map(([ reaction, participants ]) => {
-                return { reaction,
-                    participants };
+                return { reaction, participants };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
+
+        const openReactions = Boolean(reactionsAnchorEl);
+        const reactionsId = openReactions ? 'reactions-popover' : undefined;
+        const totalReactions = reactionsArray.reduce((sum, { participants }) => sum + participants.size, 0);
+        const numReactionsDisplayed = 3;
 
         return (
             <>
@@ -288,7 +289,7 @@ const ChatMessage = ({
                     ))}
                     {reactionsArray.length > 3 && (
                         <span className = { classes.reactionCount }>
-                            +{reactionsArray.length - 3}
+                            +{totalReactions - numReactionsDisplayed}
                         </span>
                     )}
                 </div>
