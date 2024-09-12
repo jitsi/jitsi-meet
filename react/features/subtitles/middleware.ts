@@ -12,7 +12,8 @@ import {
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
 import {
-    removeTranscriptMessage, setRequestingSubtitles,
+    removeTranscriptMessage,
+    setRequestingSubtitles,
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
