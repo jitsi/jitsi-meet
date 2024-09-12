@@ -1,4 +1,3 @@
-import Popover from '@mui/material/Popover';
 import React, { useCallback, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
+import Popover from '../../../base/popover/components/Popover.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
@@ -15,25 +15,9 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
 export interface IProps {
     className?: string;
-
-    /**
-    * True if the message is a lobby chat message.
-    */
     isLobbyMessage: boolean;
-
-    /**
-     * The current chat message.
-    */
     message: string;
-
-    /**
-     * The ID of the participant that the message is to be sent.
-     */
     participantId: string;
-
-    /**
-     * Whether the chat message menu is visible or not.
-     */
     shouldDisplayChatMessageMenu: boolean;
 }
 
@@ -42,7 +26,6 @@ const useStyles = makeStyles()(theme => {
         messageMenuButton: {
             padding: '2px'
         },
-
         menuItem: {
             padding: '8px 16px',
             cursor: 'pointer',
@@ -51,21 +34,12 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: theme.palette.action03
             }
         },
-
         menuPanel: {
             backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
             boxShadow: theme.shadows[3],
             overflow: 'hidden'
         },
-
-        popover: {
-            '& .MuiPaper-root': {
-                backgroundColor: 'transparent',
-                boxShadow: 'none'
-            }
-        },
-
         copiedMessage: {
             position: 'fixed',
             backgroundColor: theme.palette.ui03,
@@ -78,7 +52,6 @@ const useStyles = makeStyles()(theme => {
             transition: 'opacity 0.3s ease-in-out',
             pointerEvents: 'none'
         },
-
         showCopiedMessage: {
             opacity: 1
         }
@@ -89,7 +62,7 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
-    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+    const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
@@ -97,12 +70,12 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
-    const handleMenuClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleMenuClick = useCallback(() => {
+        setIsPopoverOpen(true);
     }, []);
 
     const handleClose = useCallback(() => {
-        setAnchorEl(null);
+        setIsPopoverOpen(false);
     }, []);
 
     const handlePrivateClick = useCallback(() => {
@@ -140,18 +113,39 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
         handleClose();
     }, [ message ]);
 
-    const open = Boolean(anchorEl);
-    const id = open ? 'message-menu-popover' : undefined;
+    const popoverContent = (
+        <div className = { classes.menuPanel }>
+            {shouldDisplayChatMessageMenu && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handlePrivateClick }>
+                    {t('Private Message')}
+                </div>
+            )}
+            <div
+                className = { classes.menuItem }
+                onClick = { handleCopyClick }>
+                {t('Copy')}
+            </div>
+        </div>
+    );
 
     return (
         <div>
             <div ref = { buttonRef }>
-                <Button
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
-                    className = { classes.messageMenuButton }
-                    icon = { IconDotsHorizontal }
-                    onClick = { handleMenuClick }
-                    type = { BUTTON_TYPES.TERTIARY } />
+                <Popover
+                    content = { popoverContent }
+                    onPopoverClose = { handleClose }
+                    position = 'top'
+                    trigger = 'click'
+                    visible = { isPopoverOpen }>
+                    <Button
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
+                        className = { classes.messageMenuButton }
+                        icon = { IconDotsHorizontal }
+                        onClick = { handleMenuClick }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                </Popover>
             </div>
 
             {showCopiedMessage && ReactDOM.createPortal(
@@ -163,36 +157,6 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
                 </div>,
                 document.body
             )}
-
-            <Popover
-                anchorEl = { anchorEl }
-                anchorOrigin = {{
-                    vertical: 'bottom',
-                    horizontal: 'center'
-                }}
-                className = { classes.popover }
-                id = { id }
-                onClose = { handleClose }
-                open = { open }
-                transformOrigin = {{
-                    vertical: 'top',
-                    horizontal: 'center'
-                }}>
-                <div className = { classes.menuPanel }>
-                    {shouldDisplayChatMessageMenu && (
-                        <div
-                            className = { classes.menuItem }
-                            onClick = { handlePrivateClick }>
-                            {t('Private Message')}
-                        </div>
-                    )}
-                    <div
-                        className = { classes.menuItem }
-                        onClick = { handleCopyClick }>
-                        {t('Copy')}
-                    </div>
-                </div>
-            </Popover>
         </div>
     );
 };
