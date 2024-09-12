@@ -25,7 +25,7 @@ const useStyles = makeStyles()(theme => {
         messageGroup: {
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: '100%',
+            maxWidth: '75%',
 
             '&.remote': {
                 maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin

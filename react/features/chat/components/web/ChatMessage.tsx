@@ -38,6 +38,9 @@ const useStyles = makeStyles()((theme: Theme) => {
         chatMessageWrapper: {
             maxWidth: '100%'
         },
+        chatFirstMessageWrapper: {
+            maxWidth: '72%'
+        },
         chatMessage: {
             display: 'inline-flex',
             padding: '12px',
@@ -306,7 +309,7 @@ const ChatMessage = ({
                 onPopoverClose = { handleReactionsClose }
                 onPopoverOpen = { handleReactionsOpen }
                 position = 'top'
-                trigger = 'click'
+                trigger = 'hover'
                 visible = { isReactionsOpen }>
                 <div className = { classes.reactionBox }>
                     {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
@@ -324,7 +327,7 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, type) }
+            className = { cx(showDisplayName && shouldDisplayChatMessageMenu ? classes.chatFirstMessageWrapper : classes.chatMessageWrapper, type) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
