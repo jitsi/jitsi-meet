@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconFaceSmile } from '../../../base/icons/svg';
-import Popover from '../../../base/popover/components/Popover.web.tsx';
+import Popover from '../../../base/popover/components/Popover.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { sendReaction } from '../../actions.any';

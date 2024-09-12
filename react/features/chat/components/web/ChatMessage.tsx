@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
-import Popover from '../../../base/popover/components/Popover.web.tsx';
+import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
