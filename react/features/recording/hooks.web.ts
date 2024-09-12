@@ -8,7 +8,7 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { getLiveStreaming } from './components/LiveStream/functions';
 import LiveStreamButton from './components/LiveStream/web/LiveStreamButton';
 import RecordButton from './components/Recording/web/RecordButton';
-import { getRecordButtonProps } from './functions';
+import { getRecordButtonProps, isLiveStreamingButtonVisible } from './functions';
 
 
 const recording = {
@@ -52,9 +52,11 @@ export function useLiveStreamingButton() {
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     if (toolbarButtons?.includes('recording')
-            && !_isInBreakoutRoom
-            && liveStreaming?.enabled
-            && liveStreamingAllowed) {
+            && isLiveStreamingButtonVisible({
+                liveStreamingAllowed,
+                liveStreamingEnabled: liveStreaming?.enabled,
+                isInBreakoutRoom: _isInBreakoutRoom
+            })) {
         return livestreaming;
     }
 }

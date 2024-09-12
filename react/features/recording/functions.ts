@@ -414,3 +414,24 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
 }
+
+/**
+ * Returns true if the live-streaming button should be visible.
+ *
+ * @param {boolean} liveStreamingEnabled - True if the live-streaming is enabled.
+ * @param {boolean} liveStreamingAllowed - True if the live-streaming feature is enabled in JWT
+ *                                         or is a moderator if JWT is missing or features are missing in JWT.
+ * @param {boolean} isInBreakoutRoom - True if in breakout room.
+ * @returns {boolean}
+ */
+export function isLiveStreamingButtonVisible({
+    liveStreamingAllowed,
+    liveStreamingEnabled,
+    isInBreakoutRoom
+}: {
+    isInBreakoutRoom: boolean;
+    liveStreamingAllowed: boolean;
+    liveStreamingEnabled: boolean;
+}) {
+    return !isInBreakoutRoom && liveStreamingEnabled && liveStreamingAllowed;
+}
