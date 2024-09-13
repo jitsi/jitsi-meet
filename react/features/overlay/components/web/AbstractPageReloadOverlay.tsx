@@ -258,29 +258,24 @@ export default class AbstractPageReloadOverlay<P extends IProps>
 export function abstractMapStateToProps(state: IReduxState) {
     const { error: configError } = state['features/base/config'];
     const { error: connectionError } = state['features/base/connection'];
-    const { fatalError } = state['features/overlay'];
+    const { error: conferenceError } = state['features/base/conference'];
+    const error = configError || connectionError || conferenceError;
+    let reason;
 
-    let reason = fatalError && (fatalError.message || fatalError.name);
-
-    if (!reason) {
-        const { error: conferenceError } = state['features/base/conference'];
-
-        if (conferenceError) {
-            reason = `error.conference.${conferenceError.name}`;
-        } else if (configError) {
-            reason = `error.config.${configError.name}`;
-        } else if (connectionError) {
-            reason = `error.connection.${connectionError.name}`;
-        } else {
-            logger.error('No reload reason defined!');
-        }
+    if (conferenceError) {
+        reason = `error.conference.${conferenceError.name}`;
+    } else if (configError) {
+        reason = `error.config.${configError.name}`;
+    } else if (connectionError) {
+        reason = `error.connection.${connectionError.name}`;
+    } else {
+        logger.error('No reload reason defined!');
     }
 
     return {
-        details: fatalError?.details,
-        error: fatalError,
-        isNetworkFailure:
-            fatalError === configError || fatalError === connectionError,
+        details: undefined, // TODO: revisit this.
+        error,
+        isNetworkFailure: Boolean(configError || connectionError),
         reason
     };
 }

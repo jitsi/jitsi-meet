@@ -7,6 +7,7 @@ import {
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { openPageReloadDialog } from './actions';
+import logger from './logger';
 
 /**
  * Error type. Basically like Error, but augmented with a recoverable property.
@@ -94,11 +95,11 @@ StateListenerRegistry.register(
         return configError || connectionError || conferenceError;
     },
     /* listener */ (error: ErrorType, store: IStore) => {
-        const state = store.getState();
-
         if (!error) {
             return;
         }
+
+        const state = store.getState();
 
         // eslint-disable-next-line no-negated-condition
         if (typeof APP !== 'undefined') {
@@ -107,8 +108,21 @@ StateListenerRegistry.register(
                 ...getErrorExtraInfo(state, error)
             });
         } else if (RN_NO_RELOAD_DIALOG_ERRORS.indexOf(error.name) === -1 && typeof error.recoverable === 'undefined') {
+            const { error: conferenceError } = state['features/base/conference'];
+            const { error: configError } = state['features/base/config'];
+            const { error: connectionError } = state['features/base/connection'];
+            const conferenceState = state['features/base/conference'];
+
+            if (conferenceState.leaving) {
+                logger.info(`Ignoring ${error.name} while leaving conference`);
+
+                return;
+            }
+
             setTimeout(() => {
-                store.dispatch(openPageReloadDialog());
+                logger.info(`Reloading due to error: ${error.name}`, error);
+
+                store.dispatch(openPageReloadDialog(conferenceError, configError, connectionError));
             }, 500);
         }
     }

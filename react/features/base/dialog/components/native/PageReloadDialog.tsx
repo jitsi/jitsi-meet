@@ -18,7 +18,10 @@ import ConfirmDialog from './ConfirmDialog';
  * The type of the React {@code Component} props of
  * {@link PageReloadDialog}.
  */
-interface IPageReloadDialogProps extends WithTranslation {
+interface IProps extends WithTranslation {
+    conferenceError?: Error;
+    configError?: Error;
+    connectionError?: Error;
     dispatch: IStore['dispatch'];
     isNetworkFailure: boolean;
     reason?: string;
@@ -37,7 +40,7 @@ interface IPageReloadDialogState {
  * conference is reloaded.
  * Shows a warning message and counts down towards the re-load.
  */
-class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDialogState> {
+class PageReloadDialog extends Component<IProps, IPageReloadDialogState> {
     _interval?: number;
     _timeoutSeconds: number;
 
@@ -48,7 +51,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
      * instance is to be initialized.
      * @public
      */
-    constructor(props: IPageReloadDialogProps) {
+    constructor(props: IProps) {
         super(props);
 
         this._timeoutSeconds = 10 + randomInt(0, 20);
@@ -184,23 +187,18 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * Maps (parts of) the redux state to the associated component's props.
  *
  * @param {Object} state - The redux state.
+ * @param {IProps} ownProps - The own props of the component.
  * @protected
  * @returns {{
  *     isNetworkFailure: boolean,
  *     reason: string
  * }}
  */
-function mapStateToProps(state: IReduxState) {
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-    const { fatalError } = state['features/overlay'];
-
+function mapStateToProps(state: IReduxState, ownProps: IProps) {
+    const { conferenceError, configError, connectionError } = ownProps;
     const fatalConnectionError
         = connectionError && isFatalJitsiConnectionError(connectionError);
-    const fatalConfigError = fatalError === configError;
-
-    const isNetworkFailure = Boolean(fatalConfigError || fatalConnectionError);
+    const isNetworkFailure = Boolean(configError || fatalConnectionError);
 
     let reason;
 
