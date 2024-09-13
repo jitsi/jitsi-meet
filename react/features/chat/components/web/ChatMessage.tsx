@@ -327,7 +327,8 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(showDisplayName && shouldDisplayChatMessageMenu ? classes.chatFirstMessageWrapper : classes.chatMessageWrapper, type) }
+            className = { cx(showDisplayName && shouldDisplayChatMessageMenu
+                ? classes.chatFirstMessageWrapper : classes.chatMessageWrapper, type) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
