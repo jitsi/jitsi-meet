@@ -215,7 +215,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                     className = { classes.checkbox }
                     disabled = { followMeRecorderActive || followMeActive }
                     label = { t('settings.followMeRecorder') }
-                    name = 'follow-me'
+                    name = 'follow-me-recorder'
                     onChange = { this._onFollowMeRecorderEnabledChanged } />
                 { !disableReactionsModeration
                         && <Checkbox

@@ -43,7 +43,7 @@ const ModeratorSection = () => {
 
     const onFollowMeRecorderToggled = useCallback((enabled?: boolean) => {
         dispatch(setFollowMeRecorder(Boolean(enabled)));
-    }, [ dispatch, setFollowMe ]);
+    }, [ dispatch, setFollowMeRecorder ]);
 
     const onStartReactionsMutedToggled = useCallback((enabled?: boolean) => {
         dispatch(setStartReactionsMuted(Boolean(enabled), true));

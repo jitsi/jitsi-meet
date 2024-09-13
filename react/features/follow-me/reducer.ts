@@ -26,11 +26,11 @@ ReducerRegistry.register<IFollowMeState>(
             let newState = set(state, 'moderator', action.id);
 
             if (action.id) {
-                newState = set(state, 'recorder', action.forRecorder);
+                newState = set(newState, 'recorder', action.forRecorder);
             } else {
                 // clear the state if feature becomes disabled
                 newState = set(newState, 'state', undefined);
-                newState = set(state, 'recorder', undefined);
+                newState = set(newState, 'recorder', undefined);
             }
 
             return newState;
