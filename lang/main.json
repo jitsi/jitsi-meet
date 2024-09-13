@@ -1096,6 +1096,7 @@
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "followMe": "Everyone follows me",
+        "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
         "incomingMessage": "Incoming message",
         "language": "Language",

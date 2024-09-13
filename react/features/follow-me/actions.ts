@@ -7,15 +7,18 @@ import {
  * Sets the current moderator id or clears it.
  *
  * @param {?string} id - The Follow Me moderator participant id.
+ * @param {?boolean} forRecorder - Whether this is command only for recorder.
  * @returns {{
  *     type: SET_FOLLOW_ME_MODERATOR,
- *     id, string
+ *     id: string,
+ *     forRecorder: boolean
  * }}
  */
-export function setFollowMeModerator(id?: string) {
+export function setFollowMeModerator(id?: string, forRecorder?: boolean) {
     return {
         type: SET_FOLLOW_ME_MODERATOR,
-        id
+        id,
+        forRecorder
     };
 }
 

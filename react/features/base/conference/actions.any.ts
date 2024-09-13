@@ -61,6 +61,7 @@ import {
     SEND_TONES,
     SET_ASSUMED_BANDWIDTH_BPS,
     SET_FOLLOW_ME,
+    SET_FOLLOW_ME_RECORDER,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -843,6 +844,22 @@ export function sendTones(tones: string, duration: number, pause: number) {
 export function setFollowMe(enabled: boolean) {
     return {
         type: SET_FOLLOW_ME,
+        enabled
+    };
+}
+
+/**
+ * Enables or disables the Follow Me feature used only for the recorder.
+ *
+ * @param {boolean} enabled - Whether Follow Me should be enabled and used only by the recorder.
+ * @returns {{
+ *     type: SET_FOLLOW_ME_RECORDER,
+ *     enabled: boolean
+ * }}
+ */
+export function setFollowMeRecorder(enabled: boolean) {
+    return {
+        type: SET_FOLLOW_ME_RECORDER,
         enabled
     };
 }
