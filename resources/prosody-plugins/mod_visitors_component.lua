@@ -1,5 +1,6 @@
 module:log('info', 'Starting visitors_component at %s', module.host);
 
+local array = require "util.array";
 local http = require 'net.http';
 local jid = require 'util.jid';
 local st = require 'util.stanza';
@@ -14,6 +15,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_vpaas = util.is_vpaas;
 local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
+local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'cjson.safe';
@@ -179,7 +181,7 @@ local function connect_vnode_received(room, vnode)
         room._connected_vnodes = cache.new(16); -- we up to 16 vnodes for this prosody
     end
 
-    room._connected_vnodes:set(vnode..'.meet.jitsi', 'connected');
+    room._connected_vnodes:set(vnode..'.meet.jitsi', {});
 end
 
 local function disconnect_vnode_received(room, vnode)
@@ -192,6 +194,34 @@ local function disconnect_vnode_received(room, vnode)
         visitors_promotion_requests[room.jid] = nil;
         room._connected_vnodes = nil;
     end
+end
+
+-- returns the accumulated data for visitors nodes, count all visitors requesting transcriptions
+-- and accumulated languages requested
+-- @returns count, languages
+function get_visitors_languages(room)
+    if not room._connected_vnodes then
+        return;
+    end
+
+    local count = 0;
+    local languages = array();
+
+    -- iterate over visitor nodes we are connected to and accumulate data if we have it
+    for k, v in room._connected_vnodes:items() do
+        if v.count then
+            count = count + v.count;
+        end
+        if v.langs then
+            for k in pairs(v.langs) do
+                local val = v.langs[k]
+                if not languages[val] then
+                    languages:push(val);
+                end
+            end
+        end
+    end
+    return count, languages:sort():concat(',');
 end
 
 -- listens for iq request for promotion and forward it to moderators in the meeting for approval
@@ -232,12 +262,17 @@ local function stanza_handler(event)
         return;
     end
 
+    local from_vnode;
+    if room._connected_vnodes then
+        from_vnode = room._connected_vnodes:get(stanza.attr.from);
+    end
+
     local processed;
     -- promotion request is coming from visitors and is a set and is over the s2s connection
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
-        if not (room._connected_vnodes and room._connected_vnodes:get(stanza.attr.from)) then
-            module:log('warn', 'Received forged promotion-request: %s %s %s', stanza, inspect(room._connected_vnodes), room._connected_vnodes:get(stanza.attr.from));
+        if not from_vnode then
+            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, inspect(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -263,6 +298,44 @@ local function stanza_handler(event)
         for item in visitors_iq:childtags('disconnect-vnode') do
             disconnect_vnode_received(room, item.attr.vnode);
             processed = true;
+        end
+    end
+
+    -- request to update metadata service for jigasi languages
+    local transcription_languages = visitors_iq:get_child('transcription-languages');
+
+    if transcription_languages
+        and (transcription_languages.attr.langs or transcription_languages.attr.count) then
+        if not from_vnode then
+            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, inspect(room._connected_vnodes));
+            return true; -- stop processing
+        end
+        if not room.jitsiMetadata then
+            room.jitsiMetadata = {};
+        end
+        if not room.jitsiMetadata.visitors then
+            room.jitsiMetadata.visitors = {};
+        end
+
+        -- we keep the split by languages array to optimize accumulating languages
+        from_vnode.langs = split_string(transcription_languages.attr.langs, ',');
+        from_vnode.count = transcription_languages.attr.count;
+
+        local count, languages = get_visitors_languages(room);
+
+        if room.jitsiMetadata.visitors.transcribingLanguages ~= languages then
+            room.jitsiMetadata.visitors.transcribingLanguages = languages;
+            processed = true;
+        end
+
+        if room.jitsiMetadata.visitors.transcribingCount ~= count then
+            room.jitsiMetadata.visitors.transcribingCount = count;
+            processed = true;
+        end
+
+        if processed then
+            module:context(muc_domain_prefix..'.'..muc_domain_base)
+                :fire_event('room-metadata-changed', { room = room; });
         end
     end
 

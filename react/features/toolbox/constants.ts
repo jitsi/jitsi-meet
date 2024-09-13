@@ -133,6 +133,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
  */
 export const VISITORS_MODE_BUTTONS: ToolbarButton[] = [
     'chat',
+    'closedcaptions',
     'hangup',
     'raisehand',
     'settings',

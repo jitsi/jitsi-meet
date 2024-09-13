@@ -1,6 +1,7 @@
 -- This module is enabled under the main virtual host
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
+local jid = require "util.jid";
 
 local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
@@ -29,6 +30,14 @@ if token_util == nil then
     return;
 end
 
+-- this is the main virtual host of the main prosody that this vnode serves
+local main_domain = module:get_option_string('main_domain');
+-- only the visitor prosody has main_domain setting
+local is_visitor_prosody = main_domain ~= nil;
+
+-- this is the main virtual host of this vnode
+local local_domain = module:get_option_string('muc_mapper_domain_base');
+
 local um_is_admin = require 'core.usermanager'.is_admin;
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
@@ -45,6 +54,8 @@ load_config();
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
+local OUT_ROOM_NAME_ATTR_NAME = "JvbRoomName";
+
 local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
                                              -- the max number of outgoing calls a user can try for a minute
 
@@ -60,18 +71,33 @@ module:hook("pre-iq/full", function(event)
             local token = session.auth_token;
 
             -- find header with attr name 'JvbRoomName' and extract its value
-            local headerName = 'JvbRoomName';
             local roomName;
-            for _, child in ipairs(dial.tags) do
-                if (child.name == 'header'
-                        and child.attr.name == headerName) then
-                    roomName = child.attr.value;
-                    break;
+            -- Remove any 'header' element if it already exists, so it cannot be spoofed by a client
+            dial:maptags(function(tag)
+                if tag.name == "header"
+                        and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
+                                or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
+                    return nil
+                elseif tag.name == "header" and tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
+                    roomName = tag.attr.value;
+                    -- we will remove it as we will add it later, modified
+                    if is_visitor_prosody then
+                        return nil;
+                    end
                 end
-            end
+                return tag
+            end);
 
-            local room_real_jid = room_jid_match_rewrite(roomName);
+            local room_jid = jid.bare(stanza.attr.to);
+            local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
+            local is_sender_in_room = room:get_occupant_jid(stanza.attr.from) ~= nil;
+
+            if not room or not is_sender_in_room then
+                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
+                session.send(st.error_reply(stanza, "auth", "forbidden"));
+                return true;
+            end
 
             local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
             local is_session_allowed = is_feature_allowed(
@@ -81,6 +107,7 @@ module:hook("pre-iq/full", function(event)
                 room:get_affiliation(stanza.attr.from) == 'owner');
 
             if roomName == nil
+                or roomName ~= room_jid
                 or (token ~= nil and not token_util:verify_room(session, room_real_jid))
                 or not is_session_allowed
             then
@@ -119,20 +146,6 @@ module:hook("pre-iq/full", function(event)
 
             -- now lets insert token information if any
             if session and user_id then
-                -- First remove any 'header' element if it already
-                -- exists, so it cannot be spoofed by a client
-                stanza:maptags(
-                    function(tag)
-                        if tag.name == "header"
-                                and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
-                                        or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
-                            return nil
-                        end
-                        return tag
-                    end
-                )
-
-                local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
                 -- adds initiator user id from token
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
@@ -149,9 +162,18 @@ module:hook("pre-iq/full", function(event)
                     dial:up();
                 end
             end
+
+            -- we want to instruct jigasi to enter the main room, so send the correct main room jid
+            if is_visitor_prosody then
+                dial:tag("header", {
+                    xmlns = "urn:xmpp:rayo:1",
+                    name = OUT_ROOM_NAME_ATTR_NAME,
+                    value = string.gsub(roomName, local_domain, main_domain) });
+                dial:up();
+            end
         end
     end
-end);
+end, 1); -- make sure we run before domain mapper
 
 --- Finds and returns the number of concurrent outgoing calls for a user
 -- @param context_user the user id extracted from the token

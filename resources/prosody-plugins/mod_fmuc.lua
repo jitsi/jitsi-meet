@@ -14,6 +14,7 @@ local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
 local filters = require 'util.filters';
+local array = require"util.array";
 
 local util = module:require 'util';
 local ends_with = util.ends_with;
@@ -23,6 +24,11 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
+
+local PARTICIPANT_PROP_RAISE_HAND = 'jitsi_participant_raisedHand';
+local PARTICIPANT_PROP_REQUEST_TRANSCRIPTION = 'jitsi_participant_requestingTranscription';
+local PARTICIPANT_PROP_TRANSLATION_LANG = 'jitsi_participant_translation_language';
+local TRANSCRIPT_DEFAULT_LANG = module:get_option_string('transcriptions_default_language', 'en');
 
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
@@ -60,6 +66,62 @@ local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end
 
+local function send_transcriptions_update(room)
+    -- let's notify main prosody
+    local lang_array = array{};
+    local count = 0;
+
+    for k, v in pairs(room._transcription_languages) do
+        if not lang_array[v] then
+            lang_array:push(v);
+        end
+        count = count + 1;
+    end
+
+    local iq_id = new_id();
+    sent_iq_cache:set(iq_id, socket.gettime());
+    module:send(st.iq({
+        type = 'set',
+        to = 'visitors.'..main_domain,
+        from = local_domain,
+        id = iq_id })
+      :tag('visitors', { xmlns = 'jitsi:visitors',
+                         room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
+      :tag('transcription-languages', {
+        xmlns = 'jitsi:visitors',
+        langs = lang_array:sort():concat(','),
+        count = tostring(count)
+      }):up());
+end
+
+local function remove_transcription(room, occupant)
+    local send_update = false;
+    if room._transcription_languages then
+        if room._transcription_languages[occupant.jid] then
+            send_update = true;
+        end
+        room._transcription_languages[occupant.jid] = nil;
+    end
+
+    if send_update then
+        send_transcriptions_update(room);
+    end
+end
+
+-- if lang is nil we will remove it from the list
+local function add_transcription(room, occupant, lang)
+    if not room._transcription_languages then
+        room._transcription_languages = {};
+    end
+
+    local old = room._transcription_languages[occupant.jid];
+    room._transcription_languages[occupant.jid] = lang or TRANSCRIPT_DEFAULT_LANG;
+
+    if old ~= room._transcription_languages[occupant.jid] then
+        send_transcriptions_update(room);
+    end
+end
+
 -- mark all occupants as visitors
 module:hook('muc-occupant-pre-join', function (event)
     local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
@@ -92,7 +154,7 @@ module:hook('muc-occupant-pre-leave', function (event)
     -- to main prosody
     local pr = occupant:get_presence();
 
-    local raiseHand = pr:get_child_text('jitsi_participant_raisedHand');
+    local raiseHand = pr:get_child_text(PARTICIPANT_PROP_RAISE_HAND);
 
     -- a promotion detected let's send it to main prosody
     if raiseHand and #raiseHand > 0 then
@@ -114,6 +176,7 @@ module:hook('muc-occupant-pre-leave', function (event)
         module:send(promotion_request);
     end
 
+     remove_transcription(room, occupant);
 end, 1); -- rate limit is 0
 
 -- Returns the main participants count and the visitors count
@@ -201,6 +264,7 @@ end);
 
 -- forward visitor presences to jicofo
 -- detects raise hand in visitors presence, this is request for promotion
+-- detects the requested transcription and its language to send updates for it
 module:hook('muc-broadcast-presence', function (event)
     local occupant = event.occupant;
 
@@ -230,7 +294,7 @@ module:hook('muc-broadcast-presence', function (event)
     full_p.attr.to = focus_occupant.jid;
     room:route_to_occupant(focus_occupant, full_p);
 
-    local raiseHand = full_p:get_child_text('jitsi_participant_raisedHand');
+    local raiseHand = full_p:get_child_text(PARTICIPANT_PROP_RAISE_HAND);
     -- a promotion detected let's send it to main prosody
     if raiseHand then
         local user_id;
@@ -284,6 +348,18 @@ module:hook('muc-broadcast-presence', function (event)
         end
 
         module:send(promotion_request);
+    end
+
+    -- detect transcription
+    if full_p:get_child_text(PARTICIPANT_PROP_REQUEST_TRANSCRIPTION) then
+        local lang = full_p:get_child_text(PARTICIPANT_PROP_TRANSLATION_LANG);
+
+        occupant._transcription_enabled = true;
+
+        add_transcription(room, occupant, lang);
+    elseif occupant._transcription_enabled then
+        occupant._transcription_enabled = false;
+        remove_transcription(room, occupant, nil);
     end
 
     return;

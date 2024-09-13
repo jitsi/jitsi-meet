@@ -2,6 +2,7 @@ local jid = require "util.jid";
 local timer = require "util.timer";
 local http = require "net.http";
 local cache = require "util.cache";
+local array = require "util.array";
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -473,6 +474,23 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
+function is_transcriber_jigasi(stanza)
+    local features = stanza:get_child('features');
+    if not features  then
+        return false;
+    end
+
+    for i = 1, #features do
+        local feature = features[i];
+        if feature.attr and feature.attr.var and feature.attr.var == 'http://jitsi.org/protocol/transcriber' then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+
 function get_sip_jibri_email_prefix(email)
     if not email then
         return nil;
@@ -537,6 +555,17 @@ function table_shallow_copy(t)
     return t2
 end
 
+-- Splits a string using delimiter
+function split_string(str, delimiter)
+    str = str .. delimiter;
+    local result = array();
+    for w in str:gmatch("(.-)" .. delimiter) do
+        result:push(w);
+    end
+
+    return result;
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
@@ -546,6 +575,7 @@ return {
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
+    is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_room_from_jid = get_room_from_jid;
@@ -560,6 +590,7 @@ return {
     update_presence_identity = update_presence_identity;
     http_get_with_retry = http_get_with_retry;
     ends_with = ends_with;
+    split_string = split_string;
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
     table_shallow_copy = table_shallow_copy;
