@@ -20,10 +20,10 @@ export const MEET_FEATURES = {
 
 /**
  * A mapping between jwt features and toolbar buttons keys.
+ * We don't need recording in here, as it will disable the local recording too.
  */
 export const FEATURES_TO_BUTTONS_MAPPING = {
     'livestreaming': 'livestreaming',
-    'recording': 'recording',
     'transcription': 'closedcaptions'
 };
 

@@ -28,7 +28,13 @@ local FORM_KEY = 'muc#roominfo_jitsimetadata';
 local muc_component_host = module:get_option_string('muc_component');
 
 if muc_component_host == nil then
-    module:log("error", "No muc_component specified. No muc to operate on!");
+    module:log('error', 'No muc_component specified. No muc to operate on!');
+    return;
+end
+
+local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
+if not muc_domain_base then
+    module:log('warn', 'No muc_domain_base option set.');
     return;
 end
 
@@ -129,11 +135,6 @@ function on_message(event)
         return false;
     end
 
-    if occupant.role ~= 'moderator' then
-        module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
-        return false;
-    end
-
     local jsonData, error = json.decode(messageText);
     if jsonData == nil then -- invalid JSON
         module:log("error", "Invalid JSON message: %s error:%s", messageText, error);
@@ -143,6 +144,19 @@ function on_message(event)
     if jsonData.key == nil or jsonData.data == nil then
         module:log("error", "Invalid JSON payload, key or data are missing: %s", messageText);
         return false;
+    end
+
+    if occupant.role ~= 'moderator' then
+        -- will return a non nil filtered data to use, if it is nil, it is not allowed
+        local res = module:context(muc_domain_base):fire_event('jitsi-metadata-allow-moderation',
+                { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
+
+        if not res then
+            module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+            return false;
+        end
+
+        jsonData.data = res;
     end
 
     room.jitsiMetadata[jsonData.key] = jsonData.data;

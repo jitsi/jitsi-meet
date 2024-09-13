@@ -15,7 +15,6 @@ local get_room_from_jid = util.get_room_from_jid;
 local st = require "util.stanza";
 local json = require "cjson.safe";
 
-local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
 
 if asapKeyServer then

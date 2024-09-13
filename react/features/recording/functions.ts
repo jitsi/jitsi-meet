@@ -267,8 +267,8 @@ export function getRecordButtonProps(state: IReduxState) {
 
     if (localRecordingEnabled) {
         visible = true;
-    } else if (isModerator) {
-        visible = recordingEnabled ? isJwtFeatureEnabled(state, 'recording', true) : false;
+    } else if (isJwtFeatureEnabled(state, 'recording', isModerator, isModerator)) {
+        visible = recordingEnabled;
     }
 
     // disable the button if the livestreaming is running.
@@ -416,29 +416,22 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
 }
 
 /**
- * Returns true if the live streaming button should be visible.
+ * Returns true if the live-streaming button should be visible.
  *
- * @param {boolean} localParticipantIsModerator - True if the local participant is moderator.
- * @param {boolean} liveStreamingEnabled - True if the live streaming is enabled.
- * @param {boolean} liveStreamingEnabledInJwt - True if the lives treaming feature is enabled in JWT.
+ * @param {boolean} liveStreamingEnabled - True if the live-streaming is enabled.
+ * @param {boolean} liveStreamingAllowed - True if the live-streaming feature is enabled in JWT
+ *                                         or is a moderator if JWT is missing or features are missing in JWT.
+ * @param {boolean} isInBreakoutRoom - True if in breakout room.
  * @returns {boolean}
  */
 export function isLiveStreamingButtonVisible({
-    localParticipantIsModerator,
+    liveStreamingAllowed,
     liveStreamingEnabled,
-    liveStreamingEnabledInJwt,
     isInBreakoutRoom
 }: {
     isInBreakoutRoom: boolean;
+    liveStreamingAllowed: boolean;
     liveStreamingEnabled: boolean;
-    liveStreamingEnabledInJwt: boolean;
-    localParticipantIsModerator: boolean;
 }) {
-    let visible = false;
-
-    if (localParticipantIsModerator && !isInBreakoutRoom) {
-        visible = liveStreamingEnabled ? liveStreamingEnabledInJwt : false;
-    }
-
-    return visible;
+    return !isInBreakoutRoom && liveStreamingEnabled && liveStreamingAllowed;
 }

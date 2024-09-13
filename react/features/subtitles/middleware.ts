@@ -2,6 +2,9 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import {
@@ -10,9 +13,11 @@ import {
 } from './actionTypes';
 import {
     removeTranscriptMessage,
+    setRequestingSubtitles,
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
+import logger from './logger';
 import { ITranscriptMessage } from './types';
 
 
@@ -39,6 +44,11 @@ const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
  * preference for translation for a participant.
  */
 const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
+
+/**
+ * The dial command to use for starting a transcriber.
+ */
+const TRANSCRIBER_DIAL_NUMBER = 'jitsi_meet_transcribe';
 
 /**
 * Time after which the rendered subtitles will be removed.
@@ -229,7 +239,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
  * @returns {void}
  */
 function _requestingSubtitlesChange(
-        { getState }: IStore,
+        { dispatch, getState }: IStore,
         enabled: boolean,
         language?: string | null) {
     const state = getState();
@@ -238,6 +248,21 @@ function _requestingSubtitlesChange(
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
+
+    if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
+        const isModerator = isLocalParticipantModerator(state);
+        const featureAllowed = isJwtFeatureEnabled(getState(), 'transcription', isModerator, isModerator);
+
+        if (featureAllowed) {
+            conference?.dial(TRANSCRIBER_DIAL_NUMBER)
+                .catch((e: any) => {
+                    logger.error('Error dialing', e);
+
+                    // let's back to the correct state
+                    dispatch(setRequestingSubtitles(false, false));
+                });
+        }
+    }
 
     if (enabled && language) {
         conference?.setLocalParticipantProperty(

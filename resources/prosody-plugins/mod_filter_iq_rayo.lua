@@ -1,3 +1,4 @@
+-- This module is enabled under the main virtual host
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 
@@ -69,20 +70,19 @@ module:hook("pre-iq/full", function(event)
                 end
             end
 
+            local room_real_jid = room_jid_match_rewrite(roomName);
+            local room = main_muc_service.get_room_from_jid(room_real_jid);
+
             local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
-            local is_session_allowed = is_feature_allowed(session.jitsi_meet_context_features, feature);
+            local is_session_allowed = is_feature_allowed(
+                feature,
+                session.jitsi_meet_context_features,
+                session.granted_jitsi_meet_context_features,
+                room:get_affiliation(stanza.attr.from) == 'owner');
 
-            -- if current user is not allowed, but was granted moderation by a user
-            -- that is allowed by its features we want to allow it
-            local is_granting_session_allowed = false;
-            if (session.granted_jitsi_meet_context_features) then
-                is_granting_session_allowed = is_feature_allowed(session.granted_jitsi_meet_context_features, feature);
-            end
-
-            if (token == nil
-                or roomName == nil
-                or not token_util:verify_room(session, room_jid_match_rewrite(roomName))
-                or not (is_session_allowed or is_granting_session_allowed))
+            if roomName == nil
+                or (token ~= nil and not token_util:verify_room(session, room_real_jid))
+                or not is_session_allowed
             then
                 module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
@@ -99,8 +99,8 @@ module:hook("pre-iq/full", function(event)
                 group_id = session.granted_jitsi_meet_context_group_id;
             end
 
-            -- now lets check any limits if configured
-            if limit_outgoing_calls > 0 then
+            -- now lets check any limits for outgoing calls if configured
+            if feature == 'outbound-call' and limit_outgoing_calls > 0 then
                 if not session.dial_out_throttle then
                     -- module:log("debug", "Enabling dial-out throttle session=%s.", session);
                     session.dial_out_throttle = new_throttle(limit_outgoing_calls, OUTGOING_CALLS_THROTTLE_INTERVAL);
@@ -259,3 +259,34 @@ process_host_module(main_muc_component_host, function(host_module, host)
         end);
     end
 end);
+
+-- when recording participants may enable and backend transcriptions
+-- it is possible that participant is not moderator, but has the features enabled for
+-- transcribing, we need to allow that operation
+module:hook('jitsi-metadata-allow-moderation', function (event)
+    local data, key, occupant, session = event.data, event.key, event.actor, event.session;
+
+    if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+        -- if it is recording we want to allow setting in metadata if not moderator but features
+        -- are present
+        if session.jitsi_meet_context_features
+            and occupant.role ~= 'moderator'
+            and is_feature_allowed('transcription', session.jitsi_meet_context_features)
+            and is_feature_allowed('recording', session.jitsi_meet_context_features) then
+                local res = {};
+                res.isTranscribingEnabled = data.isTranscribingEnabled;
+                return res;
+        elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
+            return data;
+        else
+            return nil;
+        end
+    end
+
+    if occupant.role == 'moderator' then
+        return data;
+    end
+
+    return nil;
+end);
+

@@ -133,9 +133,8 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         const liveStreaming = getLiveStreaming(state);
 
         visible = isLiveStreamingButtonVisible({
-            localParticipantIsModerator: isModerator,
+            liveStreamingAllowed: isJwtFeatureEnabled(state, 'livestreaming', isModerator, isModerator),
             liveStreamingEnabled: liveStreaming?.enabled,
-            liveStreamingEnabledInJwt: isJwtFeatureEnabled(state, 'livestreaming', true),
             isInBreakoutRoom: isInBreakoutRoom(state)
         });
     }

@@ -250,13 +250,15 @@ end
 -- Utility function to check whether feature is present and enabled. Allow
 -- a feature if there are features present in the session(coming from
 -- the token) and the value of the feature is true.
--- If features is not present in the token we skip feature detection and allow
--- everything.
-function is_feature_allowed(features, ft)
-    if (features == nil or features[ft] == "true" or features[ft] == true) then
-        return true;
+-- If features are missing but we have granted_features check that
+-- if features are missing from the token we check whether it is moderator
+function is_feature_allowed(ft, features, granted_features, is_moderator)
+    if features then
+        return features[ft] == "true" or features[ft] == true;
+    elseif granted_features then
+        return granted_features[ft] == "true" or granted_features[ft] == true;
     else
-        return false;
+        return is_moderator;
     end
 end
 
