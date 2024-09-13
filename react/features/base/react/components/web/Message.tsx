@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import GifMessage from '../../../../chat/components/web/GifMessage';
-import { GIF_PREFIX } from '../../../../gifs/constants';
-import { isGifEnabled, isGifMessage } from '../../../../gifs/functions.web';
+import { extractGifURL, isGifEnabled, isGifMessage } from '../../../../gifs/functions.web';
 
 import Linkify from './Linkify';
 
@@ -55,7 +54,7 @@ class Message extends Component<IProps> {
 
         // check if the message is a GIF
         if (gifEnabled && isGifMessage(text)) {
-            const url = text.substring(GIF_PREFIX.length, text.length - 1);
+            const url = extractGifURL(text);
 
             content.push(<GifMessage
                 key = { url }

@@ -154,6 +154,8 @@ server {
         proxy_pass http://127.0.0.1:8888/conference-request/v1$1;
         add_header "Cache-Control" "no-cache, no-store";
         add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Content-Type';
     }
     location ~ ^/([^/?&:'"]+)/conference-request/v1(\/.*)?$ {
         rewrite ^/([^/?&:'"]+)/conference-request/v1(\/.*)?$ /conference-request/v1$2;

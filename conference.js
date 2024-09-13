@@ -111,6 +111,7 @@ import {
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
+    getParticipantByIdOrUndefined,
     getVirtualScreenshareParticipantByOwnerId
 } from './react/features/base/participants/functions';
 import { updateSettings } from './react/features/base/settings/actions';
@@ -1775,12 +1776,17 @@ export default {
         room.addCommandListener(
             this.commands.defaults.AVATAR_URL,
             (data, from) => {
-                APP.store.dispatch(
-                    participantUpdated({
-                        conference: room,
-                        id: from,
-                        avatarURL: data.value
-                    }));
+                const participant = getParticipantByIdOrUndefined(APP.store, from);
+
+                // if already set from presence(jwt), skip the command processing
+                if (!participant?.avatarURL) {
+                    APP.store.dispatch(
+                        participantUpdated({
+                            conference: room,
+                            id: from,
+                            avatarURL: data.value
+                        }));
+                }
             });
 
         room.on(

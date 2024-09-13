@@ -43,6 +43,9 @@ local local_muc_domain = muc_domain_prefix..'.'..local_domain;
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
+-- in certain cases we consider participants with token as moderators, this is the default behavior which can be turned off
+local auto_promoted_with_token = module:get_option_boolean('visitors_auto_promoted_with_token', true);
+
 -- we send stats for the total number of rooms, total number of participants and total number of visitors
 local measure_rooms = module:measure('vnode-rooms', 'amount');
 local measure_participants = module:measure('vnode-participants', 'amount');
@@ -251,8 +254,8 @@ module:hook('muc-broadcast-presence', function (event)
                     if room._data.moderator_id == user_id then
                         is_moderator = true;
                     end
-                elseif session.auth_token then
-                    -- non-vpass and having a token is considered a moderator
+                elseif session.auth_token and auto_promoted_with_token then
+                    -- non-vpaas and having a token is considered a moderator
                     is_moderator = true;
                 end
             end

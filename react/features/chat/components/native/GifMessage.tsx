@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, ImageStyle, View } from 'react-native';
 
-import { GIF_PREFIX } from '../../../gifs/constants';
+import { extractGifURL } from '../../../gifs/function.any';
 
 import styles from './styles';
 
@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const GifMessage = ({ message }: IProps) => {
-    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+    const url = extractGifURL(message);
 
     return (<View
         id = 'gif-message'

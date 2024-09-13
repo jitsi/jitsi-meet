@@ -833,6 +833,7 @@ export function toggleCamera() {
         const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
+        const { localFlipX } = state['features/base/settings'];
 
         /**
          * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
@@ -848,7 +849,7 @@ export function toggleCamera() {
             : CAMERA_FACING_MODE.USER;
 
         // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
-        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER ? localFlipX : false }));
 
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 

@@ -25,7 +25,7 @@ import {
     participantSourcesUpdated,
     participantUpdated
 } from '../participants/actions';
-import { getNormalizedDisplayName } from '../participants/functions';
+import { getNormalizedDisplayName, getParticipantByIdOrUndefined } from '../participants/functions';
 import { IJitsiParticipant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
@@ -277,11 +277,18 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     conference.addCommandListener(
         AVATAR_URL_COMMAND,
-        (data: { value: string; }, id: string) => dispatch(participantUpdated({
-            conference,
-            id,
-            avatarURL: data.value
-        })));
+        (data: { value: string; }, id: string) => {
+            const participant = getParticipantByIdOrUndefined(state, id);
+
+            // if already set from presence(jwt), skip the command processing
+            if (!participant?.avatarURL) {
+                return dispatch(participantUpdated({
+                    conference,
+                    id,
+                    avatarURL: data.value
+                }));
+            }
+        });
     conference.addCommandListener(
         EMAIL_COMMAND,
         (data: { value: string; }, id: string) => dispatch(participantUpdated({

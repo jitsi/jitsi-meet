@@ -1,9 +1,13 @@
 import { IStateful } from '../base/app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import { getFakeParticipants } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import {
-    URL_WHITELIST,
+    ALLOW_ALL_URL_DOMAINS,
+    PLAYBACK_START,
+    PLAYBACK_STATUSES,
+    SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_PLAYER_PARTICIPANT_NAME,
     YOUTUBE_URL_DOMAIN
@@ -35,7 +39,7 @@ function getYoutubeId(url: string) {
  * @returns {boolean}
  */
 export function isSharingStatus(status: string) {
-    return [ 'playing', 'pause', 'start' ].includes(status);
+    return [ PLAYBACK_STATUSES.PLAYING, PLAYBACK_STATUSES.PAUSED, PLAYBACK_START ].includes(status);
 }
 
 
@@ -76,22 +80,16 @@ export function extractYoutubeIdOrURL(input: string) {
         return;
     }
 
-    if (areYoutubeURLsAllowedForSharedVideo()) {
-        const youtubeId = getYoutubeId(trimmedLink);
+    const youtubeId = getYoutubeId(trimmedLink);
 
-        if (youtubeId) {
-            return youtubeId;
-        }
+    if (youtubeId) {
+        return youtubeId;
     }
 
     // Check if the URL is valid, native may crash otherwise.
     try {
         // eslint-disable-next-line no-new
-        const url = new URL(trimmedLink);
-
-        if (!URL_WHITELIST.includes(url?.hostname)) {
-            return;
-        }
+        new URL(trimmedLink);
     } catch (_) {
         return;
     }
@@ -107,27 +105,33 @@ export function extractYoutubeIdOrURL(input: string) {
  */
 export function isSharedVideoEnabled(stateful: IStateful) {
     const state = toState(stateful);
+
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
-    return !disableThirdPartyRequests && URL_WHITELIST.length > 0;
+    return !disableThirdPartyRequests;
 }
 
 /**
  * Checks if you youtube URLs should be allowed for shared videos.
  *
+ * @param {Array<string>} allowedUrlDomains - The allowed URL domains for shared video.
  * @returns {boolean}
  */
-export function areYoutubeURLsAllowedForSharedVideo() {
-    return URL_WHITELIST.includes(YOUTUBE_URL_DOMAIN);
+export function areYoutubeURLsAllowedForSharedVideo(allowedUrlDomains?: Array<string>) {
+    return Boolean(allowedUrlDomains?.includes(YOUTUBE_URL_DOMAIN));
 }
 
 /**
  * Returns true if the passed url is allowed to be used for shared video or not.
  *
  * @param {string} url - The URL.
+ * @param {Array<string>} allowedUrlDomains - The allowed url domains.
+ * @param {boolean} considerNonURLsAllowedForYoututbe - If true, the invalid URLs will be considered youtube IDs
+ * and if youtube is allowed the function will return true.
  * @returns {boolean}
  */
-export function isURLAllowedForSharedVideo(url: string) {
+export function isURLAllowedForSharedVideo(url: string,
+        allowedUrlDomains: Array<string> = [], considerNonURLsAllowedForYoututbe = false) {
     if (!url) {
         return false;
     }
@@ -136,11 +140,37 @@ export function isURLAllowedForSharedVideo(url: string) {
         const urlObject = new URL(url);
 
         if ([ 'http:', 'https:' ].includes(urlObject?.protocol?.toLowerCase())) {
-            return URL_WHITELIST.includes(urlObject?.hostname);
+            return allowedUrlDomains.includes(ALLOW_ALL_URL_DOMAINS) || allowedUrlDomains.includes(urlObject?.hostname);
         }
-    } catch (_e) { // it should be youtube id.
-        return areYoutubeURLsAllowedForSharedVideo();
+    } catch (_e) { // it should be YouTube id.
+        return considerNonURLsAllowedForYoututbe && allowedUrlDomains.includes(YOUTUBE_URL_DOMAIN);
     }
 
     return false;
+}
+
+/**
+ * Sends SHARED_VIDEO command.
+ *
+ * @param {string} id - The id of the video.
+ * @param {string} status - The status of the shared video.
+ * @param {JitsiConference} conference - The current conference.
+ * @param {string} localParticipantId - The id of the local participant.
+ * @param {string} time - The seek position of the video.
+ * @returns {void}
+ */
+export function sendShareVideoCommand({ id, status, conference, localParticipantId = '', time, muted, volume }: {
+    conference?: IJitsiConference; id: string; localParticipantId?: string; muted?: boolean;
+    status: string; time: number; volume?: number;
+}) {
+    conference?.sendCommandOnce(SHARED_VIDEO, {
+        value: id,
+        attributes: {
+            from: localParticipantId,
+            muted,
+            state: status,
+            time,
+            volume
+        }
+    });
 }

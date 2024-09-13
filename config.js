@@ -1443,6 +1443,13 @@ var config = {
     */
     // dynamicBrandingUrl: '',
 
+    // A list of allowed URL domains for shared video.
+    //
+    // NOTE:
+    // '*' is allowed value and it will allow any URL to be used for shared video. We do not recommend using '*',
+    // use it at your own risk!
+    // sharedVideoAllowedURLDomains: [ ],
+
     // Options related to the participants pane.
     // participantsPane: {
     //     // Enables feature

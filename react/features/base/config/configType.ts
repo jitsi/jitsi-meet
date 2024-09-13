@@ -531,6 +531,7 @@ export interface IConfig {
         hideLobbyButton?: boolean;
     };
     serviceUrl?: string;
+    sharedVideoAllowedURLDomains?: Array<string>;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;

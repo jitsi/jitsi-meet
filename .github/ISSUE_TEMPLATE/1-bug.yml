@@ -30,12 +30,10 @@ body:
         - label: Android mobile app
         - label: iOS mobile app
         - label: Custom app using a mobile SDK
-    validations:
-      required: true
   - type: input
     attributes:
       label: Browser / app / sdk version
-      description: Please provice the version of the browser / app / sdk where the problem manifests.
+      description: Please provide the version of the browser / app / sdk where the problem manifests.
     validations:
       required: true
   - type: textarea

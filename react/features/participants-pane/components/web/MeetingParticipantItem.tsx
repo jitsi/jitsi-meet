@@ -280,7 +280,7 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && (_localVideoOwner || _participant?.fakeParticipant) && (
+            {!overflowDrawer && (_localVideoOwner && _participant?.fakeParticipant) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />

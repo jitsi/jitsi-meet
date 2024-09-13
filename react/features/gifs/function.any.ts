@@ -71,11 +71,29 @@ export function isGifUrlAllowed(url: string) {
  * @param {string} message - Message to check.
  * @returns {boolean}
  */
-export function isGifMessage(message: string) {
-    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+export function isGifMessage(message = '') {
+    const trimmedMessage = message.trim();
 
-    return message.trim().toLowerCase()
-        .startsWith(GIF_PREFIX) && isGifUrlAllowed(url);
+    if (!trimmedMessage.toLowerCase().startsWith(GIF_PREFIX)) {
+        return false;
+    }
+
+    const url = extractGifURL(trimmedMessage);
+
+    return isGifUrlAllowed(url);
+}
+
+/**
+ * Extracts the URL from a gif message.
+ *
+ * @param {string} message - The message.
+ * @returns {string} - The URL.
+ */
+export function extractGifURL(message = '') {
+    const trimmedMessage = message.trim();
+
+    return trimmedMessage.substring(GIF_PREFIX.length, trimmedMessage.length - 1);
+
 }
 
 /**

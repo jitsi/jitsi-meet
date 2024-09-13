@@ -304,6 +304,7 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const track = getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack;
+        const { localFlipX } = state['features/base/settings'];
 
         if (newState.options?.selectedThumbnail) {
             await dispatch(toggleBackgroundEffect(newState.options, track));
@@ -311,7 +312,7 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
             if (!isCancel) {
                 // Set x scale to default value.
                 dispatch(updateSettings({
-                    localFlipX: true
+                    localFlipX
                 }));
 
                 virtualBackgroundLogger.info(`Virtual background type: '${
