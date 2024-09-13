@@ -113,9 +113,6 @@ StateListenerRegistry.register(
             const { error: connectionError } = state['features/base/connection'];
             const conferenceState = state['features/base/conference'];
 
-            console.log(`conference: ${typeof conferenceState.conference}`);
-            console.log(`leaving: ${typeof conferenceState.leaving}`);
-
             if (conferenceState.leaving) {
                 logger.info(`Ignoring ${error.name} while leaving conference`);
 
