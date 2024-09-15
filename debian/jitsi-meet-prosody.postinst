@@ -252,9 +252,10 @@ case "$1" in
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart || true
 
-            # In case we had updated the certificates and restarted prosody, let's restart and the bridge if possible
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
             if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
                 systemctl restart jitsi-videobridge2.service >/dev/null || true
+                systemctl restart jicofo.service >/dev/null || true
             fi
         fi
     ;;
