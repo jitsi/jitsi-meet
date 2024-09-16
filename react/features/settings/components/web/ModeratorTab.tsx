@@ -35,6 +35,16 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     followMeEnabled: boolean;
 
     /**
+     * Whether follow me for recorder is currently active (enabled by some other participant).
+     */
+    followMeRecorderActive: boolean;
+
+    /**
+     * Whether the user has selected the Follow Me Recorder feature to be enabled.
+     */
+    followMeRecorderEnabled: boolean;
+
+    /**
      * Whether or not the user has selected the Start Audio Muted feature to be
      * enabled.
      */
@@ -92,6 +102,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onStartVideoMutedChanged = this._onStartVideoMutedChanged.bind(this);
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
+        this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
     }
 
     /**
@@ -143,6 +154,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if follow-me for recorder mode should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onFollowMeRecorderEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ followMeRecorderEnabled: checked });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -153,6 +175,8 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
+            followMeRecorderActive,
+            followMeRecorderEnabled,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
@@ -182,10 +206,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                 <Checkbox
                     checked = { followMeEnabled && !followMeActive }
                     className = { classes.checkbox }
-                    disabled = { followMeActive }
+                    disabled = { followMeActive || followMeRecorderActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
                     onChange = { this._onFollowMeEnabledChanged } />
+                <Checkbox
+                    checked = { followMeRecorderEnabled && !followMeRecorderActive }
+                    className = { classes.checkbox }
+                    disabled = { followMeRecorderActive || followMeActive }
+                    label = { t('settings.followMeRecorder') }
+                    name = 'follow-me-recorder'
+                    onChange = { this._onFollowMeRecorderEnabledChanged } />
                 { !disableReactionsModeration
                         && <Checkbox
                             checked = { startReactionsMuted }

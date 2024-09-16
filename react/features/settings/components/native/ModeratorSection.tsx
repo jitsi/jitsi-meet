@@ -2,7 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { setFollowMe, setStartMutedPolicy, setStartReactionsMuted } from '../../../base/conference/actions';
+import {
+    setFollowMe,
+    setFollowMeRecorder,
+    setStartMutedPolicy,
+    setStartReactionsMuted
+} from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { getModeratorTabProps } from '../../functions.native';
@@ -14,6 +19,7 @@ const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
         followMeEnabled,
+        followMeRecorderEnabled,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted
@@ -34,6 +40,10 @@ const ModeratorSection = () => {
     const onFollowMeToggled = useCallback((enabled?: boolean) => {
         dispatch(setFollowMe(Boolean(enabled)));
     }, [ dispatch, setFollowMe ]);
+
+    const onFollowMeRecorderToggled = useCallback((enabled?: boolean) => {
+        dispatch(setFollowMeRecorder(Boolean(enabled)));
+    }, [ dispatch, setFollowMeRecorder ]);
 
     const onStartReactionsMutedToggled = useCallback((enabled?: boolean) => {
         dispatch(setStartReactionsMuted(Boolean(enabled), true));
@@ -58,6 +68,11 @@ const ModeratorSection = () => {
                 onChange: onFollowMeToggled
             },
             {
+                label: 'settings.followMeRecorder',
+                state: followMeRecorderEnabled,
+                onChange: onFollowMeRecorderToggled
+            },
+            {
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
@@ -72,7 +87,13 @@ const ModeratorSection = () => {
     }, [ startAudioMuted,
         startVideoMuted,
         followMeEnabled,
+        followMeRecorderEnabled,
         disableReactionsModeration,
+        onStartAudioMutedToggled,
+        onStartVideoMutedToggled,
+        onFollowMeToggled,
+        onFollowMeRecorderToggled,
+        onStartReactionsMutedToggled,
         startReactionsMuted ]);
 
     return (

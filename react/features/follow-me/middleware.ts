@@ -128,13 +128,18 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
     }
 
     if (!isFollowMeActive(state)) {
-        store.dispatch(setFollowMeModerator(id));
+        store.dispatch(setFollowMeModerator(id, attributes.recorder));
     }
 
     // just a command that follow me was turned off
     if (attributes.off) {
         store.dispatch(setFollowMeModerator());
 
+        return;
+    }
+
+    // when recorder flag is on, follow me is handled only on recorder side
+    if (attributes.recorder && !store.getState()['features/base/config'].iAmRecorder) {
         return;
     }
 

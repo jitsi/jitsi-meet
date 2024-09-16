@@ -253,6 +253,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 return {
                     ...newProps,
                     followMeEnabled: tabState?.followMeEnabled,
+                    followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
                     startVideoMuted: tabState?.startVideoMuted,
                     startReactionsMuted: tabState?.startReactionsMuted
