@@ -56,7 +56,7 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 /**
  * The type of (redux) action which signals that the conference is out of focus.
  * For example, if the user navigates to the Chat screen.
- * 
+ *
  * {
  *      type: CONFERENCE_BLURRED,
  * }
@@ -65,7 +65,7 @@ export const CONFERENCE_BLURRED = 'CONFERENCE_BLURRED';
 
 /**
  * The type of (redux) action which signals that the conference is in focus.
- * 
+ *
  * {
  *      type: CONFERENCE_FOCUSED,
  * }
@@ -259,6 +259,17 @@ export const SEND_TONES = 'SEND_TONES';
 export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
 
 /**
+ * The type of (redux) action which updates the current known status of the
+ * Follow Me feature that is used only by the recorder.
+ *
+ * {
+ *     type: SET_FOLLOW_ME_RECORDER,
+ *     enabled: boolean
+ * }
+ */
+export const SET_FOLLOW_ME_RECORDER = 'SET_FOLLOW_ME_RECORDER';
+
+/**
  * The type of (redux) action which sets the obfuscated room name.
  *
  * {
@@ -338,7 +349,7 @@ export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
 
 /**
  * The type of (redux) action which updates the assumed bandwidth bps.
- * 
+ *
  * {
  *      type: SET_ASSUMED_BANDWIDTH_BPS,
  *      assumedBandwidthBps: number

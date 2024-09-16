@@ -5,6 +5,7 @@ import { setTokenAuthUrlSuccess } from '../authentication/actions.web';
 import { isTokenAuthEnabled } from '../authentication/functions';
 import {
     setFollowMe,
+    setFollowMeRecorder,
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../base/conference/actions';
@@ -163,6 +164,10 @@ export function submitModeratorTab(newState: any) {
 
         if (newState.followMeEnabled !== currentState.followMeEnabled) {
             dispatch(setFollowMe(newState.followMeEnabled));
+        }
+
+        if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
+            dispatch(setFollowMeRecorder(newState.followMeRecorderEnabled));
         }
 
         if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
