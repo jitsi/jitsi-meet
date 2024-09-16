@@ -150,7 +150,10 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      * @returns {void}
      */
     _onFollowMeEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ followMeEnabled: checked });
+        super._onChange({
+            followMeEnabled: checked,
+            followMeRecorderEnabled: checked ? false : undefined
+        });
     }
 
     /**
@@ -161,7 +164,10 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      * @returns {void}
      */
     _onFollowMeRecorderEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ followMeRecorderEnabled: checked });
+        super._onChange({
+            followMeEnabled: checked ? false : undefined,
+            followMeRecorderEnabled: checked
+        });
     }
 
     /**
@@ -184,6 +190,8 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         } = this.props;
         const classes = withStyles.getClasses(this.props);
 
+        const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
+
         return (
             <div
                 className = { `moderator-tab ${classes.container}` }
@@ -204,14 +212,14 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                     name = 'start-video-muted'
                     onChange = { this._onStartVideoMutedChanged } />
                 <Checkbox
-                    checked = { followMeEnabled && !followMeActive }
+                    checked = { followMeEnabled && !followMeActive && !followMeRecorderChecked }
                     className = { classes.checkbox }
                     disabled = { followMeActive || followMeRecorderActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
                     onChange = { this._onFollowMeEnabledChanged } />
                 <Checkbox
-                    checked = { followMeRecorderEnabled && !followMeRecorderActive }
+                    checked = { followMeRecorderChecked }
                     className = { classes.checkbox }
                     disabled = { followMeRecorderActive || followMeActive }
                     label = { t('settings.followMeRecorder') }
