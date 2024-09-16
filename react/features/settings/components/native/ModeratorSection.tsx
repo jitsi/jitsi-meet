@@ -89,6 +89,11 @@ const ModeratorSection = () => {
         followMeEnabled,
         followMeRecorderEnabled,
         disableReactionsModeration,
+        onStartAudioMutedToggled,
+        onStartVideoMutedToggled,
+        onFollowMeToggled,
+        onFollowMeRecorderToggled,
+        onStartReactionsMutedToggled,
         startReactionsMuted ]);
 
     return (
