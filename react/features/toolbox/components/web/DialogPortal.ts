@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { debounce } from '../../../base/config/functions.any';
 import { ZINDEX_DIALOG_PORTAL } from '../../constants';
 
 interface IProps {
 
     /**
-     * The component(s) to be displayed within the drawer portal.
-     */
+    * The component(s) to be displayed within the drawer portal.
+    */
     children: ReactNode;
 
     /**
@@ -86,7 +87,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
             width: 1,
             height: 1
         };
-        const observer = new ResizeObserver(entries => {
+        const debouncedResizeCallback = debounce((entries: ResizeObserverEntry[]) => {
             const { contentRect } = entries[0];
 
             if (contentRect.width !== size.width || contentRect.height !== size.height) {
@@ -97,8 +98,10 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
                     onVisible?.();
                 }, 100);
             }
-        });
+        }, 20); // 20ms delay
 
+        // Create and observe ResizeObserver
+        const observer = new ResizeObserver(debouncedResizeCallback);
         const target = targetSelector ? portalTarget.querySelector(targetSelector) : portalTarget;
 
         if (document.body) {

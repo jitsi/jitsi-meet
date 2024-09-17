@@ -301,6 +301,7 @@ const VideoSettingsContent = ({
 
     return (
         <ContextMenu
+            activateFocusTrap = { true }
             aria-labelledby = 'video-settings-button'
             className = { classes.container }
             hidden = { false }
