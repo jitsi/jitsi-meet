@@ -334,7 +334,7 @@ function initCommands() {
                 }));
             }
 
-            recorderOnly ? APP.store.dispatch(setFollowMeRecorder(value)) : APP.store.dispatch(setFollowMe(value));
+            APP.store.dispatch(recorderOnly ? setFollowMeRecorder(value) : setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
             const { getState, dispatch } = APP.store;
