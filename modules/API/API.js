@@ -19,6 +19,7 @@ import {
     sendTones,
     setAssumedBandwidthBps,
     setFollowMe,
+    setFollowMeRecorder,
     setLocalSubject,
     setPassword,
     setSubject
@@ -322,15 +323,18 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
-        'set-follow-me': value => {
-
+        'set-follow-me': (value, recorderOnly) => {
             if (value) {
-                sendAnalytics(createApiEvent('follow.me.set'));
+                sendAnalytics(createApiEvent('follow.me.set', {
+                    recorderOnly
+                }));
             } else {
-                sendAnalytics(createApiEvent('follow.me.unset'));
+                sendAnalytics(createApiEvent('follow.me.unset', {
+                    recorderOnly
+                }));
             }
 
-            APP.store.dispatch(setFollowMe(value));
+            APP.store.dispatch(recorderOnly ? setFollowMeRecorder(value) : setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
             const { getState, dispatch } = APP.store;
