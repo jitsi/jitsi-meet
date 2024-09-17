@@ -381,3 +381,21 @@ export function getLegalUrls(state: IReduxState) {
         terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
     };
 }
+
+/**
+ * Utility function to debounce the execution of a callback function.
+ *
+ * @param {Function} callback - The callback to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {Function} - A debounced function that delays the execution of the callback.
+ */
+export function debounce(callback: (...args: any[]) => void, delay: number) {
+    let timerId: any;
+
+    return (...args: any[]) => {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => callback(...args), delay);
+    };
+}
