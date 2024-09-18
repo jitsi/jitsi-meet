@@ -1,4 +1,5 @@
 local jid = require "util.jid";
+local st = require 'util.stanza';
 local timer = require "util.timer";
 local http = require "net.http";
 local cache = require "util.cache";
@@ -566,6 +567,17 @@ function split_string(str, delimiter)
     return result;
 end
 
+-- send iq result that the iq was received and will be processed
+function respond_iq_result(origin, stanza)
+    -- respond with successful receiving the iq
+    origin.send(st.iq({
+        type = 'result';
+        from = stanza.attr.to;
+        to = stanza.attr.from;
+        id = stanza.attr.id
+    }));
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
@@ -584,6 +596,7 @@ return {
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;
     process_host_module = process_host_module;
+    respond_iq_result = respond_iq_result;
     room_jid_match_rewrite = room_jid_match_rewrite;
     room_jid_split_subdomain = room_jid_split_subdomain;
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;

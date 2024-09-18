@@ -24,6 +24,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
+local respond_iq_result = util.respond_iq_result;
 
 local PARTICIPANT_PROP_RAISE_HAND = 'jitsi_participant_raisedHand';
 local PARTICIPANT_PROP_REQUEST_TRANSCRIPTION = 'jitsi_participant_requestingTranscription';
@@ -406,12 +407,7 @@ local function stanza_handler(event)
     end
 
     -- respond with successful receiving the iq
-    origin.send(st.iq({
-        type = 'result';
-        from = stanza.attr.to;
-        to = stanza.attr.from;
-        id = stanza.attr.id
-    }));
+    respond_iq_result(origin, stanza);
 
     local req_jid = request_promotion.attr.jid;
     -- now let's find the occupant and forward the response
@@ -602,12 +598,7 @@ local function iq_from_main_handler(event)
     end
 
     -- respond with successful receiving the iq
-    origin.send(st.iq({
-        type = 'result';
-        from = stanza.attr.to;
-        to = stanza.attr.from;
-        id = stanza.attr.id
-    }));
+    respond_iq_result(origin, stanza);
 
     if process_disconnect then
         cancel_destroy_timer(room);
