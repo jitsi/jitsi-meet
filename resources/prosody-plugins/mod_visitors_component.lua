@@ -249,7 +249,7 @@ local function stanza_handler(event)
     if not room then
         -- this maybe as we receive the iq from jicofo after the room is already destroyed
         module:log('debug', 'No room found %s', room_jid);
-        return;
+        return true;
     end
 
     local from_vnode;
