@@ -38,9 +38,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         chatMessageWrapper: {
             maxWidth: '100%'
         },
-        chatFirstMessageWrapper: {
-            maxWidth: '72%'
-        },
         chatMessage: {
             display: 'inline-flex',
             padding: '12px',
@@ -136,7 +133,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
-            marginBottom: theme.spacing(1)
+            marginBottom: theme.spacing(1),
+            maxWidth: '130px'
         },
         userMessage: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
@@ -161,7 +159,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
-            maxWidth: '300px',
+            maxWidth: '150px',
             maxHeight: '400px',
             overflowY: 'auto',
             color: theme.palette.text01
@@ -181,7 +179,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         participantList: {
             marginLeft: theme.spacing(1),
             fontSize: '0.8rem',
-            maxWidth: '180px'
+            maxWidth: '120px'
         },
         participant: {
             overflow: 'hidden',
@@ -327,8 +325,7 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(showDisplayName && shouldDisplayChatMessageMenu
-                ? classes.chatFirstMessageWrapper : classes.chatMessageWrapper, type) }
+            className = { cx(classes.chatMessageWrapper, type) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
