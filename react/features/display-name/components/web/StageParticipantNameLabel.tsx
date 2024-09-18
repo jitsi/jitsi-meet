@@ -3,17 +3,17 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { isDisplayNameVisible } from '../../../base/config/functions.any';
-import {
-    getLocalParticipant,
-    getParticipantDisplayName,
-    isWhiteboardParticipant
-} from '../../../base/participants/functions';
+import { getParticipantDisplayName, isScreenShareParticipant } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { getTransitionParamsForElementsAboveToolbox, isToolboxVisible } from '../../../toolbox/functions.web';
-import { isLayoutTileView } from '../../../video-layout/functions.web';
+import {
+    getTransitionParamsForElementsAboveToolbox,
+    isToolboxVisible,
+    toCSSTransitionValue
+} from '../../../toolbox/functions.web';
+import { isLayoutTileView } from '../../../video-layout/functions.any';
+import { shouldDisplayStageParticipantBadge } from '../../functions';
 
 import DisplayNameBadge from './DisplayNameBadge';
 import {
@@ -27,7 +27,7 @@ interface IOptions {
     clientHeight?: number;
 }
 
-const useStyles = makeStyles<IOptions>()((theme, options: IOptions = {}) => {
+const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOptions = {}, classes) => {
     const typography = {
         ...getStageParticipantTypography(theme)
     };
@@ -42,6 +42,15 @@ const useStyles = makeStyles<IOptions>()((theme, options: IOptions = {}) => {
         typography.lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
     }
 
+    const toolbarVisibleTransitionProps = getTransitionParamsForElementsAboveToolbox(true);
+    const toolbarHiddenTransitionProps = getTransitionParamsForElementsAboveToolbox(false);
+    const showTransitionDuration = toolbarVisibleTransitionProps.delay + toolbarVisibleTransitionProps.duration;
+    const hideTransitionDuration = toolbarHiddenTransitionProps.delay + toolbarHiddenTransitionProps.duration;
+    const showTransition = `opacity ${showTransitionDuration}s ${toolbarVisibleTransitionProps.easingFunction}`;
+    const hideTransition = `opacity ${hideTransitionDuration}s ${toolbarHiddenTransitionProps.easingFunction}`;
+    const moveUpTransition = `margin-bottom ${toCSSTransitionValue(toolbarVisibleTransitionProps)}`;
+    const moveDownTransition = `margin-bottom ${toCSSTransitionValue(toolbarHiddenTransitionProps)}`;
+
     return {
         badgeContainer: {
             ...withPixelLineHeight(typography),
@@ -49,7 +58,7 @@ const useStyles = makeStyles<IOptions>()((theme, options: IOptions = {}) => {
             display: 'inline-flex',
             justifyContent: 'center',
             marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, false),
-            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(false)}`,
+            transition: moveDownTransition,
             pointerEvents: 'none',
             position: 'absolute',
             bottom: 0,
@@ -59,7 +68,15 @@ const useStyles = makeStyles<IOptions>()((theme, options: IOptions = {}) => {
         },
         containerElevated: {
             marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, true),
-            transition: `margin-bottom ${getTransitionParamsForElementsAboveToolbox(true)}`
+            transition: moveUpTransition,
+            [`&.${classes.screenSharing}`]: {
+                opacity: 1,
+                transition: `${showTransition}, ${moveUpTransition}`
+            }
+        },
+        screenSharing: {
+            opacity: 0,
+            transition: `${hideTransition}, ${moveDownTransition}`
         }
     };
 });
@@ -75,25 +92,20 @@ const StageParticipantNameLabel = () => {
     const largeVideoParticipant = useSelector(getLargeVideoParticipant);
     const selectedId = largeVideoParticipant?.id;
     const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, selectedId ?? ''));
-
-    const localParticipant = useSelector(getLocalParticipant);
-    const localId = localParticipant?.id;
-
-    const isTileView = useSelector(isLayoutTileView);
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
-    const showDisplayName = useSelector(isDisplayNameVisible);
+    const visible = useSelector(shouldDisplayStageParticipantBadge);
+    const isTileView = useSelector(isLayoutTileView);
+    const _isScreenShareParticipant = isScreenShareParticipant(largeVideoParticipant);
 
-    if (showDisplayName
-        && nameToDisplay
-        && selectedId !== localId
-        && !isTileView
-        && !isWhiteboardParticipant(largeVideoParticipant)
-    ) {
+    if (visible || (_isScreenShareParticipant && !isTileView)) {
+        // For stage participant visibility is true only when the toolbar is visible but we need to keep the element
+        // in the DOM in order to make it disappear with an animation.
         return (
             <div
                 className = { cx(
                     classes.badgeContainer,
-                    toolboxVisible && classes.containerElevated
+                    toolboxVisible && classes.containerElevated,
+                    _isScreenShareParticipant && classes.screenSharing
                 ) }>
                 <DisplayNameBadge name = { nameToDisplay } />
             </div>

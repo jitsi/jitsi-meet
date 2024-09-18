@@ -250,16 +250,41 @@ export function getParticipantMenuButtonsWithNotifyClick(state: IReduxState): Ma
     return state['features/toolbox'].participantMenuButtonsWithNotifyClick;
 }
 
+interface ICSSTransitionObject {
+    delay: number;
+    duration: number;
+    easingFunction: string;
+}
 
 /**
  * Returns the time, timing function and delay for elements that are position above the toolbar and need to move along
  * with the toolbar.
  *
  * @param {boolean} isToolbarVisible - Whether the toolbar is visible or not.
- * @returns {string}
+ * @returns {ICSSTransitionObject}
  */
-export function getTransitionParamsForElementsAboveToolbox(isToolbarVisible: boolean) {
+export function getTransitionParamsForElementsAboveToolbox(isToolbarVisible: boolean): ICSSTransitionObject {
     // The transistion time and delay is different to account for the time when the toolbar is about to hide/show but
     // the elements don't have to move.
-    return isToolbarVisible ? '0.15s ease-in 0.15s' : '0.24s ease-in 0s';
+    return isToolbarVisible ? {
+        duration: 0.15,
+        easingFunction: 'ease-in',
+        delay: 0.15
+    } : {
+        duration: 0.24,
+        easingFunction: 'ease-in',
+        delay: 0
+    };
+}
+
+/**
+ * Converts a given object to a css transition value string.
+ *
+ * @param {ICSSTransitionObject} object - The object.
+ * @returns {string}
+ */
+export function toCSSTransitionValue(object: ICSSTransitionObject) {
+    const { delay, duration, easingFunction } = object;
+
+    return `${duration}s ${easingFunction} ${delay}s`;
 }
