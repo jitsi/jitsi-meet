@@ -15,6 +15,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_vpaas = util.is_vpaas;
 local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
+local respond_iq_result = util.respond_iq_result;
 local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
 local um_is_admin = require 'core.usermanager'.is_admin;
@@ -64,17 +65,6 @@ local visitors_promotion_requests = {};
 
 local cache = require 'util.cache';
 local sent_iq_cache = cache.new(200);
-
--- send iq result that the iq was received and will be processed
-local function respond_iq_result(origin, stanza)
-    -- respond with successful receiving the iq
-    origin.send(st.iq({
-        type = 'result';
-        from = stanza.attr.to;
-        to = stanza.attr.from;
-        id = stanza.attr.id
-    }));
-end
 
 -- Sends a json-message to the destination jid
 -- @param to_jid the destination jid
