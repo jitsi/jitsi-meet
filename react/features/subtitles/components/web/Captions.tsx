@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getStageParticipantNameLabelHeight } from '../../../display-name/components/web/styles';
-import { getLargeVideoParticipant } from '../../../large-video/functions';
-import { getTransitionParamsForElementsAboveToolbox, isToolboxVisible } from '../../../toolbox/functions.web';
-import { isLayoutTileView } from '../../../video-layout/functions.web';
+import { shouldDisplayStageParticipantBadge } from '../../../display-name/functions';
+import {
+    getTransitionParamsForElementsAboveToolbox,
+    isToolboxVisible,
+    toCSSTransitionValue
+} from '../../../toolbox/functions.web';
 import { calculateSubtitlesFontSize } from '../../functions.web';
 import {
     AbstractCaptions,
@@ -53,7 +55,7 @@ const styles = (theme: Theme, props: IProps) => {
     // Normally we would use 0.2 * fontSize in order to cover the background gap from line-height: 1.2 but it seems
     // the current font is a little bit larger than it is supposed to be.
     const padding = 0.1 * fontSize;
-    const bottom = getVideospaceFloatingElementsBottomSpacing(theme, _toolboxVisible);
+    let bottom = getVideospaceFloatingElementsBottomSpacing(theme, _toolboxVisible);
     let marginBottom = 0;
 
     // This is the case where we display the onstage participant display name
@@ -61,7 +63,7 @@ const styles = (theme: Theme, props: IProps) => {
     if (_isLifted) {
         // 10px is the space between the onstage participant display name label and subtitles. We also need
         // to add the padding of the subtitles because it will decrease the gap between the label and subtitles.
-        marginBottom += getStageParticipantNameLabelHeight(theme, _clientHeight) + 10 + padding;
+        bottom += getStageParticipantNameLabelHeight(theme, _clientHeight) + 10 + padding;
     }
 
     if (_shiftUp) {
@@ -72,7 +74,7 @@ const styles = (theme: Theme, props: IProps) => {
     return {
         transcriptionSubtitles: {
             bottom: `${bottom}px`,
-            marginBottom,
+            marginBottom: `${marginBottom}px`,
             fontSize: `${fontSize}px`,
             left: '50%',
             maxWidth: '50vw',
@@ -87,7 +89,7 @@ const styles = (theme: Theme, props: IProps) => {
             transform: 'translateX(-50%)',
             zIndex: 7, // The popups are with z-index 8. This z-index has to be lower.
             lineHeight: 1.2,
-            transition: `bottom ${getTransitionParamsForElementsAboveToolbox(_toolboxVisible)}`,
+            transition: `bottom ${toCSSTransitionValue(getTransitionParamsForElementsAboveToolbox(_toolboxVisible))}`,
 
             span: {
                 color: '#fff',
@@ -153,14 +155,11 @@ class Captions extends AbstractCaptions<IProps> {
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
-    const isTileView = isLayoutTileView(state);
-    const largeVideoParticipant = getLargeVideoParticipant(state);
-    const localParticipant = getLocalParticipant(state);
     const { clientHeight } = state['features/base/responsive-ui'];
 
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: Boolean(largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView),
+        _isLifted: shouldDisplayStageParticipantBadge(state),
         _clientHeight: clientHeight,
         _shiftUp: state['features/toolbox'].shiftUp,
         _toolboxVisible: isToolboxVisible(state)
