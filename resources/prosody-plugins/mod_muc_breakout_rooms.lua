@@ -416,6 +416,16 @@ function exist_occupants_in_rooms(main_room)
     return false;
 end
 
+function on_occupant_pre_leave(event)
+    local room, occupant, session, stanza = event.room, event.occupant, event.origin, event.stanza;
+
+    local main_room = get_main_room(room.jid);
+
+    prosody.events.fire_event('jitsi-breakout-occupant-leaving', {
+        room = room; main_room = main_room; occupant = occupant; stanza = stanza; session = session;
+    });
+end
+
 function on_occupant_left(event)
     local room_jid = event.room.jid;
 
@@ -510,6 +520,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     host_module:hook('muc-occupant-joined', on_occupant_joined);
     host_module:hook('muc-occupant-left', on_occupant_left);
     host_module:hook('muc-room-pre-create', on_breakout_room_pre_create);
+    host_module:hook('muc-occupant-pre-leave', on_occupant_pre_leave);
 
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
