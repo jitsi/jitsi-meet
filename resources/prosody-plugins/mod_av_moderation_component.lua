@@ -4,6 +4,7 @@ local is_healthcheck_room = util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
+local table_shallow_copy = util.table_shallow_copy;
 local array = require "util.array";
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
@@ -75,11 +76,20 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     local body_json = {};
     body_json.type = 'av_moderation';
     body_json.room = internal_room_jid_match_rewrite(room.jid);
-    body_json.whitelists = room.av_moderation;
+    -- we will be modifying it, so we need a copy
+    body_json.whitelists = table_shallow_copy(room.av_moderation);
     if removed then
         body_json.removed = true;
     end
     body_json.mediaType = mediaType;
+
+    -- sanitize, make sure we don't have an empty array as it will encode it as {} not as []
+    for _,mediaType in pairs({'audio', 'video'}) do
+        if body_json.whitelists[mediaType] and #body_json.whitelists[mediaType] == 0 then
+            body_json.whitelists[mediaType] = nil;
+        end
+    end
+
     local moderators_body_json_str, error = json.encode(body_json);
 
     if not moderators_body_json_str then
