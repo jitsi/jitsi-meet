@@ -636,3 +636,22 @@ prosody.events.add_handler('pre-jitsi-authentication', function(session)
         return session.customusername;
     end
 end);
+
+-- when occupant is leaving breakout to join the main room and visitors are enabled
+-- make sure we will allow that participant to join as it is already part of the main room
+function handle_occupant_leaving_breakout(event)
+    local main_room, occupant, stanza = event.main_room, event.occupant, event.stanza;
+    local presence_status = stanza:get_child_text('status');
+
+    if presence_status ~= 'switch_room' or not visitors_promotion_map[main_room.jid] then
+        return;
+    end
+
+    local node = jid.node(occupant.bare_jid);
+
+    visitors_promotion_map[main_room.jid][node] = {
+        from = 'none';
+        jid = occupant.bare_jid;
+    };
+end
+module:hook_global('jitsi-breakout-occupant-leaving', handle_occupant_leaving_breakout);
