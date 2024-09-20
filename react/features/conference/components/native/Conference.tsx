@@ -559,6 +559,7 @@ class Conference extends AbstractConference<IProps, State> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
+    const { appState } = state['features/background'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
@@ -580,7 +581,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: isPipEnabled(state),
-        _reducedUI: reducedUI,
+        _reducedUI: reducedUI || appState === 'background',
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)
