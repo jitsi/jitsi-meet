@@ -60,6 +60,7 @@ const commands = {
     sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
     setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
+    setBlurredBackground: 'set-blurred-background',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',

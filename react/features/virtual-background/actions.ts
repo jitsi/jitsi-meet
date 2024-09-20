@@ -2,6 +2,7 @@ import { IStore } from '../app/types';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
+import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 import logger from './logger';
 import { IVirtualBackground } from './reducer';
 
@@ -69,5 +70,36 @@ export function backgroundEnabled(backgroundEffectEnabled?: boolean) {
     return {
         type: BACKGROUND_ENABLED,
         backgroundEffectEnabled
+    };
+}
+
+/**
+ * Simulates blurred background selection/removal on video background. Used by API only.
+ *
+ * @param {JitsiLocalTrack} videoTrack - The targeted video track.
+ * @param {string} [blurType] - Blur type to apply. Accepted values are 'slight-blur', 'blur' or 'none'.
+ * @param {boolean} muted - Muted state of the video track.
+ * @returns {Promise}
+ */
+export function toggleBlurredBackgroundEffect(videoTrack: any, blurType: 'slight-blur' | 'blur' | 'none',
+        muted: boolean) {
+    return async function(dispatch: IStore['dispatch'], _getState: IStore['getState']) {
+        if (muted || !videoTrack || !blurType) {
+            return;
+        }
+
+        if (blurType === 'none') {
+            dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: false,
+                selectedThumbnail: blurType
+            }, videoTrack));
+        } else {
+            dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: true,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
+                blurValue: blurType === 'blur' ? 25 : 8,
+                selectedThumbnail: blurType
+            }, videoTrack));
+        }
     };
 }
