@@ -924,12 +924,15 @@
         "connection": {
             "good": "Your internet connection looks good!",
             "nonOptimal": "Your internet connection is not optimal",
-            "poor": "You have a poor internet connection"
+            "poor": "You have a poor internet connection",
+            "running": "Running connection test...",
+            "failed": "Connection test failed!"
         },
         "connectionDetails": {
             "audioClipping": "We expect your audio to be clipped.",
             "audioHighQuality": "We expect your audio to have excellent quality.",
             "audioLowNoVideo": "We expect your audio quality to be low and no video.",
+            "testFailed": "The connection test encountered unexpected issues, but this might not impact your experience",
             "goodQuality": "Awesome! Your media quality is going to be great.",
             "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
             "noVideo": "We expect that your video will be terrible.",
