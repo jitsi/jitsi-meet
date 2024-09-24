@@ -37,9 +37,11 @@ const defaultMarginTop = '10%';
  */
 const smallMarginTop = '5%';
 
+// loss in percentage overall the test duration
 const LOSS_AUDIO_THRESHOLDS = [ 0.33, 0.05 ];
 const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
 
+// throughput in kbps
 const THROUGHPUT_AUDIO_THRESHOLDS = [ 8, 20 ];
 const THROUGHPUT_VIDEO_THRESHOLDS = [ 60, 750 ];
 
@@ -131,6 +133,11 @@ function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t, m
     if (!mediaConnectivity) {
         connectionType = CONNECTION_TYPE.POOR;
         connectionDetails.push('prejoin.connectionDetails.noMediaConnectivity');
+
+        return {
+            connectionType,
+            connectionDetails
+        };
     }
 
     const loss = {
@@ -189,7 +196,6 @@ function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t, m
         connectionDetails
     };
 }
-
 
 /**
  * Selector for determining the connection type & details.
@@ -256,10 +262,10 @@ export function isPreCallTestEnabled(state: IReduxState): boolean {
  * Selector for retrieving the pre-call test ICE URL.
  *
  * @param {Object} state - The state of the app.
- * @returns {string}
+ * @returns {string | undefined}
  */
-export function getPreCallICEUrl(state: IReduxState): string {
+export function getPreCallICEUrl(state: IReduxState): string | undefined {
     const { analytics } = state['features/base/config'];
 
-    return analytics?.preCallTestICEUrl ?? '';
+    return analytics?.preCallTestICEUrl;
 }

@@ -34,6 +34,11 @@ export function runPreCallTest() {
             dispatch(setPreCallTestResults({ status: PreCallTestStatus.RUNNING }));
 
             const turnCredentialsUrl = getPreCallICEUrl(getState());
+
+            if (!turnCredentialsUrl) {
+                throw new Error('No TURN credentials URL provided in config');
+            }
+
             const turnCredentials = await fetch(turnCredentialsUrl);
             const { iceServers } = await turnCredentials.json();
             const result: IPreCallResult = await JitsiMeetJS.runPreCallTest(iceServers);

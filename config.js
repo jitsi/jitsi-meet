@@ -1148,6 +1148,12 @@ var config = {
         // This would also require to configure watchRTCConfigParams.
         // Please remember to keep rtcstatsEnabled disabled for watchRTC to work.
         // watchRTCEnabled: false,
+
+        // Configuration for pre-call test
+        // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
+        // ICE server credentials need to be provided over the preCallTestICEUrl
+        // preCallTestEnabled: false,
+        // preCallTestICEUrl: ''
     },
 
     // Logs that should go be passed through the 'log' event if a handler is defined for it
