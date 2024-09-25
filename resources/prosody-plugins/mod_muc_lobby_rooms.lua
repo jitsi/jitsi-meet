@@ -224,6 +224,7 @@ function attach_lobby_room(room, actor)
         new_room:set_persistent(true);
         module:log("info","Lobby room jid = %s created from:%s", lobby_room_jid, actor);
         new_room.main_room = room;
+        new_room._data.meetingId = room._data.meetingId;
         room._data.lobbyroom = new_room.jid;
         room:save(true);
         return true
@@ -429,6 +430,20 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
             -- we need to notify in the main room
             notify_lobby_access(room.main_room, actor, occupant.nick, display_name, false);
         end
+    end);
+
+    -- add meeting Id to the disco info requests to the room
+    host_module:hook("muc-disco#info", function(event)
+        if not event.room._data.meetingId then
+            return;
+        end
+
+        table.insert(event.form, {
+                name = "muc#roominfo_meetingId";
+                type = "text-single";
+                label = "The meeting unique id.";
+                value = event.room._data.meetingId;
+            });
     end);
 end
 
