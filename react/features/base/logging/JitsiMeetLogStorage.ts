@@ -31,7 +31,7 @@ export default class JitsiMeetLogStorage {
     }
 
     /**
-     * The JitsiMeetLogStorage is ready when the conference has been joined.
+     * The JitsiMeetLogStorage is ready when the conference has been joined or when we are in the lobby waiting.
      * A conference is considered joined when the 'conference' field is defined
      * in the base/conference state.
      *
@@ -39,9 +39,9 @@ export default class JitsiMeetLogStorage {
      * <tt>false</tt> otherwise.
      */
     isReady() {
-        const { conference } = this.getState()['features/base/conference'];
+        const { conference, membersOnly } = this.getState()['features/base/conference'];
 
-        return Boolean(conference);
+        return Boolean(conference || membersOnly);
     }
 
     /**

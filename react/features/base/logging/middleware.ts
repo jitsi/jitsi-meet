@@ -4,10 +4,11 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
+    JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
 import { LIB_WILL_INIT } from '../lib-jitsi-meet/actionTypes';
@@ -31,6 +32,17 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         return _appWillMount(store, next, action);
+
+    case CONFERENCE_FAILED: {
+        const { error } = action;
+
+        if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
+            // init the conference logger earlier
+            return _conferenceJoined(store, next, action);
+        }
+
+        break;
+    }
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
