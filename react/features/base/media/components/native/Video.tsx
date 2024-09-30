@@ -1,16 +1,27 @@
-import React, { Component } from 'react';
+import React, {Component, RefObject} from 'react';
 import { GestureResponderEvent } from 'react-native';
-import { MediaStream, RTCView } from 'react-native-webrtc';
+import { connect } from 'react-redux';
 
+import { MediaStream, RTCPIPView, startIOSPIP, stopIOSPIP } from 'react-native-webrtc';
+
+import { IReduxState}  from '../../../../app/types';
+import { translate } from '../../../i18n/functions';
 import Pressable from '../../../react/components/native/Pressable';
+
+import logger from '../../logger';
 
 import VideoTransform from './VideoTransform';
 import styles from './styles';
+import FallbackView from "./FallbackView";
+
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
 interface IProps {
+
+    _enableIosPIP?: boolean;
+
     mirror: boolean;
 
     onPlaying: Function;
@@ -58,7 +69,15 @@ interface IProps {
  * {@code HTMLVideoElement} and wraps around react-native-webrtc's
  * {@link RTCView}.
  */
-export default class Video extends Component<IProps> {
+class Video extends Component<IProps> {
+
+    _ref: RefObject<typeof Video>;
+
+    constructor(props) {
+        super(props);
+        this._ref = React.createRef();
+    }
+
     /**
      * React Component method that executes once component is mounted.
      *
@@ -79,7 +98,28 @@ export default class Video extends Component<IProps> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { onPress, stream, zoomEnabled } = this.props;
+        const { _enableIosPIP, onPress, stream, zoomEnabled } = this.props;
+
+        const iosPIPOptions = {
+            startAutomatically: true,
+            fallbackView: (<FallbackView />),
+            preferredSize: {
+                width: 400,
+                height: 800,
+            }
+        }
+
+        if (_enableIosPIP) {
+            console.log('TESTING _enableIosPIP is', _enableIosPIP);
+            console.log(this._ref?.current, 'Picture in picture mode on');
+            // logger.warn(this._ref?.current, `Picture in picture mode on`);
+            // startIOSPIP(this._ref?.current);
+        } else {
+            console.log('TESTING _enableIosPIP is', _enableIosPIP);
+            console.log('TESTING Picture in picture mode off');
+            // logger.warn(`Picture in picture mode off`);
+            // stopIOSPIP(this._ref?.current);
+        }
 
         if (stream) {
             // RTCView
@@ -90,9 +130,11 @@ export default class Video extends Component<IProps> {
                     : 'cover';
             const rtcView
                 = (
-                    <RTCView
+                    <RTCPIPView
+                        iosPIP = { iosPIPOptions }
                         mirror = { this.props.mirror }
                         objectFit = { objectFit }
+                        ref = { this._ref }
                         streamURL = { stream.toURL() }
                         style = { style }
                         zOrder = { this.props.zOrder } />
@@ -132,3 +174,20 @@ export default class Video extends Component<IProps> {
         return null;
     }
 }
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Object}
+ */
+function _mapStateToProps(state: IReduxState) {
+    const iosPIP = state['features/mobile/picture-in-picture']?.enableIosPIP
+
+    return {
+        _enableIosPIP: iosPIP
+    };
+}
+
+// @ts-ignore
+export default translate(connect(_mapStateToProps)(Video));
