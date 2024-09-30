@@ -21,6 +21,7 @@ import TestHint from '../../testing/components/TestHint';
 import { getVideoTrackByParticipant } from '../../tracks/functions';
 import { ITrack } from '../../tracks/types';
 import { getParticipantById, getParticipantDisplayName, isSharedVideoParticipant } from '../functions';
+import { FakeParticipant } from '../types';
 
 import styles from './styles';
 
@@ -71,7 +72,7 @@ interface IProps {
     /**
      * Whether video should be disabled for his view.
      */
-    disableVideo?: boolean;
+    disableVideo?: boolean | FakeParticipant;
 
     /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
