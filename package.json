@@ -178,7 +178,7 @@
     "ts-loader": "9.4.2",
     "typescript": "5.0.4",
     "unorm": "1.6.0",
-    "webpack": "5.76.0",
+    "webpack": "5.95.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.9.0",
     "webpack-dev-server": "4.15.2"
