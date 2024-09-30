@@ -203,7 +203,9 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        return isLocalParticipantModerator(state) && isJwtFeatureEnabled(state, 'recording', true);
+        const isModerator = isLocalParticipantModerator(state);
+
+        return isJwtFeatureEnabled(state, 'recording', isModerator, isModerator);
     }
 
     return false;
