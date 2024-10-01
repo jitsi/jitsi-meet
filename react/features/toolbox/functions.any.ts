@@ -21,12 +21,14 @@ export function isAudioMuteButtonDisabled(state: IReduxState) {
  * Returns the buttons corresponding to features disabled through jwt.
  *
  * @param {IReduxState} state - The state from the Redux store.
+ * @param {boolean} isModerator - Whether local participant is moderator.
  * @param {string | undefined} jwt - The jwt token.
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @returns {string[]} - The disabled by jwt buttons array.
  */
 export function getJwtDisabledButtons(
         state: IReduxState,
+        isModerator: boolean,
         jwt: string | undefined,
         localParticipantFeatures?: IParticipantFeatures) {
     const acc = [];
@@ -35,8 +37,8 @@ export function getJwtDisabledButtons(
         jwt,
         localParticipantFeatures,
         feature: 'livestreaming',
-        ifNoToken: true,
-        ifNotInFeatures: true
+        ifNoToken: isModerator,
+        ifNotInFeatures: isModerator
     })) {
         acc.push('livestreaming');
     }
@@ -45,8 +47,8 @@ export function getJwtDisabledButtons(
         jwt,
         localParticipantFeatures,
         feature: 'transcription',
-        ifNoToken: true,
-        ifNotInFeatures: true
+        ifNoToken: isModerator,
+        ifNotInFeatures: isModerator
     })) {
         acc.push('closedcaptions');
     }
