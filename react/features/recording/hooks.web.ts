@@ -48,7 +48,7 @@ export function useLiveStreamingButton() {
     const localParticipantIsModerator = useSelector(isLocalParticipantModerator);
     const liveStreaming = useSelector(getLiveStreaming);
     const liveStreamingAllowed = useSelector((state: IReduxState) =>
-        isJwtFeatureEnabled(state, 'livestreaming', localParticipantIsModerator, localParticipantIsModerator));
+        isJwtFeatureEnabled(state, 'livestreaming', localParticipantIsModerator, false));
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     if (toolbarButtons?.includes('recording')

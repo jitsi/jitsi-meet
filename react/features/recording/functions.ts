@@ -205,7 +205,7 @@ export function canStopRecording(state: IReduxState) {
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
         const isModerator = isLocalParticipantModerator(state);
 
-        return isJwtFeatureEnabled(state, 'recording', isModerator, isModerator);
+        return isJwtFeatureEnabled(state, 'recording', isModerator, false);
     }
 
     return false;
@@ -269,7 +269,7 @@ export function getRecordButtonProps(state: IReduxState) {
 
     if (localRecordingEnabled) {
         visible = true;
-    } else if (isJwtFeatureEnabled(state, 'recording', isModerator, isModerator)) {
+    } else if (isJwtFeatureEnabled(state, 'recording', isModerator, false)) {
         visible = recordingEnabled;
     }
 
