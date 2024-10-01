@@ -38,7 +38,7 @@ export function getJwtDisabledButtons(
         localParticipantFeatures,
         feature: 'livestreaming',
         ifNoToken: isModerator,
-        ifNotInFeatures: isModerator
+        ifNotInFeatures: false
     })) {
         acc.push('livestreaming');
     }
@@ -48,7 +48,7 @@ export function getJwtDisabledButtons(
         localParticipantFeatures,
         feature: 'transcription',
         ifNoToken: isModerator,
-        ifNotInFeatures: isModerator
+        ifNotInFeatures: false
     })) {
         acc.push('closedcaptions');
     }

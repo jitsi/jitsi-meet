@@ -92,7 +92,7 @@ export function isJwtFeatureEnabledStateless({
     }
 
     if (typeof features === 'undefined') {
-        return ifNotInFeatures;
+        return ifNoToken;
     }
 
     if (typeof features[feature as keyof typeof features] === 'undefined') {
