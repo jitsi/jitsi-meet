@@ -1687,11 +1687,11 @@ export default {
 
         room.on(
             JitsiConferenceEvents.TRANSCRIPTION_STATUS_CHANGED,
-            (status, id) => {
+            (status, id, abruptly) => {
                 if (status === JitsiMeetJS.constants.transcriptionStatus.ON) {
                     APP.store.dispatch(transcriberJoined(id));
                 } else if (status === JitsiMeetJS.constants.transcriptionStatus.OFF) {
-                    APP.store.dispatch(transcriberLeft(id));
+                    APP.store.dispatch(transcriberLeft(id, abruptly));
                 }
             });
 

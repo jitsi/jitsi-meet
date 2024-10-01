@@ -279,11 +279,11 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     conference.on(
         JitsiConferenceEvents.TRANSCRIPTION_STATUS_CHANGED,
-        (status: string, id: string) => {
+        (status: string, id: string, abruptly: boolean) => {
             if (status === JitsiMeetJS.constants.transcriptionStatus.ON) {
                 dispatch(transcriberJoined(id));
             } else if (status === JitsiMeetJS.constants.transcriptionStatus.OFF) {
-                dispatch(transcriberLeft(id));
+                dispatch(transcriberLeft(id, abruptly));
             }
         });
 

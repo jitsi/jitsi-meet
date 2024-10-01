@@ -23,14 +23,18 @@ export function transcriberJoined(participantId: string) {
  * Notify that the transcriber, with a unique ID, has left.
  *
  * @param {string} participantId - The participant id of the transcriber.
+ * @param {boolean} abruptly - The transcriber did not exit the conference gracefully with switching off first.
+ * It maybe there was some backend problem, like network.
  * @returns {{
  *     type: TRANSCRIBER_LEFT,
- *     participantId: string
+ *     participantId: string,
+ *     abruptly: boolean
  * }}
  */
-export function transcriberLeft(participantId: string) {
+export function transcriberLeft(participantId: string, abruptly: boolean) {
     return {
         type: TRANSCRIBER_LEFT,
-        transcriberJID: participantId
+        transcriberJID: participantId,
+        abruptly
     };
 }

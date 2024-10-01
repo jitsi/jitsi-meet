@@ -1721,7 +1721,7 @@ var config = {
     //     'toolbar.noAudioSignalTitle', // shown when a broken mic is detected
     //     'toolbar.noisyAudioInputTitle', // shown when noise is detected for the current microphone
     //     'toolbar.talkWhileMutedPopup', // shown when user tries to speak while muted
-    //     'transcribing.failedToStart', // shown when transcribing fails to start
+    //     'transcribing.failed', // shown when transcribing fails
     // ],
 
     // List of notifications to be disabled. Works in tandem with the above setting.
