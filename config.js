@@ -215,12 +215,15 @@ var config = {
     //   - https://meet.example.com/libs/krisp/models/model_8.kw
     //   - https://meet.example.com/libs/krisp/models/model_16.kw
     //   - https://meet.example.com/libs/krisp/models/model_32.kw
+    //   - https://meet.example.com/libs/krisp/models/model_bvc.kw
+    //   - https://meet.example.com/libs/krisp/assets/bvc-allowed.txt
     // NOTE: Krisp JS SDK v1.0.9 was tested.
     // noiseSuppression: {
     //     krisp: {
     //         enabled: false,
     //         logProcessStats: false,
     //         debugLogs: false,
+    //         useBVC: false,
     //     },
     // },
 

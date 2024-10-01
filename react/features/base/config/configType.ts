@@ -129,6 +129,7 @@ export interface INoiseSuppressionConfig {
         debugLogs?: boolean;
         enabled?: boolean;
         logProcessStats?: boolean;
+        useBVC?: boolean;
     };
 }
 

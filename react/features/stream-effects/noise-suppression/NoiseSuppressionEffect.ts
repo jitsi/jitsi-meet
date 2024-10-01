@@ -180,12 +180,17 @@ async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<Audio
         krispState.sdk = new KrispSDK({
             params: {
                 models: {
+                    modelBVC: `${baseUrl}/models/model_bvc.kw`,
                     model8: `${baseUrl}/models/model_8.kw`,
                     model16: `${baseUrl}/models/model_16.kw`,
                     model32: `${baseUrl}/models/model_32.kw`
                 },
                 logProcessStats: options?.krisp?.logProcessStats,
-                debugLogs: options?.krisp?.debugLogs
+                debugLogs: options?.krisp?.debugLogs,
+                useBVC: options?.krisp?.useBVC,
+                bvc: {
+                    allowedDevices: `${baseUrl}/assets/bvc-allowed.txt`
+                }
             },
             callbacks: {}
         });
@@ -198,10 +203,23 @@ async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<Audio
         krispState.sdkInitialized = true;
     }
 
+    const audioSettings = {
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: false
+        }
+    };
+
+    const stream = await navigator.mediaDevices.getUserMedia(audioSettings);
+
     if (!krispState.filterNode) {
         try {
             // @ts-ignore
-            krispState.filterNode = await krispState.sdk?.createNoiseFilter(audioContext, () => {
+            krispState.filterNode = await krispState.sdk?.createNoiseFilter({
+                audioContext,
+                stream
+            }, () => {
                 logger.info('Krisp audio filter ready');
 
                 // Enable audio filtering.
