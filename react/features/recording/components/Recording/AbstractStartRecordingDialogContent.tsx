@@ -421,7 +421,7 @@ export function mapStateToProps(state: IReduxState) {
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
-        _renderRecording: isJwtFeatureEnabled(state, 'recording', isModerator, isModerator),
+        _renderRecording: isJwtFeatureEnabled(state, 'recording', isModerator, false),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
