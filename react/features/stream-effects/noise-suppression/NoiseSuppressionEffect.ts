@@ -90,7 +90,7 @@ export class NoiseSuppressionEffect {
         let init;
 
         if (this._options?.krisp?.enabled) {
-            init = _initializeKrisp(this._options).then(filterNode => {
+            init = _initializeKrisp(this._options, audioStream).then(filterNode => {
                 this._noiseSuppressorNode = filterNode;
 
                 if (krispState.filterNodeReady) {
@@ -167,10 +167,14 @@ export class NoiseSuppressionEffect {
  * Initializes the Krisp SDK and creates the filter node.
  *
  * @param {INoiseSuppressionConfig} options - Krisp options.
+ * @param {MediaStream} stream - Audio stream which will be mixed with _mixAudio.
  *
  * @returns {Promise<AudioWorkletNode | undefined>}
  */
-async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<AudioWorkletNode | undefined> {
+async function _initializeKrisp(
+        options: INoiseSuppressionConfig,
+        stream: MediaStream
+): Promise<AudioWorkletNode | undefined> {
     await audioContext.resume();
 
     if (!krispState.sdk) {
@@ -204,30 +208,23 @@ async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<Audio
         krispState.sdkInitialized = true;
     }
 
-    const audioSettings = {
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: false
-        }
-    };
-
-    const stream = await navigator.mediaDevices.getUserMedia(audioSettings);
-
     if (!krispState.filterNode) {
         try {
             // @ts-ignore
-            krispState.filterNode = await krispState.sdk?.createNoiseFilter({
-                audioContext,
-                stream
-            }, () => {
-                logger.info('Krisp audio filter ready');
+            krispState.filterNode = await krispState.sdk?.createNoiseFilter(
+                {
+                    audioContext,
+                    stream
+                },
+                () => {
+                    logger.info('Krisp audio filter ready');
 
-                // Enable audio filtering.
-                // @ts-ignore
-                krispState.filterNode?.enable();
-                krispState.filterNodeReady = true;
-            });
+                    // Enable audio filtering.
+                    // @ts-ignore
+                    krispState.filterNode?.enable();
+                    krispState.filterNodeReady = true;
+                }
+            );
         } catch (e) {
             logger.error('Failed to create Krisp noise filter', e);
 
