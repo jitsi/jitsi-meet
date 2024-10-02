@@ -2,7 +2,6 @@ import { IReduxState } from '../app/types';
 import { isJwtFeatureEnabledStateless } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
 import { IParticipantFeatures } from '../base/participants/types';
-import { isTranscribing } from '../transcribing/functions';
 
 /**
  * Indicates if the audio mute button is disabled or not.
@@ -19,15 +18,16 @@ export function isAudioMuteButtonDisabled(state: IReduxState) {
 
 /**
  * Returns the buttons corresponding to features disabled through jwt.
+ * This function is stateless as it returns a new array and may cause re-rendering.
  *
- * @param {IReduxState} state - The state from the Redux store.
+ * @param {boolean} isTranscribing - Whether there is currently a transcriber in the meeting.
  * @param {boolean} isModerator - Whether local participant is moderator.
  * @param {string | undefined} jwt - The jwt token.
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @returns {string[]} - The disabled by jwt buttons array.
  */
 export function getJwtDisabledButtons(
-        state: IReduxState,
+        isTranscribing: boolean,
         isModerator: boolean,
         jwt: string | undefined,
         localParticipantFeatures?: IParticipantFeatures) {
@@ -43,7 +43,7 @@ export function getJwtDisabledButtons(
         acc.push('livestreaming');
     }
 
-    if (!isTranscribing(state) && !isJwtFeatureEnabledStateless({
+    if (!isTranscribing && !isJwtFeatureEnabledStateless({
         jwt,
         localParticipantFeatures,
         feature: 'transcription',
