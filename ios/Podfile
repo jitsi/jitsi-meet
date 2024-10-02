@@ -29,7 +29,6 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
-  flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => false,
