@@ -1,8 +1,8 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    TRANSCRIBER_LEFT,
-    _TRANSCRIBER_JOINED
+    TRANSCRIBER_JOINED,
+    TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -44,7 +44,7 @@ export interface ITranscribingState {
 ReducerRegistry.register<ITranscribingState>('features/transcribing',
     (state = _getInitialState(), action): ITranscribingState => {
         switch (action.type) {
-        case _TRANSCRIBER_JOINED:
+        case TRANSCRIBER_JOINED:
             return {
                 ...state,
                 isTranscribing: true,

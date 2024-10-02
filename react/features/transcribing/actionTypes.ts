@@ -8,7 +8,7 @@
  * }
  * @private
  */
-export const _TRANSCRIBER_JOINED = 'TRANSCRIBER_JOINED';
+export const TRANSCRIBER_JOINED = 'TRANSCRIBER_JOINED';
 
 /**
  * The type of Redux action signalling that the transcriber has left

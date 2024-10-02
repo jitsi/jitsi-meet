@@ -1,6 +1,6 @@
 import {
-    TRANSCRIBER_LEFT,
-    _TRANSCRIBER_JOINED
+    TRANSCRIBER_JOINED,
+    TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -8,13 +8,13 @@ import {
  *
  * @param {string} participantId - The participant id of the transcriber.
  * @returns {{
- *     type: _TRANSCRIBER_JOINED,
+ *     type: TRANSCRIBER_JOINED,
  *     participantId: string
  * }}
  */
 export function transcriberJoined(participantId: string) {
     return {
-        type: _TRANSCRIBER_JOINED,
+        type: TRANSCRIBER_JOINED,
         transcriberJID: participantId
     };
 }
