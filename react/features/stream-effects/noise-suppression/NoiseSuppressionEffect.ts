@@ -189,7 +189,8 @@ async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<Audio
                 debugLogs: options?.krisp?.debugLogs,
                 useBVC: options?.krisp?.useBVC,
                 bvc: {
-                    allowedDevices: `${baseUrl}/assets/bvc-allowed.txt`
+                    allowedDevices: `${baseUrl}/assets/bvc-allowed.txt`,
+                    allowedDevicesExt: `${baseUrl}/assets/bvc-allowed-ext.txt`
                 }
             },
             callbacks: {}

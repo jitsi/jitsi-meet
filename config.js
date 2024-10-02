@@ -217,6 +217,8 @@ var config = {
     //   - https://meet.example.com/libs/krisp/models/model_32.kw
     //   - https://meet.example.com/libs/krisp/models/model_bvc.kw
     //   - https://meet.example.com/libs/krisp/assets/bvc-allowed.txt
+    //     In case when you have known BVC supported devices and you want to extend allowed devices list
+    //   - https://meet.example.com/libs/krisp/assets/bvc-allowed-ext.txt
     // NOTE: Krisp JS SDK v1.0.9 was tested.
     // noiseSuppression: {
     //     krisp: {
