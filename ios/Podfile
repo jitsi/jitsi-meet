@@ -51,6 +51,7 @@ target 'JitsiMeetSDK' do
 
   cocoa_utilities
   pod 'ObjectiveDropboxOfficial', '6.2.3'
+  pod 'Giphy', '2.2.11'
 end
 
 target 'JitsiMeetSDKLite' do
