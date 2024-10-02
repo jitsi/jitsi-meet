@@ -1,4 +1,5 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { TRANSCRIBER_LEFT } from '../transcribing/actionTypes';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
@@ -47,6 +48,11 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
         return {
             ...state,
             _requestingSubtitles: !state._requestingSubtitles
+        };
+    case TRANSCRIBER_LEFT:
+        return {
+            ...state,
+            ...defaultState
         };
     }
 
