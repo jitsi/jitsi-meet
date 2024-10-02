@@ -1,18 +1,8 @@
-import {
-    HIDDEN_PARTICIPANT_JOINED,
-    HIDDEN_PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
-} from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
-import {
-    potentialTranscriberJoined,
-    transcriberJoined,
-    transcriberLeft
-} from './actions';
-import './subscriber';
-
-const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
+import { TRANSCRIBER_LEFT } from './actionTypes';
 
 /**
  * Implements the middleware of the feature transcribing.
@@ -20,37 +10,15 @@ const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line no-unused-vars
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const {
-        transcriberJID,
-        potentialTranscriberJIDs
-    } = getState()['features/transcribing'];
-
+MiddlewareRegistry.register(({ dispatch }) => next => action => {
     switch (action.type) {
-    case HIDDEN_PARTICIPANT_JOINED:
-        if (action.displayName === TRANSCRIBER_DISPLAY_NAME) {
-            dispatch(transcriberJoined(action.id));
-        } else {
-            dispatch(potentialTranscriberJoined(action.id));
-        }
-
-        break;
-    case HIDDEN_PARTICIPANT_LEFT:
-        if (action.id === transcriberJID) {
-            dispatch(transcriberLeft(action.id));
+    case TRANSCRIBER_LEFT:
+        if (action.abruptly) {
+            dispatch(showErrorNotification({
+                titleKey: 'transcribing.failed'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
         break;
-    case PARTICIPANT_UPDATED: {
-        const { participant } = action;
-
-        if (potentialTranscriberJIDs.includes(participant.id) && participant.name === TRANSCRIBER_DISPLAY_NAME) {
-            dispatch(transcriberJoined(participant.id));
-        }
-
-        break;
-    }
-
     }
 
     return next(action);

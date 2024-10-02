@@ -147,28 +147,6 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
 export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
- * Action to signal that a hidden participant has joined.
- *
- * {
- *     type: HIDDEN_PARTICIPANT_JOINED,
- *     participant: Participant
- * }
- */
-export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
-
-/**
- * Action to handle case when hidden participant leaves.
- *
- * {
- *     type: PARTICIPANT_LEFT,
- *     participant: {
- *         id: string
- *     }
- * }
- */
-export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
-
-/**
  * The type of Redux action which notifies the app that the loadable avatar URL has changed.
  *
  * {

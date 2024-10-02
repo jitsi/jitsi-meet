@@ -1390,7 +1390,7 @@
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
         "expandedLabel": "Transcribing is currently on",
-        "failedToStart": "Transcribing failed to start",
+        "failed": "Transcribing failed",
         "labelToolTip": "The meeting is being transcribed",
         "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
         "sourceLanguageHere": "here",

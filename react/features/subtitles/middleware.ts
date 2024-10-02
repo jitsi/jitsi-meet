@@ -259,7 +259,7 @@ function _requestingSubtitlesChange(
                     logger.error('Error dialing', e);
 
                     // let's back to the correct state
-                    dispatch(setRequestingSubtitles(false, false));
+                    dispatch(setRequestingSubtitles(false, false, null));
                 });
         }
     }
