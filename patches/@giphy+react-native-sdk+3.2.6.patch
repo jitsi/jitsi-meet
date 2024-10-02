@@ -1,0 +1,19 @@
+diff --git a/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec b/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
+index 41cf883..c70b36e 100644
+--- a/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
++++ b/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
+@@ -11,12 +11,12 @@ Pod::Spec.new do |s|
+   s.license = package["license"]
+   s.authors = package["author"]
+ 
+-  s.platforms = { :ios => "10.2" }
++  s.platforms = { :ios => "15.1" }
+   s.source = { :git => "https://github.com/Giphy/giphy-react-native-sdk.git", :tag => "#{s.version}" }
+ 
+   s.source_files = "ios/**/*.{h,m,mm,swift}"
+ 
+-  s.dependency "Giphy", "2.2.9"
++  s.dependency "Giphy", "2.2.11"
+ 
+   s.pod_target_xcconfig = {
+     "DEFINES_MODULE" => "YES"
