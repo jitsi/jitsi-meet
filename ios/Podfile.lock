@@ -79,12 +79,10 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
   - fmt (6.2.1)
-  - Giphy (2.2.11):
+  - Giphy (2.2.4):
     - libwebp
-  - giphy-react-native-sdk (3.2.6):
-    - Giphy (= 2.2.11)
-    - glog
-    - RCT-Folly (= 2022.05.16.00)
+  - giphy-react-native-sdk (2.3.0):
+    - Giphy (= 2.2.4)
     - React-Core
   - glog (0.3.5)
   - GoogleAppMeasurement (8.15.0):
@@ -147,7 +145,7 @@ PODS:
     - AppAuth/Core (~> 1.7)
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher/Core (3.5.0)
-  - JitsiWebRTC (124.0.1)
+  - JitsiWebRTC (124.0.0)
   - libwebp (1.3.2):
     - libwebp/demux (= 1.3.2)
     - libwebp/mux (= 1.3.2)
@@ -1250,7 +1248,6 @@ DEPENDENCIES:
   - Firebase/Analytics (~> 8.0)
   - Firebase/Crashlytics (~> 8.0)
   - Firebase/DynamicLinks (~> 8.0)
-  - Giphy (= 2.2.11)
   - "giphy-react-native-sdk (from `../node_modules/@giphy/react-native-sdk`)"
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - ObjectiveDropboxOfficial (= 6.2.3)
@@ -1518,8 +1515,8 @@ SPEC CHECKSUMS:
   FirebaseDynamicLinks: 1dc816ef789c5adac6fede0b46d11478175c70e4
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  Giphy: faa396040488ce71a33c4c090a2fa71f868e389e
-  giphy-react-native-sdk: 2d00627ef362289cc0fd606493c5538187c7e16a
+  Giphy: 6b5f6986c8df4f71e01a8ef86595f426b3439fb5
+  giphy-react-native-sdk: fcda9639f8ca2cc47e0517b6ef11c19359db5f5a
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
@@ -1527,7 +1524,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  JitsiWebRTC: d0ae5fd6a81e771bfd82c2ee6c6bb542ebd65ee8
+  JitsiWebRTC: 37fb2fb70d42cac58c06948527a5f9e1b3f50812
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
@@ -1601,6 +1598,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: e5b887426cee15d2a326bdd34afc0282fc0486ad
 
-PODFILE CHECKSUM: d06de60a5161830d5a9506cc2237f2395881bb1d
+PODFILE CHECKSUM: 79119d2af4f01a2584749dc3926902e66572d896
 
 COCOAPODS: 1.15.2
