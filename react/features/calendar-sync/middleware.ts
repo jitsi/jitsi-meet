@@ -71,6 +71,6 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _maybeClearAccessStatus(store: IStore, { appState }: { appState: string; }) {
-    appState === 'background'
+    appState !== 'active'
         && store.dispatch(setCalendarAuthorization(undefined));
 }
