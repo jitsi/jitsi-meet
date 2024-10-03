@@ -25,6 +25,7 @@
         "react/features/e2ee",
         "react/features/embed-meeting",
         "react/features/face-landmarks",
+        "react/features/keyboard-shortcuts",
         "react/features/no-audio-signal",
         "react/features/noise-suppression",
         "react/features/old-client-notification",
