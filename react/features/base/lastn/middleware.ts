@@ -1,4 +1,5 @@
 import { debounce } from 'lodash-es';
+import { Platform } from 'react-native';
 
 import { IStore } from '../../app/types';
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
@@ -14,6 +15,7 @@ import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { setLastN } from './actions';
 import logger from './logger';
+
 
 /**
  * Updates the last N value in the conference based on the current state of the redux store.
@@ -44,7 +46,13 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 3. -1 as the default value.
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
-    if (appState === 'background' || carMode) {
+    if (appState !== 'active') {
+        if (navigator.product === 'ReactNative' && Platform.OS === 'ios') {
+            lastNSelected = -1;
+        } else {
+            lastNSelected = 0;
+        }
+    } else if (carMode) {
         lastNSelected = 0;
     } else if (audioOnly) {
         const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
