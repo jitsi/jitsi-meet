@@ -8,12 +8,18 @@ import { openSettingsDialog } from '../settings/actions.web';
 import { SETTINGS_TABS } from '../settings/constants';
 import { iAmVisitor } from '../visitors/functions';
 
-import { registerShortcut } from './actions.any';
+import { registerShortcut, unregisterShortcut } from './actions.any';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
 import logger from './logger';
 import { getKeyboardKey, getPriorityFocusedElement } from './utils';
 
 export * from './actions.any';
+
+
+type KeyHandler = ((e: KeyboardEvent) => void) | undefined;
+
+let keyDownHandler: KeyHandler;
+let keyUpHandler: KeyHandler;
 
 /**
  * Initialise global shortcuts.
@@ -21,64 +27,82 @@ export * from './actions.any';
  * link associated with the action. In other words they represent actions
  * triggered _only_ with a shortcut.
  *
- * @returns {Function}
+ * @param {Function} dispatch - The redux dispatch function.
+ * @returns {void}
  */
-const initGlobalKeyboardShortcuts = () =>
-    (dispatch: IStore['dispatch']) => {
-        batch(() => {
+function initGlobalKeyboardShortcuts(dispatch: IStore['dispatch']) {
+    batch(() => {
+        dispatch(registerShortcut({
+            character: '?',
+            helpDescription: 'keyboardShortcuts.toggleShortcuts',
+            handler: () => {
+                sendAnalytics(createShortcutEvent('help'));
+                dispatch(openSettingsDialog(SETTINGS_TABS.SHORTCUTS, false));
+            }
+        }));
+
+        // register SPACE shortcut in two steps to insure visibility of help message
+        dispatch(registerShortcut({
+            character: ' ',
+            helpCharacter: 'SPACE',
+            helpDescription: 'keyboardShortcuts.pushToTalk',
+            handler: () => {
+                // Handled directly on the global handler.
+            }
+        }));
+
+        dispatch(registerShortcut({
+            character: '0',
+            helpDescription: 'keyboardShortcuts.focusLocal',
+            handler: () => {
+                dispatch(clickOnVideo(0));
+            }
+        }));
+
+        for (let num = 1; num < 10; num++) {
             dispatch(registerShortcut({
-                character: '?',
-                helpDescription: 'keyboardShortcuts.toggleShortcuts',
+                character: `${num}`,
+
+                // only show help hint for the first shortcut
+                helpCharacter: num === 1 ? '1-9' : undefined,
+                helpDescription: num === 1 ? 'keyboardShortcuts.focusRemote' : undefined,
                 handler: () => {
-                    sendAnalytics(createShortcutEvent('help'));
-                    dispatch(openSettingsDialog(SETTINGS_TABS.SHORTCUTS, false));
+                    dispatch(clickOnVideo(num));
                 }
             }));
+        }
+    });
+}
 
-            // register SPACE shortcut in two steps to insure visibility of help message
-            dispatch(registerShortcut({
-                character: ' ',
-                helpCharacter: 'SPACE',
-                helpDescription: 'keyboardShortcuts.pushToTalk',
-                handler: () => {
-                    // Handled directly on the global handler.
-                }
-            }));
+/**
+ * Unregisters global shortcuts.
+ *
+ * @param {Function} dispatch - The redux dispatch function.
+ * @returns {void}
+ */
+function unregisterGlobalKeyboardShortcuts(dispatch: IStore['dispatch']) {
+    batch(() => {
+        dispatch(unregisterShortcut('?'));
 
-            dispatch(registerShortcut({
-                character: '0',
-                helpDescription: 'keyboardShortcuts.focusLocal',
-                handler: () => {
-                    dispatch(clickOnVideo(0));
-                }
-            }));
+        // register SPACE shortcut in two steps to insure visibility of help message
+        dispatch(unregisterShortcut(' '));
 
-            Array(9).fill(1)
-            .forEach((_, index) => {
-                const num = index + 1;
+        dispatch(unregisterShortcut('0'));
 
-                dispatch(registerShortcut({
-                    character: `${num}`,
-
-                    // only show help hint for the first shortcut
-                    helpCharacter: num === 1 ? '1-9' : undefined,
-                    helpDescription: num === 1 ? 'keyboardShortcuts.focusRemote' : undefined,
-                    handler: () => {
-                        dispatch(clickOnVideo(num));
-                    }
-                }));
-            });
-        });
-    };
+        for (let num = 1; num < 10; num++) {
+            dispatch(unregisterShortcut(`${num}`));
+        }
+    });
+}
 
 /**
  * Initializes keyboard shortcuts.
  *
  * @returns {Function}
 */
-export const initKeyboardShortcuts = () =>
-    (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        dispatch(initGlobalKeyboardShortcuts());
+export function initKeyboardShortcuts() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        initGlobalKeyboardShortcuts(dispatch);
 
         const pttDelay = 50;
         let pttTimeout: number | undefined;
@@ -91,7 +115,7 @@ export const initKeyboardShortcuts = () =>
         // chaining at all.
         let mutePromise = Promise.resolve();
 
-        window.addEventListener('keyup', (e: KeyboardEvent) => {
+        keyUpHandler = (e: KeyboardEvent) => {
             const state = getState();
             const enabled = areKeyboardShortcutsEnabled(state);
             const shortcuts = getKeyboardShortcuts(state);
@@ -115,9 +139,9 @@ export const initKeyboardShortcuts = () =>
             if (shortcuts.has(key)) {
                 shortcuts.get(key)?.handler(e);
             }
-        });
+        };
 
-        window.addEventListener('keydown', (e: KeyboardEvent) => {
+        keyDownHandler = (e: KeyboardEvent) => {
             const state = getState();
             const enabled = areKeyboardShortcutsEnabled(state);
 
@@ -137,5 +161,25 @@ export const initKeyboardShortcuts = () =>
             } else if (key === 'ESCAPE') {
                 focusedElement?.blur();
             }
-        });
+        };
+
+        window.addEventListener('keyup', keyUpHandler);
+        window.addEventListener('keydown', keyDownHandler);
     };
+}
+
+/**
+ * Unregisters the global shortcuts and removes the global keyboard listeners.
+ *
+ * @returns {Function}
+ */
+export function disposeKeyboardShortcuts() {
+    return (dispatch: IStore['dispatch']) => {
+        // The components that are registering shortcut should take care of unregistering them.
+        unregisterGlobalKeyboardShortcuts(dispatch);
+
+        keyUpHandler && window.removeEventListener('keyup', keyUpHandler);
+        keyDownHandler && window.removeEventListener('keydown', keyDownHandler);
+        keyDownHandler = keyUpHandler = undefined;
+    };
+}
