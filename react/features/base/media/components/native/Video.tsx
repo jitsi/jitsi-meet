@@ -8,7 +8,7 @@ import { IReduxState}  from '../../../../app/types';
 import { translate } from '../../../i18n/functions';
 import Pressable from '../../../react/components/native/Pressable';
 
-import logger from '../../logger';
+// import logger from '../../logger';
 
 import VideoTransform from './VideoTransform';
 import styles from './styles';
@@ -101,7 +101,6 @@ class Video extends Component<IProps> {
         const { _enableIosPIP, onPress, stream, zoomEnabled } = this.props;
 
         const iosPIPOptions = {
-            startAutomatically: true,
             fallbackView: (<FallbackView />),
             preferredSize: {
                 width: 400,
@@ -121,51 +120,48 @@ class Video extends Component<IProps> {
             // stopIOSPIP(this._ref?.current);
         }
 
-        if (stream) {
-            // RTCView
-            const style = styles.video;
-            const objectFit
-                = zoomEnabled
-                    ? 'contain'
-                    : 'cover';
-            const rtcView
-                = (
-                    <RTCPIPView
-                        iosPIP = { iosPIPOptions }
-                        mirror = { this.props.mirror }
-                        objectFit = { objectFit }
-                        ref = { this._ref }
-                        streamURL = { stream.toURL() }
-                        style = { style }
-                        zOrder = { this.props.zOrder } />
-                );
+        // RTCView
+        const style = styles.video;
+        const objectFit
+            = zoomEnabled
+            ? 'contain'
+            : 'cover';
+        const rtcView
+            = (
+            <RTCPIPView
+                iosPIP = { iosPIPOptions }
+                mirror = { this.props.mirror }
+                objectFit = { objectFit }
+                streamURL = { stream && stream.toURL() }
+                style = { style }
+                zOrder = { this.props.zOrder } />
+        );
 
-            // VideoTransform implements "pinch to zoom". As part of "pinch to
-            // zoom", it implements onPress, of course.
-            if (zoomEnabled) {
-                return (
-                    <VideoTransform
-                        enabled = { zoomEnabled }
-                        onPress = { onPress }
-                        streamId = { stream.id }
-                        style = { style }>
-                        { rtcView }
-                    </VideoTransform>
-                );
-            }
-
-            // XXX Unfortunately, VideoTransform implements a custom press
-            // detection which has been observed to be very picky about the
-            // precision of the press unlike the builtin/default/standard press
-            // detection which is forgiving to imperceptible movements while
-            // pressing. It's not acceptable to be so picky, especially when
-            // "pinch to zoom" is not enabled.
+        // VideoTransform implements "pinch to zoom". As part of "pinch to
+        // zoom", it implements onPress, of course.
+        if (zoomEnabled) {
             return (
-                <Pressable onPress = { onPress }>
+                <VideoTransform
+                    enabled = { zoomEnabled }
+                    onPress = { onPress }
+                    streamId = { stream && stream.id }
+                    style = { style }>
                     { rtcView }
-                </Pressable>
+                </VideoTransform>
             );
         }
+
+        // XXX Unfortunately, VideoTransform implements a custom press
+        // detection which has been observed to be very picky about the
+        // precision of the press unlike the builtin/default/standard press
+        // detection which is forgiving to imperceptible movements while
+        // pressing. It's not acceptable to be so picky, especially when
+        // "pinch to zoom" is not enabled.
+        return (
+            <Pressable onPress = { onPress }>
+                { rtcView }
+            </Pressable>
+        );
 
         // RTCView has peculiarities which may or may not be platform specific.
         // For example, it doesn't accept an empty streamURL. If the execution
