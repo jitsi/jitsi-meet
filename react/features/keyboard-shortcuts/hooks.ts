@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import { isMobileBrowser } from '../base/environment/utils';
 
-import KeyboardShortcutsButton from './components/web/KeyboardShortcutsButton';
+import KeyboardShortcutsButton from './components/KeyboardShortcutsButton';
 import { areKeyboardShortcutsEnabled } from './functions';
 
 const shortcuts = {
