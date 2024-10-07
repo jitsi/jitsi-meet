@@ -1,15 +1,15 @@
 import { connect } from 'react-redux';
 
-import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
-import { IconShortcuts } from '../../../base/icons/svg';
-import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { openSettingsDialog } from '../../../settings/actions';
-import { SETTINGS_TABS } from '../../../settings/constants';
-import { areKeyboardShortcutsEnabled } from '../../functions';
+import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
+import { IReduxState } from '../../app/types';
+import { isMobileBrowser } from '../../base/environment/utils';
+import { translate } from '../../base/i18n/functions';
+import { IconShortcuts } from '../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+import { openSettingsDialog } from '../../settings/actions.web';
+import { SETTINGS_TABS } from '../../settings/constants';
+import { areKeyboardShortcutsEnabled } from '../functions';
 
 /**
  * Implementation of a button for opening keyboard shortcuts dialog.

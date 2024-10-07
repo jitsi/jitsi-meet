@@ -17,7 +17,7 @@ import { getNormalizedDisplayName } from '../base/participants/functions';
 import { updateSettings } from '../base/settings/actions';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions.web';
+import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 

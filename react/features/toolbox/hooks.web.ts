@@ -20,8 +20,8 @@ import { useFeedbackButton } from '../feedback/hooks.web';
 import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
-import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions.web';
-import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks.web';
+import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
+import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
     close as closeParticipantsPane,
