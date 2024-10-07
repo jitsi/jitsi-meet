@@ -93,7 +93,6 @@ export interface IReduxState {
     'features/analytics': IAnalyticsState;
     'features/authentication': IAuthenticationState;
     'features/av-moderation': IAVModerationState;
-    'features/background': IBackgroundState;
     'features/base/app': IAppState;
     'features/base/audio-only': IAudioOnlyState;
     'features/base/color-scheme': any;
@@ -141,6 +140,7 @@ export interface IReduxState {
     'features/large-video': ILargeVideoState;
     'features/lobby': ILobbyState;
     'features/mobile/audio-mode': IMobileAudioModeState;
+    'features/mobile/background': IBackgroundState;
     'features/mobile/external-api': IMobileExternalApiState;
     'features/mobile/watchos': IMobileWatchOSState;
     'features/no-audio-signal': INoAudioSignalState;

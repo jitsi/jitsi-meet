@@ -16,7 +16,7 @@ const DEFAULT_STATE = {
     appState: 'active'
 };
 
-ReducerRegistry.register<IBackgroundState>('features/background', (state = DEFAULT_STATE, action): IBackgroundState => {
+ReducerRegistry.register<IBackgroundState>('features/mobile/background', (state = DEFAULT_STATE, action): IBackgroundState => {
     switch (action.type) {
 
     case _SET_APP_STATE_SUBSCRIPTION:

@@ -60,7 +60,7 @@ StateListenerRegistry.register(
  */
 function _onImmersiveChange({ getState }: IStore) {
     const state = getState();
-    const { appState } = state['features/background'];
+    const { appState } = state['features/mobile/background'];
 
     if (appState === 'active') {
         _setFullScreen(shouldUseFullScreen(state));

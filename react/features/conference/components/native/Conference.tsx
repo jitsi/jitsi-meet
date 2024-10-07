@@ -559,7 +559,7 @@ class Conference extends AbstractConference<IProps, State> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { appState } = state['features/background'];
+    const { appState } = state['features/mobile/background'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];

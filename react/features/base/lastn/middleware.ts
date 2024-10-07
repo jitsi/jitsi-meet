@@ -33,7 +33,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     }
 
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { appState } = state['features/background'] || {};
+    const { appState } = state['features/mobile/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
     const { carMode } = state['features/video-layout'];

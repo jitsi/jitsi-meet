@@ -62,7 +62,7 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAppStateListener({ dispatch, getState }: IStore, listener: any) {
-    const { subscription } = getState()['features/background'];
+    const { subscription } = getState()['features/mobile/background'];
 
     subscription?.remove();
 
