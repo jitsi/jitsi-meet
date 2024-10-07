@@ -13,9 +13,10 @@ export interface IBackgroundState {
  * The default/initial redux state of the feature background.
  */
 const DEFAULT_STATE = {
-    appState: 'active'
+    appState: ''
 };
 
+// eslint-disable-next-line max-len
 ReducerRegistry.register<IBackgroundState>('features/mobile/background', (state = DEFAULT_STATE, action): IBackgroundState => {
     switch (action.type) {
 
