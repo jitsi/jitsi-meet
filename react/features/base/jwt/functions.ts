@@ -2,6 +2,7 @@
 import jwtDecode from 'jwt-decode';
 
 import { IReduxState } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipantFeatures } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
@@ -50,7 +51,12 @@ export function getJwtName(state: IReduxState) {
  */
 export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken: boolean, ifNotInFeatures: boolean) {
     const { jwt } = state['features/base/jwt'];
-    const { features } = getLocalParticipant(state) || {};
+    let { features } = getLocalParticipant(state) || {};
+
+    if (typeof features === 'undefined' && isVpaasMeeting(state)) {
+        // for vpaas the backend is always initialized with empty features if those are missing
+        features = {};
+    }
 
     return isJwtFeatureEnabledStateless({
         jwt,
