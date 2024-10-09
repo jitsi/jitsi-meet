@@ -13,7 +13,7 @@ import {
     setHangupMenuVisible,
     setOverflowMenuVisible,
     setToolbarHovered,
-    showToolbox
+    setToolboxVisible
 } from '../../actions.web';
 import {
     getJwtDisabledButtons,
@@ -198,15 +198,22 @@ export default function Toolbox({
     }, [ dispatch ]);
 
     /**
-     * Toggle the toolbar visibility when tabbing into it.
+     * Handle focus on the toolbar.
      *
      * @returns {void}
      */
-    const onTabIn = useCallback(() => {
-        if (!toolbarVisible) {
-            dispatch(showToolbox());
-        }
-    }, [ toolbarVisible, dispatch ]);
+    const handleFocus = useCallback(() => {
+        dispatch(setToolboxVisible(true));
+    }, [ dispatch ]);
+
+    /**
+     * Handle blur the toolbar..
+     *
+     * @returns {void}
+     */
+    const handleBlur = useCallback(() => {
+        dispatch(setToolboxVisible(false));
+    }, [ dispatch ]);
 
     if (iAmRecorder || iAmSipGateway) {
         return null;
@@ -243,7 +250,8 @@ export default function Toolbox({
             <div className = { containerClassName }>
                 <div
                     className = 'toolbox-content-wrapper'
-                    onFocus = { onTabIn }
+                    onBlur = { handleBlur }
+                    onFocus = { handleFocus }
                     { ...(isMobile ? {} : {
                         onMouseOut,
                         onMouseOver
