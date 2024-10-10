@@ -232,7 +232,9 @@ module:hook('muc-occupant-left', function (event)
     if prosody.hosts[occupant_domain] and not is_admin(occupant.bare_jid) then
         local focus_occupant = get_focus_occupant(room);
         if not focus_occupant then
-            module:log('info', 'No focus found for %s', room.jid);
+            if not room.destroying then
+                module:log('warn', 'No focus found for %s', room.jid);
+            end
             return;
         end
         -- Let's forward unavailable presence to the special jicofo
