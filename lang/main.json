@@ -1255,7 +1255,7 @@
             "muteGUMPending": "Connecting your microphone",
             "noiseSuppression": "Noise suppression",
             "openChat": "Open chat",
-            "participants": "Open participants pane",
+            "participants": "Open participants pane. {{participantsCount}} participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
