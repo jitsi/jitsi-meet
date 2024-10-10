@@ -105,7 +105,7 @@ export function extractGifURL(message = '') {
 export function getGifUrl(gif?: { data?: { embed_url: string; }; embed_url?: string; }) {
     const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
-    const id = embedUrl.substr(idx + 1);
+    const id = embedUrl.slice(idx + 1);
 
     return `https://i.giphy.com/media/${id}/giphy.gif`;
 }
