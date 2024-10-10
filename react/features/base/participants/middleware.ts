@@ -8,9 +8,11 @@ import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { getBreakoutRooms } from '../../breakout-rooms/functions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
-import { showNotification } from '../../notifications/actions';
+import { hideNotification, showNotification } from '../../notifications/actions';
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
+    LOWER_RAISED_HANDS_ID,
+    NOTIFICATION_TIMEOUT,
     NOTIFICATION_TIMEOUT_TYPE,
     RAISE_HAND_NOTIFICATION_ID
 } from '../../notifications/constants';
@@ -24,7 +26,10 @@ import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTyp
 import { forEachConference, getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
-import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
+import {
+    getDisableRemoveRaisedHandOnFocus,
+    getDisableRemoveRaisedHandOnFocusNotification
+} from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
@@ -117,7 +122,23 @@ MiddlewareRegistry.register(store => next => action => {
         if (isLocal && dominantSpeaker?.id !== id
                 && hasRaisedHand(participant)
                 && !getDisableRemoveRaisedHandOnFocus(state)) {
-            store.dispatch(raiseHand(false));
+            if (getDisableRemoveRaisedHandOnFocusNotification(state)) {
+                store.dispatch(raiseHand(false));
+            } else {
+                const timeoutId = setTimeout(() => {
+                    store.dispatch(raiseHand(false));
+                }, NOTIFICATION_TIMEOUT.SHORT);
+
+                store.dispatch(showNotification({
+                    titleKey: 'notify.lowerRaisedHandsNotificationTitle',
+                    uid: LOWER_RAISED_HANDS_ID,
+                    customActionNameKey: [ 'notify.keepHandsRaised' ],
+                    customActionHandler: [ () => {
+                        clearTimeout(timeoutId);
+                        store.dispatch(hideNotification(LOWER_RAISED_HANDS_ID));
+                    } ]
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            }
         }
 
         break;
