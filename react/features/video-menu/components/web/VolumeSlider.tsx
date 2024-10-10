@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
@@ -56,7 +56,9 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             width: '100%',
             top: '50%',
-            transform: 'translate(0, -50%)'
+            transform: 'translate(0, -50%)',
+            outline: 'none',
+            borderRadius: '8px'
         }
     };
 });
@@ -65,21 +67,36 @@ const _onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 };
 
-const VolumeSlider = ({
-    initialValue,
-    onChange
-}: IProps) => {
-    const { classes, cx } = useStyles();
+const VolumeSlider = ({ initialValue, onChange }: IProps) => {
+    const { classes, cx, theme } = useStyles();
     const { t } = useTranslation();
-
+    const sliderRef = useRef< HTMLInputElement | null >(null);
     const [ volumeLevel, setVolumeLevel ] = useState((initialValue || 0) * VOLUME_SLIDER_SCALE);
+
+    const updateSliderBackground = (value: number) => {
+        const percentage = (value / VOLUME_SLIDER_SCALE) * 100;
+        const gradient = `linear-gradient(
+            to right, 
+            ${theme.palette.primary.main} ${percentage}%, 
+            ${theme.palette.grey[300]} ${percentage}%
+        )`;
+
+        if (sliderRef.current) {
+            sliderRef.current.style.background = gradient;
+        }
+    };
 
     const _onVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const newVolumeLevel = Number(event.currentTarget.value);
 
         onChange(newVolumeLevel / VOLUME_SLIDER_SCALE);
         setVolumeLevel(newVolumeLevel);
+        updateSliderBackground(newVolumeLevel);
     }, [ onChange ]);
+
+    useEffect(() => {
+        updateSliderBackground(volumeLevel);
+    }, [ volumeLevel ]);
 
     return (
         <div
@@ -100,6 +117,7 @@ const VolumeSlider = ({
                     max = { VOLUME_SLIDER_SCALE }
                     min = { 0 }
                     onChange = { _onVolumeChange }
+                    ref = { sliderRef }
                     tabIndex = { 0 }
                     type = 'range'
                     value = { volumeLevel } />
