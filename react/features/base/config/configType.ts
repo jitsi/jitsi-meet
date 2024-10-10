@@ -171,6 +171,8 @@ export interface IConfig {
         matomoEndpoint?: string;
         matomoSiteID?: string;
         obfuscateRoomName?: boolean;
+        preCallTestEnabled?: boolean;
+        preCallTestICEUrl?: string;
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
