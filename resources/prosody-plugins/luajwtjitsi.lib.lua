@@ -226,7 +226,11 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
 
 
 	if body.exp and os.time() >= body.exp then
-		return nil, "Not acceptable by exp ("..tostring(os.time()-body.exp)..")"
+        local extra_msg = '';
+        if body.iat then
+            extra_msg = ", valid for:"..tostring(body.exp-body.iat).." sec";
+        end
+		return nil, "Not acceptable by exp ("..tostring(os.time()-body.exp).." sec since expired"..extra_msg..")"
 	end
 
 	if body.nbf and os.time() < body.nbf then
