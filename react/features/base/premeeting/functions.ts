@@ -1,4 +1,4 @@
-import { findIndex } from 'lodash';
+import { findIndex } from 'lodash-es';
 
 import { IReduxState } from '../../app/types';
 
@@ -253,9 +253,9 @@ export function getConnectionData(state: IReduxState) {
  * @returns {boolean}
  */
 export function isPreCallTestEnabled(state: IReduxState): boolean {
-    const { analytics } = state['features/base/config'];
+    const { prejoinConfig } = state['features/base/config'];
 
-    return analytics?.preCallTestEnabled ?? false;
+    return prejoinConfig?.preCallTestEnabled ?? false;
 }
 
 /**
@@ -265,7 +265,7 @@ export function isPreCallTestEnabled(state: IReduxState): boolean {
  * @returns {string | undefined}
  */
 export function getPreCallICEUrl(state: IReduxState): string | undefined {
-    const { analytics } = state['features/base/config'];
+    const { prejoinConfig } = state['features/base/config'];
 
-    return analytics?.preCallTestICEUrl;
+    return prejoinConfig?.preCallTestICEUrl;
 }

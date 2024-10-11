@@ -1,36 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState, IStore } from '../../../../app/types';
-import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
-import { IconArrowDown, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
+import { IconArrowDown, IconCloseCircle, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import Spinner from '../../../ui/components/web/Spinner';
 import { runPreCallTest } from '../../actions.web';
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
-
-interface IProps extends WithTranslation {
-
-    /**
-     * Run the pre-call test.
-     */
-    _runPreCallTest: Function;
-
-    /**
-     * List of strings with details about the connection.
-     */
-    connectionDetails?: string[];
-
-    /**
-     * The type of the connection. Can be: 'none', 'poor', 'nonOptimal' or 'good'.
-     */
-    connectionType?: string;
-}
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -74,6 +54,10 @@ const useStyles = makeStyles()(theme => {
 
             '& .con-status--good': {
                 background: '#31B76A'
+            },
+
+            '& .con-status--failed': {
+                background: '#E12D2D'
             },
 
             '& .con-status--poor': {
@@ -131,8 +115,8 @@ const CONNECTION_TYPE_MAP: {
     };
 } = {
     [CONNECTION_TYPE.FAILED]: {
-        connectionClass: 'con-status--poor',
-        icon: IconWifi1Bar,
+        connectionClass: 'con-status--failed',
+        icon: IconCloseCircle,
         connectionText: 'prejoin.connection.failed'
     },
     [CONNECTION_TYPE.POOR]: {
@@ -158,13 +142,15 @@ const CONNECTION_TYPE_MAP: {
  * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-const ConnectionStatus = React.memo(({ connectionDetails, t, connectionType, _runPreCallTest }: IProps) => {
+const ConnectionStatus = () => {
     const { classes } = useStyles();
-
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const { connectionType, connectionDetails } = useSelector(getConnectionData);
     const [ showDetails, toggleDetails ] = useState(false);
 
     useEffect(() => {
-        _runPreCallTest();
+        dispatch(runPreCallTest());
     }, []);
 
     const arrowClassName = showDetails
@@ -203,7 +189,6 @@ const ConnectionStatus = React.memo(({ connectionDetails, t, connectionType, _ru
                             color = { 'green' }
                             size = 'medium' />
                     </div>
-                    <span>&nbsp;&nbsp;</span>
                     <span
                         className = 'con-status-text'
                         id = 'connection-status-description'>{t('prejoin.connection.running')}</span>
@@ -247,43 +232,6 @@ const ConnectionStatus = React.memo(({ connectionDetails, t, connectionType, _ru
                 {detailsText}</div>
         </div>
     );
-}, (prevProps, nextProps) => prevProps.connectionType === nextProps.connectionType);
+};
 
-/**
- * Maps dispatching of some action to React component props.
- *
- * @param {Function} dispatch - Redux action dispatcher.
- * @private
- * @returns {{
-*     runPreCallTest: Function
-* }}
-*/
-function mapDispatchToProps(dispatch: IStore['dispatch']) {
-    return {
-        /**
-        * Run the pre-call test.
-        *
-        * @returns {void}
-        */
-        _runPreCallTest() {
-            dispatch(runPreCallTest());
-        }
-    };
-}
-
-/**
- * Maps (parts of) the redux state to the React {@code Component} props.
- *
- * @param {Object} state - The redux state.
- * @returns {Object}
- */
-function mapStateToProps(state: IReduxState) {
-    const { connectionType, connectionDetails } = getConnectionData(state);
-
-    return {
-        connectionDetails,
-        connectionType
-    };
-}
-
-export default translate(connect(mapStateToProps, mapDispatchToProps)(ConnectionStatus));
+export default ConnectionStatus;

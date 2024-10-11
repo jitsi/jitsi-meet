@@ -171,8 +171,6 @@ export interface IConfig {
         matomoEndpoint?: string;
         matomoSiteID?: string;
         obfuscateRoomName?: boolean;
-        preCallTestEnabled?: boolean;
-        preCallTestICEUrl?: string;
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
@@ -487,6 +485,8 @@ export interface IConfig {
         enabled?: boolean;
         hideDisplayName?: boolean;
         hideExtraJoinButtons?: Array<string>;
+        preCallTestEnabled?: boolean;
+        preCallTestICEUrl?: string;
     };
     prejoinPageEnabled?: boolean;
     raisedHands?: {
