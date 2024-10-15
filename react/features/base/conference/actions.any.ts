@@ -1086,6 +1086,7 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             })
             .then(() => {
                 dispatch(conferenceWillInit());
+                logger.info(`Dispatching connect from redirect (visitor = ${Boolean(vnode)}).`);
 
                 return dispatch(connect());
             })
