@@ -615,9 +615,6 @@ export default {
             if (isPrejoinPageVisible(getState())) {
                 dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
                 dispatch(setInitialGUMPromise());
-
-                // Note: Not sure if initPrejoin needs to be async. But let's wait for it just to be sure the
-                // tracks are added.
                 initPrejoin(tracks, errors, dispatch);
             } else {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
@@ -631,6 +628,7 @@ export default {
         })));
 
         if (!isPrejoinPageVisible(getState())) {
+            logger.info('Dispatching connect from init since prejoin is not visible.');
             dispatch(connect());
         }
     },
