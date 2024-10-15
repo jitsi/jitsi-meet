@@ -15,6 +15,7 @@ import {
     UPDATE_VISITORS_IN_QUEUE_COUNT,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
+import logger from './logger';
 import { IPromotionRequest } from './types';
 
 /**
@@ -95,6 +96,7 @@ export function demoteRequest(id: string) {
             dispatch(disconnect(true))
                 .then(() => {
                     dispatch(setPreferVisitor(true));
+                    logger.info('Dispatching connect to demote the local participant.');
 
                     return dispatch(connect());
                 });

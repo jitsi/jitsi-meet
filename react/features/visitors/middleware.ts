@@ -118,6 +118,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                                 dispatch(setVisitorDemoteActor(participantById.name));
                             }
 
+                            logger.info('Dispatching connect on demote request visitor message for local participant.');
+
                             return dispatch(connect());
                         });
                 }
@@ -198,6 +200,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                                 }
 
                                 setTimeout(() => {
+                                    logger.info('Dispatching joinConference on conference live event.');
                                     dispatch(joinConference());
                                     dispatch(setInVisitorsQueue(false));
                                 }, Math.random() * delay);
