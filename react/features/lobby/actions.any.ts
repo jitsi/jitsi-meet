@@ -206,6 +206,8 @@ export function startKnocking() {
         const state = getState();
         const { membersOnly } = state['features/base/conference'];
 
+        logger.info(`Lobby starting knocking (membersOnly = ${membersOnly})`);
+
         if (!membersOnly) {
 
             // no membersOnly, this means we got lobby screen shown as someone
