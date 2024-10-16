@@ -34,7 +34,7 @@ interface IProps extends AbstractButtonProps {
     /**
      * Participants count.
      */
-    _particioantsCount: number;
+    _participantsCount: number;
 }
 
 /**
@@ -83,14 +83,14 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @returns {string}
      */
     _getAccessibilityLabel() {
-        const { t, _particioantsCount, _isOpen } = this.props;
+        const { t, _participantsCount, _isOpen } = this.props;
 
         if (_isOpen) {
             return t('toolbar.accessibilityLabel.closeParticipantsPane');
         }
 
         return t('toolbar.accessibilityLabel.participants', {
-            participantsCount: _particioantsCount
+            participantsCount: _participantsCount
         });
 
     }
@@ -131,7 +131,7 @@ function mapStateToProps(state: IReduxState) {
     return {
         _isOpen: isOpen,
         _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
-        _particioantsCount: getParticipantCount(state)
+        _participantsCount: getParticipantCount(state)
     };
 }
 
