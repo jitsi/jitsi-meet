@@ -13,6 +13,7 @@ import { setColorAlpha } from '../../base/util/helpers';
 import StageParticipantNameLabel from '../../display-name/components/web/StageParticipantNameLabel';
 import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
 import SharedVideo from '../../shared-video/components/web/SharedVideo';
 import Captions from '../../subtitles/components/web/Captions';
 import { setTileView } from '../../video-layout/actions.web';
@@ -110,6 +111,11 @@ interface IProps {
     _visibleFilmstrip: boolean;
 
     /**
+     * Whether or not the watermarks are visible.
+     */
+    _watermarksEnabled: boolean;
+
+    /**
      * Whether or not the whiteboard is ready to be used.
      */
     _whiteboardEnabled: boolean;
@@ -193,6 +199,7 @@ class LargeVideo extends Component<IProps> {
             _isChatOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
+            _watermarksEnabled,
             _whiteboardEnabled
         } = this.props;
         const style = this._getCustomStyles();
@@ -208,7 +215,7 @@ class LargeVideo extends Component<IProps> {
                 {_whiteboardEnabled && <Whiteboard />}
                 <div id = 'etherpad' />
 
-                <Watermarks />
+                { _watermarksEnabled ? <Watermarks /> : <></> }
 
                 <div
                     id = 'dominantSpeaker'
@@ -378,6 +385,7 @@ function _mapStateToProps(state: IReduxState) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
+        _watermarksEnabled: !isPrejoinPageVisible(state),
         _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
