@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight } from 'react-native';
+import { TouchableHighlight, ViewStyle } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import styles from '../../../react/components/native/styles';
@@ -58,7 +58,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
             style = { [
                 iconButtonContainerStyles,
                 style
-            ] }
+            ] as ViewStyle }
             underlayColor = { underlayColor }>
             <Icon
                 color = { color }
