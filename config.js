@@ -758,6 +758,11 @@ var config = {
     //     hideDisplayName: false,
     //     // List of buttons to hide from the extra join options dropdown.
     //     hideExtraJoinButtons: ['no-audio', 'by-phone'],
+    //     // Configuration for pre-call test
+    //     // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
+    //     // ICE server credentials need to be provided over the preCallTestICEUrl
+    //     preCallTestEnabled: false,
+    //     preCallTestICEUrl: ''
     // },
 
     // When 'true', the user cannot edit the display name.
