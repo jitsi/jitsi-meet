@@ -1,15 +1,16 @@
 import { HumanHelper, IFaceLandmarksHelper } from './FaceLandmarksHelper';
-import { DETECT_FACE, INIT_WORKER } from './constants';
+import { DETECT, INIT_WORKER } from './constants';
 
 let helper: IFaceLandmarksHelper;
 
 onmessage = async function({ data }: MessageEvent<any>) {
     switch (data.type) {
-    case DETECT_FACE: {
+    case DETECT: {
         if (!helper || helper.getDetectionInProgress()) {
             return;
         }
 
+        // detections include both face detections and hand detections
         const detections = await helper.detect(data);
 
         if (detections) {
