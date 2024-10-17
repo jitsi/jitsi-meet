@@ -3,7 +3,7 @@ import { NativeModules } from 'react-native';
 import { IStore } from '../../app/types';
 import Platform from '../../base/react/Platform.native';
 
-import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
+import { ENABLE_IOS_PIP, ENTER_PICTURE_IN_PICTURE } from './actionTypes';
 import { isPipEnabled } from './functions';
 import logger from './logger';
 
@@ -24,8 +24,13 @@ export function enterPictureInPicture() {
         // fine to enter PiP mode.
         if (isPipEnabled(getState())) {
             const { PictureInPicture } = NativeModules;
+            const { enableIosPIP } = getState()['features/mobile/picture-in-picture'];
             const p
-                = Platform.OS === 'android'
+                = Platform.OS === 'ios'
+                ? dispatch({
+                type: ENABLE_IOS_PIP,
+                enableIosPIP: !enableIosPIP })
+                : Platform.OS === 'android'
                     ? PictureInPicture
                         ? PictureInPicture.enterPictureInPicture()
                         : Promise.reject(
