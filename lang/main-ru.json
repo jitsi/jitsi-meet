@@ -860,6 +860,8 @@
     "pinnedParticipant": "Участник закреплен",
     "polls": {
         "answer": {
+            "edit": "Редактировать",
+            "send": "Отправить",
             "skip": "Пропустить",
             "submit": "Подтвердить"
         },
@@ -873,6 +875,7 @@
             "pollQuestion": "Вопрос опроса",
             "questionPlaceholder": "Задайте вопрос",
             "removeOption": "Удалить вариант",
+            "save": "Сохранить",
             "send": "Отправлять"
         },
         "errors": {
