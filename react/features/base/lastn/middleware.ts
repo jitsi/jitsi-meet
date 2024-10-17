@@ -33,7 +33,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     }
 
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { appState } = state['features/background'] || {};
+    const { appState } = state['features/mobile/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
     const { carMode } = state['features/video-layout'];
@@ -44,7 +44,9 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 3. -1 as the default value.
     let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
-    if (appState === 'background' || carMode) {
+    // Because this is shared, on web appState is always undefined,
+    // meaning that it is never active
+    if (navigator.product === 'ReactNative' && (appState !== 'active' || carMode)) {
         lastNSelected = 0;
     } else if (audioOnly) {
         const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
