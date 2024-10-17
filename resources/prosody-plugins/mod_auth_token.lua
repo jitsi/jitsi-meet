@@ -48,7 +48,7 @@ function init_session(event)
         -- After validating auth_token will be cleaned in case of error and few
         -- other fields will be extracted from the token and set in the session
 
-        if query and params.token then
+        if params and params.token then
             token = params.token;
         end
     end
