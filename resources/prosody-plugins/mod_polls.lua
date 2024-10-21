@@ -113,6 +113,11 @@ module:hook("message/bare", function(event)
             return
         end
 
+        if room.polls.by_id[data.pollId] ~= nil then
+            module:log("error", "Poll already exists: %s", data.pollId);
+            return;
+        end
+
         local answers = {}
         local compact_answers = {}
         for i, name in ipairs(data.answers) do
