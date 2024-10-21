@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
 
+import { UPDATE_CONFERENCE_METADATA } from '../conference/actionTypes';
 import { MEDIA_TYPE } from '../media/constants';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -499,6 +500,33 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             raisedHandsQueue: action.queue
         };
     }
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+
+        if (metadata?.visitors?.promoted) {
+            let participantProcessed = false;
+
+            Object.entries(metadata?.visitors?.promoted).forEach(([ key, _ ]) => {
+
+                const p = state.remote.get(key);
+
+                if (p && !p.isPromoted) {
+                    const newParticipant = _participant(p, action);
+
+                    newParticipant.isPromoted = true;
+                    state.remote.set(key, newParticipant);
+                    participantProcessed = true;
+                }
+            });
+
+            if (participantProcessed) {
+                return { ...state };
+            }
+        }
+
+        break;
+    }
     case OVERWRITE_PARTICIPANT_NAME: {
         const { id, name } = action;
 
@@ -545,7 +573,8 @@ function _participant(state: IParticipant | ILocalParticipant = { id: '' },
         action: AnyAction): IParticipant | ILocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
-    case PARTICIPANT_UPDATED: {
+    case PARTICIPANT_UPDATED:
+    case UPDATE_CONFERENCE_METADATA: {
         const { participant } = action; // eslint-disable-line no-shadow
 
         const newState = { ...state };
@@ -608,6 +637,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         id || (id = LOCAL_PARTICIPANT_DEFAULT_ID);
     }
 
+    const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
+
     return {
         avatarURL,
         botType,
@@ -616,6 +647,7 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         email,
         fakeParticipant,
         id,
+        isPromoted,
         isReplacing,
         loadableAvatarUrl,
         local: local || false,
