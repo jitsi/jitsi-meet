@@ -195,8 +195,6 @@ const PreMeetingScreen = ({
         backgroundSize: 'cover'
     } : {};
 
-    console.log('Rendering premeeting....');
-
     return (
         <div className = { clsx('premeeting-screen', classes.container, className) }>
             <div style = { style }>
