@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
 
+import { UPDATE_CONFERENCE_METADATA } from '../conference/actionTypes';
 import { MEDIA_TYPE } from '../media/constants';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -499,6 +500,34 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             raisedHandsQueue: action.queue
         };
     }
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+
+        if (metadata?.visitors?.promoted) {
+            let participantProcessed = false;
+
+            Object.entries(metadata?.visitors?.promoted).forEach(([ key, _ ]) => {
+
+                const p = state.remote.get(key);
+
+                if (p && !p.isPromoted) {
+
+                    state.remote.set(key, {
+                        ...p,
+                        isPromoted: true
+                    });
+                    participantProcessed = true;
+                }
+            });
+
+            if (participantProcessed) {
+                return { ...state };
+            }
+        }
+
+        break;
+    }
     case OVERWRITE_PARTICIPANT_NAME: {
         const { id, name } = action;
 
@@ -585,6 +614,7 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         dominantSpeaker,
         email,
         fakeParticipant,
+        isPromoted,
         isReplacing,
         loadableAvatarUrl,
         local,
@@ -616,6 +646,7 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         email,
         fakeParticipant,
         id,
+        isPromoted,
         isReplacing,
         loadableAvatarUrl,
         local: local || false,
