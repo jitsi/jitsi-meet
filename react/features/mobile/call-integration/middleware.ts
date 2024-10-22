@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { createTrackMutedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
+import { appNavigate } from '../../app/actions.native';
 import { IReduxState, IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
@@ -30,7 +30,7 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from '../../base/tracks/actionTypes';
-import { isLocalTrackMuted } from '../../base/tracks/functions.any';
+import { isLocalTrackMuted } from '../../base/tracks/functions.native';
 
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
@@ -158,6 +158,7 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
 
         if (callUUID) {
             delete action.conference.callUUID;
+
             CallIntegration.reportCallFailed(callUUID);
         }
     }
@@ -234,6 +235,7 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
 
     if (callUUID) {
         delete action.conference.callUUID;
+
         CallIntegration.endCall(callUUID);
     }
 
@@ -272,7 +274,7 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
         return result;
     }
 
-    // When assigning the call UUID, do so in upper case, since iOS will return
+    // When assigning the callUUID, do so in upper case, since iOS will return
     // it upper-cased.
     conference.callUUID = (callUUID || uuidv4()).toUpperCase();
 
@@ -300,6 +302,7 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
                 // We're not tracking the call anymore - it doesn't exist on
                 // the native side.
                 delete conference.callUUID;
+
                 dispatch(appNavigate(undefined));
                 Alert.alert(
                     'Call aborted',
@@ -362,11 +365,12 @@ function _onPerformEndCallAction({ callUUID }: { callUUID: string; }) {
     const { dispatch, getState } = this; // eslint-disable-line @typescript-eslint/no-invalid-this
     const conference = getCurrentConference(getState);
 
-    if (conference && conference.callUUID === callUUID) {
+    if (conference?.callUUID === callUUID) {
         // We arrive here when a call is ended by the system, for example, when
         // another incoming call is received and the user selects "End &
         // Accept".
         delete conference.callUUID;
+
         dispatch(appNavigate(undefined));
     }
 }
@@ -383,10 +387,12 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
     const { dispatch, getState } = this; // eslint-disable-line @typescript-eslint/no-invalid-this
     const conference = getCurrentConference(getState);
 
-    if (conference && conference.callUUID === callUUID) {
+    if (conference?.callUUID === callUUID) {
         muted = Boolean(muted); // eslint-disable-line no-param-reassign
+
         sendAnalytics(
             createTrackMutedEvent('audio', 'call-integration', muted));
+
         dispatch(setAudioMuted(muted, /* ensureTrack */ true));
     }
 }

@@ -5,6 +5,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
 import { _setAppStateSubscription, appStateChanged } from './actions';
+import logger from './logger';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application
@@ -45,6 +46,8 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
     dispatch(appStateChanged(appState));
+
+    logger.debug(`appState changed to: ${appState}`);
 }
 
 /**
@@ -59,7 +62,7 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAppStateListener({ dispatch, getState }: IStore, listener: any) {
-    const { subscription } = getState()['features/background'];
+    const { subscription } = getState()['features/mobile/background'];
 
     subscription?.remove();
 
