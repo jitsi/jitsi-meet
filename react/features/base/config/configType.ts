@@ -484,6 +484,8 @@ export interface IConfig {
         enabled?: boolean;
         hideDisplayName?: boolean;
         hideExtraJoinButtons?: Array<string>;
+        preCallTestEnabled?: boolean;
+        preCallTestICEUrl?: string;
     };
     prejoinPageEnabled?: boolean;
     raisedHands?: {

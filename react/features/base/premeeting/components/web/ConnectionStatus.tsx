@@ -1,28 +1,16 @@
-import React, { useCallback, useState } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
-import { IconArrowDown, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
+import { IconArrowDown, IconCloseCircle, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
+import Spinner from '../../../ui/components/web/Spinner';
+import { runPreCallTest } from '../../actions.web';
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
-
-interface IProps extends WithTranslation {
-
-    /**
-     * List of strings with details about the connection.
-     */
-    connectionDetails?: string[];
-
-    /**
-     * The type of the connection. Can be: 'none', 'poor', 'nonOptimal' or 'good'.
-     */
-    connectionType?: string;
-}
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -66,6 +54,10 @@ const useStyles = makeStyles()(theme => {
 
             '& .con-status--good': {
                 background: '#31B76A'
+            },
+
+            '& .con-status--failed': {
+                background: '#E12D2D'
             },
 
             '& .con-status--poor': {
@@ -122,6 +114,11 @@ const CONNECTION_TYPE_MAP: {
         icon: Function;
     };
 } = {
+    [CONNECTION_TYPE.FAILED]: {
+        connectionClass: 'con-status--failed',
+        icon: IconCloseCircle,
+        connectionText: 'prejoin.connection.failed'
+    },
     [CONNECTION_TYPE.POOR]: {
         connectionClass: 'con-status--poor',
         icon: IconWifi1Bar,
@@ -145,10 +142,17 @@ const CONNECTION_TYPE_MAP: {
  * @param {IProps} props - The props of the component.
  * @returns {ReactElement}
  */
-function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
+const ConnectionStatus = () => {
     const { classes } = useStyles();
-
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const { connectionType, connectionDetails } = useSelector(getConnectionData);
     const [ showDetails, toggleDetails ] = useState(false);
+
+    useEffect(() => {
+        dispatch(runPreCallTest());
+    }, []);
+
     const arrowClassName = showDetails
         ? 'con-status-arrow con-status-arrow--up'
         : 'con-status-arrow';
@@ -171,6 +175,26 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
 
     if (connectionType === CONNECTION_TYPE.NONE) {
         return null;
+    }
+
+    if (connectionType === CONNECTION_TYPE.RUNNING) {
+        return (
+            <div className = { classes.connectionStatus }>
+                <div
+                    aria-level = { 1 }
+                    className = 'con-status-header'
+                    role = 'heading'>
+                    <div className = 'con-status-circle'>
+                        <Spinner
+                            color = { 'green' }
+                            size = 'medium' />
+                    </div>
+                    <span
+                        className = 'con-status-text'
+                        id = 'connection-status-description'>{t('prejoin.connection.running')}</span>
+                </div>
+            </div>
+        );
     }
 
     const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType ?? ''];
@@ -208,21 +232,6 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: IProps) {
                 {detailsText}</div>
         </div>
     );
-}
+};
 
-/**
- * Maps (parts of) the redux state to the React {@code Component} props.
- *
- * @param {Object} state - The redux state.
- * @returns {Object}
- */
-function mapStateToProps() {
-    const { connectionDetails, connectionType } = getConnectionData();
-
-    return {
-        connectionDetails,
-        connectionType
-    };
-}
-
-export default translate(connect(mapStateToProps)(ConnectionStatus));
+export default ConnectionStatus;
