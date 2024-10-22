@@ -6,6 +6,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
     SET_REQUESTING_SUBTITLES,
@@ -78,6 +79,15 @@ MiddlewareRegistry.register(store => next => action => {
         const toggledValue = !state._requestingSubtitles;
 
         _requestingSubtitlesChange(store, toggledValue, state._language);
+        break;
+    }
+    case TRANSCRIBER_JOINED: {
+        const { transcription } = store.getState()['features/base/config'];
+
+        if (transcription?.autoCaptionOnTranscribe) {
+            store.dispatch(setRequestingSubtitles(true));
+        }
+
         break;
     }
     case SET_REQUESTING_SUBTITLES:
