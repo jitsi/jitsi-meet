@@ -36,7 +36,6 @@ import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
 import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 import { isCallIntegrationEnabled } from './functions';
-import logger from './logger';
 
 const { AudioMode } = NativeModules;
 const CallIntegration = CallKit || ConnectionService;
@@ -366,8 +365,6 @@ function _onPerformEndCallAction({ callUUID }: { callUUID: string; }) {
     const { dispatch, getState } = this; // eslint-disable-line @typescript-eslint/no-invalid-this
     const conference = getCurrentConference(getState);
 
-    logger.warn('Handling Callkit performEndCallAction event');
-
     if (conference?.callUUID === callUUID) {
         // We arrive here when a call is ended by the system, for example, when
         // another incoming call is received and the user selects "End &
@@ -389,8 +386,6 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
     // @ts-ignore
     const { dispatch, getState } = this; // eslint-disable-line @typescript-eslint/no-invalid-this
     const conference = getCurrentConference(getState);
-
-    logger.warn('Handling Callkit performSetMutedCallAction event');
 
     if (conference?.callUUID === callUUID) {
         muted = Boolean(muted); // eslint-disable-line no-param-reassign
