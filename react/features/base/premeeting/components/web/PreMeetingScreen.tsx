@@ -11,6 +11,7 @@ import { isButtonEnabled } from '../../../../toolbox/functions.web';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { isPreCallTestEnabled } from '../../functions';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
@@ -23,6 +24,11 @@ interface IProps {
      * The list of toolbar buttons to render.
      */
     _buttons: Array<string>;
+
+    /**
+     * Determine if pre call test is enabled.
+     */
+    _isPreCallTestEnabled?: boolean;
 
     /**
      * The branding background of the premeeting screen(lobby/prejoin).
@@ -169,6 +175,7 @@ const useStyles = makeStyles()(theme => {
 
 const PreMeetingScreen = ({
     _buttons,
+    _isPreCallTestEnabled,
     _premeetingBackground,
     _roomName,
     children,
@@ -188,11 +195,13 @@ const PreMeetingScreen = ({
         backgroundSize: 'cover'
     } : {};
 
+    console.log('Rendering premeeting....');
+
     return (
         <div className = { clsx('premeeting-screen', classes.container, className) }>
             <div style = { style }>
                 <div className = { classes.content }>
-                    <ConnectionStatus />
+                    {_isPreCallTestEnabled && <ConnectionStatus />}
 
                     <div className = { classes.contentControls }>
                         <h1 className = { classes.title }>
@@ -245,6 +254,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _buttons: hiddenPremeetingButtons
             ? premeetingButtons
             : premeetingButtons.filter(b => isButtonEnabled(b, toolbarButtons)),
+        _isPreCallTestEnabled: isPreCallTestEnabled(state),
         _premeetingBackground: premeetingBackground,
         _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : ''
     };

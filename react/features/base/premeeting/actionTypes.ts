@@ -1,3 +1,9 @@
+
+/**
+ * Action type to set the precall test data.
+ */
+export const SET_PRECALL_TEST_RESULTS = 'SET_PRECALL_TEST_RESULTS';
+
 /**
  * Type for setting the user's consent for unsafe room joining.
  *
