@@ -5,6 +5,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 
 import 'promise.allsettled/auto'; // Promise.allSettled.
+import 'promise.withresolvers/auto'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
