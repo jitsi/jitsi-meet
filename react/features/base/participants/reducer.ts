@@ -512,10 +512,10 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
                 const p = state.remote.get(key);
 
                 if (p && !p.isPromoted) {
-                    const newParticipant = _participant(p, action);
+                    const { participant } = action;
 
-                    newParticipant.isPromoted = true;
-                    state.remote.set(key, newParticipant);
+                    participant.isPromoted = true;
+                    state.remote.set(key, { ...participant });
                     participantProcessed = true;
                 }
             });
@@ -573,8 +573,7 @@ function _participant(state: IParticipant | ILocalParticipant = { id: '' },
         action: AnyAction): IParticipant | ILocalParticipant {
     switch (action.type) {
     case SET_LOADABLE_AVATAR_URL:
-    case PARTICIPANT_UPDATED:
-    case UPDATE_CONFERENCE_METADATA: {
+    case PARTICIPANT_UPDATED: {
         const { participant } = action; // eslint-disable-line no-shadow
 
         const newState = { ...state };
