@@ -922,9 +922,11 @@
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
+            "failed": "Connection test failed!",
             "good": "Your internet connection looks good!",
             "nonOptimal": "Your internet connection is not optimal",
-            "poor": "You have a poor internet connection"
+            "poor": "You have a poor internet connection",
+            "running": "Running connection test..."
         },
         "connectionDetails": {
             "audioClipping": "We expect your audio to be clipped.",
@@ -933,6 +935,7 @@
             "goodQuality": "Awesome! Your media quality is going to be great.",
             "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
             "noVideo": "We expect that your video will be terrible.",
+            "testFailed": "The connection test encountered unexpected issues, but this might not impact your experience.",
             "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
             "veryPoorConnection": "We expect your call quality to be really terrible.",
             "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
