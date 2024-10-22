@@ -4,7 +4,7 @@
         "allowSyntheticDefaultImports": true,
         "target": "es2020",
         "jsx": "react-native",
-        "lib": [ "es2020"],
+        "lib": [ "ES2020", "ES2024.Promise" ],
         "types": [ "react-native" ],
         "skipLibCheck": true,
         "moduleResolution": "Node",

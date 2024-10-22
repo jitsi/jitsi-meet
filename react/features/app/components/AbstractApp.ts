@@ -27,11 +27,9 @@ export interface IProps {
  */
 export class AbstractApp<P extends IProps = IProps> extends BaseApp<P> {
     /**
-     * The deferred for the initialisation {{promise, resolve, reject}}.
+     * The deferred for the initialization {{promise, resolve, reject}}.
      */
-    _init: {
-        promise: Promise<any>;
-    };
+    _init: PromiseWithResolvers<any>;
 
     /**
      * Initializes the app.
