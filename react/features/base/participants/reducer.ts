@@ -512,10 +512,11 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
                 const p = state.remote.get(key);
 
                 if (p && !p.isPromoted) {
-                    const { participant } = action;
 
-                    participant.isPromoted = true;
-                    state.remote.set(key, { ...participant });
+                    state.remote.set(key, {
+                        ...p,
+                        isPromoted: true
+                    });
                     participantProcessed = true;
                 }
             });
@@ -613,6 +614,7 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         dominantSpeaker,
         email,
         fakeParticipant,
+        isPromoted,
         isReplacing,
         loadableAvatarUrl,
         local,
@@ -635,8 +637,6 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         // id
         id || (id = LOCAL_PARTICIPANT_DEFAULT_ID);
     }
-
-    const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
 
     return {
         avatarURL,
