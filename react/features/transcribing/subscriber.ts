@@ -12,7 +12,7 @@ import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functio
 import { isRecorderTranscriptionsRunning } from './functions';
 
 /**
- * Listens for large video participant ID changes.
+ * Listens for transcriber status change.
  */
 StateListenerRegistry.register(
     /* selector */ isRecorderTranscriptionsRunning,
