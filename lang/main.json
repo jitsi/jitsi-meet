@@ -774,6 +774,18 @@
             "description": "Open polls tab to vote",
             "title": "A new poll was added to this meeting"
         },
+        "copy": {
+            "buttonText": "Copy Results to Clipboard",
+            "notification": {
+              "title": "The polls results have been copied to your clipboard"
+            }
+        },
+        "download": {
+            "buttonText": "Download Results",
+            "notification": {
+              "title": "The polls results will be downloaded shortly"
+            }
+        },
         "results": {
             "changeVote": "Change vote",
             "empty": "There are no polls in the meeting yet. Start a poll here!",

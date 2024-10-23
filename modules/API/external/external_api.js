@@ -133,6 +133,8 @@ const events = {
     'participant-role-changed': 'participantRoleChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
+    'poll-results-changed': 'pollResultsChanged',
+    'poll-results-download-requested': 'pollResultsDownloadRequested',
     'prejoin-screen-loaded': 'prejoinScreenLoaded',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',

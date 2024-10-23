@@ -63,6 +63,17 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
+    /**
+     * We want to return out local version of 
+     * external_api.js instead of the version hosted
+     * on the server.
+     * 
+     * This way we can locally test any changes we make 
+     * https://github.com/jitsi/jitsi-meet/issues/6964#issuecomment-1771442496
+     */
+    if (path === '/external_api.js') {
+      return '/libs/external_api.js';
+    }
     if (path.startsWith('/css/')
             || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
