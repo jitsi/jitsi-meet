@@ -12,6 +12,7 @@ Follow this guide for instuctions on how to run jitsi-meet in development mode
 
 https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-web
 
+Important: Use node 16+
 
 ## Releasing
 
