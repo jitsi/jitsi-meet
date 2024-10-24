@@ -69,6 +69,7 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
     case CONFERENCE_LEFT:
         return {
             ...state,
+            isDisplayNameRequiredError: false,
             knocking: false,
             passwordJoinFailed: false
         };

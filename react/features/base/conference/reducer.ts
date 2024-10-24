@@ -165,6 +165,7 @@ export interface IConferenceState {
     followMeRecorderEnabled?: boolean;
     joining?: IJitsiConference;
     leaving?: IJitsiConference;
+    lobbyError?: boolean;
     lobbyWaitingForHost?: boolean;
     localSubject?: string;
     locked?: string;
@@ -363,13 +364,24 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
     let membersOnly;
     let passwordRequired;
     let lobbyWaitingForHost;
+    let lobbyError;
 
     switch (error.name) {
     case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
         authRequired = conference;
         break;
 
+    /**
+     * Access denied while waiting in the lobby.
+     * A conference error when we tried to join into a room with no display name when lobby is enabled in the room.
+     */
     case JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED:
+    case JitsiConferenceErrors.DISPLAY_NAME_REQUIRED: {
+        lobbyError = true;
+
+        break;
+    }
+
     case JitsiConferenceErrors.MEMBERS_ONLY_ERROR: {
         membersOnly = conference;
 
@@ -393,6 +405,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
         error,
         joining: undefined,
         leaving: undefined,
+        lobbyError,
         lobbyWaitingForHost,
 
         /**
@@ -450,6 +463,7 @@ function _conferenceJoined(state: IConferenceState, { conference }: { conference
         membersOnly: undefined,
         leaving: undefined,
 
+        lobbyError: undefined,
         lobbyWaitingForHost: undefined,
 
         /**
