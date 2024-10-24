@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import Pressable from '../../../react/components/native/Pressable';
-
 import logger from '../../logger';
 
 import VideoTransform from './VideoTransform';

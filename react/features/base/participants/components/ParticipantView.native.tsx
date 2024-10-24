@@ -171,8 +171,8 @@ class ParticipantView extends Component<IProps> {
                     participantId = { participantId }
                     size = { avatarSize } />
             </View>
-        )
-    };
+        );
+    }
 
     /**
      * Implements React's {@link Component#render()}.

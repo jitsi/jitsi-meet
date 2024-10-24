@@ -22,7 +22,7 @@ ReducerRegistry.register<IMobilePictureInPictureState>(STORE_NAME, (state = DEFA
         return {
             ...state,
             enableIosPIP
-        }
+        };
     }
 
     default:
