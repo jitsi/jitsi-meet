@@ -23,10 +23,10 @@ import {
     PARTICIPANT_ROLE,
     WHITEBOARD_PARTICIPANT_ICON
 } from './constants';
-import {  preloadImage } from './preloadImage';
-import {  FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from './types';
-import {  shouldRenderVideoTrack } from '../media/functions';
-import {  isTrackStreamingStatusActive } from '../../connection-indicator/functions';
+import { preloadImage } from './preloadImage';
+import { FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from './types';
+import { shouldRenderVideoTrack } from '../media/functions';
+import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 
 
 /**
