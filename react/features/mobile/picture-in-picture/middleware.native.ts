@@ -1,5 +1,6 @@
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { APP_STATE_CHANGED } from '../background/actionTypes';
+
 import { ENABLE_IOS_PIP } from './actionTypes';
 
 MiddlewareRegistry.register(store => next => action => {
@@ -14,11 +15,12 @@ MiddlewareRegistry.register(store => next => action => {
         if (appState === 'inactive') {
             dispatch({
                 type: ENABLE_IOS_PIP,
-                enableIosPIP: false })
+                enableIosPIP: false
+            });
         }
         break;
     }
     }
 
     return result;
-})
+});

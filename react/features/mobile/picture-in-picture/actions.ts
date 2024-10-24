@@ -27,15 +27,14 @@ export function enterPictureInPicture() {
         if (Platform.OS === 'ios') {
             dispatch({
                 type: ENABLE_IOS_PIP,
-                enableIosPIP: !enableIosPIP })
+                enableIosPIP: !enableIosPIP });
         }
 
         if (Platform.OS === 'android') {
             if (isPipEnabled(getState())) {
                 const { PictureInPicture } = NativeModules;
                 const p
-                    = Platform.OS === 'android'
-                    ? PictureInPicture
+                    = Platform.OS === 'android' ? PictureInPicture
                         ? PictureInPicture.enterPictureInPicture()
                         : Promise.reject(
                             new Error('Picture-in-Picture not supported'))

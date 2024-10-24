@@ -163,19 +163,16 @@ class ParticipantView extends Component<IProps> {
     }
 
     _renderParticipantAvatar() {
-        const {
-            avatarSize,
-            participantId,
-        } = this.props;
+        const { avatarSize, participantId } = this.props;
 
-        return(
+        return (
             <View style = { styles.avatarContainer as ViewStyle }>
                 <Avatar
                     participantId = { participantId }
                     size = { avatarSize } />
             </View>
         )
-    }
+    };
 
     /**
      * Implements React's {@link Component#render()}.

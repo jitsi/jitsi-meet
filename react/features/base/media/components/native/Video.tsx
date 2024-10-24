@@ -1,16 +1,15 @@
-import React, { Component, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GestureResponderEvent, ViewStyle } from 'react-native';
+import { MediaStream, RTCPIPView, startIOSPIP, stopIOSPIP } from 'react-native-webrtc';
 import { useSelector } from 'react-redux';
 
-import { MediaStream, RTCPIPView, startIOSPIP, stopIOSPIP } from 'react-native-webrtc';
-
-import { IReduxState}  from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import Pressable from '../../../react/components/native/Pressable';
+
+import logger from '../../logger';
 
 import VideoTransform from './VideoTransform';
 import styles from './styles';
-import logger from '../../logger';
-
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -18,7 +17,7 @@ import logger from '../../logger';
 interface IProps {
 
     /**
-     * iOS component for PiP view.
+     * IOS component for PiP view.
      */
     fallbackView: React.Component;
 
@@ -76,10 +75,10 @@ const Video: React.FC<IProps> = ({ fallbackView, mirror, onPlaying, onPress, str
         fallbackView,
         preferredSize: {
             width: 400,
-            height: 800,
+            height: 800
         },
         startAutomatically: true
-    }
+    };
     const objectFit = zoomEnabled ? 'contain' : 'cover';
     const viewRef = useRef();
 
@@ -100,12 +99,12 @@ const Video: React.FC<IProps> = ({ fallbackView, mirror, onPlaying, onPress, str
         onPlaying?.();
     }, []);
 
-    useEffect(() =>  {
+    useEffect(() => {
         if (enableIosPIP) {
-            logger.warn(`Picture in picture mode on`);
+            logger.warn('Picture in picture mode on');
             startIOSPIP(viewRef);
         } else {
-            logger.warn(`Picture in picture mode off`);
+            logger.warn('Picture in picture mode off');
             stopIOSPIP(viewRef);
         }
     }, [ enableIosPIP ]);
@@ -136,7 +135,7 @@ const Video: React.FC<IProps> = ({ fallbackView, mirror, onPlaying, onPress, str
         </Pressable>
     );
 
-}
+};
 
 // @ts-ignore
 export default Video;

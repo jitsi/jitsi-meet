@@ -1,4 +1,4 @@
-import React, {Component, ReactElement} from 'react';
+import React, { Component, ReactElement } from 'react';
 
 import { IStore } from '../../../app/types';
 import { trackVideoStarted } from '../../tracks/actions';
@@ -17,7 +17,7 @@ export interface IProps {
     dispatch: IStore['dispatch'];
 
     /**
-     * iOS component for PiP view.
+     * IOS component for PiP view.
      */
     fallbackView?: ReactElement;
 

@@ -58,9 +58,9 @@ class PictureInPictureButton extends AbstractButton<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const pipEnabled = isPipEnabled(state);
-    const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
-    const enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
+    // const pipEnabled = isPipEnabled(state);
+    // const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
+    // const enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
 
     return {
         _enabled: true

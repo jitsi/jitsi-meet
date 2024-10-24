@@ -2,6 +2,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
+import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
@@ -12,6 +13,7 @@ import { getCurrentConference } from '../conference/functions';
 import { ADD_PEOPLE_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 import i18next from '../i18n/i18next';
+import { shouldRenderVideoTrack } from '../media/functions';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
 import { getScreenShareTrack, getVideoTrackByParticipant, isLocalTrackMuted } from '../tracks/functions.any';
@@ -25,8 +27,6 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 import { FakeParticipant, IJitsiParticipant, IParticipant, ISourceInfo } from './types';
-import { shouldRenderVideoTrack } from '../media/functions';
-import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 
 
 /**
@@ -852,5 +852,8 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
     /* Last, check if the participant is sharing their screen and they are on stage. */
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
     const largeVideoParticipantId = state['features/large-video'].participantId;
-    return participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
+    const participantIsInLargeVideoWithScreen
+        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
+
+    return participantIsInLargeVideoWithScreen;
 }
