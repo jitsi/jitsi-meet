@@ -1,13 +1,13 @@
 // @ts-expect-error
-import {  getGravatarURL } from '@jitsi/js-utils/avatar';
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import {  IReduxState, IStore } from '../../app/types';
-import {  isStageFilmstripAvailable } from '../../filmstrip/functions';
-import {  isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
-import {  toggleShareDialog } from '../../share-room/actions';
-import {  IStateful } from '../app/types';
-import {  GRAVATAR_BASE_URL } from '../avatar/constants';
-import {  isCORSAvatarURL } from '../avatar/functions';
+import { IReduxState, IStore } from '../../app/types';
+import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
+import { toggleShareDialog } from '../../share-room/actions';
+import { IStateful } from '../app/types';
+import { GRAVATAR_BASE_URL } from '../avatar/constants';
+import { isCORSAvatarURL } from '../avatar/functions';
 import { getCurrentConference } from '../conference/functions';
 import { ADD_PEOPLE_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
