@@ -561,6 +561,7 @@ export interface IConfig {
     };
     tileView?: {
         disabled?: boolean;
+        force?: boolean;
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;

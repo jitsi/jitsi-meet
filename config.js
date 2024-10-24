@@ -1758,6 +1758,10 @@ var config = {
     // tileView: {
     //     // Whether tileview should be disabled.
     //     disabled: false,
+    //     // If true start the video in tile view. It is enforced in all cases,
+    //     // including jibri recording, screen sharing etc. The only exception are local
+    //     // user preference, which comes before everything else, or if tile view is disabled.
+    //     force: false,
     //     // The optimal number of tiles that are going to be shown in tile view. Depending on the screen size it may
     //     // not be possible to show the exact number of participants specified here.
     //     numberOfVisibleTiles: 25,
