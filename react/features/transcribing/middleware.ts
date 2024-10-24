@@ -3,6 +3,7 @@ import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { TRANSCRIBER_LEFT } from './actionTypes';
+import './subscriber';
 
 /**
  * Implements the middleware of the feature transcribing.
