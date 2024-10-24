@@ -73,15 +73,15 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve(SocketConnection);
     }
 
-    if (isUsingMobileBrowser) { // mobile
-        const mobileAppPromo
-            = typeof interfaceConfig === 'object'
-                && interfaceConfig.MOBILE_APP_PROMO;
+    // if (isUsingMobileBrowser) { // mobile
+    //     const mobileAppPromo
+    //         = typeof interfaceConfig === 'object'
+    //             && interfaceConfig.MOBILE_APP_PROMO;
 
-        return Promise.resolve(
-            typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
-                ? DeepLinkingMobilePage : NoMobileApp);
-    }
+    //     return Promise.resolve(
+    //         typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
+    //             ? DeepLinkingMobilePage : NoMobileApp);
+    // }
 
     return _openDesktopApp(state).then(
         // eslint-disable-next-line no-confusing-arrow
