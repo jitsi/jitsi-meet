@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import { GestureResponderEvent } from 'react-native';
-import { MediaStream, RTCView } from 'react-native-webrtc';
+import React, { useEffect, useRef } from 'react';
+import { GestureResponderEvent, ViewStyle } from 'react-native';
+import { MediaStream, RTCPIPView, startIOSPIP, stopIOSPIP } from 'react-native-webrtc';
+import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import Pressable from '../../../react/components/native/Pressable';
+import logger from '../../logger';
 
 import VideoTransform from './VideoTransform';
 import styles from './styles';
@@ -11,6 +14,12 @@ import styles from './styles';
  * The type of the React {@code Component} props of {@link Video}.
  */
 interface IProps {
+
+    /**
+     * IOS component for PiP view.
+     */
+    fallbackView: React.Component;
+
     mirror: boolean;
 
     onPlaying: Function;
@@ -56,79 +65,76 @@ interface IProps {
 /**
  * The React Native {@link Component} which is similar to Web's
  * {@code HTMLVideoElement} and wraps around react-native-webrtc's
- * {@link RTCView}.
+ * {@link RTCPIPView}.
  */
-export default class Video extends Component<IProps> {
-    /**
-     * React Component method that executes once component is mounted.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
+const Video: React.FC<IProps> = ({ fallbackView, mirror, onPlaying, onPress, stream, zoomEnabled, zOrder }: IProps) => {
+    const { enableIosPIP } = useSelector((state: IReduxState) => state['features/mobile/picture-in-picture']);
+
+    const iosPIPOptions = {
+        fallbackView,
+        preferredSize: {
+            width: 400,
+            height: 800
+        },
+        startAutomatically: true
+    };
+    const objectFit = zoomEnabled ? 'contain' : 'cover';
+    const viewRef = useRef();
+
+    const rtcView = (
+        <RTCPIPView
+            iosPIP = { iosPIPOptions }
+            mirror = { mirror }
+            objectFit = { objectFit }
+            ref = { viewRef }
+            streamURL = { stream?.toURL() }
+            style = { styles.video as ViewStyle }
+            zOrder = { zOrder } />
+    );
+
+    useEffect(() => {
         // RTCView currently does not support media events, so just fire
         // onPlaying callback when <RTCView> is rendered.
-        const { onPlaying } = this.props;
-
         onPlaying?.();
-    }
+    }, []);
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement|null}
-     */
-    render() {
-        const { onPress, stream, zoomEnabled } = this.props;
-
-        if (stream) {
-            // RTCView
-            const style = styles.video;
-            const objectFit
-                = zoomEnabled
-                    ? 'contain'
-                    : 'cover';
-            const rtcView
-                = (
-                    <RTCView
-                        mirror = { this.props.mirror }
-                        objectFit = { objectFit }
-                        streamURL = { stream.toURL() }
-                        style = { style }
-                        zOrder = { this.props.zOrder } />
-                );
-
-            // VideoTransform implements "pinch to zoom". As part of "pinch to
-            // zoom", it implements onPress, of course.
-            if (zoomEnabled) {
-                return (
-                    <VideoTransform
-                        enabled = { zoomEnabled }
-                        onPress = { onPress }
-                        streamId = { stream.id }
-                        style = { style }>
-                        { rtcView }
-                    </VideoTransform>
-                );
-            }
-
-            // XXX Unfortunately, VideoTransform implements a custom press
-            // detection which has been observed to be very picky about the
-            // precision of the press unlike the builtin/default/standard press
-            // detection which is forgiving to imperceptible movements while
-            // pressing. It's not acceptable to be so picky, especially when
-            // "pinch to zoom" is not enabled.
-            return (
-                <Pressable onPress = { onPress }>
-                    { rtcView }
-                </Pressable>
-            );
+    useEffect(() => {
+        if (enableIosPIP) {
+            logger.warn('Picture in picture mode on');
+            startIOSPIP(viewRef);
+        } else {
+            logger.warn('Picture in picture mode off');
+            stopIOSPIP(viewRef);
         }
+    }, [ enableIosPIP ]);
 
-        // RTCView has peculiarities which may or may not be platform specific.
-        // For example, it doesn't accept an empty streamURL. If the execution
-        // reached here, it means that we explicitly chose to not initialize an
-        // RTCView as a way of dealing with its idiosyncrasies.
-        return null;
+    // VideoTransform implements "pinch to zoom". As part of "pinch to
+    // zoom", it implements onPress, of course.
+    if (zoomEnabled) {
+        return (
+            <VideoTransform
+                enabled = { zoomEnabled }
+                onPress = { onPress }
+                streamId = { stream?.id }
+                style = { styles.video as ViewStyle }>
+                { rtcView }
+            </VideoTransform>
+        );
     }
-}
+
+    // XXX Unfortunately, VideoTransform implements a custom press
+    // detection which has been observed to be very picky about the
+    // precision of the press unlike the builtin/default/standard press
+    // detection which is forgiving to imperceptible movements while
+    // pressing. It's not acceptable to be so picky, especially when
+    // "pinch to zoom" is not enabled.
+    return (
+        <Pressable onPress = { onPress }>
+            { rtcView }
+        </Pressable>
+    );
+
+};
+
+// @ts-ignore
+export default Video;

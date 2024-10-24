@@ -3,24 +3,24 @@ import { GestureResponderEvent, Text, TextStyle, View, ViewStyle } from 'react-n
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import {
-    isTrackStreamingStatusActive,
-    isTrackStreamingStatusInactive
-} from '../../../connection-indicator/functions';
+import { isTrackStreamingStatusInactive } from '../../../connection-indicator/functions';
 import SharedVideo from '../../../shared-video/components/native/SharedVideo';
 import { isSharedVideoEnabled } from '../../../shared-video/functions';
-import { IStateful } from '../../app/types';
 import Avatar from '../../avatar/components/Avatar';
 import { translate } from '../../i18n/functions';
 import VideoTrack from '../../media/components/native/VideoTrack';
-import { shouldRenderVideoTrack } from '../../media/functions';
 import Container from '../../react/components/native/Container';
-import { toState } from '../../redux/functions';
 import { StyleType } from '../../styles/functions.any';
 import TestHint from '../../testing/components/TestHint';
-import { getVideoTrackByParticipant } from '../../tracks/functions';
+import { getVideoTrackByParticipant } from '../../tracks/functions.native';
 import { ITrack } from '../../tracks/types';
-import { getParticipantById, getParticipantDisplayName, isSharedVideoParticipant } from '../functions';
+import {
+    getParticipantById,
+    getParticipantDisplayName,
+    isSharedVideoParticipant,
+    shouldRenderParticipantVideo
+} from '../functions';
+import { FakeParticipant } from '../types';
 
 import styles from './styles';
 
@@ -71,7 +71,7 @@ interface IProps {
     /**
      * Whether video should be disabled for his view.
      */
-    disableVideo?: boolean;
+    disableVideo?: boolean | FakeParticipant;
 
     /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
@@ -162,6 +162,18 @@ class ParticipantView extends Component<IProps> {
         );
     }
 
+    _renderParticipantAvatar() {
+        const { avatarSize, participantId } = this.props;
+
+        return (
+            <View style = { styles.avatarContainer as ViewStyle }>
+                <Avatar
+                    participantId = { participantId }
+                    size = { avatarSize } />
+            </View>
+        );
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -175,14 +187,21 @@ class ParticipantView extends Component<IProps> {
             _renderVideo: renderVideo,
             _sharedVideoEnabled,
             _videoTrack: videoTrack,
+            avatarSize,
             disableVideo,
-            onPress
+            onPress,
+            participantId,
+            style,
+            testHintId: testHintIdProp,
+            useConnectivityInfoLabel,
+            zOrder,
+            zoomEnabled
         } = this.props;
 
         const testHintId
-            = this.props.testHintId
-                ? this.props.testHintId
-                : `org.jitsi.meet.Participant#${this.props.participantId}`;
+            = testHintIdProp
+                ? testHintIdProp
+                : `org.jitsi.meet.Participant#${participantId}`;
 
         const renderSharedVideo = _isSharedVideoParticipant && !disableVideo && _sharedVideoEnabled;
 
@@ -191,7 +210,7 @@ class ParticipantView extends Component<IProps> {
                 onClick = { renderVideo || renderSharedVideo ? undefined : onPress }
                 style = {{
                     ...styles.participantView,
-                    ...this.props.style
+                    ...style
                 }}
                 touchFeedback = { false }>
 
@@ -202,22 +221,17 @@ class ParticipantView extends Component<IProps> {
 
                 { renderSharedVideo && <SharedVideo /> }
 
-                { renderVideo
-                    && <VideoTrack
-                        onPress = { onPress }
-                        videoTrack = { videoTrack }
-                        waitForVideoStarted = { false }
-                        zOrder = { this.props.zOrder }
-                        zoomEnabled = { this.props.zoomEnabled } /> }
+                <VideoTrack
+                    avatarSize = { avatarSize }
+                    fallbackView = { this._renderParticipantAvatar() }
+                    onPress = { onPress }
+                    participantId = { participantId }
+                    videoTrack = { videoTrack }
+                    waitForVideoStarted = { false }
+                    zOrder = { zOrder }
+                    zoomEnabled = { zoomEnabled } />
 
-                { !renderSharedVideo && !renderVideo
-                    && <View style = { styles.avatarContainer as ViewStyle }>
-                        <Avatar
-                            participantId = { this.props.participantId }
-                            size = { this.props.avatarSize } />
-                    </View> }
-
-                { _isConnectionInactive && this.props.useConnectivityInfoLabel
+                { _isConnectionInactive && useConnectivityInfoLabel
                     && this._renderInactiveConnectionInfo() }
             </Container>
         );
@@ -247,54 +261,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _sharedVideoEnabled: isSharedVideoEnabled(state),
         _videoTrack: videoTrack
     };
-}
-
-/**
- * Returns true if the video of the participant should be rendered.
- *
- * @param {Object|Function} stateful - Object or function that can be resolved
- * to the Redux state.
- * @param {string} id - The ID of the participant.
- * @returns {boolean}
- */
-function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
-    const state = toState(stateful);
-    const participant = getParticipantById(state, id);
-
-    if (!participant) {
-        return false;
-    }
-
-    /* First check if we have an unmuted video track. */
-    const videoTrack = getVideoTrackByParticipant(state, participant);
-
-    if (!videoTrack) {
-        return false;
-    }
-
-    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
-        return false;
-    }
-
-    /* Then check if the participant connection or track streaming status is active. */
-    if (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack)) {
-        return false;
-    }
-
-    /* Then check if audio-only mode is not active. */
-    const audioOnly = state['features/base/audio-only'].enabled;
-
-    if (!audioOnly) {
-        return true;
-    }
-
-    /* Last, check if the participant is sharing their screen and they are on stage. */
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
-    const largeVideoParticipantId = state['features/large-video'].participantId;
-    const participantIsInLargeVideoWithScreen
-        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
-
-    return participantIsInLargeVideoWithScreen;
 }
 
 export default translate(connect(_mapStateToProps)(ParticipantView));

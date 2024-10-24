@@ -52,6 +52,7 @@ import { IMobileBackgroundState } from '../mobile/background/reducer';
 import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
 import { IFullScreenState } from '../mobile/full-screen/reducer';
+import { IMobilePictureInPictureState } from '../mobile/picture-in-picture/reducer';
 import { IMobileWatchOSState } from '../mobile/watchos/reducer';
 import { INoAudioSignalState } from '../no-audio-signal/reducer';
 import { INoiseDetectionState } from '../noise-detection/reducer';
@@ -142,6 +143,7 @@ export interface IReduxState {
     'features/mobile/audio-mode': IMobileAudioModeState;
     'features/mobile/background': IMobileBackgroundState;
     'features/mobile/external-api': IMobileExternalApiState;
+    'features/mobile/picture-in-picture': IMobilePictureInPictureState;
     'features/mobile/watchos': IMobileWatchOSState;
     'features/no-audio-signal': INoAudioSignalState;
     'features/noise-detection': INoiseDetectionState;

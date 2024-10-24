@@ -2,6 +2,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
+import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
@@ -13,8 +14,9 @@ import { ADD_PEOPLE_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 import i18next from '../i18n/i18next';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { shouldRenderVideoTrack } from '../media/functions';
 import { toState } from '../redux/functions';
-import { getScreenShareTrack, isLocalTrackMuted } from '../tracks/functions.any';
+import { getScreenShareTrack, getVideoTrackByParticipant, isLocalTrackMuted } from '../tracks/functions.any';
 import { createDeferred } from '../util/helpers';
 
 import {
@@ -807,3 +809,51 @@ export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispat
         dispatch(toggleShareDialog(true));
     }
 };
+
+/**
+ * Returns true if the video of the participant should be rendered.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @param {string} id - The ID of the participant.
+ * @returns {boolean}
+ */
+export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
+    const state = toState(stateful);
+    const participant = getParticipantById(state, id);
+
+    if (!participant) {
+        return false;
+    }
+
+    /* First check if we have an unmuted video track. */
+    const videoTrack = getVideoTrackByParticipant(state, participant);
+
+    if (!videoTrack) {
+        return false;
+    }
+
+    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
+        return false;
+    }
+
+    /* Then check if the participant connection or track streaming status is active. */
+    if (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack)) {
+        return false;
+    }
+
+    /* Then check if audio-only mode is not active. */
+    const audioOnly = state['features/base/audio-only'].enabled;
+
+    if (!audioOnly) {
+        return true;
+    }
+
+    /* Last, check if the participant is sharing their screen and they are on stage. */
+    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
+    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const participantIsInLargeVideoWithScreen
+        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
+
+    return participantIsInLargeVideoWithScreen;
+}
