@@ -22,26 +22,31 @@ export function enterPictureInPicture() {
         // XXX At the time of this writing this action can only be dispatched by
         // the button which is on the conference view, which means that it's
         // fine to enter PiP mode.
-        if (isPipEnabled(getState())) {
-            const { PictureInPicture } = NativeModules;
-            const { enableIosPIP } = getState()['features/mobile/picture-in-picture'];
-            const p
-                = Platform.OS === 'ios'
-                ? dispatch({
+        const { enableIosPIP } = getState()['features/mobile/picture-in-picture'];
+
+        if (Platform.OS === 'ios') {
+            dispatch({
                 type: ENABLE_IOS_PIP,
                 enableIosPIP: !enableIosPIP })
-                : Platform.OS === 'android'
+        }
+
+        if (Platform.OS === 'android') {
+            if (isPipEnabled(getState())) {
+                const { PictureInPicture } = NativeModules;
+                const p
+                    = Platform.OS === 'android'
                     ? PictureInPicture
                         ? PictureInPicture.enterPictureInPicture()
                         : Promise.reject(
                             new Error('Picture-in-Picture not supported'))
                     : Promise.resolve();
 
-            p.catch((e: string) => logger.warn(`Error entering PiP mode: ${e}`));
+                p.catch((e: string) => logger.warn(`Error entering PiP mode: ${e}`));
 
-            // We should still dispatch ENTER_PICTURE_IN_PICTURE for cases where
-            // the external app needs to handle the event (ie. react-native-sdk)
-            p.finally(() => dispatch({ type: ENTER_PICTURE_IN_PICTURE }));
+                // We should still dispatch ENTER_PICTURE_IN_PICTURE for cases where
+                // the external app needs to handle the event (ie. react-native-sdk)
+                p.finally(() => dispatch({ type: ENTER_PICTURE_IN_PICTURE }));
+            }
         }
     };
 }

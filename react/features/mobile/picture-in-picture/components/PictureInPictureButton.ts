@@ -63,7 +63,7 @@ function _mapStateToProps(state: IReduxState) {
     const enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
 
     return {
-        _enabled: enabled
+        _enabled: true
     };
 }
 

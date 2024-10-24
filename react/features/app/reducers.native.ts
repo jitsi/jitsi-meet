@@ -3,6 +3,7 @@ import '../mobile/background/reducer';
 import '../mobile/call-integration/reducer';
 import '../mobile/external-api/reducer';
 import '../mobile/full-screen/reducer';
+import '../mobile/picture-in-picture/reducer';
 import '../mobile/watchos/reducer';
 import '../share-room/reducer';
 
