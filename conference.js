@@ -6,7 +6,7 @@ import Logger from '@jitsi/logger';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue } from './modules/util/helpers';
+import { createDeferred, createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
@@ -167,6 +167,8 @@ import { muteLocal } from './react/features/video-menu/actions.any';
 
 const logger = Logger.getLogger(__filename);
 let room;
+
+const initPromise = createDeferred();
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -509,49 +511,56 @@ export default {
     },
 
     startConference(tracks) {
-        tracks.forEach(track => {
-            if ((track.isAudioTrack() && this.isLocalAudioMuted())
-                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
-                const mediaType = track.getType();
+        logger.debug('startConference called!');
 
-                sendAnalytics(
-                    createTrackMutedEvent(mediaType, 'initial mute'));
-                logger.log(`${mediaType} mute: initially muted.`);
-                track.mute();
+        const promise = initPromise?.promise || Promise.resolve();
+
+        return promise.then(() => {
+            logger.debug('startConference start execution!');
+            tracks.forEach(track => {
+                if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                    || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                    const mediaType = track.getType();
+
+                    sendAnalytics(
+                        createTrackMutedEvent(mediaType, 'initial mute'));
+                    logger.log(`${mediaType} mute: initially muted.`);
+                    track.mute();
+                }
+            });
+
+            this._createRoom(tracks);
+
+            // if user didn't give access to mic or camera or doesn't have
+            // them at all, we mark corresponding toolbar buttons as muted,
+            // so that the user can try unmute later on and add audio/video
+            // to the conference
+            if (!tracks.find(t => t.isAudioTrack())) {
+                this.updateAudioIconEnabled();
             }
-        });
 
-        this._createRoom(tracks);
+            if (!tracks.find(t => t.isVideoTrack())) {
+                this.setVideoMuteStatus();
+            }
 
-        // if user didn't give access to mic or camera or doesn't have
-        // them at all, we mark corresponding toolbar buttons as muted,
-        // so that the user can try unmute later on and add audio/video
-        // to the conference
-        if (!tracks.find(t => t.isAudioTrack())) {
-            this.updateAudioIconEnabled();
-        }
+            if (config.iAmRecorder) {
+                this.recorder = new Recorder();
+            }
 
-        if (!tracks.find(t => t.isVideoTrack())) {
-            this.setVideoMuteStatus();
-        }
+            if (config.startSilent) {
+                sendAnalytics(createStartSilentEvent());
+                APP.store.dispatch(showNotification({
+                    descriptionKey: 'notify.startSilentDescription',
+                    titleKey: 'notify.startSilentTitle'
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }
 
-        if (config.iAmRecorder) {
-            this.recorder = new Recorder();
-        }
-
-        if (config.startSilent) {
-            sendAnalytics(createStartSilentEvent());
-            APP.store.dispatch(showNotification({
-                descriptionKey: 'notify.startSilentDescription',
-                titleKey: 'notify.startSilentTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-        }
-
-        // XXX The API will take care of disconnecting from the XMPP
-        // server (and, thus, leaving the room) on unload.
-        return new Promise((resolve, reject) => {
-            new ConferenceConnector(resolve, reject, this).connect();
-        });
+            // XXX The API will take care of disconnecting from the XMPP
+            // server (and, thus, leaving the room) on unload.
+            return new Promise((resolve, reject) => {
+                new ConferenceConnector(resolve, reject, this).connect();
+            });
+        }).catch(logger.error);
     },
 
     /**
@@ -618,7 +627,14 @@ export default {
             if (isPrejoinPageVisible(state)) {
                 APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
 
-                return APP.store.dispatch(initPrejoin(localTracks, errors));
+                const promise = APP.store.dispatch(initPrejoin(localTracks, errors));
+
+                promise.finally(() => {
+                    logger.debug('Resolving initPromise! prejoinVisible=true');
+                    initPromise.resolve();
+                });
+
+                return promise;
             }
 
             logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
@@ -629,12 +645,19 @@ export default {
 
             setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
 
-            return this._setLocalAudioVideoStreams(tracks);
+            const promise = this._setLocalAudioVideoStreams(tracks);
+
+            promise.finally(() => {
+                logger.debug('Resolving initPromise! Prejoin was visible initially but now it is hidden.');
+                initPromise.resolve();
+            });
+
+            return promise;
         }
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
 
-        return Promise.all([
+        const promise = Promise.all([
             tryCreateLocalTracks.then(tr => {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
 
@@ -649,7 +672,14 @@ export default {
                 return filteredTracks;
             }),
             APP.store.dispatch(connect())
-        ]).then(([ tracks, _ ]) => {
+        ]);
+
+        promise.finally(() => {
+            logger.debug('Resolving initPromise! prejoinVisible=false');
+            initPromise.resolve();
+        });
+
+        return promise.then(([ tracks, _ ]) => {
             this.startConference(tracks).catch(logger.error);
         });
     },
