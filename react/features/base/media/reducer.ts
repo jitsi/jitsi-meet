@@ -3,6 +3,7 @@ import { AnyAction, combineReducers } from 'redux';
 import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { TRACK_REMOVED } from '../tracks/actionTypes';
+import { DefferedPromise, createDeferred } from '../util/helpers';
 
 import {
     GUM_PENDING,
@@ -88,6 +89,12 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
     }
 }
 
+// Using a deferred promise here to make sure that once the connection is established even if conference.init and the
+// initial track creation haven't been started we would wait for it to finish before starting to join the room.
+// NOTE: The previous implementation was using the GUM promise from conference.init. But it turned out that connect
+// may finish even before conference.init is executed.
+const DEFAULT_INITIAL_PROMISE_STATE = createDeferred<IInitialGUMPromiseResult>();
+
 /**
  * Reducer fot the common properties in media state.
  *
@@ -96,7 +103,8 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
  * @param {string} action.type - Type of action.
  * @returns {ICommonState}
  */
-function _initialGUMPromise(state: initialGUMPromise | null = null, action: AnyAction) {
+function _initialGUMPromise(state: DefferedPromise<IInitialGUMPromiseResult> | null = DEFAULT_INITIAL_PROMISE_STATE,
+        action: AnyAction) {
     if (action.type === SET_INITIAL_GUM_PROMISE) {
         return action.promise ?? null;
     }
@@ -264,10 +272,10 @@ interface IAudioState {
     unmuteBlocked: boolean;
 }
 
-type initialGUMPromise = Promise<{
-        errors?: any;
-        tracks: Array<any>;
-    }> | null;
+interface IInitialGUMPromiseResult {
+    errors?: any;
+    tracks: Array<any>;
+}
 
 interface IScreenshareState {
     available: boolean;
@@ -286,7 +294,7 @@ interface IVideoState {
 
 export interface IMediaState {
     audio: IAudioState;
-    initialGUMPromise: initialGUMPromise;
+    initialGUMPromise: DefferedPromise<IInitialGUMPromiseResult> | null;
     screenshare: IScreenshareState;
     video: IVideoState;
 }

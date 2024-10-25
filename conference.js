@@ -560,10 +560,10 @@ export default {
      * If prejoin page is enabled open an new connection in the background
      * and create local tracks.
      *
-     * @param {{ roomName: string }} options
+     * @param {{ roomName: string, shouldDispatchConnect }} options
      * @returns {Promise}
      */
-    async init({ roomName }) {
+    async init({ roomName, shouldDispatchConnect }) {
         const state = APP.store.getState();
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
@@ -607,27 +607,49 @@ export default {
         const { dispatch, getState } = APP.store;
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
 
-        dispatch(setInitialGUMPromise(tryCreateLocalTracks.then(async tr => {
+        tryCreateLocalTracks.then(async tr => {
             const tracks = handleInitialTracks(initialOptions, tr);
 
             this._initDeviceList(true);
 
+            const { initialGUMPromise } = getState()['features/base/media'];
+
             if (isPrejoinPageVisible(getState())) {
                 dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
-                dispatch(setInitialGUMPromise());
+
+                // Since the conference is not yet created in redux this function will execute synchronous
+                // which will guarantee us that the local tracks are added to redux before we proceed.
                 initPrejoin(tracks, errors, dispatch);
+
+                // resolve the initialGUMPromise in case connect have finished so that we can proceed to join.
+                if (initialGUMPromise) {
+                    logger.debug('Resolving the initialGUM promise! (prejoinVisible=true)');
+                    initialGUMPromise.resolve({
+                        tracks,
+                        errors
+                    });
+                }
+
+                logger.debug('Clear the initialGUM promise! (prejoinVisible=true)');
+
+                // For prejoin we don't need the initial GUM promise since the tracks are already added to the store
+                // via initPrejoin
+                dispatch(setInitialGUMPromise());
             } else {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
                 setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
+
+                if (initialGUMPromise) {
+                    logger.debug('Resolving the initialGUM promise!');
+                    initialGUMPromise.resolve({
+                        tracks,
+                        errors
+                    });
+                }
             }
+        });
 
-            return {
-                tracks,
-                errors
-            };
-        })));
-
-        if (!isPrejoinPageVisible(getState())) {
+        if (shouldDispatchConnect) {
             logger.info('Dispatching connect from init since prejoin is not visible.');
             dispatch(connect());
         }
@@ -2047,8 +2069,9 @@ export default {
             const { dispatch } = APP.store;
 
             return dispatch(getAvailableDevices())
-                .then(devices => {
-                    APP.UI.onAvailableDevicesChanged(devices);
+                .then(() => {
+                    this.updateAudioIconEnabled();
+                    this.updateVideoIconEnabled();
                 });
         }
 
@@ -2213,7 +2236,8 @@ export default {
 
         return Promise.all(promises)
             .then(() => {
-                APP.UI.onAvailableDevicesChanged(filteredDevices);
+                this.updateAudioIconEnabled();
+                this.updateVideoIconEnabled();
             });
     },
 
