@@ -49,9 +49,11 @@ export function setupInitialDevices() {
 /**
  * Init.
  *
+ * @param {boolean} shouldDispatchConnect - Whether or not connect should be dispatched. This should be false only when
+ * prejoin is enabled.
  * @returns {Promise<JitsiConnection>}
  */
-export function init() {
+export function init(shouldDispatchConnect: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const room = getBackendSafeRoomName(getState()['features/base/conference'].room);
 
@@ -59,7 +61,8 @@ export function init() {
         // from the old app (at the moment of writing).
         return dispatch(setupInitialDevices()).then(
             () => APP.conference.init({
-                roomName: room
+                roomName: room,
+                shouldDispatchConnect
             }).catch((error: Error) => {
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
                 logger.error(error);

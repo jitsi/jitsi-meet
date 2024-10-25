@@ -212,14 +212,6 @@ UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
 UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
 
 /**
- * Update list of available physical devices.
- */
-UI.onAvailableDevicesChanged = function() {
-    APP.conference.updateAudioIconEnabled();
-    APP.conference.updateVideoIconEnabled();
-};
-
-/**
  * Returns the id of the current video shown on large.
  * Currently used by tests (torture).
  */
