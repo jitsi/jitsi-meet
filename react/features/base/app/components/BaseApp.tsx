@@ -79,7 +79,7 @@ export default class BaseApp<P> extends Component<P, IState> {
          * @see {@link #_initStorage}
          * @type {Promise}
          */
-        this._init = createDeferred();
+        this._init = createDeferred<void>();
 
         try {
             await this._initStorage();

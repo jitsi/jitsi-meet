@@ -104,10 +104,22 @@ interface IProps extends AbstractProps, WithTranslation {
 
     /**
      * If visitors queue page is visible or not.
+     * NOTE: This should be set to true once we received an error on connect. Before the first connect this will always
+     * be false.
      */
     _showVisitorsQueue: boolean;
 
     dispatch: IStore['dispatch'];
+}
+
+/**
+ * Returns true if the prejoin screen should be displayed and false otherwise.
+ *
+ * @param {IProps} props - The props object.
+ * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
+ */
+function shouldShowPrejoin({ _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue;
 }
 
 /**
@@ -265,7 +277,7 @@ class Conference extends AbstractConference<IProps, any> {
 
                     <CalleeInfoContainer />
 
-                    { (_showPrejoin && !_showVisitorsQueue) && <Prejoin />}
+                    { shouldShowPrejoin(this.props) && <Prejoin />}
                     { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />}
                     { _showVisitorsQueue && <VisitorsQueue />}
                 </div>
@@ -384,7 +396,9 @@ class Conference extends AbstractConference<IProps, any> {
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        // if we will be showing prejoin we don't want to call connect from init.
+        // Connect will be dispatched from prejoin screen.
+        dispatch(init(!shouldShowPrejoin(this.props)));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
