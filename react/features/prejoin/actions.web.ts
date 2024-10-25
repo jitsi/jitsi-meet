@@ -228,6 +228,8 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
             dispatch(setJoiningInProgress(true));
         }
 
+        logger.debug('joinConference executed!');
+
         options && dispatch(updateConfig(options));
 
         dispatch(connect(jid, password)).then(async () => {
