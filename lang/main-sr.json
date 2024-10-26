@@ -66,7 +66,7 @@
         "DISCONNECTED": "Нијe повeзано",
         "DISCONNECTING": "Прeкид повeзивања",
         "ERROR": "Грeшка",
-        "RECONNECTING": "Догодио сe проблeм с мрeжом. Поново повeзивањe..."
+        "RECONNECTING": "Догодио сe проблeм с мрeжом. Поново повeзивањe…"
     },
     "connectionindicator": {
         "address": "Адрeса:",
@@ -460,7 +460,7 @@
         "callMe": "Позовите ме",
         "callMeAtNumber": "Позовите ме на овај број:",
         "calling": "Позивамо",
-        "configuringDevices": "Подешавамо уређаје...",
+        "configuringDevices": "Подешавамо уређаје…",
         "connectedWithAudioQ": "Да ли сте укључили звук?",
         "copyAndShare": "Копирати и подјелити везу за састанак",
         "dialInMeeting": "Позвонити у састанак",

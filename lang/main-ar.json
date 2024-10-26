@@ -122,7 +122,7 @@
         "installExtensionText": "نزِّل الإضافة للدمج مع رزنامة غوغل ورزنامة أوفيس 365"
     },
     "connectingOverlay": {
-        "joiningRoom": "قيد وصلك بالإجتماع..."
+        "joiningRoom": "قيد وصلك بالإجتماع…"
     },
     "connection": {
         "ATTACHED": "رُبِط",
@@ -134,7 +134,7 @@
         "DISCONNECTED": "فُصِل",
         "DISCONNECTING": "قيد الفصل",
         "ERROR": "خطأ",
-        "FETCH_SESSION_ID": "قيد الحصول على مُعرِّف الجلسة...",
+        "FETCH_SESSION_ID": "قيد الحصول على مُعرِّف الجلسة…",
         "GET_SESSION_ID_ERROR": "خطأ في الحصول على مُعرِّف الجلسة: {{code}}",
         "GOT_SESSION_ID": "جرى الحصول على مُعرِّف الجلسة",
         "LOW_BANDWIDTH": "أوقف فيديو {{displayName}} لتوفير كمية البيانات المتبادلة"
@@ -189,7 +189,7 @@
         "ifHaveApp": "إن كان لديك التطبيق:",
         "joinInApp": "انضم للمُلتقى عبر تطبيق الجوال",
         "launchWebButton": "افتح تطبيق الويب",
-        "title": "قيد عقد مُلتقىك في {{app}}...",
+        "title": "قيد عقد مُلتقىك في {{app}}…",
         "tryAgainButton": "جرب مرة أخرى في تطبيق الحاسوب",
         "unsupportedBrowser": "يبدو أنك تستخدم متصفحًا لا ندعمه."
     },
@@ -222,7 +222,7 @@
         "Share": "شارك",
         "Submit": "أرسل",
         "WaitForHostMsg": "لم يبدأ المؤتمر بعد. إن كنت المضيف والراعي، فنرجو تأكيد ذلك عبر الاستيثاق أو انتظر وصول المضيف رجاءً. ",
-        "WaitingForHostTitle": "في انتظار المضيف ...",
+        "WaitingForHostTitle": "في انتظار المضيف…",
         "Yes": "نعم",
         "accessibilityLabel": {
             "liveStreaming": "بث حي مباشر"
@@ -244,9 +244,9 @@
         "cameraUnknownError": "يصعب استعمال الكاميرا لأسباب مجهولة.",
         "cameraUnsupportedResolutionError": "لا تدعم كاميرتك دقة الفيديو المطلوبة.",
         "close": "أغلق",
-        "conferenceDisconnectMsg": "قد تضطر للتحقق من اتصال الشبكة لديك. سيعاد الاتصال خلال {{seconds}} ثانية...",
+        "conferenceDisconnectMsg": "قد تضطر للتحقق من اتصال الشبكة لديك. سيعاد الاتصال خلال {{seconds}} ثانية…",
         "conferenceDisconnectTitle": "فُصِل الاتصال لديك.",
-        "conferenceReloadMsg": "نحاول إصلاح الأمر. سيعاد الاتصال خلال {{seconds}} ثانية...",
+        "conferenceReloadMsg": "نحاول إصلاح الأمر. سيعاد الاتصال خلال {{seconds}} ثانية…",
         "conferenceReloadTitle": "لم تسر الأمور على ما يرام، نأسف لذلك!",
         "confirm": "أكِّد",
         "confirmNo": "لا",
@@ -531,7 +531,7 @@
         "errorLiveStreamNotEnabled": "البث الحي غير مفعَّل على على {{email}}. فعَّل البث الحي رجاءً، أو سجِّل الدخل إلى حسابٍ مُفعَّل فيه البث الحي",
         "expandedOff": "أُوقِف البث الحي",
         "expandedOn": "يجري بث المُلتقى على يوتيوب",
-        "expandedPending": "تبدأ عملية البث الحي...",
+        "expandedPending": "تبدأ عملية البث الحي…",
         "failedToStart": "فشلت عملية بدء البث الحي",
         "getStreamKeyManually": "لم نتمكن من الوصول إلى أي بث حي. جرب جلب مفتاح بث حي خاص بك من يوتيوب.",
         "googlePrivacyPolicy": "سياسية خصوصية غوغل",
@@ -574,10 +574,10 @@
         "joinRejectedMessage": "رفض رئيس الجلسة منحك الإذن بالدخول إلى المُلتقى",
         "joinRejectedTitle": "تم رفض طلب الانضمام.",
         "joinTitle": "انضم للمُلتقى",
-        "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور...",
+        "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور…",
         "joiningMessage": "ستتمكن من الانضمام للمُلتقى بعد الموافقة على طلبك",
-        "joiningTitle": "يجري طلب إذنٍ للدخول...",
-        "joiningWithPasswordTitle": "الدخول مع كلمة مرور...",
+        "joiningTitle": "يجري طلب إذنٍ للدخول…",
+        "joiningWithPasswordTitle": "الدخول مع كلمة مرور…",
         "knockButton": "اطلب إذن الدخول",
         "knockTitle": "يريد أحدٌ الدخول إلى المُلتقى",
         "knockingParticipantList": "تنبيه قائمة المشاركين",
@@ -658,7 +658,7 @@
         "linkToSalesforceDescription": "يمكنك ربط ملخص الاجتماع بكائن Salesforce.",
         "linkToSalesforceError": "فشل ربط المُلتقى بـ Salesforce",
         "linkToSalesforceKey": "ربط هذا المُلتقى",
-        "linkToSalesforceProgress": "جارٍ ربط الاجتماع بـ Salesforce ...",
+        "linkToSalesforceProgress": "جارٍ ربط الاجتماع بـ Salesforce…",
         "linkToSalesforceSuccess": "تم ربط الاجتماع بـ Salesforce",
         "localRecordingStarted": "بدأ {{name}} تسجيلًا محليًا.",
         "localRecordingStopped": "أوقف {{name}} التسجيل المحلي.",
@@ -789,7 +789,7 @@
         "callMe": "اتصل بي",
         "callMeAtNumber": "اتصل بي على هذا الرقم:",
         "calling": "قيد الاتصال",
-        "configuringDevices": "يجري ضبط الأجهزة...",
+        "configuringDevices": "يجري ضبط الأجهزة…",
         "connectedWithAudioQ": "هل متصل بجهاز صوت؟",
         "connection": {
             "good": "اتصال الإنترنت لديك جيد!",
@@ -843,17 +843,17 @@
     },
     "presenceStatus": {
         "busy": "مشغول",
-        "calling": "يتحدث...",
+        "calling": "يتحدث…",
         "connected": "متصل",
-        "connecting": "يتصل...",
-        "connecting2": "يتصل...",
+        "connecting": "يتصل…",
+        "connecting2": "يتصل…",
         "disconnected": "غير الاتصال",
         "expired": "منتهي الصلاحية",
         "ignored": "مهمل",
-        "initializingCall": "تهيئة مكالمة...",
+        "initializingCall": "تهيئة مكالمة…",
         "invited": "مدعو",
         "rejected": "مرفوض",
-        "ringing": "يرن..."
+        "ringing": "يرن…"
     },
     "privacyView": {
         "title": "خصوصية"
@@ -890,7 +890,7 @@
         "errorFetchingLink": "خطأ في جلب رابط التسجيل.",
         "expandedOff": "أوقٍف التسجيل",
         "expandedOn": "يُسجَّل المُلتقى الآن",
-        "expandedPending": "بدء التسجيل...",
+        "expandedPending": "بدء التسجيل…",
         "failedToStart": "فشل بدء التسجيل",
         "fileSharingdescription": "شارك التسجيل مع المشاركين للمُلتقى",
         "highlight": "تسليط الضوء",
@@ -917,7 +917,7 @@
         "on": "تسجيل",
         "onBy": "بدأ {{name}} التسجيل",
         "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
-        "pending": "التحضير لتسجيل المُلتقى...",
+        "pending": "التحضير لتسجيل المُلتقى…",
         "rec": "تسجيل",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
         "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
@@ -1215,7 +1215,7 @@
         "failedToStart": "فشلت عملية بدء الإذاعة",
         "labelToolTip": "يجري إذاعة المُلتقى",
         "off": "أوقفت الإذاعة",
-        "pending": "التحضير لإذاعة المُلتقى...",
+        "pending": "التحضير لإذاعة المُلتقى…",
         "start": "بدء إظهار الترجمة",
         "stop": "إيقاف عرض الترجمة",
         "subtitles": "ترجمات",
@@ -1302,7 +1302,7 @@
         "image6": "غابة",
         "image7": "شروق الشمس",
         "none": "بدون",
-        "pleaseWait": "يرجى الانتظار...",
+        "pleaseWait": "يرجى الانتظار…",
         "removeBackground": "إزالة خلفية",
         "slightBlur": "طمس طفيف",
         "title": "خلفيات افتراضية",

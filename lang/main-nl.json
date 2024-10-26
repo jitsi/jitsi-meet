@@ -20,7 +20,7 @@
         "noResults": "Geen resultaten die overeenkomen met de zoekopdracht",
         "outlookEmail": "Outlook e-mail",
         "phoneNumbers": "telefoonnummers",
-        "searching": "Zoeken...",
+        "searching": "Zoeken…",
         "shareInvite": "Uitnodiging voor vergadering delen",
         "shareLink": "Deel de link naar de vergadering om anderen uit te nodigen",
         "shareStream": "Deel de link naar de livestream",
@@ -110,7 +110,7 @@
         "installExtensionText": "Installeer de extensie voor Google Calendar en Office 365 integratie"
     },
     "connectingOverlay": {
-        "joiningRoom": "U wordt verbonden met uw vergadering..."
+        "joiningRoom": "U wordt verbonden met uw vergadering…"
     },
     "connection": {
         "ATTACHED": "Bijgevoegd",
@@ -122,9 +122,9 @@
         "DISCONNECTED": "Verbinding verbroken",
         "DISCONNECTING": "Verbinding verbreken",
         "ERROR": "Fout",
-        "FETCH_SESSION_ID": "Sessie-id ophalen...",
+        "FETCH_SESSION_ID": "Sessie-id ophalen…",
         "GET_SESSION_ID_ERROR": "Fout bij ophalen sessie-id: {{code}}",
-        "GOT_SESSION_ID": "Sessie-id ophalen... Klaar",
+        "GOT_SESSION_ID": "Sessie-id ophalen… Klaar",
         "LOW_BANDWIDTH": "Video voor {{displayName}} is uitgeschakeld om bandbreedte te besparen"
     },
     "connectionindicator": {
@@ -177,7 +177,7 @@
         "ifHaveApp": "Als u de app al hebt:",
         "joinInApp": "Deelnemen aan deze vergadering met de app",
         "launchWebButton": "Starten in web",
-        "title": "Uw vergadering wordt gestart in {{app}}...",
+        "title": "Uw vergadering wordt gestart in {{app}}…",
         "tryAgainButton": "Opnieuw proberen in desktop",
         "unsupportedBrowser": "Het lijkt erop dat u een browser gebruikt die wij niet ondersteunen."
     },
@@ -226,9 +226,9 @@
         "cameraUnknownError": "Kan de camera om een onbekende reden niet gebruiken.",
         "cameraUnsupportedResolutionError": "Uw camera ondersteunt de vereiste videoresolutie niet.",
         "close": "Sluiten",
-        "conferenceDisconnectMsg": "Controleer uw netwerkverbinding. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken...",
+        "conferenceDisconnectMsg": "Controleer uw netwerkverbinding. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceDisconnectTitle": "Uw verbinding is verbroken.",
-        "conferenceReloadMsg": "Er wordt geprobeerd om dit op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken...",
+        "conferenceReloadMsg": "Er wordt geprobeerd om dit op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceReloadTitle": "Er is helaas iets misgegaan.",
         "confirm": "Bevestigen",
         "confirmNo": "Nee",
@@ -462,7 +462,7 @@
         "errorLiveStreamNotEnabled": "Livestreamen is niet ingeschakeld voor {{email}}. Schakel livestreamen in of meld u aan met een account waarbij livestreamen is ingeschakeld.",
         "expandedOff": "De livestream is gestopt",
         "expandedOn": "De vergadering wordt momenteel gestreamd naar YouTube.",
-        "expandedPending": "De livestream wordt gestart...",
+        "expandedPending": "De livestream wordt gestart…",
         "failedToStart": "Livestream starten mislukt",
         "getStreamKeyManually": "Er konden geen livestreams opgehaald worden. Probeer uw livestream-sleutel van YouTube te krijgen.",
         "googlePrivacyPolicy": "Privacybeleid Google",
@@ -473,7 +473,7 @@
         "offBy": "{{name}} heeft de livestream gestopt.",
         "on": "Livestream",
         "onBy": "{{name}} heeft de livestream gestart.",
-        "pending": "Livestream starten...",
+        "pending": "Livestream starten…",
         "serviceName": "Livestreamservice",
         "signIn": "Aanmelden met Google",
         "signInCTA": "Meld u aan of voer uw livestream-sleutel van YouTube in.",
@@ -502,10 +502,10 @@
         "joinRejectedMessage": "Uw verzoek tot deelname is afgewezen door een moderator.",
         "joinRejectedTitle": "Verzoek tot deelname afgewezen",
         "joinTitle": "Deelnemen aan vergadering",
-        "joinWithPasswordMessage": "Poging tot deelname met wachtwoord, even geduld a.u.b...",
+        "joinWithPasswordMessage": "Poging tot deelname met wachtwoord, even geduld a.u.b…",
         "joiningMessage": "U neemt deel aan de vergadering zodra iemand uw verzoek accepteert",
-        "joiningTitle": "Vragen om deel te nemen aan vergadering...",
-        "joiningWithPasswordTitle": "Deelnemen met wachtwoord...",
+        "joiningTitle": "Vragen om deel te nemen aan vergadering…",
+        "joiningWithPasswordTitle": "Deelnemen met wachtwoord…",
         "knockButton": "Vragen om deel te nemen",
         "knockTitle": "Iemand wil deelnemen aan de vergadering",
         "knockingParticipantList": "Lijst van aankloppende deelnemers",
@@ -692,7 +692,7 @@
         "callMe": "Bel me",
         "callMeAtNumber": "Bel me op dit nummer:",
         "calling": "Bellen",
-        "configuringDevices": "Apparaten instellen...",
+        "configuringDevices": "Apparaten instellen…",
         "connectedWithAudioQ": "Bent u verbonden met audio?",
         "connection": {
             "good": "Uw internetverbinding lijkt goed te zijn!",
@@ -731,17 +731,17 @@
     },
     "presenceStatus": {
         "busy": "Bezet",
-        "calling": "Bellen...",
+        "calling": "Bellen…",
         "connected": "Verbonden",
-        "connecting": "Verbinding maken...",
-        "connecting2": "Verbinding maken*...",
+        "connecting": "Verbinding maken…",
+        "connecting2": "Verbinding maken*…",
         "disconnected": "Verbinding verbroken",
         "expired": "Verlopen",
         "ignored": "Genegeerd",
-        "initializingCall": "Oproep Starten...",
+        "initializingCall": "Oproep Starten…",
         "invited": "Uitgenodigd",
         "rejected": "Geweigerd",
-        "ringing": "Gaat over..."
+        "ringing": "Gaat over…"
     },
     "privacyView": {
         "title": "Privacy"
@@ -762,7 +762,7 @@
         "error": "Opname is mislukt. Probeer het opnieuw.",
         "expandedOff": "Opname is gestopt",
         "expandedOn": "De vergadering wordt momenteel opgenomen.",
-        "expandedPending": "Opname wordt gestart...",
+        "expandedPending": "Opname wordt gestart…",
         "failedToStart": "Opname starten mislukt",
         "fileSharingdescription": "Opname delen met deelnemers aan vergadering",
         "limitNotificationDescriptionNative": "Vanwege een grote vraag wordt uw opname beperkt tot {{limit}} min. Voor ongelimiteerde opnamen, probeer <3>{{app}}</3>.",
@@ -773,7 +773,7 @@
         "offBy": "{{name}} heeft de opname gestopt",
         "on": "Opnemen",
         "onBy": "{{name}} heeft de opname gestart",
-        "pending": "Voorbereiden op opnemen van de vergadering...",
+        "pending": "Voorbereiden op opnemen van de vergadering…",
         "rec": "OPN",
         "serviceDescription": "Uw opname wordt opgeslagen door de opnameservice",
         "serviceName": "Opnameservice",
@@ -1007,7 +1007,7 @@
         "failedToStart": "Transcriberen starten mislukt",
         "labelToolTip": "De vergadering wordt getranscribeerd",
         "off": "Transcriberen gestopt",
-        "pending": "Voorbereiden op transcriberen van de vergadering...",
+        "pending": "Voorbereiden op transcriberen van de vergadering…",
         "start": "Weergave van ondertiteling starten",
         "stop": "Weergave van ondertiteling stoppen",
         "tr": "TR"
@@ -1077,7 +1077,7 @@
         "apply": "Toepassen",
         "blur": "Vervagen",
         "none": "Geen",
-        "pleaseWait": "Even geduld a.u.b...",
+        "pleaseWait": "Even geduld a.u.b…",
         "removeBackground": "Verwijder achtergrond",
         "slightBlur": "Licht vervagen",
         "title": "Achtergronden"

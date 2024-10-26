@@ -85,7 +85,7 @@
         "installExtensionText": "గూగుల్ క్యాలెండర్, ఆఫీస్ 365 సమన్వయం కోసం పొడగింతను స్థాపించుకోండి"
     },
     "connectingOverlay": {
-        "joiningRoom": "మిమ్మల్ని సమావేశంలో చేరుస్తోంది..."
+        "joiningRoom": "మిమ్మల్ని సమావేశంలో చేరుస్తోంది…"
     },
     "connection": {
         "ATTACHED": "జోడించబడింది",
@@ -97,9 +97,9 @@
         "DISCONNECTED": "అనుసంధానం కాలేదు",
         "DISCONNECTING": "అనుసంధానం తెంచుతున్నది",
         "ERROR": "తప్పిదం",
-        "FETCH_SESSION_ID": "Session-id తెస్తూన్నది...",
+        "FETCH_SESSION_ID": "Session-id తెస్తూన్నది…",
         "GET_SESSION_ID_ERROR": "Session-id పొందడంలో తప్పిదం: {{code}}",
-        "GOT_SESSION_ID": "Session-id తెస్తూన్నది... పూర్తయింది",
+        "GOT_SESSION_ID": "Session-id తెస్తూన్నది… పూర్తయింది",
         "LOW_BANDWIDTH": "బ్యాండ్‌విడ్త్ ఆదా చేయడం కోసం {{displayName}} నుండి వీడియో ఆపివేయబడింది"
     },
     "connectionindicator": {
@@ -152,7 +152,7 @@
         "ifHaveApp": "మీకు ఇప్పటికే అనువర్తనం ఉంటే:",
         "joinInApp": "అనువర్తనం ద్వారా సమావేశంలో చేరండి",
         "launchWebButton": "జాలంలో తెరవండి",
-        "title": "మీ సమావేశాన్ని {{app}}లో తెరుస్తూన్నది...",
+        "title": "మీ సమావేశాన్ని {{app}}లో తెరుస్తూన్నది…",
         "tryAgainButton": "డెస్క్‌టాప్‌లో మళ్ళీ ప్రయత్నించు"
     },
     "defaultLink": "ఉదా॥ {{url}}",
@@ -181,7 +181,7 @@
         "Share": "పంచుకోండి",
         "Submit": "దాఖలుచేయి",
         "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
+        "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం…",
         "Yes": "అవును",
         "accessibilityLabel": {
             "liveStreaming": "తాజా స్ట్రీమింగ్"
@@ -201,9 +201,9 @@
         "cameraUnknownError": "ఏదో తెలియని కారణం చేత కేమెరాను వాడలేకున్నాం.",
         "cameraUnsupportedResolutionError": "కావాల్సిన వీడియో రిజల్యూషనుకు మీ కేమెరాలో తోడ్పాటు లేదు.",
         "close": "మూసివేయి",
-        "conferenceDisconnectMsg": "మీ నెట్‌వర్క్ అనుసంధానాన్ని ఒకసారి సరిచూసుకోండి. {{seconds}} క్షణాల్లో తిరిగి అనుసంధానమవుతుంది...",
+        "conferenceDisconnectMsg": "మీ నెట్‌వర్క్ అనుసంధానాన్ని ఒకసారి సరిచూసుకోండి. {{seconds}} క్షణాల్లో తిరిగి అనుసంధానమవుతుంది…",
         "conferenceDisconnectTitle": "మీ అనుసంధానం తెగిపోయింది.",
-        "conferenceReloadMsg": "దాన్ని సరిచేయడానికి ప్రయత్నిస్తున్నాం. {{seconds}} క్షణాల్లో తిరిగి అనుసంధానమవుతుంది...",
+        "conferenceReloadMsg": "దాన్ని సరిచేయడానికి ప్రయత్నిస్తున్నాం. {{seconds}} క్షణాల్లో తిరిగి అనుసంధానమవుతుంది…",
         "conferenceReloadTitle": "దురదృష్టవశాత్తూ, ఏదో తప్పు జరిగింది.",
         "confirm": "నిర్ధారించండి",
         "confirmNo": "కాదు",
@@ -431,7 +431,7 @@
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
         "expandedOff": "The live streaming has stopped",
         "expandedOn": "The meeting is currently being streamed to YouTube.",
-        "expandedPending": "The live streaming is being started...",
+        "expandedPending": "The live streaming is being started…",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
         "googlePrivacyPolicy": "గూగుల్ గోప్యతా విధానం",
@@ -442,7 +442,7 @@
         "offBy": "{{name}} stopped the live streaming",
         "on": "Live Streaming started",
         "onBy": "{{name}} started the live streaming",
-        "pending": "Starting Live Stream...",
+        "pending": "Starting Live Stream…",
         "serviceName": "లైవ్ స్ట్రీమింగ్ సేవ",
         "signIn": "గూగుల్‌తో ప్రవేశించండి",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
@@ -468,10 +468,10 @@
         "invalidPassword": "చెల్లని సంకేతపదం",
         "joinRejectedMessage": "మీ అభ్యర్థనను ఒక మధ్యవర్తి తిరస్కరించారు.",
         "joinTitle": "సమావేశంలో చేరండి",
-        "joinWithPasswordMessage": "సంకేతపదంతో చేరడానికి ప్రయత్నిస్తున్నది, దయచేసి వేచివుండండి...",
+        "joinWithPasswordMessage": "సంకేతపదంతో చేరడానికి ప్రయత్నిస్తున్నది, దయచేసి వేచివుండండి…",
         "joiningMessage": "ఎవరైనా మీ అభ్యర్థనను ఆమోదించగానే మీరు సమావేశంలో చేరతారు",
-        "joiningTitle": "సమావేశంలో చేరడానికి అడుగుతున్నాం...",
-        "joiningWithPasswordTitle": "సంకేతపదంతో చేరుతున్నారు...",
+        "joiningTitle": "సమావేశంలో చేరడానికి అడుగుతున్నాం…",
+        "joiningWithPasswordTitle": "సంకేతపదంతో చేరుతున్నారు…",
         "knockButton": "చేరడానికి అడుగు",
         "knockTitle": "ఎవరో సమావేశంలో చేరదామనుకుంటున్నారు",
         "knockingParticipantList": "Knocking participant list",
@@ -591,7 +591,7 @@
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
         "calling": "Calling",
-        "configuringDevices": "Configuring devices...",
+        "configuringDevices": "Configuring devices…",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
             "good": "మీ అంతర్జాల అనుసంధానం బానే ఉంది!",
@@ -642,17 +642,17 @@
     },
     "presenceStatus": {
         "busy": "Busy",
-        "calling": "పిలుస్తూన్నది...",
+        "calling": "పిలుస్తూన్నది…",
         "connected": "అనుసంధానమయ్యింది",
-        "connecting": "అనుసంధానమవుతూన్నది...",
-        "connecting2": "అనుసంధానమవుతూన్నది*...",
+        "connecting": "అనుసంధానమవుతూన్నది…",
+        "connecting2": "అనుసంధానమవుతూన్నది*…",
         "disconnected": "అనుసంధానం తెగిపోయింది",
         "expired": "కాలంచెల్లింది",
         "ignored": "పట్టించుకోలేదు",
-        "initializingCall": "పిలుపు మొదలవుతూన్నది...",
+        "initializingCall": "పిలుపు మొదలవుతూన్నది…",
         "invited": "ఆహ్వానించారు",
         "rejected": "తిరస్కరించారు",
-        "ringing": "రింగవుతూన్నది..."
+        "ringing": "రింగవుతూన్నది…"
     },
     "profile": {
         "setDisplayNameLabel": "చూపించాల్సిన పేరు అమర్చుకోండి",
@@ -670,7 +670,7 @@
         "error": "రికార్డింగు విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
         "expandedOff": "రికార్డింగు ఆగిపోయింది",
         "expandedOn": "ఈ సమావేశం ప్రస్తుతం రికార్డు అవుతూన్నది.",
-        "expandedPending": "రికార్డింగు మొదలవుతూన్నది...",
+        "expandedPending": "రికార్డింగు మొదలవుతూన్నది…",
         "failedToStart": "రికార్డింగు మొదలవడం విఫలమైంది",
         "fileSharingdescription": "రికార్డింగును సదస్యులతో పంచుకోండి",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
@@ -681,7 +681,7 @@
         "offBy": "{{name}} రికార్డింగును ఆపివేసారు",
         "on": "రికార్డింగు మొదలయింది",
         "onBy": "{{name}} రికార్డింగును మొదలుపెట్టారు",
-        "pending": "Preparing to record the meeting...",
+        "pending": "Preparing to record the meeting…",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
@@ -896,7 +896,7 @@
         "failedToStart": "Transcribing failed to start",
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
-        "pending": "Preparing to transcribe the meeting...",
+        "pending": "Preparing to transcribe the meeting…",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "tr": "TR"
@@ -960,7 +960,7 @@
         "addBackground": "వెనుతలం చేర్చు",
         "blur": "Blur",
         "none": "ఏమీలేదు",
-        "pleaseWait": "దయచేసి వేచివుండండి...",
+        "pleaseWait": "దయచేసి వేచివుండండి…",
         "removeBackground": "వెనుతలం తీసివేయి",
         "slightBlur": "Slight Blur",
         "title": "మిధ్యా వెనుతలాలు"
