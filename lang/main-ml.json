@@ -83,7 +83,7 @@
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
     },
     "connectingOverlay": {
-        "joiningRoom": "നിങ്ങളുടെ മീറ്റിംഗിലേക്ക് നിങ്ങളെ ബന്ധിപ്പിക്കുന്നു ..."
+        "joiningRoom": "നിങ്ങളുടെ മീറ്റിംഗിലേക്ക് നിങ്ങളെ ബന്ധിപ്പിക്കുന്നു…"
     },
     "connection": {
         "ATTACHED": "അറ്റാച്ചുചെയ്തു",
@@ -95,9 +95,9 @@
         "DISCONNECTED": "ബന്ധം വേർപെടുത്തിയിരിക്കുന്നു",
         "DISCONNECTING": "ഡിസ്കണനെക്ട ചെയ്യുന്നു ",
         "ERROR": "Error",
-        "FETCH_SESSION_ID": "സെഷൻ ഐഡി നേടുന്നു ...",
+        "FETCH_SESSION_ID": "സെഷൻ ഐഡി നേടുന്നു…",
         "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
-        "GOT_SESSION_ID": "സെഷൻ ഐഡി നേടുന്നു... ചെയ്തു",
+        "GOT_SESSION_ID": "സെഷൻ ഐഡി നേടുന്നു… ചെയ്തു",
         "LOW_BANDWIDTH": "ബാൻഡ്വിഡിത്ത് സൂക്ഷിക്കുന്നതിനായി {{displayName}}-നുള്ള വീഡിയോ ഓഫ് ചെയ്തിരിക്കുന്നു"
     },
     "connectionindicator": {
@@ -146,7 +146,7 @@
         "ifHaveApp": "നിങ്ങൾക്ക് അപ്ലിക്കേഷൻ ഉണ്ടെങ്കിൽ:",
         "joinInApp": "അപ്ലിക്കേഷൻ ഉപയോഗിച്ച് ഈ മീറ്റിംഗിൽ ചേരുക",
         "launchWebButton": "വെബിൽ സമാരംഭിക്കുക",
-        "title": "Launching your meeting in {{app}}...",
+        "title": "Launching your meeting in {{app}}…",
         "tryAgainButton": "ഡെസ്ക്ടോപ്പിൽ വീണ്ടും ശ്രമിക്കുക"
     },
     "defaultLink": "e.g. {{url}}",
@@ -175,7 +175,7 @@
         "Share": "പങ്കിടുക",
         "Submit": "സമർപ്പിക്കുക",
         "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHost": "ഹോസ്റ്റിനായി കാത്തിരിക്കുന്നു ...",
+        "WaitingForHost": "ഹോസ്റ്റിനായി കാത്തിരിക്കുന്നു…",
         "Yes": "അതെ",
         "accessibilityLabel": {
             "liveStreaming": "തത്സമയ സംപ്രേക്ഷണം"
@@ -193,9 +193,9 @@
         "cameraUnknownError": "Cannot use camera for an unknown reason.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "close": "അടയ്ക്കുക",
-        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec...",
+        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec…",
         "conferenceDisconnectTitle": "നിങ്ങൾ ബന്ധം വിച്ഛേദിച്ചിരിക്കുന്നു.",
-        "conferenceReloadMsg": "ഞങ്ങൾ ഇത് പരിഹരിക്കാൻ ശ്രമിക്കുകയാണ്. {{seconds}} സെക്കൻഡിൽ വീണ്ടും കണക്റ്റുചെയ്യുന്നു ...",
+        "conferenceReloadMsg": "ഞങ്ങൾ ഇത് പരിഹരിക്കാൻ ശ്രമിക്കുകയാണ്. {{seconds}} സെക്കൻഡിൽ വീണ്ടും കണക്റ്റുചെയ്യുന്നു…",
         "conferenceReloadTitle": "നിർഭാഗ്യവശാൽ, എന്തോ കുഴപ്പം സംഭവിച്ചു.",
         "confirm": "ഉറപ്പാക്കുക",
         "confirmNo": "വേണ്ട",
@@ -411,7 +411,7 @@
         "errorLiveStreamNotEnabled": "{{email}} -ൽ തത്സമയ സ്ട്രീമിംഗ് പ്രാപ്തമാക്കിയിട്ടില്ല.തത്സമയ സ്ട്രീമിംഗ് പ്രാപ്തമാക്കുക അല്ലെങ്കിൽ തത്സമയ സ്ട്രീമിംഗ് പ്രാപ്തമാക്കിയ ഒരു അക്കൗണ്ടിലേക്ക് പ്രവേശിക്കുക.",
         "expandedOff": "തത്സമയ സ്ട്രീമിംഗ് അവസാനിച്ചു",
         "expandedOn": "മീറ്റിംഗ് നിലവിൽ യൂട്യൂബിലേക്ക്  സ്ട്രീം ചെയ്യുന്നു.",
-        "expandedPending": "തത്സമയ സ്ട്രീമിംഗ് ആരംഭിക്കുന്നു...",
+        "expandedPending": "തത്സമയ സ്ട്രീമിംഗ് ആരംഭിക്കുന്നു…",
         "failedToStart": "തത്സമയ സ്ട്രീമിംഗ് ആരംഭിക്കുന്നതിൽ പരാജയപ്പെട്ടു",
         "getStreamKeyManually": "ഞങ്ങൾക്ക് തത്സമയ സ്ട്രീമുകളൊന്നും നേടാനായില്ല. യൂട്യൂബിൽ നിന്ന് നിങ്ങളുടെ തത്സമയ സ്ട്രീം കീ നേടാൻ ശ്രമിക്കുക.",
         "googlePrivacyPolicy": "ഗൂഗിൾ സ്വകാര്യതാ നയം",
@@ -422,7 +422,7 @@
         "offBy": "{{name}} തത്സമയ സ്ട്രീമിംഗ് നിർത്തി",
         "on": "തത്സമയ സംപ്രേക്ഷണം",
         "onBy": "{{name}} തത്സമയ സ്ട്രീമിംഗ് ആരംഭിച്ചു",
-        "pending": "തത്സമയ സ്ട്രീം ആരംഭിക്കുന്നു...",
+        "pending": "തത്സമയ സ്ട്രീം ആരംഭിക്കുന്നു…",
         "serviceName": "തത്സമയ സ്ട്രീമിംഗ് സേവനം",
         "signIn": "ഗൂഗിൾ ഉപയോഗിച്ച് പ്രവേശിക്കുക",
         "signInCTA": "പ്രവേശിക്കുക അല്ലെങ്കിൽ നിങ്ങളുടെ യൂട്യൂബ് തത്സമയ സ്ട്രീം കീ നൽകുക.",
@@ -449,10 +449,10 @@
         "invalidPassword": "പാസ്‌വേഡ് അസാധുവാണ്",
         "joinRejectedMessage": "നിങ്ങളുടെ ചേരൽ അഭ്യർത്ഥന ഒരു മോഡറേറ്റർ നിരസിച്ചു.",
         "joinTitle": "മീറ്റിംഗിൽ ചേരുക",
-        "joinWithPasswordMessage": "പാസ്‌വേഡുമായി ചേരാൻ ശ്രമിക്കുന്നു, ദയവായി കാത്തിരിക്കുക ...",
+        "joinWithPasswordMessage": "പാസ്‌വേഡുമായി ചേരാൻ ശ്രമിക്കുന്നു, ദയവായി കാത്തിരിക്കുക…",
         "joiningMessage": "ആരെങ്കിലും നിങ്ങളുടെ അഭ്യർത്ഥന സ്വീകരിച്ചാലുടൻ നിങ്ങൾ മീറ്റിംഗിൽ ചേരും",
-        "joiningTitle": "മീറ്റിംഗിൽ ചേരാൻ ആവശ്യപ്പെടുന്നു ...",
-        "joiningWithPasswordTitle": "പാസ്‌വേഡുമായി ചേരുന്നു ...",
+        "joiningTitle": "മീറ്റിംഗിൽ ചേരാൻ ആവശ്യപ്പെടുന്നു…",
+        "joiningWithPasswordTitle": "പാസ്‌വേഡുമായി ചേരുന്നു…",
         "knockButton": "ചേരാൻ ആവശ്യപ്പെടുക",
         "knockTitle": "ആരോ  മീറ്റിംഗിൽ ചേരാൻ ശ്രമിക്കുന്നു ",
         "knockingParticipantList": "Knocking participant list",
@@ -559,7 +559,7 @@
         "callMe": "എന്നെ വിളിക്കുക",
         "callMeAtNumber": "ഈ നമ്പറിൽ എന്നെ വിളിക്കുക:",
         "calling": "വിളിക്കുന്നു",
-        "configuringDevices": "ഉപകരണങ്ങൾ ക്രമീകരിക്കുന്നു...",
+        "configuringDevices": "ഉപകരണങ്ങൾ ക്രമീകരിക്കുന്നു…",
         "connectedWithAudioQ": "നിങ്ങൾ ഓഡിയോയുമായി ബന്ധിപ്പിച്ചിട്ടുണ്ടോ?",
         "connection": {
             "good": "നിങ്ങളുടെ ഇന്റർനെറ്റ് കണക്ഷൻ മികച്ചതായി തോന്നുന്നു!",
@@ -610,17 +610,17 @@
     },
     "presenceStatus": {
         "busy": "തിരക്ക്",
-        "calling": "വിളിക്കുന്നു ...",
+        "calling": "വിളിക്കുന്നു…",
         "connected": "ബന്ധിപ്പിച്ചു",
-        "connecting": "ബന്ധിപ്പിക്കുന്നു...",
-        "connecting2": "ബന്ധിപ്പിക്കുന്നു*...",
+        "connecting": "ബന്ധിപ്പിക്കുന്നു…",
+        "connecting2": "ബന്ധിപ്പിക്കുന്നു*…",
         "disconnected": "വിച്ഛേദിച്ചു",
         "expired": "കാലഹരണപ്പെട്ടു",
         "ignored": "അവഗണിച്ചു",
-        "initializingCall": "കോൾ സമാരംഭിക്കുന്നു...",
+        "initializingCall": "കോൾ സമാരംഭിക്കുന്നു…",
         "invited": "ക്ഷണിച്ചു",
         "rejected": "നിരസിച്ചു",
-        "ringing": "റിംഗുചെയ്യുന്നു..."
+        "ringing": "റിംഗുചെയ്യുന്നു…"
     },
     "profile": {
         "setDisplayNameLabel": "നിങ്ങളുടെ ഡിസ്പ്ലേ നാമം സജ്ജമാക്കുക",
@@ -638,7 +638,7 @@
         "error": "റെക്കോർഡിംഗ് പരാജയപ്പെട്ടു. ദയവായി വീണ്ടും ശ്രമിക്കുക.",
         "expandedOff": "റെക്കോർഡിംഗ് അവസാനിച്ചു ",
         "expandedOn": "മീറ്റിംഗ് നിലവിൽ റെക്കോർഡുചെയ്യുന്നു.",
-        "expandedPending": "റെക്കോർഡിംഗ് ആരംഭിച്ചു...",
+        "expandedPending": "റെക്കോർഡിംഗ് ആരംഭിച്ചു…",
         "failedToStart": "റെക്കോർഡിംഗ് ആരംഭിക്കുന്നതിൽ പരാജയപ്പെട്ടു",
         "fileSharingdescription": "മീറ്റിംഗ് പങ്കാളികളുമായി റെക്കോർഡിംഗ് പങ്കിടുക",
         "limitNotificationDescriptionNative": "ഉയർന്ന ഡിമാൻഡ് കാരണം നിങ്ങളുടെ റെക്കോർഡിംഗ് {{limit}} മിനിറ്റായി പരിമിതപ്പെടുത്തും. പരിധിയില്ലാത്ത റെക്കോർഡിംഗുകൾക്കായി <3>{{app}}</3>.",
@@ -649,7 +649,7 @@
         "offBy": "{{name}} റെക്കോർഡിംഗ് നിർത്തി",
         "on": "റെക്കോർഡിംഗ്",
         "onBy": "{{name}} റെക്കോർഡിംഗ് ആരംഭിച്ചു",
-        "pending": "മീറ്റിംഗ് റെക്കോർഡുചെയ്യാൻ തയ്യാറെടുക്കുന്നു...",
+        "pending": "മീറ്റിംഗ് റെക്കോർഡുചെയ്യാൻ തയ്യാറെടുക്കുന്നു…",
         "rec": "REC",
         "serviceDescription": "നിങ്ങളുടെ റെക്കോർഡിംഗ് റെക്കോർഡിംഗ് സേവനം സൂക്ഷിക്കും",
         "serviceName": "റെക്കോർഡിംഗ് സേവനം ",
@@ -852,7 +852,7 @@
         "failedToStart": "ട്രാൻസ്‌ക്രൈബുചെയ്യൽ ആരംഭിക്കുന്നതിൽ പരാജയപ്പെട്ടു",
         "labelToolTip": "മീറ്റിംഗ് പകർത്തിയെഴുതുകയാണ്",
         "off": "ട്രാൻസ്‌ക്രൈബുചെയ്യൽ നിർത്തി",
-        "pending": "മീറ്റിംഗ് പകർത്തിയെഴുതാൻ  തയ്യാറെടുക്കുന്നു...",
+        "pending": "മീറ്റിംഗ് പകർത്തിയെഴുതാൻ  തയ്യാറെടുക്കുന്നു…",
         "start": "സബ്ടൈറ്റിലുകൾ കാണിക്കാൻ ആരംഭിക്കുക",
         "stop": "സബ്‌ടൈറ്റിലുകൾ കാണിക്കുന്നത് നിർത്തുക",
         "tr": "TR"

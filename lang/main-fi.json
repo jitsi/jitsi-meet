@@ -69,7 +69,7 @@
         "DISCONNECTED": "Ei yhteyttä",
         "DISCONNECTING": "Yhteyttä katkaistaan",
         "ERROR": "Virhe",
-        "RECONNECTING": "Tapahtui verkkovirhe. Yhdistetään uudelleen..."
+        "RECONNECTING": "Tapahtui verkkovirhe. Yhdistetään uudelleen…"
     },
     "connectionindicator": {
         "address": "Osoite:",
@@ -449,7 +449,7 @@
         "calling": "Soitetaan…",
         "connected": "Yhdistetty",
         "connecting": "Yhdistetään…",
-        "connecting2": "Yhdistetään*...",
+        "connecting2": "Yhdistetään*…",
         "disconnected": "Ei yhteyttä",
         "expired": "Vanhentunut",
         "ignored": "Sivuutettu",

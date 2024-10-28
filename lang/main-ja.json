@@ -20,7 +20,7 @@
         "noResults": "一致する検索結果がありません",
         "outlookEmail": "Outlook メール",
         "phoneNumbers": "電話番号",
-        "searching": "検索中...",
+        "searching": "検索中…",
         "shareInvite": "ミーティングの招待状を共有",
         "shareLink": "ミーティングへのリンクを共有して、他の人を招待しましょう",
         "shareStream": "ライブ配信へのリンクを共有する",
@@ -112,7 +112,7 @@
         "installExtensionText": "Google カレンダーと Office 365 統合のための拡張機能をインストールしてください"
     },
     "connectingOverlay": {
-        "joiningRoom": "ミーティングに参加しています..."
+        "joiningRoom": "ミーティングに参加しています…"
     },
     "connection": {
         "ATTACHED": "アタッチされました",
@@ -124,9 +124,9 @@
         "DISCONNECTED": "切断されました",
         "DISCONNECTING": "切断しています",
         "ERROR": "エラー",
-        "FETCH_SESSION_ID": "セッションIDの取得中...",
+        "FETCH_SESSION_ID": "セッションIDの取得中…",
         "GET_SESSION_ID_ERROR": "セッションIDの取得エラー: {{code}}",
-        "GOT_SESSION_ID": "セッションIDの取得中... 完了",
+        "GOT_SESSION_ID": "セッションIDの取得中… 完了",
         "LOW_BANDWIDTH": "帯域節約のため、{{displayName}} のビデオがオフになりました"
     },
     "connectionindicator": {
@@ -179,7 +179,7 @@
         "ifHaveApp": "すでにこのアプリを持っている場合:",
         "joinInApp": "アプリでミーティングに参加",
         "launchWebButton": "Web 版を起動",
-        "title": "{{app}} でミーティングを開始しています...",
+        "title": "{{app}} でミーティングを開始しています…",
         "tryAgainButton": "デスクトップでもう一度お試しください",
         "unsupportedBrowser": "我々がサポートしていないブラウザをお使いのようです。"
     },
@@ -209,7 +209,7 @@
         "Share": "共有",
         "Submit": "投稿",
         "WaitForHostMsg": "ミーティング はまだ開始されていません。あなたがホストの場合は、認証を行ってください。それ以外の場合は、ホストの到着をお待ちください。",
-        "WaitingForHostTitle": "ホストの到着を待っています...",
+        "WaitingForHostTitle": "ホストの到着を待っています…",
         "Yes": "はい",
         "accessibilityLabel": {
             "liveStreaming": "ライブ配信"
@@ -229,9 +229,9 @@
         "cameraUnknownError": "不明な理由でカメラが使用できません。",
         "cameraUnsupportedResolutionError": "お使いのカメラは、必要なビデオ解像度をサポートしていません。",
         "close": "閉じる",
-        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。{{seconds}} 秒以内に再接続します...",
+        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。{{seconds}} 秒以内に再接続します…",
         "conferenceDisconnectTitle": "あなたは切断されました。",
-        "conferenceReloadMsg": "私たちはこれを解決しようとしています。{{seconds}} 秒以内に再接続します...",
+        "conferenceReloadMsg": "私たちはこれを解決しようとしています。{{seconds}} 秒以内に再接続します…",
         "conferenceReloadTitle": "残念ながら、何か問題が発生しています。",
         "confirm": "確認",
         "confirmNo": "いいえ",
@@ -499,7 +499,7 @@
         "errorLiveStreamNotEnabled": "{{email}} のライブ配信は有効ではありません。ライブ配信を有効にしてもらうか、ライブ配信が有効なアカウントでログインしてください。",
         "expandedOff": "ライブ配信が停止しました",
         "expandedOn": "このミーティングは、現在 YouTube に配信されています。",
-        "expandedPending": "ライブ配信を開始しています...",
+        "expandedPending": "ライブ配信を開始しています…",
         "failedToStart": "ライブ配信の開始に失敗しました",
         "getStreamKeyManually": "ライブ配信を取得できませんでした。YouTube よりストリームキーの取得を試してください。",
         "googlePrivacyPolicy": "Google プライバシーポリシー",
@@ -511,7 +511,7 @@
         "offBy": "{{name}} がライブ配信を停止しました",
         "on": "ライブ配信を開始しました",
         "onBy": "{{name}} がライブ配信を開始しました",
-        "pending": "ライブ配信を開始しています...",
+        "pending": "ライブ配信を開始しています…",
         "serviceName": "ライブ配信サービス",
         "sessionAlreadyActive": "このセッションはすでに録画またはライブ配信されています。",
         "signIn": "Google でログイン",
@@ -540,10 +540,10 @@
         "invalidPassword": "無効なパスワード",
         "joinRejectedMessage": "あなたの参加リクエストは、モデレーターによって却下されました。",
         "joinTitle": "ミーティングに参加",
-        "joinWithPasswordMessage": "パスワードを使って参加しようとしています。お待ちください...",
+        "joinWithPasswordMessage": "パスワードを使って参加しようとしています。お待ちください…",
         "joiningMessage": "誰かがあなたのリクエストを受け入れたら、すぐに会議に参加します",
-        "joiningTitle": "ミーティングへの参加を依頼中...",
-        "joiningWithPasswordTitle": "パスワードを使って参加中...",
+        "joiningTitle": "ミーティングへの参加を依頼中…",
+        "joiningWithPasswordTitle": "パスワードを使って参加中…",
         "knockButton": "参加を依頼",
         "knockTitle": "会議に参加したい人がいます",
         "knockingParticipantList": "待機中の参加者一覧",
@@ -739,7 +739,7 @@
         "callMe": "呼び出してください",
         "callMeAtNumber": "この番号に電話してください:",
         "calling": "呼び出し中",
-        "configuringDevices": "デバイスの設定中...",
+        "configuringDevices": "デバイスの設定中…",
         "connectedWithAudioQ": "オーディオを有効にして接続していますか?",
         "connection": {
             "good": "インターネット接続は良好のようです!",
@@ -792,17 +792,17 @@
     },
     "presenceStatus": {
         "busy": "話し中",
-        "calling": "呼び出し中...",
+        "calling": "呼び出し中…",
         "connected": "接続されました",
-        "connecting": "接続中...",
-        "connecting2": "接続中*...",
+        "connecting": "接続中…",
+        "connecting2": "接続中*…",
         "disconnected": "切断されました",
         "expired": "期限切れ",
         "ignored": "無視",
-        "initializingCall": "通話の初期化中...",
+        "initializingCall": "通話の初期化中…",
         "invited": "招待",
         "rejected": "拒否",
-        "ringing": "呼び出し中..."
+        "ringing": "呼び出し中…"
     },
     "privacyView": {
         "title": "プライバシー"
@@ -827,7 +827,7 @@
         "errorFetchingLink": "録画のリンクを取得中にエラーが発生しました。",
         "expandedOff": "録画が停止しました",
         "expandedOn": "このミーティングは現在録画中です。",
-        "expandedPending": "録画の開始中です...",
+        "expandedPending": "録画の開始中です…",
         "failedToStart": "録画の開始に失敗しました",
         "fileSharingdescription": "録画をミーティングの参加者と共有する",
         "highlight": "ハイライト",
@@ -855,7 +855,7 @@
         "on": "録画を開始しました",
         "onBy": "{{name}} が録画を開始しました",
         "onlyRecordSelf": "自身の音声・映像のみを録画する",
-        "pending": "ミーティングの録画準備中...",
+        "pending": "ミーティングの録画準備中…",
         "rec": "REC",
         "saveLocalRecording": "ローカルに録画を保存 (Beta)",
         "serviceDescription": "ビデオは録画サービスで録画されます",
@@ -1126,7 +1126,7 @@
         "failedToStart": "文字起こしを開始できませんでした",
         "labelToolTip": "ミーティングの文字起こしが行われています",
         "off": "文字起こしが停止されています",
-        "pending": "ミーティングの文字起こしの準備中...",
+        "pending": "ミーティングの文字起こしの準備中…",
         "start": "字幕の表示を開始",
         "stop": "字幕の表示を停止",
         "tr": "TR"
@@ -1208,7 +1208,7 @@
         "image6": "フォレスト",
         "image7": "サンライズ",
         "none": "無し",
-        "pleaseWait": "しばらくお待ちください...",
+        "pleaseWait": "しばらくお待ちください…",
         "removeBackground": "背景削除",
         "slightBlur": "少しぼかし",
         "title": "バーチャル背景",

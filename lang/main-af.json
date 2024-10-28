@@ -68,7 +68,7 @@
         "DISCONNECTED": "Ontkoppeld",
         "DISCONNECTING": "Ontkoppel tans",
         "ERROR": "Fout",
-        "RECONNECTING": "’n Netwerkprobleem het voorgekom. Herkoppel tans..."
+        "RECONNECTING": "’n Netwerkprobleem het voorgekom. Herkoppel tans…"
     },
     "connectionindicator": {
         "address": "Adres:",
@@ -426,7 +426,7 @@
         "somebody": "Iemand",
         "startSilentDescription": "",
         "startSilentTitle": "",
-        "suboptimalExperienceDescription": "Gits... ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde blaaiers</a>.",
+        "suboptimalExperienceDescription": "Gits… ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde blaaiers</a>.",
         "suboptimalExperienceTitle": "Blaaierwaarskuwing",
         "unmute": ""
     },
@@ -443,7 +443,7 @@
         "calling": "Bel tans…",
         "connected": "Gekoppel",
         "connecting": "Koppel tans…",
-        "connecting2": "Koppel tans*...",
+        "connecting2": "Koppel tans*…",
         "disconnected": "Ontkoppeld",
         "expired": "Verval",
         "ignored": "Geïgnoreer",

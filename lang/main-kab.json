@@ -20,7 +20,7 @@
         "noResults": "Ulac igmaḍ n unadi yemṣadan",
         "outlookEmail": "Imayl n Outlook",
         "phoneNumbers": "uṭṭunen n tiliɣri",
-        "searching": "Anadi...",
+        "searching": "Anadi…",
         "shareInvite": "Bḍu tinubga n temlilit",
         "shareLink": "Bḍu aseɣwen n usarag i usnubget n wiyaḍ",
         "shareStream": "Bḍu aseɣwen n usuddem usrid",
@@ -90,7 +90,7 @@
         "installExtensionText": "Sbedd asiɣzef i umsidef n uwitay n Google d Office 365"
     },
     "connectingOverlay": {
-        "joiningRoom": "Tetteqqneḍ ɣer temlilit-ik·im..."
+        "joiningRoom": "Tetteqqneḍ ɣer temlilit-ik·im…"
     },
     "connection": {
         "ATTACHED": "Isedda",
@@ -102,9 +102,9 @@
         "DISCONNECTED": "Ur yeqqin ara",
         "DISCONNECTING": "Tuffɣa",
         "ERROR": "Tuccḍa",
-        "FETCH_SESSION_ID": "Awway n usulay n tɣimit...",
+        "FETCH_SESSION_ID": "Awway n usulay n tɣimit…",
         "GET_SESSION_ID_ERROR": "Tuccḍa deg wawway n usulay n tɣimit: {{code}}",
-        "GOT_SESSION_ID": "Awway n usulay n tɣimit... Yemmed",
+        "GOT_SESSION_ID": "Awway n usulay n tɣimit… Yemmed",
         "LOW_BANDWIDTH": "Tettwasens tvidyut i {{displayName}} i wakken ad tettwaḥraz tehri n tseftit"
     },
     "connectionindicator": {
@@ -157,7 +157,7 @@
         "ifHaveApp": "Ma yella tesɛiḍ yakan asnas:",
         "joinInApp": "Ttekki deg usarag s useqdec n usnas",
         "launchWebButton": "Seddu deg web",
-        "title": "Seddu timlilit-ik·im deg {{app}}...",
+        "title": "Seddu timlilit-ik·im deg {{app}}…",
         "tryAgainButton": "Ɛreḍ tikkelt-nniḍen ɣef tnarit"
     },
     "defaultLink": "md. {{url}}",
@@ -186,7 +186,7 @@
         "Share": "Bḍu",
         "Submit": "Azen",
         "WaitForHostMsg": "Asarag mazal ur yebdi ara. Ma yella d kečč·kemm i d asenneftaɣ, ttxil-k·m ilaq usesteb. Ma yella xaṭi, ttxil-k·m rǧu asenneftaɣ ad d-yaweḍ.",
-        "WaitingForHostTitle": "Aṛaǧu n usenneftaɣ ...",
+        "WaitingForHostTitle": "Aṛaǧu n usenneftaɣ…",
         "Yes": "Ih",
         "accessibilityLabel": {
             "liveStreaming": "Asuddim usrid"
@@ -206,9 +206,9 @@
         "cameraUnknownError": "Ur tezmireḍ ara ad tesqedceḍ takamiṛat, ur neẓri ara acuɣer.",
         "cameraUnsupportedResolutionError": "Takamiṛat-ik·im ur tessefrak ara afray tvidyut yettusran.",
         "close": "Mdel",
-        "conferenceDisconnectMsg": "Ilaq-ak·am ad tesneqdeḍ tuqqna-inek·inem ɣer uzeṭṭa. Allus n tuqqna deg {{seconds}} tisinin...",
+        "conferenceDisconnectMsg": "Ilaq-ak·am ad tesneqdeḍ tuqqna-inek·inem ɣer uzeṭṭa. Allus n tuqqna deg {{seconds}} tisinin…",
         "conferenceDisconnectTitle": "Tettwasuffɣeḍ.",
-        "conferenceReloadMsg": "Nettaɛraḍ ad nṣeggem aya. Allus n tuqqna deg {{seconds}} tisinin...",
+        "conferenceReloadMsg": "Nettaɛraḍ ad nṣeggem aya. Allus n tuqqna deg {{seconds}} tisinin…",
         "conferenceReloadTitle": "Nesḥassef, yella wayen ur nteddu ara akken ilaq.",
         "confirm": "Sentem",
         "confirmNo": "Uhu",
@@ -475,7 +475,7 @@
         "errorLiveStreamNotEnabled": "Asuddem usrid ur yettwarmed ara deg {{email}}. Ma ulac aɣilif rmed asuddem usrid neɣ kcem ɣer umiḍan s usuddem usrid yettwaremden.",
         "expandedOff": "Asuddes usrid yettuseḥbes",
         "expandedOn": "Timlilit ha-tt-a akka tura tettɛeddi-d deg Youtuba.",
-        "expandedPending": "Asuddem usrid ha-t-an ad yebdu...",
+        "expandedPending": "Asuddem usrid ha-t-an ad yebdu…",
         "failedToStart": "Ur yesmurres wusrid deg uqlaɛ",
         "getStreamKeyManually": "Ur nessaweḍ ara ad d-nerr ula d yiwen n usuddem usrid. Ɛreḍ ad d-tawiḍ tasarut-ik·im n usuddem usrid seg Youtube.",
         "googlePrivacyPolicy": "Tasertit tabaḍnit n Google",
@@ -486,7 +486,7 @@
         "offBy": "{{name}} iseḥbes asuddem usrid",
         "on": "Yebda usuddem usrid",
         "onBy": "{{name}} yebda asuddem usrid",
-        "pending": "Beddu n usuddem usrid...",
+        "pending": "Beddu n usuddem usrid…",
         "serviceName": "Ameẓlu n usuddem usrid",
         "signIn": "Qqen s Google",
         "signInCTA": "Qqen neɣ sekcem tasarut-ik·im n usuddem usrid seg Youtube.",
@@ -513,10 +513,10 @@
         "invalidPassword": "Yir awal uffir",
         "joinRejectedMessage": "Asuter-inek·inem n uttekki yettwagi sɣur amaẓrag.",
         "joinTitle": "Ttekki deg temlilit",
-        "joinWithPasswordMessage": "Aneɛruḍ n uttekki s wawal uffir, ttxil-k·m rǧu...",
+        "joinWithPasswordMessage": "Aneɛruḍ n uttekki s wawal uffir, ttxil-k·m rǧu…",
         "joiningMessage": "Ad tettekkiḍ deg temlilit akken kan ara yeqbel walbaɛḍ asuter-inek·inem",
-        "joiningTitle": "Asuter n uttekki deg temlilit...",
-        "joiningWithPasswordTitle": "Attekki s wawal uffir...",
+        "joiningTitle": "Asuter n uttekki deg temlilit…",
+        "joiningWithPasswordTitle": "Attekki s wawal uffir…",
         "knockButton": "Suter attekki",
         "knockTitle": "Yella win yebɣan ad ittekki deg temlilit",
         "knockingParticipantList": "Tadbart n yimttekkiyen n usṭebṭeb",
@@ -691,7 +691,7 @@
         "callMe": "Siwel-iyi-d",
         "callMeAtNumber": "Siwel-iyi-d ɣer wuṭṭun-a:",
         "calling": "Asiwel",
-        "configuringDevices": "Amtawi n yibenkan...",
+        "configuringDevices": "Amtawi n yibenkan…",
         "connectedWithAudioQ": "Teqqneḍ s umeslaw?",
         "connection": {
             "good": "Tuqqna-inek·inem internet tettban tgerrez!",
@@ -744,17 +744,17 @@
     },
     "presenceStatus": {
         "busy": "Yecɣel",
-        "calling": "Yessawal...",
+        "calling": "Yessawal…",
         "connected": "Yeqqen",
         "connecting": "Yetteqqen…",
         "connecting2": "Yetteqqen*…",
         "disconnected": "Yeffeɣ",
         "expired": "Yemmut",
         "ignored": "Yettwanef",
-        "initializingCall": "Awennez n usiwel...",
+        "initializingCall": "Awennez n usiwel…",
         "invited": "Yettwancad",
         "rejected": "Yettwagi",
-        "ringing": "Yettṣuni...."
+        "ringing": "Yettṣuni…."
     },
     "profile": {
         "avatar": "avaṭar",
@@ -775,7 +775,7 @@
         "errorFetchingLink": "Tuccḍa lawan n tririt n useɣwen n usekles.",
         "expandedOff": "Asekles yettuseḥbes",
         "expandedOn": "Timlilit ha-tt-a akka tura tettwaseklas.",
-        "expandedPending": "Asekles ha-t-an yebda....",
+        "expandedPending": "Asekles ha-t-an yebda….",
         "failedToStart": "Beddu n usekles ur yeddi ara",
         "fileSharingdescription": "Bḍu asekles d yimttekkiyen n temlilit",
         "limitNotificationDescriptionNative": "Seg tuget n usuter, asekles-inek·inem ad yesɛu kan {{limit}} tesdidin. I yiseklas war tilas, ɛreḍ <3>{{app}}</3>.",
@@ -787,7 +787,7 @@
         "offBy": "{{name}} iseḥbes asekles",
         "on": "Asekles",
         "onBy": "{{name}} yebda asekles",
-        "pending": "Aheyyi n usekles n temlilit...",
+        "pending": "Aheyyi n usekles n temlilit…",
         "rec": "REC",
         "serviceDescription": "Asekles-inek·inem ad yettwasekles s umeẓlu n usekles",
         "serviceDescriptionCloud": "Asekles deg usigna",
@@ -1041,7 +1041,7 @@
         "failedToStart": "Aseskel yegguma ad yebdu",
         "labelToolTip": "Timlilit ha-tt-an la tettwaseskal",
         "off": "Aseskel yettwaḥbes",
-        "pending": "Aheyyi i useskel n temlilit...",
+        "pending": "Aheyyi i useskel n temlilit…",
         "start": "Bdu askan n yizwal isnawanen",
         "stop": "Seḥbes askan n yiduzwilen",
         "tr": "TR"
@@ -1117,7 +1117,7 @@
         "image6": "Tiẓgi ",
         "image7": "Alluy n yiṭṭij",
         "none": "Ula d yiwen",
-        "pleaseWait": "Ttxil-k rǧu...",
+        "pleaseWait": "Ttxil-k rǧu…",
         "removeBackground": "Kkes agilal",
         "slightBlur": "Cwiṭ n uluɣu",
         "title": "Igilalen uhlisen",

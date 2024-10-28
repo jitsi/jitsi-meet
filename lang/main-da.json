@@ -83,7 +83,7 @@
         "GET_SESSION_ID_ERROR": "Hent session-id fejl: {{code}}",
         "GOT_SESSION_ID": "Henter session-ID… Udført",
         "LOW_BANDWIDTH": "Video for {{displayName}} er slået fra for at spare båndbredde",
-        "RECONNECTING": "Et netværksproblem opstod. Forbinder igen..."
+        "RECONNECTING": "Et netværksproblem opstod. Forbinder igen…"
     },
     "connectionindicator": {
         "address": "Adresse:",
@@ -458,7 +458,7 @@
         "somebody": "Nogen",
         "startSilentDescription": "",
         "startSilentTitle": "",
-        "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da forsøg venligst at bruge en af følgende <a href='{{recommendedBrowserPageLink}}' target='_blank'>fuldt understøttede internet browsere</a>.",
+        "suboptimalExperienceDescription": "Hmmm… vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da forsøg venligst at bruge en af følgende <a href='{{recommendedBrowserPageLink}}' target='_blank'>fuldt understøttede internet browsere</a>.",
         "suboptimalExperienceTitle": "Browser-advarsel",
         "unmute": ""
     },
@@ -475,7 +475,7 @@
         "calling": "Ringer op…",
         "connected": "Forbundet",
         "connecting": "Forbinder…",
-        "connecting2": "Forbinder*...",
+        "connecting2": "Forbinder*…",
         "disconnected": "Forbindelse afbrudt",
         "expired": "Udløbet",
         "ignored": "Ignoreret",

@@ -68,7 +68,7 @@
         "DISCONNECTED": "Անջատված է",
         "DISCONNECTING": "Անջատում…",
         "ERROR": "Սխալ",
-        "RECONNECTING": "Ցանցի խնդիր է տեղի ունեցել: Վերամիացում..."
+        "RECONNECTING": "Ցանցի խնդիր է տեղի ունեցել: Վերամիացում…"
     },
     "connectionindicator": {
         "address": "Հասցե։",
@@ -438,7 +438,7 @@
         "calling": "",
         "connected": "Միացված է",
         "connecting": "Միանում է…",
-        "connecting2": "Միանում է...",
+        "connecting2": "Միանում է…",
         "disconnected": "Անջատված է",
         "expired": "",
         "ignored": "",
