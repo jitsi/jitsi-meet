@@ -308,6 +308,7 @@ export interface IConfig {
     };
     dynamicBrandingUrl?: string;
     e2ee?: {
+        disabled?: boolean;
         externallyManagedKey?: boolean;
         labels?: {
             description?: string;
@@ -552,7 +553,6 @@ export interface IConfig {
     subject?: string;
     testing?: {
         assumeBandwidth?: boolean;
-        disableE2EE?: boolean;
         dumpTranscript?: boolean;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
