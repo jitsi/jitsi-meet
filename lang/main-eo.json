@@ -222,7 +222,7 @@
         "noMobileApp": "Ĉu vi ne jam havas la aplikaĵon?",
         "termsAndConditions": "Daŭrigante, vi konsentas kun niaj <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>kondiĉoj.</a>",
         "title": "Enirante vian kunvenon per {{app}}…",
-        "titleNew": "Enirante vian kunvenon...",
+        "titleNew": "Enirante vian kunvenon…",
         "tryAgainButton": "Provu denove per la komputila aplikaĵo",
         "unsupportedBrowser": "Ŝajnas ke vi uzas nesubtenitan retumilon"
     },

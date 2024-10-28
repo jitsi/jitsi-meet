@@ -84,7 +84,7 @@
         "installExtensionText": "Google 캘린더 및 Office 365 확장 프로그램을 설치합니다."
     },
     "connectingOverlay": {
-        "joiningRoom": "회의에 연결중 ..."
+        "joiningRoom": "회의에 연결중…"
     },
     "connection": {
         "ATTACHED": "첨부",
@@ -97,9 +97,9 @@
         "DISCONNECTING": "연결 종료중",
         "ERROR": "에러",
         "GET_SESSION_ID_ERROR": "세션 ID 가져오기 오류 : {{code}}",
-        "GOT_SESSION_ID": "세션 ID를 가져오는중 ... 완료",
+        "GOT_SESSION_ID": "세션 ID를 가져오는중… 완료",
         "LOW_BANDWIDTH": "대역폭을 절약하기 위해 {{displayName}}의 동영상이 중지되었습니다.",
-        "RECONNECTING": "네트워크 문제가 발생했습니다. 다시 연결중..."
+        "RECONNECTING": "네트워크 문제가 발생했습니다. 다시 연결중…"
     },
     "connectionindicator": {
         "address": "주소:",
@@ -407,7 +407,7 @@
         "errorLiveStreamNotEnabled": "{{email}}에 의해 라이브 스트리밍이 활성화되지 않았습니다. 라이브 스트리밍을 활성화하거나 라이브 스트리밍이 활성화된 계정으로 로그인하십시오.",
         "expandedOff": "라이브 스트리밍이 중지되었습니다",
         "expandedOn": "현재 회의가 YouTube로 스트리밍되고 있습니다.",
-        "expandedPending": "라이브 스트리밍이 시작됩니다 ...",
+        "expandedPending": "라이브 스트리밍이 시작됩니다…",
         "failedToStart": "실시간 스트리밍 시작 실패",
         "getStreamKeyManually": "실시간 스트림을 가져올 수 없습니다. YouTube에서 실시간 스트림 키를 받아보세요.",
         "googlePrivacyPolicy": "Google 개인 정보 보호 정책",
@@ -532,7 +532,7 @@
         "error": "녹화가 실패했습니다. 다시 시도하십시오.",
         "expandedOff": "녹화가 중지됨",
         "expandedOn": "회의가 현재 녹화 중입니다.",
-        "expandedPending": "녹화가 시작됩니다 ...",
+        "expandedPending": "녹화가 시작됩니다…",
         "failedToStart": "녹화를 시작하지 못했습니다",
         "fileSharingdescription": "회의 참가자와 녹화 공유",
         "live": "라이브",
@@ -781,7 +781,7 @@
     "virtualBackground": {
         "enableBlur": "흐린 배경 활성화",
         "none": "없음",
-        "pleaseWait": "잠시만 기다려주세요...",
+        "pleaseWait": "잠시만 기다려주세요…",
         "removeBackground": "배경 제거",
         "title": "배경",
         "uploadImage": "이미지 업로드"

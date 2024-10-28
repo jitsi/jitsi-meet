@@ -80,7 +80,7 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Erro",
-        "RECONNECTING": "Produciuse un problema na rede. Reconectando..."
+        "RECONNECTING": "Produciuse un problema na rede. Reconectando…"
     },
     "connectionindicator": {
         "address": "Enderezo:",
@@ -465,7 +465,7 @@
         "calling": "Chamando…",
         "connected": "Conectado",
         "connecting": "Conectando…",
-        "connecting2": "Conectando*...",
+        "connecting2": "Conectando*…",
         "disconnected": "Desconectado",
         "expired": "Expirou",
         "ignored": "Ignorado",

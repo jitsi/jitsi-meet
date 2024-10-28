@@ -68,7 +68,7 @@
         "installExtensionText": "התקן את התוסף לשילוב Google Calendar ו-Office 365"
     },
     "connectingOverlay": {
-        "joiningRoom": "מחבר אותך למפגש שלך..."
+        "joiningRoom": "מחבר אותך למפגש שלך…"
     },
     "connection": {
         "ATTACHED": "צרופה",
@@ -80,9 +80,9 @@
         "DISCONNECTED": "לא מחובר",
         "DISCONNECTING": "מתנתק",
         "ERROR": "שגיאה",
-        "FETCH_SESSION_ID": "השגת מזהה הפעלה...",
+        "FETCH_SESSION_ID": "השגת מזהה הפעלה…",
         "GET_SESSION_ID_ERROR": "התקבלה שגיאה מזהה הפעלה: {{code}}",
-        "GOT_SESSION_ID": "השגת מזהה הפעלה... בוצע",
+        "GOT_SESSION_ID": "השגת מזהה הפעלה… בוצע",
         "LOW_BANDWIDTH": "הווידאו עבור {{displayName}} כבה כדי לשמור על רוחב הפס"
     },
     "connectionindicator": {
@@ -127,7 +127,7 @@
         "downloadApp": "הורד את היישום",
         "launchWebButton": "הפעל ברשת",
         "openApp": "מתחבר ליישום",
-        "title": "מפעיל את הפגישה שלך ב{{app}}...",
+        "title": "מפעיל את הפגישה שלך ב{{app}}…",
         "tryAgainButton": "נסה שוב במחשב"
     },
     "defaultLink": "למשל {{url}}",
@@ -156,7 +156,7 @@
         "Share": "שתף",
         "Submit": "שלח",
         "WaitForHostMsg": "הועידה טרם החלה. אם אתה המארח אז בצע אימות. אחרת, אנא המתן שהמארח יגיע.",
-        "WaitingForHost": "ממתין למארח ...",
+        "WaitingForHost": "ממתין למארח…",
         "Yes": "כן",
         "accessibilityLabel": {
             "liveStreaming": "שידור חי"
@@ -173,9 +173,9 @@
         "cameraUnknownError": "לא ניתן להשתמש במצלמה מסיבה לא ידועה.",
         "cameraUnsupportedResolutionError": "המצלמה שלך אינה תומכת ברזולוציית וידאו הנדרשת.",
         "close": "סגור",
-        "conferenceDisconnectMsg": "יתכן שתרצה לבדוק את חיבור הרשת שלך, מתחבר מחדש בעוד {{seconds}} שניות...",
+        "conferenceDisconnectMsg": "יתכן שתרצה לבדוק את חיבור הרשת שלך, מתחבר מחדש בעוד {{seconds}} שניות…",
         "conferenceDisconnectTitle": "נותקת.",
-        "conferenceReloadMsg": "אנו מנסים לתקן זאת, מתחבר מחדש בעוד {{seconds}} שניות...",
+        "conferenceReloadMsg": "אנו מנסים לתקן זאת, מתחבר מחדש בעוד {{seconds}} שניות…",
         "conferenceReloadTitle": "לצערנו משהו השתבש.",
         "confirm": "אשר",
         "confirmNo": "לא",
@@ -383,7 +383,7 @@
         "errorLiveStreamNotEnabled": "הזרמה בשידור חי אינו מופעל ב-{{email}}. אנא אפשר הזרמה בשידור חי או היכנס לחשבון עם שידור חי מופעל",
         "expandedOff": "השידור החי פסק",
         "expandedOn": "המפגש הזה מוזרם כעת ליוטיוב.",
-        "expandedPending": "השידור החי עומד להתחיל...",
+        "expandedPending": "השידור החי עומד להתחיל…",
         "failedToStart": "ההפעלה של השידור החי כשלה",
         "getStreamKeyManually": "לא הצלחנו להשיג הזרמה של שידור חי, נסה להשיג את מפתח שידור החי מיוטיוב.",
         "googlePrivacyPolicy": "מדיניות הפרטיות של גוגל",
@@ -392,7 +392,7 @@
         "offBy": "{{name}} הפסיק את השידור החי",
         "on": "שידור חי",
         "onBy": "{{name}} הפעיל את השידור החי",
-        "pending": "מתחיל שידור חי...",
+        "pending": "מתחיל שידור חי…",
         "serviceName": "שירותי שידור חי",
         "signIn": "התחבר באמצעות גוגל",
         "signInCTA": "התחבר או הזן מפתח שידור חי מיוטיוב.",
@@ -471,7 +471,7 @@
         "somebody": "מישהו",
         "startSilentDescription": "הצטרף שוב לפגישה כדי לאפשר שמע",
         "startSilentTitle": "הצטרפת ללא פלט שמע!",
-        "suboptimalExperienceDescription": "אופ... אנו חוששים שהחוויה שלך עם {{appName}} לא תהיה נהדרת כאן. אנו מחפשים דרכים לשפר זאת, אך עד אז, נסה להשתמש באחד מה<a href='{{recommendedBrowserPageLink}}' target='_blank'>דפדפנים הנתמכים לחלוטין</a>.",
+        "suboptimalExperienceDescription": "אופ… אנו חוששים שהחוויה שלך עם {{appName}} לא תהיה נהדרת כאן. אנו מחפשים דרכים לשפר זאת, אך עד אז, נסה להשתמש באחד מה<a href='{{recommendedBrowserPageLink}}' target='_blank'>דפדפנים הנתמכים לחלוטין</a>.",
         "suboptimalExperienceTitle": "אזהרת דפדפן",
         "unmute": "בטל השתקה"
     },
@@ -485,17 +485,17 @@
     "poweredby": "מופעל על ידי",
     "presenceStatus": {
         "busy": "עסוק",
-        "calling": "מחייג...",
+        "calling": "מחייג…",
         "connected": "מחובר",
-        "connecting": "מתחבר...",
-        "connecting2": "מתחבר*...",
+        "connecting": "מתחבר…",
+        "connecting2": "מתחבר*…",
         "disconnected": "מנותק",
         "expired": "פג תוקף",
         "ignored": "התעלמו",
-        "initializingCall": "מאתחל שיחה...",
+        "initializingCall": "מאתחל שיחה…",
         "invited": "הוזמנו",
         "rejected": "דחו",
-        "ringing": "מצלצל..."
+        "ringing": "מצלצל…"
     },
     "profile": {
         "setDisplayNameLabel": "הגדר שם תצוגה",
@@ -513,7 +513,7 @@
         "error": "ההקלטה כשלה. אנא נסה שוב.",
         "expandedOff": "ההקלטה הופסקה",
         "expandedOn": "הפגישה מתועדת כעת.",
-        "expandedPending": "ההקלטה עומדת להתחיל...",
+        "expandedPending": "ההקלטה עומדת להתחיל…",
         "failedToStart": "התחלת הקלטה כשלה",
         "fileSharingdescription": "שתף את ההקלטה עם משתתפי הפגישה",
         "live": "חי",
@@ -522,7 +522,7 @@
         "offBy": "{{name}} עצר את ההקלטה",
         "on": "מקליט",
         "onBy": "{{name}} הפעיל את ההקלטה",
-        "pending": "מתכונן להקליט את הפגישה...",
+        "pending": "מתכונן להקליט את הפגישה…",
         "rec": "מקליט",
         "serviceDescription": "ההקלטה שלך תישמר על ידי שירותי ההקלטה",
         "serviceName": "שירותי הקלטה",
@@ -707,7 +707,7 @@
         "failedToStart": "הפעלת תמלול כשלה",
         "labelToolTip": "הפגישה מתומללת",
         "off": "התמלול פסק",
-        "pending": "מתכונן לתמלול הפגישה...",
+        "pending": "מתכונן לתמלול הפגישה…",
         "start": "התחל הצגת כתוביות",
         "stop": "עצור הצגת כתוביות",
         "tr": "TR"

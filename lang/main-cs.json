@@ -19,7 +19,7 @@
         "noResults": "Žádné odpovídající výsledky vyhledávání",
         "outlookEmail": "Email Outlook",
         "phoneNumbers": "telefonní čísla",
-        "searching": "Hledám...",
+        "searching": "Hledám…",
         "shareInvite": "Sdílet pozvánku na setkání",
         "shareLink": "Pozvěte ostatní tak, že jim pošlete odkaz na setkání",
         "shareStream": "Sdílet odkaz na živý přenos",
@@ -825,17 +825,17 @@
     },
     "presenceStatus": {
         "busy": "Obsazeno",
-        "calling": "Vytáčím...",
+        "calling": "Vytáčím…",
         "connected": "Spojování",
-        "connecting": "Spojování...",
-        "connecting2": "Spojování*...",
+        "connecting": "Spojování…",
+        "connecting2": "Spojování*…",
         "disconnected": "Odpojeno",
         "expired": "Spojení vypršelo",
         "ignored": "Spojení ignorováno",
-        "initializingCall": "Nastavuji hovor...",
+        "initializingCall": "Nastavuji hovor…",
         "invited": "Pozván",
         "rejected": "Odmítnuto",
-        "ringing": "Zvoní..."
+        "ringing": "Zvoní…"
     },
     "privacyView": {
         "header": ""
@@ -1284,7 +1284,7 @@
         "image6": "Les",
         "image7": "Východ slunce",
         "none": "Žádné",
-        "pleaseWait": "Čekejte prosím...",
+        "pleaseWait": "Čekejte prosím…",
         "removeBackground": "Smazat pozadí",
         "slightBlur": "Lehké rozmazání",
         "title": "Virtuální pozadí",

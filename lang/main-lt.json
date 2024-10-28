@@ -68,7 +68,7 @@
         "installExtensionText": "Įdiekite „Google“ ir „Office 365“ kalendoriaus plėtinį"
     },
     "connectingOverlay": {
-        "joiningRoom": "Jungiamasi prie jūsų susitikimo..."
+        "joiningRoom": "Jungiamasi prie jūsų susitikimo…"
     },
     "connection": {
         "ATTACHED": "Pridėta",
@@ -80,9 +80,9 @@
         "DISCONNECTED": "Atsijungta",
         "DISCONNECTING": "Atsijungiama",
         "ERROR": "Klaida",
-        "FETCH_SESSION_ID": "Gaunamas sesijos-id...",
+        "FETCH_SESSION_ID": "Gaunamas sesijos-id…",
         "GET_SESSION_ID_ERROR": "Sesijos-id gavimo klaida: {{kodas}}",
-        "GOT_SESSION_ID": "Gautas sesijos-id... Atlikta",
+        "GOT_SESSION_ID": "Gautas sesijos-id… Atlikta",
         "LOW_BANDWIDTH": "Vaizdo įrašas, skirtas {{displayName}}, buvo išjungtas, kad būtų išsaugotas pralaidumas"
     },
     "connectionindicator": {
@@ -127,7 +127,7 @@
         "downloadApp": "Atsisiųsti programą",
         "launchWebButton": "Paleisti svetainėje",
         "openApp": "Tęsti mobiliaja programėle",
-        "title": "Paleidžiamas susitikimas {{app}}...",
+        "title": "Paleidžiamas susitikimas {{app}}…",
         "tryAgainButton": "Bandyti dar kartą darbalaukyje"
     },
     "defaultLink": "e.g. {{url}}",
@@ -156,7 +156,7 @@
         "Share": "Dalintis",
         "Submit": "Pateikti",
         "WaitForHostMsg": "Konferencija dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
-        "WaitingForHost": "Laukiama organizatoriaus ...",
+        "WaitingForHost": "Laukiama organizatoriaus…",
         "Yes": "Taip",
         "accessibilityLabel": {
             "liveStreaming": "Tiesioginis srautas"
@@ -173,9 +173,9 @@
         "cameraUnknownError": "Įvyko klaida - negalite naudoti kameros.",
         "cameraUnsupportedResolutionError": "Jūsų kamera nepalaiko reikalaujamos vaizdo raiškos.",
         "close": "Uždaryti",
-        "conferenceDisconnectMsg": "Pasitikrinkite savo interneto ryšį. Perkrausime už {{seconds}} sek. ...",
+        "conferenceDisconnectMsg": "Pasitikrinkite savo interneto ryšį. Perkrausime už {{seconds}} sek.…",
         "conferenceDisconnectTitle": "Jūs buvote atjungta(-as).",
-        "conferenceReloadMsg": "Mes bandome tai pataisyti. Perkrausime už {{seconds}} sek. ...",
+        "conferenceReloadMsg": "Mes bandome tai pataisyti. Perkrausime už {{seconds}} sek.…",
         "conferenceReloadTitle": "Apgailėstaujame, įvyko klaida.",
         "confirm": "Patvirtinti",
         "confirmNo": "Ne",
@@ -379,7 +379,7 @@
         "errorLiveStreamNotEnabled": "Tiesioginė transliacija nėra galima paskyrai {{email}}. Įjunkite tiesioginį srautą arba prisijunkite prie paskyros, kurioje įjungta tiesioginė transliacija.",
         "expandedOff": "Tiesioginė transliacija sustojo",
         "expandedOn": "Šiuo metu susitikimas transliuojamas per YouTube.",
-        "expandedPending": "Tiesioginė transliacija prasideda...",
+        "expandedPending": "Tiesioginė transliacija prasideda…",
         "failedToStart": "Nepavyko pajungti tiesioginės transliacijos",
         "getStreamKeyManually": "Mums nepavyko atverti jokios tiesioginės transliacijos. Pabandykite suvesti tiesioginės transliacijos raktažodį iš Youtube.",
         "invalidStreamKey": "Tiesioginės transliacijos raktažodis neteisingas.",
@@ -387,7 +387,7 @@
         "offBy": "{{name}} sustabdė srautą",
         "on": "Tiesioginė transliacija",
         "onBy": "{{name}} pradėjo tiesioginę transliaciją",
-        "pending": "Pradedama tiesioginė transliacija...",
+        "pending": "Pradedama tiesioginė transliacija…",
         "serviceName": "Tiesioginė transliacijos tarnyba",
         "signIn": "Prisijunkite su Google",
         "signInCTA": "Prisijunkite arba įveskite raktažodį iš Youtube.",
@@ -475,17 +475,17 @@
     "poweredby": "pateikiamas",
     "presenceStatus": {
         "busy": "Užimtas",
-        "calling": "Skambinama...",
+        "calling": "Skambinama…",
         "connected": "Prisijungta",
-        "connecting": "Prisijungiama...",
-        "connecting2": "Prisijungiama*...",
+        "connecting": "Prisijungiama…",
+        "connecting2": "Prisijungiama*…",
         "disconnected": "Atsijungta",
         "expired": "Pasibaigęs",
         "ignored": "Ignoruojamas",
-        "initializingCall": "Inicijuojamas skambutis...",
+        "initializingCall": "Inicijuojamas skambutis…",
         "invited": "Pakviestas",
         "rejected": "Atmestas",
-        "ringing": "Skambina..."
+        "ringing": "Skambina…"
     },
     "profile": {
         "setDisplayNameLabel": "Įveskite savo vardą",
@@ -503,7 +503,7 @@
         "error": "Įrašymas nepavyko. Bandykite dar kartą.",
         "expandedOff": "Įrašymas buvo sustabdytas",
         "expandedOn": "Šis susitikimas šiuo metu yra įrašomas.",
-        "expandedPending": "Įrašymas prasidėjo...",
+        "expandedPending": "Įrašymas prasidėjo…",
         "failedToStart": "Nepavyko pradėti įrašymo",
         "fileSharingdescription": "Dalintis įrašu su kitais naudotojais",
         "live": "GYVAI",
@@ -512,7 +512,7 @@
         "offBy": "{{name}} sustabdė įrašą",
         "on": "Įrašinėjama",
         "onBy": "{{name}} pradėjo įrašą",
-        "pending": "Ruošiama įrašinėti susitikimą...",
+        "pending": "Ruošiama įrašinėti susitikimą…",
         "rec": "REC",
         "serviceDescription": "Jūsų įrašą išssaugos įrašymo tarnyba",
         "serviceName": "Įrašymo tarnyba",
@@ -695,7 +695,7 @@
         "failedToStart": "Perrašymas neprasidėjo",
         "labelToolTip": "Susitikimas yra perrašomas",
         "off": "Perrašymas sustojo",
-        "pending": "Ruošiama perrašyti susitikimą...",
+        "pending": "Ruošiama perrašyti susitikimą…",
         "start": "Pradėti rodyti subtitrus",
         "stop": "Nustoti rodyti subtitrus",
         "tr": "TR"
