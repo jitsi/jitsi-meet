@@ -4,7 +4,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
-import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiConnectionErrors, JitsiConnectionEvents } from '../lib-jitsi-meet';
 import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
@@ -288,7 +288,8 @@ export function _connectInternal(id?: string, password?: string) {
                     credentials,
                     details,
                     name: err,
-                    message
+                    message,
+                    recoverable: err === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED ? false : undefined
                 }));
 
                 reject(err);
