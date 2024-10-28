@@ -27,6 +27,7 @@ import {
     conferenceJoinInProgress,
     conferenceJoined,
     conferenceLeft,
+    conferencePropertiesChanged,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
     conferenceUniqueIdSet,
@@ -1739,6 +1740,10 @@ export default {
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
+
+        room.on(
+            JitsiConferenceEvents.PROPERTIES_CHANGED,
+            properties => APP.store.dispatch(conferencePropertiesChanged(properties)));
 
         room.on(JitsiConferenceEvents.KICKED, (participant, reason, isReplaced) => {
             if (isReplaced) {

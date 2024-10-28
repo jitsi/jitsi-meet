@@ -5,7 +5,6 @@ import { IStore } from '../app/types';
 import { IStateful } from '../base/app/types';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_JOIN_IN_PROGRESS,
     ENDPOINT_MESSAGE_RECEIVED,
     UPDATE_CONFERENCE_METADATA
 } from '../base/conference/actionTypes';
@@ -46,28 +45,15 @@ import {
     setInVisitorsQueue,
     setVisitorDemoteActor,
     setVisitorsSupported,
-    updateVisitorsCount,
     updateVisitorsInQueueCount
 } from './actions';
 import { JoinMeetingDialog } from './components';
-import { getPromotionRequests, getVisitorsCount, getVisitorsInQueueCount } from './functions';
+import { getPromotionRequests, getVisitorsInQueueCount } from './functions';
 import logger from './logger';
 import { WebsocketClient } from './websocket-client';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
-    case CONFERENCE_JOIN_IN_PROGRESS: {
-        const { conference } = action;
-
-        conference.on(JitsiConferenceEvents.PROPERTIES_CHANGED, (properties: { 'visitor-count': number; }) => {
-            const visitorCount = Number(properties?.['visitor-count']);
-
-            if (!isNaN(visitorCount) && getVisitorsCount(getState) !== visitorCount) {
-                dispatch(updateVisitorsCount(visitorCount));
-            }
-        });
-        break;
-    }
     case CONFERENCE_JOINED: {
         const { conference } = action;
 

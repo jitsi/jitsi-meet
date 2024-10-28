@@ -394,6 +394,19 @@ export function isP2pActive(stateful: IStateful): boolean | null {
 }
 
 /**
+ * Returns whether the current conference has audio recording property which is on.
+ *
+ * @param {IStateful} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean|null}
+ */
+export function isConferenceAudioRecordingOn(stateful: IStateful): boolean | null {
+    const state = getConferenceState(toState(stateful));
+
+    // @ts-ignore
+    return state.properties?.['audio-recording-enabled'] === 'true';
+}
+
+/**
  * Returns the stored room name.
  *
  * @param {IReduxState} state - The current state of the app.

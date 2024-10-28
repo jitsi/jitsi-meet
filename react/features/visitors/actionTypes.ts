@@ -1,14 +1,4 @@
 /**
- * The type of (redux) action to update visitors count.
- *
- * {
- *     type: UPDATE_VISITORS_COUNT,
- *     count: number
- * }
- */
-export const UPDATE_VISITORS_COUNT = 'UPDATE_VISITORS_COUNT';
-
-/**
  * The type of (redux) action to update visitors in queue count.
  *
  * {
