@@ -13,7 +13,7 @@ export interface IMobileBackgroundState {
  * The default/initial redux state of the feature background.
  */
 const DEFAULT_STATE = {
-    appState: ''
+    appState: undefined
 };
 
 // eslint-disable-next-line max-len
