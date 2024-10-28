@@ -45,6 +45,7 @@ import {
     CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
+    CONFERENCE_PROPERTIES_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
@@ -155,6 +156,10 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
         (locked: boolean) => dispatch(lockStateChanged(conference, locked)));
+
+    conference.on(
+        JitsiConferenceEvents.PROPERTIES_CHANGED,
+        (properties: Object) => dispatch(conferencePropertiesChanged(properties)));
 
     // Dispatches into features/base/media follow:
 
@@ -448,6 +453,23 @@ export function conferenceLeft(conference?: IJitsiConference) {
         conference
     };
 }
+
+/**
+ * Signals that the conference properties have been changed.
+ *
+ * @param {Object} properties - The new properties set.
+ * @returns {{
+ *     type: CONFERENCE_PROPERTIES_CHANGED,
+ *     properties: Object
+ * }}
+ */
+export function conferencePropertiesChanged(properties: object) {
+    return {
+        type: CONFERENCE_PROPERTIES_CHANGED,
+        properties
+    };
+}
+
 
 /**
  * Signals that the conference subject has been changed.

@@ -82,6 +82,19 @@ export const CONFERENCE_FOCUSED = 'CONFERENCE_FOCUSED';
  */
  export const CONFERENCE_LOCAL_SUBJECT_CHANGED = 'CONFERENCE_LOCAL_SUBJECT_CHANGED';
 
+/**
+ * The type of (redux) action, which indicates conference properties change.
+ *
+ * {
+ *     type: CONFERENCE_PROPERTIES_CHANGED
+ *     properties: {
+*           audio-recording-enabled: boolean,
+ *          visitor-count: number
+ *     }
+ * }
+ */
+ export const CONFERENCE_PROPERTIES_CHANGED = 'CONFERENCE_PROPERTIES_CHANGED';
+
  /**
  * The type of (redux) action, which indicates conference subject changes.
  *

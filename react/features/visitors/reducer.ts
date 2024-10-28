@@ -1,4 +1,4 @@
-import { CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import { CONFERENCE_PROPERTIES_CHANGED, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -7,7 +7,6 @@ import {
     SET_IN_VISITORS_QUEUE,
     SET_VISITORS_SUPPORTED,
     SET_VISITOR_DEMOTE_ACTOR,
-    UPDATE_VISITORS_COUNT,
     UPDATE_VISITORS_IN_QUEUE_COUNT,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
@@ -34,6 +33,18 @@ export interface IVisitorsState {
 }
 ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_STATE, action): IVisitorsState => {
     switch (action.type) {
+    case CONFERENCE_PROPERTIES_CHANGED: {
+        const visitorCount = Number(action.properties?.['visitor-count']);
+
+        if (!isNaN(visitorCount) && state.count !== visitorCount) {
+            return {
+                ...state,
+                count: visitorCount
+            };
+        }
+
+        break;
+    }
     case CONFERENCE_WILL_LEAVE: {
         return {
             ...state,
@@ -43,16 +54,6 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
             // to false with the I_AM_VISITOR_MODE action and we will be able to distinguish leaving the conference use
             // case and promoting a visitor use case.
             iAmVisitor: action.isRedirect ? state.iAmVisitor : DEFAULT_STATE.iAmVisitor
-        };
-    }
-    case UPDATE_VISITORS_COUNT: {
-        if (state.count === action.count) {
-            return state;
-        }
-
-        return {
-            ...state,
-            count: action.count
         };
     }
     case UPDATE_VISITORS_IN_QUEUE_COUNT: {
