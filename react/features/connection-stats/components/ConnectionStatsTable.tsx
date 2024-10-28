@@ -71,7 +71,7 @@ interface IProps {
     /**
      * Whether or not the participant was verified.
      */
-    e2eeVerified: boolean;
+    e2eeVerified?: boolean;
 
     /**
      * Whether to enable assumed bandwidth.
