@@ -439,7 +439,10 @@
         "shareScreenWarningD2": "jums ir jāpārtrauc audio kopīgošana, jāsāk ekrāna kopīgošana un jāatzīmē opcija \"kopīgot audio\".",
         "shareScreenWarningH1": "Ja vēlaties kopīgot tikai savu ekrānu:",
         "shareScreenWarningTitle": "Pirms ekrāna kopīgošanas jums ir jāpārtrauc audio kopīgošana",
+        "shareVideoConfirmPlay": "Jūs gatavojaties atvērt ārēju vietni. Vai vēlaties turpināt?",
+        "shareVideoConfirmPlayTitle": "{{name}} kopīgoja ar jums videoklipu.",
         "shareVideoLinkError": "Lūdzu, norādiet pareizu video saiti.",
+        "shareVideoLinkStopped": "Videoklips no {{name}} tika apturēts.",
         "shareVideoTitle": "Kopīgot video",
         "shareYourScreen": "Kopīgot ekrānu",
         "shareYourScreenDisabled": "Ekrāna kopīgošana izslēgta.",
@@ -919,9 +922,11 @@
         "configuringDevices": "Notiek ierīču konfigurēšana…",
         "connectedWithAudioQ": "Vai esat pievienojies audio?",
         "connection": {
-            "good": "Jūsu interneta savienojums izskatās labs!",
+            "failed": "Savienojuma pārbaude neizdevās!",
+            "good": "Jūsu interneta savienojums ir labs!",
             "nonOptimal": "Jūsu interneta savienojums nav optimāls",
-            "poor": "Jums ir slikts interneta savienojums"
+            "poor": "Jums ir slikts interneta savienojums",
+            "running": "Notiek savienojuma pārbaude…"
         },
         "connectionDetails": {
             "audioClipping": "Mēs sagaidām, ka jūsu audio raustīsies.",
@@ -930,6 +935,7 @@
             "goodQuality": "Satriecoši! Jūsu multivides kvalitāte būs lieliska.",
             "noMediaConnectivity": "Mēs nevarējām atrast veidu, kā šim testam izveidot multivides savienojumu. To parasti izraisa ugunsmūris vai NAT.",
             "noVideo": "Mēs sagaidām, ka jūsu video kvalitāte būs briesmīga.",
+            "testFailed": "Savienojuma testā radās neparedzētas problēmas, tomēr tas var neietekmēt jūsu pieredzi.",
             "undetectable": "Ja pārlūkprogrammā joprojām nevarat veikt zvanus, iesakām pārliecināties, vai skaļruņi, mikrofons un kamera ir pareizi iestatīti, vai esat piešķīris pārlūkprogrammai tiesības izmantot mikrofonu un kameru un vai pārlūkprogrammas versija ir atjaunināta. Ja joprojām neizdodas zvanīt, sazinieties ar tīmekļa lietojumprogrammas izstrādātāju.",
             "veryPoorConnection": "Mēs sagaidām, ka jūsu zvanu kvalitāte būs patiešām briesmīga.",
             "videoFreezing": "Mēs sagaidām, ka jūsu video sastings, kļūs melns un pikseļosies.",
@@ -1093,6 +1099,7 @@
         "desktopShareWarning": "Lai jaunie iestatījumi stātos spēkā, ir jārestartē ekrāna kopīgošana.",
         "devices": "Ierīces",
         "followMe": "Visi seko man",
+        "followMeRecorder": "Ierakstītājs seko man",
         "framesPerSecond": "kadri sekundē",
         "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
@@ -1256,6 +1263,7 @@
             "privateMessage": "Nosūtīt privātu ziņu",
             "profile": "Rediģēt savu profilu",
             "raiseHand": "Pacelt roku",
+            "react": "Ziņojumu reakcijas",
             "reactions": "Reakcijas",
             "reactionsMenu": "Reakciju izvēlne",
             "recording": "Ieraksts (iesl./izsl.)",
@@ -1385,7 +1393,7 @@
     "transcribing": {
         "ccButtonTooltip": "Iesl./izsl. subtitrus",
         "expandedLabel": "Transkripcija ir ieslēgta",
-        "failedToStart": "Neizdevās sākt transkripciju",
+        "failed": "Transkripcija neizdevās",
         "labelToolTip": "Notiek sapulces transkripcija",
         "sourceLanguageDesc": "Pašlaik sapulces valoda ir iestatīta uz <b>{{sourceLanguage}}</b>. <br/> Varat to mainīt no ",
         "sourceLanguageHere": "šeit",
