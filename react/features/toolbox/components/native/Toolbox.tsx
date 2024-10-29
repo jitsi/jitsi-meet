@@ -126,7 +126,7 @@ function Toolbox(props: IProps) {
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
                 }
-                { _endConferenceSupported
+                { _endConferenceSupported && !isPatient
                     ? <HangupMenuButton />
                     : <HangupButton
                         styles = { hangupButtonStyles } />
@@ -148,6 +148,7 @@ function Toolbox(props: IProps) {
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
+    const isPatient = state['user']?.isPatient ?? false;
 
     return {
         _endConferenceSupported: Boolean(endConferenceSupported),
@@ -155,7 +156,8 @@ function _mapStateToProps(state: IReduxState) {
         _visible: isToolboxVisible(state),
         _iAmVisitor: iAmVisitor(state),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
+	isPatient
     };
 }
 
