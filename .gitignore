@@ -38,6 +38,7 @@ DerivedData
 *.dSYM.zip
 *.xcuserstate
 project.xcworkspace
+**/.xcode.env.local
 
 # Android/IntelliJ
 #
