@@ -27,10 +27,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         // Because there is no change taking place when the app mounts,
         // we need to force registering the appState status.
-        const appStateInterval  = setInterval(() => {
+        const appStateInterval = setInterval(() => {
             const { currentState } = AppState;
 
-            if (currentState !== "unknown") {
+            if (currentState !== 'unknown') {
                 clearInterval(appStateInterval);
 
                 _onAppStateChange(dispatch, currentState);
