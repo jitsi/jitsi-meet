@@ -67,7 +67,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1880.0.0+5d53ecdc/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1882.0.0+d51e5575/lib-jitsi-meet.tgz",
     "lodash-es": "4.17.21",
     "moment": "2.29.4",
     "moment-duration-format": "2.2.2",
