@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ class AppInfoModule
     public static final String NAME = "AppInfo";
     public static final boolean GOOGLE_SERVICES_ENABLED = getGoogleServicesEnabled();
     public static final boolean LIBRE_BUILD = getLibreBuild();
+    public static final String SDK_VERSION = getSdkVersion();
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -79,6 +80,7 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
+        constants.put("sdkVersion", SDK_VERSION);
         constants.put("LIBRE_BUILD", LIBRE_BUILD);
         constants.put("GOOGLE_SERVICES_ENABLED", GOOGLE_SERVICES_ENABLED);
 
@@ -114,6 +116,19 @@ class AppInfoModule
         }
 
         return false;
+    }
+
+    /**
+     * Gets the SDK version.
+     */
+    private static String getSdkVersion() {
+        Object sdkVersion = getBuildConfigValue("SDK_VERSION");
+
+        if (sdkVersion !=null) {
+            return (String) sdkVersion;
+        }
+
+        return "";
     }
 
     /**
