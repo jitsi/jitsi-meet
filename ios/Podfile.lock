@@ -1375,11 +1375,30 @@ PODS:
     - React-Core
   - react-native-orientation-locker (1.6.0):
     - React-Core
-  - react-native-pager-view (6.2.0):
+  - react-native-pager-view (6.4.1):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-performance (5.0.0):
     - React-Core
-  - react-native-safe-area-context (4.10.8):
+  - react-native-safe-area-context (4.12.0):
     - React-Core
   - react-native-slider (4.4.3):
     - React-Core
@@ -1692,7 +1711,7 @@ PODS:
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
     - React-Core
-  - RNScreens (3.32.0):
+  - RNScreens (3.35.0):
     - DoubleConversion
     - glog
     - RCT-Folly (= 2024.01.01.00)
@@ -2089,9 +2108,9 @@ SPEC CHECKSUMS:
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 3aa5637c18834966e0c932de8ae1ae56fea20a97
   react-native-orientation-locker: 4409c5b12b65f942e75449872b4f078b6f27af81
-  react-native-pager-view: 0ccb8bf60e2ebd38b1f3669fa3650ecce81db2df
+  react-native-pager-view: 707f0384a5d5d1fe103c44789ea48187ffdae5ce
   react-native-performance: 47ac22ebf2aa24f324a96a5825581f6ce18c09e8
-  react-native-safe-area-context: b7daa1a8df36095a032dff095a1ea8963cb48371
+  react-native-safe-area-context: 142fade490cbebbe428640b8cbdb09daf17e8191
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: 472b7c366eaaaa0207e546d9a50410df89790bcf
@@ -2129,7 +2148,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   RNGestureHandler: 6ccbf156a2ba9cb7300f3fe3b387d27c30b18794
   RNGoogleSignin: a6a612cce56a45ab701c5c5c6e36f5390522d100
-  RNScreens: c288139142de77071d651f826d66b181dbef9674
+  RNScreens: c992c58460a05b17de3eb5e4767a63a2568bf64d
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
   RNWatch: fd30ca40a5b5ef58dcbc195638e68219bc455236
