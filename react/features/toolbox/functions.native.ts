@@ -97,6 +97,5 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput')
-        || (unmuteBlocked && Boolean(muted))
-        || isLocalVideoTrackDesktop(state);
+        || (unmuteBlocked && Boolean(muted));
 }
