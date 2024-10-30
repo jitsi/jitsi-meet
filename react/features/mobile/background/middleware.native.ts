@@ -24,6 +24,19 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch } = store;
 
         _setAppStateListener(store, _onAppStateChange.bind(undefined, dispatch));
+
+        // Because there is no change taking place when the app mounts,
+        // we need to force registering the appState status.
+        const appStateInterval = setInterval(() => {
+            const { currentState } = AppState;
+
+            if (currentState !== 'unknown') {
+                clearInterval(appStateInterval);
+
+                _onAppStateChange(dispatch, currentState);
+            }
+        }, 100);
+
         break;
     }
 
@@ -47,7 +60,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
     dispatch(appStateChanged(appState));
 
-    logger.debug(`appState changed to: ${appState}`);
+    logger.info(`appState changed to: ${appState}`);
 }
 
 /**
