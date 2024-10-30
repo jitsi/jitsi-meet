@@ -11,8 +11,8 @@ import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE
 } from '../../base/conference/actionTypes';
 import {
@@ -77,7 +77,7 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_LEAVE:
         return _conferenceLeft(store, next, action);
 
-    case CONFERENCE_WILL_JOIN:
+    case CONFERENCE_JOIN_IN_PROGRESS:
         return _conferenceWillJoin(store, next, action);
 
     case SET_AUDIO_ONLY:
