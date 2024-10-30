@@ -1,6 +1,6 @@
 import { DOMParser } from '@xmldom/xmldom';
 import { atob, btoa } from 'abab';
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 
@@ -8,6 +8,8 @@ import 'promise.allsettled/auto'; // Promise.allSettled.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
+
+const { AppInfo } = NativeModules;
 
 /**
  * Implements an absolute minimum of the common logic of
@@ -254,25 +256,27 @@ function _visitNode(node, callback) {
         //
         // Required by:
         // - lib-jitsi-meet/modules/browser/BrowserDetection.js
-        let userAgent = navigator.userAgent || '';
 
-        // react-native/version
-        const { name, version } = require('react-native/package.json');
-        let rn = name || 'react-native';
-
-        version && (rn += `/${version}`);
-        if (userAgent.indexOf(rn) === -1) {
-            userAgent = userAgent ? `${rn} ${userAgent}` : rn;
-        }
+        // React Native version
+        const { reactNativeVersion } = Platform.constants;
+        const rnVersion
+            = `react-native/${reactNativeVersion.major}.${reactNativeVersion.minor}.${reactNativeVersion.patch}`;
 
         // (OS version)
-        const os = `(${Platform.OS} ${Platform.Version})`;
+        const os = `(${Platform.OS}/${Platform.Version})`;
 
-        if (userAgent.indexOf(os) === -1) {
-            userAgent = userAgent ? `${userAgent} ${os}` : os;
-        }
+        // SDK
+        const liteTxt = AppInfo.isLiteSDK ? '-lite' : '';
+        const sdkVersion = `JitsiMeetSDK/${AppInfo.sdkVersion}${liteTxt}`;
 
-        navigator.userAgent = userAgent;
+        const parts = [
+            navigator.userAgent ?? '',
+            sdkVersion,
+            os,
+            rnVersion
+        ];
+
+        navigator.userAgent = parts.filter(Boolean).join(' ');
     }
 
     // WebRTC
