@@ -5,11 +5,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { PIP_WHILE_SCREEN_SHARING_ENABLED } from '../flags/constants';
 import { getFeatureFlag } from '../flags/functions';
 import JitsiMeetJS from '../lib-jitsi-meet';
-import {
-    setScreenshareMuted,
-    setVideoMuted
-} from '../media/actions';
-import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
+import { setScreenshareMuted } from '../media/actions';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
@@ -37,7 +33,6 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
             }
         } else {
             dispatch(setScreenshareMuted(true));
-            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
             setPictureInPictureEnabled(true);
         }
     };
@@ -71,8 +66,6 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
         } else {
             dispatch(addLocalTrack(track));
         }
-
-        dispatch(setVideoMuted(true, VIDEO_MUTISM_AUTHORITY.SCREEN_SHARE));
 
         const { enabled: audioOnly } = state['features/base/audio-only'];
 

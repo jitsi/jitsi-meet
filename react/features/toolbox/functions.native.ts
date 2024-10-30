@@ -1,11 +1,11 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { hasAvailableDevices } from '../base/devices/functions';
+import { hasAvailableDevices } from '../base/devices/functions.native';
 import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { isLocalVideoTrackDesktop } from '../base/tracks/functions';
+import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
 
 export * from './functions.any';
 
@@ -97,6 +97,5 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
 
     return !hasAvailableDevices(state, 'videoInput')
-        || (unmuteBlocked && Boolean(muted))
-        || isLocalVideoTrackDesktop(state);
+        || (unmuteBlocked && Boolean(muted));
 }
