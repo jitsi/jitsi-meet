@@ -139,7 +139,7 @@ android.libraryVariants.all { def variant ->
         // Run the bundler
         commandLine(
                 "node",
-                "node_modules/react-native/bundle.js",
+                "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
                 "--reset-cache",
