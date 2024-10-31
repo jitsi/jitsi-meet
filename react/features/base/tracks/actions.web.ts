@@ -352,9 +352,10 @@ export function createAndAddInitialAVTracks(devices: Array<MediaType>) {
  * Creates the initial audio/video tracks.
  *
  * @param {ICreateInitialTracksOptions} options - Options for creating the audio/video tracks.
+ * @param {boolean} recordTimeMetrics - If true time metrics will be recorded.
  * @returns {Function}
  */
-export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
+export function createInitialAVTracks(options: ICreateInitialTracksOptions, recordTimeMetrics = false) {
     return (dispatch: IStore['dispatch'], _getState: IStore['getState']) => {
         const {
             devices,
@@ -364,7 +365,7 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions) {
 
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
 
-        return createLocalTracksF(options).then(tracks => {
+        return createLocalTracksF(options, undefined, recordTimeMetrics).then(tracks => {
             return {
                 errors: {} as IInitialTracksErrors,
                 tracks
