@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
 import Platform from './features/base/react/Platform.web';
-import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
+import { getJitsiMeetGlobalNS, getJitsiMeetGlobalNSConnectionTimes } from './features/base/util/helpers';
 import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
@@ -45,20 +45,19 @@ if (Platform.OS === 'ios') {
 }
 
 const globalNS = getJitsiMeetGlobalNS();
+const connectionTimes = getJitsiMeetGlobalNSConnectionTimes();
 
 // Used for automated performance tests.
-globalNS.connectionTimes = {
-    'index.loaded': window.indexLoadedTime
-};
+connectionTimes['index.loaded'] = window.indexLoadedTime;
 
 window.addEventListener('load', () => {
-    globalNS.connectionTimes['window.loaded'] = window.loadedEventTime;
+    connectionTimes['window.loaded'] = window.loadedEventTime;
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
 
-    globalNS.connectionTimes['document.ready'] = now;
+    connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
 });
 

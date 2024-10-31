@@ -136,6 +136,7 @@ import {
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
@@ -413,9 +414,10 @@ export default {
      * without any audio tracks.
      * @param {boolean} options.startWithVideoMuted - will start the conference
      * without any video tracks.
+     * @param {boolean} recordTimeMetrics - If true time metrics will be recorded.
      * @returns {Promise<JitsiLocalTrack[]>, Object}
      */
-    createInitialLocalTracks(options = {}) {
+    createInitialLocalTracks(options = {}, recordTimeMetrics = false) {
         const errors = {};
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
@@ -487,7 +489,7 @@ export default {
                 devices: initialDevices,
                 timeout,
                 firePermissionPromptIsShownEvent: true
-            })).then(({ tracks, errors: pErrors }) => {
+            }, recordTimeMetrics)).then(({ tracks, errors: pErrors }) => {
                 Object.assign(errors, pErrors);
 
                 return tracks;
@@ -571,8 +573,12 @@ export default {
             startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
             startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
         };
+        const connectionTimes = getJitsiMeetGlobalNSConnectionTimes();
+        const startTime = window.performance.now();
 
-        logger.debug(`Executed conference.init with roomName: ${roomName}`);
+        connectionTimes['conference.init.start'] = startTime;
+
+        logger.debug(`Executed conference.init with roomName: ${roomName} (performance.now=${startTime})`);
 
         this.roomName = roomName;
 
@@ -605,9 +611,19 @@ export default {
             return localTracks;
         };
         const { dispatch, getState } = APP.store;
-        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+        const createLocalTracksStart = window.performance.now();
+
+        connectionTimes['conference.init.createLocalTracks.start'] = createLocalTracksStart;
+
+        logger.debug(`(TIME) createInitialLocalTracks: ${createLocalTracksStart} `);
+
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions, true);
 
         tryCreateLocalTracks.then(async tr => {
+            const createLocalTracksEnd = window.performance.now();
+
+            connectionTimes['conference.init.createLocalTracks.end'] = createLocalTracksEnd;
+            logger.debug(`(TIME) createInitialLocalTracks finished: ${createLocalTracksEnd} `);
             const tracks = handleInitialTracks(initialOptions, tr);
 
             this._initDeviceList(true);
@@ -620,6 +636,8 @@ export default {
                 // Since the conference is not yet created in redux this function will execute synchronous
                 // which will guarantee us that the local tracks are added to redux before we proceed.
                 initPrejoin(tracks, errors, dispatch);
+
+                connectionTimes['conference.init.end'] = window.performance.now();
 
                 // resolve the initialGUMPromise in case connect have finished so that we can proceed to join.
                 if (initialGUMPromise) {
@@ -639,6 +657,7 @@ export default {
                 APP.store.dispatch(displayErrorsForCreateInitialLocalTracks(errors));
                 setGUMPendingStateOnFailedTracks(tracks, APP.store.dispatch);
 
+                connectionTimes['conference.init.end'] = window.performance.now();
                 if (initialGUMPromise) {
                     logger.debug('Resolving the initialGUM promise!');
                     initialGUMPromise.resolve({

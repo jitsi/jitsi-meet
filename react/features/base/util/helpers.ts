@@ -101,6 +101,21 @@ export function getJitsiMeetGlobalNS() {
 }
 
 /**
+ * Returns the object that stores the connection times.
+ *
+ * @returns {Object} - The object that stores the connection times.
+ */
+export function getJitsiMeetGlobalNSConnectionTimes() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.connectionTimes) {
+        globalNS.connectionTimes = {};
+    }
+
+    return globalNS.connectionTimes;
+}
+
+/**
  * Prints the error and reports it to the global error handler.
  *
  * @param {Error} e - The error object.
