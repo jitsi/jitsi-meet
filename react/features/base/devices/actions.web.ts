@@ -75,6 +75,9 @@ export function configureInitialDevices() {
         const deviceLabels = getDevicesFromURL(getState());
         let updateSettingsPromise;
 
+        logger.debug(`(TIME) configureInitialDevices: deviceLabels=${
+            Boolean(deviceLabels)}, performance.now=${window.performance.now()}`);
+
         if (deviceLabels) {
             updateSettingsPromise = dispatch(getAvailableDevices()).then(() => {
                 const state = getState();
@@ -126,6 +129,9 @@ export function configureInitialDevices() {
         return updateSettingsPromise
             .then(() => {
                 const userSelectedAudioOutputDeviceId = getUserSelectedOutputDeviceId(getState());
+
+                logger.debug(`(TIME) configureInitialDevices -> setAudioOutputDeviceId: performance.now=${
+                    window.performance.now()}`);
 
                 return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
                     .catch(ex => logger.warn(`Failed to set audio output device.
