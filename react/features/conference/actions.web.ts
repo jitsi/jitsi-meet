@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { configureInitialDevices, getAvailableDevices } from '../base/devices/actions.web';
 import { openDialog } from '../base/dialog/actions';
+import { getJitsiMeetGlobalNSConnectionTimes } from '../base/util/helpers';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
@@ -37,12 +38,29 @@ export function dismissCalendarNotification() {
 /**
  * Setups initial devices. Makes sure we populate availableDevices list before configuring.
  *
+ * @param {boolean} recordTimeMetrics - If true, an analytics time metrics will be sent.
  * @returns {Promise<any>}
  */
-export function setupInitialDevices() {
+export function setupInitialDevices(recordTimeMetrics = false) {
     return async (dispatch: IStore['dispatch']) => {
+        if (recordTimeMetrics) {
+            getJitsiMeetGlobalNSConnectionTimes()['setupInitialDevices.start'] = window.performance.now();
+        }
+
         await dispatch(getAvailableDevices());
+
+        if (recordTimeMetrics) {
+            getJitsiMeetGlobalNSConnectionTimes()['setupInitialDevices.getAD.finished'] = window.performance.now();
+        }
+
         await dispatch(configureInitialDevices());
+
+        const now = window.performance.now();
+
+        if (recordTimeMetrics) {
+            getJitsiMeetGlobalNSConnectionTimes()['setupInitialDevices.end'] = now;
+        }
+        logger.debug(`(TIME) setupInitialDevices finished: ${now}`);
     };
 }
 
@@ -55,11 +73,13 @@ export function setupInitialDevices() {
  */
 export function init(shouldDispatchConnect: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        logger.debug(`(TIME) init action dispatched: ${window.performance.now()}`);
+
         const room = getBackendSafeRoomName(getState()['features/base/conference'].room);
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
-        return dispatch(setupInitialDevices()).then(
+        return dispatch(setupInitialDevices(true)).then(
             () => APP.conference.init({
                 roomName: room,
                 shouldDispatchConnect

@@ -11,6 +11,7 @@ import logger from './logger';
  * @returns {Promise} - A Promise which resolves when all effects are created.
  */
 export default function loadEffects(store: IStore): Promise<any> {
+    const start = window.performance.now();
     const state = store.getState();
     const virtualBackground = state['features/virtual-background'];
     const noiseSuppression = state['features/noise-suppression'];
@@ -30,5 +31,11 @@ export default function loadEffects(store: IStore): Promise<any> {
         ? Promise.resolve(new NoiseSuppressionEffect(nsOptions))
         : Promise.resolve();
 
-    return Promise.all([ backgroundPromise, noiseSuppressionPromise ]);
+    return Promise.all([ backgroundPromise, noiseSuppressionPromise ]).then(effectsArray => {
+        const end = window.performance.now();
+
+        logger.debug(`(TIME) loadEffects() start=${start}, end=${end}, time=${end - start}`);
+
+        return effectsArray;
+    });
 }

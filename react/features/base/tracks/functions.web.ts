@@ -11,6 +11,7 @@ import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
+import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
 import { getCameraFacingMode } from './functions.any';
 import loadEffects from './loadEffects';
@@ -36,9 +37,10 @@ export * from './functions.any';
  * corresponding event.
  * @param {IStore} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
+ * @param {boolean} recordTimeMetrics - If true time metrics will be recorded.
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) {
+export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, recordTimeMetrics = false) {
     let { cameraDeviceId, micDeviceId } = options;
     const {
         desktopSharingSourceDevice,
@@ -69,6 +71,10 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
 
     return (
         loadEffects(store).then((effectsArray: Object[]) => {
+            if (recordTimeMetrics) {
+                getJitsiMeetGlobalNSConnectionTimes()['trackEffects.loaded'] = window.performance.now();
+            }
+
             // Filter any undefined values returned by Promise.resolve().
             const effects = effectsArray.filter(effect => Boolean(effect));
 
