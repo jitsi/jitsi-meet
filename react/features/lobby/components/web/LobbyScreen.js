@@ -67,6 +67,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
 
         return (
+          <>
+            <span className='lobby-title'>
+              {t('lobby.newTitle')}
+            </span>
             <PreMeetingScreen
                 className = 'lobby-screen'
                 showCopyUrlButton = { showCopyUrlButton }
@@ -74,6 +78,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 title = { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }>
                 { this._renderContent() }
             </PreMeetingScreen>
+          </>
         );
     }
 
