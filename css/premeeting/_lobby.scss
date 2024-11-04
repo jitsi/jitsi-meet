@@ -2,6 +2,10 @@
     font-size: 16px;
     font-weight: 400;
     line-height: 26px;
+    background-image: url('../images/lobby-bg.jpg') !important;
+    background-repeat: no-repeat !important;    
+    background-position: center !important;
+    background-size: cover !important;
 
     &-content {
         align-items: center;
