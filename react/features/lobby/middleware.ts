@@ -331,6 +331,10 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         dispatch(hideLobbyScreen());
     }
 
+    // we want to finish this action before showing the notification
+    // as the conference will be cleared which will clear all notifications, including this one
+    const result = next(action);
+
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
         dispatch(
             showNotification({
@@ -343,7 +347,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         );
     }
 
-    return next(action);
+    return result;
 }
 
 /**

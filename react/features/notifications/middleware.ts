@@ -78,22 +78,6 @@ const getNotifications = (state: IReduxState) => {
 };
 
 /**
- * Check whether we need to clear notifications.
- *
- * @param {Object} state - Global state.
- * @returns {boolean} - True if we need to clear any notification.
- */
-const shouldClearNotifications = (state: IReduxState): boolean => {
-    // in case of lobby error, access is denied, the conference is cleared, but we still
-    // want to show the notification
-    if (state['features/base/conference'].lobbyError) {
-        return false;
-    }
-
-    return !getCurrentConference(state);
-};
-
-/**
  * Middleware that captures actions to display notifications.
  *
  * @param {Store} store - The redux store.
@@ -217,9 +201,9 @@ MiddlewareRegistry.register(store => next => action => {
  * conference, where we need to clean up the notifications.
  */
 StateListenerRegistry.register(
-    /* selector */ state => shouldClearNotifications(state),
-    /* listener */ (clear, { dispatch }) => {
-        if (clear) {
+    /* selector */ state => getCurrentConference(state),
+    /* listener */ (conference, { dispatch }) => {
+        if (!conference) {
             dispatch(clearNotifications());
         }
     }
