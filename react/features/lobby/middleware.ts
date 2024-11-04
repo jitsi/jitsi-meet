@@ -43,6 +43,7 @@ import {
 import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
+import { PREJOIN_JOINING_IN_PROGRESS } from '../prejoin/actionTypes';
 import {
     isPrejoinEnabledInConfig,
     isPrejoinPageVisible,
@@ -107,6 +108,14 @@ MiddlewareRegistry.register(store => next => action => {
         _handleLobbyNotification(store);
 
         return result;
+    }
+    case PREJOIN_JOINING_IN_PROGRESS: {
+        if (action.value) {
+            // let's hide the notification (the case with denied access and retrying) when prejoin is enabled
+            store.dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+        }
+
+        break;
     }
     }
 
@@ -270,9 +279,8 @@ function _handleLobbyNotification(store: IStore) {
 function _conferenceFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { error } = action;
     const state = getState();
-    const { membersOnly } = state['features/base/conference'];
+    const { lobbyError, membersOnly } = state['features/base/conference'];
     const nonFirstFailure = Boolean(membersOnly);
-    const { isDisplayNameRequiredError } = state['features/lobby'];
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
@@ -288,7 +296,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
         // if there was an error about display name and pre-join is not enabled
         if (shouldAutoKnock(state)
-                || (isDisplayNameRequiredError && !isPrejoinEnabledInConfig(state))
+                || (lobbyError && !isPrejoinEnabledInConfig(state))
                 || lobbyWaitingForHost) {
             dispatch(startKnocking());
         }
@@ -315,7 +323,17 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         return result;
     }
 
-    dispatch(hideLobbyScreen());
+    // if both are available pre-join is with priority (the case when pre-join is enabled)
+    // when pre-join is disabled, and we are in lobby with error, we want to end up in lobby UI
+    // instead of hiding it and showing conference UI. Still in lobby the user can retry
+    // after we show the error notification
+    if (isPrejoinPageVisible(state)) {
+        dispatch(hideLobbyScreen());
+    }
+
+    // we want to finish this action before showing the notification
+    // as the conference will be cleared which will clear all notifications, including this one
+    const result = next(action);
 
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
         dispatch(
@@ -323,12 +341,13 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
                 appearance: NOTIFICATION_TYPE.ERROR,
                 hideErrorSupportLink: true,
                 titleKey: 'lobby.joinRejectedTitle',
+                uid: LOBBY_NOTIFICATION_ID,
                 descriptionKey: 'lobby.joinRejectedMessage'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG)
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY)
         );
     }
 
-    return next(action);
+    return result;
 }
 
 /**
