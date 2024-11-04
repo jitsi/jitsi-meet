@@ -83,7 +83,7 @@
         "installExtensionText": "Nainštalujte rozšírenie pre integráciu s Google Calendar a Office 365"
     },
     "connectingOverlay": {
-        "joiningRoom": "Pripájanie do konferencie..."
+        "joiningRoom": "Pripájanie do konferencie…"
     },
     "connection": {
         "ATTACHED": "Priložený",
@@ -95,9 +95,9 @@
         "DISCONNECTED": "Odpojený",
         "DISCONNECTING": "Odpájanie",
         "ERROR": "Chyba",
-        "FETCH_SESSION_ID": "Získavanie session-id...",
+        "FETCH_SESSION_ID": "Získavanie session-id…",
         "GET_SESSION_ID_ERROR": "Chyba pri získavaní session-id: {{code}}",
-        "GOT_SESSION_ID": "Získavanie session-id... Hotovo",
+        "GOT_SESSION_ID": "Získavanie session-id… Hotovo",
         "LOW_BANDWIDTH": "Video pre {{displayName}} bolo vypnuté, aby sa ušetrila prenosová kapacita"
     },
     "connectionindicator": {
@@ -146,7 +146,7 @@
         "ifHaveApp": "Ak máte aplikáciu:",
         "joinInApp": "Vstúpiť do konferencie cez aplikáciu",
         "launchWebButton": "Otvoriť na webe",
-        "title": "Konferencia sa otvára v {{app}}...",
+        "title": "Konferencia sa otvára v {{app}}…",
         "tryAgainButton": "Skúsiť znova s natívnou aplikáciou"
     },
     "defaultLink": "napr. {{url}}",
@@ -175,7 +175,7 @@
         "Share": "Zdieľať",
         "Submit": "OK",
         "WaitForHostMsg": "Konferencia sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
-        "WaitingForHost": "Čakám na hostiteľa ...",
+        "WaitingForHost": "Čakám na hostiteľa…",
         "Yes": "Áno",
         "accessibilityLabel": {
             "liveStreaming": "Živé vysielanie"
@@ -193,9 +193,9 @@
         "cameraUnknownError": "Z neznámeho dôvodu sa kamera nedá použiť.",
         "cameraUnsupportedResolutionError": "Kamera nepodporuje požadované rozlíšenie.",
         "close": "Zatvoriť",
-        "conferenceDisconnectMsg": "Skontrolujte prípadne vaše sieťové pripojenie. Pripájam znovu o {{seconds}} sekúnd...",
+        "conferenceDisconnectMsg": "Skontrolujte prípadne vaše sieťové pripojenie. Pripájam znovu o {{seconds}} sekúnd…",
         "conferenceDisconnectTitle": "Vaše spojenie bolo prerušené.",
-        "conferenceReloadMsg": "Snažíme sa to napraviť. Pripájam znovu o {{seconds}} sekund...",
+        "conferenceReloadMsg": "Snažíme sa to napraviť. Pripájam znovu o {{seconds}} sekund…",
         "conferenceReloadTitle": "Spojenie sa prerušilo.",
         "confirm": "Potvrdiť",
         "confirmNo": "Nie",
@@ -413,7 +413,7 @@
         "errorLiveStreamNotEnabled": "Živé vysielanie pre {{email}} nie je aktivované. Aktivujte živé vysielanie, alebo sa prihláste pomocou konta s aktivovaným živým vysielaním.",
         "expandedOff": "Živé vysielanie bolo zastavené",
         "expandedOn": "Stretnutie je momentálne vysielané na YouTube.",
-        "expandedPending": "Spúšťa živé vysielanie...",
+        "expandedPending": "Spúšťa živé vysielanie…",
         "failedToStart": "Nepodarilo sa spustiť živé vysielanie",
         "getStreamKeyManually": "Nepodarilo sa získať žiadne živé vysielania. Skúste získať kľúč pre živé vysielanie z YouTube.",
         "googlePrivacyPolicy": "Pravidlá ochrany súkromia Google",
@@ -424,7 +424,7 @@
         "offBy": "{{name}} ukončil živé vysielanie",
         "on": "Živé vysielanie",
         "onBy": "{{name}} začal živé vysielanie",
-        "pending": "Spúšťa sa živé vysielanie...",
+        "pending": "Spúšťa sa živé vysielanie…",
         "serviceName": "Služba pre živé vysielanie",
         "signIn": "Prihlásiť sa pomocou Google",
         "signInCTA": "Prihláste sa, alebo zadajte váš YouTube klúč pre živé vysielanie.",
@@ -451,10 +451,10 @@
         "invalidPassword": "Nesprávne heslo",
         "joinRejectedMessage": "Vaša žiadosť bola zamietnutá moderátorom.",
         "joinTitle": "Vstup do konferencie",
-        "joinWithPasswordMessage": "Vstupujem s heslom...",
+        "joinWithPasswordMessage": "Vstupujem s heslom…",
         "joiningMessage": "Vstúpite do konferencie, keď niekto schváli vašu žiadosť",
-        "joiningTitle": "Žiadam o vstup do konferencie...",
-        "joiningWithPasswordTitle": "Vstupujem s heslom...",
+        "joiningTitle": "Žiadam o vstup do konferencie…",
+        "joiningWithPasswordTitle": "Vstupujem s heslom…",
         "knockButton": "Požiadať o vstup",
         "knockTitle": "Niekto žiada o vstup do konferencie",
         "knockingParticipantList": "Zoznam čakajúcich účastníkov",
@@ -560,7 +560,7 @@
         "callMe": "Zavolať mi",
         "callMeAtNumber": "Zavolajte mi na toto číslo:",
         "calling": "Volanie",
-        "configuringDevices": "Konfigurácia zariedení...",
+        "configuringDevices": "Konfigurácia zariedení…",
         "connectedWithAudioQ": "Ste pripojení so zvukom?",
         "copyAndShare": "Kopírovať a zdieľať odkaz",
         "dialInMeeting": "Volanie dnu do konferencie",
@@ -596,10 +596,10 @@
         "disconnected": "Odpojený",
         "expired": "Vypršaní",
         "ignored": "Ignorovaný",
-        "initializingCall": "Volanie je inicializované...",
+        "initializingCall": "Volanie je inicializované…",
         "invited": "Pozvať",
         "rejected": "Zložiť",
-        "ringing": "Zvoní..."
+        "ringing": "Zvoní…"
     },
     "profile": {
         "setDisplayNameLabel": "Nastavte si meno",
@@ -617,7 +617,7 @@
         "error": "Nahrávka sa nepodarila. Skúste prosím znovu.",
         "expandedOff": "Nahrávanie bolo zastavené",
         "expandedOn": "Stretnutie sa momentálne nahráva.",
-        "expandedPending": "Začína sa nahrávanie...",
+        "expandedPending": "Začína sa nahrávanie…",
         "failedToStart": "Nepodarilo sa začať nahrávanie",
         "fileSharingdescription": "Nahrávku zdielať s účastníkmi stretnutia",
         "limitNotificationDescriptionNative": "Nahrávanie je obmedzené na {{limit}} minút. Pre neobmedzené nahrávanie skúste <3>{{app}}</3>.",
@@ -628,7 +628,7 @@
         "offBy": "{{name}} zastavil nahrávanie",
         "on": "Nahrávanie",
         "onBy": "{{name}} začal nahrávanie",
-        "pending": "Pripravuje sa nahrávanie stretnutia...",
+        "pending": "Pripravuje sa nahrávanie stretnutia…",
         "rec": "REC",
         "serviceDescription": "Vaša nahrávka sa ukladá nahrávacou službou",
         "serviceName": "Nahrávacia služba",
@@ -831,7 +831,7 @@
         "failedToStart": "Prepisovanie sa nepodarilo naštartovať",
         "labelToolTip": "Stretnutie je prepisované",
         "off": "Prepisovanie sa skončilo",
-        "pending": "Pripravuje sa prepisovanie stretnutia...",
+        "pending": "Pripravuje sa prepisovanie stretnutia…",
         "start": "Začni zobrazovať titulky",
         "stop": "Skonči zobrazovať titulky",
         "tr": "TR"

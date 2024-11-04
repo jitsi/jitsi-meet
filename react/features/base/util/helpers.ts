@@ -22,16 +22,21 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
+export type DefferedPromise<T> = {
+    promise: Promise<T>;
+    reject: (reason?: any) => void;
+    resolve: (value: T) => void;
+};
 
 /**
  * Creates a deferred object.
  *
  * @returns {{promise, resolve, reject}}
  */
-export function createDeferred() {
-    const deferred: any = {};
+export function createDeferred<T>() {
+    const deferred = {} as DefferedPromise<T>;
 
-    deferred.promise = new Promise((resolve, reject) => {
+    deferred.promise = new Promise<T>((resolve, reject) => {
         deferred.resolve = resolve;
         deferred.reject = reject;
     });
@@ -93,6 +98,21 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
+}
+
+/**
+ * Returns the object that stores the connection times.
+ *
+ * @returns {Object} - The object that stores the connection times.
+ */
+export function getJitsiMeetGlobalNSConnectionTimes() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.connectionTimes) {
+        globalNS.connectionTimes = {};
+    }
+
+    return globalNS.connectionTimes;
 }
 
 /**

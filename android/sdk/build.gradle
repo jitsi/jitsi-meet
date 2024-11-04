@@ -8,6 +8,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        buildConfigField "String", "SDK_VERSION", "\"$sdkVersion\""
     }
 
     buildTypes {
@@ -138,8 +139,7 @@ android.libraryVariants.all { def variant ->
         // Run the bundler
         commandLine(
                 "node",
-                "node_modules/react-native/local-cli/cli.js",
-                "bundle",
+                "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
                 "--reset-cache",

@@ -5,6 +5,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 
 import { _setAppStateSubscription, appStateChanged } from './actions';
+import logger from './logger';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application
@@ -23,6 +24,19 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch } = store;
 
         _setAppStateListener(store, _onAppStateChange.bind(undefined, dispatch));
+
+        // Because there is no change taking place when the app mounts,
+        // we need to force registering the appState status.
+        const appStateInterval = setInterval(() => {
+            const { currentState } = AppState;
+
+            if (currentState !== 'unknown') {
+                clearInterval(appStateInterval);
+
+                _onAppStateChange(dispatch, currentState);
+            }
+        }, 100);
+
         break;
     }
 
@@ -45,6 +59,8 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
     dispatch(appStateChanged(appState));
+
+    logger.info(`appState changed to: ${appState}`);
 }
 
 /**
@@ -59,7 +75,7 @@ function _onAppStateChange(dispatch: IStore['dispatch'], appState: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAppStateListener({ dispatch, getState }: IStore, listener: any) {
-    const { subscription } = getState()['features/background'];
+    const { subscription } = getState()['features/mobile/background'];
 
     subscription?.remove();
 

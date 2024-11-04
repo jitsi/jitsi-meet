@@ -96,7 +96,7 @@ interface IProps extends AbstractProps, WithTranslation {
 
     _isConnectionStatusInterrupted: boolean;
 
-    _isE2EEVerified: boolean;
+    _isE2EEVerified?: boolean;
 
     /**
      * Whether or not the displays stats are for local video.
@@ -364,7 +364,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
         _enableSaveLogs: Boolean(state['features/base/config'].enableSaveLogs),
         _isConnectionStatusInactive,
         _isConnectionStatusInterrupted,
-        _isE2EEVerified: Boolean(participant?.e2eeVerified),
+        _isE2EEVerified: participant?.e2eeVerified,
         _isNarrowLayout: isNarrowLayout,
         _isVirtualScreenshareParticipant: isScreenShareParticipant(participant),
         _isLocalVideo: Boolean(participant?.local),

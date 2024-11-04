@@ -8,11 +8,12 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
+import { isTranscribing } from '../../../transcribing/functions';
 import {
     setHangupMenuVisible,
     setOverflowMenuVisible,
     setToolbarHovered,
-    showToolbox
+    setToolboxVisible
 } from '../../actions.web';
 import {
     getJwtDisabledButtons,
@@ -99,8 +100,11 @@ export default function Toolbox({
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
     const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
     const localParticipant = useSelector(getLocalParticipant);
-    const jwtDisabledButtons = useSelector((state: IReduxState) =>
-        getJwtDisabledButtons(state, jwt, localParticipant?.features));
+    const transcribing = useSelector(isTranscribing);
+
+    // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
+    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, isModerator, jwt, localParticipant?.features);
+
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
     const toolbarVisible = useSelector(isToolboxVisible);
@@ -194,15 +198,22 @@ export default function Toolbox({
     }, [ dispatch ]);
 
     /**
-     * Toggle the toolbar visibility when tabbing into it.
+     * Handle focus on the toolbar.
      *
      * @returns {void}
      */
-    const onTabIn = useCallback(() => {
-        if (!toolbarVisible) {
-            dispatch(showToolbox());
-        }
-    }, [ toolbarVisible, dispatch ]);
+    const handleFocus = useCallback(() => {
+        dispatch(setToolboxVisible(true));
+    }, [ dispatch ]);
+
+    /**
+     * Handle blur the toolbar..
+     *
+     * @returns {void}
+     */
+    const handleBlur = useCallback(() => {
+        dispatch(setToolboxVisible(false));
+    }, [ dispatch ]);
 
     if (iAmRecorder || iAmSipGateway) {
         return null;
@@ -239,7 +250,8 @@ export default function Toolbox({
             <div className = { containerClassName }>
                 <div
                     className = 'toolbox-content-wrapper'
-                    onFocus = { onTabIn }
+                    onBlur = { handleBlur }
+                    onFocus = { handleFocus }
                     { ...(isMobile ? {} : {
                         onMouseOut,
                         onMouseOver

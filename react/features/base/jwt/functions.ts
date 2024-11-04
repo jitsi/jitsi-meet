@@ -2,6 +2,7 @@
 import jwtDecode from 'jwt-decode';
 
 import { IReduxState } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipantFeatures } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
@@ -48,9 +49,14 @@ export function getJwtName(state: IReduxState) {
  * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
  * @returns {boolean}
  */
-export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
+export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken: boolean, ifNotInFeatures: boolean) {
     const { jwt } = state['features/base/jwt'];
-    const { features } = getLocalParticipant(state) || {};
+    let { features } = getLocalParticipant(state) || {};
+
+    if (typeof features === 'undefined' && isVpaasMeeting(state)) {
+        // for vpaas the backend is always initialized with empty features if those are missing
+        features = {};
+    }
 
     return isJwtFeatureEnabledStateless({
         jwt,
@@ -63,8 +69,8 @@ export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoTok
 
 interface IIsJwtFeatureEnabledStatelessParams {
     feature: string;
-    ifNoToken?: boolean;
-    ifNotInFeatures?: boolean;
+    ifNoToken: boolean;
+    ifNotInFeatures: boolean;
     jwt?: string;
     localParticipantFeatures?: IParticipantFeatures;
 }
@@ -76,23 +82,23 @@ interface IIsJwtFeatureEnabledStatelessParams {
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNoToken - Default value if there is no token.
- * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
- * @returns {bolean}
+ * @param {boolean} ifNotInFeatures - Default value if features is missing
+ * or prop exists but does not have the {@code feature}.
+ * @returns {boolean}
  */
 export function isJwtFeatureEnabledStateless({
     jwt,
     localParticipantFeatures: features,
     feature,
-    ifNoToken = false,
-    ifNotInFeatures = false
+    ifNoToken,
+    ifNotInFeatures
 }: IIsJwtFeatureEnabledStatelessParams) {
     if (!jwt) {
         return ifNoToken;
     }
 
-    // If `features` is undefined, act as if everything is enabled.
     if (typeof features === 'undefined') {
-        return true;
+        return ifNoToken;
     }
 
     if (typeof features[feature as keyof typeof features] === 'undefined') {

@@ -209,6 +209,7 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
 
         options && dispatch(updateConfig(options));
 
+        logger.info('Dispatching connect from joinConference.');
         dispatch(connect(jid, password))
         .catch(() => {
             // There is nothing to do here. This is handled and dispatched in base/connection/actions.
@@ -256,6 +257,8 @@ export function joinConferenceWithoutAudio() {
                 logger.error(`Failed to replace local audio with null: ${error}`);
             }
         }
+
+        logger.info('Dispatching joinConference action with startSilent=true from joinConferenceWithoutAudio.');
 
         dispatch(joinConference({
             startSilent: true

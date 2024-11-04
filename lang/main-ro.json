@@ -68,7 +68,7 @@
         "installExtensionText": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "Sunteți conectat la conversația dumneavoastră ..."
+        "joiningRoom": "Sunteți conectat la conversația dumneavoastră…"
     },
     "connection": {
         "ATTACHED": "Atașat",
@@ -84,7 +84,7 @@
         "GET_SESSION_ID_ERROR": "",
         "GOT_SESSION_ID": "",
         "LOW_BANDWIDTH": "",
-        "RECONNECTING": "A apărut o eroare de rețea. Reconectare..."
+        "RECONNECTING": "A apărut o eroare de rețea. Reconectare…"
     },
     "connectionindicator": {
         "address": "Adresă:",
@@ -131,7 +131,7 @@
         "ifHaveApp": "Dacă aveti deja aplicația:",
         "launchWebButton": "Deschideți în browser",
         "openApp": "Continuați spre aplicație",
-        "title": "Deschidere apel video în {{app}}...",
+        "title": "Deschidere apel video în {{app}}…",
         "tryAgainButton": "Încercați din nou pe desktop"
     },
     "defaultLink": "e.g. {{url}}",
@@ -160,7 +160,7 @@
         "Share": "Partajare",
         "Submit": "Trimiteți",
         "WaitForHostMsg": "Conferința nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
-        "WaitingForHost": "Așteptare moderator conferință ...",
+        "WaitingForHost": "Așteptare moderator conferință…",
         "Yes": "Da",
         "accessibilityLabel": {
             "liveStreaming": "Transmitere live"
@@ -177,9 +177,9 @@
         "cameraUnknownError": "Camera nu poate fi folosită din motive necunoscute.",
         "cameraUnsupportedResolutionError": "Camera dumneavoastră nu suportă rezoluția video necesara.",
         "close": "Închidere",
-        "conferenceDisconnectMsg": "Vă rugam să verificați conexiunea la rețea. Reconectare în {{seconds}} sec...",
+        "conferenceDisconnectMsg": "Vă rugam să verificați conexiunea la rețea. Reconectare în {{seconds}} sec…",
         "conferenceDisconnectTitle": "Ați fost deconectat.",
-        "conferenceReloadMsg": "Încercăm să remediem situația. Reconectare în {{seconds}} sec...",
+        "conferenceReloadMsg": "Încercăm să remediem situația. Reconectare în {{seconds}} sec…",
         "conferenceReloadTitle": "Din nefericire, ceva nu a funcționat corespunzător.",
         "confirm": "Confirmare",
         "confirmNo": "Nu",
@@ -384,7 +384,7 @@
         "errorLiveStreamNotEnabled": "Transmiterea live nu este activată pe {{email}}. Vă rugăm să activați opțiunea de transmitere live sau autentificați-vă cu un cont avand această opțiune activată.",
         "expandedOff": "Transmiterea live s-a încheiat",
         "expandedOn": "Acest apel video este transmis pe YouTube.",
-        "expandedPending": "Transmiterea a început...",
+        "expandedPending": "Transmiterea a început…",
         "failedToStart": "Începerea transmiterii live a eșuat ",
         "getStreamKeyManually": "Nu am reușit să preluăm fluxurile live. Încercați să obțineți cheia fluxului video YouTube.",
         "googlePrivacyPolicy": "Politica de confidențialitate Google",
@@ -393,7 +393,7 @@
         "offBy": "",
         "on": "Transmitere live",
         "onBy": "",
-        "pending": "Inițiere transmitere live...",
+        "pending": "Inițiere transmitere live…",
         "serviceName": "Serviciu de transmitere live",
         "signIn": "Conectați-vă cu Google",
         "signInCTA": "Conectați-vă sau introduceți cheia YouTube pentru distribuire video.",
@@ -465,7 +465,7 @@
         "startSilentDescription": "",
         "startSilentTitle": "",
         "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser-ele suportate</a>.",
-        "suboptimalExperienceDescription": "Hmm... se pare că experiența avută cu {{appName}} nu a decurs prea bine. Încercăm să îmbunătățim acest lucru, până atunci vă rugăm să folosiți unul dintre browserele suportate.",
+        "suboptimalExperienceDescription": "Hmm… se pare că experiența avută cu {{appName}} nu a decurs prea bine. Încercăm să îmbunătățim acest lucru, până atunci vă rugăm să folosiți unul dintre browserele suportate.",
         "suboptimalExperienceTitle": "Avertisment browser",
         "unmute": ""
     },
@@ -479,17 +479,17 @@
     "poweredby": "cu sprijinul",
     "presenceStatus": {
         "busy": "Ocupat",
-        "calling": "Apelare...",
+        "calling": "Apelare…",
         "connected": "Conectat",
-        "connecting": "Conectare...",
-        "connecting2": "Conectare*...",
+        "connecting": "Conectare…",
+        "connecting2": "Conectare*…",
         "disconnected": "Deconectat",
         "expired": "Expirat",
         "ignored": "Ignorat",
-        "initializingCall": "Inițiere apel...",
+        "initializingCall": "Inițiere apel…",
         "invited": "Adăugat",
         "rejected": "Respins",
-        "ringing": "Apelare..."
+        "ringing": "Apelare…"
     },
     "profile": {
         "setDisplayNameLabel": "Introduceți numele care va fi afișat",
@@ -507,7 +507,7 @@
         "error": "Înregistrare eșuată. Vă rugăm să încercați din nou mai târziu.",
         "expandedOff": "Înregistrarea s-a încheiat",
         "expandedOn": "Conversația este înregistrată.",
-        "expandedPending": "Înregistrarea a început...",
+        "expandedPending": "Înregistrarea a început…",
         "failedToStart": "Începerea înregistrării a eșuat",
         "fileSharingdescription": "Partajați înregistrarea cu ceilalți participanți",
         "live": "LIVE",
@@ -516,7 +516,7 @@
         "offBy": "{{name}} a oprit înregistrarea",
         "on": "Înregistrare",
         "onBy": "{{name}} a pornit înregistrarea",
-        "pending": "Se pregătește înregistrarea apelului video...",
+        "pending": "Se pregătește înregistrarea apelului video…",
         "rec": "REC",
         "serviceDescription": "Înregistrarea dumneavoastră va fi salvată de serviciul înregistrare",
         "serviceName": "Serviciu înregistrare",
@@ -688,7 +688,7 @@
         "failedToStart": "Inițierea copierii a eșuat",
         "labelToolTip": "Conversația este copiată",
         "off": "Copiere încheiată",
-        "pending": "Se pregătește copierea apelului video...",
+        "pending": "Se pregătește copierea apelului video…",
         "start": "Afișați subtitrări",
         "stop": "Ascundeți subtitrări",
         "tr": "TR"

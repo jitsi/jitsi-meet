@@ -434,9 +434,8 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                 state = getState();
                 const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
-                const canBypassDialog = isModerator
-                    && recordingService?.enabled
-                    && isJwtFeatureEnabled(state, 'recording', true);
+                const canBypassDialog = recordingService?.enabled
+                    && isJwtFeatureEnabled(state, 'recording', isModerator, false);
 
                 if (canBypassDialog) {
                     const options = {

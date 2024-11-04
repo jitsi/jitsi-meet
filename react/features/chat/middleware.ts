@@ -127,11 +127,14 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant, data } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
-            store.dispatch(pushReactions(data.reactions));
+            // Skip duplicates, keep just 3.
+            const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
+
+            store.dispatch(pushReactions(reactions));
 
             _handleReceivedMessage(store, {
                 participantId: participant.getId(),
-                message: getReactionMessageFromBuffer(data.reactions),
+                message: getReactionMessageFromBuffer(reactions),
                 privateMessage: false,
                 lobbyChat: false,
                 timestamp: data.timestamp

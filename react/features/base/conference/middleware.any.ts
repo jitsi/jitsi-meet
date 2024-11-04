@@ -615,37 +615,6 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
 }
 
 /**
- * Synchronizes local tracks from state with local tracks in JitsiConference
- * instance.
- *
- * @param {Store} store - The redux store.
- * @param {Object} action - Action object.
- * @private
- * @returns {Promise}
- */
-function _syncConferenceLocalTracksWithState({ getState }: IStore, action: AnyAction) {
-    const state = getState();
-    const conference = getCurrentConference(state);
-    let promise;
-
-    if (conference) {
-        const track = action.track.jitsiTrack;
-
-        if (action.type === TRACK_ADDED) {
-            // If gUM is slow and tracks are created after the user has already joined the conference, avoid
-            // adding the tracks to the conference if the user is a visitor.
-            if (!iAmVisitor(state)) {
-                promise = _addLocalTracksToConference(conference, [ track ]);
-            }
-        } else {
-            promise = _removeLocalTracksFromConference(conference, [ track ]);
-        }
-    }
-
-    return promise || Promise.resolve();
-}
-
-/**
  * Notifies the feature base/conference that the action {@code TRACK_ADDED}
  * or {@code TRACK_REMOVED} is being dispatched within a specific redux store.
  *
@@ -664,9 +633,28 @@ function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAction) 
 
     // TODO All track swapping should happen here instead of conference.js.
     if (track?.local) {
-        return (
-            _syncConferenceLocalTracksWithState(store, action)
-                .then(() => next(action)));
+        const { getState } = store;
+        const state = getState();
+        const conference = getCurrentConference(state);
+        let promise;
+
+        if (conference) {
+            const jitsiTrack = action.track.jitsiTrack;
+
+            if (action.type === TRACK_ADDED) {
+                // If gUM is slow and tracks are created after the user has already joined the conference, avoid
+                // adding the tracks to the conference if the user is a visitor.
+                if (!iAmVisitor(state)) {
+                    promise = _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                }
+            } else {
+                promise = _removeLocalTracksFromConference(conference, [ jitsiTrack ]);
+            }
+
+            if (promise) {
+                return promise.then(() => next(action));
+            }
+        }
     }
 
     return next(action);
