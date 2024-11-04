@@ -124,12 +124,26 @@ export interface IDeeplinkingConfig {
     ios?: IDeeplinkingMobileConfig;
 }
 
+export type PartialRecord<K extends keyof any, T> = {
+    [P in K]?: T;
+};
+
 export interface INoiseSuppressionConfig {
     krisp?: {
-        debugLogs?: boolean;
-        enabled?: boolean;
+        bufferOverflowMS?: number;
+        bvc?: {
+            allowedDevices?: string;
+            allowedDevicesExt?: string;
+        };
+        debugLogs: boolean;
+        enableSessionStats?: boolean;
+        inboundModels?: PartialRecord<string, string>;
         logProcessStats?: boolean;
+        models?: PartialRecord<string, string>;
+        preloadInboundModels?: PartialRecord<string, string>;
+        preloadModels?: PartialRecord<string, string>;
         useBVC?: boolean;
+        useSharedArrayBuffer?: boolean;
     };
 }
 

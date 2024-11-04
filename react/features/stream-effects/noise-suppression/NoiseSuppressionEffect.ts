@@ -181,22 +181,38 @@ async function _initializeKrisp(
         const baseUrl = `${getBaseUrl()}libs/krisp`;
         const { default: KrispSDK } = await import(/* webpackIgnore: true */ `${baseUrl}/krispsdk.mjs`);
 
-        krispState.sdk = new KrispSDK({
-            params: {
+        const ncParams = {
+            krisp: {
                 models: {
-                    modelBVC: `${baseUrl}/models/model_bvc.kw`,
-                    model8: `${baseUrl}/models/model_8.kw`,
-                    model16: `${baseUrl}/models/model_16.kw`,
-                    model32: `${baseUrl}/models/model_32.kw`
+                    modelBVC: `${baseUrl}/models${options?.krisp?.models?.modelBVC}`,
+                    model8: `${baseUrl}/models/${options?.krisp?.models?.model8}`,
+                    modelNC: `${baseUrl}/models/${options?.krisp?.models?.modelNC}`
                 },
-                logProcessStats: options?.krisp?.logProcessStats,
-                debugLogs: options?.krisp?.debugLogs,
-                useBVC: options?.krisp?.useBVC,
+                logProcessStats: !options?.krisp?.logProcessStats,
+                debugLogs: !options?.krisp?.debugLogs,
+                useBVC: !options?.krisp?.useBVC,
                 bvc: {
-                    allowedDevices: `${baseUrl}/assets/bvc-allowed.txt`,
-                    allowedDevicesExt: `${baseUrl}/assets/bvc-allowed-ext.txt`
+                    allowedDevices: `${baseUrl}/assets/${options?.krisp?.bvc?.allowedDevices}`,
+                    allowedDevicesExt: `${baseUrl}/assets/${options?.krisp?.bvc?.allowedDevicesExt}`
+                },
+                inboundModels: {
+                    modelInbound8: `${baseUrl}/models/${options?.krisp?.inboundModels?.modelInbound8}`,
+                    modelInbound16: `${baseUrl}/models/${options?.krisp?.inboundModels?.modelInbound16}`
+                },
+                preloadModels: {
+                    modelBVC: `${baseUrl}/models/${options?.krisp?.preloadModels?.modelBVC}`,
+                    model8: `${baseUrl}/models/${options?.krisp?.preloadModels?.model8}`,
+                    modelNC: `${baseUrl}/models/${options?.krisp?.preloadModels?.modelNC}`
+                },
+                preloadInboundModels: {
+                    modelInbound8: `${baseUrl}/models/${options?.krisp?.preloadInboundModels?.modelInbound8}`,
+                    modelInbound16: `${baseUrl}/models/${options?.krisp?.preloadInboundModels?.modelInbound16}`
                 }
-            },
+            }
+        };
+
+        krispState.sdk = new KrispSDK({
+            params: ncParams.krisp,
             callbacks: {}
         });
     }

@@ -220,14 +220,37 @@ var config = {
     //     In case when you have known BVC supported devices and you want to extend allowed devices list
     //   - https://meet.example.com/libs/krisp/assets/bvc-allowed-ext.txt
     // NOTE: Krisp JS SDK v1.0.9 was tested.
-    // noiseSuppression: {
-    //     krisp: {
-    //         enabled: false,
-    //         logProcessStats: false,
-    //         debugLogs: false,
-    //         useBVC: false,
-    //     },
-    // },
+    noiseSuppression: {
+        krisp: {
+            enabled: false,
+            logProcessStats: false,
+            debugLogs: false,
+            useBVC: false,
+            bufferOverflowMS: 1000,
+            inboundModels: {
+                modelInbound8: 'model_inbound_8.kef',
+                modelInbound16: 'model_inbound_16.kef',
+            },
+            preloadInboundModels: {
+                modelInbound8: 'model_inbound_8.kef',
+                modelInbound16: 'model_inbound_16.kef',
+            },
+            preloadModels: {
+                modelBVC: 'model_bvc.kef',
+                model8: 'model_8.kef',
+                modelNV: 'model_nc_mq.kef',
+            },
+            models: {
+                modelBVC: 'model_bvc.kef',
+                model8: 'model_8.kef',
+                modelNV: 'model_nc_mq.kef',
+            },
+            bvc: {
+                allowedDevices: 'bvc-allowed.txt',
+                allowedDevicesExt: 'bvc-allowed-ext.txt',
+            }
+        },
+    },
 
     // Video
 
