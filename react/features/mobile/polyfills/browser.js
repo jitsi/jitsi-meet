@@ -263,7 +263,7 @@ function _visitNode(node, callback) {
             = `react-native/${reactNativeVersion.major}.${reactNativeVersion.minor}.${reactNativeVersion.patch}`;
 
         // (OS version)
-        const os = `(${Platform.OS}/${Platform.Version})`;
+        const os = `${Platform.OS.toLowerCase()}/${Platform.Version}`;
 
         // SDK
         const liteTxt = AppInfo.isLiteSDK ? '-lite' : '';
