@@ -324,6 +324,9 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     }
 
     // if both are available pre-join is with priority (the case when pre-join is enabled)
+    // when pre-join is disabled, and we are in lobby with error, we want to end up in lobby UI
+    // instead of hiding it and showing conference UI. Still in lobby the user can retry
+    // after we show the error notification
     if (isPrejoinPageVisible(state)) {
         dispatch(hideLobbyScreen());
     }
@@ -338,8 +341,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
                 descriptionKey: 'lobby.joinRejectedMessage'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY)
         );
-    } else {
-        dispatch(hideLobbyScreen());
     }
 
     return next(action);
