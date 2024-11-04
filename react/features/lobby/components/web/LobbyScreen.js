@@ -119,9 +119,12 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                     ? this._renderLobbyChat()
                     : (
                         <>
-                            <div className = 'spinner'>
+                            {/* <span className = 'meeting-name'>                                
+                              {this.props._meetingName}
+                            </span> */}
+                            {/* <div className = 'spinner'>
                                 <LoadingIndicator size = 'large' />
-                            </div>
+                            </div> */}
                             <span className = 'joining-message'>
                                 { this.props.t('lobby.joiningMessage') }
                             </span>

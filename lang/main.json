@@ -580,7 +580,7 @@
         "joinRejectedTitle": "Join request rejected.",
         "joinTitle": "Join Meeting",
         "joinWithPasswordMessage": "Trying to join with password, please wait...",
-        "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
+        "joiningMessage": "You will enter the meeting room as soon as the moderator is present and starts the meeting. Please be patient for a moment until the meeting starts.",
         "joiningTitle": "Asking to join meeting...",
         "joiningWithPasswordTitle": "Joining with password...",
         "knockButton": "Ask to Join",
