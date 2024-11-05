@@ -128,6 +128,7 @@
         "privateNotice": "Mesazh privat për {{recipient}}",
         "sendButton": "Dërgoje",
         "smileysPanel": "Panel emoxhish",
+        "systemDisplayName": "Sistem",
         "tabs": {
             "chat": "Fjalosje",
             "polls": "Pyetësorë"
@@ -263,6 +264,7 @@
         "Share": "Ndaje",
         "Submit": "Parashtroje",
         "WaitForHostMsg": "Konferenca s’ka nisur, ngaqë s’ka mbërritur ende ndonjë moderator. Nëse dëshironi të bëheni një moderator, ju lutemi, bëni hyrjen. Përndryshe, ju lutemi, pritni.",
+        "WaitForHostNoAuthMsg": "Konferenca s’ka nisur, ngaqë s’ka mbërritur ende ndonjë moderator. Përndryshe, ju lutemi, pritni.",
         "WaitingForHostButton": "Prit për moderator",
         "WaitingForHostTitle": "Po pritet për një moderator…",
         "Yes": "Po",
@@ -305,6 +307,8 @@
         "contactSupport": "Lidhuni me ata të asistencës",
         "copied": "U kopjua",
         "copy": "Kopjoje",
+        "demoteParticipantDialog": "Jeni i sigurt se doni ta kaloni këtë pjesëmarrës si vizitor?",
+        "demoteParticipantTitle": "Kaloje si vizitor",
         "dismiss": "Hidhe tej",
         "displayNameRequired": "Njatjeta! Cili është emri juaj?",
         "done": "U bë",
@@ -316,6 +320,7 @@
         "embedMeeting": "Trupëzoni takim",
         "enterDisplayName": "Jepni këtu emrin tuaj",
         "error": "Gabim",
+        "errorRoomCreationRestriction": "Provuat të hyni shumë shpejt, ju lutemi, kthehuni pas pak.",
         "gracefulShutdown": "Shërbimi ynë është aktualisht i ndërprerë, për punë mirëmbajtjeje. Ju lutemi, riprovoni më vonë.",
         "grantModeratorDialog": "Jeni i sigurt se doni të akordohen të drejta moderatori për {{participantName}}?",
         "grantModeratorTitle": "Akordoni të drejta moderatori",
@@ -434,7 +439,10 @@
         "shareScreenWarningD2": "lypset të ndalni ndarjen e audios me të tjerë, të nisni tregimin e ekranit dhe t’i vini shenjë mundësisë “ndani audio me të tjerë”.",
         "shareScreenWarningH1": "Nëse thjesht doni të tregoni ekranin tuaj:",
         "shareScreenWarningTitle": "Lypset të ndalni ndarjen e audios me të tjerë, para tregimit të ekranit tuaj",
-        "shareVideoLinkError": "Ju lutemi, jepni një lidhje të saktë videoje.",
+        "shareVideoConfirmPlay": "Ju ndan një hap nga hapja e një sajti të jashtëm. Doni të vazhdohet?",
+        "shareVideoConfirmPlayTitle": "{{name}} ndau me ju një video.",
+        "shareVideoLinkError": "Hëm, kjo video s’mund të luhet.",
+        "shareVideoLinkStopped": "Videoja nga {{name}} u ndal.",
         "shareVideoTitle": "Ndani video me të tjerë",
         "shareYourScreen": "Tregoni ekranin tuaj",
         "shareYourScreenDisabled": "Tregimi i ekranit është i çaktivizuar.",
@@ -731,8 +739,10 @@
         "connectedOneMember": "{{name}} nisi takimin",
         "connectedThreePlusMembers": "{{name}} dhe mjaft të tjerë tjerë hynë në takim",
         "connectedTwoMembers": "{{first}} dhe {{second}} tjetër hynë në takim",
-        "dataChannelClosed": "Rënie cilësie videoje",
+        "dataChannelClosed": "Cilësia e videos mund të jetë dëmtuar",
         "dataChannelClosedDescription": "Kanali urë u shkëput, kështu që cilësia e videos është kufizuar te vlera më e ulët.",
+        "dataChannelClosedDescriptionWithAudio": "Kanali urë është jashtë funksionimi, prandaj mund të ndodhin shkëputje te audioja dhe videoja.",
+        "dataChannelClosedWithAudio": "Cilësia e audios dhe videos mund të jetë dëmtuar",
         "disabledIframe": "Trupëzimi është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash.",
         "disabledIframeSecondary": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash. Ju lutemi, për trupëzime të njëmendta përdorni <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
         "disconnected": "u shkëput",
@@ -779,6 +789,7 @@
         "newDeviceAction": "Përdore",
         "newDeviceAudioTitle": "U pikas pajisje audio e re",
         "newDeviceCameraTitle": "U pikas kamerë e re",
+        "nextToSpeak": "Jeni pasuesi në radhë për folje",
         "noiseSuppressionDesktopAudioDescription": "Mbytja e zhurmave s’mund të aktivizohet teksa ndahet me të tjerët audioja e desktopit, ju lutemi, çaktivizojeni dhe riprovoni.",
         "noiseSuppressionFailedTitle": "S’u arrit të nisej mbytja e zhurmave",
         "noiseSuppressionStereoDescription": "Aktualisht nuk mbulohet mbytje zhurmash audioje stereo.",
@@ -813,7 +824,11 @@
         "videoUnmuteBlockedDescription": "Heqja e heshtimit të kamerës dhe veprimi i tregimit të desktopit janë bllokuar përkohësisht për shkak kufizimesh të sistemit.",
         "videoUnmuteBlockedTitle": "Heqja e heshtimit të kamerës dhe tregimi i desktopit janë bllokuar!",
         "viewLobby": "Shihni hollin",
+        "viewParticipants": "Shihni pjesëmarrësit",
+        "viewVisitors": "Shihni vizitorët",
         "waitingParticipants": "{{waitingParticipants}} vetë",
+        "waitingVisitors": "Vizitorë që presin në radhë: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "Takimi s’ka filluar endeThe meeting is not live yet!",
         "whiteboardLimitDescription": "Ju lutemi, ruani ç’keni bërë, ngaqë së shpejti do të mbërrihet në kufi përdoruesi dhe tabela do të mbyllet.",
         "whiteboardLimitTitle": "Përdorim tabele"
     },
@@ -827,7 +842,10 @@
             "audioModeration": "Heqin heshtim të vetes",
             "blockEveryoneMicCamera": "Bllokoni mikrofonin dhe kamerën e gjithkujt",
             "breakoutRooms": "Dhoma anekse konsultimesh",
+            "goLive": "Go live",
             "invite": "Ftoni Dikë",
+            "lowerAllHands": "Uli krejt duart",
+            "lowerHand": "Uleni dorën",
             "moreModerationActions": "Më tepër mundësi moderimi",
             "moreModerationControls": "Më tepër kontrolle moderimi",
             "moreParticipantOptions": "Më tepër mundësi pjesëmarrësi",
@@ -844,6 +862,7 @@
         "headings": {
             "lobby": "Holli ({{count}})",
             "participantsList": "Pjesëmarrës në takim ({{count}})",
+            "visitorInQueue": " (në pritje {{count}})",
             "visitorRequests": " (requests {{count}})",
             "visitors": "Vizitorë {{count}}",
             "waitingLobby": "Duke pritur në holl ({{count}})"
@@ -857,10 +876,13 @@
     "pinnedParticipant": "Pjesëmarrësi është fiksuar",
     "polls": {
         "answer": {
+            "edit": "Përpunojeni",
+            "send": "Dërgoje",
             "skip": "Anashkaloje",
             "submit": "Parashtroje"
         },
         "by": "Nga {{ name }}",
+        "closeButton": "Mbylle pyetësorin",
         "create": {
             "addOption": "Shtoni mundësi",
             "answerPlaceholder": "Mundësia {{index}}",
@@ -870,6 +892,7 @@
             "pollQuestion": "Pyetje Pyetësori",
             "questionPlaceholder": "Bëni një pyetje",
             "removeOption": "Hiqe mundësinë",
+            "save": "Ruaje",
             "send": "Dërgoje"
         },
         "errors": {
@@ -899,9 +922,11 @@
         "configuringDevices": "Po formësohen pajisjet…",
         "connectedWithAudioQ": "Jeni lidhur me audio?",
         "connection": {
+            "failed": "Prova e lidhjes dështoi!",
             "good": "Lidhja juaj internet duket mirë!",
             "nonOptimal": "Lidhja juaj internet s’është optimale",
-            "poor": "Keni lidhje të dobët internet"
+            "poor": "Keni lidhje të dobët internet",
+            "running": "Po bëhet prova e lidhjes…"
         },
         "connectionDetails": {
             "audioClipping": "Presim që audioja juaj do të shformohet.",
@@ -910,6 +935,7 @@
             "goodQuality": "Shkëlqyeshëm! Cilësia e medias tuaj do të jetë shumë e mirë.",
             "noMediaConnectivity": "S’gjetëm dot rrugë për të vendosur lidhje media për këtë provë. Zakonisht kjo shkaktohet nga një firewall ose NAT.",
             "noVideo": "Presim që cilësia e videos për ju të jetë për të vënë kujën.",
+            "testFailed": "Prova e lidhjes hasi në probleme të papritura, por kjo mund të mos prekë funksionimin për ju.",
             "undetectable": "Nëse s’bëni dot ende thirrje në shfletues, rekomandojmë të siguroheni se altoparlantët, mikrofoni dhe kamera juaj janë ujdisur si duhet, se i keni akorduar shfletuesit tuaja të drejta të përdorë mikrofonin dhe kamerën tuaj, dhe se versioni i shfletuesit tuaj është i përditësuar. Nëse keni ende probleme me thirrje, duhet të lidheni me zhvilluesin e aplikacionit web.",
             "veryPoorConnection": "Presim që cilësia e thirrjes te ju të jetë për të vënë kujën",
             "videoFreezing": "Presim që videoja te ju të ngrijë, të bëhet e zezë dhe të shfaqet tërë piksela.",
@@ -1073,6 +1099,7 @@
         "desktopShareWarning": "Që të hyjnë në fuqi rregullimet e reja, duhet të rinisni tregimin e ekranit.",
         "devices": "Pajisje",
         "followMe": "Më ndjek gjithkush",
+        "followMeRecorder": "Më ndjek regjistruesi",
         "framesPerSecond": "kuadro-për-sekondë",
         "incomingMessage": "Mesazh ardhës",
         "language": "Gjuhë",
@@ -1236,6 +1263,7 @@
             "privateMessage": "Dërgoni mesazh privat",
             "profile": "Përpunoni profilin tuaj",
             "raiseHand": "Ngrini dorën",
+            "react": "Reagime ndaj mesazhesh",
             "reactions": "Reagime",
             "reactionsMenu": "Menu reagimesh",
             "recording": "Nis/Ndal regjistrimin",
@@ -1422,6 +1450,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Hollësi Lidhjeje",
+        "demote": "Kaloje te vizitorët",
         "domute": "Heshtoje",
         "domuteOthers": "Heshto gjithkënd tjetër",
         "domuteVideo": "Çaktivizoje kamerën",
@@ -1474,11 +1503,22 @@
     },
     "visitors": {
         "chatIndicator": "(vizitor)",
+        "joinMeeting": {
+            "description": "Aktualisht jeni vëzhgues në këtë konferencë.",
+            "raiseHand": "Ngrini dorën",
+            "title": "Hyrje në takim",
+            "wishToSpeak": "Nëse dëshironi të flisni, ju lutemi, ngrini dorën më poshtë dhe prisni miratimin e moderatorit."
+        },
         "labelTooltip": "Numër vizitorësh: {{count}}",
         "notification": {
-            "description": "Që të merrni pjesë, ngrini dorën",
+            "demoteDescription": "Dërguar këtu nga {{actor}}, që të merrni pjesë, ngrini dorën",
+            "noMainParticipantsDescription": "Duhet që një pjesëmarrëstë nisë takimin. Ju lutemi, riprovoni pas pak.",
+            "noMainParticipantsTitle": "Ky takim s’ka filluar ende.",
+            "noVisitorLobby": "S’mund të hyni, teksa ka një holll të hapur për takimin.",
+            "notAllowedPromotion": "Lypset që së pari një pjesëmarrës të lejojë kërkesën tuaj.",
             "title": "Jeni vizitor në takim"
-        }
+        },
+        "waitingMessage": "Do të merrni pjesë në këta takim sapo të fillojë!"
     },
     "volumeSlider": "Rrëshqitës volumi",
     "welcomepage": {
