@@ -137,6 +137,7 @@ export interface INoiseSuppressionConfig {
         };
         debugLogs: boolean;
         enableSessionStats?: boolean;
+        enabled: boolean;
         inboundModels?: PartialRecord<string, string>;
         logProcessStats?: boolean;
         models?: PartialRecord<string, string>;

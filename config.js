@@ -221,10 +221,10 @@ var config = {
     // NOTE: Krisp JS SDK v2.0.0 was tested.
     // noiseSuppression: {
     //     krisp: {
-    //         enabled: true,
-    //         logProcessStats: true,
-    //         debugLogs: true,
-    //         useBVC: true,
+    //         enabled: false,
+    //         logProcessStats: false,
+    //         debugLogs: false,
+    //         useBVC: false,
     //         bufferOverflowMS: 1000,
     //         inboundModels: {
     //             modelInbound8: 'model_inbound_8.kef',
