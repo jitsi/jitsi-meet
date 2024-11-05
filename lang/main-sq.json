@@ -1100,7 +1100,7 @@
         "devices": "Pajisje",
         "followMe": "Më ndjek gjithkush",
         "followMeRecorder": "Më ndjek regjistruesi",
-         "framesPerSecond": "kuadro-për-sekondë",
+        "framesPerSecond": "kuadro-për-sekondë",
         "incomingMessage": "Mesazh ardhës",
         "language": "Gjuhë",
         "loggedIn": "I futur si {{name}}",
