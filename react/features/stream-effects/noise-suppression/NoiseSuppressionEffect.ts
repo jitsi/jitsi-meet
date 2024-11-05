@@ -184,7 +184,7 @@ async function _initializeKrisp(
         const ncParams = {
             krisp: {
                 models: {
-                    modelBVC: `${baseUrl}/models${options?.krisp?.models?.modelBVC}`,
+                    modelBVC: `${baseUrl}/models/${options?.krisp?.models?.modelBVC}`,
                     model8: `${baseUrl}/models/${options?.krisp?.models?.model8}`,
                     modelNC: `${baseUrl}/models/${options?.krisp?.models?.modelNC}`
                 },
