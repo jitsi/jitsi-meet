@@ -79,7 +79,8 @@ platform :ios do
     build_app(
         scheme: "JitsiMeet",
         include_symbols: true,
-        export_xcargs: "-allowProvisioningUpdates"
+        export_xcargs: "-allowProvisioningUpdates",
+        xcodebuild_formatter: ""
     )
 
     # Upload the build to TestFlight

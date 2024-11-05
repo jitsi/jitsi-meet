@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import { Text, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native';
 
 import Icon from '../../icons/components/Icon';
 
@@ -53,9 +53,9 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
             // show both the icon and the label, then these two need to be
             // wrapped in a View.
             children = (
-                <View style = { style }>
+                <View style = { style as ViewStyle }>
                     { children }
-                    <Text style = { styles?.labelStyle }>
+                    <Text style = { styles?.labelStyle as TextStyle }>
                         { this.label }
                     </Text>
                     { elementAfter }
@@ -70,11 +70,11 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         return (
             <TouchableHighlight
                 accessibilityLabel = { this.accessibilityLabel }
-                accessibilityRole = 'button'
+                accessibilityRole = { 'button' }
                 accessibilityState = {{ 'selected': Boolean(toggled) }}
                 disabled = { disabled }
                 onPress = { onClick }
-                style = { style }
+                style = { style as ViewStyle }
                 underlayColor = { styles?.underlayColor } >
                 { children }
             </TouchableHighlight>

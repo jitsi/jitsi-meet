@@ -9,11 +9,11 @@ import DialInSummary from '../../../invite/components/dial-in-summary/native/Dia
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
 import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
+import VisitorsQueue from '../../../visitors/components/native/VisitorsQueue';
 // eslint-disable-next-line
 // @ts-ignore
 import WelcomePage from '../../../welcome/components/WelcomePage';
 import { isWelcomePageEnabled } from '../../../welcome/functions';
-import Whiteboard from '../../../whiteboard/components/native/Whiteboard';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
@@ -24,8 +24,8 @@ import {
     navigationContainerTheme,
     preJoinScreenOptions,
     unsafeMeetingScreenOptions,
-    welcomeScreenOptions,
-    whiteboardScreenOptions
+    visitorsScreenOptions,
+    welcomeScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
@@ -96,10 +96,6 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                     component = { ConnectingPage }
                     name = { screen.connecting }
                     options = { connectingScreenOptions } />
-                <RootStack.Screen // @ts-ignore
-                    component = { Whiteboard }
-                    name = { screen.conference.whiteboard }
-                    options = { whiteboardScreenOptions } />
                 <RootStack.Screen
                     component = { Prejoin }
                     name = { screen.preJoin }
@@ -111,6 +107,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                         name = { screen.unsafeRoomWarning }
                         options = { unsafeMeetingScreenOptions } />
                 }
+                <RootStack.Screen
+                    component = { VisitorsQueue }
+                    name = { screen.visitorsQueue }
+                    options = { visitorsScreenOptions } />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }

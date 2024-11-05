@@ -6,11 +6,13 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
+    ADD_MESSAGE_REACTION,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_REACTION,
     SET_IS_POLL_TAB_FOCUSED,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -46,6 +48,27 @@ export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Adds a reaction to a chat message.
+ *
+ * @param {Object} reactionDetails - The reaction to add.
+ * @param {string} reactionDetails.participantId - The ID of the message to react to.
+ * @param {string} reactionDetails.reactionList - The reaction to add.
+ * @param {string} reactionDetails.messageId - The receiver ID of the reaction.
+ * @returns {{
+ *     type: ADD_MESSAGE_REACTION,
+ *     participantId: string,
+ *     reactionList: string[],
+ *     messageId: string
+ * }}
+ */
+export function addMessageReaction(reactionDetails: Object) {
+    return {
+        type: ADD_MESSAGE_REACTION,
+        ...reactionDetails
     };
 }
 
@@ -108,6 +131,24 @@ export function sendMessage(message: string, ignorePrivacy = false) {
         type: SEND_MESSAGE,
         ignorePrivacy,
         message
+    };
+}
+
+/**
+ * Sends a reaction to a message.
+ *
+ * @param {string} reaction - The reaction to send.
+ * @param {string} messageId - The message ID to react to.
+ * @param {string} receiverId - The receiver ID of the reaction.
+ * @returns {Function}
+ */
+export function sendReaction(reaction: string, messageId: string, receiverId?: string) {
+
+    return {
+        type: SEND_REACTION,
+        reaction,
+        messageId,
+        receiverId
     };
 }
 

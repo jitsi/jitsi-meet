@@ -56,6 +56,11 @@ export const welcomeScreenOptions = {
 export const conferenceScreenOptions = fullScreenOptions;
 
 /**
+ * Screen options for visitors queue.
+ */
+export const visitorsScreenOptions = fullScreenOptions;
+
+/**
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {
@@ -191,15 +196,7 @@ export const connectingScreenOptions = {
 /**
  * Screen options for the whiteboard screen.
  */
-export const whiteboardScreenOptions = {
-    gestureEnabled: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.ui01
-    },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
+export const whiteboardScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for pre-join screen.

@@ -19,6 +19,7 @@ import {
     sendTones,
     setAssumedBandwidthBps,
     setFollowMe,
+    setFollowMeRecorder,
     setLocalSubject,
     setPassword,
     setSubject
@@ -31,6 +32,7 @@ import { isSupportedBrowser } from '../../react/features/base/environment/enviro
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
+import { isVideoMutedByUser } from '../../react/features/base/media/functions';
 import {
     grantModerator,
     kickParticipant,
@@ -41,6 +43,7 @@ import {
 import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
 import {
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
     getScreenshareParticipantIds,
     getVirtualScreenshareParticipantByOwnerId,
@@ -52,6 +55,10 @@ import { updateSettings } from '../../react/features/base/settings/actions';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
 import { setCameraFacingMode } from '../../react/features/base/tracks/actions.web';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../react/features/base/tracks/constants';
+import {
+    getLocalVideoTrack,
+    isLocalTrackMuted
+} from '../../react/features/base/tracks/functions';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,
@@ -76,6 +83,7 @@ import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/act
 import {
     addStageParticipant,
     resizeFilmStrip,
+    setFilmstripVisible,
     setVolume,
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
@@ -98,7 +106,7 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
-import { RECORDING_TYPES } from '../../react/features/recording/constants';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
@@ -113,6 +121,7 @@ import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/function
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
+import { toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -199,7 +208,7 @@ function initCommands() {
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
-            APP.conference.changeLocalDisplayName(displayName);
+            APP.store.dispatch(updateSettings({ displayName: getNormalizedDisplayName(displayName) }));
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -320,15 +329,26 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
-        'set-follow-me': value => {
+        'set-blurred-background': blurType => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const muted = tracks ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : isVideoMutedByUser(APP.store);
+
+            APP.store.dispatch(toggleBlurredBackgroundEffect(videoTrack, blurType, muted));
+        },
+        'set-follow-me': (value, recorderOnly) => {
 
             if (value) {
-                sendAnalytics(createApiEvent('follow.me.set'));
+                sendAnalytics(createApiEvent('follow.me.set', {
+                    recorderOnly
+                }));
             } else {
-                sendAnalytics(createApiEvent('follow.me.unset'));
+                sendAnalytics(createApiEvent('follow.me.unset', {
+                    recorderOnly
+                }));
             }
 
-            APP.store.dispatch(setFollowMe(value));
+            APP.store.dispatch(recorderOnly ? setFollowMeRecorder(value) : setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
             const { getState, dispatch } = APP.store;
@@ -376,7 +396,9 @@ function initCommands() {
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
-            APP.UI.toggleFilmstrip();
+            const { visible } = APP.store.getState()['features/filmstrip'];
+
+            APP.store.dispatch(setFilmstripVisible(!visible));
         },
 
         /*
@@ -485,7 +507,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('email.changed'));
             APP.conference.changeLocalEmail(email);
         },
-        'avatar-url': avatarUrl => {
+        'avatar-url': avatarUrl => { // @deprecated
+            console.warn('Using command avatarUrl is deprecated. Use context.user.avatar in the jwt.');
+
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
@@ -625,6 +649,7 @@ function initCommands() {
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
          * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.
+         * @param { boolean } arg.transcription - Whether a transcription should be started or not.
          * @returns {void}
          */
         'start-recording': ({
@@ -636,7 +661,8 @@ function initCommands() {
             rtmpBroadcastID,
             youtubeStreamKey,
             youtubeBroadcastID,
-            extraMetadata = {}
+            extraMetadata = {},
+            transcription
         }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
@@ -711,25 +737,33 @@ function initCommands() {
                     mode: JitsiRecordingConstants.mode.STREAM,
                     streamId: youtubeStreamKey || rtmpStreamKey
                 };
-            } else {
-                logger.error('Invalid recording mode provided');
-
-                return;
             }
 
             if (isScreenshotCaptureEnabled(state, true, false)) {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
-            conference.startRecording(recordingConfig);
+
+            // Start audio / video recording, if requested.
+            if (typeof recordingConfig !== 'undefined') {
+                conference.startRecording(recordingConfig);
+            }
+
+            if (transcription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null));
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isTranscribingEnabled: true
+                });
+            }
         },
 
         /**
          * Stops a recording or streaming in progress.
          *
          * @param {string} mode - `local`, `file` or `stream`.
+         * @param {boolean} transcription - Whether the transcription needs to be stopped.
          * @returns {void}
          */
-        'stop-recording': mode => {
+        'stop-recording': (mode, transcription) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -737,6 +771,13 @@ function initCommands() {
                 logger.error('Conference is not defined');
 
                 return;
+            }
+
+            if (transcription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null));
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isTranscribingEnabled: false
+                });
             }
 
             if (mode === 'local') {
@@ -979,6 +1020,12 @@ function initCommands() {
         }
         case 'get-p2p-status': {
             callback(isP2pActive(APP.store.getState()));
+            break;
+        }
+        case 'session-id': {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            callback(conference?.getMeetingUniqueId() || '');
             break;
         }
         case '_new_electron_screensharing_supported': {
@@ -1311,14 +1358,14 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, privateMessage, ts } = {}) {
-        if (APP.conference.isLocalId(id)) {
+            { body, from, nick, privateMessage, ts } = {}) {
+        if (APP.conference.isLocalId(from)) {
             return;
         }
 
         this._sendEvent({
             name: 'incoming-message',
-            from: id,
+            from,
             message: body,
             nick,
             privateMessage,
@@ -1787,9 +1834,9 @@ class API {
      * Notify external application of a participant, remote or local, being
      * removed from the conference by another participant.
      *
-     * @param {string} kicked - The ID of the participant removed from the
+     * @param {Object} kicked - The participant removed from the
      * conference.
-     * @param {string} kicker - The ID of the participant that removed the
+     * @param {Object} kicker - The participant that removed the
      * other participant.
      * @returns {void}
      */
@@ -1907,14 +1954,16 @@ class API {
      * @param {boolean} on - True if recording is on, false otherwise.
      * @param {string} mode - Stream or file or local.
      * @param {string} error - Error type or null if success.
+     * @param {boolean} transcription - True if a transcription is being recorded, false otherwise.
      * @returns {void}
      */
-    notifyRecordingStatusChanged(on, mode, error) {
+    notifyRecordingStatusChanged(on, mode, error, transcription) {
         this._sendEvent({
             name: 'recording-status-changed',
             on,
             mode,
-            error
+            error,
+            transcription
         });
     }
 
@@ -2124,6 +2173,21 @@ class API {
             name: 'non-participant-message-received',
             id,
             message: json
+        });
+    }
+
+
+    /**
+     * Notify external application (if API is enabled) the conference
+     * start time.
+     *
+     * @param {number} timestamp - Timestamp conference was created.
+     * @returns {void}
+     */
+    notifyConferenceCreatedTimestamp(timestamp) {
+        this._sendEvent({
+            name: 'conference-created-timestamp',
+            timestamp
         });
     }
 

@@ -38,6 +38,7 @@ DerivedData
 *.dSYM.zip
 *.xcuserstate
 project.xcworkspace
+**/.xcode.env.local
 
 # Android/IntelliJ
 #
@@ -99,10 +100,7 @@ tsconfig.json
 #
 react-native-sdk/*.tgz
 react-native-sdk/android/src
-!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetOngoingConferenceService.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetReactNativePackage.java
-!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceModule.java
-!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/RNOngoingNotification.java
 react-native-sdk/images
 react-native-sdk/ios
 react-native-sdk/lang

@@ -10,7 +10,6 @@ MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1 | cut -c 2-)
-DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
     MVN_HTTP=1
@@ -67,15 +66,12 @@ pushd ${THIS_DIR}/../
 ./gradlew publish
 popd
 
-if [[ $DO_GIT_TAG == 1 ]]; then
-    # The artifacts are now on the Maven repo, commit them
+# The artifacts are now on the Maven repo, commit them
+if [[ $MVN_HTTP == 0 ]]; then
     pushd ${MVN_REPO_PATH}
     git add -A .
     git commit -m "Jitsi Meet SDK + dependencies: ${SDK_VERSION}"
     popd
-
-    # Tag the release
-    git tag android-sdk-${SDK_VERSION}
 fi
 
 # Done!

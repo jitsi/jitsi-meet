@@ -49,6 +49,11 @@ export interface IProps {
     colorBase?: string;
 
     /**
+     * Indicates the default icon for the avatar.
+     */
+    defaultIcon?: string;
+
+    /**
      * Display name of the entity to render an avatar for (if any). This is handy when we need
      * an avatar for a non-participant entity (e.g. A recent list item).
      */
@@ -112,6 +117,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      * @static
      */
     static defaultProps = {
+        defaultIcon: IconUser,
         dynamicColor: true
     };
 
@@ -172,6 +178,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
             _loadableAvatarUrlUseCORS,
             className,
             colorBase,
+            defaultIcon,
             dynamicColor,
             id,
             size,
@@ -229,7 +236,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
         }
 
         if (navigator.product !== 'ReactNative') {
-            avatarProps.iconUser = IconUser;
+            avatarProps.iconUser = defaultIcon;
         }
 
         return (

@@ -178,6 +178,7 @@ const Notification = ({
     description,
     descriptionArguments,
     descriptionKey,
+    disableClosing,
     hideErrorSupportLink,
     icon,
     onDismissed,
@@ -310,6 +311,8 @@ const Notification = ({
 
     return (
         <div
+            aria-atomic = 'false'
+            aria-live = 'polite'
             className = { cx(classes.container, unmounting.get(uid ?? '') && 'unmount') }
             data-testid = { titleKey || descriptionKey }
             id = { uid }>
@@ -336,14 +339,16 @@ const Notification = ({
                         ))}
                     </div>
                 </div>
-                <Icon
-                    className = { classes.closeIcon }
-                    color = { theme.palette.icon04 }
-                    id = 'close-notification'
-                    onClick = { onDismiss }
-                    size = { 20 }
-                    src = { IconCloseLarge }
-                    testId = { `${titleKey || descriptionKey}-dismiss` } />
+                { !disableClosing && (
+                    <Icon
+                        className = { classes.closeIcon }
+                        color = { theme.palette.icon04 }
+                        id = 'close-notification'
+                        onClick = { onDismiss }
+                        size = { 20 }
+                        src = { IconCloseLarge }
+                        testId = { `${titleKey || descriptionKey}-dismiss` } />
+                )}
             </div>
         </div>
     );

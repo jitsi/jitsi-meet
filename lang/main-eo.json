@@ -222,7 +222,7 @@
         "noMobileApp": "Ĉu vi ne jam havas la aplikaĵon?",
         "termsAndConditions": "Daŭrigante, vi konsentas kun niaj <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>kondiĉoj.</a>",
         "title": "Enirante vian kunvenon per {{app}}…",
-        "titleNew": "Enirante vian kunvenon...",
+        "titleNew": "Enirante vian kunvenon…",
         "tryAgainButton": "Provu denove per la komputila aplikaĵo",
         "unsupportedBrowser": "Ŝajnas ke vi uzas nesubtenitan retumilon"
     },
@@ -864,6 +864,9 @@
             "removeOption": "Forigi opcion",
             "send": "Sendu"
         },
+        "errors": {
+            "notUniqueOption": "Ebloj devas esti unikaj"
+        },
         "notification": {
             "description": "Malfermu la enketan langeton por voĉdoni",
             "title": "Oni aldonis novan enketon en la kunveno"
@@ -922,7 +925,7 @@
         "iWantToDialIn": "Mi volas alvoki",
         "initiated": "Voko komencita",
         "joinAudioByPhone": "Aliĝu kun telefona mikrofono",
-        "joinMeeting": "Aliĝu al la kunvenon",
+        "joinMeeting": "Aliĝu al la kunveno",
         "joinMeetingInLowBandwidthMode": "Aliĝu en malaltkapacita modo",
         "joinWithoutAudio": "Aliĝu sen mikrofono",
         "keyboardShortcuts": "Ŝaltu fulmoklavojn",

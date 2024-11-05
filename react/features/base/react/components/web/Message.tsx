@@ -1,13 +1,19 @@
 import React, { Component, ReactNode } from 'react';
 import { toArray } from 'react-emoji-render';
+import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import GifMessage from '../../../../chat/components/web/GifMessage';
-import { GIF_PREFIX } from '../../../../gifs/constants';
-import { isGifMessage } from '../../../../gifs/functions.web';
+import { extractGifURL, isGifEnabled, isGifMessage } from '../../../../gifs/functions.web';
 
 import Linkify from './Linkify';
 
 interface IProps {
+
+    /**
+     * Whether the gifs are enabled or not.
+     */
+    gifEnabled: boolean;
 
     /**
      * The body of the message.
@@ -43,12 +49,12 @@ class Message extends Component<IProps> {
 
         // Tokenize the text in order to avoid emoji substitution for URLs
         const tokens = text ? text.split(' ') : [];
-
         const content = [];
+        const { gifEnabled } = this.props;
 
         // check if the message is a GIF
-        if (isGifMessage(text)) {
-            const url = text.substring(GIF_PREFIX.length, text.length - 1);
+        if (gifEnabled && isGifMessage(text)) {
+            const url = extractGifURL(text);
 
             content.push(<GifMessage
                 key = { url }
@@ -56,9 +62,9 @@ class Message extends Component<IProps> {
         } else {
             for (const token of tokens) {
 
-                if (token.includes('://')) {
+                if (token.includes('://') || token.startsWith('@')) {
 
-                    // Bypass the emojification when urls are involved
+                    // Bypass the emojification when urls or matrix ids are involved
                     content.push(token);
                 } else {
                     content.push(...toArray(token, { className: 'smiley' }));
@@ -93,4 +99,16 @@ class Message extends Component<IProps> {
     }
 }
 
-export default Message;
+/**
+ * Maps part of the redux state to the props of this component.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {IProps}
+ */
+function _mapStateToProps(state: IReduxState) {
+    return {
+        gifEnabled: isGifEnabled(state)
+    };
+}
+
+export default connect(_mapStateToProps)(Message);

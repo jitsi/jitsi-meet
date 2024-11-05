@@ -88,6 +88,7 @@ function _getFollowMeState(state: IReduxState) {
     const stageFilmstrip = isStageFilmstripEnabled(state);
 
     return {
+        recorder: state['features/base/conference'].followMeRecorderEnabled,
         filmstripVisible: state['features/filmstrip'].visible,
         maxStageParticipants: stageFilmstrip ? state['features/base/settings'].maxStageParticipants : undefined,
         nextOnStage: pinnedParticipant?.id,

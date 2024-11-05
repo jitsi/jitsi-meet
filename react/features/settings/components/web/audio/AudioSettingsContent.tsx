@@ -281,6 +281,7 @@ const AudioSettingsContent = ({
 
     return (
         <ContextMenu
+            activateFocusTrap = { true }
             aria-labelledby = 'audio-settings-button'
             className = { classes.contextMenu }
             hidden = { false }

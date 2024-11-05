@@ -111,7 +111,7 @@
         "GET_SESSION_ID_ERROR": "Hiba a munkamenet-azonosítása beszerzése közben: {{code}}",
         "GOT_SESSION_ID": "Munkamenet-azonosító beszerzése… Kész",
         "LOW_BANDWIDTH": "{{displayName}} videója le lett kapcsolva a sávszélesség csökkentése érdekében",
-        "RECONNECTING": "Hálózati hiba történt. Újracsatlakozás..."
+        "RECONNECTING": "Hálózati hiba történt. Újracsatlakozás…"
     },
     "connectionindicator": {
         "address": "Cím:",
@@ -184,6 +184,7 @@
         "Share": "Megosztás",
         "Submit": "Elküldés",
         "WaitForHostMsg": "A konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
+        "WaitForHostNoAuthMsg": "A konferencia még nem kezdődött el, mert nincs elérhető moderátor. Kérlek várj.",
         "WaitingForHost": "Várakozás a házigazdára…",
         "Yes": "Igen",
         "accessibilityLabel": {
@@ -479,10 +480,10 @@
         "joinRejectedMessage": "Csatlakozási kérelmét egy moderátor elutasította.",
         "joinRejectedTitle": "Csatlakozási kérelem elutasítva.",
         "joinTitle": "Csatlakozás az értekezlethez",
-        "joinWithPasswordMessage": "Csatlakozás jelszóval, kérjük várjon...",
+        "joinWithPasswordMessage": "Csatlakozás jelszóval, kérjük várjon…",
         "joiningMessage": "Amint valaki elfogadja kérését, csatlakoztatjuk az értekezlethez",
-        "joiningTitle": "Értekezlethez csatlakozás kérése...",
-        "joiningWithPasswordTitle": "Csatlakozás jelszóval...",
+        "joiningTitle": "Értekezlethez csatlakozás kérése…",
+        "joiningWithPasswordTitle": "Csatlakozás jelszóval…",
         "knockButton": "Csatlakozási kérelem küldése",
         "knockTitle": "Valaki szeretne csatlakozni az értekezlethez",
         "nameField": "Adja meg a nevét",
@@ -623,6 +624,9 @@
             "removeOption": "Opció eltávolítása",
             "send": "Küldés"
         },
+        "errors": {
+            "notUniqueOption": "Az opcióknak egyedinek kell lenniük"
+        },
         "notification": {
             "description": "Szavazás megnyitása",
             "title": "Új szavazás létrehozva"
@@ -644,7 +648,7 @@
         "callMe": "Hívj fel",
         "callMeAtNumber": "Hívj fel ezen a számon:",
         "calling": "Hívás",
-        "configuringDevices": "Eszköz beállítás...",
+        "configuringDevices": "Eszköz beállítás…",
         "connectedWithAudioQ": "Csak hanggal szeretne csatlakozni?",
         "connection": {
             "good": "Az internet kapcsolat jónak tűnik!",
@@ -690,7 +694,7 @@
         "calling": "Hívás…",
         "connected": "Kapcsolódva",
         "connecting": "Kapcsolódás…",
-        "connecting2": "Kapcsolódás*...",
+        "connecting2": "Kapcsolódás*…",
         "disconnected": "Szétkapcsolva",
         "expired": "Lejárt",
         "ignored": "Figyelmen kívül hagyva",
@@ -1060,7 +1064,7 @@
         "image6": "Erdő",
         "image7": "Napfelkelte",
         "none": "Nincs",
-        "pleaseWait": "Kérjük várjon...",
+        "pleaseWait": "Kérjük várjon…",
         "removeBackground": "Háttér eltávolítása",
         "slightBlur": "Enyhén elmosódott",
         "title": "Virtuális háttérképek",

@@ -467,13 +467,18 @@
     },
     "passwordDigitsOnly": "Kuni {{number}} tähemärki",
     "passwordSetRemotely": "määratud teise kasutaja poolt",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Valikud peavad olema ainulaadsed"
+        }
+    },
     "poweredby": "teieni toodud",
     "presenceStatus": {
         "busy": "Hõivatud",
         "calling": "Helistamine…",
         "connected": "Ühendatud",
         "connecting": "Ühendamine…",
-        "connecting2": "Ühendamine*...",
+        "connecting2": "Ühendamine*…",
         "disconnected": "Lahti ühendatud",
         "expired": "Aegunud",
         "ignored": "Eiratud",

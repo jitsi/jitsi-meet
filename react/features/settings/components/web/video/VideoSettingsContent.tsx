@@ -34,6 +34,11 @@ export interface IProps {
     currentCameraDeviceId: string;
 
     /**
+     * Whether the local video flip is disabled.
+     */
+    disableLocalVideoFlip: boolean | undefined;
+
+    /**
      * Whether or not the local video is flipped.
      */
     localFlipX: boolean;
@@ -146,6 +151,7 @@ const stopPropagation = (e: React.MouseEvent) => {
 const VideoSettingsContent = ({
     changeFlip,
     currentCameraDeviceId,
+    disableLocalVideoFlip,
     localFlipX,
     selectBackground,
     setVideoInputDevice,
@@ -295,6 +301,7 @@ const VideoSettingsContent = ({
 
     return (
         <ContextMenu
+            activateFocusTrap = { true }
             aria-labelledby = 'video-settings-button'
             className = { classes.container }
             hidden = { false }
@@ -310,23 +317,27 @@ const VideoSettingsContent = ({
                     icon = { IconImage }
                     onClick = { selectBackground }
                     text = { t('virtualBackground.title') } /> }
-                <div
-                    className = { classes.checkboxContainer }
-                    onClick = { stopPropagation }>
-                    <Checkbox
-                        checked = { localFlipX }
-                        label = { t('videothumbnail.mirrorVideo') }
-                        onChange = { _onToggleFlip } />
-                </div>
+                {!disableLocalVideoFlip && (
+                    <div
+                        className = { classes.checkboxContainer }
+                        onClick = { stopPropagation }>
+                        <Checkbox
+                            checked = { localFlipX }
+                            label = { t('videothumbnail.mirrorVideo') }
+                            onChange = { _onToggleFlip } />
+                    </div>
+                )}
             </ContextMenuItemGroup>
         </ContextMenu>
     );
 };
 
 const mapStateToProps = (state: IReduxState) => {
+    const { disableLocalVideoFlip } = state['features/base/config'];
     const { localFlipX } = state['features/base/settings'];
 
     return {
+        disableLocalVideoFlip,
         localFlipX: Boolean(localFlipX),
         visibleVirtualBackground: checkBlurSupport()
         && checkVirtualBackgroundEnabled(state)

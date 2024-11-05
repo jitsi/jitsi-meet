@@ -3,9 +3,10 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
-import _ from 'lodash';
+import { isEmpty, mergeWith, pick } from 'lodash-es';
 
 import { IReduxState } from '../../app/types';
+import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -65,7 +66,7 @@ export function getMeetingRegion(state: IReduxState) {
  * @returns {boolean}
  */
 export function getSsrcRewritingFeatureFlag(state: IReduxState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING) ?? true;
 }
 
 /**
@@ -88,7 +89,37 @@ export function getFeatureFlag(state: IReduxState, featureFlag: string) {
  * @returns {boolean}
  */
 export function getDisableRemoveRaisedHandOnFocus(state: IReduxState) {
-    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+    return state['features/base/config']?.raisedHands?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandByModerator.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandByModerator(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandByModerator || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandNotification || true;
+}
+
+/**
+ * Selector used to get the disableNextSpeakerNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableNextSpeakerNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableNextSpeakerNotification || false;
 }
 
 /**
@@ -135,13 +166,11 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
             const configJSON
                 = getWhitelistedJSON(configName as 'interfaceConfig' | 'config', json[configName]);
 
-            if (!_.isEmpty(configJSON)) {
-                logger.info(
-                    `Extending ${configName} with: ${
-                        JSON.stringify(configJSON)}`);
+            if (!isEmpty(configJSON)) {
+                logger.info(`Extending ${configName} with: ${JSON.stringify(configJSON)}`);
 
                 // eslint-disable-next-line arrow-body-style
-                _.mergeWith(configObj, configJSON, (oldValue, newValue) => {
+                mergeWith(configObj, configJSON, (oldValue, newValue) => {
 
                     // XXX We don't want to merge the arrays, we want to
                     // overwrite them.
@@ -165,9 +194,9 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
  */
 export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', configJSON: any): Object {
     if (configName === 'interfaceConfig') {
-        return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
+        return pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {
-        return _.pick(configJSON, CONFIG_WHITELIST);
+        return pick(configJSON, CONFIG_WHITELIST);
     }
 
     return configJSON;
@@ -182,6 +211,31 @@ export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', con
 export function isNameReadOnly(state: IReduxState): boolean {
     return Boolean(state['features/base/config'].disableProfile
         || state['features/base/config'].readOnlyName);
+}
+
+/**
+ * Selector for determining if the participant is the next one in the queue to speak.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNextToSpeak(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue || [];
+    const participantId = getLocalParticipant(state)?.id;
+
+    return participantId === raisedHandsQueue[0]?.id;
+}
+
+/**
+ * Selector for determining if the next to speak participant in the queue has been notified.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function hasBeenNotified(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue;
+
+    return Boolean(raisedHandsQueue[0]?.hasBeenNotified);
 }
 
 /**
@@ -325,5 +379,23 @@ export function getLegalUrls(state: IReduxState) {
         privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
         helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
         terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+    };
+}
+
+/**
+ * Utility function to debounce the execution of a callback function.
+ *
+ * @param {Function} callback - The callback to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {Function} - A debounced function that delays the execution of the callback.
+ */
+export function debounce(callback: (...args: any[]) => void, delay: number) {
+    let timerId: any;
+
+    return (...args: any[]) => {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => callback(...args), delay);
     };
 }

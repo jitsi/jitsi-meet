@@ -5,13 +5,14 @@ import { IStore } from '../app/types';
 export interface IMessage {
     displayName: string;
     error?: Object;
-    id: string;
     isReaction: boolean;
     lobbyChat: boolean;
     message: string;
     messageId: string;
     messageType: string;
+    participantId: string;
     privateMessage: boolean;
+    reactions: Map<string, Set<string>>;
     recipient: string;
     timestamp: number;
 }
@@ -40,14 +41,29 @@ export interface IChatProps extends WithTranslation {
 export interface IChatMessageProps extends WithTranslation {
 
     /**
+     * Whether the message can be replied to.
+     */
+    canReply?: boolean;
+
+    /**
+     * Whether gifs are enabled or not.
+     */
+    gifEnabled?: boolean;
+
+    /**
      * Whether current participant is currently knocking in the lobby room.
      */
-    knocking: boolean;
+    knocking?: boolean;
 
     /**
      * The representation of a chat message.
      */
     message: IMessage;
+
+    /**
+     * Whether the chat message menu is visible or not.
+     */
+    shouldDisplayChatMessageMenu?: boolean;
 
     /**
      * Whether or not the avatar image of the participant which sent the message

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { throttle } from 'lodash-es';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect as reactReduxConnect } from 'react-redux';
@@ -30,6 +30,8 @@ import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import Toolbox from '../../../toolbox/components/web/Toolbox';
 import { LAYOUT_CLASSNAMES } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.any';
+import VisitorsQueue from '../../../visitors/components/web/VisitorsQueue';
+import { showVisitorsQueue } from '../../../visitors/functions';
 import { init } from '../../actions.web';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions.web';
 import {
@@ -100,7 +102,24 @@ interface IProps extends AbstractProps, WithTranslation {
      */
     _showPrejoin: boolean;
 
+    /**
+     * If visitors queue page is visible or not.
+     * NOTE: This should be set to true once we received an error on connect. Before the first connect this will always
+     * be false.
+     */
+    _showVisitorsQueue: boolean;
+
     dispatch: IStore['dispatch'];
+}
+
+/**
+ * Returns true if the prejoin screen should be displayed and false otherwise.
+ *
+ * @param {IProps} props - The props object.
+ * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
+ */
+function shouldShowPrejoin({ _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue;
 }
 
 /**
@@ -126,7 +145,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._originalOnShowToolbar = this._onShowToolbar;
         this._originalOnMouseMove = this._onMouseMove;
 
-        this._onShowToolbar = _.throttle(
+        this._onShowToolbar = throttle(
             () => this._originalOnShowToolbar(),
             100,
             {
@@ -134,7 +153,7 @@ class Conference extends AbstractConference<IProps, any> {
                 trailing: false
             });
 
-        this._onMouseMove = _.throttle(
+        this._onMouseMove = throttle(
             event => this._originalOnMouseMove(event),
             _mouseMoveCallbackInterval,
             {
@@ -206,6 +225,7 @@ class Conference extends AbstractConference<IProps, any> {
             _overflowDrawer,
             _showLobby,
             _showPrejoin,
+            _showVisitorsQueue,
             t
         } = this.props;
 
@@ -257,8 +277,9 @@ class Conference extends AbstractConference<IProps, any> {
 
                     <CalleeInfoContainer />
 
-                    { _showPrejoin && <Prejoin />}
-                    { _showLobby && <LobbyScreen />}
+                    { shouldShowPrejoin(this.props) && <Prejoin />}
+                    { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />}
+                    { _showVisitorsQueue && <VisitorsQueue />}
                 </div>
                 <ParticipantsPane />
                 <ReactionAnimations />
@@ -368,8 +389,6 @@ class Conference extends AbstractConference<IProps, any> {
      */
     _start() {
         APP.UI.start();
-
-        APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach(name =>
@@ -377,7 +396,9 @@ class Conference extends AbstractConference<IProps, any> {
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        // if we will be showing prejoin we don't want to call connect from init.
+        // Connect will be dispatched from prejoin screen.
+        dispatch(init(!shouldShowPrejoin(this.props)));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
@@ -404,7 +425,8 @@ function _mapStateToProps(state: IReduxState) {
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state)
+        _showPrejoin: isPrejoinPageVisible(state),
+        _showVisitorsQueue: showVisitorsQueue(state)
     };
 }
 

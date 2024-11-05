@@ -3,7 +3,6 @@ import { AnyAction } from 'redux';
 import { IStore } from '../app/types';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_TIMESTAMP_CHANGED,
     E2E_RTT_CHANGED
 } from '../base/conference/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED } from '../base/participants/actionTypes';
@@ -121,14 +120,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 faceLandmarks: faceExpression,
                 timestamp
             });
-        }
-        break;
-    }
-    case CONFERENCE_TIMESTAMP_CHANGED: {
-        if (isRTCStatsEnabled(state)) {
-            const { conferenceTimestamp } = action;
-
-            RTCStats.sendConferenceTimestamp(conferenceTimestamp);
         }
         break;
     }

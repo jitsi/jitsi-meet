@@ -16,7 +16,7 @@ import {
     setDeviceStatusWarning,
     setJoiningInProgress
 } from './actions';
-import { isPrejoinPageVisible } from './functions';
+import { isPrejoinPageVisible } from './functions.any';
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -24,7 +24,7 @@ import { isPrejoinPageVisible } from './functions';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_AUDIO_MUTED: {
         if (isPrejoinPageVisible(store.getState())) {

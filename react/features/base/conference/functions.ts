@@ -1,5 +1,5 @@
 import { sha512_256 as sha512 } from 'js-sha512';
-import _ from 'lodash';
+import { upperFirst, words } from 'lodash-es';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
@@ -7,8 +7,6 @@ import { determineTranscriptionLanguage } from '../../transcribing/functions';
 import { IStateful } from '../app/types';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
-    hiddenParticipantJoined,
-    hiddenParticipantLeft,
     participantJoined,
     participantLeft
 } from '../participants/actions';
@@ -36,14 +34,6 @@ import { IJitsiConference } from './reducer';
  * @returns {Object} Conference state.
  */
 export const getConferenceState = (state: IReduxState) => state['features/base/conference'];
-
-/**
- * Is the conference joined or not.
- *
- * @param {IReduxState} state - Global state.
- * @returns {boolean}
- */
-export const getIsConferenceJoined = (state: IReduxState) => Boolean(getConferenceState(state).conference);
 
 /**
  * Attach a set of local tracks to a conference.
@@ -93,18 +83,20 @@ export function commonUserJoinedHandling(
     const id = user.getId();
     const displayName = user.getDisplayName();
 
-    if (user.isHidden()) {
-        dispatch(hiddenParticipantJoined(id, displayName));
-    } else {
+    if (!user.isHidden()) {
         const isReplacing = user?.isReplacing();
+        const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
 
+        // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
+            avatarURL: user.getIdentity()?.user?.avatar,
             botType: user.getBotType(),
             conference,
             id,
             name: displayName,
             presence: user.getStatus(),
             role: user.getRole(),
+            isPromoted,
             isReplacing,
             sources: user.getSources()
         }));
@@ -128,9 +120,7 @@ export function commonUserLeftHandling(
         user: any) {
     const id = user.getId();
 
-    if (user.isHidden()) {
-        dispatch(hiddenParticipantLeft(id));
-    } else {
+    if (!user.isHidden()) {
         const isReplaced = user.isReplaced?.();
 
         dispatch(participantLeft(id, conference, { isReplaced }));
@@ -188,8 +178,8 @@ export function getConferenceName(stateful: IStateful): string {
     const { callDisplayName } = state['features/base/config'];
     const { localSubject, pendingSubjectChange, room, subject } = getConferenceState(state);
 
-    return (pendingSubjectChange
-        || localSubject
+    return (localSubject
+        || pendingSubjectChange
         || subject
         || callDisplayName
         || callee?.name
@@ -404,6 +394,19 @@ export function isP2pActive(stateful: IStateful): boolean | null {
 }
 
 /**
+ * Returns whether the current conference has audio recording property which is on.
+ *
+ * @param {IStateful} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean|null}
+ */
+export function isConferenceAudioRecordingOn(stateful: IStateful): boolean | null {
+    const state = getConferenceState(toState(stateful));
+
+    // @ts-ignore
+    return state.properties?.['audio-recording-enabled'] === 'true';
+}
+
+/**
  * Returns the stored room name.
  *
  * @param {IReduxState} state - The current state of the app.
@@ -579,7 +582,7 @@ export function sendLocalParticipant(
  * @returns {string}
  */
 function safeStartCase(s = '') {
-    return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
-        (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
+    return words(`${s}`.replace(/['\u2019]/g, '')).reduce(
+        (result, word, index) => result + (index ? ' ' : '') + upperFirst(word)
         , '');
 }

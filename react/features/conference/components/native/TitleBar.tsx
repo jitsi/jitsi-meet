@@ -9,6 +9,7 @@ import { getFeatureFlag } from '../../../base/flags/functions';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import PictureInPictureButton from '../../../mobile/picture-in-picture/components/PictureInPictureButton';
 import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
+import { isParticipantsPaneEnabled } from '../../../participants-pane/functions';
 import { isRoomNameEnabled } from '../../../prejoin/functions';
 import ToggleCameraButton from '../../../toolbox/components/native/ToggleCameraButton';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
@@ -30,6 +31,11 @@ interface IProps {
      * triggered.
      */
     _createOnPress: Function;
+
+    /**
+     * Whether participants feature is enabled or not.
+     */
+    _isParticipantsPaneEnabled: boolean;
 
     /**
      * Name of the meeting we're currently in.
@@ -55,7 +61,7 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const TitleBar = (props: IProps) => {
-    const { _visible } = props;
+    const { _isParticipantsPaneEnabled, _visible } = props;
 
     if (!_visible) {
         return null;
@@ -95,9 +101,13 @@ const TitleBar = (props: IProps) => {
             <View style = { styles.titleBarButtonContainer }>
                 <AudioDeviceToggleButton styles = { styles.titleBarButton } />
             </View>
-            <View style = { styles.titleBarButtonContainer }>
-                <ParticipantsPaneButton styles = { styles.titleBarButton } />
-            </View>
+            {
+                _isParticipantsPaneEnabled
+                && <View style = { styles.titleBarButtonContainer }>
+                    <ParticipantsPaneButton
+                        styles = { styles.titleBarButton } />
+                </View>
+            }
         </View>
     );
 };
@@ -115,6 +125,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _conferenceTimerEnabled:
             Boolean(getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !hideConferenceTimer && startTimestamp),
+        _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
         _meetingName: getConferenceName(state),
         _roomNameEnabled: isRoomNameEnabled(state),
         _visible: isToolboxVisible(state)

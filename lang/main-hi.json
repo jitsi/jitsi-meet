@@ -85,7 +85,7 @@
         "installExtensionText": ",गूगल कैलेंडर और ऑफिस 365 एकीकरण के लिए एक्सटेंशन इंस्टॉल करें"
     },
     "connectingOverlay": {
-        "joiningRoom": "आपको आपकी मीटिंग से कनेक्ट किया जा रहा है ..."
+        "joiningRoom": "आपको आपकी मीटिंग से कनेक्ट किया जा रहा है…"
     },
     "connection": {
         "ATTACHED": "संलग्न",
@@ -97,9 +97,9 @@
         "DISCONNECTED": "संपर्क विफ़ल ",
         "DISCONNECTING": "संपर्क हटाया जा रहा ",
         "ERROR": "त्रुटि",
-        "FETCH_SESSION_ID": "सत्र-आईडी प्राप्त की जा रही हैं  ...",
+        "FETCH_SESSION_ID": "सत्र-आईडी प्राप्त की जा रही हैं …",
         "GET_SESSION_ID_ERROR": "सत्र-आईडी त्रुटि प्राप्त करें: {{code}}",
-        "GOT_SESSION_ID": "सत्र-आईडी प्राप्त की जा रही हैं... पूर्ण",
+        "GOT_SESSION_ID": "सत्र-आईडी प्राप्त की जा रही हैं… पूर्ण",
         "LOW_BANDWIDTH": "बैंडविड्थ को बचाने के लिए {{displayName}} का वीडियो बंद कर दिया गया है"
     },
     "connectionindicator": {
@@ -152,7 +152,7 @@
         "ifHaveApp": "यदि आपके पास पहले से ही ऐप है:",
         "joinInApp": "ऐप का उपयोग करके इस मीटिंग में शामिल हों",
         "launchWebButton": "वेब में लॉन्च करे",
-        "title": "{{app}} में आपकी मीटिंग शुरू की जा रही हैं ...",
+        "title": "{{app}} में आपकी मीटिंग शुरू की जा रही हैं…",
         "tryAgainButton": "डेस्कटॉप में फिर से प्रयास करें"
     },
     "defaultLink": "उदाहरण {{url}}",
@@ -181,7 +181,7 @@
         "Share": "Share",
         "Submit": "सबमिट करें",
         "WaitForHostMsg": "सम्मेलन अभी तक शुरू नहीं हुआ है। यदि आप मेजबान हैं तो कृपया प्रमाणित करें। अन्यथा, कृपया मेजबान के आने की प्रतीक्षा करें।",
-        "WaitingForHostTitle": "होस्ट की प्रतीक्षा कर रहा है ...",
+        "WaitingForHostTitle": "होस्ट की प्रतीक्षा कर रहा है…",
         "Yes": "हाँ",
         "accessibilityLabel": {
             "liveStreaming": "सीधा प्रसारण"
@@ -201,9 +201,9 @@
         "cameraUnknownError": "अज्ञात कारण की वजह से कैमरे का उपयोग नहीं किया जा सकता है।",
         "cameraUnsupportedResolutionError": "आपका कैमरा आवश्यक वीडियो रिज़ॉल्यूशन का समर्थन नहीं करता है।",
         "close": "बंद करें",
-        "conferenceDisconnectMsg": "आप अपने नेटवर्क कनेक्शन की जांच कर सकते है। . {{seconds}} सेकंड में पुनः कनेक्ट किया जायेंगा ...",
+        "conferenceDisconnectMsg": "आप अपने नेटवर्क कनेक्शन की जांच कर सकते है। . {{seconds}} सेकंड में पुनः कनेक्ट किया जायेंगा…",
         "conferenceDisconnectTitle": "आपको डिस्कनेक्ट कर दिया गया है।",
-        "conferenceReloadMsg": "हम इसे ठीक करने का प्रयास कर रहे हैं। {{seconds}} सेकंड में पुनः कनेक्ट कर रहे हैं ...",
+        "conferenceReloadMsg": "हम इसे ठीक करने का प्रयास कर रहे हैं। {{seconds}} सेकंड में पुनः कनेक्ट कर रहे हैं…",
         "conferenceReloadTitle": "दुर्भाग्य से, कुछ गलत हो गया।",
         "confirm": "पुष्टि करें",
         "confirmNo": "नहीं",
@@ -298,7 +298,7 @@
         "screenSharingFailed": "उफ़! कुछ गड़बड़ हो गई, हम स्क्रीन शेयरिंग शुरू करने में सक्षम नहीं थे!",
         "screenSharingFailedTitle": "Screen sharing failed!",
         "screenSharingPermissionDeniedError": "उफ़! आपकी स्क्रीन शेयरिंग अनुमतियों में कुछ गड़बड़ हो गई है। कृपया पुनः लोड करें और पुनः प्रयास करें।",
-        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
+        "sendPrivateMessage": "आपने हाल ही में एक निजी संदेश प्राप्त किया है। क्या आप उसका निजी रूप से जवाब देने का इरादा रखते हैं? या आप अपना संदेश समूह को भेजना चाहते हैं?",
         "sendPrivateMessageCancel": "समूह को भेजें",
         "sendPrivateMessageOk": "निजी तौर पर भेजें",
         "sendPrivateMessageTitle": "निजी तौर पर भेजें?",
@@ -429,7 +429,7 @@
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
         "expandedOff": "The live streaming has stopped",
         "expandedOn": "The meeting is currently being streamed to YouTube.",
-        "expandedPending": "The live streaming is being started...",
+        "expandedPending": "The live streaming is being started…",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
         "googlePrivacyPolicy": "Google Privacy Policy",
@@ -440,7 +440,7 @@
         "offBy": "{{name}} stopped the live streaming",
         "on": "Live Streaming started",
         "onBy": "{{name}} started the live streaming",
-        "pending": "Starting Live Stream...",
+        "pending": "Starting Live Stream…",
         "serviceName": "Live Streaming service",
         "signIn": "Sign in with Google",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
@@ -467,10 +467,10 @@
         "invalidPassword": "अमान्य पासवर्ड",
         "joinRejectedMessage": "आपका अनुरोध एक मॉडरेटर द्वारा अस्वीकार कर दिया गया.",
         "joinTitle": "मीटिंग में शामिल हों",
-        "joinWithPasswordMessage": "पासवर्ड के साथ जुड़ने की कोशिश कर रहा है, कृपया प्रतीक्षा करें...",
+        "joinWithPasswordMessage": "पासवर्ड के साथ जुड़ने की कोशिश कर रहा है, कृपया प्रतीक्षा करें…",
         "joiningMessage": "जैसे ही कोई आपके अनुरोध को स्वीकार करता है आप बैठक में शामिल हो जाएंगे",
-        "joiningTitle": "मीटिंग में शामिल होने के लिए कह रहा है...",
-        "joiningWithPasswordTitle": "पासवर्ड के साथ जुड़े...",
+        "joiningTitle": "मीटिंग में शामिल होने के लिए कह रहा है…",
+        "joiningWithPasswordTitle": "पासवर्ड के साथ जुड़े…",
         "knockButton": "जुड़ने के लिए कहें ",
         "knockTitle": "कोई व्यक्ति बैठक में शामिल होना चाहता है",
         "knockingParticipantList": "प्रतिभागी सूची दस्तक",
@@ -552,10 +552,10 @@
         "somebody": "Somebody",
         "startSilentDescription": "ऑडियो सक्षम करने के लिए मीटिंग को फिर से करें",
         "startSilentTitle": "आप बिना ऑडियो आउटपुट के साथ शामिल हुए!",
-        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "हमें डर है कि आपकी मीटिंग अनुभव यहाँ बहुत अच्छा नहीं होने वाला है। हम इसे सुधारने के तरीके ढूंढ़ रहे हैं, लेकिन उस समय तक कृपया  <a href='{{recommendedBrowserPageLink}}' target='_blank'>पूरी तरह से समर्थित ब्राउज़र</a>  में से एक का प्रयास करें",
         "suboptimalExperienceTitle": "ब्राउज़र चेतावनी",
         "unmute": "अनम्यूट",
-        "videoMutedRemotelyDescription": "You can always turn it on again.",
+        "videoMutedRemotelyDescription": "आप इसे हमेशा फिर से चालू कर सकते हैं।",
         "videoMutedRemotelyTitle": "आपका कैमरा {{participantDisplayName}}द्वारा अक्षम कर दिया गया है!"
     },
     "participantsPane": {
@@ -565,6 +565,11 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "दूसरे प्रतिभागी द्वारा निर्धारित",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "विकल्प अद्वितीय होना चाहिए"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "ऑडियो और वीडियो त्रुटि:",
@@ -574,7 +579,7 @@
         "callMe": "मुझे कॉल करें",
         "callMeAtNumber": "मुझे इस नंबर पर कॉल करें:",
         "calling": "कॉलिंग",
-        "configuringDevices": "डिवाइस कॉन्फ़िगर कर रहा है ...",
+        "configuringDevices": "डिवाइस कॉन्फ़िगर कर रहा है…",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
             "good": "Your internet connection looks good!",
@@ -625,17 +630,17 @@
     },
     "presenceStatus": {
         "busy": "व्यस्त",
-        "calling": "कॉलिंग...",
+        "calling": "कॉलिंग…",
         "connected": "कनेक्टेड",
-        "connecting": "कनेक्टिंग...",
-        "connecting2": "कनेक्टिंग*...",
+        "connecting": "कनेक्टिंग…",
+        "connecting2": "कनेक्टिंग*…",
         "disconnected": "डिस्कनेक्ट किया गया",
         "expired": "एक्सपायर्ड",
         "ignored": "Ignored",
-        "initializingCall": "Initializing Call...",
+        "initializingCall": "Initializing Call…",
         "invited": "आमंत्रित",
         "rejected": "अस्वीकृत",
-        "ringing": "Ringing..."
+        "ringing": "Ringing…"
     },
     "profile": {
         "setDisplayNameLabel": "अपना नाम सेट करें",
@@ -649,12 +654,12 @@
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
-        "busyTitle": "All recorders are currently busy",
-        "error": "Recording failed. Please try again.",
-        "expandedOff": "Recording has stopped",
+        "busyTitle": "सभी रिकॉर्डर अभी व्यस्त हैं",
+        "error": "रिकॉर्डिंग विफल हुई। कृपया पुन: प्रयास करें।",
+        "expandedOff": "रिकॉर्डिंग बंद हो गई है",
         "expandedOn": "The meeting is currently being recorded.",
-        "expandedPending": "Recording is being started...",
-        "failedToStart": "Recording failed to start",
+        "expandedPending": "रिकॉर्डिंग शुरू की जा रही है…",
+        "failedToStart": "रिकॉर्डिंग शुरू करने में विफलता हुई।",
         "fileSharingdescription": "Share recording with meeting participants",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -664,7 +669,7 @@
         "offBy": "{{name}} stopped the recording",
         "on": "Recording started",
         "onBy": "{{name}} started the recording",
-        "pending": "Preparing to record the meeting...",
+        "pending": "Preparing to record the meeting…",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
@@ -672,16 +677,16 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "title": "रिकॉर्डिंग",
-        "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable"
+        "unavailable": "ओह! {{serviceName}} वर्तमान में अनुपलब्ध है। हम समस्या को हल करने पर काम कर रहे हैं। कृपया बाद में पुनः प्रयास करें।",
+        "unavailableTitle": "रिकॉर्डिंग उपलब्ध नहीं है"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
     },
     "security": {
-        "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "about": "आप अपनी मीटिंग में $t(lockRoomPassword) जोड़ सकते हैं। सहभागियों को मीटिंग में शामिल होने से पहले $t(lockRoomPassword) प्रदान करना होगा।",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "insecureRoomNameWarning": "कमरे का नाम असुरक्षित है। अनचाहे सहभागियों की कॉन्फ्रेंस में शामिल हो सकते हैं। सुरक्षा बटन का उपयोग करके अपनी मीटिंग को सुरक्षित बनाने का विचार करें।        ",
         "securityOptions": "Security options"
     },
     "settings": {
@@ -875,32 +880,32 @@
         "failedToStart": "ट्रांसक्रिप्शनिंग प्रारंभ करने में विफल",
         "labelToolTip": "The meeting is being transcribed",
         "off": "ट्रांसक्रिप्शनिंग बंद कर दिया",
-        "pending": "Preparing to transcribe the meeting...",
+        "pending": "Preparing to transcribe the meeting…",
         "start": "उपशीर्षक दिखाना शुरू करें",
         "stop": "उपशीर्षक दिखाना बंद करें",
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "edgeGrantPermissions": "Select <b><i>Yes</i></b> when your browser asks for permissions.",
-        "electronGrantPermissions": "Trying to access your camera and microphone",
-        "firefoxGrantPermissions": "Select <b><i>Share Selected Device</i></b> when your browser asks for permissions.",
-        "iexplorerGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
-        "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone",
-        "operaGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "safariGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions."
+        "androidGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>अनुमति दें</i></b> चुनें।",
+        "chromeGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>अनुमति दें</i></b> चुनें।",
+        "edgeGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>हां</i></b> चुनें।",
+        "electronGrantPermissions": "आपका कैमरा और माइक्रोफोन तक पहुंच करने की कोशिश की जा रही है",
+        "firefoxGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>चयनित उपकरण साझा करें</i></b> चुनें।",
+        "iexplorerGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>ठीक है</i></b> चुनें।",
+        "nwjsGrantPermissions": "कृपया अपने कैमरा और माइक्रोफोन का उपयोग करने के लिए अनुमतियाँ प्रदान करें",
+        "operaGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>अनुमति दें</i></b> चुनें।",
+        "react-nativeGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>अनुमति दें</i></b> चुनें।",
+        "safariGrantPermissions": "जब आपका ब्राउज़र स्वीकृति मांगता है, तो <b><i>ठीक है</i></b> चुनें।"
     },
     "videoSIPGW": {
-        "busy": "We're working on freeing resources. Please try again in a few minutes.",
-        "busyTitle": "The Room service is currently busy",
-        "errorAlreadyInvited": "{{displayName}} already invited",
-        "errorInvite": "Conference not established yet. Please try again later.",
-        "errorInviteFailed": "We're working on resolving the issue. Please try again later.",
-        "errorInviteFailedTitle": "Inviting {{displayName}} failed",
-        "errorInviteTitle": "Error inviting room",
-        "pending": "{{displayName}} has been invited"
+        "busy": "हम संसाधनों को मुक्त करने पर काम कर रहे हैं। कृपया कुछ मिनटों बाद पुन: प्रयास करें।",
+        "busyTitle": "रूम सेवा वर्तमान में व्यस्त है",
+        "errorAlreadyInvited": "{{displayName}} पहले से ही आमंत्रित हैं",
+        "errorInvite": "कॉन्फ़्रेंस अब तक स्थापित नहीं हुई है। कृपया बाद में पुनः प्रयास करें।",
+        "errorInviteFailed": "हम समस्या को हल करने पर काम कर रहे हैं। कृपया बाद में पुनः प्रयास करें।",
+        "errorInviteFailedTitle": "{{displayName}} को आमंत्रित करने में विफलता",
+        "errorInviteTitle": "रूम आमंत्रण में त्रुटि",
+        "pending": "{{displayName}} को आमंत्रित किया गया है"
     },
     "videoStatus": {
         "audioOnly": "AUD",
@@ -923,10 +928,10 @@
         "domute": "म्यूट",
         "domuteOthers": "सभी को म्यूट करें",
         "domuteVideo": "कैमरा अक्षम करें",
-        "domuteVideoOfOthers": "Disable camera of everyone else",
+        "domuteVideoOfOthers": "अन्य सभी के लिए कैमरा बंद करें",
         "flip": "Flip",
         "grantModerator": "Grant Moderator",
-        "kick": "Kick out",
+        "kick": "निकालें",
         "moderator": "Moderator",
         "mute": "प्रतिभागी मौन है",
         "muted": "म्यूटेड",
@@ -938,15 +943,15 @@
     "virtualBackground": {
         "enableBlur": "ब्लर सक्षम करें",
         "none": "कोई नहीं",
-        "pleaseWait": "कृपया प्रतीक्षा करें ...",
+        "pleaseWait": "कृपया प्रतीक्षा करें…",
         "removeBackground": "पृष्ठभूमि निकालें",
         "title": "पृष्ठभूमि",
         "uploadImage": "छवि अपलोड करें"
     },
     "welcomepage": {
         "accessibilityLabel": {
-            "join": "Tap to join",
-            "roomname": "Enter room name"
+            "join": "शामिल होने के लिए टैप करें",
+            "roomname": "कमरे का नाम लिखे"
         },
         "appDescription": "आगे बढ़ो, पूरी टीम के साथ वीडियो चैट करें। वास्तव में, हर किसी को जिसे आप जानते हैं, आमंत्रित करें। { {{app}} एक पूरी तरह से एन्क्रिप्टेड, 100% ओपन सोर्स वीडियो कॉन्फ्रेंसिंग समाधान है जिसका आप मुफ्त में - बिना किसी खाते की आवश्यकता के पूरे दिन, हर दिन, उपयोग कर सकते हैं।",
         "audioVideoSwitch": {

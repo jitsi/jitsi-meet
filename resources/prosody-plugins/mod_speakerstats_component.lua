@@ -4,10 +4,9 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
 local jid_resource = require "util.jid".resource;
-local ext_events = module:require "ext_events"
 local st = require "util.stanza";
 local socket = require "socket";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local um_is_admin = require "core.usermanager".is_admin;
 local jid_split = require 'util.jid'.split;
 
@@ -265,13 +264,19 @@ function occupant_joined(event)
                 body_json.type = 'speakerstats';
                 body_json.users = users_json;
 
-                local stanza = st.message({
-                    from = module.host;
-                    to = occupant.jid; })
-                :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
-                :text(json.encode(body_json)):up();
+                local json_msg_str, error = json.encode(body_json);
 
-                room:route_stanza(stanza);
+                if json_msg_str then
+                    local stanza = st.message({
+                        from = module.host;
+                        to = occupant.jid; })
+                    :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+                    :text(json_msg_str):up();
+
+                    room:route_stanza(stanza);
+                else
+                    module:log('error', 'Error encoding room:%s error:%s', room.jid, error);
+                end
             end
         end
 
@@ -314,14 +319,14 @@ function room_destroyed(event)
         return;
     end
 
-    ext_events.speaker_stats(room, room.speakerStats);
+    module:fire_event("send-speaker-stats", { room = room; roomSpeakerStats = room.speakerStats; });
 end
 
 module:hook("message/host", on_message);
 
 function process_main_muc_loaded(main_muc, host_module)
     -- the conference muc component
-    module:log("info", "Hook to muc events on %s", host_module);
+    module:log("info", "Hook to muc events on %s", host_module.host);
     main_muc_service = main_muc;
     module:log("info", "Main muc service %s", main_muc_service)
     host_module:hook("muc-room-created", room_created, -1);
@@ -332,7 +337,7 @@ end
 
 function process_breakout_muc_loaded(breakout_muc, host_module)
     -- the Breakout muc component
-    module:log("info", "Hook to muc events on %s", host_module);
+    module:log("info", "Hook to muc events on %s", host_module.host);
     host_module:hook("muc-room-created", breakout_room_created, -1);
     host_module:hook("muc-occupant-joined", occupant_joined, -1);
     host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);

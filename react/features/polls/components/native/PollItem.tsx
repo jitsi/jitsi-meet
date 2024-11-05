@@ -6,7 +6,7 @@ import { shouldShowResults } from '../../functions';
 
 import PollAnswer from './PollAnswer';
 import PollResults from './PollResults';
-import { chatStyles } from './styles';
+import { pollsStyles } from './styles';
 
 interface IProps {
 
@@ -15,20 +15,27 @@ interface IProps {
      */
     pollId: string;
 
+    /**
+     * Create mode control.
+     */
+    setCreateMode: (mode: boolean) => void;
+
 }
 
-const PollItem = ({ pollId }: IProps) => {
+const PollItem = ({ pollId, setCreateMode }: IProps) => {
     const showResults = useSelector(shouldShowResults(pollId));
 
     return (
         <View
-            style = { chatStyles.pollItemContainer as ViewStyle }>
+            id = 'poll-item-container'
+            style = { pollsStyles.pollItemContainer as ViewStyle }>
             { showResults
                 ? <PollResults
                     key = { pollId }
                     pollId = { pollId } />
                 : <PollAnswer
-                    pollId = { pollId } />
+                    pollId = { pollId }
+                    setCreateMode = { setCreateMode } />
             }
 
         </View>

@@ -9,6 +9,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { stopLocalVideoRecording } from '../../actions';
+import { RECORDING_METADATA_ID } from '../../constants';
 import { getActiveSession } from '../../functions';
 import { ISessionData } from '../../reducer';
 
@@ -26,6 +27,11 @@ export interface IProps extends WithTranslation {
     _conference?: IJitsiConference;
 
     /**
+     * Whether subtitles should be displayed or not.
+     */
+    _displaySubtitles?: boolean;
+
+    /**
      * The redux representation of the recording session to be stopped.
      */
     _fileRecordingSession?: ISessionData;
@@ -34,6 +40,11 @@ export interface IProps extends WithTranslation {
      * Whether the recording is a local recording or not.
      */
     _localRecording: boolean;
+
+    /**
+     * The selected language for subtitles.
+     */
+    _subtitlesLanguage: string | null;
 
     /**
      * The redux dispatch function.
@@ -76,22 +87,32 @@ export default class AbstractStopRecordingDialog<P extends IProps>
     _onSubmit() {
         sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
 
-        if (this.props._localRecording) {
-            this.props.dispatch(stopLocalVideoRecording());
-            if (this.props.localRecordingVideoStop) {
-                this.props.dispatch(setVideoMuted(true));
-            }
-        } else {
-            const { _fileRecordingSession } = this.props;
+        const {
+            _conference,
+            _displaySubtitles,
+            _fileRecordingSession,
+            _localRecording,
+            _subtitlesLanguage,
+            dispatch,
+            localRecordingVideoStop
+        } = this.props;
 
-            if (_fileRecordingSession) {
-                this.props._conference?.stopRecording(_fileRecordingSession.id);
-                this._toggleScreenshotCapture();
+        if (_localRecording) {
+            dispatch(stopLocalVideoRecording());
+            if (localRecordingVideoStop) {
+                dispatch(setVideoMuted(true));
             }
+        } else if (_fileRecordingSession) {
+            _conference?.stopRecording(_fileRecordingSession.id);
+            this._toggleScreenshotCapture();
         }
 
         // TODO: this should be an action in transcribing. -saghul
-        this.props.dispatch(setRequestingSubtitles(false, false, null));
+        this.props.dispatch(setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage));
+
+        this.props._conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+            isTranscribingEnabled: false
+        });
 
         return true;
     }
@@ -112,16 +133,20 @@ export default class AbstractStopRecordingDialog<P extends IProps>
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _conference: JitsiConference,
- *     _fileRecordingSession: Object
- * }}
+ * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState) {
+    const {
+        _displaySubtitles,
+        _language: _subtitlesLanguage
+    } = state['features/subtitles'];
+
     return {
         _conference: state['features/base/conference'].conference,
+        _displaySubtitles,
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
-        _localRecording: LocalRecordingManager.isRecordingLocally()
+        _localRecording: LocalRecordingManager.isRecordingLocally(),
+        _subtitlesLanguage
     };
 }

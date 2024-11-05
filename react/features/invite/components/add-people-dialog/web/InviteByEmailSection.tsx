@@ -1,10 +1,13 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
+import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import {
+    IconCheck,
     IconCopy,
     IconEnvelope,
     IconGoogle,
@@ -13,8 +16,12 @@ import {
 } from '../../../../base/icons/svg';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import { copyText } from '../../../../base/util/copyText.web';
+import { showSuccessNotification } from '../../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 
-interface IProps {
+let mounted: boolean;
+
+interface IProps extends WithTranslation {
 
     /**
      * The encoded invitation subject.
@@ -61,14 +68,23 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {ReactNode}
  */
-function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IProps) {
+function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: IProps) {
+    const dispatch = useDispatch();
     const { classes } = useStyles();
-    const { t } = useTranslation();
+    const [ isClicked, setIsClicked ] = useState(false);
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
     const encodedInviteTextiOS = encodeURIComponent(inviteTextiOS);
 
     const encodedDefaultEmailText = isIosMobileBrowser() ? encodedInviteTextiOS : encodedInviteText;
+
+    useEffect(() => {
+        mounted = true;
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     /**
      * Copies the conference invitation to the clipboard.
@@ -77,6 +93,16 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
      */
     function _onCopyText() {
         copyText(inviteText);
+        dispatch(showSuccessNotification({
+            titleKey: 'dialog.copied'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        setIsClicked(true);
+        setTimeout(() => {
+            // avoid: Can't perform a React state update on an unmounted component
+            if (mounted) {
+                setIsClicked(false);
+            }
+        }, 2500);
     }
 
     /**
@@ -89,7 +115,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
     function _onCopyTextKeyPress(e: React.KeyboardEvent) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            copyText(inviteText);
+            _onCopyText();
         }
     }
 
@@ -165,7 +191,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
                             onKeyPress = { _onCopyTextKeyPress }
                             role = 'button'
                             tabIndex = { 0 }>
-                            <Icon src = { IconCopy } />
+                            <Icon src = { isClicked ? IconCheck : IconCopy } />
                         </div>
                     </Tooltip>
                     {renderEmailIcons()}
@@ -175,4 +201,4 @@ function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS }: IPro
     );
 }
 
-export default InviteByEmailSection;
+export default translate(InviteByEmailSection);

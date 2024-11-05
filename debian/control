@@ -3,7 +3,7 @@ Section: net
 Priority: extra
 Maintainer: Jitsi Team <dev@jitsi.org>
 Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
-Build-Depends: debhelper (>= 8.0.0), nodejs
+Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.6
 Homepage: https://jitsi.org/meet
 
@@ -20,7 +20,8 @@ Description: WebRTC JavaScript video conferences
 
 Package: jitsi-meet-web-config
 Architecture: all
-Depends: openssl, nginx | nginx-full | nginx-extras | openresty | apache2, curl
+Pre-Depends: nginx | nginx-full | nginx-extras | openresty | apache2
+Depends: openssl, curl
 Description: Configuration for web serving of Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.

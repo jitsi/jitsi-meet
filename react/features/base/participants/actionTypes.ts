@@ -1,4 +1,13 @@
 /**
+ * Create an action to mark the participant as notified to speak next.
+ *
+ * {
+ *     type: NOTIFIED_TO_SPEAK
+ * }
+ */
+export const NOTIFIED_TO_SPEAK = 'NOTIFIED_TO_SPEAK';
+
+/**
  * Create an action for when dominant speaker changes.
  *
  * {
@@ -42,18 +51,6 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
  * }
  */
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
-
-/**
- * Create an action for when the local participant's display name is updated.
- *
- * {
- *     type: PARTICIPANT_DISPLAY_NAME_CHANGED,
- *     id: string,
- *     name: string
- * }
- */
-export const PARTICIPANT_DISPLAY_NAME_CHANGED
-    = 'PARTICIPANT_DISPLAY_NAME_CHANGED';
 
 /**
  * Action to signal that ID of participant has changed. This happens when
@@ -148,28 +145,6 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
  * }
  */
 export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
-
-/**
- * Action to signal that a hidden participant has joined.
- *
- * {
- *     type: HIDDEN_PARTICIPANT_JOINED,
- *     participant: Participant
- * }
- */
-export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
-
-/**
- * Action to handle case when hidden participant leaves.
- *
- * {
- *     type: PARTICIPANT_LEFT,
- *     participant: {
- *         id: string
- *     }
- * }
- */
-export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
 
 /**
  * The type of Redux action which notifies the app that the loadable avatar URL has changed.

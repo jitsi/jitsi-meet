@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
@@ -17,7 +17,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * If set hides the reactions moderation setting.
@@ -33,6 +33,16 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Whether or not the user has selected the Follow Me feature to be enabled.
      */
     followMeEnabled: boolean;
+
+    /**
+     * Whether follow me for recorder is currently active (enabled by some other participant).
+     */
+    followMeRecorderActive: boolean;
+
+    /**
+     * Whether the user has selected the Follow Me Recorder feature to be enabled.
+     */
+    followMeRecorderEnabled: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
@@ -92,6 +102,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onStartVideoMutedChanged = this._onStartVideoMutedChanged.bind(this);
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
+        this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
     }
 
     /**
@@ -139,7 +150,24 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      * @returns {void}
      */
     _onFollowMeEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ followMeEnabled: checked });
+        super._onChange({
+            followMeEnabled: checked,
+            followMeRecorderEnabled: checked ? false : undefined
+        });
+    }
+
+    /**
+     * Callback invoked to select if follow-me for recorder mode should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onFollowMeRecorderEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({
+            followMeEnabled: checked ? false : undefined,
+            followMeRecorderEnabled: checked
+        });
     }
 
     /**
@@ -150,15 +178,19 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      */
     render() {
         const {
-            classes,
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
+            followMeRecorderActive,
+            followMeRecorderEnabled,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
+
+        const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
         return (
             <div
@@ -180,12 +212,19 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                     name = 'start-video-muted'
                     onChange = { this._onStartVideoMutedChanged } />
                 <Checkbox
-                    checked = { followMeEnabled && !followMeActive }
+                    checked = { followMeEnabled && !followMeActive && !followMeRecorderChecked }
                     className = { classes.checkbox }
-                    disabled = { followMeActive }
+                    disabled = { followMeActive || followMeRecorderActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
                     onChange = { this._onFollowMeEnabledChanged } />
+                <Checkbox
+                    checked = { followMeRecorderChecked }
+                    className = { classes.checkbox }
+                    disabled = { followMeRecorderActive || followMeActive }
+                    label = { t('settings.followMeRecorder') }
+                    name = 'follow-me-recorder'
+                    onChange = { this._onFollowMeRecorderEnabledChanged } />
                 { !disableReactionsModeration
                         && <Checkbox
                             checked = { startReactionsMuted }
@@ -198,4 +237,4 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(ModeratorTab));
+export default withStyles(translate(ModeratorTab), styles);

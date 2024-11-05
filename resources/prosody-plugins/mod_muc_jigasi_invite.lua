@@ -6,7 +6,7 @@ local jid_split = require "util.jid".split;
 local hashes = require "util.hashes";
 local random = require "util.random";
 local st = require("util.stanza");
-local json = require "util.json";
+local json = require 'cjson.safe';
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
 local process_host_module = util.process_host_module;
@@ -133,7 +133,12 @@ local function handle_jigasi_invite(event)
         module:log("warn", "Wrong content type: %s or missing payload", request.headers.content_type);
         return { status_code = 400; }
     end
-    local payload = json.decode(request.body);
+    local payload, error = json.decode(request.body);
+
+    if not payload then
+        module:log('error', 'Cannot decode json error:%s', error);
+        return { status_code = 400; }
+    end
 
     local conference = payload["conference"];
     local phone_no = payload["phoneNo"];

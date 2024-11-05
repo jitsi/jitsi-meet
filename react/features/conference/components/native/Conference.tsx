@@ -15,7 +15,7 @@ import { connect, useDispatch } from 'react-redux';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
-import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
+import { FULLSCREEN_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
@@ -38,7 +38,7 @@ import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
+import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
 import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
@@ -559,6 +559,7 @@ class Conference extends AbstractConference<IProps, State> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
+    const { appState } = state['features/mobile/background'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
@@ -579,8 +580,12 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
-        _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
-        _reducedUI: reducedUI,
+        _pictureInPictureEnabled: isPipEnabled(state),
+
+        // [iOS] - Transitioning between foreground & background, appState goes from active -> inactive -> background
+        // and during periods of inactivity such as entering the multitasking view,
+        // opening the Notification Center or in the event of an incoming call.
+        _reducedUI: reducedUI || appState !== 'active',
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)

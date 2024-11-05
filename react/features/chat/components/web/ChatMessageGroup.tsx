@@ -66,13 +66,14 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
         <div className = { clsx(classes.groupContainer, className) }>
             <Avatar
                 className = { clsx(classes.avatar, 'avatar') }
-                participantId = { messages[0].id }
+                participantId = { messages[0].participantId }
                 size = { 32 } />
             <div className = { `${classes.messageGroup} chat-message-group ${className}` }>
                 {messages.map((message, i) => (
                     <ChatMessage
                         key = { i }
                         message = { message }
+                        shouldDisplayChatMessageMenu = { false }
                         showDisplayName = { i === 0 }
                         showTimestamp = { i === messages.length - 1 }
                         type = { className } />

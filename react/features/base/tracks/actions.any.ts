@@ -26,7 +26,6 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
-    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED,
@@ -41,7 +40,7 @@ import {
     getTrackByJitsiTrack
 } from './functions';
 import logger from './logger';
-import { ITrackOptions } from './types';
+import { ITrack, ITrackOptions } from './types';
 
 /**
  * Add a given local track to the conference.
@@ -65,7 +64,7 @@ export function addLocalTrack(newTrack: any) {
         const isMuted = newTrack.isMuted();
 
         logger.log(`Adding ${newTrack.getType()} track - ${isMuted ? 'muted' : 'unmuted'}`);
-        await dispatch(setMuted(isMuted));
+        dispatch(setMuted(isMuted));
 
         return dispatch(_addTracks([ newTrack ]));
     };
@@ -234,12 +233,11 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
  */
 export function destroyLocalTracks(track: any = null) {
     if (track) {
-        return (dispatch: IStore['dispatch']) => {
-            dispatch(_disposeAndRemoveTracks([ track ]));
-        };
+        return (dispatch: IStore['dispatch']) => dispatch(_disposeAndRemoveTracks([ track ]));
     }
 
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+
         // First wait until any getUserMedia in progress is settled and then get
         // rid of all local tracks.
         _cancelGUMProcesses(getState)
@@ -249,7 +247,6 @@ export function destroyLocalTracks(track: any = null) {
                         getState()['features/base/tracks']
                             .filter(t => t.local)
                             .map(t => t.jitsiTrack))));
-    };
 }
 
 /**
@@ -275,7 +272,7 @@ export function noDataFromSource(track: any) {
  * @returns {Function}
  */
 export function showNoDataFromSourceVideoError(jitsiTrack: any) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let notificationInfo;
 
         const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
@@ -287,7 +284,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
         if (track.isReceivingData) {
             notificationInfo = undefined;
         } else {
-            const notificationAction = await dispatch(showErrorNotification({
+            const notificationAction = dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
@@ -360,7 +357,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
             sendAnalytics(createTrackMutedEvent(newTrack.getType(), 'track.replaced', isMuted));
             logger.log(`Replace ${newTrack.getType()} track - ${isMuted ? 'muted' : 'unmuted'}`);
 
-            await dispatch(setMuted(isMuted));
+            dispatch(setMuted(isMuted));
             await dispatch(_addTracks([ newTrack ]));
         }
     };
@@ -374,16 +371,13 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  * @returns {Function}
  */
 export function trackAdded(track: any) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
-        track.on(
-            JitsiTrackEvents.TRACK_OWNER_CHANGED,
-            (owner: string) => dispatch(trackOwnerChanged(track, owner)));
         const local = track.isLocal();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
@@ -404,7 +398,7 @@ export function trackAdded(track: any) {
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
-                    const notificationAction = await dispatch(showNotification({
+                    const notificationAction = dispatch(showNotification({
                         descriptionKey: 'dialog.micNotSendingData',
                         titleKey: 'dialog.micNotSendingDataTitle'
                     }, NOTIFICATION_TIMEOUT_TYPE.LONG));
@@ -451,6 +445,32 @@ export function trackAdded(track: any) {
                 videoType: track.videoType
             }
         });
+    };
+}
+
+/**
+ * Create an action for when a track's codec has been signaled to have been changed.
+ *
+ * @param {JitsiLocalTrack} track - JitsiLocalTrack instance.
+ * @param {string} codec - The video codec.
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
+ */
+export function trackCodecChanged(track: ITrack, codec: string): {
+    track: {
+        codec: string;
+        jitsiTrack: any;
+    };
+    type: 'TRACK_UPDATED';
+} {
+    return {
+        type: TRACK_UPDATED,
+        track: {
+            codec,
+            jitsiTrack: track
+        }
     };
 }
 
@@ -621,32 +641,6 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
         track: {
             jitsiTrack: track,
             streamingStatus
-        }
-    };
-}
-
-/**
- * Create an action for when the owner of the track changes due to ssrc remapping.
- *
- * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
- * @param {string} participantId - New owner's participant ID.
- * @returns {{
- *     type: TRACK_OWNER_CHANGED,
- *     track: Track
- * }}
- */
-export function trackOwnerChanged(track: any, participantId: string): {
-    track: {
-        jitsiTrack: any;
-        participantId: string;
-    };
-    type: 'TRACK_OWNER_CHANGED';
-} {
-    return {
-        type: TRACK_OWNER_CHANGED,
-        track: {
-            jitsiTrack: track,
-            participantId
         }
     };
 }
@@ -839,6 +833,7 @@ export function toggleCamera() {
         const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
+        const { localFlipX } = state['features/base/settings'];
 
         /**
          * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
@@ -854,7 +849,7 @@ export function toggleCamera() {
             : CAMERA_FACING_MODE.USER;
 
         // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
-        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER ? localFlipX : false }));
 
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 

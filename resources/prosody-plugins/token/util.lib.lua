@@ -26,6 +26,24 @@ local ssl = require "ssl";
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
 
+-- the cache for generated asap jwt tokens
+local jwtKeyCache = require 'util.cache'.new(cacheSize);
+
+local ASAPTTL_THRESHOLD = module:get_option_number('asap_ttl_threshold', 600);
+local ASAPTTL = module:get_option_number('asap_ttl', 3600);
+local ASAPIssuer = module:get_option_string('asap_issuer', 'jitsi');
+local ASAPAudience = module:get_option_string('asap_audience', 'jitsi');
+local ASAPKeyId = module:get_option_string('asap_key_id', 'jitsi');
+local ASAPKeyPath = module:get_option_string('asap_key_path', '/etc/prosody/certs/asap.key');
+
+local ASAPKey;
+local f = io.open(ASAPKeyPath, 'r');
+
+if f then
+    ASAPKey = f:read('*all');
+    f:close();
+end
+
 local Util = {}
 Util.__index = Util
 
@@ -123,6 +141,7 @@ function Util.new(module)
         self.cachedKeys = {};
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
@@ -228,13 +247,8 @@ end
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
--- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers;
-    end
-
+function Util:process_and_verify_token(session)
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -291,7 +305,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         session.auth_token,
         self.signatureAlgorithm,
         key,
-        acceptedIssuers,
+        self.acceptedIssuers,
         self.acceptedAudiences
     )
     if claims ~= nil then
@@ -439,7 +453,8 @@ function Util:verify_room(session, room_address)
     if session.jitsi_meet_str_tenant
         and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
         module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
-            inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group,
+            session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
+            session.jitsi_meet_context_group,
             session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
         session.jitsi_meet_tenant_mismatch = true;
     end
@@ -474,6 +489,50 @@ function Util:verify_room(session, room_address)
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(room_to_check, subdomain_to_check);
+    end
+end
+
+function Util:generateAsapToken(audience)
+    if not ASAPKey then
+        module:log('warn', 'No ASAP Key read, asap key generation is disabled');
+        return ''
+    end
+
+    audience = audience or ASAPAudience
+    local t = os.time()
+    local err
+    local exp_key = 'asap_exp.'..audience
+    local token_key = 'asap_token.'..audience
+    local exp = jwtKeyCache:get(exp_key)
+    local token = jwtKeyCache:get(token_key)
+
+    --if we find a token and it isn't too far from expiry, then use it
+    if token ~= nil and exp ~= nil then
+        exp = tonumber(exp)
+        if (exp - t) > ASAPTTL_THRESHOLD then
+            return token
+        end
+    end
+
+    --expiry is the current time plus TTL
+    exp = t + ASAPTTL
+    local payload = {
+        iss = ASAPIssuer,
+        aud = audience,
+        nbf = t,
+        exp = exp,
+    }
+
+    -- encode
+    local alg = 'RS256'
+    token, err = jwt.encode(payload, ASAPKey, alg, { kid = ASAPKeyId })
+    if not err then
+        token = 'Bearer '..token
+        jwtKeyCache:set(exp_key, exp)
+        jwtKeyCache:set(token_key, token)
+        return token
+    else
+        return ''
     end
 end
 

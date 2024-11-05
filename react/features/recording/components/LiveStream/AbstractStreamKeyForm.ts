@@ -1,5 +1,5 @@
-import { DebouncedFunc } from 'lodash';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
+import type { DebouncedFunc } from 'lodash-es';
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -21,11 +21,11 @@ export type LiveStreaming = {
 };
 
 export type LiveStreamingProps = {
-    dataPrivacyURL: string;
+    dataPrivacyURL?: string;
     enabled: boolean;
-    helpURL: string;
+    helpURL?: string;
     streamLinkRegexp: RegExp;
-    termsURL: string;
+    termsURL?: string;
 };
 
 /**
@@ -37,8 +37,6 @@ export interface IProps extends WithTranslation {
      * The live streaming dialog properties.
      */
     _liveStreaming: LiveStreamingProps;
-
-    classes?: any;
 
     /**
      * Callback invoked when the entered stream key has changed.

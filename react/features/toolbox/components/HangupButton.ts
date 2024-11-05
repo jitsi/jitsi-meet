@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { once } from 'lodash-es';
 import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
@@ -29,7 +29,7 @@ class HangupButton extends AbstractHangupButton<AbstractButtonProps> {
     constructor(props: AbstractButtonProps) {
         super(props);
 
-        this._hangup = _.once(() => {
+        this._hangup = once(() => {
             sendAnalytics(createToolbarEvent('hangup'));
             this.props.dispatch(leaveConference());
         });

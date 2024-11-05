@@ -1,14 +1,12 @@
 #!/bin/bash
 
-set -e -u
+set -e -u -x
 
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 PROJECT_REPO=$(realpath ${THIS_DIR}/../..)
 RELEASE_REPO=$(realpath ${THIS_DIR}/../../../jitsi-meet-ios-sdk-releases)
 DEFAULT_SDK_VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ${THIS_DIR}/../sdk/src/Lite-Info.plist)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
-DO_GIT_TAG=${GIT_TAG:-0}
-
 
 echo "Releasing Jitsi Meet SDK Lite ${SDK_VERSION}"
 
@@ -50,9 +48,6 @@ xcodebuild -create-xcframework \
     -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
     -framework ios/sdk/out/ios-simulator.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
     -output ios/sdk/out/JitsiMeetSDK.xcframework
-if [[ $DO_GIT_TAG == 1 ]]; then
-    git tag ios-sdk-lite-${SDK_VERSION}
-fi
 popd
 
 pushd ${RELEASE_REPO}
@@ -61,11 +56,9 @@ pushd ${RELEASE_REPO}
 cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework lite/Frameworks/
 
 # Add all files to git
-if [[ $DO_GIT_TAG == 1 ]]; then
-    git add -A .
-    git commit -m "${SDK_VERSION} lite"
-    git tag "${SDK_VERSION}-lite"
-fi
+git add -A .
+git commit --allow-empty -m "${SDK_VERSION} lite"
+git tag "${SDK_VERSION}-lite"
 
 popd
 

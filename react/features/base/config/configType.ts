@@ -1,40 +1,4 @@
-export type ToolbarButton = 'camera' |
-    'chat' |
-    'closedcaptions' |
-    'desktop' |
-    'download' |
-    'embedmeeting' |
-    'etherpad' |
-    'feedback' |
-    'filmstrip' |
-    'fullscreen' |
-    'hangup' |
-    'help' |
-    'highlight' |
-    'invite' |
-    'linktosalesforce' |
-    'livestreaming' |
-    'microphone' |
-    'mute-everyone' |
-    'mute-video-everyone' |
-    'noisesuppression' |
-    'participants-pane' |
-    'profile' |
-    'raisehand' |
-    'reactions' |
-    'recording' |
-    'security' |
-    'select-background' |
-    'settings' |
-    'shareaudio' |
-    'sharedvideo' |
-    'shortcuts' |
-    'stats' |
-    'tileview' |
-    'toggle-camera' |
-    'videoquality' |
-    'whiteboard' |
-    '__end';
+import { ToolbarButton } from '../../toolbox/types';
 
 type ButtonsWithNotifyClick = 'camera' |
     'chat' |
@@ -323,6 +287,7 @@ export interface IConfig {
     disableRemoveRaisedHandOnFocus?: boolean;
     disableResponsiveTiles?: boolean;
     disableRtx?: boolean;
+    disableSelfDemote?: boolean;
     disableSelfView?: boolean;
     disableSelfViewSettings?: boolean;
     disableShortcuts?: boolean;
@@ -343,6 +308,7 @@ export interface IConfig {
     };
     dynamicBrandingUrl?: string;
     e2ee?: {
+        disabled?: boolean;
         externallyManagedKey?: boolean;
         labels?: {
             description?: string;
@@ -370,7 +336,6 @@ export interface IConfig {
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
     enableForcedReload?: boolean;
-    enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;
     enableLobbyChat?: boolean;
     enableNoAudioDetection?: boolean;
@@ -410,7 +375,6 @@ export interface IConfig {
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
         enabled?: boolean;
-        proxyUrl?: string;
         rating?: 'g' | 'pg' | 'pg-13' | 'r';
         sdkKey?: string;
         tileTime?: number;
@@ -432,6 +396,7 @@ export interface IConfig {
     hideDominantSpeakerBadge?: boolean;
     hideEmailInSettings?: boolean;
     hideLobbyButton?: boolean;
+    hideLoginButton?: boolean;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {
@@ -476,6 +441,7 @@ export interface IConfig {
     };
     localSubject?: string;
     locationURL?: URL;
+    mainToolbarButtons?: Array<Array<string>>;
     maxFullResolutionParticipants?: number;
     microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;
@@ -503,21 +469,32 @@ export interface IConfig {
         preventExecution: boolean;
     }>;
     participantsPane?: {
+        enabled?: boolean;
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;
         hideMuteAllButton?: boolean;
     };
     pcStatsInterval?: number;
     peopleSearchQueryTypes?: string[];
+    peopleSearchTokenLocation?: string;
     peopleSearchUrl?: string;
     preferBosh?: boolean;
+    preferVisitor?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;
         hideDisplayName?: boolean;
         hideExtraJoinButtons?: Array<string>;
+        preCallTestEnabled?: boolean;
+        preCallTestICEUrl?: string;
     };
     prejoinPageEnabled?: boolean;
+    raisedHands?: {
+        disableLowerHandByModerator?: boolean;
+        disableLowerHandNotification?: boolean;
+        disableNextSpeakerNotification?: boolean;
+        disableRemoveRaisedHandOnFocus?: boolean;
+    };
     readOnlyName?: boolean;
     recordingLimit?: {
         appName?: string;
@@ -531,10 +508,12 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        recordAudioAndVideo?: boolean;
         showPrejoinWarning?: boolean;
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {
+        disableDemote?: boolean;
         disableGrantModerator?: boolean;
         disableKick?: boolean;
         disablePrivateChat?: boolean;
@@ -554,6 +533,7 @@ export interface IConfig {
         hideLobbyButton?: boolean;
     };
     serviceUrl?: string;
+    sharedVideoAllowedURLDomains?: Array<string>;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;
@@ -573,9 +553,7 @@ export interface IConfig {
     subject?: string;
     testing?: {
         assumeBandwidth?: boolean;
-        disableE2EE?: boolean;
         dumpTranscript?: boolean;
-        mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
         skipInterimTranscriptions?: boolean;
@@ -598,6 +576,7 @@ export interface IConfig {
     transcribeWithAppLanguage?: boolean;
     transcribingEnabled?: boolean;
     transcription?: {
+        autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;

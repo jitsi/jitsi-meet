@@ -18,7 +18,7 @@ let pressureObserver: typeof window.PressureObserver;
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(() => (next: Function) => async (action: AnyAction) => {
+MiddlewareRegistry.register(() => (next: Function) => (action: AnyAction) => {
 
     switch (action.type) {
     case APP_WILL_MOUNT: {

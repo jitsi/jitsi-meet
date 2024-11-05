@@ -19,15 +19,6 @@ export const MEET_FEATURES = {
 };
 
 /**
- * A mapping between jwt features and toolbar buttons keys.
- */
-export const FEATURES_TO_BUTTONS_MAPPING = {
-    'livestreaming': 'livestreaming',
-    'recording': 'recording',
-    'transcription': 'closedcaptions'
-};
-
-/**
  * The JWT validation errors for JaaS.
  */
 export const JWT_VALIDATION_ERRORS = {

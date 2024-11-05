@@ -1,3 +1,5 @@
+import { CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED } from './actionTypes';
+
 export * from './actions.any';
 
 /**
@@ -21,4 +23,23 @@ export function showToolbox(_timeout?: number): any {
  */
 export function setOverflowMenuVisible(_visible: boolean): any {
     return {};
+}
+
+/**
+ * Creates a (redux) action which that a custom overflow menu button was pressed.
+ *
+ * @param {string} id - The id for the custom button.
+ * @param {string} text - The label for the custom button.
+ * @returns {{
+ *     type: CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
+ *     id: string,
+ *     text: string
+ * }}
+ */
+export function customOverflowMenuButtonPressed(id: string, text: string) {
+    return {
+        type: CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
+        id,
+        text
+    };
 }

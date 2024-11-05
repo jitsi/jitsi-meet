@@ -7,10 +7,11 @@ import { IReduxState } from '../../../../app/types';
 import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
 import { isRoomNameEnabled } from '../../../../prejoin/functions';
 import Toolbox from '../../../../toolbox/components/web/Toolbox';
+import { isButtonEnabled } from '../../../../toolbox/functions.web';
 import { getConferenceName } from '../../../conference/functions';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
-import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
 import { withPixelLineHeight } from '../../../styles/functions.web';
+import { isPreCallTestEnabled } from '../../functions';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
@@ -23,6 +24,11 @@ interface IProps {
      * The list of toolbar buttons to render.
      */
     _buttons: Array<string>;
+
+    /**
+     * Determine if pre call test is enabled.
+     */
+    _isPreCallTestEnabled?: boolean;
 
     /**
      * The branding background of the premeeting screen(lobby/prejoin).
@@ -169,6 +175,7 @@ const useStyles = makeStyles()(theme => {
 
 const PreMeetingScreen = ({
     _buttons,
+    _isPreCallTestEnabled,
     _premeetingBackground,
     _roomName,
     children,
@@ -192,7 +199,7 @@ const PreMeetingScreen = ({
         <div className = { clsx('premeeting-screen', classes.container, className) }>
             <div style = { style }>
                 <div className = { classes.content }>
-                    <ConnectionStatus />
+                    {_isPreCallTestEnabled && <ConnectionStatus />}
 
                     <div className = { classes.contentControls }>
                         <h1 className = { classes.title }>
@@ -229,7 +236,7 @@ const PreMeetingScreen = ({
  */
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state['features/base/config'];
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
         : PREMEETING_BUTTONS).filter((b: any) => !(hiddenPremeetingButtons || []).includes(b));
@@ -244,7 +251,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         // toolbarButtons config overwrite.
         _buttons: hiddenPremeetingButtons
             ? premeetingButtons
-            : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
+            : premeetingButtons.filter(b => isButtonEnabled(b, toolbarButtons)),
+        _isPreCallTestEnabled: isPreCallTestEnabled(state),
         _premeetingBackground: premeetingBackground,
         _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : ''
     };

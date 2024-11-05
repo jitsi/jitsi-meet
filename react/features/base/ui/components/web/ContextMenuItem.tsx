@@ -145,6 +145,24 @@ const useStyles = makeStyles()(theme => {
             pointerEvents: 'none'
         },
 
+        contextMenuItemIconDisabled: {
+            '& svg': {
+                fill: `${theme.palette.text03} !important`
+            }
+        },
+
+        contextMenuItemLabelDisabled: {
+            color: theme.palette.text03,
+
+            '&:hover': {
+                background: 'none'
+            },
+
+            '& svg': {
+                fill: theme.palette.text03
+            }
+        },
+
         contextMenuItemDrawer: {
             padding: '13px 16px'
         },
@@ -233,13 +251,15 @@ const ContextMenuItem = ({
             tabIndex = { onClick ? tabIndex : undefined }>
             {customIcon ? customIcon
                 : icon && <Icon
-                    className = { styles.contextMenuItemIcon }
+                    className = { cx(styles.contextMenuItemIcon,
+                        disabled && styles.contextMenuItemIconDisabled) }
                     size = { 20 }
                     src = { icon } />}
             {text && (
                 <TextWithOverflow
                     className = { cx(styles.text,
                     _overflowDrawer && styles.drawerText,
+                    disabled && styles.contextMenuItemLabelDisabled,
                     textClassName) }
                     overflowType = { overflowType } >
                     {text}

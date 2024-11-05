@@ -183,7 +183,7 @@ function _getLocalTrack(
  * @private
  * @returns {void}
  */
-async function _setMuted(store: IStore, { ensureTrack, muted }: {
+function _setMuted(store: IStore, { ensureTrack, muted }: {
     ensureTrack: boolean; muted: boolean; }, mediaType: MediaType) {
     const { dispatch, getState } = store;
     const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);

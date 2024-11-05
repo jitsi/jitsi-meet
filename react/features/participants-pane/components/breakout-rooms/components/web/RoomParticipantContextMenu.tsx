@@ -4,20 +4,15 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../../../base/avatar/components/Avatar';
-import {
-    getButtonNotifyMode,
-    getParticipantMenuButtonsWithNotifyClick
-} from '../../../../../base/config/functions.web';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
-import { NOTIFY_CLICK_MODE } from '../../../../../toolbox/constants';
-import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
+import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../../../toolbox/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../../../toolbox/types';
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
 import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../../../../video-menu/constants';
 import { AVATAR_SIZE } from '../../../../constants';
-
 
 interface IProps {
 
@@ -82,7 +77,7 @@ export const RoomParticipantContextMenu = ({
 
     const notifyClick = useCallback(
         (buttonKey: string, participantId?: string) => {
-            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+            const notifyMode = buttonsWithNotifyClick?.get(buttonKey);
 
             if (!notifyMode) {
                 return;
@@ -93,7 +88,7 @@ export const RoomParticipantContextMenu = ({
                 participantId,
                 notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
-        }, [ buttonsWithNotifyClick, getButtonNotifyMode ]);
+        }, [ buttonsWithNotifyClick ]);
 
     const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: any) => {
         if (room.id !== entity?.room?.id) {
@@ -101,7 +96,7 @@ export const RoomParticipantContextMenu = ({
                 key = { room.id }
                 // eslint-disable-next-line react/jsx-no-bind
                 notifyClick = { () => notifyClick(BUTTONS.SEND_PARTICIPANT_TO_ROOM, entity?.jid) }
-                notifyMode = { getButtonNotifyMode(BUTTONS.SEND_PARTICIPANT_TO_ROOM, buttonsWithNotifyClick) }
+                notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.SEND_PARTICIPANT_TO_ROOM) }
                 onClick = { lowerMenu }
                 participantID = { entity?.jid ?? '' }
                 room = { room } />);
@@ -109,7 +104,7 @@ export const RoomParticipantContextMenu = ({
 
         return null;
     })
-    .filter(Boolean), [ entity, rooms ]);
+    .filter(Boolean), [ entity, rooms, buttonsWithNotifyClick ]);
 
     return isLocalModerator ? (
         <ContextMenu

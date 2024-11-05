@@ -73,5 +73,15 @@ export default {
 
     clearIcon: {
         color: BaseTheme.palette.icon01
+    },
+
+    bottomLabel: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text02,
+        marginTop: BaseTheme.spacing[2]
+    },
+
+    bottomLabelError: {
+        color: BaseTheme.palette.textError
     }
 };

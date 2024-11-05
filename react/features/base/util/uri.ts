@@ -1,3 +1,5 @@
+import { sanitizeUrl as _sanitizeUrl } from '@braintree/sanitize-url';
+
 import { parseURLParams } from './parseURLParams';
 import { normalizeNFKC } from './strings';
 
@@ -535,6 +537,7 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     const search = new URLSearchParams(url.search);
 
+    // TODO: once all available versions are updated to support the jwt in the hash, remove this
     if (jwt) {
         search.set('jwt', jwt);
     }
@@ -558,6 +561,14 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
     // fragment/hash
 
     let { hash } = url;
+
+    if (jwt) {
+        if (hash.length) {
+            hash = `${hash}&jwt=${JSON.stringify(jwt)}`;
+        } else {
+            hash = `#jwt=${JSON.stringify(jwt)}`;
+        }
+    }
 
     for (const urlPrefix of [ 'config', 'iceServers', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray
@@ -656,4 +667,26 @@ export function appendURLHashParam(url: string, name: string, value: string) {
     newUrl.hash = dummyUrl.searchParams.toString();
 
     return newUrl.toString();
+}
+
+/**
+ * Sanitizes the given URL so that it's safe to use. If it's unsafe, null is returned.
+ *
+ * @param {string|URL} url - The URL that needs to be sanitized.
+ *
+ * @returns {URL?} - The sanitized URL, or null otherwise.
+ */
+export function sanitizeUrl(url?: string | URL): URL | null {
+    if (!url) {
+        return null;
+    }
+
+    const urlStr = url.toString();
+    const result = _sanitizeUrl(urlStr);
+
+    if (result === 'about:blank') {
+        return null;
+    }
+
+    return new URL(result);
 }

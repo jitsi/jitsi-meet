@@ -6,7 +6,7 @@ import { IconPin, IconPinned } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { togglePinStageParticipant } from '../../../filmstrip/actions.web';
 import { getPinnedActiveParticipants } from '../../../filmstrip/functions.web';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 interface IProps extends IButtonProps {

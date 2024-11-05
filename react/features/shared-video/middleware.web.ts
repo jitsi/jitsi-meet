@@ -3,7 +3,8 @@ import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { setDisableButton } from './actions.web';
-import { SHARED_VIDEO } from './constants';
+import { PLAYBACK_STATUSES, SHARED_VIDEO } from './constants';
+import { isSharedVideoEnabled } from './functions';
 
 import './middleware.any';
 
@@ -13,6 +14,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
+        if (!isSharedVideoEnabled(state)) {
+            break;
+        }
+
         const { conference } = action;
 
         conference.addCommandListener(SHARED_VIDEO, ({ attributes }: { attributes:
@@ -20,7 +25,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const { from } = attributes;
             const status = attributes.state;
 
-            if (status === 'playing') {
+            if (status === PLAYBACK_STATUSES.PLAYING) {
                 if (localParticipantId !== from) {
                     dispatch(setDisableButton(true));
                 }

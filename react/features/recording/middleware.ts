@@ -22,7 +22,7 @@ import {
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isTranscribing } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
@@ -72,7 +72,7 @@ StateListenerRegistry.register(
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     let oldSessionData;
 
     if (action.type === RECORDING_SESSION_UPDATED) {
@@ -101,7 +101,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             (recorderSession: any) => {
                 if (recorderSession) {
                     recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
-                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
+                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch, getState);
                 }
 
                 return;
@@ -114,9 +114,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         const { localRecording } = getState()['features/base/config'];
         const { onlySelf } = action;
 
-        try {
-            await LocalRecordingManager.startLocalRecording({ dispatch,
-                getState }, action.onlySelf);
+        LocalRecordingManager.startLocalRecording({
+            dispatch,
+            getState
+        }, action.onlySelf)
+        .then(() => {
             const props = {
                 descriptionKey: 'recording.on',
                 titleKey: 'dialog.recording'
@@ -133,9 +135,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(true, 'local');
+                APP.API.notifyRecordingStatusChanged(
+                    true, 'local', undefined, isRecorderTranscriptionsRunning(getState()));
             }
-        } catch (err: any) {
+        })
+        .catch(err => {
             logger.error('Capture failed', err);
 
             let descriptionKey = 'recording.error';
@@ -154,11 +158,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
             };
 
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(false, 'local', err.message);
+                APP.API.notifyRecordingStatusChanged(
+                    false, 'local', err.message, isRecorderTranscriptionsRunning(getState()));
             }
 
             dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-        }
+        });
         break;
     }
 
@@ -172,7 +177,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
             if (typeof APP !== 'undefined') {
-                APP.API.notifyRecordingStatusChanged(false, 'local');
+                APP.API.notifyRecordingStatusChanged(
+                    false, 'local', undefined, isRecorderTranscriptionsRunning(getState()));
             }
         }
         break;
@@ -202,75 +208,78 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
         if (updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING) {
             dispatch(showPendingRecordingNotification(mode));
             dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
-        } else {
-            dispatch(hidePendingRecordingNotification(mode));
+            break;
+        }
 
-            if (updatedSessionData?.status === ON) {
+        dispatch(hidePendingRecordingNotification(mode));
 
-                // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
-                // The second one is from jicofo which will deliever the initiator value. Since the start
-                // recording notification uses the initiator value we skip the jibri update and show the
-                // notification on the update from jicofo.
-                // FIXE: simplify checks when the backend start sending only one status ON update containing the
-                // initiator.
-                if (initiator && !oldSessionData?.initiator) {
-                    if (typeof recordingLimit === 'object') {
-                        dispatch(showRecordingLimitNotification(mode));
-                    } else {
-                        dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
-                    }
+        if (updatedSessionData?.status === ON) {
+
+            // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
+            // The second one is from jicofo which will deliever the initiator value. Since the start
+            // recording notification uses the initiator value we skip the jibri update and show the
+            // notification on the update from jicofo.
+            // FIXE: simplify checks when the backend start sending only one status ON update containing the
+            // initiator.
+            if (initiator && !oldSessionData?.initiator) {
+                if (typeof recordingLimit === 'object') {
+                    dispatch(showRecordingLimitNotification(mode));
+                } else {
+                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                 }
+            }
 
-                if (oldSessionData?.status !== ON) {
-                    sendAnalytics(createRecordingEvent('start', mode));
+            if (oldSessionData?.status !== ON) {
+                sendAnalytics(createRecordingEvent('start', mode));
 
-                    let soundID;
+                let soundID;
 
-                    if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing(state)) {
-                        soundID = RECORDING_ON_SOUND_ID;
-                    } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                        soundID = LIVE_STREAMING_ON_SOUND_ID;
-                    }
-
-                    if (soundID) {
-                        dispatch(playSound(soundID));
-                    }
-
-                    if (typeof APP !== 'undefined') {
-                        APP.API.notifyRecordingStatusChanged(true, mode);
-                    }
-                }
-            } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
-                if (terminator) {
-                    dispatch(
-                        showStoppedRecordingNotification(
-                            mode, getParticipantDisplayName(state, getResourceId(terminator))));
-                }
-
-                let duration = 0, soundOff, soundOn;
-
-                if (oldSessionData?.timestamp) {
-                    duration
-                        = (Date.now() / 1000) - oldSessionData.timestamp;
-                }
-                sendAnalytics(createRecordingEvent('stop', mode, duration));
-
-                if (mode === JitsiRecordingConstants.mode.FILE && !isTranscribing(state)) {
-                    soundOff = RECORDING_OFF_SOUND_ID;
-                    soundOn = RECORDING_ON_SOUND_ID;
+                if (mode === JitsiRecordingConstants.mode.FILE && !isRecorderTranscriptionsRunning(state)) {
+                    soundID = RECORDING_ON_SOUND_ID;
                 } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundOff = LIVE_STREAMING_OFF_SOUND_ID;
-                    soundOn = LIVE_STREAMING_ON_SOUND_ID;
+                    soundID = LIVE_STREAMING_ON_SOUND_ID;
                 }
 
-                if (soundOff && soundOn) {
-                    dispatch(stopSound(soundOn));
-                    dispatch(playSound(soundOff));
+                if (soundID) {
+                    dispatch(playSound(soundID));
                 }
 
                 if (typeof APP !== 'undefined') {
-                    APP.API.notifyRecordingStatusChanged(false, mode);
+                    APP.API.notifyRecordingStatusChanged(
+                        true, mode, undefined, isRecorderTranscriptionsRunning(state));
                 }
+            }
+        } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
+            if (terminator) {
+                dispatch(
+                    showStoppedRecordingNotification(
+                        mode, getParticipantDisplayName(state, getResourceId(terminator))));
+            }
+
+            let duration = 0, soundOff, soundOn;
+
+            if (oldSessionData?.timestamp) {
+                duration
+                    = (Date.now() / 1000) - oldSessionData.timestamp;
+            }
+            sendAnalytics(createRecordingEvent('stop', mode, duration));
+
+            if (mode === JitsiRecordingConstants.mode.FILE && !isRecorderTranscriptionsRunning(state)) {
+                soundOff = RECORDING_OFF_SOUND_ID;
+                soundOn = RECORDING_ON_SOUND_ID;
+            } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+                soundOff = LIVE_STREAMING_OFF_SOUND_ID;
+                soundOn = LIVE_STREAMING_ON_SOUND_ID;
+            }
+
+            if (soundOff && soundOn) {
+                dispatch(stopSound(soundOn));
+                dispatch(playSound(soundOff));
+            }
+
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyRecordingStatusChanged(
+                    false, mode, undefined, isRecorderTranscriptionsRunning(state));
             }
         }
 
@@ -312,14 +321,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
  * in recording session.
  *
  * @private
- * @param {Object} recorderSession - The recorder session model from the
+ * @param {Object} session - The recorder session model from the
  * lib.
  * @param {Dispatch} dispatch - The Redux Dispatch function.
+ * @param {Function} getState - The Redux getState function.
  * @returns {void}
  */
-function _showRecordingErrorNotification(recorderSession: any, dispatch: IStore['dispatch']) {
-    const mode = recorderSession.getMode();
-    const error = recorderSession.getError();
+function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    const mode = session.getMode();
+    const error = session.getError();
     const isStreamMode = mode === JitsiMeetJS.constants.recording.mode.STREAM;
 
     switch (error) {
@@ -367,6 +377,6 @@ function _showRecordingErrorNotification(recorderSession: any, dispatch: IStore[
     }
 
     if (typeof APP !== 'undefined') {
-        APP.API.notifyRecordingStatusChanged(false, mode, error);
+        APP.API.notifyRecordingStatusChanged(false, mode, error, isRecorderTranscriptionsRunning(getState()));
     }
 }

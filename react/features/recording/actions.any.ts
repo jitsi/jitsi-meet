@@ -19,6 +19,7 @@ import {
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 import { setRequestingSubtitles } from '../subtitles/actions.any';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -31,7 +32,10 @@ import {
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
-import { START_RECORDING_NOTIFICATION_ID } from './constants';
+import {
+    RECORDING_METADATA_ID,
+    START_RECORDING_NOTIFICATION_ID
+} from './constants';
 import {
     getRecordButtonProps,
     getRecordingLink,
@@ -134,7 +138,7 @@ export function setLiveStreamKey(streamKey: string) {
  * @returns {Function}
  */
 export function showPendingRecordingNotification(streamType: string) {
-    return async (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore['dispatch']) => {
         const isLiveStreaming
             = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
         const dialogProps = isLiveStreaming ? {
@@ -144,7 +148,7 @@ export function showPendingRecordingNotification(streamType: string) {
             descriptionKey: 'recording.pending',
             titleKey: 'dialog.recording'
         };
-        const notification = await dispatch(showNotification({
+        const notification = dispatch(showNotification({
             ...dialogProps
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
@@ -408,7 +412,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
         const { recordings } = state['features/base/config'];
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
-        const isAlreadyRecording = isRecordingRunning(state);
+        const isAlreadyRecording = isRecordingRunning(state) || isRecorderTranscriptionsRunning(state);
         const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
 
         if (!suggestRecording
@@ -430,9 +434,8 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                 state = getState();
                 const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
-                const canBypassDialog = isModerator
-                    && recordingService?.enabled
-                    && isJwtFeatureEnabled(state, 'recording', true);
+                const canBypassDialog = recordingService?.enabled
+                    && isJwtFeatureEnabled(state, 'recording', isModerator, false);
 
                 if (canBypassDialog) {
                     const options = {
@@ -450,6 +453,9 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     });
 
                     if (autoTranscribeOnRecord) {
+                        conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                            isTranscribingEnabled: true
+                        });
                         dispatch(setRequestingSubtitles(true, false, null));
                     }
                 } else {
@@ -459,6 +465,6 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                 dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }

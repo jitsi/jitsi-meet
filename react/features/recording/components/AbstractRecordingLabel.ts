@@ -2,36 +2,37 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
-import { isTranscribing } from '../../transcribing/functions';
-import { getSessionStatusToShow, isRecordingRunning } from '../functions';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { isRecorderTranscriptionsRunning } from '../../transcribing/functions';
+import {
+    getSessionStatusToShow,
+    isLiveStreamingRunning,
+    isRecordingRunning,
+    isRemoteParticipantRecordingLocally
+} from '../functions';
 
-
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Whether this is the Jibri recorder participant.
      */
     _iAmRecorder: boolean;
 
-    /**
-     * Whether the recording is currently running.
-     */
-    _isRecordingRunning: boolean;
 
     /**
      * Whether this meeting is being transcribed.
-     */
-    _isTranscribing: boolean;
+    */
+   _isTranscribing: boolean;
+
+   /**
+    * Whether the recording/livestreaming/transcriber is currently running.
+    */
+   _isVisible: boolean;
 
     /**
      * The status of the higher priority session.
      */
     _status?: string;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes?: { [ key: string]: string; };
 
     /**
      * The recording mode this indicator should display.
@@ -40,28 +41,18 @@ interface IProps extends WithTranslation {
 }
 
 /**
- * State of the component.
- */
-interface IState {
-
-    /**
-     * True if the label status is stale, so it needs to be removed.
-     */
-    staleLabel: boolean;
-}
-
-/**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel extends Component<IProps, IState> {
+export default class AbstractRecordingLabel<P extends IProps = IProps> extends Component<P> {
     /**
      * Implements React {@code Component}'s render.
      *
      * @inheritdoc
      */
     render() {
-        return this.props._isRecordingRunning && !this.props._iAmRecorder
-            ? this._renderLabel() : null;
+        const { _iAmRecorder, _isVisible } = this.props;
+
+        return _isVisible && !_iAmRecorder ? this._renderLabel() : null;
     }
 
     /**
@@ -88,11 +79,18 @@ export default class AbstractRecordingLabel extends Component<IProps, IState> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { mode } = ownProps;
+    const isLiveStreamingLabel = mode === JitsiRecordingConstants.mode.STREAM;
+    const _isTranscribing = isRecorderTranscriptionsRunning(state);
+    const _isLivestreamingRunning = isLiveStreamingRunning(state);
+    const _isVisible = isLiveStreamingLabel
+        ? _isLivestreamingRunning // this is the livestreaming label
+        : isRecordingRunning(state) || isRemoteParticipantRecordingLocally(state)
+            || _isTranscribing; // this is the recording label
 
     return {
-        _isRecordingRunning: isRecordingRunning(state),
+        _isVisible,
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        _isTranscribing: isTranscribing(state),
+        _isTranscribing,
         _status: getSessionStatusToShow(state, mode)
     };
 }

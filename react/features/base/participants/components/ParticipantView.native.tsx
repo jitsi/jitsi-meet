@@ -8,6 +8,7 @@ import {
     isTrackStreamingStatusInactive
 } from '../../../connection-indicator/functions';
 import SharedVideo from '../../../shared-video/components/native/SharedVideo';
+import { isSharedVideoEnabled } from '../../../shared-video/functions';
 import { IStateful } from '../../app/types';
 import Avatar from '../../avatar/components/Avatar';
 import { translate } from '../../i18n/functions';
@@ -51,6 +52,11 @@ interface IProps {
      * True if the video should be rendered, false otherwise.
      */
     _renderVideo: boolean;
+
+    /**
+     * Whether the shared video is enabled or not.
+     */
+    _sharedVideoEnabled: boolean;
 
     /**
      * The video Track of the participant with {@link #participantId}.
@@ -167,6 +173,7 @@ class ParticipantView extends Component<IProps> {
             _isConnectionInactive,
             _isSharedVideoParticipant,
             _renderVideo: renderVideo,
+            _sharedVideoEnabled,
             _videoTrack: videoTrack,
             disableVideo,
             onPress
@@ -177,7 +184,7 @@ class ParticipantView extends Component<IProps> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderSharedVideo = _isSharedVideoParticipant && !disableVideo;
+        const renderSharedVideo = _isSharedVideoParticipant && !disableVideo && _sharedVideoEnabled;
 
         return (
             <Container
@@ -237,6 +244,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _isSharedVideoParticipant: isSharedVideoParticipant(participant),
         _participantName: getParticipantDisplayName(state, participantId),
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
+        _sharedVideoEnabled: isSharedVideoEnabled(state),
         _videoTrack: videoTrack
     };
 }

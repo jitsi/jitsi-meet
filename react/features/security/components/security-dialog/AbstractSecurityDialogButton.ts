@@ -7,6 +7,7 @@ import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { isSecurityDialogButtonVisible } from '../../functions';
 
 export interface IProps extends AbstractButtonProps {
 
@@ -71,17 +72,21 @@ export default class AbstractSecurityDialogButton<P extends IProps, S>
  */
 export function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
-    const { hideLobbyButton } = getSecurityUiConfig(state);
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
-    const lobbySupported = conference?.isLobbySupported();
-    const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
-    const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
-    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;
+    const enabledSecurityOptionsFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
+    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true);
     const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
         _locked: Boolean(locked || lobbyEnabled),
-        visible: enabledFlag && (enabledLobbyModeFlag || enabledMeetingPassFlag)
+        visible: isSecurityDialogButtonVisible({
+            conference,
+            securityUIConfig: getSecurityUiConfig(state),
+            isModerator: isLocalParticipantModerator(state),
+            enabledLobbyModeFlag,
+            enabledMeetingPassFlag,
+            enabledSecurityOptionsFlag
+        })
     };
 }

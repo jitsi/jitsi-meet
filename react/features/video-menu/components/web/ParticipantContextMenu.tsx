@@ -6,11 +6,10 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState, IStore } from '../../../app/types';
 import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { getButtonNotifyMode, getParticipantMenuButtonsWithNotifyClick } from '../../../base/config/functions.web';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getLocalParticipant } from '../../../base/participants/functions';
+import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks/functions.any';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
@@ -23,16 +22,18 @@ import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { QUICK_ACTION_BUTTON } from '../../../participants-pane/constants';
 import { getQuickActionButtonType, isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control/actions';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
+import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../toolbox/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { iAmVisitor } from '../../../visitors/functions';
 import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 
 import AskToUnmuteButton from './AskToUnmuteButton';
 import ConnectionStatusButton from './ConnectionStatusButton';
 import CustomOptionButton from './CustomOptionButton';
+import DemoteToVisitorButton from './DemoteToVisitorButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
+import LowerHandButton from './LowerHandButton';
 import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteEveryoneElsesVideoButton from './MuteEveryoneElsesVideoButton';
@@ -141,12 +142,14 @@ const ParticipantContextMenu = ({
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
-    const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
+    const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
+    const { disableDemote, disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
+    const raisedHands = hasRaisedHand(participant);
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const shouldDisplayVerification = useSelector((state: IReduxState) => displayVerification(state, participant?.id));
     const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
@@ -167,7 +170,7 @@ const ParticipantContextMenu = ({
 
     const notifyClick = useCallback(
         (buttonKey: string) => {
-            const notifyMode = getButtonNotifyMode(buttonKey, buttonsWithNotifyClick);
+            const notifyMode = buttonsWithNotifyClick?.get(buttonKey);
 
             if (!notifyMode) {
                 return;
@@ -178,7 +181,7 @@ const ParticipantContextMenu = ({
                 _getCurrentParticipantId(),
                 notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
-        }, [ buttonsWithNotifyClick, getButtonNotifyMode, _getCurrentParticipantId ]);
+        }, [ buttonsWithNotifyClick, _getCurrentParticipantId ]);
 
     const onBreakoutRoomButtonClick = useCallback(() => {
         onSelect(true);
@@ -200,9 +203,8 @@ const ParticipantContextMenu = ({
         && !isNaN(_volume);
 
     const getButtonProps = useCallback((key: string) => {
-        const notifyMode = getButtonNotifyMode(key, buttonsWithNotifyClick);
-        const shouldNotifyClick = notifyMode !== NOTIFY_CLICK_MODE.ONLY_NOTIFY
-            || notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY;
+        const notifyMode = buttonsWithNotifyClick?.get(key);
+        const shouldNotifyClick = typeof notifyMode !== 'undefined';
 
         return {
             key,
@@ -210,11 +212,11 @@ const ParticipantContextMenu = ({
             notifyClick: shouldNotifyClick ? () => notifyClick(key) : undefined,
             participantID: _getCurrentParticipantId()
         };
-    }, [ _getCurrentParticipantId, buttonsWithNotifyClick, getButtonNotifyMode, notifyClick ]);
+    }, [ _getCurrentParticipantId, buttonsWithNotifyClick, notifyClick ]);
 
     if (_isModerator) {
         if (isModerationSupported) {
-            if (_isAudioMuted
+            if (_isAudioMuted && !participant.isSilent
                 && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ASK_TO_UNMUTE)) {
                 buttons.push(<AskToUnmuteButton
                     { ...getButtonProps(BUTTONS.ASK_UNMUTE) }
@@ -230,7 +232,7 @@ const ParticipantContextMenu = ({
             }
         }
 
-        if (!disableRemoteMute) {
+        if (!disableRemoteMute && !participant.isSilent) {
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
                 buttons.push(<MuteButton { ...getButtonProps(BUTTONS.MUTE) } />);
             }
@@ -241,8 +243,16 @@ const ParticipantContextMenu = ({
             buttons.push(<MuteEveryoneElsesVideoButton { ...getButtonProps(BUTTONS.MUTE_OTHERS_VIDEO) } />);
         }
 
+        if (raisedHands) {
+            buttons2.push(<LowerHandButton { ...getButtonProps(BUTTONS.LOWER_PARTICIPANT_HAND) } />);
+        }
+
         if (!disableGrantModerator && !isBreakoutRoom) {
             buttons2.push(<GrantModeratorButton { ...getButtonProps(BUTTONS.GRANT_MODERATOR) } />);
+        }
+
+        if (!disableDemote && visitorsSupported && _isModerator) {
+            buttons2.push(<DemoteToVisitorButton { ...getButtonProps(BUTTONS.DEMOTE) } />);
         }
 
         if (!disableKick) {

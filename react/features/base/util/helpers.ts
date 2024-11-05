@@ -22,16 +22,21 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
+export type DefferedPromise<T> = {
+    promise: Promise<T>;
+    reject: (reason?: any) => void;
+    resolve: (value: T) => void;
+};
 
 /**
  * Creates a deferred object.
  *
  * @returns {{promise, resolve, reject}}
  */
-export function createDeferred() {
-    const deferred: any = {};
+export function createDeferred<T>() {
+    const deferred = {} as DefferedPromise<T>;
 
-    deferred.promise = new Promise((resolve, reject) => {
+    deferred.promise = new Promise<T>((resolve, reject) => {
         deferred.resolve = resolve;
         deferred.reject = reject;
     });
@@ -96,6 +101,21 @@ export function getJitsiMeetGlobalNS() {
 }
 
 /**
+ * Returns the object that stores the connection times.
+ *
+ * @returns {Object} - The object that stores the connection times.
+ */
+export function getJitsiMeetGlobalNSConnectionTimes() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.connectionTimes) {
+        globalNS.connectionTimes = {};
+    }
+
+    return globalNS.connectionTimes;
+}
+
+/**
  * Prints the error and reports it to the global error handler.
  *
  * @param {Error} e - The error object.
@@ -145,7 +165,7 @@ export function setColorAlpha(color: string, opacity: number) {
 /**
  * Gets the hexa rgb values for a shorthand css color.
  *
- * @param {string} color -
+ * @param {string} color - The shorthand css color.
  * @returns {Array<number>} - Array containing parsed r, g, b values of the color.
  */
 function parseShorthandColor(color: string) {

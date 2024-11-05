@@ -1,32 +1,29 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { TRANSCRIBER_LEFT } from '../transcribing/actionTypes';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE,
-    SET_REQUESTING_SUBTITLES, TOGGLE_REQUESTING_SUBTITLES, UPDATE_TRANSCRIPT_MESSAGE
+    SET_REQUESTING_SUBTITLES,
+    TOGGLE_REQUESTING_SUBTITLES,
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
+import { ITranscriptMessage } from './types';
 
 /**
  * Default State for 'features/transcription' feature.
  */
 const defaultState = {
-    _displaySubtitles: true,
+    _displaySubtitles: false,
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
     _language: null
 };
 
-interface ITranscriptMessage {
-    final: string;
-    participantName: string;
-    stable: string;
-    unstable: string;
-}
-
 export interface ISubtitlesState {
     _displaySubtitles: boolean;
     _language: string | null;
     _requestingSubtitles: boolean;
-    _transcriptMessages: Map<string, ITranscriptMessage> | any;
+    _transcriptMessages: Map<string, ITranscriptMessage>;
 }
 
 /**
@@ -51,6 +48,11 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
         return {
             ...state,
             _requestingSubtitles: !state._requestingSubtitles
+        };
+    case TRANSCRIBER_LEFT:
+        return {
+            ...state,
+            ...defaultState
         };
     }
 

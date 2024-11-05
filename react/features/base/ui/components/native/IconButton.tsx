@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight } from 'react-native';
+import { TouchableHighlight, ViewStyle } from 'react-native';
 
 import Icon from '../../../icons/components/Icon';
 import styles from '../../../react/components/native/styles';
@@ -12,6 +12,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
     accessibilityLabel,
     color: iconColor,
     disabled,
+    id,
     onPress,
     size,
     src,
@@ -52,11 +53,12 @@ const IconButton: React.FC<IIconButtonProps> = ({
         <TouchableHighlight
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
+            id = { id }
             onPress = { onPress }
             style = { [
                 iconButtonContainerStyles,
                 style
-            ] }
+            ] as ViewStyle }
             underlayColor = { underlayColor }>
             <Icon
                 color = { color }

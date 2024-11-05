@@ -34,8 +34,11 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then(j => j && dispatch(setJWT(j)))
-                .then(() => dispatch(_connectInternal(id, password)));
+                .then(j => {
+                    j && dispatch(setJWT(j));
+
+                    return dispatch(_connectInternal(id, password));
+                });
         }
 
         // used by jibri

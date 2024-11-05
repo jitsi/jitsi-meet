@@ -7,8 +7,6 @@ import { set } from '../redux/functions';
 import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
-    HIDDEN_PARTICIPANT_JOINED,
-    HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
@@ -332,42 +330,6 @@ export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
 }
 
 /**
- * Action to signal that a hidden participant has joined the conference.
- *
- * @param {string} id - The id of the participant.
- * @param {string} displayName - The display name, or undefined when
- * unknown.
- * @returns {{
- *     type: HIDDEN_PARTICIPANT_JOINED,
- *     displayName: string,
- *     id: string
- * }}
- */
-export function hiddenParticipantJoined(id: string, displayName: string) {
-    return {
-        type: HIDDEN_PARTICIPANT_JOINED,
-        id,
-        displayName
-    };
-}
-
-/**
- * Action to signal that a hidden participant has left the conference.
- *
- * @param {string} id - The id of the participant.
- * @returns {{
- *     type: HIDDEN_PARTICIPANT_LEFT,
- *     id: string
- * }}
- */
-export function hiddenParticipantLeft(id: string) {
-    return {
-        type: HIDDEN_PARTICIPANT_LEFT,
-        id
-    };
-}
-
-/**
  * Action to signal that a participant has left.
  *
  * @param {string} id - Participant's ID.
@@ -544,23 +506,27 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  */
 export function participantKicked(kicker: any, kicked: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+        const kickedId = kicked.getId();
+        const kickerId = kicker?.getId();
 
         dispatch({
             type: PARTICIPANT_KICKED,
-            kicked: kicked.getId(),
-            kicker: kicker?.getId()
+            kicked: kickedId,
+            kicker: kickerId
         });
 
-        if (kicked.isReplaced?.()) {
+        if (kicked.isReplaced?.() || !kickerId || kickerId === localParticipant?.id) {
             return;
         }
 
         dispatch(showNotification({
             titleArguments: {
                 kicked:
-                    getParticipantDisplayName(getState, kicked.getId()),
+                    getParticipantDisplayName(state, kickedId),
                 kicker:
-                    getParticipantDisplayName(getState, kicker.getId())
+                    getParticipantDisplayName(state, kickerId)
             },
             titleKey: 'notify.kickParticipant'
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

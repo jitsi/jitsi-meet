@@ -1,0 +1,53 @@
+name: Bug report
+description: File a bug report and help us improve
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue tracker is only for reporting bugs and tracking issues related to the source code.
+
+        **Before posting, please make sure to check if the same or similar bugs have already been reported.**
+
+        ⚠️ General questions regarding usage, installation, etc. should be posted in our [community forum](https://community.jitsi.org).
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Please describe the problem. Be as detailed as possible.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Platform
+      description: On what platforms can you reproduce the problem?
+      options:
+        - label: Chrome (or Chromium based)
+        - label: Firefox
+        - label: Safari
+        - label: Other desktop browser
+        - label: Android browser
+        - label: iOS browser
+        - label: Electron app
+        - label: Android mobile app
+        - label: iOS mobile app
+        - label: Custom app using a mobile SDK
+  - type: input
+    attributes:
+      label: Browser / app / sdk version
+      description: Please provide the version of the browser / app / sdk where the problem manifests.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. The browser console JS logs (if applicable) is a good start. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    attributes:
+      label: Reproducibility
+      description: Does the problem reproduce on meet.jit.si using Chrome, Firefox or the official mobile apps?
+      options:
+        - label: The problem is reproducible on meet.jit.si
+  - type: textarea
+    attributes:
+      label: More details?
+      description: Please provide more details in case they apply (such as the Jitsi Meet version you are running, if you are hosting your own server).

@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvailableDevices } from '../../base/devices/actions.web';
@@ -33,7 +33,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
@@ -50,6 +50,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * will display as disabled.
      */
     disableDeviceChange: boolean;
+
+    /**
+     * Whether the local video can be flipped or not.
+     */
+    disableLocalVideoFlip: boolean | undefined;
 
     /**
      * Whether video input dropdown should be enabled or not.
@@ -203,12 +208,14 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      */
     render() {
         const {
-            classes,
+            disableLocalVideoFlip,
             hideAdditionalSettings,
             hideVideoInputPreview,
             localFlipX,
             t
         } = this.props;
+
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = { classes.container }>
@@ -224,13 +231,15 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                 </div>
                 {!hideAdditionalSettings && (
                     <>
-                        <div className = { classes.checkboxContainer }>
-                            <Checkbox
-                                checked = { localFlipX }
-                                label = { t('videothumbnail.mirrorVideo') }
-                                // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
-                        </div>
+                        {!disableLocalVideoFlip && (
+                            <div className = { classes.checkboxContainer }>
+                                <Checkbox
+                                    checked = { localFlipX }
+                                    label = { t('videothumbnail.mirrorVideo') }
+                                    // eslint-disable-next-line react/jsx-no-bind
+                                    onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
+                            </div>
+                        )}
                         {this._renderFramerateSelect()}
                     </>
                 )}
@@ -366,4 +375,4 @@ const mapStateToProps = (state: IReduxState) => {
     };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(translate(VideoDeviceSelection)));
+export default connect(mapStateToProps)(withStyles(translate(VideoDeviceSelection), styles));

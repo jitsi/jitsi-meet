@@ -80,7 +80,7 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Erro",
-        "RECONNECTING": "Produciuse un problema na rede. Reconectando..."
+        "RECONNECTING": "Produciuse un problema na rede. Reconectando…"
     },
     "connectionindicator": {
         "address": "Enderezo:",
@@ -454,13 +454,18 @@
     },
     "passwordDigitsOnly": "Ata {{number}} díxitos",
     "passwordSetRemotely": "estabelecida por outro participante",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "As opcións deben ser únicas"
+        }
+    },
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",
         "calling": "Chamando…",
         "connected": "Conectado",
         "connecting": "Conectando…",
-        "connecting2": "Conectando*...",
+        "connecting2": "Conectando*…",
         "disconnected": "Desconectado",
         "expired": "Expirou",
         "ignored": "Ignorado",

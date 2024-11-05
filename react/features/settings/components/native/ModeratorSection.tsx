@@ -2,7 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { setFollowMe, setStartMutedPolicy, setStartReactionsMuted } from '../../../base/conference/actions';
+import {
+    setFollowMe,
+    setFollowMeRecorder,
+    setStartMutedPolicy,
+    setStartReactionsMuted
+} from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { getModeratorTabProps } from '../../functions.native';
@@ -13,7 +18,10 @@ import FormSection from './FormSection';
 const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
+        followMeActive,
         followMeEnabled,
+        followMeRecorderActive,
+        followMeRecorderEnabled,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted
@@ -35,29 +43,45 @@ const ModeratorSection = () => {
         dispatch(setFollowMe(Boolean(enabled)));
     }, [ dispatch, setFollowMe ]);
 
+    const onFollowMeRecorderToggled = useCallback((enabled?: boolean) => {
+        dispatch(setFollowMeRecorder(Boolean(enabled)));
+    }, [ dispatch, setFollowMeRecorder ]);
+
     const onStartReactionsMutedToggled = useCallback((enabled?: boolean) => {
         dispatch(setStartReactionsMuted(Boolean(enabled), true));
         dispatch(updateSettings({ soundsReactions: enabled }));
     }, [ dispatch, updateSettings, setStartReactionsMuted ]);
 
+    const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
+
     const moderationSettings = useMemo(() => {
         const moderation = [
             {
+                disabled: false,
                 label: 'settings.startAudioMuted',
                 state: startAudioMuted,
                 onChange: onStartAudioMutedToggled
             },
             {
+                disabled: false,
                 label: 'settings.startVideoMuted',
                 state: startVideoMuted,
                 onChange: onStartVideoMutedToggled
             },
             {
+                disabled: followMeActive || followMeRecorderActive,
                 label: 'settings.followMe',
-                state: followMeEnabled,
+                state: followMeEnabled && !followMeActive && !followMeRecorderChecked,
                 onChange: onFollowMeToggled
             },
             {
+                disabled: followMeRecorderActive || followMeActive,
+                label: 'settings.followMeRecorder',
+                state: followMeRecorderChecked,
+                onChange: onFollowMeRecorderToggled
+            },
+            {
+                disabled: false,
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
@@ -72,19 +96,26 @@ const ModeratorSection = () => {
     }, [ startAudioMuted,
         startVideoMuted,
         followMeEnabled,
+        followMeRecorderEnabled,
         disableReactionsModeration,
+        onStartAudioMutedToggled,
+        onStartVideoMutedToggled,
+        onFollowMeToggled,
+        onFollowMeRecorderToggled,
+        onStartReactionsMutedToggled,
         startReactionsMuted ]);
 
     return (
         <FormSection
             label = 'settings.playSounds'>
             {
-                moderationSettings.map(({ label, state, onChange }) => (
+                moderationSettings.map(({ label, state, onChange, disabled }) => (
                     <FormRow
                         key = { label }
                         label = { label }>
                         <Switch
                             checked = { Boolean(state) }
+                            disabled = { disabled }
                             onChange = { onChange } />
                     </FormRow>
                 ))

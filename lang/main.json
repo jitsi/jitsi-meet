@@ -22,7 +22,7 @@
         "noResults": "No matching search results",
         "outlookEmail": "Outlook Email",
         "phoneNumbers": "phone numbers",
-        "searching": "Searching...",
+        "searching": "Searching…",
         "shareInvite": "Share meeting invitation",
         "shareLink": "Share the meeting link to invite others",
         "shareStream": "Share the live streaming link",
@@ -128,6 +128,7 @@
         "privateNotice": "Private message to {{recipient}}",
         "sendButton": "Send",
         "smileysPanel": "Emoji panel",
+        "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
             "polls": "Polls"
@@ -144,7 +145,7 @@
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
     },
     "connectingOverlay": {
-        "joiningRoom": "Connecting you to your meeting..."
+        "joiningRoom": "Connecting you to your meeting…"
     },
     "connection": {
         "ATTACHED": "Attached",
@@ -156,9 +157,9 @@
         "DISCONNECTED": "Disconnected",
         "DISCONNECTING": "Disconnecting",
         "ERROR": "Error",
-        "FETCH_SESSION_ID": "Obtaining session-id...",
+        "FETCH_SESSION_ID": "Obtaining session-id…",
         "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
-        "GOT_SESSION_ID": "Obtaining session-id... Done",
+        "GOT_SESSION_ID": "Obtaining session-id… Done",
         "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth"
     },
     "connectionindicator": {
@@ -223,8 +224,8 @@
         "noMobileApp": "You don’t have the app?",
         "or": "OR",
         "termsAndConditions": "By continuing you agree to our <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a>",
-        "title": "Launching your meeting in {{app}}...",
-        "titleNew": "Launching your meeting ...",
+        "title": "Launching your meeting in {{app}}…",
+        "titleNew": "Launching your meeting…",
         "tryAgainButton": "Try again in desktop",
         "unsupportedBrowser": "It looks like you're using a browser we don't support."
     },
@@ -263,8 +264,9 @@
         "Share": "Share",
         "Submit": "Submit",
         "WaitForHostMsg": "The conference has not yet started because no moderators have yet arrived. If you'd like to become a moderator please log-in. Otherwise, please wait.",
+        "WaitForHostNoAuthMsg": "The conference has not yet started because no moderators have yet arrived. Please wait.",
         "WaitingForHostButton": "Wait for moderator",
-        "WaitingForHostTitle": "Waiting for a moderator...",
+        "WaitingForHostTitle": "Waiting for a moderator…",
         "Yes": "Yes",
         "accessibilityLabel": {
             "Cancel": "Cancel (leave dialog)",
@@ -292,9 +294,9 @@
         "cameraUnknownError": "Cannot use camera for an unknown reason.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "close": "Close",
-        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec...",
+        "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec…",
         "conferenceDisconnectTitle": "You have been disconnected.",
-        "conferenceReloadMsg": "We're trying to fix this. Reconnecting in {{seconds}} sec...",
+        "conferenceReloadMsg": "We're trying to fix this. Reconnecting in {{seconds}} sec…",
         "conferenceReloadTitle": "Unfortunately, something went wrong.",
         "confirm": "Confirm",
         "confirmNo": "No",
@@ -305,6 +307,8 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
+        "demoteParticipantDialog": "Are you sure you want to move this participant to visitor?",
+        "demoteParticipantTitle": "Move to visitor",
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
         "done": "Done",
@@ -316,6 +320,7 @@
         "embedMeeting": "Embed meeting",
         "enterDisplayName": "Enter your name",
         "error": "Error",
+        "errorRoomCreationRestriction": "You tried to join too quickly, please come back in a bit.",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator rights",
@@ -434,11 +439,14 @@
         "shareScreenWarningD2": "you need to stop audio sharing, start screen sharing and check the \"share audio\" option.",
         "shareScreenWarningH1": "If you want to share just your screen:",
         "shareScreenWarningTitle": "You need to stop audio sharing before sharing your screen",
-        "shareVideoLinkError": "Please provide a correct video link.",
+        "shareVideoConfirmPlay": "You’re about to open an external website. Do you want to continue?",
+        "shareVideoConfirmPlayTitle": "{{name}} has shared a video with you.",
+        "shareVideoLinkError": "Oops, this video cannot be played.",
+        "shareVideoLinkStopped": "The video from {{name}} was stopped.",
         "shareVideoTitle": "Share video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
-        "sharedVideoDialogError": "Error: Invalid URL",
+        "sharedVideoDialogError": "Error: Invalid or forbidden URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "show": "Show",
         "start": "Start ",
@@ -620,7 +628,7 @@
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
         "expandedOff": "The live streaming has stopped",
         "expandedOn": "The meeting is currently being live streamed",
-        "expandedPending": "The live streaming is being started...",
+        "expandedPending": "The live streaming is being started…",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
         "googlePrivacyPolicy": "Google Privacy Policy",
@@ -632,7 +640,7 @@
         "offBy": "{{name}} stopped the live streaming",
         "on": "Live Streaming started",
         "onBy": "{{name}} started the live streaming",
-        "pending": "Starting Live Stream...",
+        "pending": "Starting Live Stream…",
         "serviceName": "Live Streaming service",
         "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signIn": "Sign in with Google",
@@ -662,10 +670,10 @@
         "joinRejectedMessage": "Your join request was rejected by a moderator.",
         "joinRejectedTitle": "Join request rejected.",
         "joinTitle": "Join Meeting",
-        "joinWithPasswordMessage": "Trying to join with password, please wait...",
+        "joinWithPasswordMessage": "Trying to join with password, please wait…",
         "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
-        "joiningTitle": "Asking to join meeting...",
-        "joiningWithPasswordTitle": "Joining with password...",
+        "joiningTitle": "Asking to join meeting…",
+        "joiningWithPasswordTitle": "Joining with password…",
         "knockButton": "Ask to Join",
         "knockTitle": "Someone wants to join the meeting",
         "knockingParticipantList": "Knocking participant list",
@@ -731,8 +739,10 @@
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
-        "dataChannelClosed": "Video quality impaired",
-        "dataChannelClosedDescription": "The bridge channel has been disconnected and thus video quality is limited to its lowest setting.",
+        "dataChannelClosed": "Video quality may be impaired",
+        "dataChannelClosedDescription": "The bridge channel is down and thus video quality may be limited to its lowest setting.",
+        "dataChannelClosedDescriptionWithAudio": "The bridge channel is down and thus disruptions to audio and video may occur.",
+        "dataChannelClosedWithAudio": "Audio and video quality may be impaired",
         "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondary": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
         "disconnected": "disconnected",
@@ -755,7 +765,7 @@
         "linkToSalesforceDescription": "You can link the meeting summary to a Salesforce object.",
         "linkToSalesforceError": "Failed to link meeting to Salesforce",
         "linkToSalesforceKey": "Link this meeting",
-        "linkToSalesforceProgress": "Linking meeting to Salesforce...",
+        "linkToSalesforceProgress": "Linking meeting to Salesforce…",
         "linkToSalesforceSuccess": "The meeting was linked to Salesforce",
         "localRecordingStarted": "{{name}} has started a local recording.",
         "localRecordingStopped": "{{name}} has stopped a local recording.",
@@ -779,6 +789,7 @@
         "newDeviceAction": "Use",
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceCameraTitle": "New camera detected",
+        "nextToSpeak": "You are the next in line to speak",
         "noiseSuppressionDesktopAudioDescription": "Noise suppression can't be enabled while sharing desktop audio, please disable it and try again.",
         "noiseSuppressionFailedTitle": "Failed to start noise suppression",
         "noiseSuppressionStereoDescription": "Stereo audio noise suppression is not currently supported.",
@@ -813,7 +824,11 @@
         "videoUnmuteBlockedDescription": "Camera unmute and desktop sharing operation have been temporarily blocked because of system limits.",
         "videoUnmuteBlockedTitle": "Camera unmute and desktop sharing blocked!",
         "viewLobby": "View lobby",
+        "viewParticipants": "View participants",
+        "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
+        "waitingVisitors": "Visitors waiting in queue: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "The meeting is not live yet!",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
         "whiteboardLimitTitle": "Whiteboard usage"
     },
@@ -827,7 +842,10 @@
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "breakoutRooms": "Breakout rooms",
+            "goLive": "Go live",
             "invite": "Invite Someone",
+            "lowerAllHands": "Lower all hands",
+            "lowerHand": "Lower the hand",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",
             "moreParticipantOptions": "More participant options",
@@ -844,6 +862,7 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",
+            "visitorInQueue": " (waiting {{count}})",
             "visitorRequests": " (requests {{count}})",
             "visitors": "Visitors {{count}}",
             "waitingLobby": "Waiting in lobby ({{count}})"
@@ -857,10 +876,13 @@
     "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
+            "edit": "Edit",
+            "send": "Send",
             "skip": "Skip",
             "submit": "Submit"
         },
         "by": "By {{ name }}",
+        "closeButton": "Close poll",
         "create": {
             "addOption": "Add option",
             "answerPlaceholder": "Option {{index}}",
@@ -870,7 +892,11 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
+            "save": "Save",
             "send": "Send"
+        },
+        "errors": {
+            "notUniqueOption": "Options must be unique"
         },
         "notification": {
             "description": "Open polls tab to vote",
@@ -893,12 +919,14 @@
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
         "calling": "Calling",
-        "configuringDevices": "Configuring devices...",
+        "configuringDevices": "Configuring devices…",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
+            "failed": "Connection test failed!",
             "good": "Your internet connection looks good!",
             "nonOptimal": "Your internet connection is not optimal",
-            "poor": "You have a poor internet connection"
+            "poor": "You have a poor internet connection",
+            "running": "Running connection test…"
         },
         "connectionDetails": {
             "audioClipping": "We expect your audio to be clipped.",
@@ -907,6 +935,7 @@
             "goodQuality": "Awesome! Your media quality is going to be great.",
             "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
             "noVideo": "We expect that your video will be terrible.",
+            "testFailed": "The connection test encountered unexpected issues, but this might not impact your experience.",
             "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
             "veryPoorConnection": "We expect your call quality to be really terrible.",
             "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
@@ -950,17 +979,17 @@
     },
     "presenceStatus": {
         "busy": "Busy",
-        "calling": "Calling...",
+        "calling": "Calling…",
         "connected": "Connected",
-        "connecting": "Connecting...",
-        "connecting2": "Connecting*...",
+        "connecting": "Connecting…",
+        "connecting2": "Connecting*…",
         "disconnected": "Disconnected",
         "expired": "Expired",
         "ignored": "Ignored",
-        "initializingCall": "Initializing Call...",
+        "initializingCall": "Initializing Call…",
         "invited": "Invited",
         "rejected": "Rejected",
-        "ringing": "Ringing..."
+        "ringing": "Ringing…"
     },
     "profile": {
         "avatar": "avatar",
@@ -994,7 +1023,7 @@
         "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
         "expandedOn": "The meeting is currently being recorded",
-        "expandedPending": "Recording is being started...",
+        "expandedPending": "Recording is being started…",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share the recording link with the meeting participants",
         "highlight": "Highlight",
@@ -1021,7 +1050,7 @@
         "on": "Recording started",
         "onBy": "{{name}} started the recording",
         "onlyRecordSelf": "Record only my audio and video streams",
-        "pending": "Preparing to record the meeting...",
+        "pending": "Preparing to record the meeting…",
         "recordAudioAndVideo": "Record audio and video",
         "recordTranscription": "Record transcription",
         "saveLocalRecording": "Save recording file locally (Beta)",
@@ -1070,6 +1099,7 @@
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "followMe": "Everyone follows me",
+        "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
         "incomingMessage": "Incoming message",
         "language": "Language",
@@ -1228,11 +1258,12 @@
             "muteGUMPending": "Connecting your microphone",
             "noiseSuppression": "Noise suppression",
             "openChat": "Open chat",
-            "participants": "Open participants pane",
+            "participants": "Open participants panel. {{participantsCount}} participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise your hand",
+            "react": "Message reactions",
             "reactions": "Reactions",
             "reactionsMenu": "Reactions menu",
             "recording": "Toggle recording",
@@ -1362,7 +1393,7 @@
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
         "expandedLabel": "Transcribing is currently on",
-        "failedToStart": "Transcribing failed to start",
+        "failed": "Transcribing failed",
         "labelToolTip": "The meeting is being transcribed",
         "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
         "sourceLanguageHere": "here",
@@ -1419,6 +1450,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
+        "demote": "Move to visitor",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "domuteVideo": "Disable camera",
@@ -1461,7 +1493,7 @@
         "image6": "Forest ",
         "image7": "Sunrise",
         "none": "None",
-        "pleaseWait": "Please wait...",
+        "pleaseWait": "Please wait…",
         "removeBackground": "Remove background",
         "slightBlur": "Half Blur",
         "title": "Virtual backgrounds",
@@ -1471,11 +1503,22 @@
     },
     "visitors": {
         "chatIndicator": "(visitor)",
+        "joinMeeting": {
+            "description": "You're currently an observer in this conference.",
+            "raiseHand": "Raise your hand",
+            "title": "Joining meeting",
+            "wishToSpeak": "If you wish to speak, please raise your hand below and wait for the moderator's approval."
+        },
         "labelTooltip": "Number of visitors: {{count}}",
         "notification": {
-            "description": "To participate raise your hand",
+            "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
+            "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
+            "noMainParticipantsTitle": "This meeting hasn’t started yet.",
+            "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
+            "notAllowedPromotion": "A participant needs to allow your request first.",
             "title": "You are a visitor in the meeting"
-        }
+        },
+        "waitingMessage": "You'll join the meeting as soon as it is live!"
     },
     "volumeSlider": "Volume slider",
     "welcomepage": {

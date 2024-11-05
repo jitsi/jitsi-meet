@@ -11,8 +11,8 @@ import { getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/actions.web';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 interface IProps extends IButtonProps, WithTranslation {
