@@ -14,7 +14,7 @@ import AbstractLobbyScreen, {
     _mapStateToProps
 } from '../AbstractLobbyScreen';
 
-import './LobbyScreen.scss'
+import './LobbyScreen.css'
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
