@@ -71,8 +71,7 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
           <>
             <span className='lobby-title'>
-
-              {t(_knocking ? 'lobby.newTitle': 'Check-in for your meeting')}
+              {t(_knocking ? 'lobby.weTeamLobbyTitle': 'lobby.weTeamCheckInTitle')}
             </span>
             <PreMeetingScreen
                 className = 'lobby-screen'

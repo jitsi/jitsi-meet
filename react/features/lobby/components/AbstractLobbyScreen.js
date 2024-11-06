@@ -186,7 +186,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         const { screenState } = this.state;
         const passwordPrompt = screenState === SCREEN_STATES.PASSWORD;
 
-        return this.props._meetingName;
+        // return this.props._meetingName;
 
         return !passwordPrompt && this.props._knocking
             ? this.props._isLobbyChatActive ? 'lobby.lobbyChatStartedTitle' : 'lobby.joiningTitle'
@@ -462,7 +462,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantId: participantId,
         _participantName: localParticipant?.name,
         _passwordJoinFailed: passwordJoinFailed,
-        _renderPassword: !iAmSipGateway && !hidePasswordInLobby,
+        _renderPassword: false, //!iAmSipGateway && !hidePasswordInLobby,
         showCopyUrlButton
     };
 }

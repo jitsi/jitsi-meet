@@ -595,7 +595,8 @@
         "passwordJoinButton": "Beitreten",
         "reject": "Ablehnen",
         "rejectAll": "Alle ablehnen",
-        "newTitle": "Willkommen in der Lobby von We.Team Meet",
+        "weTeamLobbyTitle": "We.Team Meet Lobby ",
+        "weTeamCheckInTitle": "We.Team Meet Check-in",
         "toggleLabel": "Lobby aktivieren"
     },
     "localRecording": {

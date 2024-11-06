@@ -599,7 +599,8 @@
         "reject": "Reject",
         "rejectAll": "Reject all",
         "title": "Lobby",
-        "newTitle": "Welcome to the lobby of We.Team Meet",
+        "weTeamLobbyTitle": "We.Team Meet Lobby ",
+        "weTeamCheckInTitle": "We.Team Meet Check-in",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
