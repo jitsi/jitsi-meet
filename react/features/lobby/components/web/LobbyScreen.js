@@ -64,12 +64,13 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
+        const { _deviceStatusVisible, showCopyUrlButton, t, _knocking } = this.props;
 
         return (
           <>
             <span className='lobby-title'>
-              {t('lobby.newTitle')}
+
+              {t(_knocking ? 'lobby.newTitle': 'Check-in for your meeting')}
             </span>
             <PreMeetingScreen
                 className = 'lobby-screen'
@@ -260,6 +261,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <>
+                <span className = 'joining-message'>
+                    { this.props.t('lobby.joiningMessage') }
+                </span>
                 { _knocking || <ActionButton
                     disabled = { !this.state.displayName }
                     onClick = { this._onAskToJoin }

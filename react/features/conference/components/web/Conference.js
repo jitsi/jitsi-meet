@@ -400,7 +400,7 @@ function _mapStateToProps(state) {
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
-        _showLobby: true, //getIsLobbyVisible(state),
+        _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state)
     };
 }
