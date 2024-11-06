@@ -1,31 +1,16 @@
 import React from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../../app/types';
-import { translate } from '../../../../base/i18n/functions';
+import { ColorPalette } from '../../../../base/styles/components/styles/ColorPalette';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,
     getDeviceStatusType
 } from '../../../functions';
 
-export interface IProps extends WithTranslation {
-
-    /**
-     * The text to be displayed in relation to the status of the audio/video devices.
-     */
-    deviceStatusText?: string;
-
-    /**
-     * The type of status for current devices, controlling the background color of the text.
-     * Can be `ok` or `warning`.
-     */
-    deviceStatusType?: string;
-}
-
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceStatusType = 'pending' }) => {
     return {
         deviceStatus: {
             display: 'flex',
@@ -57,7 +42,7 @@ const useStyles = makeStyles()(theme => {
             width: '16px',
             height: '16px',
             borderRadius: '100%',
-            backgroundColor: theme.palette.success01
+            backgroundColor: deviceStatusType === 'ok' ? theme.palette.success01 : ColorPalette.darkGrey
         }
     };
 });
@@ -68,8 +53,11 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {ReactElement}
  */
-function DeviceStatus({ deviceStatusType, deviceStatusText, t }: IProps) {
-    const { classes, cx } = useStyles();
+function DeviceStatus() {
+    const { t } = useTranslation();
+    const deviceStatusType = useSelector(getDeviceStatusType);
+    const deviceStatusText = useSelector(getDeviceStatusText);
+    const { classes, cx } = useStyles({ deviceStatusType });
     const hasError = deviceStatusType === 'warning';
     const containerClassName = cx(classes.deviceStatus, { 'device-status-error': hasError });
 
@@ -86,17 +74,4 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, t }: IProps) {
     );
 }
 
-/**
- * Maps (parts of) the redux state to the React {@code Component} props.
- *
- * @param {Object} state - The redux state.
- * @returns {{ deviceStatusText: string, deviceStatusText: string }}
- */
-function mapStateToProps(state: IReduxState) {
-    return {
-        deviceStatusText: getDeviceStatusText(state),
-        deviceStatusType: getDeviceStatusType(state)
-    };
-}
-
-export default translate(connect(mapStateToProps)(DeviceStatus));
+export default DeviceStatus;
