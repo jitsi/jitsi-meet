@@ -14,6 +14,8 @@ import AbstractLobbyScreen, {
     _mapStateToProps
 } from '../AbstractLobbyScreen';
 
+import './LobbyScreen.scss'
+
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
  */
@@ -121,6 +123,9 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
         return (
             <div className = 'lobby-screen-content'>
+              <div className='lobby-we-team-test'>
+                test
+              </div>
                 {_isLobbyChatActive
                     ? this._renderLobbyChat()
                     : (
