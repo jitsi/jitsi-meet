@@ -16,7 +16,7 @@ import {
 const DEFAULT_STATE = {
     country: '',
     deviceStatusText: 'prejoin.configuringDevices',
-    deviceStatusType: 'ok',
+    deviceStatusType: 'pending',
     dialOutCountry: {
         name: 'United States',
         dialCode: '1',
