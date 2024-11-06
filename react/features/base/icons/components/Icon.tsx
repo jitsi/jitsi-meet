@@ -125,7 +125,7 @@ export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;
 export default function Icon(props: IProps) {
     const {
         alt,
-        className,
+        className = '',
         color,
         id,
         containerId,
@@ -202,7 +202,3 @@ export default function Icon(props: IProps) {
         </Container>
     );
 }
-
-Icon.defaultProps = {
-    className: ''
-};
