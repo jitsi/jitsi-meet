@@ -580,7 +580,7 @@
         "joinRejectedTitle": "Join request rejected.",
         "joinTitle": "Join Meeting",
         "joinWithPasswordMessage": "Trying to join with password, please wait...",
-        "joiningMessage": "You will enter the meeting room as soon as the moderator is present and starts the meeting. Please be patient for a moment until the meeting starts.",
+        "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
         "joiningTitle": "Asking to join meeting...",
         "joiningWithPasswordTitle": "Joining with password...",
         "knockButton": "Ask to Join",
@@ -601,6 +601,8 @@
         "title": "Lobby",
         "weTeamLobbyTitle": "We.Team Meet Lobby ",
         "weTeamCheckInTitle": "We.Team Meet Check-in",
+        "weTeamCheckInMessage": "Schritt 1: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br />Schritt 2: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br />Schritt 3: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
+        "weTeamLobbyMessage": " Du bist nun eingecheckt und gelangst automatisch in das Meeting, sobald der Moderator anwesend ist und das Meeting startet.<br /><br />Bitte gedulde dich und bleibe auf dieser Seite.",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
