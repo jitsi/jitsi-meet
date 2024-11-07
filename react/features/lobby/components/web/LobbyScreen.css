@@ -52,7 +52,6 @@
   /* flex: 1 1 0; */
   margin: 0 20px;
   display: flex !important;
-  justify-content: flex-end !important;
   align-items: flex-start !important;
 }
 
@@ -71,8 +70,19 @@
 .lobby-screen .content-controls .new-toolbox {
   background: #000000a6;
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
+
+@media (min-width: 1001px) {
+  .lobby-screen .content-controls .new-toolbox {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    width: 400px;
+    margin: 0 auto 20px;
+  }
+}
+
  
 .lobby-screen .content {
   background: #ffffff8a !important;
@@ -93,8 +103,6 @@
   background: #000000;
   width: 450px;
   height: 300px;
-  align-items: center !important;
-  justify-content: center !important;
 }
 @media (max-width: 1000px) {
   .lobby-screen #preview {
