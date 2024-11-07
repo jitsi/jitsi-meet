@@ -583,7 +583,7 @@
         "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
         "joiningTitle": "Asking to join meeting...",
         "joiningWithPasswordTitle": "Joining with password...",
-        "knockButton": "Ask to Join",
+        "knockButton": "Next",
         "knockTitle": "Someone wants to join the meeting",
         "knockingParticipantList": "Knocking participant list",
         "lobbyChatStartedNotification": "{{moderator}} started a lobby chat with {{attendee}}",
@@ -601,7 +601,7 @@
         "title": "Lobby",
         "weTeamLobbyTitle": "We.Team Meet Lobby ",
         "weTeamCheckInTitle": "We.Team Meet Check-in",
-        "weTeamCheckInMessage": "Schritt 1: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br />Schritt 2: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br />Schritt 3: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
+        "weTeamCheckInMessage": "<strong>Schritt 1</strong>: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br /><strong>Schritt 2</strong>: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br /><strong>Schritt 3</strong>: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
         "weTeamLobbyMessage": " Du bist nun eingecheckt und gelangst automatisch in das Meeting, sobald der Moderator anwesend ist und das Meeting startet.<br /><br />Bitte gedulde dich und bleibe auf dieser Seite.",
         "toggleLabel": "Enable lobby"
     },

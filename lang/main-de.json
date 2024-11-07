@@ -580,7 +580,7 @@
         "joiningMessage": "Du gelangst in den Meetingraum, sobald der Moderator anwesend ist und er das Meeting startet. Bitte gedulde dich einen Moment, bis das Meeting startet.",
         "joiningTitle": "Beitritt anfragen …",
         "joiningWithPasswordTitle": "Mit Passwort beitreten …",
-        "knockButton": "Beitritt anfragen",
+        "knockButton": "Weiter",
         "knockTitle": "Jemand möchte der Konferenz beitreten",
         "knockingParticipantList": "Liste anklopfender Personen",
         "lobbyChatStartedNotification": "{{moderator}} hat einen Lobby-Chat mit {{attendee}} gestartet",

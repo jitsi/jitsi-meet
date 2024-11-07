@@ -1,24 +1,20 @@
 // @flow
 
-import React from "react";
+import React from 'react';
 
-import { translate, translateToHTML } from "../../../base/i18n";
-import { Icon, IconClose } from "../../../base/icons";
-import {
-    ActionButton,
-    InputField,
-    PreMeetingScreen,
-} from "../../../base/premeeting";
-import { LoadingIndicator } from "../../../base/react";
-import { connect } from "../../../base/redux";
-import ChatInput from "../../../chat/components/web/ChatInput";
-import MessageContainer from "../../../chat/components/web/MessageContainer";
+import { translate, translateToHTML } from '../../../base/i18n';
+import { Icon, IconClose } from '../../../base/icons';
+import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
+import { LoadingIndicator } from '../../../base/react';
+import { connect } from '../../../base/redux';
+import ChatInput from '../../../chat/components/web/ChatInput';
+import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
     type Props,
-    _mapStateToProps,
-} from "../AbstractLobbyScreen";
+    _mapStateToProps
+} from '../AbstractLobbyScreen';
 
-import "./LobbyScreen.css";
+import './LobbyScreen.css'
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
@@ -31,11 +27,11 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
     _messageContainerRef: Object;
 
     /**
-     * Initializes a new {@code LobbyScreen} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
+       * Initializes a new {@code LobbyScreen} instance.
+       *
+       * @param {Object} props - The read-only properties with which the new
+       * instance is to be initialized.
+       */
     constructor(props: Props) {
         super(props);
 
@@ -43,26 +39,23 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
     }
 
     /**
-     * Implements {@code Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
+       * Implements {@code Component#componentDidMount}.
+       *
+       * @inheritdoc
+       */
     componentDidMount() {
         this._scrollMessageContainerToBottom(true);
     }
 
     /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
+       * Implements {@code Component#componentDidUpdate}.
+       *
+       * @inheritdoc
+       */
     componentDidUpdate(prevProps) {
         if (this.props._lobbyChatMessages !== prevProps._lobbyChatMessages) {
             this._scrollMessageContainerToBottom(true);
-        } else if (
-            this.props._isLobbyChatActive &&
-            !prevProps._isLobbyChatActive
-        ) {
+        } else if (this.props._isLobbyChatActive && !prevProps._isLobbyChatActive) {
             this._scrollMessageContainerToBottom(false);
         }
     }
@@ -73,40 +66,29 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        const { _deviceStatusVisible, showCopyUrlButton, t, _knocking } =
-            this.props;
+        const { _deviceStatusVisible, showCopyUrlButton, t, _knocking } = this.props;
 
         return (
-            <>
-                <span className="lobby-title">
-                    {t(
-                        _knocking
-                            ? "lobby.weTeamLobbyTitle"
-                            : "lobby.weTeamCheckInTitle"
-                    )}
-                </span>
-                <PreMeetingScreen
-                    className="lobby-screen"
-                    showCopyUrlButton={showCopyUrlButton}
-                    showDeviceStatus={_deviceStatusVisible}
-                    title={t(this._getScreenTitleKey(), {
-                        moderator: this.props._lobbyMessageRecipient,
-                    })}
-                >
-                    {this._renderWeTeamMessage()}
-                    {this._renderContent()}
-                </PreMeetingScreen>
-            </>
+          <>
+            <PreMeetingScreen
+                className = 'lobby-screen'
+                showCopyUrlButton = { showCopyUrlButton }
+                showDeviceStatus = { _deviceStatusVisible }
+                title = { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }>
+                {this._renderWeTeamTitle()}
+                { this._renderContent() }
+            </PreMeetingScreen>
+          </>
         );
     }
 
-    _renderWeTeamMessage() {
-        const { t } = this.props;
-        return (
-            <span className="joining-message">
-                {translateToHTML(t, "lobby.weTeamLobbyMessage")}
-            </span>
-        );
+    _renderWeTeamTitle() {
+      const { t, _knocking } = this.props;
+      return (
+        <span className='we-team-lobby-title'>
+          {t(_knocking ? 'lobby.weTeamLobbyTitle': 'lobby.weTeamCheckInTitle')}
+        </span>
+      )
     }
 
     _getScreenTitleKey: () => string;
@@ -115,11 +97,11 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
 
     _onCancel: () => boolean;
 
-    _onChangeDisplayName: (Object) => void;
+    _onChangeDisplayName: Object => void;
 
-    _onChangeEmail: (Object) => void;
+    _onChangeEmail: Object => void;
 
-    _onChangePassword: (Object) => void;
+    _onChangePassword: Object => void;
 
     _onEnableEdit: () => void;
 
@@ -146,15 +128,21 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { _isLobbyChatActive, t } = this.props;
 
         return (
-            <div className="lobby-screen-content">
-                {_isLobbyChatActive ? (
-                    this._renderLobbyChat()
-                ) : (
-                    <span className="joining-message">
-                        {translateToHTML(t, "lobby.weTeamCheckInMessage")}
-                    </span>
-                )}
-                {this._renderStandardButtons()}
+            <div className = 'lobby-screen-content'>
+                {_isLobbyChatActive
+                    ? this._renderLobbyChat()
+                    : (
+                        <span className = 'we-team-lobby-message'>
+                          { 
+                            translateToHTML(
+                              t,
+                              'lobby.weTeamLobbyMessage'
+                            )
+                          }
+                        </span>
+                    )
+                }
+                { this._renderStandardButtons() }
             </div>
         );
     }
@@ -169,27 +157,21 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { isChatOpen } = this.state;
 
         return (
-            <div
-                className={`lobby-chat-container ${isChatOpen ? "hidden" : ""}`}
-            >
-                <div className="lobby-chat-header">
-                    <h1 className="title">
-                        {t(this._getScreenTitleKey(), {
-                            moderator: this.props._lobbyMessageRecipient,
-                        })}
+            <div className = { `lobby-chat-container ${isChatOpen ? 'hidden' : ''}` }>
+                <div className = 'lobby-chat-header'>
+                    <h1 className = 'title'>
+                        { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }
                     </h1>
                     <Icon
-                        ariaLabel={t("toolbar.closeChat")}
-                        onClick={this._onToggleChat}
-                        role="button"
-                        src={IconClose}
-                    />
+                        ariaLabel = { t('toolbar.closeChat') }
+                        onClick = { this._onToggleChat }
+                        role = 'button'
+                        src = { IconClose } />
                 </div>
                 <MessageContainer
-                    messages={_lobbyChatMessages}
-                    ref={this._messageContainerRef}
-                />
-                <ChatInput onSend={this._onSendMessage} />
+                    messages = { _lobbyChatMessages }
+                    ref = { this._messageContainerRef } />
+                <ChatInput onSend = { this._onSendMessage } />
             </div>
         );
     }
@@ -216,12 +198,21 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { t } = this.props;
 
         return (
+          <>          
+            <span className = 'we-team-checkin-message'>
+                { 
+                  translateToHTML(
+                    t,
+                    'lobby.weTeamCheckInMessage'
+                  )
+                }
+            </span>
             <InputField
-                onChange={this._onChangeDisplayName}
-                placeHolder={t("lobby.nameField")}
-                testId="lobby.nameField"
-                value={displayName}
-            />
+                onChange = { this._onChangeDisplayName }
+                placeHolder = { t('lobby.nameField') }
+                testId = 'lobby.nameField'
+                value = { displayName } />
+          </>
         );
     }
 
@@ -236,22 +227,16 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <>
                 <InputField
-                    className={_passwordJoinFailed ? "error" : ""}
-                    onChange={this._onChangePassword}
-                    placeHolder={t("lobby.passwordField")}
-                    testId="lobby.password"
-                    type="password"
-                    value={this.state.password}
-                />
+                    className = { _passwordJoinFailed ? 'error' : '' }
+                    onChange = { this._onChangePassword }
+                    placeHolder = { t('lobby.passwordField') }
+                    testId = 'lobby.password'
+                    type = 'password'
+                    value = { this.state.password } />
 
-                {_passwordJoinFailed && (
-                    <div
-                        className="prejoin-error"
-                        data-testid="lobby.errorMessage"
-                    >
-                        {t("lobby.invalidPassword")}
-                    </div>
-                )}
+                {_passwordJoinFailed && <div
+                    className = 'prejoin-error'
+                    data-testid = 'lobby.errorMessage'>{t('lobby.invalidPassword')}</div>}
             </>
         );
     }
@@ -267,18 +252,16 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         return (
             <>
                 <ActionButton
-                    onClick={this._onJoinWithPassword}
-                    testId="lobby.passwordJoinButton"
-                    type="primary"
-                >
-                    {t("prejoin.joinMeeting")}
+                    onClick = { this._onJoinWithPassword }
+                    testId = 'lobby.passwordJoinButton'
+                    type = 'primary'>
+                    { t('prejoin.joinMeeting') }
                 </ActionButton>
                 <ActionButton
-                    onClick={this._onSwitchToKnockMode}
-                    testId="lobby.backToKnockModeButton"
-                    type="secondary"
-                >
-                    {t("lobby.backToKnockModeButton")}
+                    onClick = { this._onSwitchToKnockMode }
+                    testId = 'lobby.backToKnockModeButton'
+                    type = 'secondary'>
+                    { t('lobby.backToKnockModeButton') }
                 </ActionButton>
             </>
         );
@@ -290,40 +273,30 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _isLobbyChatActive, _renderPassword, t } =
-            this.props;
+        const { _knocking, _isLobbyChatActive, _renderPassword, t } = this.props;
 
         return (
             <>
-                {_knocking || (
-                    <ActionButton
-                        disabled={!this.state.displayName}
-                        onClick={this._onAskToJoin}
-                        testId="lobby.knockButton"
-                        type="primary"
-                    >
-                        {t("lobby.knockButton")}
-                    </ActionButton>
-                )}
-                {_knocking && _isLobbyChatActive && (
-                    <ActionButton
-                        className="open-chat-button"
-                        onClick={this._onToggleChat}
-                        testId="toolbar.openChat"
-                        type="primary"
-                    >
-                        {t("toolbar.openChat")}
-                    </ActionButton>
-                )}
-                {_renderPassword && (
-                    <ActionButton
-                        onClick={this._onSwitchToPasswordMode}
-                        testId="lobby.enterPasswordButton"
-                        type="secondary"
-                    >
-                        {t("lobby.enterPasswordButton")}
-                    </ActionButton>
-                )}
+                { _knocking || <ActionButton
+                    disabled = { !this.state.displayName }
+                    onClick = { this._onAskToJoin }
+                    testId = 'lobby.knockButton'
+                    type = 'primary'>
+                    { t('lobby.knockButton') }
+                </ActionButton> }
+                { (_knocking && _isLobbyChatActive) && <ActionButton
+                    className = 'open-chat-button'
+                    onClick = { this._onToggleChat }
+                    testId = 'toolbar.openChat'
+                    type = 'primary' >
+                    { t('toolbar.openChat') }
+                </ActionButton> }
+                {_renderPassword && <ActionButton
+                    onClick = { this._onSwitchToPasswordMode }
+                    testId = 'lobby.enterPasswordButton'
+                    type = 'secondary'>
+                    { t('lobby.enterPasswordButton') }
+                </ActionButton> }
             </>
         );
     }
