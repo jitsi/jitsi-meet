@@ -87,8 +87,7 @@
 .lobby-screen .content {
   background: #ffffff8a !important;
   height: initial !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding: 0 20px!important;
   width: 450px;
   margin: 0;
   border-radius: 10px;
@@ -98,6 +97,7 @@
   .lobby-screen .content {
     width: 100%;
     margin: 0 auto;
+    border-radius: 0;
   }
 }
 .lobby-screen #preview {
