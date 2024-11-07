@@ -73,7 +73,8 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
             <PreMeetingScreen
                 className = 'lobby-screen'
                 showCopyUrlButton = { showCopyUrlButton }
-                showDeviceStatus = { _deviceStatusVisible }
+                showDeviceStatus = { false }
+                showDeviceStatusInVideo= { _deviceStatusVisible }
                 title = { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }>
                 {this._renderWeTeamTitle()}
                 { this._renderContent() }

@@ -8,6 +8,7 @@ import { Video } from '../../../media';
 import { getLocalParticipant } from '../../../participants';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
+import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 
 declare var APP: Object;
 
@@ -46,7 +47,7 @@ export type Props = {
  * @returns {ReactElement}
  */
 function Preview(props: Props) {
-    const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
+    const { _participantId, flipVideo, name, videoMuted, videoTrack, showDeviceStatusInVideo } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
     useEffect(() => {
@@ -63,10 +64,17 @@ function Preview(props: Props) {
         <div id = 'preview'>
             {!videoMuted && videoTrack
                 ? (
+                  <>
                     <Video
                         className = { className }
                         id = 'prejoinVideo'
                         videoTrack = {{ jitsiTrack: videoTrack }} />
+                      { showDeviceStatusInVideo && 
+                        <div className='preview-device-status'>
+                          <DeviceStatus /> 
+                        </div>
+                      }
+                  </>
                 )
                 : (
                     <Avatar

@@ -103,6 +103,9 @@
   background: #000000;
   width: 450px;
   height: 300px;
+  position: relative;
+  /* this will vertical center the avatar */
+  align-items: center !important;
 }
 @media (max-width: 1000px) {
   .lobby-screen #preview {
@@ -116,4 +119,11 @@
     width: 450px;
     height: 300px;
   }
+}
+
+.lobby-screen .preview-device-status {
+  position: absolute;
+  bottom: 10px;
+  background: #c9c3bdc7;
+  border-radius: 5px;
 }
