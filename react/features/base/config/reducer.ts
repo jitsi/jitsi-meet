@@ -341,6 +341,9 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
     }
 
+    // TODO: REMOVE BEFORE MERGE
+    newValue.prejoinConfig.enabled = false;
+
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {

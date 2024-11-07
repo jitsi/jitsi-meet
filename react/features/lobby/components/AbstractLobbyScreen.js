@@ -186,7 +186,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         const { screenState } = this.state;
         const passwordPrompt = screenState === SCREEN_STATES.PASSWORD;
 
-        // return this.props._meetingName;
+        return "";
 
         return !passwordPrompt && this.props._knocking
             ? this.props._isLobbyChatActive ? 'lobby.lobbyChatStartedTitle' : 'lobby.joiningTitle'
