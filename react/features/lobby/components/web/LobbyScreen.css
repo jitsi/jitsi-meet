@@ -91,6 +91,7 @@
   padding-right: 20px !important;
   width: 450px;
   margin: 0;
+  border-radius: 10px;
 }
 
 @media (max-width: 1000px) {
@@ -106,6 +107,7 @@
   position: relative;
   /* this will vertical center the avatar */
   align-items: center !important;
+  border-radius: 10px;
 }
 @media (max-width: 1000px) {
   .lobby-screen #preview {
@@ -118,6 +120,7 @@
   .lobby-screen #preview video {
     width: 450px;
     height: 300px;
+    border-radius: 10px;
   }
 }
 
