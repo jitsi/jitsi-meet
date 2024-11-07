@@ -92,7 +92,7 @@
 .lobby-screen #preview {
   background: #000000;
   width: 450px;
-  height: 360px;
+  height: 300px;
   align-items: center !important;
   justify-content: center !important;
 }
@@ -106,6 +106,6 @@
 @media (min-width: 1001px) {
   .lobby-screen #preview video {
     width: 450px;
-    height: 360px;
+    height: 300px;
   }
 }
