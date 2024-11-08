@@ -35,7 +35,7 @@
 .we-team-lobby-message,
 .we-team-checkin-message {
   color: #000;
-  margin-bottom: 16px;
+  margin-bottom: 16px;  
   font-size: 1.2em;
 }
 
@@ -56,6 +56,7 @@
 @media (max-width: 1000px) {
   .lobby-screen {
       flex-direction: column-reverse;
+      justify-content: initial;
   }
 }
 
@@ -74,10 +75,19 @@
   }
 }
  
+.lobby-screen .content-controls { 
+  margin-top: 16px;
+}
+
 .lobby-screen .content-controls span[role=heading],
 .lobby-screen .content-controls .title { 
   color: #000 !important;
 }
+
+.lobby-screen .content-controls .title { 
+  display: none;
+}
+
 .lobby-screen .content-controls .new-toolbox {
   background: #000000a6;
   border-radius: 10px;
