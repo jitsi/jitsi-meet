@@ -601,8 +601,8 @@
         "title": "Lobby",
         "weTeamLobbyTitle": "We.Team Meet Lobby ",
         "weTeamCheckInTitle": "We.Team Meet Check-in",
-        "weTeamCheckInMessage": "<strong>Schritt 1</strong>: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br /><strong>Schritt 2</strong>: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br /><strong>Schritt 3</strong>: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
-        "weTeamLobbyMessage": " Du bist nun eingecheckt und gelangst automatisch in das Meeting, sobald der Moderator anwesend ist und das Meeting startet.<br /><br />Bitte gedulde dich und bleibe auf dieser Seite.",
+        "weTeamCheckInMessage": "<strong>Step 1:</strong> Please enter the name with which you would like to take part in the meeting.<br /><br /><strong>Step 2:</strong> Make the settings for your microphone and camera.<br /><br /><strong>Step 3:</strong> Click on “Next” to enter the We.Team meeting lobby.",
+        "weTeamLobbyMessage": " You are now checked in and will automatically join the meeting as soon as the moderator is present and the meeting starts.<br /><br />Please be patient and stay on this page.",
         "toggleLabel": "Enable lobby"
     },
     "localRecording": {
