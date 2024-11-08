@@ -239,7 +239,8 @@ class Video extends Component<IProps> {
                     // Prevent uncaught "DOMException: The play() request was interrupted by a new load request"
                     // when video playback takes long to start and it starts after the component was unmounted.
                     if (this._mounted) {
-                        throw error;
+                        logger.error(`Error while trying to play video with id ${
+                            this.props.id} and video track ${this.props.videoTrack?.jitsiTrack}: ${error}`);
                     }
                 });
             }
@@ -276,6 +277,9 @@ class Video extends Component<IProps> {
             this._attachTrack(nextProps.videoTrack).catch((_error: Error) => {
                 // Ignore the error. We are already logging it.
             });
+
+            // NOTE: We may want to consider calling .play() explicitly in this case if any issues araise in future.
+            // For now it seems we are good with the autoplay attribute of the video element.
         }
 
         if (this.props.style !== nextProps.style || this.props.className !== nextProps.className) {

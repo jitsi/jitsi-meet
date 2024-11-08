@@ -244,6 +244,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
         return (
             <Video
                 className = { classes.previewVideo }
+                id = 'virtual_background_preview'
                 playsinline = { true }
                 videoTrack = {{ jitsiTrack: data }} />
         );
