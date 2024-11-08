@@ -1,23 +1,34 @@
-.we-team-lobby-title {
-  background: #ffffff8a !important;
+.we-team-lobby-title-container {  
   position: fixed;
-  color: #000;
   left: 0;
   right: 0;
-  top: 0px;
+  top: 20px;
   height: 60px;
-  text-align: center;
-  font-size: 3rem;
-  line-height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.we-team-lobby-title {
+  padding: 10px;
+  background: #ffffff54;
+  border-radius: 10px;
+  color: #000;
+  text-align: center;
+  font-size: 3rem;
+  line-height: 3rem;
+}
 
 @media (max-width: 1000px) {
+  .we-team-lobby-title-container {
+    top: 0;
+    background: #ffffff54;
+  }
   .we-team-lobby-title {
+    background: initial;
+    padding: 5px;
+    border-radius: 0;
     font-size: 2rem;
-    line-height: 3rem;
+    line-height: 2rem;
   }
 }
 

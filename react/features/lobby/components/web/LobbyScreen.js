@@ -86,8 +86,10 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
     _renderWeTeamTitle() {
       const { t, _knocking } = this.props;
       return (
-        <span className='we-team-lobby-title'>
-          {t(_knocking ? 'lobby.weTeamLobbyTitle': 'lobby.weTeamCheckInTitle')}
+        <span className='we-team-lobby-title-container'>
+          <span className='we-team-lobby-title'>
+            {t(_knocking ? 'lobby.weTeamLobbyTitle': 'lobby.weTeamCheckInTitle')}
+          </span>
         </span>
       )
     }
