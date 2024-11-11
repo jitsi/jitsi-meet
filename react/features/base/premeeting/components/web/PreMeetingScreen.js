@@ -138,6 +138,7 @@ class PreMeetingScreen extends PureComponent<Props> {
             classes,
             className,
             showDeviceStatus,
+            showDeviceStatusInVideo,
             skipPrejoinButton,
             title,
             videoMuted,
@@ -175,7 +176,8 @@ class PreMeetingScreen extends PureComponent<Props> {
                 </div>
                 <Preview
                     videoMuted = { videoMuted }
-                    videoTrack = { videoTrack } />
+                    videoTrack = { videoTrack }
+                    showDeviceStatusInVideo = { showDeviceStatusInVideo } />
             </div>
         );
     }

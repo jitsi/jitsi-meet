@@ -580,7 +580,7 @@
         "joiningMessage": "Sie treten der Konferenz bei, sobald jemand Ihre Anfrage annimmt.",
         "joiningTitle": "Beitritt anfragen …",
         "joiningWithPasswordTitle": "Mit Passwort beitreten …",
-        "knockButton": "Beitritt anfragen",
+        "knockButton": "Weiter",
         "knockTitle": "Jemand möchte der Konferenz beitreten",
         "knockingParticipantList": "Liste anklopfender Personen",
         "lobbyChatStartedNotification": "{{moderator}} hat einen Lobby-Chat mit {{attendee}} gestartet",
@@ -595,6 +595,10 @@
         "passwordJoinButton": "Beitreten",
         "reject": "Ablehnen",
         "rejectAll": "Alle ablehnen",
+        "weTeamLobbyTitle": "We.Team Meet Lobby ",
+        "weTeamCheckInTitle": "We.Team Meet Check-in",
+        "weTeamCheckInMessage": "<strong>Schritt 1</strong>: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br /><strong>Schritt 2</strong>: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br /><strong>Schritt 3</strong>: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
+        "weTeamLobbyMessage": " Du bist nun eingecheckt und gelangst automatisch in das Meeting, sobald der Moderator anwesend ist und das Meeting startet.<br /><br />Bitte gedulde dich und bleibe auf dieser Seite.",
         "toggleLabel": "Lobby aktivieren"
     },
     "localRecording": {

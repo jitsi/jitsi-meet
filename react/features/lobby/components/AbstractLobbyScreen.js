@@ -460,7 +460,8 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantId: participantId,
         _participantName: localParticipant?.name,
         _passwordJoinFailed: passwordJoinFailed,
-        _renderPassword: !iAmSipGateway && !hidePasswordInLobby,
+        // TODO: REMOVE BEFORE MERGE
+        _renderPassword: false, //!iAmSipGateway && !hidePasswordInLobby,
         showCopyUrlButton
     };
 }

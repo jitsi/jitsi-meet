@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
+import { translate, translateToHTML } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
@@ -13,6 +13,8 @@ import AbstractLobbyScreen, {
     type Props,
     _mapStateToProps
 } from '../AbstractLobbyScreen';
+
+import './LobbyScreen.css'
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
@@ -67,14 +69,29 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
 
         return (
+          <>
             <PreMeetingScreen
                 className = 'lobby-screen'
                 showCopyUrlButton = { showCopyUrlButton }
-                showDeviceStatus = { _deviceStatusVisible }
+                showDeviceStatus = { false }
+                showDeviceStatusInVideo= { _deviceStatusVisible }
                 title = { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }>
+                {this._renderWeTeamTitle()}
                 { this._renderContent() }
             </PreMeetingScreen>
+          </>
         );
+    }
+
+    _renderWeTeamTitle() {
+      const { t, _knocking } = this.props;
+      return (
+        <span className='we-team-lobby-title-container'>
+          <span className='we-team-lobby-title'>
+            {t(_knocking ? 'lobby.weTeamLobbyTitle': 'lobby.weTeamCheckInTitle')}
+          </span>
+        </span>
+      )
     }
 
     _getScreenTitleKey: () => string;
@@ -111,22 +128,23 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     _renderJoining() {
-        const { _isLobbyChatActive } = this.props;
+        const { _isLobbyChatActive, t } = this.props;
 
         return (
             <div className = 'lobby-screen-content'>
                 {_isLobbyChatActive
                     ? this._renderLobbyChat()
                     : (
-                        <>
-                            <div className = 'spinner'>
-                                <LoadingIndicator size = 'large' />
-                            </div>
-                            <span className = 'joining-message'>
-                                { this.props.t('lobby.joiningMessage') }
-                            </span>
-                        </>
-                    )}
+                        <span className = 'we-team-lobby-message'>
+                          { 
+                            translateToHTML(
+                              t,
+                              'lobby.weTeamLobbyMessage'
+                            )
+                          }
+                        </span>
+                    )
+                }
                 { this._renderStandardButtons() }
             </div>
         );
@@ -183,11 +201,21 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
         const { t } = this.props;
 
         return (
+          <>          
+            <span className = 'we-team-checkin-message'>
+                { 
+                  translateToHTML(
+                    t,
+                    'lobby.weTeamCheckInMessage'
+                  )
+                }
+            </span>
             <InputField
                 onChange = { this._onChangeDisplayName }
                 placeHolder = { t('lobby.nameField') }
                 testId = 'lobby.nameField'
                 value = { displayName } />
+          </>
         );
     }
 
