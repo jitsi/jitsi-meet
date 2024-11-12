@@ -182,7 +182,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
-                    hideSelfView: tabState?.hideSelfView,
                     currentFramerate: tabState?.currentFramerate,
                     localFlipX: tabState.localFlipX,
                     selectedVideoInputId: tabState.selectedVideoInputId
@@ -314,6 +313,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 return {
                     ...newProps,
                     currentLanguage: tabState?.currentLanguage,
+                    hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
