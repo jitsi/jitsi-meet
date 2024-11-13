@@ -145,6 +145,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             isChatOpen: true,
             password: '',
             passwordJoinFailed: false,
+            lobbyMusicPlaying: true,
             screenState: props._participantName ? SCREEN_STATES.VIEW : SCREEN_STATES.EDIT
         };
 

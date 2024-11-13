@@ -597,6 +597,8 @@
         "rejectAll": "Alle ablehnen",
         "weTeamLobbyTitle": "We.Team Meet Lobby ",
         "weTeamCheckInTitle": "We.Team Meet Check-in",
+        "stopMusic": "Lobby-Musik stoppen",
+        "playMusic": "Lobby-Musik abspielen",
         "weTeamCheckInMessage": "<strong>Schritt 1</strong>: Bitte gib den Namen ein, mit dem du am Meeting teilnehmen möchtest.<br /><br /><strong>Schritt 2</strong>: Nimm die Einstellungen für dein Mikrofon und deine Kamera vor.<br /><br /><strong>Schritt 3</strong>: Klicke auf „Weiter“, um in die We.Team Meeting Lobby zu gelangen.",
         "weTeamLobbyMessage": " Du bist nun eingecheckt und gelangst automatisch in das Meeting, sobald der Moderator anwesend ist und das Meeting startet.<br /><br />Bitte gedulde dich und bleibe auf dieser Seite.",
         "toggleLabel": "Lobby aktivieren"

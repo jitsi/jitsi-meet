@@ -28,7 +28,7 @@
     background: initial;
     padding: 5px;
     border-radius: 0;
-    font-size: 2rem;
+    font-size: 1.3rem;
     line-height: 2rem;
   }
 }
@@ -151,4 +151,13 @@
   bottom: 10px;
   background: #c9c3bdc7;
   border-radius: 5px;
+}
+
+.we-team-lobby-music-control {
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  background: #000000a6;
+  border-radius: 5px;
+  padding: 2px;
 }

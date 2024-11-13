@@ -28,6 +28,10 @@ make && make source-package
 
 Visit https://github.com/otixo-inc/jitsi-meet/releases and create a new release and include jitsi-meet.tar.bz2 as a release asset.
 
+## Create the infrastructure
+
+https://github.com/otixo-inc/Infrastructure/blob/master/jitsi-aws/README.md
+
 ## Synching our fork with the Jitsi origin
 
 If we want to include new Jitsi features in our fork, we need to rebase the jitsi origin branch on to our `master` branch.
