@@ -41,6 +41,13 @@ export const SURPRISE_SOUND_FILES = new Array(3).fill('reactions-surprise.mp3');
 export const SILENCE_SOUND_FILES = new Array(3).fill('reactions-crickets.mp3');
 
 /**
+ * The name of the bundled audio file which will be played for the heart reaction sound.
+ *
+ * @type {Array<string>}
+ */
+export const HEART_SOUND_FILES = new Array(3).fill('reactions-love.mp3');
+
+/**
  * The name of the bundled audio file which will be played for the raise hand sound.
  *
  * @type {string}

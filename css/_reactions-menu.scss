@@ -1,14 +1,14 @@
 @use 'sass:math';
 
 .reactions-menu {
-	width: 280px;
+	width: 330px;
 	background: #242528;
 	box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25);
 	border-radius: 6px;
 	padding: 16px;
 
 	&.with-gif {
-		width: 328px;
+		width: 380px;
 
 		.reactions-row .toolbox-button:last-of-type {
 			top: 3px;
