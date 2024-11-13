@@ -38,6 +38,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { parseURIString } from '../util/uri';
 
 import {
     CONFERENCE_FAILED,
@@ -421,13 +422,27 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
     }
 
     if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
+        let notificationAction: Function = showNotification;
         const notificationProps = {
             customActionNameKey: [ 'dialog.rejoinNow' ],
             customActionHandler: [ () => dispatch(reloadNow()) ],
             descriptionKey: 'notify.connectionFailed'
         } as INotificationProps;
 
-        dispatch(showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        const { locationURL = { href: '' } as URL } = getState()['features/base/connection'];
+        const { tenant } = parseURIString(locationURL.href) || {};
+
+        if (tenant.startsWith('-') || tenant.endsWith('-')) {
+            notificationProps.descriptionKey = 'notify.invalidTenantHyphenDescription';
+            notificationProps.titleKey = 'notify.invalidTenant';
+            notificationAction = showErrorNotification;
+        } else if (tenant.length > 63) {
+            notificationProps.descriptionKey = 'notify.invalidTenantLengthDescription';
+            notificationProps.titleKey = 'notify.invalidTenant';
+            notificationAction = showErrorNotification;
+        }
+
+        dispatch(notificationAction(notificationProps, NOTIFICATION_TIMEOUT_TYPE.STICKY));
     }
 
     const result = next(action);
