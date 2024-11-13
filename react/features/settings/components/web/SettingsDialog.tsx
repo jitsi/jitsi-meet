@@ -182,10 +182,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
-                    hideSelfView: tabState?.hideSelfView,
                     currentFramerate: tabState?.currentFramerate,
                     localFlipX: tabState.localFlipX,
-                    selectedVideoInputId: tabState.selectedVideoInputId
+                    selectedVideoInputId: tabState.selectedVideoInputId,
+                    hideSelfView: tabState?.hideSelfView
                 };
             },
             submit: (newState: any) => submitVideoDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
