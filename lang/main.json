@@ -739,6 +739,7 @@
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
+        "connectionFailed": "Connection failed. Please try again later!",
         "dataChannelClosed": "Video quality may be impaired",
         "dataChannelClosedDescription": "The bridge channel is down and thus video quality may be limited to its lowest setting.",
         "dataChannelClosedDescriptionWithAudio": "The bridge channel is down and thus disruptions to audio and video may occur.",
