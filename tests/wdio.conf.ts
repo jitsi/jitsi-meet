@@ -1,10 +1,11 @@
-/* global process, browser, Buffer */
-
 import AllureReporter from '@wdio/allure-reporter';
+import { multiremotebrowser } from '@wdio/globals';
+import { Buffer } from 'buffer';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 
 const allure = require('allure-commandline');
+const process = require('node:process');
 
 // This is deprecated without alternative (https://github.com/nodejs/node/issues/32483)
 // we need it to be able to reuse jitsi-meet code in tests
@@ -55,7 +56,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     maxInstances: 1,
 
     baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture',
-    tsConfigPath: '../tsconfig.web.json',
+    tsConfigPath: './tsconfig.json',
 
     // Default timeout for all waitForXXX commands.
     waitforTimeout: 1000,
@@ -152,13 +153,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs        List of spec file paths that are to be run
-     * @param {object}         browser      instance of created browser/device session
      */
-    before(capabilities, specs, browser) {
-        browser.instances.forEach((instance: string) => {
-            initLogger(browser[instance], instance, TEST_RESULTS_DIR);
+    before() {
+        multiremotebrowser.instances.forEach((instance: string) => {
+            initLogger(multiremotebrowser[instance], instance, TEST_RESULTS_DIR);
         });
     },
 
@@ -167,8 +165,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {object} suite suite details
      */
     beforeSuite(suite) {
-        browser.instances.forEach((instance: string) => {
-            logInfo(browser[instance], `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
+        multiremotebrowser.instances.forEach((instance: string) => {
+            logInfo(multiremotebrowser[instance],
+                `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
 
@@ -177,8 +176,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {object} test    test object
      */
     beforeTest(test) {
-        browser.instances.forEach((instance: string) => {
-            logInfo(browser[instance], `---=== Start test ${test.fullName} ===---`);
+        multiremotebrowser.instances.forEach((instance: string) => {
+            logInfo(multiremotebrowser[instance], `---=== Start test ${test.fullName} ===---`);
         });
     },
 
@@ -189,14 +188,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Error}   error     error object in case the test fails, otherwise `undefined`
      */
     async afterTest(test, context, { error }) {
-        browser.instances.forEach((instance: string) =>
-            logInfo(browser[instance], `---=== End test ${test.fullName} ===---`));
+        multiremotebrowser.instances.forEach((instance: string) =>
+            logInfo(multiremotebrowser[instance], `---=== End test ${test.fullName} ===---`));
 
         if (error) {
             const allProcessing = [];
 
-            browser.instances.forEach((instance: string) => {
-                const bInstance = browser.getInstance(instance);
+            multiremotebrowser.instances.forEach((instance: string) => {
+                const bInstance = multiremotebrowser[instance];
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
                     AllureReporter.addAttachment(
@@ -222,8 +221,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {object} suite suite details
      */
     afterSuite(suite) {
-        browser.instances.forEach((instance: string) => {
-            logInfo(browser[instance], `---=== End ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
+        multiremotebrowser.instances.forEach((instance: string) => {
+            logInfo(multiremotebrowser[instance],
+                `---=== End ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
 

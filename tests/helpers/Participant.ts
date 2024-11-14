@@ -1,4 +1,6 @@
-/* global APP, browser, $ */
+/* global APP $ */
+
+import { multiremotebrowser } from '@wdio/globals';
 
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
@@ -76,7 +78,7 @@ export class Participant {
      * The driver it uses.
      */
     get driver() {
-        return browser.getInstance(this._name);
+        return multiremotebrowser[this._name];
     }
 
     /**

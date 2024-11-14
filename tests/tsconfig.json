@@ -1,0 +1,10 @@
+{
+    "extends": "../tsconfig.web.json",
+    "compilerOptions": {
+        "types": [
+            "node",
+            "@wdio/globals/types",
+            "@wdio/jasmine-framework"
+        ]
+    }
+}
