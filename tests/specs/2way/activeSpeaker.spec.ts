@@ -1,6 +1,4 @@
 import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
-import Filmstrip from '../../pageobjects/Filmstrip';
-import Toolbar from '../../pageobjects/Toolbar';
 
 describe('ActiveSpeaker ', () => {
     const context = {};
@@ -49,13 +47,13 @@ async function testActiveSpeaker(
     activeSpeaker.log('Unmuting in testActiveSpeaker');
 
     // Unmute
-    await new Toolbar(activeSpeaker).clickAudioUnmuteButton();
+    await activeSpeaker.getToolbar().clickAudioUnmuteButton();
 
     // just a debug print to go in logs
     otherParticipant1.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
     otherParticipant2.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
 
-    await new Filmstrip(activeSpeaker).assertAudioMuteIconIsDisplayed(activeSpeaker, true);
+    await activeSpeaker.getFilmstrip().assertAudioMuteIconIsDisplayed(activeSpeaker, true);
 
     // Verify that the user is now an active speaker from otherParticipant1's perspective
     const otherParticipant1Driver = otherParticipant1.driver;
@@ -71,13 +69,13 @@ async function testActiveSpeaker(
     activeSpeaker.log('Muting in testActiveSpeaker');
 
     // Mute back again
-    await new Toolbar(activeSpeaker).clickAudioMuteButton();
+    await activeSpeaker.getToolbar().clickAudioMuteButton();
 
     // just a debug print to go in logs
     otherParticipant1.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
     otherParticipant2.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
 
-    await new Filmstrip(otherParticipant1).assertAudioMuteIconIsDisplayed(activeSpeaker);
+    await otherParticipant1.getFilmstrip().assertAudioMuteIconIsDisplayed(activeSpeaker);
 }
 
 /**

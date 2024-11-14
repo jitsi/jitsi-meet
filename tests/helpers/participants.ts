@@ -1,6 +1,3 @@
-import Filmstrip from '../pageobjects/Filmstrip';
-import Toolbar from '../pageobjects/Toolbar';
-
 import { Participant } from './Participant';
 
 /**
@@ -58,8 +55,8 @@ export async function ensureThreeParticipants(context: Object): Promise<void> {
  * the mute state of {@code testee}.
  */
 export async function toggleMuteAndCheck(testee: Participant, observer: Participant): Promise<void> {
-    await new Toolbar(testee).clickAudioMuteButton();
+    await testee.getToolbar().clickAudioMuteButton();
 
-    await new Filmstrip(observer).assertAudioMuteIconIsDisplayed(testee);
-    await new Filmstrip(testee).assertAudioMuteIconIsDisplayed(testee);
+    await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
+    await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
 }

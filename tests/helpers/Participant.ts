@@ -1,4 +1,6 @@
 import { urlObjectToString } from '../../react/features/base/util/uri';
+import Filmstrip from '../pageobjects/Filmstrip';
+import Toolbar from '../pageobjects/Toolbar';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 
@@ -234,5 +236,19 @@ export class Participant {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
+    }
+
+    /**
+     * Returns the toolbar for this participant.
+     */
+    getToolbar() {
+        return new Toolbar(this);
+    }
+
+    /**
+     * Returns the filmstrip for this participant.
+     */
+    getFilmstrip() {
+        return new Filmstrip(this);
     }
 }
