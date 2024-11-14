@@ -214,18 +214,14 @@ export class Participant {
 
         return driver.waitUntil(async () =>
             driver.execute(() => {
-                try {
-                    const stats = APP.conference.getStats();
-                    const bitrateMap = stats.bitrate;
-                    const rtpStats = {
-                        uploadBitrate: bitrateMap?.upload,
-                        downloadBitrate: bitrateMap?.download
-                    };
+                const stats = APP.conference.getStats();
+                const bitrateMap = stats?.bitrate || {};
+                const rtpStats = {
+                    uploadBitrate: bitrateMap.upload || 0,
+                    downloadBitrate: bitrateMap.download || 0
+                };
 
-                    return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
-                } catch (e) {
-                    console.error('error', e.message, e.cause);
-                }
+                return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
             }), {
             timeout: 15000,
             timeoutMsg: 'expected to receive/send data in 15s'
