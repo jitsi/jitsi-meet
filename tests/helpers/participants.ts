@@ -7,7 +7,7 @@ import { Participant } from './Participant';
  * Generate a random room name.
  */
 function generateRandomRoomName(): string {
-    return `jitsimeettorture-${Math.round(Math.random() * 1000000000)}`;
+    return `jitsimeettorture-${crypto.randomUUID()}}`;
 }
 
 /**
