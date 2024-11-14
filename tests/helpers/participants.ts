@@ -35,13 +35,13 @@ export async function ensureThreeParticipants(context: Object): Promise<void> {
     context.p2 = p2;
     context.p3 = p3;
 
-    await Promise.all([
+    await Promise.allSettled([
         p1.joinConference(context),
         p2.joinConference(context),
         p3.joinConference(context)
     ]);
 
-    await Promise.all([
+    await Promise.allSettled([
         p1.waitForRemoteStreams(2),
         p2.waitForRemoteStreams(2),
         p3.waitForRemoteStreams(2)

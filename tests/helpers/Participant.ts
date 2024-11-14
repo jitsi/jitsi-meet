@@ -150,7 +150,7 @@ export class Participant {
         }, this._name, driver.sessionId));
 
         if (skipInMeetingChecks) {
-            await Promise.all(parallel);
+            await Promise.allSettled(parallel);
 
             return;
         }
@@ -158,7 +158,7 @@ export class Participant {
         parallel.push(this.waitForIceConnected());
         parallel.push(this.waitForSendReceiveData());
 
-        await Promise.all(parallel);
+        await Promise.allSettled(parallel);
     }
 
     /**
