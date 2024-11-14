@@ -1,3 +1,5 @@
+/* global APP */
+
 import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {

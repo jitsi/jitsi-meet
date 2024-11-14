@@ -1,3 +1,5 @@
+/* global APP, browser, $ */
+
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import Toolbar from '../pageobjects/Toolbar';

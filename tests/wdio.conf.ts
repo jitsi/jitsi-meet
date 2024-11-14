@@ -1,3 +1,5 @@
+/* global process, browser, Buffer */
+
 import AllureReporter from '@wdio/allure-reporter';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
@@ -186,7 +188,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {object}  context          scope object the test was executed with
      * @param {Error}   error     error object in case the test fails, otherwise `undefined`
      */
-    afterTest: async function(test, context, { error }) {
+    async afterTest(test, context, { error }) {
         browser.instances.forEach((instance: string) =>
             logInfo(browser[instance], `---=== End test ${test.fullName} ===---`));
 
