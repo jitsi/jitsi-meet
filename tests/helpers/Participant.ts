@@ -131,7 +131,7 @@ export class Participant {
 
         const parallel = [];
 
-        parallel.push(driver.execute((name, sessionId) => {
+        parallel.push(driver.execute((name, sessionId, prefix) => {
             APP.UI.dockToolbar(true);
 
             // disable keyframe animations (.fadeIn and .fadeOut classes)
@@ -143,7 +143,7 @@ export class Participant {
 
             document.title = `${name}`;
 
-            console.log(`${new Date().toISOString()} ${LOG_PREFIX} sessionId: ${sessionId}`);
+            console.log(`${new Date().toISOString()} ${prefix} sessionId: ${sessionId}`);
 
             // disable the blur effect in firefox as it has some performance issues
             const blur = document.querySelector('.video_blurred_container');
@@ -151,7 +151,7 @@ export class Participant {
             if (blur) {
                 document.querySelector('.video_blurred_container').style.display = 'none';
             }
-        }, this._name, driver.sessionId));
+        }, this._name, driver.sessionId, LOG_PREFIX));
 
         if (skipInMeetingChecks) {
             await Promise.allSettled(parallel);
