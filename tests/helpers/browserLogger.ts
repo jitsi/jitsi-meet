@@ -1,6 +1,11 @@
 const fs = require('node:fs');
 
 /**
+ * A prefix to use for all messages we add to the console log.
+ */
+export const LOG_PREFIX = '[MeetTest] ';
+
+/**
  * Initialize logger for a driver.
  * @param driver The driver.
  * @param name The name of the participant.
@@ -14,7 +19,7 @@ export function initLogger(driver, name, folder) {
         try {
             await fs.appendFileSync(driver.logFile, `${entry.text}\n`);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     });
 }
@@ -44,7 +49,7 @@ export async function logInfo(driver, message) {
     try {
         await fs.appendFileSync(driver.logFile, `${message}\n`);
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 }
 

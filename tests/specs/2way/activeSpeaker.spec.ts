@@ -1,4 +1,3 @@
-import { logInfo } from '../../helpers/browserLogger';
 import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 import Filmstrip from '../../pageobjects/Filmstrip';
 import Toolbar from '../../pageobjects/Toolbar';
@@ -42,19 +41,19 @@ describe('ActiveSpeaker ', () => {
  */
 async function testActiveSpeaker(
         activeSpeaker: Paticipant, otherParticipant1: Participant, otherParticipant2: Participants) {
-    logInfo(activeSpeaker.driver, `Start testActiveSpeaker for participant: ${activeSpeaker.name}`);
+    activeSpeaker.log(`Start testActiveSpeaker for participant: ${activeSpeaker.name}`);
 
     const speakerEndpoint = await activeSpeaker.getEndpointId();
 
     // just a debug print to go in logs
-    logInfo(activeSpeaker.driver, 'Unmuting in testActiveSpeaker');
+    activeSpeaker.log('Unmuting in testActiveSpeaker');
 
     // Unmute
     await new Toolbar(activeSpeaker).clickAudioUnmuteButton();
 
     // just a debug print to go in logs
-    logInfo(otherParticipant1.driver, `Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
-    logInfo(otherParticipant2.driver, `Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
+    otherParticipant1.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
+    otherParticipant2.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
 
     await new Filmstrip(activeSpeaker).assertAudioMuteIconIsDisplayed(activeSpeaker, true);
 
@@ -69,14 +68,14 @@ async function testActiveSpeaker(
         });
 
     // just a debug print to go in logs
-    logInfo(activeSpeaker.driver, 'Muting in testActiveSpeaker');
+    activeSpeaker.log('Muting in testActiveSpeaker');
 
     // Mute back again
     await new Toolbar(activeSpeaker).clickAudioMuteButton();
 
     // just a debug print to go in logs
-    logInfo(otherParticipant1.driver, `Participant muted in testActiveSpeaker ${speakerEndpoint}`);
-    logInfo(otherParticipant2.driver, `Participant muted in testActiveSpeaker ${speakerEndpoint}`);
+    otherParticipant1.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
+    otherParticipant2.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
 
     await new Filmstrip(otherParticipant1).assertAudioMuteIconIsDisplayed(activeSpeaker);
 }

@@ -1,5 +1,7 @@
 import { urlObjectToString } from '../../react/features/base/util/uri';
 
+import { LOG_PREFIX, logInfo } from './browserLogger';
+
 /**
  * Participant.
  */
@@ -81,6 +83,14 @@ export class Participant {
     }
 
     /**
+     * Adds a log to the participants log file.
+     * @param message The message to log.
+     */
+    log(message: string) {
+        logInfo(this.driver, message);
+    }
+
+    /**
      * Joins conference.
      */
     async joinConference(context: { roomName: string }, skipInMeetingChecks = false) {
@@ -129,7 +139,7 @@ export class Participant {
 
             document.title = `${name}`;
 
-            console.log(`lib-jitsi-meet version: ${JitsiMeetJS.version} sessionId: ${sessionId}`);
+            console.log(`${new Date().toISOString()} ${LOG_PREFIX} sessionId: ${sessionId}`);
         }, this._name, driver.sessionId));
 
         // disable the blur effect in firefox as it has some performance issues
