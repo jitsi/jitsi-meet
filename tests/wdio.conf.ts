@@ -156,7 +156,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     before() {
         multiremotebrowser.instances.forEach((instance: string) => {
-            initLogger(multiremotebrowser[instance], instance, TEST_RESULTS_DIR);
+            initLogger(multiremotebrowser.getInstance(instance), instance, TEST_RESULTS_DIR);
         });
     },
 
@@ -166,7 +166,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     beforeSuite(suite) {
         multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser[instance],
+            logInfo(multiremotebrowser.getInstance(instance),
                 `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
@@ -177,7 +177,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     beforeTest(test) {
         multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser[instance], `---=== Start test ${test.fullName} ===---`);
+            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.fullName} ===---`);
         });
     },
 
@@ -189,13 +189,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     async afterTest(test, context, { error }) {
         multiremotebrowser.instances.forEach((instance: string) =>
-            logInfo(multiremotebrowser[instance], `---=== End test ${test.fullName} ===---`));
+            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.fullName} ===---`));
 
         if (error) {
-            const allProcessing = [];
+            const allProcessing: Promise<any>[] = [];
 
             multiremotebrowser.instances.forEach((instance: string) => {
-                const bInstance = multiremotebrowser[instance];
+                const bInstance = multiremotebrowser.getInstance(instance);
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
                     AllureReporter.addAttachment(
@@ -222,7 +222,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     afterSuite(suite) {
         multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser[instance],
+            logInfo(multiremotebrowser.getInstance(instance),
                 `---=== End ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
@@ -244,6 +244,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 () => reject(reportError),
                 5000);
 
+            // @ts-ignore
             generation.on('exit', eCode => {
                 clearTimeout(generationTimeout);
 

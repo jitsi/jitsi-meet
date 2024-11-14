@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+import { Participant } from '../helpers/Participant';
+
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
 

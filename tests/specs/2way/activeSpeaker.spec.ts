@@ -1,5 +1,6 @@
 /* global APP */
-
+// eslint-disable-next-line no-unused-vars
+import { Participant } from '../../helpers/Participant';
 import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
@@ -40,7 +41,7 @@ describe('ActiveSpeaker ', () => {
  * @param otherParticipant2 used only to print some debugging info
  */
 async function testActiveSpeaker(
-        activeSpeaker: Paticipant, otherParticipant1: Participant, otherParticipant2: Participants) {
+        activeSpeaker: Participant, otherParticipant1: Participant, otherParticipant2: Participant) {
     activeSpeaker.log(`Start testActiveSpeaker for participant: ${activeSpeaker.name}`);
 
     const speakerEndpoint = await activeSpeaker.getEndpointId();
@@ -86,6 +87,6 @@ async function testActiveSpeaker(
  * @param participant the participant to check
  */
 async function assertOneDominantSpeaker(participant: Participant) {
-    expect((await participant.driver.$$(
-        '//span[not(contains(@class, "tile-view"))]//span[contains(@class,"dominant-speaker")]')).length).toBe(1);
+    expect(await participant.driver.$$(
+        '//span[not(contains(@class, "tile-view"))]//span[contains(@class,"dominant-speaker")]').length).toBe(1);
 }

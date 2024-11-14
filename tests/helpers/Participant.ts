@@ -78,7 +78,7 @@ export class Participant {
      * The driver it uses.
      */
     get driver() {
-        return multiremotebrowser[this._name];
+        return multiremotebrowser.getInstance(this._name);
     }
 
     /**
@@ -111,7 +111,7 @@ export class Participant {
             userInfo: {
                 displayName: this._name
             }
-        });
+        }) || '';
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
@@ -128,7 +128,7 @@ export class Participant {
      * Loads stuff after the page loads.
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks) {
+    private async postLoadProcess(skipInMeetingChecks: boolean) {
         const driver = this.driver;
 
         const parallel = [];

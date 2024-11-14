@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+import { Participant } from '../helpers/Participant';
+
 /**
  * Filmstrip elements.
  */
