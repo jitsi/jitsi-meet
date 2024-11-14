@@ -37,8 +37,7 @@ export class Participant {
         testing: {
             testMode: true
         },
-        disableAEC: true,
-        disableNS: true,
+        disableAP: true,
         disable1On1Mode: true,
         disableModeratorIndicator: true,
         enableTalkWhileMuted: false,
