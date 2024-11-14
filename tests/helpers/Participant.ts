@@ -8,6 +8,7 @@ import Filmstrip from '../pageobjects/Filmstrip';
 import Toolbar from '../pageobjects/Toolbar';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
+import { IContext } from './participants';
 
 /**
  * Participant.
@@ -106,9 +107,11 @@ export class Participant {
     /**
      * Joins conference.
      *
+     * @param {IContext} context - The context.
+     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
      * @returns {Promise<void>}
      */
-    async joinConference(context: { roomName: string; }, skipInMeetingChecks = false) {
+    async joinConference(context: IContext, skipInMeetingChecks = false) {
         this.context = context;
 
         const url = urlObjectToString({
@@ -151,8 +154,10 @@ export class Participant {
             // disable keyframe animations (.fadeIn and .fadeOut classes)
             $('<style>.notransition * { '
                 + 'animation-duration: 0s !important; -webkit-animation-duration: 0s !important; transition:none; '
-                + '} </style>').appendTo(document.head);
+                + '} </style>') // @ts-ignore
+                    .appendTo(document.head);
 
+            // @ts-ignore
             $('body').toggleClass('notransition');
 
             document.title = `${name}`;
@@ -163,6 +168,7 @@ export class Participant {
             const blur = document.querySelector('.video_blurred_container');
 
             if (blur) {
+                // @ts-ignore
                 document.querySelector('.video_blurred_container').style.display = 'none';
             }
         }, this._name, driver.sessionId, LOG_PREFIX));

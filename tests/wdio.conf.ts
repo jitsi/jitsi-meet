@@ -1,11 +1,12 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import process from 'node:process';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const allure = require('allure-commandline');
-const process = require('node:process');
 
 // This is deprecated without alternative (https://github.com/nodejs/node/issues/32483)
 // we need it to be able to reuse jitsi-meet code in tests

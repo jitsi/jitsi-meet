@@ -1,9 +1,9 @@
 /* global APP */
 import type { Participant } from '../../helpers/Participant';
-import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
+import { IContext, ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
-    const context = {};
+    const context = {} as IContext;
 
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(context);
@@ -37,7 +37,7 @@ describe('ActiveSpeaker ', () => {
  * active speaker.
  * @param {Participant} otherParticipant1 - <tt>Participant</tt> of the participant who will be observing and verifying
  * active speaker change.
- * @param {Participant} otherParticipant2 - used only to print some debugging info
+ * @param {Participant} otherParticipant2 - Used only to print some debugging info.
  * @returns {Promise<void>}
  */
 async function testActiveSpeaker(

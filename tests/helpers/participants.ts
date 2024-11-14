@@ -1,5 +1,13 @@
 import { Participant } from './Participant';
 
+export type IContext = {
+    p1: Participant;
+    p2: Participant;
+    p3: Participant;
+    p4: Participant;
+    roomName: string;
+};
+
 /**
  * Generate a random room name.
  *
@@ -12,10 +20,10 @@ function generateRandomRoomName(): string {
 /**
  * Ensure that there is on participant.
  *
- * @param {Object} context - The context.
+ * @param {IContext} context - The context.
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(context: Object): Promise<void> {
+export async function ensureOneParticipant(context: IContext): Promise<void> {
     context.roomName = generateRandomRoomName();
 
     context.p1 = new Participant('participant1');
@@ -29,7 +37,7 @@ export async function ensureOneParticipant(context: Object): Promise<void> {
  * @param {Object} context - The context.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(context: Object): Promise<void> {
+export async function ensureThreeParticipants(context: IContext): Promise<void> {
     context.roomName = generateRandomRoomName();
 
     const p1 = new Participant('participant1');
