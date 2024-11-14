@@ -454,7 +454,7 @@ StateListenerRegistry.register(
                         features: { 'screen-sharing': true }
                     })),
                 'localRecording': (participant: IJitsiParticipant, value: string) =>
-                    _localRecordingUpdated(store, conference, participant.getId(), value),
+                    _localRecordingUpdated(store, conference, participant.getId(), Boolean(value)),
                 'raisedHand': (participant: IJitsiParticipant, value: string) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
                 'region': (participant: IJitsiParticipant, value: string) =>
@@ -714,8 +714,13 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
  * @returns {void}
  */
 function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJitsiConference,
-        participantId: string, newValue: string) {
+        participantId: string, newValue: boolean) {
     const state = getState();
+    const participant = getParticipantById(state, participantId);
+
+    if (participant?.localRecording === newValue) {
+        return;
+    }
 
     dispatch(participantUpdated({
         conference,
