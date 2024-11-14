@@ -153,6 +153,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
+     *
+     * @returns {Promise<void>}
      */
     before() {
         multiremotebrowser.instances.forEach((instance: string) => {
@@ -162,7 +164,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
     /**
      * Gets executed before the suite starts (in Mocha/Jasmine only).
-     * @param {object} suite suite details
+     *
+     * @param {Object} suite - Suite details.
+     * @returns {Promise<void>}
      */
     beforeSuite(suite) {
         multiremotebrowser.instances.forEach((instance: string) => {
@@ -172,8 +176,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
     },
 
     /**
-     * Function to be executed before a test (in Mocha/Jasmine only)
-     * @param {object} test    test object
+     * Function to be executed before a test (in Mocha/Jasmine only).
+     *
+     * @param {Object} test - Test object.
+     * @returns {Promise<void>}
      */
     beforeTest(test) {
         multiremotebrowser.instances.forEach((instance: string) => {
@@ -182,10 +188,12 @@ export const config: WebdriverIO.MultiremoteConfig = {
     },
 
     /**
-     * Function to be executed after a test (in Mocha/Jasmine only)
-     * @param {object}  test             test object
-     * @param {object}  context          scope object the test was executed with
-     * @param {Error}   error     error object in case the test fails, otherwise `undefined`
+     * Function to be executed after a test (in Mocha/Jasmine only).
+     *
+     * @param {Object} test - Test object.
+     * @param {Object} context - Scope object the test was executed with.
+     * @param {Error}  error - Error object in case the test fails, otherwise `undefined`.
+     * @returns {Promise<void>}
      */
     async afterTest(test, context, { error }) {
         multiremotebrowser.instances.forEach((instance: string) =>
@@ -205,7 +213,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }));
 
 
-                AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance), 'text/plain');
+                AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
 
                 allProcessing.push(bInstance.getPageSource().then(source => {
                     AllureReporter.addAttachment(`html-source-${instance}`, source, 'text/plain');
@@ -218,7 +226,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
     /**
      * Hook that gets executed after the suite has ended (in Mocha/Jasmine only).
-     * @param {object} suite suite details
+     *
+     * @param {Object} suite - Suite details.
+     * @returns {Promise<void>}
      */
     afterSuite(suite) {
         multiremotebrowser.instances.forEach((instance: string) => {
@@ -230,6 +240,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed after all workers have shut down and the process is about to exit.
      * An error thrown in the `onComplete` hook will result in the test run failing.
+     *
+     * @returns {Promise<void>}
      */
     onComplete() {
         const reportError = new Error('Could not generate Allure report');

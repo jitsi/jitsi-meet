@@ -2,6 +2,8 @@ import { Participant } from './Participant';
 
 /**
  * Generate a random room name.
+ *
+ * @returns {string} - The random room name.
  */
 function generateRandomRoomName(): string {
     return `jitsimeettorture-${crypto.randomUUID()}}`;
@@ -9,6 +11,9 @@ function generateRandomRoomName(): string {
 
 /**
  * Ensure that there is on participant.
+ *
+ * @param {Object} context - The context.
+ * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(context: Object): Promise<void> {
     context.roomName = generateRandomRoomName();
@@ -20,6 +25,9 @@ export async function ensureOneParticipant(context: Object): Promise<void> {
 
 /**
  * Ensure that there are three participants.
+ *
+ * @param {Object} context - The context.
+ * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(context: Object): Promise<void> {
     context.roomName = generateRandomRoomName();
@@ -50,10 +58,11 @@ export async function ensureThreeParticipants(context: Object): Promise<void> {
  * Toggles the mute state of a specific Meet conference participant and verifies that a specific other Meet
  * conference participants sees a specific mute state for the former.
  *
- * @param testee The {@code Participant} which represents the Meet conference participant whose
+ * @param {Participant} testee - The {@code Participant} which represents the Meet conference participant whose
  * mute state is to be toggled.
- * @param observer The {@code Participant} which represents the Meet conference participant to verify
+ * @param {Participant} observer - The {@code Participant} which represents the Meet conference participant to verify
  * the mute state of {@code testee}.
+ * @returns {Promise<void>}
  */
 export async function toggleMuteAndCheck(testee: Participant, observer: Participant): Promise<void> {
     await testee.getToolbar().clickAudioMuteButton();

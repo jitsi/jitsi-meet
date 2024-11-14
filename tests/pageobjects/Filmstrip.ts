@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import { Participant } from '../helpers/Participant';
 
 /**
@@ -9,7 +8,8 @@ export default class Filmstrip {
 
     /**
      * Initializes for a participant.
-     * @param participant
+     *
+     * @param {Participant} participant - The participant.
      */
     constructor(participant: Participant) {
         this.participant = participant;
@@ -20,9 +20,10 @@ export default class Filmstrip {
      * mute icon for the conference participant identified by
      * {@code testee}.
      *
-     * @param testee the {@code WebParticipant} for whom we're checking the status of audio muted icon.
-     * @param reverse if {@code true}, the method will assert the absence of the "mute" icon;
+     * @param {Participant} testee - The {@code WebParticipant} for whom we're checking the status of audio muted icon.
+     * @param {boolean} reverse - If {@code true}, the method will assert the absence of the "mute" icon;
      * otherwise, it will assert its presence.
+     * @returns {Promise<void>}
      */
     async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false) {
         let id;

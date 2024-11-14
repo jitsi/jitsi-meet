@@ -2,6 +2,7 @@
 
 import { multiremotebrowser } from '@wdio/globals';
 
+import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import Toolbar from '../pageobjects/Toolbar';
@@ -14,14 +15,16 @@ import { LOG_PREFIX, logInfo } from './browserLogger';
 export class Participant {
     /**
      * The current context.
+     *
      * @private
      */
-    private context: { roomName: string };
+    private context: { roomName: string; };
     private _name: string;
     private _endpointId: string;
 
     /**
      * The default config to use when joining.
+     *
      * @private
      */
     private config = {
@@ -50,11 +53,12 @@ export class Participant {
         toolbarConfig: {
             alwaysVisible: true
         }
-    };
+    } as IConfig;
 
     /**
      * Creates a participant with given name.
-     * @param name
+     *
+     * @param {string} name - The name of the participant.
      */
     constructor(name: string) {
         this._name = name;
@@ -62,6 +66,7 @@ export class Participant {
 
     /**
      * Returns participant endpoint ID.
+     *
      * @returns {Promise<string>} The endpoint ID.
      */
     async getEndpointId() {
@@ -90,7 +95,9 @@ export class Participant {
 
     /**
      * Adds a log to the participants log file.
-     * @param message The message to log.
+     *
+     * @param {string} message - The message to log.
+     * @returns {void}
      */
     log(message: string) {
         logInfo(this.driver, message);
@@ -98,8 +105,10 @@ export class Participant {
 
     /**
      * Joins conference.
+     *
+     * @returns {Promise<void>}
      */
-    async joinConference(context: { roomName: string }, skipInMeetingChecks = false) {
+    async joinConference(context: { roomName: string; }, skipInMeetingChecks = false) {
         this.context = context;
 
         const url = urlObjectToString({
@@ -126,6 +135,9 @@ export class Participant {
 
     /**
      * Loads stuff after the page loads.
+     *
+     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+     * @returns {Promise<void>}
      * @private
      */
     private async postLoadProcess(skipInMeetingChecks: boolean) {
@@ -169,6 +181,8 @@ export class Participant {
 
     /**
      * Waits for the page to load.
+     *
+     * @returns {Promise<void>}
      */
     async waitForPageToLoad() {
         return this.driver.waitUntil(
@@ -182,6 +196,8 @@ export class Participant {
 
     /**
      * Waits to join the muc.
+     *
+     * @returns {Promise<void>}
      */
     async waitToJoinMUC() {
         return this.driver.waitUntil(
@@ -195,6 +211,8 @@ export class Participant {
 
     /**
      * Waits for ICE to get connected.
+     *
+     * @returns {Promise<void>}
      */
     async waitForIceConnected() {
         const driver = this.driver;
@@ -208,6 +226,8 @@ export class Participant {
 
     /**
      * Waits for send and receive data.
+     *
+     * @returns {Promise<void>}
      */
     async waitForSendReceiveData() {
         const driver = this.driver;
@@ -230,7 +250,9 @@ export class Participant {
 
     /**
      * Waits for remote streams.
-     * @param number The number of remote streams o wait for.
+     *
+     * @param {number} number - The number of remote streams o wait for.
+     * @returns {Promise<void>}
      */
     waitForRemoteStreams(number: number) {
         const driver = this.driver;
@@ -244,6 +266,8 @@ export class Participant {
 
     /**
      * Returns the toolbar for this participant.
+     *
+     * @returns {Toolbar}
      */
     getToolbar() {
         return new Toolbar(this);
@@ -251,6 +275,8 @@ export class Participant {
 
     /**
      * Returns the filmstrip for this participant.
+     *
+     * @returns {Filmstrip}
      */
     getFilmstrip() {
         return new Filmstrip(this);

@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+import fs from 'node:fs';
 
 /**
  * A prefix to use for all messages we add to the console log.
@@ -7,9 +7,11 @@ export const LOG_PREFIX = '[MeetTest] ';
 
 /**
  * Initialize logger for a driver.
- * @param driver The driver.
- * @param name The name of the participant.
- * @param folder the folder to save the file.
+ *
+ * @param {WebdriverIO.Browser} driver - The driver.
+ * @param {string} name - The name of the participant.
+ * @param {string} folder - The folder to save the file.
+ * @returns {void}
  */
 export function initLogger(driver: WebdriverIO.Browser, name: string, folder: string) {
     // @ts-ignore
@@ -28,7 +30,9 @@ export function initLogger(driver: WebdriverIO.Browser, name: string, folder: st
 
 /**
  * Returns the content of the log file.
- * @param driver The driver which log file is requested.
+ *
+ * @param {WebdriverIO.Browser} driver - The driver which log file is requested.
+ * @returns {string} The content of the log file.
  */
 export function getLogs(driver: WebdriverIO.Browser) {
     // @ts-ignore
@@ -42,8 +46,10 @@ export function getLogs(driver: WebdriverIO.Browser) {
 
 /**
  * Logs a message in the logfile.
- * @param driver The participant in which log file to write.
- * @param message The message to add.
+ *
+ * @param {WebdriverIO.Browser} driver - The participant in which log file to write.
+ * @param {string} message - The message to add.
+ * @returns {void}
  */
 export function logInfo(driver: WebdriverIO.Browser, message: string) {
     // @ts-ignore

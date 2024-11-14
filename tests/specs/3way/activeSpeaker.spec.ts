@@ -1,6 +1,5 @@
 /* global APP */
-// eslint-disable-next-line no-unused-vars
-import { Participant } from '../../helpers/Participant';
+import type { Participant } from '../../helpers/Participant';
 import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
@@ -34,11 +33,12 @@ describe('ActiveSpeaker ', () => {
  * Verifies from {@code participant2}'s perspective that the active speaker
  * has been displayed on the large video area. Mutes him back.
  *
- * @param activeSpeaker <tt>Participant</tt> instance of the
- * participant who will be tested as an active speaker.
- * @param otherParticipant1 <tt>Participant</tt> of the participant who will
- * be observing and verifying active speaker change.
- * @param otherParticipant2 used only to print some debugging info
+ * @param {Participant} activeSpeaker - <tt>Participant</tt> instance of the participant who will be tested as an
+ * active speaker.
+ * @param {Participant} otherParticipant1 - <tt>Participant</tt> of the participant who will be observing and verifying
+ * active speaker change.
+ * @param {Participant} otherParticipant2 - used only to print some debugging info
+ * @returns {Promise<void>}
  */
 async function testActiveSpeaker(
         activeSpeaker: Participant, otherParticipant1: Participant, otherParticipant2: Participant) {
@@ -62,7 +62,7 @@ async function testActiveSpeaker(
     const otherParticipant1Driver = otherParticipant1.driver;
 
     await otherParticipant1Driver.waitUntil(
-        () => otherParticipant1Driver.execute(id => APP.UI.getLargeVideoID() === id, speakerEndpoint),
+        () => otherParticipant1Driver.execute((id: string) => APP.UI.getLargeVideoID() === id, speakerEndpoint),
         {
             timeout: 30_1000, // 30 seconds
             timeoutMsg: 'Active speaker not displayed on large video.'
@@ -84,7 +84,9 @@ async function testActiveSpeaker(
 /**
  * Asserts that the number of small videos with the dominant speaker
  * indicator displayed equals 1.
- * @param participant the participant to check
+ *
+ * @param {Participant} participant - The participant to check.
+ * @returns {Promise<void>}
  */
 async function assertOneDominantSpeaker(participant: Participant) {
     expect(await participant.driver.$$(

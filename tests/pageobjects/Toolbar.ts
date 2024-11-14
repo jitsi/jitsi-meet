@@ -12,7 +12,8 @@ export default class Toolbar {
 
     /**
      * Creates toolbar for a participant.
-     * @param participant The participants.
+     *
+     * @param {Participant} participant - The participants.
      */
     constructor(participant: Participant) {
         this.participant = participant;
@@ -20,7 +21,9 @@ export default class Toolbar {
 
     /**
      * Returns the button.
-     * @param accessibilityCSSSelector The selector to find the button.
+     *
+     * @param {string} accessibilityCSSSelector - The selector to find the button.
+     * @returns {WebdriverIO.Element} The button.
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
@@ -43,6 +46,8 @@ export default class Toolbar {
 
     /**
      * Clicks audio mute button.
+     *
+     * @returns {Promise<void>}
      */
     async clickAudioMuteButton() {
         await this.participant.log('Clicking on: Audio Mute Button');
@@ -51,6 +56,8 @@ export default class Toolbar {
 
     /**
      * Clicks audio unmute button.
+     *
+     * @returns {Promise<void>}
      */
     async clickAudioUnmuteButton() {
         await this.participant.log('Clicking on: Audio Unmute Button');
