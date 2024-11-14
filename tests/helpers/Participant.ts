@@ -140,20 +140,14 @@ export class Participant {
             document.title = `${name}`;
 
             console.log(`${new Date().toISOString()} ${LOG_PREFIX} sessionId: ${sessionId}`);
+
+            // disable the blur effect in firefox as it has some performance issues
+            const blur = document.querySelector('.video_blurred_container');
+
+            if (blur) {
+                document.querySelector('.video_blurred_container').style.display = 'none';
+            }
         }, this._name, driver.sessionId));
-
-        // disable the blur effect in firefox as it has some performance issues
-        if (driver.capabilities.firefox) {
-            parallel.push(driver.execute(() => {
-                try {
-                    const blur = document.querySelector('.video_blurred_container');
-
-                    if (blur) {
-                        document.querySelector('.video_blurred_container').style.display = 'none';
-                    }
-                } catch (e) {} // eslint-disable-line no-empty
-            }));
-        }
 
         if (skipInMeetingChecks) {
             await Promise.all(parallel);
