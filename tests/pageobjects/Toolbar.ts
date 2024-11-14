@@ -1,5 +1,3 @@
-import { Participant } from '../helpers/Participant';
-
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
 

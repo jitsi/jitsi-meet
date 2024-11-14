@@ -1,5 +1,3 @@
-import { Participant } from '../helpers/Participant';
-
 /**
  * Filmstrip elements.
  */

@@ -173,9 +173,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine only)
      * @param {object} test    test object
-     * @param {object} context scope object the test was executed with
      */
-    beforeTest(test, context) {
+    beforeTest(test) {
         browser.instances.forEach((instance: string) => {
             logInfo(browser[instance], `---=== Start test ${test.fullName} ===---`);
         });
@@ -185,19 +184,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * Function to be executed after a test (in Mocha/Jasmine only)
      * @param {object}  test             test object
      * @param {object}  context          scope object the test was executed with
-     * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
-     * @param {*}       result.result    return object of test function
-     * @param {number}  result.duration  duration of test
-     * @param {boolean} result.passed    true if test has passed, otherwise false
-     * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+     * @param {Error}   error     error object in case the test fails, otherwise `undefined`
      */
-    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
-        browser.instances.forEach((instance: string) => {
-            logInfo(browser[instance], `---=== End test ${test.fullName} ===---`);
-        });
+    afterTest: async function(test, context, { error }) {
+        browser.instances.forEach((instance: string) =>
+            logInfo(browser[instance], `---=== End test ${test.fullName} ===---`));
 
         if (error) {
             const allProcessing = [];
+
             browser.instances.forEach((instance: string) => {
                 const bInstance = browser.getInstance(instance);
 
@@ -238,7 +233,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const reportError = new Error('Could not generate Allure report');
         const generation = allure([
             'generate', `${TEST_RESULTS_DIR}/allure-results`,
-            '--clean', '--single-file', '--report-dir', `${TEST_RESULTS_DIR}/allure-report`]);
+            '--clean', '--single-file',
+            '--report-dir', `${TEST_RESULTS_DIR}/allure-report`
+        ]);
 
         return new Promise<void>((resolve, reject) => {
             const generationTimeout = setTimeout(
