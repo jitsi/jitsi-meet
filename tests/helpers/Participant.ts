@@ -168,7 +168,7 @@ export class Participant {
         return this.driver.waitUntil(
             () => this.driver.execute(() => document.readyState === 'complete'),
             {
-                timeout: 30 * 1000, // 30 seconds
+                timeout: 30_000, // 30 seconds
                 timeoutMsg: 'Timeout waiting for Page Load Request to complete.'
             }
         );
@@ -181,7 +181,7 @@ export class Participant {
         return this.driver.waitUntil(
             () => this.driver.execute(() => APP.conference.isJoined()),
             {
-                timeout: 10 * 1000, // 10 seconds
+                timeout: 10_000, // 10 seconds
                 timeoutMsg: 'Timeout waiting to join muc.'
             }
         );
@@ -195,7 +195,7 @@ export class Participant {
 
         return driver.waitUntil(async () =>
             driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
-            timeout: 15000,
+            timeout: 15_000,
             timeoutMsg: 'expected ICE to be connected for 15s'
         });
     }
@@ -217,7 +217,7 @@ export class Participant {
 
                 return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
             }), {
-            timeout: 15000,
+            timeout: 15_000,
             timeoutMsg: 'expected to receive/send data in 15s'
         });
     }
@@ -231,7 +231,7 @@ export class Participant {
 
         return driver.waitUntil(async () =>
             driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
-            timeout: 15000,
+            timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
     }

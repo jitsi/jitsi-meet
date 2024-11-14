@@ -60,7 +60,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
-    connectionRetryTimeout: 15000,
+    connectionRetryTimeout: 15_000,
 
     // Default request retries count
     connectionRetryCount: 3,
@@ -68,7 +68,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     framework: 'jasmine',
 
     jasmineOpts: {
-        defaultTimeoutInterval: 60000
+        defaultTimeoutInterval: 60_000
     },
 
     capabilities: {
