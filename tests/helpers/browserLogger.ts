@@ -15,9 +15,9 @@ export function initLogger(driver, name, folder) {
     driver.logFile = `${folder}/${name}.log`;
     driver.sessionSubscribe({ events: [ 'log.entryAdded' ] });
 
-    driver.on('log.entryAdded', async (entry: any) => {
+    driver.on('log.entryAdded', (entry: any) => {
         try {
-            await fs.appendFileSync(driver.logFile, `${entry.text}\n`);
+            fs.appendFileSync(driver.logFile, `${entry.text}\n`);
         } catch (err) {
             console.error(err);
         }
@@ -41,13 +41,13 @@ export function getLogs(driver) {
  * @param driver The participant in which log file to write.
  * @param message The message to add.
  */
-export async function logInfo(driver, message) {
+export function logInfo(driver, message) {
     if (!driver.logFile) {
         return;
     }
 
     try {
-        await fs.appendFileSync(driver.logFile, `${message}\n`);
+        fs.appendFileSync(driver.logFile, `${new Date().toISOString()} ${LOG_PREFIX} ${message}\n`);
     } catch (err) {
         console.error(err);
     }

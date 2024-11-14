@@ -236,7 +236,7 @@ export class Participant {
      * Waits for remote streams.
      * @param number The number of remote streams o wait for.
      */
-    async waitForRemoteStreams(number: number) {
+    waitForRemoteStreams(number: number) {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
