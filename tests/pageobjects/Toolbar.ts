@@ -42,7 +42,7 @@ export default class Toolbar {
      * Clicks audio mute button.
      */
     async clickAudioMuteButton() {
-        await this.participant.driver.execute(() => console.log('Clicking on: Audio Mute Button'));
+        await this.participant.log('Clicking on: Audio Mute Button');
         await this.audioMuteBtn.click();
     }
 
@@ -50,7 +50,7 @@ export default class Toolbar {
      * Clicks audio unmute button.
      */
     async clickAudioUnmuteButton() {
-        await this.participant.driver.execute(() => console.log('Clicking on: Audio Unmute Button'));
+        await this.participant.log('Clicking on: Audio Unmute Button');
         await this.audioUnMuteBtn.click();
     }
 }
