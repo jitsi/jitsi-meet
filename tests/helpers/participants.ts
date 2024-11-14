@@ -32,13 +32,14 @@ export async function ensureThreeParticipants(context: Object): Promise<void> {
     context.p2 = p2;
     context.p3 = p3;
 
-    await Promise.allSettled([
+    // these need to be all, so we get the error when one fails
+    await Promise.all([
         p1.joinConference(context),
         p2.joinConference(context),
         p3.joinConference(context)
     ]);
 
-    await Promise.allSettled([
+    await Promise.all([
         p1.waitForRemoteStreams(2),
         p2.waitForRemoteStreams(2),
         p3.waitForRemoteStreams(2)

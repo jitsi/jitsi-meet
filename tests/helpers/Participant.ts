@@ -162,7 +162,7 @@ export class Participant {
         parallel.push(this.waitForIceConnected());
         parallel.push(this.waitForSendReceiveData());
 
-        await Promise.allSettled(parallel);
+        await Promise.all(parallel);
     }
 
     /**
