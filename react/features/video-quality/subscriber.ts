@@ -88,6 +88,15 @@ StateListenerRegistry.register(
     });
 
 /**
+ * Handles the use case when the reducedUI is enabled.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/responsive-ui'].reducedUI,
+    /* listener */ (reducedUI, store) => {
+        _updateReceiverVideoConstraints(store);
+    });
+
+/**
  * Updates the receiver constraints when the stage participants change.
  */
 StateListenerRegistry.register(

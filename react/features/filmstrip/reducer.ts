@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
@@ -301,9 +303,20 @@ ReducerRegistry.register<IFilmstripState>(
                 }
             };
         case SET_VISIBLE_REMOTE_PARTICIPANTS: {
-            const { endIndex, startIndex } = action;
+            let { endIndex, startIndex } = action;
             const { remoteParticipants } = state;
-            const visibleRemoteParticipants = new Set(remoteParticipants.slice(startIndex, endIndex + 1));
+            let visibleRemoteParticipants = new Set(remoteParticipants.slice(startIndex, endIndex + 1));
+
+            // RN > 0.73 made us add this:
+            // Hack alert for iOS where we force visible remote participants
+            // _onViewableItemsChanged gets set to >= 1 when appState transitions from background to active.
+            if (navigator.product === 'ReactNative' && Platform.OS === 'ios') {
+                if (remoteParticipants.length > 1 && visibleRemoteParticipants.size >= 1) {
+                    startIndex = 0;
+                    endIndex = remoteParticipants.length;
+                    visibleRemoteParticipants = new Set(remoteParticipants);
+                }
+            }
 
             return {
                 ...state,
