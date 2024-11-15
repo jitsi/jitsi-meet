@@ -14,6 +14,7 @@ local ip_util = require "util.ip";
 local new_ip = ip_util.new_ip;
 local match_ip = ip_util.match;
 local parse_cidr = ip_util.parse_cidr;
+local get_ip = module:require "util".get_ip;
 
 local config = {};
 local limits_resolution = 1;
@@ -75,14 +76,6 @@ end
 local function is_whitelisted_host(h)
 	return config.whitelist_hosts:contains(h);
 end
-
--- Discover real remote IP of a session
--- Note: http_server.get_request_from_conn() was added in Prosody 0.12.3,
--- this code provides backwards compatibility with older versions
-local get_request_from_conn = http_server.get_request_from_conn or function (conn)
-	local response = conn and conn._http_open_response;
-	return response and response.request or nil;
-end;
 
 -- Add an IP to the set of limied IPs
 local function limit_ip(ip)
@@ -192,9 +185,8 @@ local function filter_hook(session)
         return;
     end
 
-	local request = get_request_from_conn(session.conn);
-	local ip = request and request.ip or session.ip;
-	module:log("debug", "New session from %s", ip);
+    local ip = get_ip(session);
+    module:log("debug", "New session from %s", ip);
     if is_whitelisted(ip) or is_whitelisted_host(session.host) then
         return;
     end
