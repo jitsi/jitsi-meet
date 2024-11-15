@@ -1,6 +1,7 @@
 import { DEFAULT_LANGUAGE } from '../base/i18n/i18next';
 
 import {
+    REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
@@ -19,6 +20,22 @@ import {
 export function removeTranscriptMessage(transcriptMessageID: string) {
     return {
         type: REMOVE_TRANSCRIPT_MESSAGE,
+        transcriptMessageID
+    };
+}
+
+/**
+ * Signals that a cached transcript has to be removed from the state.
+ *
+ * @param {string} transcriptMessageID - The message_id to be removed.
+ * @returns {{
+*      type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
+*      transcriptMessageID: string,
+* }}
+*/
+export function removeCachedTranscriptMessage(transcriptMessageID: string) {
+    return {
+        type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
         transcriptMessageID
     };
 }
