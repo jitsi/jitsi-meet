@@ -1629,7 +1629,6 @@ var config = {
      iAmRecorder
      iAmSipGateway
      microsoftApiApplicationClientID
-     requireDisplayName
      */
 
     /**
