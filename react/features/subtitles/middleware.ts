@@ -13,6 +13,7 @@ import {
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
 import {
+    removeCachedTranscriptMessage,
     removeTranscriptMessage,
     setRequestingSubtitles,
     updateTranscriptMessage
@@ -134,18 +135,16 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         name
     };
 
+    let newTranscriptMessage: ITranscriptMessage | undefined;
+
     if (json.type === JSON_TYPE_TRANSLATION_RESULT && json.language === language) {
         // Displays final results in the target language if translation is
         // enabled.
-
-        const newTranscriptMessage = {
+        newTranscriptMessage = {
             clearTimeOut: undefined,
-            final: json.text,
+            final: json.text?.trim(),
             participant
         };
-
-        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
-        dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
         // Displays interim and final results without any translation if
         // translations are disabled.
@@ -209,12 +208,11 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // message ID or adds a new transcript message if it does not
         // exist in the map.
         const existingMessage = state['features/subtitles']._transcriptMessages.get(transcriptMessageID);
-        const newTranscriptMessage: ITranscriptMessage = {
+
+        newTranscriptMessage = {
             clearTimeOut: existingMessage?.clearTimeOut,
             participant
         };
-
-        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
 
         // If this is final result, update the state as a final result
         // and start a count down to remove the subtitle from the state
@@ -231,7 +229,31 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             // after the stable part.
             newTranscriptMessage.unstable = text;
         }
+    }
 
+    if (newTranscriptMessage) {
+        if (newTranscriptMessage.final) {
+            const cachedTranscriptMessage
+                = state['features/subtitles']._cachedTranscriptMessages?.get(transcriptMessageID);
+
+            if (cachedTranscriptMessage) {
+                const cachedText = (cachedTranscriptMessage.stable || cachedTranscriptMessage.unstable)?.trim();
+                const newText = newTranscriptMessage.final;
+
+                if (cachedText && cachedText.length > 0 && newText && newText.length > 0
+                    && newText.toLowerCase().startsWith(cachedText.toLowerCase())) {
+                    newTranscriptMessage.final = newText.slice(cachedText.length)?.trim();
+                }
+                dispatch(removeCachedTranscriptMessage(transcriptMessageID));
+
+                if (!newTranscriptMessage.final || newTranscriptMessage.final.length === 0) {
+                    return next(action);
+                }
+            }
+        }
+
+
+        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
         dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
     }
 
