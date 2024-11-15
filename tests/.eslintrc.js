@@ -1,7 +1,6 @@
 module.exports = {
     'extends': [
-        '../.eslintrc.js',
-        '@jitsi/eslint-config/jsdoc'
+        '../.eslintrc.js'
     ],
     'overrides': [
         {
