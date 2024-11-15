@@ -9,10 +9,12 @@ local get_ip = util.get_ip;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
-local limit_jibri_reach_attempts;
+local limit_jibri_reach_ip_attempts;
+local limit_jibri_reach_room_attempts;
 local rates_per_ip;
 local function load_config()
-    limit_jibri_reach_attempts = module:get_option_number("max_number_attempt_per_minute", 3);
+    limit_jibri_reach_ip_attempts = module:get_option_number("max_number_ip_attempts_per_minute", 9);
+    limit_jibri_reach_room_attempts = module:get_option_number("max_number_room_attempts_per_minute", 3);
     -- The size of the cache that saves state for IP addresses
     cache_size = module:get_option_number("jibri_rate_limit_cache_size", 10000);
 
@@ -48,11 +50,11 @@ module:hook("pre-iq/full", function(event)
 
                 local ip = get_ip(session);
                 if not rates_per_ip:get(ip) then
-                    rates_per_ip:set(ip, new_throttle(limit_jibri_reach_attempts, 60));
+                    rates_per_ip:set(ip, new_throttle(limit_jibri_reach_ip_attempts, 60));
                 end
 
                 if not room.jibri_throttle then
-                    room.jibri_throttle = new_throttle(limit_jibri_reach_attempts, 60);
+                    room.jibri_throttle = new_throttle(limit_jibri_reach_room_attempts, 60);
                 end
 
                 if not rates_per_ip:get(ip):poll(1) or not room.jibri_throttle:poll(1) then
