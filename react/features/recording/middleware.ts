@@ -364,6 +364,12 @@ function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatc
             titleKey: isStreamMode ? 'liveStreaming.inProgress' : 'recording.inProgress'
         }));
         break;
+    case JitsiMeetJS.constants.recording.error.POLICY_VIOLATION:
+        dispatch(showRecordingWarning({
+            descriptionKey: isStreamMode ? 'liveStreaming.policyError' : 'recording.policyError',
+            titleKey: isStreamMode ? 'liveStreaming.failedToStart' : 'recording.failedToStart'
+        }));
+        break;
     default:
         dispatch(showRecordingError({
             descriptionKey: isStreamMode
