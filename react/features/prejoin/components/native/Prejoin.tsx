@@ -70,8 +70,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const showDisplayNameInput = useMemo(
         () => isDisplayNameVisible && (displayName || !isDisplayNameReadonly),
         [ displayName, isDisplayNameReadonly, isDisplayNameVisible ]);
-    const [ isJoining, setIsJoining ]
-        = useState(false);
     const onChangeDisplayName = useCallback(event => {
         const fieldValue = getFieldValue(event);
 
@@ -82,7 +80,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ displayName ]);
 
     const onJoin = useCallback(() => {
-        setIsJoining(true);
         dispatch(connect());
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
@@ -212,14 +209,14 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     accessibilityLabel = 'prejoin.joinMeeting'
                     disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeeting'
-                    onClick = { isJoining ? undefined : maybeJoin }
+                    onClick = { maybeJoin }
                     style = { styles.joinButton }
                     type = { PRIMARY } />
                 <Button
                     accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
                     disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                    onClick = { isJoining ? undefined : onJoinLowBandwidth }
+                    onClick = { onJoinLowBandwidth }
                     style = { styles.joinButton }
                     type = { TERTIARY } />
             </View>
