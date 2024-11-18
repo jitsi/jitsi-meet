@@ -8,23 +8,30 @@ import { goBack as goBackToLobbyScreen } from './components/lobby/LobbyNavigatio
 import { lobbyScreenHeaderCloseButton, screenHeaderCloseButton } from './functions';
 import { goBack as goBackToWelcomeScreen } from './rootNavigationContainerRef';
 
-
 /**
- * Default modal transition for the current platform.
+ * Modal transition for the current platform.
  */
-export const modalPresentation = Platform.select({
+const modalPresentation = Platform.select({
     ios: TransitionPresets.ModalPresentationIOS,
     default: TransitionPresets.DefaultTransition
 });
 
 /**
- * Screen options and transition types.
+ * Full Screen options.
  */
-export const fullScreenOptions = {
+const fullScreenOptions = {
     ...TransitionPresets.ModalTransition,
     gestureEnabled: false,
     headerShown: false
 };
+
+/**
+ * Transition type for the current platform.
+ */
+const carmodeTileViewTransition = Platform.select({
+    ios: TransitionPresets.SlideFromRightIOS,
+    default: TransitionPresets.DefaultTransition
+});
 
 /**
  * Navigation container theme.
@@ -40,11 +47,6 @@ export const navigationContainerTheme = {
  */
 export const welcomeScreenOptions = {
     ...TransitionPresets.ModalTransition,
-    gestureEnabled: false,
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.ui01
-    },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
     }
@@ -100,6 +102,22 @@ export const breakoutRoomsScreenOptions = presentationScreenOptions;
  * Screen options for car mode.
  */
 export const carmodeScreenOptions = presentationScreenOptions;
+
+/**
+ * Screen options for car mode in tile view.
+ */
+export const carmodeScreenOptionsInTileView = {
+    ...carmodeTileViewTransition,
+    gestureEnabled: true,
+    headerLeft: () => screenHeaderCloseButton(goBack),
+    headerShown: true,
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.ui01
+    },
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
+};
 
 /**
  * Screen options for chat.

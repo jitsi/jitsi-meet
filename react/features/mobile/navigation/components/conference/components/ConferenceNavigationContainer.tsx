@@ -16,7 +16,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 // @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
-import { arePollsDisabled } from '../../../../../conference/functions';
+import { arePollsDisabled } from '../../../../../conference/functions.native';
 // @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
@@ -43,12 +43,14 @@ import SpeakerStats
 import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
+import { shouldDisplayTileView } from '../../../../../video-layout/functions.native';
 import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
     breakoutRoomsScreenOptions,
     carmodeScreenOptions,
+    carmodeScreenOptionsInTileView,
     chatScreenOptions,
     conferenceScreenOptions,
     gifsMenuOptions,
@@ -84,9 +86,11 @@ const ConferenceStack = createStackNavigator();
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(arePollsDisabled);
+    const isInTileview = useSelector(shouldDisplayTileView);
     let ChatScreen;
     let chatScreenName;
     let chatTitleString;
+    let carModeScreenOptions;
 
     if (isPollsDisabled) {
         ChatScreen = Chat;
@@ -96,6 +100,12 @@ const ConferenceNavigationContainer = () => {
         ChatScreen = ChatAndPollsNavigator;
         chatScreenName = screen.conference.chatandpolls.main;
         chatTitleString = 'chat.titleWithPolls';
+    }
+
+    if (isInTileview) {
+        carModeScreenOptions = carmodeScreenOptionsInTileView;
+    } else {
+        carModeScreenOptions = carmodeScreenOptions;
     }
     const { t } = useTranslation();
 
@@ -199,7 +209,7 @@ const ConferenceNavigationContainer = () => {
                     component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{
-                        ...carmodeScreenOptions,
+                        ...carModeScreenOptions,
                         title: t('carmode.labels.title')
                     }} />
                 <ConferenceStack.Screen
