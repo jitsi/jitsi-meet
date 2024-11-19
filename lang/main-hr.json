@@ -1234,16 +1234,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Odaberi <b><i>Dozvoli</i></b> kad tvoj preglednik zatraži dozvole.",
-        "chromeGrantPermissions": "Odaberi <b><i>Dozvoli</i></b> kad tvoj preglednik zatraži dozvole.",
-        "edgeGrantPermissions": "Odaberi <b><i>Da</i></b> kad tvoj preglednik zatraži dozvole.",
-        "electronGrantPermissions": "Pokušaj pristupa tvojoj kameri i mikrofonu",
-        "firefoxGrantPermissions": "Odaberi <b><i>Dijeli odabrane uređaje</i></b> kad tvoj preglednik zatraži dozvole.",
-        "iexplorerGrantPermissions": "Odaberi <b><i>U redu</i></b> kad tvoj preglednik zatraži dozvole.",
-        "nwjsGrantPermissions": "Dozvoli pristup tvojoj kameri i mikrofonu",
-        "operaGrantPermissions": "Odaberi <b><i>Dozvoli</i></b> kad tvoj preglednik zatraži dozvole.",
-        "react-nativeGrantPermissions": "Odaberi <b><i>Dozvoli</i></b> kad tvoj preglednik zatraži dozvole.",
-        "safariGrantPermissions": "Odaberi <b><i>U redu</i></b> kad tvoj preglednik zatraži dozvole."
+        "grantPermissions": "Dozvoli pristup tvojoj kameri i mikrofonu."
     },
     "videoSIPGW": {
         "busy": "Radimo na oslobađanju resursa. Pokušaj ponovo za par minuta.",

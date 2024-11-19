@@ -1373,16 +1373,7 @@
     },
     "unpinParticipant": "{{participantName}} - Malpingli",
     "userMedia": {
-        "androidGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
-        "chromeGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
-        "edgeGrantPermissions": "Elektu <b><i>Jes</i></b> kiam via foliumilo petos permesojn.",
-        "electronGrantPermissions": "Bonvolu doni la permeson uzi viajn kameraon kaj mikrofonon",
-        "firefoxGrantPermissions": "Elektu <b><i>Havigi elektitan aparaton</i></b> kiam via foliumilo petos permesojn.",
-        "iexplorerGrantPermissions": "Elektu <b><i>Bone</i></b> kiam via foliumilo petos permesojn.",
-        "nwjsGrantPermissions": "Bonvolu doni la permeson uzi viajn kameraon kaj mikrofonon",
-        "operaGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
-        "react-nativeGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
-        "safariGrantPermissions": "Elektu <b><i>Bone</i></b> kiam via foliumilo petos permesojn."
+        "grantPermissions": "Bonvolu doni la permeson uzi viajn kameraon kaj mikrofonon."
     },
     "videoSIPGW": {
         "busy": "Ni klopodas liberigi rimedojn. Bonvolu reprovi post kelkaj minutoj.",

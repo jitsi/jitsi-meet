@@ -919,16 +919,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "chromeGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "edgeGrantPermissions": "Hautatu <b><i>Bai</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "electronGrantPermissions": "Mesedez eman zure kamera eta mikrofonoa erabiltzeko baimenak",
-        "firefoxGrantPermissions": "Hautatu <b><i>Partekatutako hautatutako gailua</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "iexplorerGrantPermissions": "Hautatu <b><i>Ados</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "nwjsGrantPermissions": "Mesedez, eman zure kamera eta mikrofonoa erabiltzeko baimenak",
-        "operaGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "react-nativeGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "safariGrantPermissions": "Hautatu <b><i>Ados</i></b> zure nabigatzaileak baimenak eskatzen dituenean."
+        "grantPermissions": "Mesedez, eman zure kamera eta mikrofonoa erabiltzeko baimenak."
     },
     "videoSIPGW": {
         "busy": "Baliabideak askatzeko lanetan gabiltza. Mesedez, saiatu berriro minutu batzuk barru.",

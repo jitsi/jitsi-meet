@@ -1381,16 +1381,7 @@
     },
     "unpinParticipant": "Désépingler - {{participantName}}",
     "userMedia": {
-        "androidGrantPermissions": "Sélectionner <b><i>Autoriser</i></b> lorsque votre navigateur vous demande l'autorisation.",
-        "chromeGrantPermissions": "Sélectionner <b><i>Autoriser</i></b> lorsque votre navigateur vous demande l'autorisation.",
-        "edgeGrantPermissions": "Sélectionner <b><i>Oui</i></b> lorsque votre navigateur demande l'autorisation.",
-        "electronGrantPermissions": "Veuillez accorder l'autorisation d'utiliser votre caméra et votre micro",
-        "firefoxGrantPermissions": "Sélectionner <b><i>Partager le dispositif sélectionné</i></b> lorsque votre navigateur demande l'autorisation.",
-        "iexplorerGrantPermissions": "Sélectionner <b><i>OK</i></b> lorsque votre navigateur demande l'autorisation.",
-        "nwjsGrantPermissions": "Veuillez accorder l'autorisation d'utiliser votre caméra et votre micro",
-        "operaGrantPermissions": "Sélectionner <b><i>Autoriser</i></b> lorsque votre navigateur vous demande l'autorisation.",
-        "react-nativeGrantPermissions": "Sélectionner <b><i>Autoriser</i></b> lorsque votre navigateur vous demande l'autorisation.",
-        "safariGrantPermissions": "Sélectionner <b><i>OK</i></b> lorsque votre navigateur demande l'autorisation."
+        "grantPermissions": "Veuillez accorder l'autorisation d'utiliser votre caméra et votre micro."
     },
     "videoSIPGW": {
         "busy": "Libération des ressources en cours. Veuillez réessayer dans quelques minutes.",

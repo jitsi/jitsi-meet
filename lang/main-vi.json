@@ -1381,16 +1381,7 @@
     },
     "unpinParticipant": "{{participantName}} - Bỏ ghim",
     "userMedia": {
-        "androidGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "chromeGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "edgeGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "electronGrantPermissions": "Vui lòng cấp quyền sử dụng camera và micro của bạn",
-        "firefoxGrantPermissions": "Chọn <b><i>Chia sẻ thiết bị đã chọn</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "iexplorerGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "nwjsGrantPermissions": "Vui lòng cấp quyền sử dụng camera và micro của bạn",
-        "operaGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "react-nativeGrantPermissions": "Chọn <b><i>Cho phép</i></b> khi trình duyệt của bạn yêu cầu cấp phép.",
-        "safariGrantPermissions": "Chọn <b><i>Có</i></b> khi trình duyệt của bạn yêu cầu cấp phép."
+        "grantPermissions": "Vui lòng cấp quyền sử dụng camera và micro của bạn."
     },
     "videoSIPGW": {
         "busy": "Chúng tôi đang giải phóng tài nguyên. Vui lòng thử lại sau vài phút.",

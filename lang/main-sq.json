@@ -1405,16 +1405,7 @@
     },
     "unpinParticipant": "{{participantName}} - Hiqja fiksimin",
     "userMedia": {
-        "androidGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
-        "chromeGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
-        "edgeGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Po</i></b>.",
-        "electronGrantPermissions": "Po provohet të përdoret kamera dhe mikrofoni juaj",
-        "firefoxGrantPermissions": "Përzgjidhni <b><i>Nda Pajisjen e Përzgjedhur</i></b>, kur shfletuesi juaj të kërkojë leje.",
-        "iexplorerGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>OK</i></b>..",
-        "nwjsGrantPermissions": "Ju lutemi, akordoni leje për përdorim të kamerës dhe mikrofonit tuaj",
-        "operaGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
-        "react-nativeGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>Lejoje</i></b>.",
-        "safariGrantPermissions": "Kur shfletuesi juaj të kërkojë leje, përzgjidhni <b><i>OK</i></b>."
+        "grantPermissions": "Ju lutemi, akordoni leje për përdorim të kamerës dhe mikrofonit tuaj."
     },
     "videoSIPGW": {
         "busy": "Po përpiqemi të lirojmë burime. Ju lutemi, riprovoni pas pak minutash.",

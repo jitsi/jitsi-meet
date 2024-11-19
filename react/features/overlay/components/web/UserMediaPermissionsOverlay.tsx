@@ -44,8 +44,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                         className = 'inlay__text'
                         role = 'alert' >
                         {
-                            translateToHTML(t,
-                                `userMedia.${browser}GrantPermissions`)
+                            t('userMedia.grantPermissions')
                         }
                     </span>
                 </div>

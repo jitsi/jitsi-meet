@@ -1205,16 +1205,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Povolit</i></b> a potvrďte.",
-        "chromeGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Povolit</i></b> a potvrďte.",
-        "edgeGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Ano</i></b> a potvrďte.",
-        "electronGrantPermissions": "Povolte prosím používání kamery a mikrofonu",
-        "firefoxGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Spravovat vybraná zařízení</i></b> a potvrďte.",
-        "iexplorerGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>OK</i></b> a potvrďte.",
-        "nwjsGrantPermissions": "Povolte prosím používání kamery a mikrofonu",
-        "operaGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Povolit</i></b> a potvrďte.",
-        "react-nativeGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>Povolit</i></b> a potvrďte.",
-        "safariGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>OK</i></b> a potvrďte."
+        "grantPermissions": "Povolte prosím používání kamery a mikrofonu."
     },
     "videoSIPGW": {
         "busy": "Pracujeme na uvolnění prostředků. Zkuste to prosím znovu za několik minut.",

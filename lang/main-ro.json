@@ -694,16 +694,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Selectați 'Permiteti' când browserul vă cere permisiunea.",
-        "chromeGrantPermissions": "Selectați 'Permiteti' când browserul vă cere permisiunea.",
-        "edgeGrantPermissions": "Selectați 'Da' când browserul vă cere permisiunea.",
-        "electronGrantPermissions": "Vă rugam să acordați permisiunea pentru utilizarea camerei și a microfonului",
-        "firefoxGrantPermissions": "Selectați 'Parajare cu dispozitivul selectat' când browserul vă cere permisiunea.",
-        "iexplorerGrantPermissions": "Selectați OK când browserul vă cere permisiunea.",
-        "nwjsGrantPermissions": "Vă rugam să acordați permisiunea pentru utilizarea camerei și a microfonului",
-        "operaGrantPermissions": "Selectați 'Permiteti' când browserul vă cere permisiunea.",
-        "react-nativeGrantPermissions": "Selectați Allow când browserul vă cere permisiunea.",
-        "safariGrantPermissions": "Selectați OK când browserul vă cere permisiunea."
+        "grantPermissions": "Vă rugam să acordați permisiunea pentru utilizarea camerei și a microfonului."
     },
     "videoSIPGW": {
         "busy": "Lucrăm la eliberarea resurselor. Vă rugăm încercați din nou în câteva minute.",

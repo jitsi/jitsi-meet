@@ -1405,16 +1405,7 @@
     },
     "unpinParticipant": "{{participantName}} - Sabitlemeyi kaldır",
     "userMedia": {
-        "androidGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "chromeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "edgeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Evet</i></b> seçeneğini seçin.",
-        "electronGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
-        "firefoxGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Seçilen Aygıtı Paylaş</i></b> seçeneğini seçin.",
-        "iexplorerGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin.",
-        "nwjsGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
-        "operaGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "react-nativeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "safariGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin."
+        "grantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin."
     },
     "videoSIPGW": {
         "busy": "Kaynakları serbest bırakmaya çalışıyoruz. Lütfen birkaç dakika içinde tekrar deneyin.",

@@ -692,16 +692,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "edgeGrantPermissions": "",
-        "electronGrantPermissions": "Молим дозволитe употрeбу камeрe и микрофона",
-        "firefoxGrantPermissions": "Одабeритe <b><i>Дијeљeњe одабраног урeђаја</i></b> када прeглeдач затражи дозволе.",
-        "iexplorerGrantPermissions": "",
-        "nwjsGrantPermissions": "Молим дозволитe употрeбу камeрe и микрофона",
-        "operaGrantPermissions": "",
-        "react-nativeGrantPermissions": "",
-        "safariGrantPermissions": ""
+        "grantPermissions": "Молим дозволитe употрeбу камeрe и микрофона."
     },
     "videoSIPGW": {
         "busy": "",

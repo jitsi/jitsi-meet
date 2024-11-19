@@ -701,16 +701,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Pasirinkite <b><i>Allow</i></b> kai jūsų naršyklė prašys leidimo.",
-        "chromeGrantPermissions": "Pasirinkite <b><i>Allow</i></b> kai jūsų naršyklė prašys leidimo.",
-        "edgeGrantPermissions": "Pasirinkite <b><i>Yes</i></b> kai jūsų naršyklė prašys leidimų.",
-        "electronGrantPermissions": "Prašome duoti leidimą, kad galėtumėte naudotis kamera ir mikrofonu",
-        "firefoxGrantPermissions": "Pasirinkite <b><i>Share Selected Device</i></b> kai jūsų naršyklė prašys leidimo.",
-        "iexplorerGrantPermissions": "Pasirinkite <b><i>OK</i></b> kai jūsų naršyklė prašys leidimo.",
-        "nwjsGrantPermissions": "Prašome duoti leidimo, kad galėtumėte naudotis kamera ir mikrofonu",
-        "operaGrantPermissions": "Pasirinkite <b><i>Allow</i></b> kai jūsų naršyklė prašys leidimo.",
-        "react-nativeGrantPermissions": "Pasirinkite <b><i>Allow</i></b> kai jūsų naršyklė prašys leidimo.",
-        "safariGrantPermissions": "Pasirinkite <b><i>OK</i></b> kai jūsų naršyklė prašys leidimo."
+        "grantPermissions": "Prašome duoti leidimo, kad galėtumėte naudotis kamera ir mikrofonu."
     },
     "videoSIPGW": {
         "busy": "Mes dirbame, kad atlaisvinti išteklius. Prašome pabandyti dar kartą po kelių minučių.",

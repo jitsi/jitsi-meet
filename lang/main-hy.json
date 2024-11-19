@@ -636,16 +636,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "chromeGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "edgeGrantPermissions": "Ընտրեք <b><i>Yes</i></b>, երբ ձեր բրաուզերը թույլտվություն հարցնի.",
-        "electronGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ",
-        "firefoxGrantPermissions": "Երբ բրաուզերը թույլտվություն հարցնի, ընտրեք <b><i>Share Selected Device</i></b>",
-        "iexplorerGrantPermissions": "Ընտրեք <b><i>OK</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "nwjsGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ",
-        "operaGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "react-nativeGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "safariGrantPermissions": "Ընտրեք <b><i>OK</i></b>, երբ բրաուզերը թույլտվություն հարցնի"
+        "grantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ."
     },
     "videoSIPGW": {
         "busy": "",

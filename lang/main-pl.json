@@ -1306,16 +1306,7 @@
     },
     "unpinParticipant": "{{participantName}} - Odepnij",
     "userMedia": {
-        "androidGrantPermissions": "Wybierz <b><i>Pozwól</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "chromeGrantPermissions": "Wybierz <b><i>Pozwól</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "edgeGrantPermissions": "Wybierz <b><i>Tak</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "electronGrantPermissions": "Udziel przyzwolenia na użycie swej kamery i mikrofonu",
-        "firefoxGrantPermissions": "Wybierz <b><i>Udostępnij wybrane urządzenie</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "iexplorerGrantPermissions": "Wybierz <b><i>OK</i></b>, gdy przegladarka zapyta o pozwolenie.",
-        "nwjsGrantPermissions": "Udziel przyzwolenia na użycie swej kamery i mikrofonu",
-        "operaGrantPermissions": "Wybierz <b><i>Pozwól</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "react-nativeGrantPermissions": "Wybierz <b><i>Pozwól</i></b>, gdy przeglądarka zapyta o pozwolenie.",
-        "safariGrantPermissions": "Wybierz <b><i>OK</i></b>, gdy przegladarka zapyta o pozwolenie."
+        "grantPermissions": "Udziel przyzwolenia na użycie swej kamery i mikrofonu."
     },
     "videoSIPGW": {
         "busy": "Pracujemy nad uwolnieniem zasobów. Prosimy spróbować za kilka minut.",

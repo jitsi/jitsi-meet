@@ -731,16 +731,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
-        "chromeGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
-        "edgeGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>Yes</i></b>를 선택",
-        "electronGrantPermissions": "카메라와 마이크 사용 권한을 부여하십시오",
-        "firefoxGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>선택된 디바이스 공유</i></b>를 선택",
-        "iexplorerGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>OK</i></b>를 선택",
-        "nwjsGrantPermissions": "카메라와 마이크 사용 권한을 부여하십시오",
-        "operaGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
-        "react-nativeGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
-        "safariGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>OK</i></b>를 선택"
+        "grantPermissions": "카메라와 마이크 사용 권한을 부여하십시오."
     },
     "videoSIPGW": {
         "busy": "자원을 확보하기 위해 노력하고 있습니다. 몇 분 후에 다시 시도하십시오.",
