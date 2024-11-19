@@ -7,7 +7,7 @@ import { IContext } from './types';
  * @returns {string} - The random room name.
  */
 function generateRandomRoomName(): string {
-    return `jitsimeettorture-${crypto.randomUUID()}}`;
+    return `jitsimeettorture-${crypto.randomUUID()}`;
 }
 
 /**
