@@ -1291,16 +1291,7 @@
     },
     "unpinParticipant": "{{participantName}} - Онцлох",
     "userMedia": {
-        "androidGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Allow</i></b> дарна уу.",
-        "chromeGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Allow</i></b> дарна уу.",
-        "edgeGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Yes</i></b> дарна уу.",
-        "electronGrantPermissions": "Камер болон микрофон ашиглах зөвшөөрөл өгнө үү",
-        "firefoxGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Share Selected Device</i></b> дарна уу.",
-        "iexplorerGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>OK</i></b> дарна уу.",
-        "nwjsGrantPermissions": "Камер болон микрофон ашиглах зөвшөөрөл өгнө үү",
-        "operaGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Allow</i></b> дарна уу.",
-        "react-nativeGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>Allow</i></b> дарна уу.",
-        "safariGrantPermissions": "Хөтөчөөс зөвшөөрөл хүсэх тохиолдолд <b><i>OK</i></b> дарна уу."
+        "grantPermissions": "Камер болон микрофон ашиглах зөвшөөрөл өгнө үү."
     },
     "videoSIPGW": {
         "busy": "Бид нөөцийг чөлөөлөхөөр ажиллаж байна. Хэдэн минутын дараа дахин оролдоно уу.",

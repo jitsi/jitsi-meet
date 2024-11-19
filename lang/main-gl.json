@@ -681,16 +681,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "chromeGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "edgeGrantPermissions": "Seleccionar <b><i>Si</i></b> cando o seu navegador pida permisos.",
-        "electronGrantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono",
-        "firefoxGrantPermissions": "Seleccionar <b><i>Compartir o dispositivo seleccionado</i></b> cando o navegador pida permisos.",
-        "iexplorerGrantPermissions": "Seleccionar <b><i>Aceptar</i></b> cando o seu navegador lle pida permisos. ",
-        "nwjsGrantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono",
-        "operaGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "react-nativeGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "safariGrantPermissions": "Seleccionar <b><i>Aceptar</i></b> cando o seu navegador lle pida permisos. "
+        "grantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono."
     },
     "videoSIPGW": {
         "busy": "Estamos liberando recursos. Ténteo de novo nuns minutos.",

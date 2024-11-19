@@ -1373,16 +1373,7 @@
     },
     "unpinParticipant": "{{participantName}} - Losa",
     "userMedia": {
-        "androidGrantPermissions": "Veldu <b><i>Leyfa</i></b> þegar vafrinn þinn biður um heimildir.",
-        "chromeGrantPermissions": "Veldu <b><i>Leyfa</i></b> þegar vafrinn þinn biður um heimildir.",
-        "edgeGrantPermissions": "Veldu <b><i>Já</i></b> þegar vafrinn þinn biður um heimildir.",
-        "electronGrantPermissions": "Reynir að nota myndavélina þína og hljóðnema",
-        "firefoxGrantPermissions": "Veldu <b><i>Deila völdu tæki</i></b> þegar vafrinn þinn biður um heimildir.",
-        "iexplorerGrantPermissions": "Veldu <b><i>Í lagi</i></b> þegar vafrinn þinn biður um heimildir.",
-        "nwjsGrantPermissions": "Gefðu heimild til að nota myndavél og hljóðnema",
-        "operaGrantPermissions": "Veldu <b><i>Leyfa</i></b> þegar vafrinn þinn biður um heimildir.",
-        "react-nativeGrantPermissions": "Veldu <b><i>Leyfa</i></b> þegar vafrinn þinn biður um heimildir.",
-        "safariGrantPermissions": "Veldu <b><i>Í lagi</i></b> þegar vafrinn þinn biður um heimildir."
+        "grantPermissions": "Gefðu heimild til að nota myndavél og hljóðnema."
     },
     "videoSIPGW": {
         "busy": "Við erum að reyna að losa um einhver tilföng. Reyndu aftur eftir nokkrar mínútur.",

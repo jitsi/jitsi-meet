@@ -1241,16 +1241,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Sèbera <b><i>Permite</i></b> cando su navigadore ti dimandet permissos.",
-        "chromeGrantPermissions": "Sèbera <b><i>Permite</i></b> cando su navigadore ti dimandet permissos.",
-        "edgeGrantPermissions": "Sèbera <b><i>Eja</i></b> cando su navigadore ti dimandet permissos.",
-        "electronGrantPermissions": "Proende a atzèdere a sa càmera e su micròfonu tuos",
-        "firefoxGrantPermissions": "Sèbera <b><i>Cumpartzi dispositivos seletzionados</i></b> cando su navigadore ti dimandet permissos.",
-        "iexplorerGrantPermissions": "Sèbera <b><i>AB</i></b> cando su navigadore ti dimandet permissos.",
-        "nwjsGrantPermissions": "Cuntzede permissos pro atzèdere a sa càmera e a su micròfonu tuos",
-        "operaGrantPermissions": "Sèbera <b><i>Permite</i></b> cando su navigadore ti dimandet permissos.",
-        "react-nativeGrantPermissions": "Sèbera <b><i>Permite</i></b> cando su navigadore ti dimandet permissos.",
-        "safariGrantPermissions": "Sèbera <b><i>AB</i></b> cando su navigadore ti dimandet permissos."
+        "grantPermissions": "Cuntzede permissos pro atzèdere a sa càmera e a su micròfonu tuos."
     },
     "videoSIPGW": {
         "busy": "Semus traballende pro liberare resursas. Torra a proare dae immoe a carchi minutu.",

@@ -837,16 +837,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Vyberte <b><i>Povoliť</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "chromeGrantPermissions": "Vyberte <b><i>Povoliť</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "edgeGrantPermissions": "Vyberte <b><i>Áno</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "electronGrantPermissions": "Prosím povoľte prístup k vašemu mikrofónu a kamere.",
-        "firefoxGrantPermissions": "Vyberte <b><i>Zdieľaj vybrané zariadenie</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "iexplorerGrantPermissions": "Vyberte <b><i>Ok</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "nwjsGrantPermissions": "Prosím povoľte prístup k vašemu mikrofónu a kamere.",
-        "operaGrantPermissions": "Vyberte <b><i>Povoliť</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "react-nativeGrantPermissions": "Vyber <b><i>Povoliť</i></b> keď sa prehliadač bude pýtať na povolenie.",
-        "safariGrantPermissions": "Vyberte <b><i>OK</i></b> keď sa prehliadač bude pýtať na povolenie."
+        "grantPermissions": "Prosím povoľte prístup k vašemu mikrofónu a kamere."
     },
     "videoSIPGW": {
         "busy": "Všetky zdroje sú obsadené, skúste znovu o pár minút.",

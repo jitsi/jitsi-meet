@@ -1115,16 +1115,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "chromeGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "edgeGrantPermissions": "Causissètz <b><i>Òc</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "electronGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camèra e vòstre microfòn",
-        "firefoxGrantPermissions": "Causissètz <b><i>Partejar l'aparelh seleccionat</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "iexplorerGrantPermissions": "Causissètz <b><i>OK</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "nwjsGrantPermissions": "Mercés de donar las permissions d'utilizar vòstra camèra e vòstre microfòn",
-        "operaGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "react-nativeGrantPermissions": "Causissètz <b><i>Autorizar</i></b> quand vòstre navigador vos demanda l'autorizacion.",
-        "safariGrantPermissions": "Causissètz <b><i>OK</i></b> quand vòstre navigador vos demanda l'autorizacion."
+        "grantPermissions": "Mercés de donar las permissions d'utilizar vòstra camèra e vòstre microfòn."
     },
     "videoSIPGW": {
         "busy": "Sèm a liurar de resorgas. Mercés de tornar ensajar dins una estona.",

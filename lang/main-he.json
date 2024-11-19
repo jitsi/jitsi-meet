@@ -713,16 +713,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "בחר <b><i>אשר</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "chromeGrantPermissions": "בחר <b><i>אשר</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "edgeGrantPermissions": "בחר <b><i>כן</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "electronGrantPermissions": "אנא הענק הרשאות להשתמש במצלמה ובמיקרופון שלך",
-        "firefoxGrantPermissions": "בחר <b><i>שתף התקן נבחר</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "iexplorerGrantPermissions": "בחר <b><i>אישור</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "nwjsGrantPermissions": "אנא הענק הרשאות להשתמש במצלמה ובמיקרופון שלך",
-        "operaGrantPermissions": "בחר <b><i>אשר</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "react-nativeGrantPermissions": "בחר <b><i>אשר</i></b> כאשר הדפדפן שלך מבקש הרשאות.",
-        "safariGrantPermissions": "בחר <b><i>אישור</i></b> כאשר הדפדפן שלך מבקש הרשאות."
+        "grantPermissions": "אנא הענק הרשאות להשתמש במצלמה ובמיקרופון שלך."
     },
     "videoSIPGW": {
         "busy": "אנו עובדים על שחרור משאבים. אנא נסה שוב בעוד מספר דקות.",

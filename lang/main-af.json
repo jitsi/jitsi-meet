@@ -641,16 +641,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "chromeGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "edgeGrantPermissions": "Kies <b><i>Yes</i></b> wanneer die blaaier vir toestemming vra.",
-        "electronGrantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon",
-        "firefoxGrantPermissions": "Kies <b><i>Deel gekose toestel</i></b> wanneer die blaaier vir toestemming vra.",
-        "iexplorerGrantPermissions": "Kies <b><i>OK</i></b> wanneer die blaaier vir toestemming vra.",
-        "nwjsGrantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon",
-        "operaGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "react-nativeGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "safariGrantPermissions": "Kies <b><i>OK</i></b> wanneer die blaaier vir toestemming vra."
+        "grantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon."
     },
     "videoSIPGW": {
         "busy": "Ons probeer tans hulpbronne vry te stel. Probeer gerus weer oor ’n paar minute.",

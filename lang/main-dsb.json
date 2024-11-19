@@ -1238,16 +1238,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "chromeGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "edgeGrantPermissions": "Wuzwólśo opciju <b><i>jo</i></b>, gaž browser wó pšawa pšosy.",
-        "electronGrantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś",
-        "firefoxGrantPermissions": "Wuzwólśo opciju <b><i>dowóliś</i></b>, gaž browser wó pšawa pšosy.",
-        "iexplorerGrantPermissions": "Wuzwólśo opciju <b><i>OK</i></b>, gaž browser wó pšawa pšosy.",
-        "nwjsGrantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś",
-        "operaGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "react-nativeGrantPermissions": "Wuzwólśo opciju <b><i>dowóliś</i></b>, gaž browser wó pšawa pšosy.",
-        "safariGrantPermissions": "Wuzwólśo opciju <b><i>OK</i></b>, gaž browser wó pšawa pšosy."
+        "grantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś."
     },
     "videoSIPGW": {
         "busy": "Źěłamy na tom, aby resurse se k dispoziciji stajili. Wopytajśo za pór minutow hyšći raz.",
