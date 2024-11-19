@@ -112,7 +112,7 @@ import {
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
-    getParticipantByIdOrUndefined,
+    getParticipantByIdOrUndefined, getParticipantCount,
     getVirtualScreenshareParticipantByOwnerId
 } from './react/features/base/participants/functions';
 import { updateSettings } from './react/features/base/settings/actions';
@@ -142,6 +142,7 @@ import { openLeaveReasonDialog } from './react/features/conference/actions.web';
 import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
+import { beginAddPeople } from './react/features/invite/actions.any';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
 import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
 import {
@@ -1573,6 +1574,11 @@ export default {
 
                 if (role === 'moderator') {
                     APP.store.dispatch(maybeSetLobbyChatMessageListener());
+                    const participantsCount = getParticipantCount(APP.store.getState());
+
+                    if (participantsCount === 1) {
+                        APP.store.dispatch(beginAddPeople());
+                    }
                 }
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
