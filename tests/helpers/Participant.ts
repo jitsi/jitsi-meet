@@ -8,7 +8,7 @@ import Filmstrip from '../pageobjects/Filmstrip';
 import Toolbar from '../pageobjects/Toolbar';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
-import { IContext } from './participants';
+import { IContext } from './types';
 
 /**
  * Participant.
@@ -19,7 +19,6 @@ export class Participant {
      *
      * @private
      */
-    private context: { roomName: string; };
     private _name: string;
     private _endpointId: string;
 
@@ -111,8 +110,6 @@ export class Participant {
      * @returns {Promise<void>}
      */
     async joinConference(context: IContext, skipInMeetingChecks = false) {
-        this.context = context;
-
         const url = urlObjectToString({
             room: context.roomName,
             configOverwrite: this.config,

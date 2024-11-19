@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import process from 'node:process';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
+import { IContext } from './helpers/types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const allure = require('allure-commandline');
@@ -164,6 +165,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
         multiremotebrowser.instances.forEach((instance: string) => {
             initLogger(multiremotebrowser.getInstance(instance), instance, TEST_RESULTS_DIR);
         });
+
+        const globalAny: any = global;
+
+        globalAny.context = {} as IContext;
     },
 
     /**

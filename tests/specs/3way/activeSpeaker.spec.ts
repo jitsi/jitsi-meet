@@ -1,10 +1,8 @@
 /* global APP */
 import type { Participant } from '../../helpers/Participant';
-import { IContext, ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
+import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
-    const context = {} as IContext;
-
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(context);
 
