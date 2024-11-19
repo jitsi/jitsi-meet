@@ -105,6 +105,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     prefs: chromePreferences
                 },
                 'wdio:exclude': [
+                    'specs/alone/**',
                     'specs/2way/**'
                 ]
             }
@@ -117,6 +118,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     prefs: chromePreferences
                 },
                 'wdio:exclude': [
+                    'specs/alone/**',
+                    'specs/2way/**',
                     'specs/3way/**'
                 ]
             }
