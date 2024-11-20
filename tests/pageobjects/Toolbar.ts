@@ -49,8 +49,8 @@ export default class Toolbar {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioMuteButton() {
-        await this.participant.log('Clicking on: Audio Mute Button');
+    async clickAudioMuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Audio Mute Button');
         await this.audioMuteBtn.click();
     }
 
@@ -59,8 +59,8 @@ export default class Toolbar {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioUnmuteButton() {
-        await this.participant.log('Clicking on: Audio Unmute Button');
+    async clickAudioUnmuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Audio Unmute Button');
         await this.audioUnMuteBtn.click();
     }
 }

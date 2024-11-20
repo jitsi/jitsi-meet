@@ -25,7 +25,7 @@ export default class Filmstrip {
      * otherwise, it will assert its presence.
      * @returns {Promise<void>}
      */
-    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false) {
+    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false): Promise<void> {
         let id;
 
         if (testee === this.participant) {

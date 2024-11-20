@@ -68,7 +68,7 @@ export class Participant {
      *
      * @returns {Promise<string>} The endpoint ID.
      */
-    async getEndpointId() {
+    async getEndpointId(): Promise<string> {
         if (!this._endpointId) {
             this._endpointId = await this.driver.execute(() => { // eslint-disable-line arrow-body-style
                 return APP.conference.getMyUserId();
@@ -98,7 +98,7 @@ export class Participant {
      * @param {string} message - The message to log.
      * @returns {void}
      */
-    log(message: string) {
+    log(message: string): void {
         logInfo(this.driver, message);
     }
 
@@ -109,7 +109,7 @@ export class Participant {
      * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
      * @returns {Promise<void>}
      */
-    async joinConference(context: IContext, skipInMeetingChecks = false) {
+    async joinConference(context: IContext, skipInMeetingChecks = false): Promise<void> {
         const config = {
             room: context.roomName,
             configOverwrite: this.config,
@@ -159,7 +159,7 @@ export class Participant {
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks: boolean) {
+    private async postLoadProcess(skipInMeetingChecks: boolean): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];
@@ -206,7 +206,7 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForPageToLoad() {
+    async waitForPageToLoad(): Promise<void> {
         return this.driver.waitUntil(
             () => this.driver.execute(() => document.readyState === 'complete'),
             {
@@ -221,7 +221,7 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitToJoinMUC() {
+    async waitToJoinMUC(): Promise<void> {
         return this.driver.waitUntil(
             () => this.driver.execute(() => APP.conference.isJoined()),
             {
@@ -236,7 +236,7 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForIceConnected() {
+    async waitForIceConnected(): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
@@ -251,7 +251,7 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForSendReceiveData() {
+    async waitForSendReceiveData(): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
@@ -276,7 +276,7 @@ export class Participant {
      * @param {number} number - The number of remote streams o wait for.
      * @returns {Promise<void>}
      */
-    waitForRemoteStreams(number: number) {
+    waitForRemoteStreams(number: number): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
@@ -291,7 +291,7 @@ export class Participant {
      *
      * @returns {Toolbar}
      */
-    getToolbar() {
+    getToolbar(): Toolbar {
         return new Toolbar(this);
     }
 
@@ -300,7 +300,7 @@ export class Participant {
      *
      * @returns {Filmstrip}
      */
-    getFilmstrip() {
+    getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
     }
 }
