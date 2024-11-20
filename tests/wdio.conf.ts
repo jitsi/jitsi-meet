@@ -169,6 +169,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const globalAny: any = global;
 
         globalAny.context = {} as IContext;
+
+        globalAny.context.iframePageBase = process.env.IFRAME_PAGE_BASE;
     },
 
     /**

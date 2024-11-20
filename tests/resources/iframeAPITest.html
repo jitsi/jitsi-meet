@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>iframe API test</title>
+</head>
+<body>
+<script>
+    const blacklist = [ '__proto__', 'constructor', 'prototype' ];
+    const paramStr = document.location.hash;
+    const params = {};
+    const paramParts = paramStr?.substring(1).split('&') || [];
+
+    paramParts.forEach(part => {
+        const param = part.split('=');
+        const key = param[0];
+
+        if (!key || key.split('.').some(k => blacklist.includes(k))) {
+            return;
+        }
+
+        let value;
+
+        try {
+            value = param[1];
+
+
+            const decoded = decodeURIComponent(value).replace(/\\&/, '&')
+                .replace(/[\u2018\u2019]/g, '\'')
+                .replace(/[\u201C\u201D]/g, '"');
+
+            value = decoded === 'undefined' || decoded === '' ? undefined : JSON.parse(decoded);
+
+        } catch (e) {
+            console.error(`Failed to parse URL parameter value: ${String(value)}`, e);
+
+            return;
+        }
+        params[key] = value;
+    });
+    const json = {
+        config: {},
+        interfaceConfig: {}
+    };
+
+    for (const param of Object.keys(params)) {
+        let base = json;
+        const names = param.split('.');
+        const last = names.pop() ?? '';
+
+        for (const name of names) {
+            base = base[name] = base[name] || {};
+        }
+
+        base[last] = params[param];
+    }
+
+    // we can drop the url params in the future
+    const urlParams = new URLSearchParams(document.location.search);
+
+    const config = !Object.keys(json.config).length ? JSON.parse(urlParams.get("config"))
+        : json.config;
+    const interfaceConfig = !Object.keys(json.interfaceConfig).length ? JSON.parse(urlParams.get("interfaceConfig"))
+        : json.interfaceConfig;
+    const password = json.password || urlParams.get("password");
+    const uInfoObj = urlParams.get("userInfo") || json.userInfo; // prefer url just for compatability with old code
+
+    let userInfo;
+    if (uInfoObj) {
+        if (uInfoObj.length > 0) {
+            userInfo = JSON.parse(uInfoObj);
+        } else if (Object.keys(uInfoObj).length) {
+            userInfo = uInfoObj;
+        }
+    }
+    const jwt = json.jwt || urlParams.get("jwt");
+    const roomName = json.room || urlParams.get("room");
+    const domain = json.domain || urlParams.get("domain");
+
+    const options = {
+        jwt,
+        roomName,
+        configOverwrite: config,
+        interfaceConfigOverwrite: interfaceConfig,
+        userInfo
+    };
+
+    const externalAPIScript = document.createElement('script');
+    externalAPIScript.src = `https://${domain}/external_api.js`;
+    externalAPIScript.type = "text/javascript";
+    externalAPIScript.onload = function(){
+        window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
+        // we use this to save data from api to be accessible to tests
+        window.jitsiAPI.test = {};
+        window.jitsiAPI.addEventListener('participantRoleChanged', function(event) {
+            if (event.role === "moderator") {
+                window.jitsiAPI.test.isModerator = true;
+            }
+        });
+        window.jitsiAPI.addEventListener('audioAvailabilityChanged', function(event) {
+            window.jitsiAPI.test.audioAvailabilityChanged = event;
+        });
+        window.jitsiAPI.addEventListener('videoAvailabilityChanged', function(event) {
+            window.jitsiAPI.test.videoAvailabilityChanged = event;
+        });
+        window.jitsiAPI.addEventListener('videoConferenceJoined', function(event) {
+            window.jitsiAPI.test.videoConferenceJoined = event;
+        });
+        if (password && password.length > 0) {
+            // join a protected channel with the password supplied
+            window.jitsiAPI.on('passwordRequired', function ()
+            {
+                window.jitsiAPI.executeCommand('password', password);
+            });
+        }
+    }
+    document.getElementsByTagName('head')[0].appendChild(externalAPIScript);
+</script>
+</body>
+</html>

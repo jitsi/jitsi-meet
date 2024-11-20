@@ -110,7 +110,7 @@ export class Participant {
      * @returns {Promise<void>}
      */
     async joinConference(context: IContext, skipInMeetingChecks = false) {
-        const url = urlObjectToString({
+        const config = {
             room: context.roomName,
             configOverwrite: this.config,
             interfaceConfigOverwrite: {
@@ -119,13 +119,33 @@ export class Participant {
             userInfo: {
                 displayName: this._name
             }
-        }) || '';
+        };
+
+        if (context.iframeAPI) {
+            config.room = 'iframeAPITest.html';
+        }
+
+        let url = urlObjectToString(config) || '';
+
+        if (context.iframeAPI) {
+            url = `${url}&domain="${new URL(this.driver.options.baseUrl || '').host}"&room="${context.roomName}"`;
+
+            if (context.iframePageBase) {
+                url = `${context.iframePageBase}${url}`;
+            }
+        }
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
         await this.driver.url(url);
 
         await this.waitForPageToLoad();
+
+        if (context.iframeAPI) {
+            const mainFrame = this.driver.$('iframe');
+
+            await this.driver.switchFrame(mainFrame);
+        }
 
         await this.waitToJoinMUC();
 
