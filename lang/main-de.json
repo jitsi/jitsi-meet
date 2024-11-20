@@ -1246,6 +1246,7 @@
             "lobbyButton": "Lobbymodus ein-/ausschalten",
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/ausschalten",
+            "love": "Herz",
             "lowerHand": "Hand senken",
             "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
             "moreActionsMenu": "Menü „Weitere Einstellungen“",
@@ -1335,6 +1336,7 @@
         "lobbyButtonEnable": "Lobbymodus aktivieren",
         "login": "Anmelden",
         "logout": "Abmelden",
+        "love": "Herz",
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
@@ -1360,6 +1362,7 @@
         "raiseYourHand": "Melden",
         "reactionBoo": "Buhen senden",
         "reactionClap": "Klatschen senden",
+        "reactionHeart": "Herz senden",
         "reactionLaugh": "Lachen senden",
         "reactionLike": "Daumen hoch senden",
         "reactionSilence": "Stille senden",
@@ -1393,7 +1396,7 @@
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
-        "failedToStart": "Transkribieren konnte nicht gestartet werden",
+        "failed": "Transkribieren fehlgeschlagen",
         "labelToolTip": "Das Meeting wird transkribiert",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
@@ -1405,16 +1408,7 @@
     },
     "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {
-        "androidGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "chromeGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "electronGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "firefoxGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "operaGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet."
+        "grantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen."
     },
     "videoSIPGW": {
         "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",

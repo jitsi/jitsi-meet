@@ -1,0 +1,12 @@
+{
+    "include": ["**/*.ts", "../globals.d.ts"],
+    "extends": "../tsconfig.web",
+    "compilerOptions": {
+        "types": [
+            "node",
+            "@wdio/globals/types",
+            "@types/jasmine",
+            "@wdio/jasmine-framework"
+        ]
+    }
+}

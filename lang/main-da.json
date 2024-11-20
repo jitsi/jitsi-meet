@@ -697,16 +697,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Vælg <b><i> Tillad</i> </b>, når din browser beder om tilladelser",
-        "chromeGrantPermissions": "Vælg <b><i> Tillad</i> </b>, når din browser beder om tilladelser",
-        "edgeGrantPermissions": "Vælg <b><i>Ja</i> </b>, når din browser beder om tilladelser",
-        "electronGrantPermissions": "Giv tilladelse til at dit kamera og din mikrofon benyttes",
-        "firefoxGrantPermissions": "Vælg <b> <i> Del valgt enhed </i> </b>, når din browser beder om tilladelser",
-        "iexplorerGrantPermissions": "Vælg <b><i>OK</i> </b>, når din browser beder om tilladelser",
-        "nwjsGrantPermissions": "Giv tilladelse til at dit kamera og din mikrofon benyttes",
-        "operaGrantPermissions": "Vælg <b><i> Tillad</i> </b>, når din browser beder om tilladelser",
-        "react-nativeGrantPermissions": "Vælg <b><i> Tillad</i> </b>, når din browser beder om tilladelser",
-        "safariGrantPermissions": "Vælg <b><i>OK</i> </b>, når din browser beder om tilladelser"
+        "grantPermissions": "Giv tilladelse til at dit kamera og din mikrofon benyttes."
     },
     "videoSIPGW": {
         "busy": "Vi arbejder på at frigøre ressourcer. Prøv igen om et par minutter",

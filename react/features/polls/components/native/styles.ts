@@ -164,13 +164,11 @@ export const pollsStyles = createStyleSheet({
     },
 
     pollSendLabel: {
-        color: BaseTheme.palette.text01,
-        textTransform: 'capitalize'
+        color: BaseTheme.palette.text01
     },
 
     pollSendDisabledLabel: {
-        color: BaseTheme.palette.text03,
-        textTransform: 'capitalize'
+        color: BaseTheme.palette.text03
     },
 
     buttonRow: {

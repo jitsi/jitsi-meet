@@ -1405,16 +1405,7 @@
     },
     "unpinParticipant": "{{participantName}} — atspraust",
     "userMedia": {
-        "androidGrantPermissions": "Izvēlieties <b><i>Atļaut</i></b>, kad pārlūks vaicā par atļaujām.",
-        "chromeGrantPermissions": "Izvēlieties <b><i>Atļaut</i></b>, kad pārlūks vaicā par atļaujām.",
-        "edgeGrantPermissions": "Izvēlieties <b><i>Jā</i></b>, kad pārlūks vaicā par atļaujām.",
-        "electronGrantPermissions": "Lūdzu, dodiet atļauju piekļūt kamerai un mikrofonam",
-        "firefoxGrantPermissions": "Izvēlieties <b><i>Kopīgot izvēlēto ierīci</i></b>, kad pārlūks vaicā par atļaujām.",
-        "iexplorerGrantPermissions": "Izvēlieties <b><i>OK</i></b>, kad pārlūks vaicā par atļaujām.",
-        "nwjsGrantPermissions": "“Lūdzu, dodiet atļauju piekļūt kamerai un mikrofonam",
-        "operaGrantPermissions": "Izvēlieties <b><i>Atļaut</i></b>, kad pārlūks vaicā par atļaujām.",
-        "react-nativeGrantPermissions": "Izvēlieties <b><i>Atļaut</i></b>, kad pārlūks vaicā par atļaujām.",
-        "safariGrantPermissions": "Izvēlieties <b><i>OK</i></b>, kad pārlūks vaicā par atļaujām."
+        "grantPermissions": "“Lūdzu, dodiet atļauju piekļūt kamerai un mikrofonam."
     },
     "videoSIPGW": {
         "busy": "Tiek strādāts pie resursu atbrīvošanas. Lūdzu, pēc dažām minūtēm mēģiniet vēlreiz.",

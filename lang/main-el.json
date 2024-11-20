@@ -1278,16 +1278,7 @@
     },
     "unpinParticipant": "{{participantName}} - Μη Διατήρηση",
     "userMedia": {
-        "androidGrantPermissions": "Επιλέξτε <b><i>Αποδοχή</i></b> όταν ο browser ζητήσει για άδεια χρήσης.",
-        "chromeGrantPermissions": "Επιλέξτε <b><i>Αποδοχή</i></b> όταν ο browser ζητήσει για άδεια χρήσης.",
-        "edgeGrantPermissions": "Επιλέξτε <b><i>Ναι</i></b> όταν ο browser ζητήσει για άδεια χρήσης.",
-        "electronGrantPermissions": "Δοκιμή πρόσβασης της κάμερας και του μικροφώνου",
-        "firefoxGrantPermissions": "Επιλέξτε <b><i>Μοιραστείτε την Επιλεγμένη Συσκευή</i></b> όταν ο browser ζητήσει για άδεια.",
-        "iexplorerGrantPermissions": "Επιλέξτε <b><i>OK</i></b> όταν ο browser σας ζητήσει άδεια χρήσης.",
-        "nwjsGrantPermissions": "Παρακαλούμε παραχωρήστε την άδεια για χρήση της κάμερα και του μικροφώνου",
-        "operaGrantPermissions": "Επιλέξτε <b><i>Αποδοχή</i></b> όταν ο browser σας ζητήσει για άδεια χρήσης.",
-        "react-nativeGrantPermissions": "Επιλέξτε <b><i>Αποδοχή</i></b> όταν ο browser σας ζητήσει για άδεια χρήσης.",
-        "safariGrantPermissions": "Επιλέξτε <b><i>OK</i></b> όταν ο browser σας ζητήσει άδεια χρήσης."
+        "grantPermissions": "Παρακαλούμε παραχωρήστε την άδεια για χρήση της κάμερα και του μικροφώνου."
     },
     "videoSIPGW": {
         "busy": "Γίνεται προσπάθεια για την απελευθέρωση πόρων. Παρακαλώ δοκιμάστε ξανά σε λίγα λεπτά.",

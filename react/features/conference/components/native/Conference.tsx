@@ -559,7 +559,6 @@ class Conference extends AbstractConference<IProps, State> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { appState } = state['features/mobile/background'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
@@ -581,11 +580,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: isPipEnabled(state),
-
-        // [iOS] - Transitioning between foreground & background, appState goes from active -> inactive -> background
-        // and during periods of inactivity such as entering the multitasking view,
-        // opening the Notification Center or in the event of an incoming call.
-        _reducedUI: reducedUI || appState !== 'active',
+        _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state)

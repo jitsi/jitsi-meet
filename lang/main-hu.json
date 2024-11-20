@@ -990,16 +990,7 @@
         "tr": "Átirat"
     },
     "userMedia": {
-        "androidGrantPermissions": "Válaszd az <b><i>Engedélyezés</i></b> opciót, ha a böngésző engedélyt kér.",
-        "chromeGrantPermissions": "Válaszd az <b><i>Engedélyezés</i></b> opciót, ha a böngésző engedélyt kér.",
-        "edgeGrantPermissions": "Válaszd az <b><i>Igen</i></b> opciót, ha a böngésző hozzáférést kér.",
-        "electronGrantPermissions": "A kamera és a mikrofon használatát engedélyezni kell",
-        "firefoxGrantPermissions": "Válaszd <b><i>Kiválasztott eszköz megosztása</i></b> opciót, ha a böngésző hozzáférést kér.",
-        "iexplorerGrantPermissions": "Válaszd az <b><i>OK</i></b> opciót, ha a böngésző engedélyezést kér.",
-        "nwjsGrantPermissions": "A kamera és a mikrofon használatát engedélyezni kell",
-        "operaGrantPermissions": "Válaszd az <b><i>Engedélyezés</i></b> opciót, ha a böngésző engedélyt kér.",
-        "react-nativeGrantPermissions": "Válaszd az <b><i>Engedélyezés</i></b> opciót, ha a böngésző engedélyt kér.",
-        "safariGrantPermissions": "Válaszd az <b><i>OK</i></b> opciót, ha a böngésző engedélyezést kér."
+        "grantPermissions": "A kamera és a mikrofon használatát engedélyezni kell."
     },
     "videoSIPGW": {
         "busy": "Dolgozunk az erőforrások felszabadításán. Kísérelje meg újra néhány perc múlva.",

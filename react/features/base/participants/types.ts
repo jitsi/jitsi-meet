@@ -31,7 +31,7 @@ export interface IParticipant {
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;
     local?: boolean;
-    localRecording?: string;
+    localRecording?: boolean;
     name?: string;
     pinned?: boolean;
     presence?: string;

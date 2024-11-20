@@ -510,7 +510,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
+				$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH,
 			);
 			name = "Adjust ATS";
 			outputPaths = (
@@ -543,7 +543,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$PROJECT_DIR/app.entitlements",
+				$PROJECT_DIR/app.entitlements,
 			);
 			name = "Update App Entitlements";
 			outputFileListPaths = (
@@ -585,7 +585,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
+				$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH,
 			);
 			name = "Setup Google reverse URL handler";
 			outputFileListPaths = (
@@ -605,7 +605,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH",
+				$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH,
 			);
 			name = "Setup Dropbox";
 			outputFileListPaths = (

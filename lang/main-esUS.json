@@ -1075,16 +1075,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "chromeGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "edgeGrantPermissions": "Selecciona <b><i>Sí</i></b> cuando el navegador solicite permisos.",
-        "electronGrantPermissions": "Otorga permisos para usar la cámara y el micrófono",
-        "firefoxGrantPermissions": "Selecciona <b><i>Compartir dispositivo seleccionado</i></b> cuando el navegador solicite permisos.",
-        "iexplorerGrantPermissions": "Selecciona <b><i>Aceptar</i></b> cuando el navegador solicite permisos.",
-        "nwjsGrantPermissions": "Otorga permisos para usar la cámara y el micrófono",
-        "operaGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "react-nativeGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "safariGrantPermissions": "Selecciona <b><i>Aceptar</i></b> cuando el navegador solicite permisos."
+        "grantPermissions": "Otorga permisos para usar la cámara y el micrófono."
     },
     "videoSIPGW": {
         "busy": "Estamos trabajando para liberar recursos. Vuelve a intentarlo en unos minutos.",

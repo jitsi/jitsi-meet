@@ -16,8 +16,9 @@ import { IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
-import { showErrorNotification } from '../../notifications/actions';
+import { showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { INotificationProps } from '../../notifications/types';
 import { hasDisplayName } from '../../prejoin/utils';
 import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
@@ -37,6 +38,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { parseURIString } from '../util/uri';
 
 import {
     CONFERENCE_FAILED,
@@ -417,6 +419,30 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
                 titleKey: 'dialog.tokenAuthFailedTitle'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
+    }
+
+    if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
+        let notificationAction: Function = showNotification;
+        const notificationProps = {
+            customActionNameKey: [ 'dialog.rejoinNow' ],
+            customActionHandler: [ () => dispatch(reloadNow()) ],
+            descriptionKey: 'notify.connectionFailed'
+        } as INotificationProps;
+
+        const { locationURL = { href: '' } as URL } = getState()['features/base/connection'];
+        const { tenant } = parseURIString(locationURL.href) || {};
+
+        if (tenant.startsWith('-') || tenant.endsWith('-')) {
+            notificationProps.descriptionKey = 'notify.invalidTenantHyphenDescription';
+            notificationProps.titleKey = 'notify.invalidTenant';
+            notificationAction = showErrorNotification;
+        } else if (tenant.length > 63) {
+            notificationProps.descriptionKey = 'notify.invalidTenantLengthDescription';
+            notificationProps.titleKey = 'notify.invalidTenant';
+            notificationAction = showErrorNotification;
+        }
+
+        dispatch(notificationAction(notificationProps, NOTIFICATION_TIMEOUT_TYPE.STICKY));
     }
 
     const result = next(action);

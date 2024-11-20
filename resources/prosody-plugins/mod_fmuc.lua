@@ -353,15 +353,15 @@ module:hook('muc-broadcast-presence', function (event)
         module:send(promotion_request);
     end
 
+    local requestTranscriptionValue = full_p:get_child_text(PARTICIPANT_PROP_REQUEST_TRANSCRIPTION);
+    local hasTranscriptionEnabled = room._transcription_languages and room._transcription_languages[occupant.jid];
+
     -- detect transcription
-    if full_p:get_child_text(PARTICIPANT_PROP_REQUEST_TRANSCRIPTION) then
+    if requestTranscriptionValue == 'true' then
         local lang = full_p:get_child_text(PARTICIPANT_PROP_TRANSLATION_LANG);
 
-        occupant._transcription_enabled = true;
-
         add_transcription(room, occupant, lang);
-    elseif occupant._transcription_enabled then
-        occupant._transcription_enabled = false;
+    elseif hasTranscriptionEnabled then
         remove_transcription(room, occupant, nil);
     end
 

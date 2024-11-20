@@ -5,7 +5,7 @@
         },
         "add": "Davet et",
         "addContacts": "Kişilerinizi davet edin",
-        "contacts": "kişiler",
+        "contacts": "Kişiler",
         "copyInvite": "Toplantı davetini kopyala",
         "copyLink": "Toplantı bağlantısını kopyala",
         "copyStream": "Canlı akış bağlantısını kopyala",
@@ -21,12 +21,12 @@
         "linkCopied": "Bağlantı panoya kopyalandı",
         "noResults": "Eşleşen sonuç bulunamadı",
         "outlookEmail": "Outlook Email",
-        "phoneNumbers": "telefon numaraları",
+        "phoneNumbers": "Telefon numaraları",
         "searching": "Aranıyor…",
         "shareInvite": "Toplantı davetini paylaş",
         "shareLink": "Katılımcıları davet etmek için toplantı bağlantısını paylaşın",
         "shareStream": "Canlı akış bağlantısını paylaşın",
-        "sipAddresses": "sip adresleri",
+        "sipAddresses": "Sip adresleri",
         "telephone": "Telefon numarası: {{number}}",
         "title": "Bu toplantıya kişi davet edin",
         "yahooEmail": "Yahoo Email"
@@ -43,16 +43,16 @@
         "audioOnly": "Düşük bant genişliği"
     },
     "bandwidthSettings": {
-        "assumedBandwidthBps": "örneğin 10 Mbps için 10000000",
+        "assumedBandwidthBps": "Örneğin 10 Mbps için 10000000",
         "assumedBandwidthBpsWarning": "Daha yüksek değerler ağ sorunlarına neden olabilir.",
         "customValue": "özel değer",
-        "customValueEffect": "gerçek bps değerini ayarlamak için",
-        "leaveEmpty": "boş bırak",
-        "leaveEmptyEffect": "tahminlerin gerçekleşmesine izin vermek için",
+        "customValueEffect": "Gerçek bps değerini ayarlamak için",
+        "leaveEmpty": "Boş bırak",
+        "leaveEmptyEffect": "Tahminlerin gerçekleşmesine izin vermek için",
         "possibleValues": "Olası değerler",
         "setAssumedBandwidthBps": "Varsayılan bant genişliği (bps)",
         "title": "Bant genişliği ayarları",
-        "zeroEffect": "videoyu devre dışı bırakmak için"
+        "zeroEffect": "Videoyu devre dışı bırakmak için"
     },
     "breakoutRooms": {
         "actions": {
@@ -90,9 +90,9 @@
         },
         "join": "Katıl",
         "joinTooltip": "Toplantıya katıl",
-        "nextMeeting": "sonraki toplantı",
+        "nextMeeting": "Sonraki toplantı",
         "noEvents": "Planlanmış bir etkinlik bulunmuyor.",
-        "ongoingMeeting": "devam eden toplantı",
+        "ongoingMeeting": "Devam eden toplantı",
         "permissionButton": "Ayarları aç",
         "permissionMessage": "Uygulama içinde toplantılarınızı görüntülemek için takvim erişim izni gereklidir.",
         "refresh": "Takvimi yenile",
@@ -115,7 +115,7 @@
         "lobbyChatMessageTo": "{{recipient}} adlı kişiye lobi mesajı",
         "message": "Mesaj",
         "messageAccessibleTitle": "{{user}} diyor:",
-        "messageAccessibleTitleMe": "ben diyorum:",
+        "messageAccessibleTitleMe": "Ben diyorum:",
         "messageTo": "{{recipient}} adlı kişiye özel mesaj",
         "messagebox": "Bir mesaj yazın",
         "newMessages": "Yeni mesajlar",
@@ -135,7 +135,7 @@
         },
         "title": "Sohbet",
         "titleWithPolls": "Sohbet",
-        "you": "sen"
+        "you": "Sen"
     },
     "chromeExtensionBanner": {
         "buttonText": "Chrome Eklentisi'ni indirin",
@@ -177,9 +177,9 @@
         "localaddress_plural": "Yerel adresler:",
         "localport": "Yerel port:",
         "localport_plural": "Yerel portlar:",
-        "maxEnabledResolution": "maksimumu gönder",
+        "maxEnabledResolution": "Maksimumu gönder",
         "more": "Daha fazla göster",
-        "no": "hayır",
+        "no": "Hayır",
         "packetloss": "Paket kaybı:",
         "participant_id": "Katılımcı id:",
         "quality": {
@@ -199,7 +199,7 @@
         "transport": "Transport:",
         "transport_plural": "Transportlar:",
         "video_ssrc": "Video SSRC:",
-        "yes": "evet"
+        "yes": "Evet"
     },
     "dateUtils": {
         "earlier": "Daha eski",
@@ -253,7 +253,7 @@
         "screenTitle": "Arama özeti"
     },
     "dialOut": {
-        "statusMessage": "şimdi {{status}}"
+        "statusMessage": "Şimdi {{status}}"
     },
     "dialog": {
         "Back": "Geri",
@@ -369,7 +369,7 @@
         "muteEveryoneTitle": "Herkesi sessize al?",
         "muteEveryonesVideoDialog": "Herkesin kamerasını devre dışı bırakmak istediğinizden emin misiniz? Kameralar devre dışı bırakıldığında geri açamayacaksınız, ancak onlar kameralarını her zaman açabilirler.",
         "muteEveryonesVideoDialogModerationOn": "Katılımcılar istedikleri zaman videolarını açmak için istek gönderebilirler.",
-        "muteEveryonesVideoDialogOk": "Kameraları Kapat",
+        "muteEveryonesVideoDialogOk": "Kameraları kapat",
         "muteEveryonesVideoTitle": "Herkesin kamerasını devre dışı bırak?",
         "muteParticipantBody": "Sesi açamazsınız, ancak istedikleri zaman kendileri seslerini açabilirler.",
         "muteParticipantButton": "Sessize al",
@@ -388,7 +388,7 @@
         "permissionCameraRequiredError": "Videolu konferanslara katılmak için kamera izni gereklidir. Lütfen ayarlardan izin verin",
         "permissionErrorTitle": "İzin gerekli",
         "permissionMicRequiredError": "Konferanslara sesli olarak katılmak için lütfen mikrofon izni gereklidir. Lütfen ayarlardan izin verin",
-        "readMore": "daha fazla",
+        "readMore": "Daha fazla",
         "recentlyUsedObjects": "Son zamanlarda kullandığınız objeler",
         "recording": "Kaydediliyor",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Canlı akış etkinken mümkün değil…",
@@ -427,16 +427,16 @@
         "sessTerminated": "Arama sonlandırıldı",
         "sessTerminatedReason": "Toplantı sonlandırıldı",
         "sessionRestarted": "Çağrı köprü tarafından yeniden başlatıldı",
-        "shareAudio": "Devam",
-        "shareAudioAltText": "istediğiniz içeriği paylaşmak için \"Tarayıcı Sekmesi\"ne gidin, içeriği seçin, \"sesi paylaş\" onay işaretini etkinleştirin ve ardından \"paylaş\" düğmesini tıklayın",
+        "shareAudio": "Sesi paylaş",
+        "shareAudioAltText": "İstediğiniz içeriği paylaşmak için \"Tarayıcı Sekmesi\"ne gidin, içeriği seçin, \"sesi paylaş\" onay işaretini etkinleştirin ve ardından \"paylaş\" düğmesini tıklayın",
         "shareAudioTitle": "Ses nasıl paylaşılır",
-        "shareAudioWarningD1": "sesinizi paylaşmadan önce ekran paylaşımını durdurmanız gerekiyor.",
-        "shareAudioWarningD2": "ekran paylaşımınızı yeniden başlatmanız ve \"sesi paylaş\" seçeneğini işaretlemeniz gerekiyor.",
+        "shareAudioWarningD1": "Sesinizi paylaşmadan önce ekran paylaşımını durdurmanız gerekiyor.",
+        "shareAudioWarningD2": "Ekran paylaşımınızı yeniden başlatmanız ve \"sesi paylaş\" seçeneğini işaretlemeniz gerekiyor.",
         "shareAudioWarningH1": "Eğer sadece ses paylaşmak istiyorsanız:",
         "shareAudioWarningTitle": "Ses paylaşımından önce ekran paylaşımını kapatmanız gerekmektedir",
         "shareMediaWarningGenericH2": "Ekranınızı ve sesinizi paylaşmak istiyorsanız",
-        "shareScreenWarningD1": "ekranınızı paylaşmadan önce ses paylaşımını durdurmanız gerekiyor.",
-        "shareScreenWarningD2": "ses paylaşımını durdurmanız, ekran paylaşımını başlatmanız ve \"sesi paylaş\" seçeneğini işaretlemeniz gerekiyor.",
+        "shareScreenWarningD1": "Ekranınızı paylaşmadan önce ses paylaşımını durdurmanız gerekiyor.",
+        "shareScreenWarningD2": "Ses paylaşımını durdurmanız, ekran paylaşımını başlatmanız ve \"sesi paylaş\" seçeneğini işaretlemeniz gerekiyor.",
         "shareScreenWarningH1": "Sadece ekranınızı paylaşmak istiyorsanız:",
         "shareScreenWarningTitle": "Ekranınızı paylaşmadan önce ses paylaşımını durdurmanız gerekiyor",
         "shareVideoConfirmPlay": "Harici bir web sitesi açmak üzeresiniz. Devam etmek istiyor musunuz?",
@@ -495,7 +495,7 @@
         "viewUpgradeOptionsTitle": "Premium bir özellik keşfettiniz!",
         "whiteboardLimitContent": "Üzgünüz, eşzamanlı beyaz tahta kullanıcılarının sınırına ulaşıldı.",
         "whiteboardLimitReference": "Daha fazla bilgi için lütfen şu adresi ziyaret edin",
-        "whiteboardLimitReferenceUrl": "web sitemiz",
+        "whiteboardLimitReferenceUrl": "Web Sitemiz",
         "whiteboardLimitTitle": "Beyaz tahta kullanımı kısıtlandı",
         "yourEntireScreen": "Tüm ekranınız"
     },
@@ -722,13 +722,13 @@
         "wait": "Kaydınız kaydedilirken lütfen bekleyin",
         "yes": "Evet"
     },
-    "lockRoomPassword": "parola",
+    "lockRoomPassword": "Parola",
     "lockRoomPasswordUppercase": "Parola",
     "lonelyMeetingExperience": {
         "button": "Birilerini davet et",
         "youAreAlone": "Toplantıdaki tek kişisiniz"
     },
-    "me": "ben",
+    "me": "Ben",
     "notify": {
         "OldElectronAPPTitle": "Güvenlik açığı!",
         "allowAction": "İzin ver",
@@ -745,7 +745,7 @@
         "dataChannelClosedWithAudio": "Ses ve video kalitesi etkilenebilir.",
         "disabledIframe": "Yerleştirme yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecek.",
         "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Jitsi</a>'yi kullanın!",
-        "disconnected": "bağlantı kesildi",
+        "disconnected": "Bağlantı kesildi",
         "displayNotifications": "Bildirimleri görüntüle",
         "dontRemindMe": "Bana hatırlatma",
         "focus": "Toplantı odağı",
@@ -794,8 +794,8 @@
         "noiseSuppressionFailedTitle": "Gürültü bastırma başlatılamadı",
         "noiseSuppressionStereoDescription": "Stereo ses gürültü bastırma şu anda desteklenmemektedir.",
         "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
-        "oldElectronClientDescription2": "son yapı",
-        "oldElectronClientDescription3": " şimdi!",
+        "oldElectronClientDescription2": "Son yapı",
+        "oldElectronClientDescription3": " Şimdi!",
         "participantWantsToJoin": "toplantıya katılmak istiyor",
         "participantsWantToJoin": "toplantıya katılmak istiyor",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) başka bir katılımcı tarafından kaldırıldı",
@@ -958,7 +958,7 @@
         "errorValidation": "Numara doğrulanamadı",
         "iWantToDialIn": "İçeri arama yapmak istiyorum",
         "initiated": "Çağrı başlatıldı",
-        "joinAudioByPhone": "Join with phone audio",
+        "joinAudioByPhone": "Telefonla sesli katıl",
         "joinMeeting": "Toplantıya katıl",
         "joinMeetingInLowBandwidthMode": "Düşük bant genişliği modunda katılın",
         "joinWithoutAudio": "Ses olmadan katıl",
@@ -975,7 +975,7 @@
         "unsafeRoomConsent": "Riskleri anlıyorum, toplantıya katılmak istiyorum",
         "videoOnlyError": "Video hatası:",
         "videoTrackError": "Video izleme oluşturulamadı.",
-        "viewAllNumbers": "tüm numaraları görüntüle"
+        "viewAllNumbers": "Tüm numaraları görüntüle"
     },
     "presenceStatus": {
         "busy": "Meşgul",
@@ -1405,16 +1405,7 @@
     },
     "unpinParticipant": "{{participantName}} - Sabitlemeyi kaldır",
     "userMedia": {
-        "androidGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "chromeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "edgeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Evet</i></b> seçeneğini seçin.",
-        "electronGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
-        "firefoxGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Seçilen Aygıtı Paylaş</i></b> seçeneğini seçin.",
-        "iexplorerGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin.",
-        "nwjsGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
-        "operaGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "react-nativeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
-        "safariGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin."
+        "grantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin."
     },
     "videoSIPGW": {
         "busy": "Kaynakları serbest bırakmaya çalışıyoruz. Lütfen birkaç dakika içinde tekrar deneyin.",

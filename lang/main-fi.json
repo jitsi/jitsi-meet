@@ -649,16 +649,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "chromeGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "edgeGrantPermissions": "Valitse <b><i>Kyllä</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "electronGrantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön.",
-        "firefoxGrantPermissions": "Valitse <b><i>Jaa havaittu laite</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "iexplorerGrantPermissions": "Valitse <b><i>OK</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "nwjsGrantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön.",
-        "operaGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "react-nativeGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "safariGrantPermissions": "Valitse <b><i>OK</i></b>, kun selain pyytää käyttöoikeuksia."
+        "grantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön."
     },
     "videoSIPGW": {
         "busy": "Yritämme vapauttaa resursseja. Yritä uudelleen muutaman minuutin kuluttua.",
