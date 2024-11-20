@@ -82,7 +82,33 @@
         roomName,
         configOverwrite: config,
         interfaceConfigOverwrite: interfaceConfig,
-        userInfo
+        userInfo,
+        onload: function () {
+            // we use this to save data from api to be accessible to tests
+            window.jitsiAPI.test = {};
+
+            window.jitsiAPI.addEventListener('participantRoleChanged', function(event) {
+                if (event.role === "moderator") {
+                    window.jitsiAPI.test.isModerator = true;
+                }
+            });
+            window.jitsiAPI.addEventListener('audioAvailabilityChanged', function(event) {
+                window.jitsiAPI.test.audioAvailabilityChanged = event;
+            });
+            window.jitsiAPI.addEventListener('videoAvailabilityChanged', function(event) {
+                window.jitsiAPI.test.videoAvailabilityChanged = event;
+            });
+            window.jitsiAPI.addEventListener('videoConferenceJoined', function(event) {
+                window.jitsiAPI.test.videoConferenceJoined = event;
+            });
+            if (password && password.length > 0) {
+                // join a protected channel with the password supplied
+                window.jitsiAPI.on('passwordRequired', function ()
+                {
+                    window.jitsiAPI.executeCommand('password', password);
+                });
+            }
+        }
     };
 
     const externalAPIScript = document.createElement('script');
@@ -90,29 +116,6 @@
     externalAPIScript.type = "text/javascript";
     externalAPIScript.onload = function(){
         window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
-        // we use this to save data from api to be accessible to tests
-        window.jitsiAPI.test = {};
-        window.jitsiAPI.addEventListener('participantRoleChanged', function(event) {
-            if (event.role === "moderator") {
-                window.jitsiAPI.test.isModerator = true;
-            }
-        });
-        window.jitsiAPI.addEventListener('audioAvailabilityChanged', function(event) {
-            window.jitsiAPI.test.audioAvailabilityChanged = event;
-        });
-        window.jitsiAPI.addEventListener('videoAvailabilityChanged', function(event) {
-            window.jitsiAPI.test.videoAvailabilityChanged = event;
-        });
-        window.jitsiAPI.addEventListener('videoConferenceJoined', function(event) {
-            window.jitsiAPI.test.videoConferenceJoined = event;
-        });
-        if (password && password.length > 0) {
-            // join a protected channel with the password supplied
-            window.jitsiAPI.on('passwordRequired', function ()
-            {
-                window.jitsiAPI.executeCommand('password', password);
-            });
-        }
     }
     document.getElementsByTagName('head')[0].appendChild(externalAPIScript);
 </script>
