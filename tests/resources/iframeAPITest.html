@@ -88,7 +88,7 @@
             window.jitsiAPI.test = {};
 
             window.jitsiAPI.addEventListener('participantRoleChanged', function(event) {
-                if (event.role === "moderator") {
+                if (event.role === "moderator" && event.id === window.jitsiAPI.test.myEndpointId) {
                     window.jitsiAPI.test.isModerator = true;
                 }
             });
@@ -100,6 +100,7 @@
             });
             window.jitsiAPI.addEventListener('videoConferenceJoined', function(event) {
                 window.jitsiAPI.test.videoConferenceJoined = event;
+                window.jitsiAPI.test.myEndpointId = event.id;
             });
             if (password && password.length > 0) {
                 // join a protected channel with the password supplied
