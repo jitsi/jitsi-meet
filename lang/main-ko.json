@@ -1,6 +1,6 @@
 {
-    "addPeople":{
-        "accessibilityLabel":{
+    "addPeople": {
+        "accessibilityLabel": {
             "meetingLink": "회의 링크: {{url}}"
         },
         "add": "초대",
@@ -31,7 +31,7 @@
         "title": "이 회의에 사람들을 초대하십시오",
         "yahooEmail": "Yahoo 이메일"
     },
-    "audioDevices":{
+    "audioDevices": {
         "bluetooth": "블루투스",
         "car": "자동차 오디오",
         "headphones": "헤드폰",
@@ -39,10 +39,10 @@
         "phone": "폰",
         "speaker": "스피커"
     },
-    "audioOnly":{
+    "audioOnly": {
         "audioOnly": "음성 전용"
     },
-    "bandwidthSettings":{
+    "bandwidthSettings": {
         "assumedBandwidthBps": "예: 10000000 (10 Mbps)",
         "assumedBandwidthBpsWarning": "더 높은 값은 네트워크 문제를 일으킬 수 있습니다.",
         "customValue": "사용자 정의 값",
@@ -54,8 +54,8 @@
         "title": "대역폭 설정",
         "zeroEffect": "비디오를 비활성화하려면"
     },
-    "breakoutRooms":{
-        "actions":{
+    "breakoutRooms": {
+        "actions": {
             "add": "분할 회의실 추가",
             "autoAssign": "자동 분배",
             "close": "닫기",
@@ -72,7 +72,7 @@
         "defaultName": "분할 회의실 #{{index}}",
         "hideParticipantList": "참가자 목록 숨기기",
         "mainRoom": "주 회의실",
-        "notifications":{
+        "notifications": {
             "joined": "\"{{name}}\" 분할 회의실에 참여했습니다",
             "joinedMainRoom": "주 회의실에 참여했습니다",
             "joinedTitle": "분할 회의실"
@@ -80,10 +80,10 @@
         "showParticipantList": "참가자 목록 보기",
         "title": "분할 회의실"
     },
-    "calendarSync":{
+    "calendarSync": {
         "addMeetingURL": "회의 링크 추가",
         "confirmAddLink": "이 이벤트에 Jitsi 링크를 추가 하시겠습니까?",
-        "error":{
+        "error": {
             "appConfiguration": "캘린더가 제대로 구성되지 않았습니다.",
             "generic": "오류가 발생했습니다. 캘린더 설정을 확인하거나 캘린더를 새로 고침 해보세요.",
             "notSignedIn": "캘린더 이벤트를 보기 위해 인증하는 동안 오류가 발생했습니다. 캘린더 설정을 확인하고 다시 로그인하십시오."
@@ -98,17 +98,17 @@
         "refresh": "캘린더 새로고침",
         "today": "오늘"
     },
-    "carmode":{
-        "actions":{
+    "carmode": {
+        "actions": {
             "selectSoundDevice": "음성 장치 선택"
         },
-        "labels":{
+        "labels": {
             "buttonLabel": "자동차 모드",
             "title": "자동차 모드",
             "videoStopped": "비디오가 중지되었습니다"
         }
     },
-    "chat":{
+    "chat": {
         "enter": "채팅방 입장",
         "error": "오류 : 메시지가 전송되지 않았습니다. 이유 : {{error}}",
         "fieldPlaceHolder": "메세지를 여기에 입력하세요",
@@ -119,7 +119,7 @@
         "messageTo": "{{recipient}}에게 보내는 비공개 메시지",
         "messagebox": "메시지 입력",
         "newMessages": "새 메시지",
-        "nickname":{
+        "nickname": {
             "popover": "닉네임을 선택하세요",
             "title": "채팅에서 사용할 닉네임을 입력하세요",
             "titleWithPolls": "채팅에서 사용할 닉네임을 입력하세요"
@@ -129,7 +129,7 @@
         "sendButton": "전송",
         "smileysPanel": "이모지 패널",
         "systemDisplayName": "시스템",
-        "tabs":{
+        "tabs": {
             "chat": "채팅",
             "polls": "투표"
         },
@@ -137,17 +137,17 @@
         "titleWithPolls": "채팅",
         "you": "당신"
     },
-    "chromeExtensionBanner":{
+    "chromeExtensionBanner": {
         "buttonText": "Chrome 확장 프로그램을 설치합니다.",
         "buttonTextEdge": "Edge 확장 프로그램 설치",
         "close": "닫기",
         "dontShowAgain": "다시 보지 않기",
         "installExtensionText": "Google 캘린더 및 Office 365 확장 프로그램을 설치합니다."
     },
-    "connectingOverlay":{
+    "connectingOverlay": {
         "joiningRoom": "회의에 연결중…"
     },
-    "connection":{
+    "connection": {
         "ATTACHED": "첨부",
         "AUTHENTICATING": "인증중",
         "AUTHFAIL": "인증 실패",
@@ -162,7 +162,7 @@
         "GOT_SESSION_ID": "세션 ID를 가져오는중… 완료",
         "LOW_BANDWIDTH": "대역폭을 절약하기 위해 {{displayName}}의 동영상이 중지되었습니다."
     },
-    "connectionindicator":{
+    "connectionindicator": {
         "address": "주소:",
         "audio_ssrc": "오디오 SSRC:",
         "bandwidth": "예상 대역폭:",
@@ -182,7 +182,7 @@
         "no": "아니오",
         "packetloss": "패킷 손실:",
         "participant_id": "참가자 ID:",
-        "quality":{
+        "quality": {
             "good": "좋음",
             "inactive": "비활성",
             "lost": "손실됨",
@@ -201,12 +201,12 @@
         "video_ssrc": "비디오 SSRC:",
         "yes": "예"
     },
-    "dateUtils":{
+    "dateUtils": {
         "earlier": "일찍이",
         "today": "오늘",
         "yesterday": "어제"
     },
-    "deepLinking":{
+    "deepLinking": {
         "appNotInstalled": "회의에 참여하려면 모바일 앱 설치가 필요합니다",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
         "descriptionNew": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다. <br /><br /> 다시 시도하거나 웹에서 실행할 수 있습니다.",
@@ -231,14 +231,14 @@
     },
     "defaultLink": "예: {{url}}",
     "defaultNickname": "예: 홍길동",
-    "deviceError":{
+    "deviceError": {
         "cameraError": "카메라에 액세스하지 못했습니다",
         "cameraPermission": "카메라 권한을 얻는 중 오류가 발생했습니다",
         "microphoneError": "마이크에 액세스하지 못했습니다",
         "microphonePermission": "마이크 권한을 얻는 중 오류가 발생했습니다"
     },
-    "deviceSelection":{
-        "hid":{
+    "deviceSelection": {
+        "hid": {
             "callControl": "통화 제어",
             "connectedDevices": "연결된 장치:",
             "deleteDevice": "장치 삭제",
@@ -249,13 +249,13 @@
         "selectADevice": "장치 선택",
         "testAudio": "테스트 사운드 재생"
     },
-    "dialIn":{
+    "dialIn": {
         "screenTitle": "전화 접속 요약"
     },
-    "dialOut":{
+    "dialOut": {
         "statusMessage": "현재 상태: {{status}}"
     },
-    "dialog":{
+    "dialog": {
         "Back": "뒤로가기",
         "Cancel": "취소",
         "IamHost": "내가 호스트",
@@ -268,7 +268,7 @@
         "WaitingForHostButton": "호스트를 기다립니다",
         "WaitingForHostTitle": "호스트를 기다리는 중…",
         "Yes": "예",
-        "accessibilityLabel":{
+        "accessibilityLabel": {
             "Cancel": "취소 (대화 상자 나가기)",
             "Ok": "확인 (저장하고 대화 상자 나가기)",
             "close": "대화 상자 닫기",
@@ -461,7 +461,7 @@
         "thankYou": "{{appName}}을 이용해 주셔서 감사합니다!",
         "token": "토큰",
         "tokenAuthFailed": "죄송합니다. 통화에 참여하실 수 없습니다.",
-        "tokenAuthFailedReason":{
+        "tokenAuthFailedReason": {
             "audInvalid": "잘못된 `aud` 값입니다. `jitsi`여야 합니다.",
             "contextNotFound": "`context` 객체가 페이로드에 없습니다.",
             "expInvalid": "잘못된 `exp` 값입니다.",
@@ -499,17 +499,17 @@
         "whiteboardLimitTitle": "화이트보드 사용 제한",
         "yourEntireScreen": "전체 화면"
     },
-    "documentSharing":{
+    "documentSharing": {
         "title": "문서 공유"
     },
-    "e2ee":{
+    "e2ee": {
         "labelToolTip": "이 통화의 오디오 및 비디오 통신은 종단 간 암호화됩니다"
     },
-    "embedMeeting":{
+    "embedMeeting": {
         "title": "이 회의를 임베드하기"
     },
-    "feedback":{
-        "accessibilityLabel":{
+    "feedback": {
+        "accessibilityLabel": {
             "yourChoice": "귀하의 선택: {{rating}}"
         },
         "average": "보통",
@@ -521,23 +521,23 @@
         "veryBad": "매우 나쁨",
         "veryGood": "매우 좋음"
     },
-    "filmstrip":{
-        "accessibilityLabel":{
+    "filmstrip": {
+        "accessibilityLabel": {
             "heading": "비디오 썸네일"
         }
     },
-    "giphy":{
+    "giphy": {
         "noResults": "결과를 찾을 수 없습니다 :(",
         "search": "GIPHY 검색"
     },
-    "incomingCall":{
+    "incomingCall": {
         "answer": "응답",
         "audioCallTitle": "수신 전화",
         "decline": "거절",
         "productLabel": "Jitsi Meet에서",
         "videoCallTitle": "수신 화상 전화"
     },
-    "info":{
+    "info": {
         "accessibilityLabel": "정보 보기",
         "addPassword": "$t(lockRoomPassword) 추가",
         "cancelPassword": "$t(lockRoomPassword) 취소",
@@ -579,13 +579,13 @@
         "upgradeOptions": "업그레이드 옵션을 확인하세요",
         "whiteboardError": "화이트보드를 로드하는 중 오류가 발생했습니다. 나중에 다시 시도하십시오."
     },
-    "inlineDialogFailure":{
+    "inlineDialogFailure": {
         "msg": "약간의 문제가 있습니다",
         "retry": "다시 시도",
         "support": "지원",
         "supportMsg": "문제가 계속 발생하면 연락하세요"
     },
-    "inviteDialog":{
+    "inviteDialog": {
         "alertText": "일부 참가자를 초대하지 못했습니다.",
         "header": "초대",
         "searchCallOnlyPlaceholder": "전화 번호 입력",
@@ -594,7 +594,7 @@
         "send": "전송"
     },
     "jitsiHome": "{{logo}} 로고, 홈페이지 링크",
-    "keyboardShortcuts":{
+    "keyboardShortcuts": {
         "focusLocal": "자신의 동영상에 포커스",
         "focusRemote": "다른 발신자의 동영상에 포커스",
         "fullScreen": "전체화면 표시 또는 종료",
@@ -612,11 +612,11 @@
         "toggleShortcuts": "도움말 메뉴 표시 또는 숨기기",
         "videoMute": "카메라 시작 또는 중지"
     },
-    "largeVideo":{
+    "largeVideo": {
         "screenIsShared": "화면을 공유 중입니다",
         "showMeWhatImSharing": "내가 공유하는 내용을 보여줘"
     },
-    "liveStreaming":{
+    "liveStreaming": {
         "busy": "스트리밍 자원을 확보하기 위해 노력하고 있습니다. 몇 분 후에 다시 시도하십시오.",
         "busyTitle": "모든 스트리머가 현재 사용 중입니다",
         "changeSignIn": "계정을 전환하십시오",
@@ -654,7 +654,7 @@
         "unavailableTitle": "실시간 스트리밍을 사용할 수 없음",
         "youtubeTerms": "YouTube 서비스 약관"
     },
-    "lobby":{
+    "lobby": {
         "backToKnockModeButton": "참여 요청",
         "chat": "채팅",
         "dialogTitle": "로비 모드",
@@ -691,8 +691,8 @@
         "title": "로비",
         "toggleLabel": "로비 활성화"
     },
-    "localRecording":{
-        "clientState":{
+    "localRecording": {
+        "clientState": {
             "off": "꺼짐",
             "on": "켜짐",
             "unknown": "알 수 없음"
@@ -705,7 +705,7 @@
         "labelToolTip": "로컬 녹화가 진행 중입니다",
         "localRecording": "로컬 녹화",
         "me": "나",
-        "messages":{
+        "messages": {
             "engaged": "로컬 녹화 시작됨.",
             "finished": "녹화 세션 {{token}}이 완료되었습니다. 녹화된 파일을 중재자에게 보내주세요.",
             "finishedModerator": "녹화 세션 {{token}}이 완료되었습니다. 로컬 트랙의 녹화가 저장되었습니다. 다른 참가자에게 녹화를 제출하도록 요청하세요.",
@@ -725,12 +725,12 @@
     },
     "lockRoomPassword": "비밀번호",
     "lockRoomPasswordUppercase": "비밀번호",
-    "lonelyMeetingExperience":{
+    "lonelyMeetingExperience": {
         "button": "초대하기",
         "youAreAlone": "회의에 참여자가 없습니다."
     },
     "me": "나",
-    "notify":{
+    "notify": {
         "OldElectronAPPTitle": "보안 취약성!",
         "allowAction": "허용",
         "allowedUnmute": "마이크 음소거 해제, 카메라 시작 또는 화면 공유를 할 수 있습니다.",
@@ -837,8 +837,8 @@
         "whiteboardLimitDescription": "진행 상황을 저장하세요. 사용자 한도에 곧 도달하여 화이트보드가 닫힐 것입니다.",
         "whiteboardLimitTitle": "화이트보드 사용"
     },
-    "participantsPane":{
-        "actions":{
+    "participantsPane": {
+        "actions": {
             "admit": "승인",
             "admitAll": "모두 승인",
             "allow": "참가자에게 허용:",
@@ -864,7 +864,7 @@
             "videoModeration": "자신의 비디오 시작"
         },
         "close": "닫기",
-        "headings":{
+        "headings": {
             "lobby": "로비 ({{count}})",
             "participantsList": "회의 참가자 ({{count}})",
             "visitorInQueue": " (대기 중 {{count}})",
@@ -879,8 +879,8 @@
     "passwordSetRemotely": "다른 참가자가 설정",
     "pinParticipant": "{{participantName}} - 고정",
     "pinnedParticipant": "참가자가 고정되었습니다",
-    "polls":{
-        "answer":{
+    "polls": {
+        "answer": {
             "edit": "편집",
             "send": "보내기",
             "skip": "건너뛰기",
@@ -888,7 +888,7 @@
         },
         "by": "{{name}}님이 작성",
         "closeButton": "투표 종료",
-        "create":{
+        "create": {
             "addOption": "옵션 추가",
             "answerPlaceholder": "옵션 {{index}}",
             "cancel": "취소",
@@ -900,14 +900,14 @@
             "save": "저장",
             "send": "보내기"
         },
-        "errors":{
+        "errors": {
             "notUniqueOption": "옵션은 고유해야합니다"
         },
-        "notification":{
+        "notification": {
             "description": "투표 탭을 열어 투표하세요",
             "title": "새로운 투표가 이 회의에 추가되었습니다"
         },
-        "results":{
+        "results": {
             "changeVote": "투표 변경",
             "empty": "회의에 아직 투표가 없습니다. 여기에서 투표를 시작하세요!",
             "hideDetailedResults": "세부 정보 숨기기",
@@ -916,7 +916,7 @@
         }
     },
     "poweredby": "제공:",
-    "prejoin":{
+    "prejoin": {
         "audioAndVideoError": "오디오 및 비디오 오류:",
         "audioDeviceProblem": "오디오 장치에 문제가 있습니다",
         "audioOnlyError": "오디오 오류:",
@@ -926,14 +926,14 @@
         "calling": "전화 중",
         "configuringDevices": "장치 구성 중…",
         "connectedWithAudioQ": "오디오에 연결되어 있습니까?",
-        "connection":{
+        "connection": {
             "failed": "연결 테스트 실패!",
             "good": "인터넷 연결이 좋아 보입니다!",
             "nonOptimal": "인터넷 연결이 최적이 아닙니다",
             "poor": "인터넷 연결이 좋지 않습니다",
             "running": "연결 테스트 실행 중…"
         },
-        "connectionDetails":{
+        "connectionDetails": {
             "audioClipping": "오디오가 클리핑될 것으로 예상됩니다.",
             "audioHighQuality": "오디오가 우수한 품질일 것으로 예상됩니다.",
             "audioLowNoVideo": "오디오 품질이 낮고 비디오는 없을 것으로 예상됩니다.",
@@ -982,7 +982,7 @@
         "videoTrackError": "비디오 트랙을 생성할 수 없습니다.",
         "viewAllNumbers": "모든 번호 보기"
     },
-    "presenceStatus":{
+    "presenceStatus": {
         "busy": "바쁨",
         "calling": "전화 거는 중",
         "connected": "연결됨",
@@ -996,7 +996,7 @@
         "rejected": "거부됨",
         "ringing": "전화 중"
     },
-    "profile":{
+    "profile": {
         "avatar": "아바타",
         "setDisplayNameLabel": "표시 이름 설정",
         "setEmailInput": "이메일 입력",
@@ -1005,11 +1005,11 @@
     },
     "raisedHand": "말하고 싶어합니다",
     "raisedHandsLabel": "손 든 사람 수",
-    "record":{
-        "already":{
+    "record": {
+        "already": {
             "linked": "회의가 이미 이 Salesforce 객체에 연결되었습니다."
         },
-        "type":{
+        "type": {
             "account": "계정",
             "contact": "연락처",
             "lead": "잠재 고객",
@@ -1017,7 +1017,7 @@
             "owner": "소유자"
         }
     },
-    "recording":{
+    "recording": {
         "authDropboxText": "Dropbox에 업로드",
         "availableSpace": "사용 가능한 공간 : {{spaceLeft}}MB (약 {{duration}}분 녹화)",
         "beta": "베타",
@@ -1075,25 +1075,25 @@
         "uploadToCloud": "클라우드에 업로드"
     },
     "screenshareDisplayName": "{{name}}의 화면",
-    "sectionList":{
+    "sectionList": {
         "pullToRefresh": "당겨서 새로고침"
     },
-    "security":{
+    "security": {
         "about": "회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "insecureRoomNameWarningNative": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법을 알아보세요",
         "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">여기</a>에서 알아보세요.",
         "title": "보안 옵션",
-        "unsafeRoomActions":{
+        "unsafeRoomActions": {
             "meeting": "회의 보안을 위해 보안 버튼을 사용하세요.",
             "prejoin": "더 고유한 회의 이름을 사용하는 것이 좋습니다.",
             "welcome": "더 고유한 회의 이름을 사용하거나 제안을 선택하는 것이 좋습니다."
         }
     },
-    "settings":{
+    "settings": {
         "audio": "오디오",
         "buttonLabel": "설정",
-        "calendar":{
+        "calendar": {
             "about": "{{appName}} 캘린더 통합은 예정된 일정을 읽을 수 있도록 캘린더에 안전하게 액세스하는 데 사용됩니다.",
             "disconnect": "연결 끊김",
             "microsoftSignIn": "Microsoft로 로그인",
@@ -1137,7 +1137,7 @@
         "title": "설정",
         "video": "비디오"
     },
-    "settingsView":{
+    "settingsView": {
         "advanced": "고급",
         "alertCancel": "취소",
         "alertOk": "확인",
@@ -1170,12 +1170,12 @@
         "terms": "이용약관",
         "version": "버전"
     },
-    "share":{
+    "share": {
         "dialInfoText": "\n\n=====\n\n전화로 접속하고 싶으신가요?\n\n{{defaultDialInNumber}}이 회의의 전화 접속 번호를 보려면 이 링크를 클릭하세요\n{{dialInfoPageUrl}}",
         "mainText": "회의에 참여하려면 다음 링크를 클릭하십시오.\n{{roomUrl}}"
     },
     "speaker": "스피커",
-    "speakerStats":{
+    "speakerStats": {
         "angry": "화남",
         "disgusted": "역겨움",
         "displayEmotions": "감정 표시",
@@ -1193,23 +1193,23 @@
         "speakerTime": "접속자 오디오 사용 시간",
         "surprised": "놀람"
     },
-    "startupoverlay":{
+    "startupoverlay": {
         "genericTitle": "회의에서 마이크와 카메라를 사용해야 합니다.",
         "policyText": " ",
         "title": "{{app}}은 마이크와 카메라를 사용해야합니다"
     },
-    "suspendedoverlay":{
+    "suspendedoverlay": {
         "rejoinKeyTitle": "재접속",
         "text": "다시 연결하려면 <i>재접속</i> 버튼을 누르십시오",
         "title": "컴퓨터 휴식 모드가 되어 화상 통화가 중단되었습니다"
     },
-    "termsView":{
+    "termsView": {
         "title": "이용약관"
     },
     "toggleTopPanelLabel": "상단 패널 전환",
-    "toolbar":{
+    "toolbar": {
         "Settings": "설정",
-        "accessibilityLabel":{
+        "accessibilityLabel": {
             "Settings": "설정 전환",
             "audioOnly": "음성 전용 모드 전환",
             "audioRoute": "음성 장비 선택하기",
@@ -1399,7 +1399,7 @@
         "videomuteGUMPending": "카메라 연결 중",
         "videounmute": "카메라 시작"
     },
-    "transcribing":{
+    "transcribing": {
         "ccButtonTooltip": "자막 시작/종료",
         "expandedLabel": "현재 스크립트 작성 중",
         "failed": "자막 작성 실패",
@@ -1413,10 +1413,10 @@
         "tr": "번역"
     },
     "unpinParticipant": "{{participantName}} - 고정 해제",
-    "userMedia":{
+    "userMedia": {
         "grantPermissions": "카메라와 마이크 사용 권한을 부여하십시오."
     },
-    "videoSIPGW":{
+    "videoSIPGW": {
         "busy": "자원을 확보하기 위해 노력하고 있습니다. 몇 분 후에 다시 시도하십시오.",
         "busyTitle": "서비스가 현재 사용 중입니다",
         "errorAlreadyInvited": "{{displayName}} 이미 초대되었습니다",
@@ -1426,7 +1426,7 @@
         "errorInviteTitle": "초대하는 중에 오류가 발생했습니다",
         "pending": "{{displayName}} 이미 초대되었습니다"
     },
-    "videoStatus":{
+    "videoStatus": {
         "adjustFor": "조정 대상:",
         "audioOnly": "오디오 전용",
         "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
@@ -1448,7 +1448,7 @@
         "standardDefinition": "표준 해상도",
         "streaming": "스트리밍 진행 중"
     },
-    "videothumbnail":{
+    "videothumbnail": {
         "connectionInfo": "연결 정보",
         "demote": "방문자로 이동",
         "domute": "음소거",
@@ -1473,8 +1473,8 @@
         "videoMuted": "카메라 비활성화됨",
         "videomute": "참가자가 카메라를 중지했습니다."
     },
-    "virtualBackground":{
-        "accessibilityLabel":{
+    "virtualBackground": {
+        "accessibilityLabel": {
             "currentBackground": "현재 배경: {{background}}",
             "selectBackground": "배경 선택"
         },
@@ -1501,16 +1501,16 @@
         "webAssemblyWarning": "WebAssembly를 지원하지 않습니다",
         "webAssemblyWarningDescription": "이 브라우저에서 WebAssembly가 비활성화되었거나 지원되지 않습니다"
     },
-    "visitors":{
+    "visitors": {
         "chatIndicator": "(방문자)",
-        "joinMeeting":{
+        "joinMeeting": {
             "description": "현재 이 회의에서 참관인입니다.",
             "raiseHand": "손 들기",
             "title": "회의 참가",
             "wishToSpeak": "발언하고 싶으시면 아래에서 손을 들고 진행자의 승인을 기다려주세요."
         },
         "labelTooltip": "방문자 수: {{count}}",
-        "notification":{
+        "notification": {
             "demoteDescription": "{{actor}}에 의해 여기로 보내졌습니다. 참여하려면 손을 들어주세요.",
             "noMainParticipantsDescription": "참가자가 회의를 시작해야 합니다. 잠시 후 다시 시도해 주세요.",
             "noMainParticipantsTitle": "이 회의는 아직 시작되지 않았습니다.",
@@ -1521,14 +1521,14 @@
         "waitingMessage": "회의가 시작되면 곧 참여하실 수 있습니다!"
     },
     "volumeSlider": "볼륨 슬라이더",
-    "welcomepage":{
-        "accessibilityLabel":{
+    "welcomepage": {
+        "accessibilityLabel": {
             "join": "가입",
             "roomname": "방 이름 입력"
         },
         "addMeetingName": "회의 이름 추가",
         "appDescription": "전체 팀과 화상 채팅을하십시오. 당신이 아는 모든 사람들을 초대하십시오. {{app}}은 완전히 암호화 된 100 % 오픈 소스 화상 회의 솔루션으로 계정 없이도 하루 종일, 매일 무료로 사용할 수 있습니다.",
-        "audioVideoSwitch":{
+        "audioVideoSwitch": {
             "audio": "음성",
             "video": "비디오"
         },
@@ -1544,7 +1544,7 @@
         "info": "정보",
         "jitsiOnMobile": "모바일에서 Jitsi – 앱을 다운로드하고 어디서나 회의를 시작하세요",
         "join": "가입",
-        "logo":{
+        "logo": {
             "calendar": "캘린더 로고",
             "desktopPreviewThumbnail": "데스크톱 미리보기 썸네일",
             "googleLogo": "구글 로고",
@@ -1573,8 +1573,8 @@
         "title": "안전하고 모든 기능을 갖춘 완전 무료 화상 회의",
         "upcomingMeetings": "예정된 회의"
     },
-    "whiteboard":{
-        "accessibilityLabel":{
+    "whiteboard": {
+        "accessibilityLabel": {
             "heading": "화이트보드"
         },
         "screenTitle": "화이트보드"
