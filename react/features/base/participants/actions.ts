@@ -17,6 +17,7 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_ROLE_CHANGED,
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -389,19 +390,27 @@ export function participantPresenceChanged(id: string, presence: string) {
  *
  * @param {string} id - Participant's ID.
  * @param {PARTICIPANT_ROLE} role - Participant's new role.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         role: PARTICIPANT_ROLE
- *     }
- * }}
+ * @returns {Promise}
  */
 export function participantRoleChanged(id: string, role: string) {
-    return participantUpdated({
-        id,
-        role
-    });
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const oldParticipantRole = getParticipantById(getState(), id)?.role;
+
+        dispatch(participantUpdated({
+            id,
+            role
+        }));
+
+        if (oldParticipantRole !== role) {
+            dispatch({
+                type: PARTICIPANT_ROLE_CHANGED,
+                participant: {
+                    id,
+                    role
+                }
+            });
+        }
+    };
 }
 
 /**
