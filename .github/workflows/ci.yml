@@ -34,9 +34,13 @@ jobs:
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npm run lint:ci && npm run tsc:ci
-  linux-build:
-    name: Build Frontend (Linux)
-    runs-on: ubuntu-latest
+  frontend:
+    name: Build Frontend
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -49,20 +53,9 @@ jobs:
         npm -v
     - run: npm install
     - run: make
-  macos-ci:
-    name: Build Frontend (macOS)
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
-    - run: npm install
-    - run: make
-  android-build:
+  android-rn-bundle-build:
     name: Build mobile bundle (Android)
-    runs-on: ubuntu-latest
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -75,13 +68,9 @@ jobs:
         npm -v
     - run: npm install
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
-  ios-build:
+  ios-rn-bundle-build:
     name: Build mobile bundle (iOS)
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15]
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -107,10 +96,73 @@ jobs:
       run: |
         pod --version
         cd ios
-        pod install --repo-update
-    - name: Check if the git repository is clean
-      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+        pod install --repo-update --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+  android-sdk-build:
+    name: Build mobile SDK (Android)
+    runs-on: ubuntu-latest
+    container: reactnativecommunity/react-native-android:v13.0
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - run: |
+        cd android
+        ./gradlew :sdk:clean
+        ./gradlew :sdk:assembleRelease
+  ios-sdk-build:
+    name: Build mobile SDK (iOS)
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - name: setup Xcode
+      run: |
+        uname -a
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+        xcodebuild -version
+    - name: setup-cocoapods
+      uses: maxim-lobanov/setup-cocoapods@v1
+      with:
+        podfile-path: ios/Podfile.lock
+    - name: Install Pods
+      run: |
+        pod --version
+        cd ios
+        pod install --repo-update --deployment
+    - run: |
+        xcodebuild clean \
+          -workspace ios/jitsi-meet.xcworkspace \
+          -scheme JitsiMeetSDK
+        xcodebuild archive \
+          -workspace ios/jitsi-meet.xcworkspace \
+          -scheme JitsiMeetSDK  \
+          -configuration Release \
+          -sdk iphoneos \
+          -destination='generic/platform=iOS' \
+          -archivePath ios/sdk/out/ios-device \
+          SKIP_INSTALL=NO \
+          BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+        xcodebuild -create-xcframework \
+          -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+          -output ios/sdk/out/JitsiMeetSDK.xcframework
+    - run: ls -lR ios/sdk/out
   debian-build:
     name: Test Debian packages build
     runs-on: ubuntu-latest
