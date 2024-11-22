@@ -25,7 +25,8 @@ MiddlewareRegistry.register(store => next => action => {
             didPageUrl,
             inviteDomain,
             labels,
-            sharedVideoAllowedURLDomains
+            sharedVideoAllowedURLDomains,
+            supportUrl
         } = action.value;
 
         action.value = {
@@ -36,7 +37,8 @@ MiddlewareRegistry.register(store => next => action => {
             didPageUrl,
             inviteDomain,
             labels,
-            sharedVideoAllowedURLDomains
+            sharedVideoAllowedURLDomains,
+            supportUrl
         };
 
         // The backend may send an empty string, make sure we skip that.
