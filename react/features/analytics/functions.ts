@@ -15,6 +15,7 @@ import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';
 import { inIframe } from '../base/util/iframeUtils';
 import { loadScript } from '../base/util/loadScript';
+import { parseURLParams } from '../base/util/parseURLParams';
 import { parseURIString } from '../base/util/uri';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
@@ -176,6 +177,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     const { group, server } = state['features/base/jwt'];
     const { locationURL = { href: '' } } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
+    const params = parseURLParams(locationURL.href) ?? {};
     const permanentProperties: {
         appName?: string;
         externalApi?: boolean;
@@ -183,6 +185,13 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         inIframe?: boolean;
         isPromotedFromVisitor?: boolean;
         isVisitor?: boolean;
+        overwritesDefaultLogoUrl?: boolean;
+        overwritesDeploymentUrls?: boolean;
+        overwritesLiveStreamingUrls?: boolean;
+        overwritesPeopleSearchUrl?: boolean;
+        overwritesPrejoinConfigICEUrl?: boolean;
+        overwritesSalesforceUrl?: boolean;
+        overwritesSupportUrl?: boolean;
         server?: string;
         tenant?: string;
         wasLobbyVisible?: boolean;
@@ -220,6 +229,36 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     // Setting visitor properties to false by default. We will update them later if it turns out we are visitor.
     permanentProperties.isVisitor = false;
     permanentProperties.isPromotedFromVisitor = false;
+
+    // TODO: Temporary metric. To be removed once we don't need it.
+    permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
+    permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
+    permanentProperties.overwritesPeopleSearchUrl = 'config.peopleSearchUrl' in params;
+    permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
+    const prejoinConfig = params['config.prejoinConfig'] ?? {};
+
+    permanentProperties.overwritesPrejoinConfigICEUrl = ('config.prejoinConfig.preCallTestICEUrl' in params)
+    || (typeof prejoinConfig === 'object' && 'preCallTestICEUrl' in prejoinConfig);
+    const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
+
+    permanentProperties.overwritesDeploymentUrls
+        = 'config.deploymentUrls.downloadAppsUrl' in params || 'config.deploymentUrls.userDocumentationURL' in params
+            || (typeof deploymentUrlsConfig === 'object'
+                && ('downloadAppsUrl' in deploymentUrlsConfig || 'userDocumentationURL' in deploymentUrlsConfig));
+    const liveStreamingConfig = params['config.liveStreaming'] ?? {};
+
+    permanentProperties.overwritesLiveStreamingUrls
+        = ('interfaceConfig.LIVE_STREAMING_HELP_LINK' in params)
+            || ('config.liveStreaming.termsLink' in params)
+            || ('config.liveStreaming.dataPrivacyLink' in params)
+            || ('config.liveStreaming.helpLink' in params)
+            || (typeof params['config.liveStreaming'] === 'object' && 'config.liveStreaming' in params
+                && (
+                    'termsLink' in liveStreamingConfig
+                    || 'dataPrivacyLink' in liveStreamingConfig
+                    || 'helpLink' in liveStreamingConfig
+                )
+            );
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
