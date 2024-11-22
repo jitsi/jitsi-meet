@@ -42,6 +42,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
+    api "com.facebook.react:hermes-android:$rootProject.ext.hermesVersion"
 
     //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'
@@ -57,7 +58,7 @@ dependencies {
     if (!rootProject.ext.libreBuild) {
         implementation project(':react-native-amplitude')
         implementation project(':react-native-giphy')
-        implementation(project(":react-native-google-signin")) {
+        implementation(project(':react-native-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
