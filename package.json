@@ -190,8 +190,8 @@
     "webdriverio": "9.2.14",
     "webpack": "5.95.0",
     "webpack-bundle-analyzer": "4.4.2",
-    "webpack-cli": "4.9.0",
-    "webpack-dev-server": "4.15.2"
+    "webpack-cli": "5.1.4",
+    "webpack-dev-server": "5.1.0"
   },
   "overrides": {
     "@xmldom/xmldom": "0.8.7"
