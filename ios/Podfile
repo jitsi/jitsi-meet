@@ -32,7 +32,7 @@ target 'JitsiMeetSDK' do
   flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
-    :hermes_enabled => false,
+    :hermes_enabled => true,
     :fabric_enabled => false,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
@@ -65,7 +65,7 @@ target 'JitsiMeetSDKLite' do
     config = use_native_modules!
     use_react_native!(
       :path => config[:reactNativePath],
-      :hermes_enabled => false,
+      :hermes_enabled => true,
       :fabric_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
@@ -78,6 +78,8 @@ target 'JitsiMeetSDKLite' do
 end
 
 post_install do |installer|
+
+  PLIST_BUDDY_PATH = '/usr/libexec/PlistBuddy'
   react_native_post_install(
     installer,
     use_native_modules![:reactNativePath],
@@ -90,10 +92,29 @@ post_install do |installer|
         config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
       end
     end
+
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
       config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
+
+    # Can be removed when updated to RN 0.76
+    # Issue https://github.com/facebook/react-native/issues/35863#issuecomment-1387465588
+    if target.name == "hermes-engine"
+     installer.pods_project.files.each do |fileref|
+      if fileref.path.end_with? "hermes.xcframework"
+        hermes_plist_file = "#{fileref.real_path}/Info.plist"
+        # Patch Hermes to remove the debug symbols entry from the Info.plist (as it's not shipped with it)
+        # This might be removed once Hermes starts to ship with Debug symbols or we remove our
+        # direct dependency from the Main iOS target on "hermes.xcframework"
+        Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:0:DebugSymbolsPath', hermes_plist_file)
+        Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:1:DebugSymbolsPath', hermes_plist_file)
+        Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:2:DebugSymbolsPath', hermes_plist_file)
+        Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:3:DebugSymbolsPath', hermes_plist_file)
+        Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:4:DebugSymbolsPath', hermes_plist_file)
+      end
+    end
+   end
   end
 end
