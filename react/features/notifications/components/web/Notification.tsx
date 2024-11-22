@@ -1,6 +1,7 @@
 import { Theme } from '@mui/material';
 import React, { isValidElement, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -15,6 +16,7 @@ import {
     IconWarningCircle
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
+import { getSupportUrl } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
@@ -190,6 +192,7 @@ const Notification = ({
     const { classes, cx, theme } = useStyles();
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
+    const supportUrl = useSelector(getSupportUrl);
 
     const ICON_COLOR = {
         error: theme.palette.iconError,
@@ -229,9 +232,9 @@ const Notification = ({
         );
     }, [ description, descriptionArguments, descriptionKey, classes ]);
 
-    const _onOpenSupportLink = () => {
-        window.open(interfaceConfig.SUPPORT_URL, '_blank', 'noopener');
-    };
+    const _onOpenSupportLink = useCallback(() => {
+        window.open(supportUrl, '_blank', 'noopener');
+    }, [ supportUrl ]);
 
     const mapAppearanceToButtons = useCallback((): {
         content: string; onClick: () => void; testId?: string; type?: string; }[] => {
@@ -244,7 +247,7 @@ const Notification = ({
                 }
             ];
 
-            if (!hideErrorSupportLink && interfaceConfig.SUPPORT_URL) {
+            if (!hideErrorSupportLink && supportUrl) {
                 buttons.push({
                     content: t('dialog.contactSupport'),
                     onClick: _onOpenSupportLink
@@ -279,7 +282,7 @@ const Notification = ({
 
             return [];
         }
-    }, [ appearance, onDismiss, customActionHandler, customActionNameKey, hideErrorSupportLink ]);
+    }, [ appearance, onDismiss, customActionHandler, customActionNameKey, hideErrorSupportLink, supportUrl ]);
 
     const getIcon = useCallback(() => {
         let iconToDisplay;
@@ -313,7 +316,7 @@ const Notification = ({
         <div
             aria-atomic = 'false'
             aria-live = 'polite'
-            className = { cx(classes.container, unmounting.get(uid ?? '') && 'unmount') }
+            className = { cx(classes.container, (unmounting.get(uid ?? '') && 'unmount') as string | undefined) }
             data-testid = { titleKey || descriptionKey }
             id = { uid }>
             <div className = { cx(classes.ribbon, appearance) } />
