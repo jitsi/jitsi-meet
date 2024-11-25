@@ -43,4 +43,16 @@ export default class Filmstrip {
             timeoutMsg: `Audio mute icon is not displayed for ${testee.name}`
         });
     }
+
+    /**
+     * Returns the remote display name for an endpoint.
+     * @param endpointId The endpoint id.
+     */
+    async getRemoteDisplayName(endpointId: string) {
+        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}_name"]`);
+
+        await remoteDisplayName.moveTo();
+
+        return await remoteDisplayName.getText();
+    }
 }

@@ -5,6 +5,7 @@ import { multiremotebrowser } from '@wdio/globals';
 import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
+import IframeAPI from '../pageobjects/IframeAPI';
 import Toolbar from '../pageobjects/Toolbar';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
@@ -217,13 +218,20 @@ export class Participant {
     }
 
     /**
+     * Checks if the participant is in the meeting.
+     */
+    isInMuc() {
+        return this.driver.execute(() => APP.conference.isJoined());
+    }
+
+    /**
      * Waits to join the muc.
      *
      * @returns {Promise<void>}
      */
     async waitToJoinMUC(): Promise<void> {
         return this.driver.waitUntil(
-            () => this.driver.execute(() => APP.conference.isJoined()),
+            () => this.isInMuc(),
             {
                 timeout: 10_000, // 10 seconds
                 timeoutMsg: 'Timeout waiting to join muc.'
@@ -302,5 +310,41 @@ export class Participant {
      */
     getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
+    }
+
+    /**
+     * Switches to the iframe API context
+     */
+    async switchToAPI() {
+        await this.driver.switchFrame(null);
+    }
+
+    /**
+     * Switches to the meeting page context.
+     */
+    async switchInPage() {
+        const mainFrame = this.driver.$('iframe');
+
+        await this.driver.switchFrame(mainFrame);
+    }
+
+    /**
+     * Returns the iframe API for this participant.
+     */
+    getIframeAPI() {
+        return new IframeAPI(this);
+    }
+
+    /**
+     * Returns the local display name.
+     */
+    async getLocalDisplayName() {
+        const localVideoContainer = this.driver.$('span[id="localVideoContainer"]');
+
+        await localVideoContainer.moveTo();
+
+        const localDisplayName = localVideoContainer.$('span[id="localDisplayName"]');
+
+        return await localDisplayName.getText();
     }
 }
