@@ -62,6 +62,7 @@ const commands = {
     setAudioOnly: 'set-audio-only',
     setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
     setBlurredBackground: 'set-blurred-background',
+    setVirtualBackground: 'set-virtual-background',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
