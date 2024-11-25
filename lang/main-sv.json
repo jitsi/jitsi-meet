@@ -1303,16 +1303,7 @@
     },
     "unpinParticipant": "Lossa deltagare",
     "userMedia": {
-        "androidGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
-        "chromeGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
-        "edgeGrantPermissions": "Välj <b><i>Ja</i></b> när din webbläsare begär åtkomst.",
-        "electronGrantPermissions": "Tillåt användning av din kamera och mikrofon",
-        "firefoxGrantPermissions": "Välj <b><i>Dela vald enhet</i></b> när din webbläsare begär åtkomst.",
-        "iexplorerGrantPermissions": "Välj <b><i>OK</i></b> när din webbläsare begär åtkomst.",
-        "nwjsGrantPermissions": "Tillåt användning av din kamera och mikrofon",
-        "operaGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
-        "react-nativeGrantPermissions": "Välj <b><i>Tillåt</i></b> när din webbläsare begär åtkomst.",
-        "safariGrantPermissions": "Välj <b><i>OK</i></b> när din webbläsare begär åtkomst."
+        "grantPermissions": "Tillåt användning av din kamera och mikrofon."
     },
     "videoSIPGW": {
         "busy": "Vi arbetar med att frigöra resurser. Försök igen om några minuter.",

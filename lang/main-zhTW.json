@@ -1369,16 +1369,7 @@
     },
     "unpinParticipant": "",
     "userMedia": {
-        "androidGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>允許</i></b>。",
-        "chromeGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>允許</i></b>。",
-        "edgeGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>是的</i></b>。",
-        "electronGrantPermissions": "正在嘗試存取您的網路攝影機及麥克風",
-        "firefoxGrantPermissions": "當瀏覽器請求權限時，請選擇<b><i>分享選取裝置</i></b>。",
-        "iexplorerGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>確定</i></b>。",
-        "nwjsGrantPermissions": "請允許使用您的網路攝影機和麥克風的權限",
-        "operaGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>允許</i></b>。",
-        "react-nativeGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>允許</i></b>。",
-        "safariGrantPermissions": "當瀏覽器要求權限時，請選擇<b><i>確定</i></b>。"
+        "grantPermissions": "請允許使用您的網路攝影機和麥克風的權限."
     },
     "videoSIPGW": {
         "busy": "我們正在釋放資源，請過幾分鐘後再試。",

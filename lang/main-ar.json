@@ -1223,16 +1223,7 @@
         "tr": "يذاع"
     },
     "userMedia": {
-        "androidGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "chromeGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "edgeGrantPermissions": "اختر <b><i>نعم</i></b> عندما يطلب المتصفح الأذونات.",
-        "electronGrantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون.",
-        "firefoxGrantPermissions": "اختر <b><i>مشاركة الجهاز المحدَّد</i></b> عندما يطل بالمتصفح الأذونات.",
-        "iexplorerGrantPermissions": "اختر <b><i>تمام</i></b> عندما يطلب المتصفح الأذونات.",
-        "nwjsGrantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون.",
-        "operaGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "react-nativeGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "safariGrantPermissions": "اختر <b><i>تمام</i></b> عندما يطلب المتصفح الأذونات."
+        "grantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون."
     },
     "videoSIPGW": {
         "busy": "نعمل على تحرير الموارد. حاول مرة أخرى لاحقًا بعد بضعة دقائق.",

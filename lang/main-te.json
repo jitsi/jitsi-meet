@@ -902,16 +902,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "edgeGrantPermissions": "Select <b><i>Yes</i></b> when your browser asks for permissions.",
-        "electronGrantPermissions": "Trying to access your camera and microphone",
-        "firefoxGrantPermissions": "Select <b><i>Share Selected Device</i></b> when your browser asks for permissions.",
-        "iexplorerGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
-        "nwjsGrantPermissions": "Please grant permissions to use your camera and microphone",
-        "operaGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
-        "safariGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions."
+        "grantPermissions": "Please grant permissions to use your camera and microphone."
     },
     "videoSIPGW": {
         "busy": "We're working on freeing resources. Please try again in a few minutes.",

@@ -68,7 +68,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1887.0.0+9652999d/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1888.0.0+db24997a/lib-jitsi-meet.tgz",
     "lodash-es": "4.17.21",
     "moment": "2.29.4",
     "moment-duration-format": "2.2.2",
@@ -190,8 +190,8 @@
     "webdriverio": "9.2.14",
     "webpack": "5.95.0",
     "webpack-bundle-analyzer": "4.4.2",
-    "webpack-cli": "4.9.0",
-    "webpack-dev-server": "4.15.2"
+    "webpack-cli": "5.1.4",
+    "webpack-dev-server": "5.1.0"
   },
   "overrides": {
     "@xmldom/xmldom": "0.8.7"

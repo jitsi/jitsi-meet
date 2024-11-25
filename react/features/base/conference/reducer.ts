@@ -147,6 +147,7 @@ export interface IJitsiConference {
     setSenderVideoConstraint: Function;
     setStartMutedPolicy: Function;
     setSubject: Function;
+    setTranscriptionLanguage: Function;
     startRecording: Function;
     startVerification: Function;
     stopRecording: Function;

@@ -1013,16 +1013,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "chromeGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "edgeGrantPermissions": "Selecteer <b><i>Ja</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "electronGrantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken.",
-        "firefoxGrantPermissions": "Selecteer <b><i>Geselecteerd apparaat delen</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "iexplorerGrantPermissions": "Selecteer <b><i>OK</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "nwjsGrantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken.",
-        "operaGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "react-nativeGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "safariGrantPermissions": "Selecteer <b><i>OK</i></b> wanneer uw browser om toegangsrechten vraagt."
+        "grantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken."
     },
     "videoSIPGW": {
         "busy": "Er worden middelen vrijgemaakt. Probeer het over enkele minuten opnieuw.",

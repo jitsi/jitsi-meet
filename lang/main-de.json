@@ -1408,16 +1408,7 @@
     },
     "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {
-        "androidGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "chromeGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "electronGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "firefoxGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "operaGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet."
+        "grantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen."
     },
     "videoSIPGW": {
         "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",

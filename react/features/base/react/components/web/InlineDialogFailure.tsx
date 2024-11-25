@@ -1,9 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import Button from '../../../ui/components/web/Button';
+import { getSupportUrl } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -50,7 +52,7 @@ const InlineDialogFailure = ({
     const { t } = useTranslation();
     const { classes } = useStyles();
 
-    const supportLink = interfaceConfig.SUPPORT_URL;
+    const supportLink = useSelector(getSupportUrl);
     const supportString = t('inlineDialogFailure.supportMsg');
     const supportLinkElem = supportLink && showSupportLink
         ? (

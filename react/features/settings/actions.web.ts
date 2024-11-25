@@ -9,6 +9,7 @@ import {
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../base/conference/actions';
+import { getConferenceState } from '../base/conference/functions';
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
@@ -128,7 +129,8 @@ function setVideoSettingsVisibility(value: boolean) {
  */
 export function submitMoreTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const currentState = getMoreTabProps(getState());
+        const state = getState();
+        const currentState = getMoreTabProps(state);
 
         const showPrejoinPage = newState.showPrejoinPage;
 
@@ -148,6 +150,10 @@ export function submitMoreTab(newState: any) {
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
+
+            const { conference } = getConferenceState(state);
+
+            conference?.setTranscriptionLanguage(newState.currentLanguage);
         }
     };
 }

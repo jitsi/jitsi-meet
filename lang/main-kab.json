@@ -1047,16 +1047,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
-        "chromeGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
-        "edgeGrantPermissions": "Fren <b><i>Ih</i></b> mi ara d-yessuter yiminig-ik·im tisirag.",
-        "electronGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
-        "firefoxGrantPermissions": "Fren <b><i>Bḍu ibenk yettwafernen</i></b> mi ara d-yessuter yiminig-ik·im tisirag.",
-        "iexplorerGrantPermissions": "Fren <b><i>Ih</i></b> mara d-yessuter yiminig tisurag.",
-        "nwjsGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
-        "operaGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
-        "react-nativeGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
-        "safariGrantPermissions": "Fren <b><i>Ih</i></b> mara d-yessuter yiminig tisurag."
+        "grantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik."
     },
     "videoSIPGW": {
         "busy": "Aql-aɣ nxeddem ad d-neslelli tiɣbula. Ma ulac aɣilif, ɛreḍ tikkelt-nniḍen deg kra n tesdidin.",

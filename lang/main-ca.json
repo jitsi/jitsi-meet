@@ -1237,16 +1237,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Seleccioneu <b><i>Permet</i></b> si el navegador us sol·licita permisos.",
-        "chromeGrantPermissions": "Seleccioneu <b><i>Permet</i></b> si el navegador us sol·licita permisos.",
-        "edgeGrantPermissions": "Seleccioneu <b><i>Sí</i></b> si el navegador us sol·licita permisos.",
-        "electronGrantPermissions": "S'està intentant accedir a la vostra càmera i micròfon",
-        "firefoxGrantPermissions": "Seleccioneu <b><i>Comparteix l'aparell seleccionat</i></b> si el navegador us sol·licita permisos.",
-        "iexplorerGrantPermissions": "Seleccioneu <b><i>D'acord</i></b> si el navegador us sol·licita permisos.",
-        "nwjsGrantPermissions": "Concediu permisos per a usar la càmera i el micròfon",
-        "operaGrantPermissions": "Seleccioneu <b><i>Permet</i></b> si el navegador us sol·licita permisos.",
-        "react-nativeGrantPermissions": "Seleccioneu <b><i>Permet</i></b> si el navegador us sol·licita permisos.",
-        "safariGrantPermissions": "Seleccioneu <b><i>D'acord</i></b> si el navegador us sol·licita permisos."
+        "grantPermissions": "Concediu permisos per a usar la càmera i el micròfon."
     },
     "videoSIPGW": {
         "busy": "Treballem per a alliberar recursos. Torneu-ho a intentar en uns minuts.",

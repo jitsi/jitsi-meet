@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 
-import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
-    from './AbstractUserMediaPermissionsOverlay';
 import OverlayFrame from './OverlayFrame';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link UserMediaPermissionsOverlay}.
+ */
+interface IProps extends WithTranslation {
+
+    _premeetingBackground?: any;
+}
 
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt.
  */
-class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
+class UserMediaPermissionsOverlay extends Component<IProps> {
+    /**
+     * Determines whether this overlay needs to be rendered (according to a
+     * specific redux state). Called by {@link OverlayContainer}.
+     *
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
+     * {@code false}, otherwise.
+     */
+    static needsRender(state: IReduxState) {
+        return state['features/overlay'].isMediaPermissionPromptVisible;
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -20,7 +40,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
      * @returns {ReactElement}
      */
     render() {
-        const { _premeetingBackground, browser, t } = this.props;
+        const { _premeetingBackground, t } = this.props;
         const style = _premeetingBackground ? {
             background: _premeetingBackground,
             backgroundPosition: 'center',
@@ -44,8 +64,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                         className = 'inlay__text'
                         role = 'alert' >
                         {
-                            translateToHTML(t,
-                                `userMedia.${browser}GrantPermissions`)
+                            t('userMedia.grantPermissions')
                         }
                     </span>
                 </div>
@@ -97,7 +116,6 @@ function mapStateToProps(state: IReduxState) {
     const { premeetingBackground } = state['features/dynamic-branding'];
 
     return {
-        ...abstractMapStateToProps(state),
         _premeetingBackground: premeetingBackground
     };
 }

@@ -1349,16 +1349,7 @@
     },
     "unpinParticipant": "{{participantName}} - 取消固定",
     "userMedia": {
-        "androidGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>",
-        "chromeGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>",
-        "edgeGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>",
-        "electronGrantPermissions": "正在尝试访问你的摄像头和麦克风",
-        "firefoxGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>分享的窗口或屏幕</i></b> ",
-        "iexplorerGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>可以</i></b>",
-        "nwjsGrantPermissions": "请授予使用你的摄像头和麦克风的权限",
-        "operaGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>",
-        "react-nativeGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>",
-        "safariGrantPermissions": "当你的浏览器要求权限时，请选择<b><i>允许</i></b>"
+        "grantPermissions": "请授予使用你的摄像头和麦克风的权限."
     },
     "videoSIPGW": {
         "busy": "我们正在释放资源，请稍后再试。",

@@ -1132,16 +1132,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "chromeGrantPermissions": "ブラウザーのポップアップで<b><i>許可</i></b>を選択してください。",
-        "edgeGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "electronGrantPermissions": "マイクとカメラの共有を許可してください。",
-        "firefoxGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "iexplorerGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "nwjsGrantPermissions": "マイクとカメラの共有を許可してください。",
-        "operaGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "react-nativeGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。",
-        "safariGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください。"
+        "grantPermissions": "マイクとカメラの共有を許可してください。."
     },
     "videoSIPGW": {
         "busy": "リソースを開放しています。数分後にもう一度お試しください。",
