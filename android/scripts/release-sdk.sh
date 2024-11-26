@@ -24,10 +24,10 @@ echo "Using ${MVN_REPO} as the Maven repo"
 
  if [[ $MVN_HTTP == 0 ]]; then
     # Check if an SDK with that same version has already been released
-        if [[ -d ${MVN_REPO}/org/jitsi/react/jitsi-meet-sdk/${SDK_VERSION} ]]; then
-            echo "There is already a release with that version in the Maven repo!"
-            exit 1
-        fi
+    if [[ -d ${MVN_REPO}/org/jitsi/react/jitsi-meet-sdk/${SDK_VERSION} ]]; then
+        echo "There is already a release with that version in the Maven repo!"
+        exit 1
+    fi
 fi
 
 # Now build and publish the Jitsi Meet SDK and its dependencies
