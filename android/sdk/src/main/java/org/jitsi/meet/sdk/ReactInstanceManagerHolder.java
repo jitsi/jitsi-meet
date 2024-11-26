@@ -21,13 +21,13 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.LifecycleState;
-import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
@@ -156,11 +156,6 @@ class ReactInstanceManagerHolder {
         return packages;
     }
 
-    static JSCExecutorFactory getReactNativeJSFactory() {
-        // Keep on using JSC, the jury is out on Hermes.
-        return new JSCExecutorFactory("", "");
-    }
-
     /**
      * Helper function to send an event to JavaScript.
      *
@@ -240,7 +235,7 @@ class ReactInstanceManagerHolder {
                 .setCurrentActivity(activity)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
-                .setJavaScriptExecutorFactory(getReactNativeJSFactory())
+                .setJavaScriptExecutorFactory(new HermesExecutorFactory())
                 .addPackages(getReactNativePackages())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)

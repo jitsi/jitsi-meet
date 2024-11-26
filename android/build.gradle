@@ -17,15 +17,12 @@ buildscript {
 }
 
 ext {
-    kotlinVersion = "1.9.0"
-    buildToolsVersion = "33.0.2"
+    kotlinVersion = "1.9.24"
+    buildToolsVersion = "34.0.0"
     compileSdkVersion = 34
     minSdkVersion    = 24
     targetSdkVersion = 34
     supportLibVersion = "28.0.0"
-
-    // NDK is now entirely compatible with Apple Silicon M1 and M2 Macs as of version 24.0.
-    // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
     ndkVersion = "26.1.10909125"
 
     // The Maven artifact groupId of the third-party react-native modules which
@@ -44,8 +41,9 @@ ext {
 
     googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
-    //React Native Version
+    //React Native and Hermes Version
     rnVersion = "0.75.4"
+    hermesVersion = "0.75.4"
 }
 
 allprojects {
