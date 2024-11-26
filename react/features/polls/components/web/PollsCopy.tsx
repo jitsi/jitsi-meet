@@ -15,6 +15,7 @@ import {
 
 // @ts-ignore
 import {convertPollsToText} from './convertPollsToText'
+import { getPolls } from "../../functions";
 
 const useStyles = makeStyles()((theme) => {
     return {
@@ -28,17 +29,16 @@ const PollsCopy = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { classes } = useStyles();
-    const polls = useSelector(
-        (state: IState) => state["features/polls"].polls
-    );
+    const polls = useSelector(getPolls());
 
-    if (!Object.values(polls).length) {
-        return null;
+
+    if (!polls.length) {
+      return null;
     }
 
     const onClick = () => {
         try {
-            copyText(convertPollsToText(polls));
+            copyText(convertPollsToText(polls, t));
             dispatch(
                 showNotification(
                     {

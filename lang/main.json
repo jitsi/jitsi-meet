@@ -788,6 +788,8 @@
         },
         "download": {
             "buttonText": "Download Results",
+            "fileName": "Poll Results {{roomName}} {{date}}",
+            "by": "By {{ name }}",
             "notification": {
               "title": "The polls results will be downloaded shortly"
             }

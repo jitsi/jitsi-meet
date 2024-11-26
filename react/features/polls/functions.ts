@@ -1,4 +1,5 @@
 import { IState } from '../app/types';
+import { getParticipantById } from '../base/participants/functions';
 
 /**
  * Selector creator for determining if poll results should be displayed or not.
@@ -25,6 +26,24 @@ export function getPoll(pollId: string) {
 }
 
 /**
+ * Selector creator for polls.
+ *
+ * @returns {Function}
+ */
+export function getPolls() {
+    return function(state: IState) {
+        const { polls } = state['features/polls'];
+        return Object.values(polls).map(poll => {
+          const participant = getParticipantById(state, poll.senderId);
+          return {
+            ...poll,
+            creatorName: participant ? participant.name : ''
+          }
+        })
+    };
+}
+
+/**
  * Selector for calculating the number of unread poll messages.
  *
  * @param {IState} state - The redux state.
@@ -45,3 +64,4 @@ export function getUnreadPollCount(state: IState) {
 export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
     return !checkBoxStates.find(checked => checked);
 }
+
