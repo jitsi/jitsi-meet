@@ -385,6 +385,8 @@ var config = {
     //    // If true, shows a warning label in the prejoin screen to point out the possibility that
     //    // the call you're joining might be recorded.
     //    // showPrejoinWarning: true,
+    //    // If true, the notification for recording start will display a link to download the cloud recording.
+    //    // showRecordingLink: true,
     // },
 
     // recordingService: {

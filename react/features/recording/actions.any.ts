@@ -260,6 +260,7 @@ export function showStartedRecordingNotification(
         if (mode !== JitsiMeetJS.constants.recording.mode.STREAM) {
             const recordingSharingUrl = getRecordingSharingUrl(state);
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
+            const { showRecordingLink } = state['features/base/config'].recordings || {};
 
             notifyProps.dialogProps = {
                 customActionHandler: undefined,
@@ -273,6 +274,7 @@ export function showStartedRecordingNotification(
             if (recordingSharingUrl
                 && isVpaasMeeting(state)
                 && iAmRecordingInitiator
+                && showRecordingLink
                 && !isSavingRecordingOnDropbox(state)) {
                 const region = getMeetingRegion(state);
                 const tenant = getVpaasTenant(state);

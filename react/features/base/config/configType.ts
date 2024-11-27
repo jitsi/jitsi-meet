@@ -526,6 +526,7 @@ export interface IConfig {
     recordings?: {
         recordAudioAndVideo?: boolean;
         showPrejoinWarning?: boolean;
+        showRecordingLink?: boolean;
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {
