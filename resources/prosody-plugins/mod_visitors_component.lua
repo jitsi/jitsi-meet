@@ -388,7 +388,7 @@ local function go_live(room)
 
     -- if missing we assume room is live, only skip if it is marked explicitly as false
     if room.jitsiMetadata and room.jitsiMetadata.visitors
-            and room.jitsiMetadata.visitors.live and room.jitsiMetadata.visitors.live == false then
+            and room.jitsiMetadata.visitors.live ~= nil and room.jitsiMetadata.visitors.live == false then
         return;
     end
 
@@ -624,7 +624,13 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             go_live(event.room);
         end);
         host_module:hook('muc-occupant-joined', function (event)
-            go_live(event.room);
+            local room = event.room;
+
+            if is_healthcheck_room(room.jid) then
+                return;
+            end
+
+            go_live(room);
         end);
     end
 
