@@ -119,8 +119,10 @@ Component "internal.auth.jitmeet.example.com" "muc"
 VirtualHost "auth.jitmeet.example.com"
     modules_enabled = {
         "limits_exception";
+        "smacks";
     }
     authentication = "internal_hashed"
+    smacks_hibernation_time = 15;
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"
