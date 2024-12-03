@@ -180,7 +180,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                                     delay = msg.randomDelayMs;
                                 }
 
-                                if (WebsocketClient.getInstance().connectCount > 1) {
+                                if (WebsocketClient.getInstance().connectCount > 3) {
                                     // if we keep connecting/disconnecting, let's slow it down
                                     delay = 30 * 1000;
                                 }
