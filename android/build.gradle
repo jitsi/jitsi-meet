@@ -43,7 +43,6 @@ ext {
 
     //React Native and Hermes Version
     rnVersion = "0.75.4"
-    hermesVersion = "0.75.4"
 }
 
 allprojects {

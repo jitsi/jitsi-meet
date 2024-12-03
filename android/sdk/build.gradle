@@ -42,7 +42,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
-    api "com.facebook.react:hermes-android:$rootProject.ext.hermesVersion"
+    api "com.facebook.react:hermes-android:$rootProject.ext.rnVersion"
 
     //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'
