@@ -113,8 +113,10 @@ VirtualHost 'auth.meet.jitsi'
     modules_enabled = {
           'limits_exception';
           'ping';
+          'smacks';
     }
     authentication = 'internal_hashed'
+    smacks_hibernation_time = 15;
 
 Component 'conference.vX.meet.jitsi' 'muc'
     storage = 'memory'
