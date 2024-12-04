@@ -99,7 +99,7 @@ export const generateCollabServerUrl = (state: IReduxState): string | undefined 
     const inBreakoutRoom = isInBreakoutRoom(state);
     const roomId = getCurrentRoomId(state);
     const room = md5.hex(
-        `${locationURL?.origin}${getBackendSafePath(locationURL?.pathname)}${inBreakoutRoom ? `|${roomId}` : ''}`
+        `${getBackendSafePath(locationURL?.pathname)}${inBreakoutRoom ? `|${roomId}` : ''}`
     );
 
     return appendURLParam(collabServerBaseUrl, 'room', room);
