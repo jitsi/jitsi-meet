@@ -31,6 +31,7 @@ local roomless_iqs = {};
 
 local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
 local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
+local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
 
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
@@ -530,6 +531,10 @@ function is_sip_jibri_join(stanza)
     return false
 end
 
+function is_jibri(occupant)
+    return starts_with_one_of(occupant.jid, RECORDER_PREFIXES)
+end
+
 -- process a host module directly if loaded or hooks to wait for its load
 function process_host_module(name, callback)
     local function process_host(host)
@@ -595,8 +600,10 @@ end
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
+    RECORDER_PREFIXES = RECORDER_PREFIXES;
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
+    is_jibri = is_jibri;
     is_healthcheck_room = is_healthcheck_room;
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;

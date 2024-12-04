@@ -1,8 +1,10 @@
 local util = module:require "util";
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local is_jibri = util.is_jibri;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
+local is_transcriber_jigasi = util.is_transcriber_jigasi;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
@@ -221,13 +223,14 @@ end
 
 -- Create SpeakerStats object for the joined user
 function occupant_joined(event)
-    local occupant, room = event.occupant, event.room;
+    local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+    if is_healthcheck_room(room.jid)
+        or is_admin(occupant.bare_jid)
+        or is_transcriber_jigasi(stanza)
+        or is_jibri(occupant) then
         return;
     end
-
-    local occupant = event.occupant;
 
     local nick = jid_resource(occupant.nick);
 
