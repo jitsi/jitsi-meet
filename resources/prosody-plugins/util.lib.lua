@@ -31,7 +31,7 @@ local roomless_iqs = {};
 
 local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
 local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
-local RECORDER_PREFIXES = { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' };
+local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
 
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
