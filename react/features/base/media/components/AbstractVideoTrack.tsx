@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 
 import { IStore } from '../../../app/types';
 import { trackVideoStarted } from '../../tracks/actions';
@@ -15,6 +15,11 @@ export interface IProps {
      * The Redux dispatch function.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * IOS component for PiP view.
+     */
+    fallbackView?: ReactElement;
 
     /**
      * Callback to invoke when the {@link Video} of {@code AbstractVideoTrack}
@@ -111,6 +116,7 @@ export default class AbstractVideoTrack<P extends IProps> extends Component<P> {
 
         return (
             <Video
+                fallbackView = { this.props.fallbackView }
                 mirror = { videoTrack?.mirror }
                 onPlaying = { this._onVideoPlaying }
 
