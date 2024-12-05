@@ -50,8 +50,9 @@
         </service>
 
         <service
-            android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
-            android:foregroundServiceType="mediaPlayback|microphone" />
+            android:name="app.notifee.core.ForegroundService"
+            android:foregroundServiceType="mediaPlayback|microphone"
+            tools:replace="android:foregroundServiceType"/>
 
         <provider
             android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"

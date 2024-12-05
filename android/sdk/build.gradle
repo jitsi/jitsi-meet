@@ -64,6 +64,7 @@ dependencies {
         }
     }
 
+    implementation project(':@notifee_react-native')
     implementation project(':react-native-async-storage')
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
