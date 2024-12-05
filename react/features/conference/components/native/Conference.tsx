@@ -48,7 +48,7 @@ import {
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
-import { isConnecting } from '../functions.native';
+import {displayNotificationAsForegroundService, isConnecting, stopForegroundService} from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -56,6 +56,7 @@ import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
 import styles from './styles';
+
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -212,6 +213,8 @@ class Conference extends AbstractConference<IProps, State> {
 
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
+        displayNotificationAsForegroundService();
+
         if (_audioOnlyEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
         }
@@ -253,6 +256,8 @@ class Conference extends AbstractConference<IProps, State> {
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+
+        stopForegroundService();
 
         clearTimeout(this._expandedLabelTimeout.current ?? 0);
     }
