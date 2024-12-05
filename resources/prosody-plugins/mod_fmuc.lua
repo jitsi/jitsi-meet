@@ -14,7 +14,8 @@ local jid = require 'util.jid';
 local st = require 'util.stanza';
 local new_id = require 'util.id'.medium;
 local filters = require 'util.filters';
-local array = require"util.array";
+local array = require 'util.array';
+local set = require 'util.set';
 
 local util = module:require 'util';
 local ends_with = util.ends_with;
@@ -69,13 +70,11 @@ end
 
 local function send_transcriptions_update(room)
     -- let's notify main prosody
-    local lang_array = array{};
+    local lang_array = array();
     local count = 0;
 
     for k, v in pairs(room._transcription_languages) do
-        if not lang_array[v] then
-            lang_array:push(v);
-        end
+        lang_array:push(v);
         count = count + 1;
     end
 
@@ -90,7 +89,7 @@ local function send_transcriptions_update(room)
                          room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
       :tag('transcription-languages', {
         xmlns = 'jitsi:visitors',
-        langs = lang_array:sort():concat(','),
+        langs = lang_array:unique():sort():concat(','),
         count = tostring(count)
       }):up());
 end
@@ -127,8 +126,14 @@ end
 module:hook('muc-occupant-pre-join', function (event)
     local occupant, room, origin, stanza = event.occupant, event.room, event.origin, event.stanza;
     local node, host = jid.split(occupant.bare_jid);
+    local resource = jid.resource(occupant.nick);
 
-    if prosody.hosts[host] and not is_admin(occupant.bare_jid) then
+    if is_admin(occupant.bare_jid) then
+        return;
+    end
+
+    if prosody.hosts[host] then
+        -- local participants which host is defined in this prosody
         if room._main_room_lobby_enabled then
             origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Visitors not allowed while lobby is on!')
                 :tag('no-visitors-lobby', { xmlns = 'jitsi:visitors' }));
@@ -136,6 +141,9 @@ module:hook('muc-occupant-pre-join', function (event)
         else
             occupant.role = 'visitor';
         end
+    elseif room.moderators_list:contains(resource) then
+        -- remote participants, host is the main prosody
+        occupant.role = 'moderator';
     end
 end, 3);
 
@@ -399,7 +407,7 @@ local function stanza_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
-        module:log('warn', 'No room found %s', room_jid);
+        module:log('warn', 'No room found %s in stanza_handler', room_jid);
         return;
     end
 
@@ -546,7 +554,15 @@ module:hook('jicofo-unlock-room', function(e)
     return true;
 end);
 
--- handles incoming iq connect stanzas
+-- handles incoming iq visitors stanzas
+-- connect - sent after sending all main participant's presences
+-- disconnect - sent when main room is destroyed or when we receive a 'disconnect-vnode' iq from jicofo
+-- update - sent on:
+--      * room secret is changed
+--      * lobby enabled or disabled
+--      * initially before connect to report currently joined moderators
+--      * moderator participant joins main room
+--      * a participant has been granted moderator rights
 local function iq_from_main_handler(event)
     local origin, stanza = event.origin, event.stanza;
 
@@ -577,7 +593,7 @@ local function iq_from_main_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
-        module:log('warn', 'No room found %s', room_jid);
+        module:log('warn', 'No room found %s in iq_from_main_handler for:%s', room_jid, visitors_iq);
         return;
     end
 
@@ -623,6 +639,28 @@ local function iq_from_main_handler(event)
         room._main_room_lobby_enabled = true;
     elseif node.attr.lobby == 'false' then
         room._main_room_lobby_enabled = false;
+    end
+
+    -- read the moderators list
+    room.moderators_list = room.moderators_list or set.new();
+    local moderators = node:get_child('moderators');
+
+    if moderators then
+        for _, child in ipairs(moderators.tags) do
+            if child.name == 'item' then
+                room.moderators_list:add(child.attr.epId);
+            end
+        end
+
+        -- let's check current occupants roles and promote them if needed
+        -- we change only main participants which are not moderators, but participant
+        for _, o in room:each_occupant() do
+            if not is_admin(o.bare_jid)
+                and o.role == 'participant'
+                and room.moderators_list:contains(jid.resource(o.nick)) then
+                room:set_affiliation(true, o.bare_jid, 'owner');
+            end
+        end
     end
 
     if fire_jicofo_unlock then

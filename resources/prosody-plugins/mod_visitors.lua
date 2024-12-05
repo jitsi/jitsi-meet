@@ -58,7 +58,7 @@ local function send_visitors_iq(conference_service, room, type)
     -- send iq informing the vnode that the connect is done and it will allow visitors to join
     local iq_id = new_id();
     sent_iq_cache:set(iq_id, socket.gettime());
-    local connect_done = st.iq({
+    local visitors_iq = st.iq({
         type = 'set',
         to = conference_service,
         from = module.host,
@@ -71,9 +71,23 @@ local function send_visitors_iq(conference_service, room, type)
         meetingId = room._data.meetingId,
         moderatorId = room._data.moderator_id, -- can be used from external modules to set single moderator for meetings
         createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
-      }):up();
+      });
 
-      module:send(connect_done);
+    if type == 'update' then
+        visitors_iq:tag('moderators', { xmlns = 'jitsi:visitors' });
+
+        for _, o in room:each_occupant() do
+            if not is_admin(o.bare_jid) and o.role == 'moderator' then
+                visitors_iq:tag('item', { epId = jid.resource(o.nick) }):up();
+            end
+        end
+
+        visitors_iq:up();
+    end
+
+    visitors_iq:up();
+
+    module:send(visitors_iq);
 end
 
 -- an event received from visitors component, which receives iqs from jicofo
@@ -96,6 +110,9 @@ local function connect_vnode(event)
     end
 
     local sent_main_participants = 0;
+
+    -- send update initially so we can report the moderators that will join
+    send_visitors_iq(conference_service, room, 'update');
 
     for _, o in room:each_occupant() do
         if not is_admin(o.bare_jid) then
@@ -258,6 +275,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local user, _, res = jid.split(occupant.nick);
         -- a main participant we need to update all active visitor nodes
         for k in pairs(vnodes) do
+            if occupant.role == 'moderator' then
+                -- first send that the participant is a moderator
+                send_visitors_iq(k, room, 'update');
+            end
             local fmuc_pr = st.clone(stanza);
             fmuc_pr.attr.to = jid.join(user, k, res);
             fmuc_pr.attr.from = occupant.jid;
@@ -332,6 +353,21 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end, -100); -- we want to run last in order to check is the status code 104
+
+    host_module:hook('muc-set-affiliation', function (event)
+        if event.actor and not is_admin(event.actor) and event.affiliation == 'owner' then
+            local room = event.room;
+
+            if not visitors_nodes[room.jid] then
+                return;
+            end
+            -- we need to update all vnodes
+            local vnodes = visitors_nodes[room.jid].nodes;
+            for conference_service in pairs(vnodes) do
+                send_visitors_iq(conference_service, room, 'update');
+            end
+        end
+    end, -2);
 end);
 
 module:hook('jitsi-lobby-enabled', function(event)
