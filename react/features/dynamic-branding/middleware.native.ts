@@ -23,10 +23,14 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl,
             brandedIcons,
             didPageUrl,
+            downloadAppsUrl,
             inviteDomain,
             labels,
+            liveStreamingDialogUrls,
+            salesforceUrl,
             sharedVideoAllowedURLDomains,
-            supportUrl
+            supportUrl,
+            userDocumentationUrl
         } = action.value;
 
         action.value = {
@@ -35,10 +39,14 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl,
             brandedIcons,
             didPageUrl,
+            downloadAppsUrl,
             inviteDomain,
             labels,
+            liveStreamingDialogUrls,
+            salesforceUrl,
             sharedVideoAllowedURLDomains,
-            supportUrl
+            supportUrl,
+            userDocumentationUrl
         };
 
         // The backend may send an empty string, make sure we skip that.

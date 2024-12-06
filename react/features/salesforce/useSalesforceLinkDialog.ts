@@ -15,6 +15,7 @@ import {
 import {
     executeLinkMeetingRequest,
     getRecentSessionRecords,
+    getSalesforceUrl,
     getSessionRecordDetails,
     searchSessionRecords
 } from './functions';
@@ -40,7 +41,7 @@ export const useSalesforceLinkDialog = () => {
     const [ hasDetailsErrors, setDetailsErrors ] = useState(false);
     const conference = useSelector(getCurrentConference);
     const sessionId = conference?.getMeetingUniqueId();
-    const { salesforceUrl = '' } = useSelector((state: IReduxState) => state['features/base/config']);
+    const salesforceUrl = useSelector((state: IReduxState) => getSalesforceUrl(state) ?? '');
     const { jwt = '' } = useSelector((state: IReduxState) => state['features/base/jwt']);
     const showSearchResults = searchTerm && searchTerm.length > 1;
     const showNoResults = showSearchResults && records.length === 0;

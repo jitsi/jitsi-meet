@@ -7,6 +7,7 @@ import { translate } from '../../base/i18n/functions';
 import { IconDownload } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { openURLInBrowser } from '../../base/util/openURLInBrowser';
+import { getDownloadAppsUrl } from '../functions.any';
 
 interface IProps extends AbstractButtonProps {
 
@@ -47,7 +48,7 @@ class DownloadButton extends AbstractButton<IProps> {
  * @returns {Object}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { downloadAppsUrl } = state['features/base/config'].deploymentUrls || {};
+    const downloadAppsUrl = getDownloadAppsUrl(state);
     const visible = typeof downloadAppsUrl === 'string';
 
     return {

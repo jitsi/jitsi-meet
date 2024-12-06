@@ -69,7 +69,12 @@ import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
-import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
+import {
+    getDownloadAppsUrl,
+    getUserDocumentationUrl,
+    isButtonEnabled,
+    isDesktopShareButtonDisabled
+} from './functions.web';
 import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
 
 
@@ -239,7 +244,7 @@ function getShareAudioButton() {
  */
 function useDownloadButton() {
     const visible = useSelector(
-        (state: IReduxState) => typeof state['features/base/config'].deploymentUrls?.downloadAppsUrl === 'string');
+        (state: IReduxState) => typeof getDownloadAppsUrl(state) === 'string');
 
     if (visible) {
         return download;
@@ -254,7 +259,7 @@ function useDownloadButton() {
 function useHelpButton() {
     const visible = useSelector(
         (state: IReduxState) =>
-            typeof state['features/base/config'].deploymentUrls?.userDocumentationURL === 'string'
+            typeof getUserDocumentationUrl(state) === 'string'
                 && getFeatureFlag(state, HELP_BUTTON_ENABLED, true));
 
     if (visible) {

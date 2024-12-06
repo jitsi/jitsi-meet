@@ -9,6 +9,7 @@ import { translate } from '../../base/i18n/functions';
 import { IconHelp } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { openURLInBrowser } from '../../base/util/openURLInBrowser';
+import { getUserDocumentationUrl } from '../functions.any';
 
 interface IProps extends AbstractButtonProps {
 
@@ -49,7 +50,7 @@ class HelpButton extends AbstractButton<IProps> {
  * @returns {Object}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
+    const userDocumentationURL = getUserDocumentationUrl(state);
     const enabled = getFeatureFlag(state, HELP_BUTTON_ENABLED, true);
     const visible = typeof userDocumentationURL === 'string' && enabled;
 

@@ -1,4 +1,6 @@
 import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
+import { toState } from '../base/redux/functions';
 import { doGetJSON } from '../base/util/httpUtils';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
@@ -9,12 +11,24 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
  * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const isSalesforceEnabled = (state: IReduxState) => {
-    const { salesforceUrl } = state['features/base/config'];
+export function isSalesforceEnabled(state: IReduxState) {
+    const salesforceUrl = getSalesforceUrl(state);
     const isBreakoutRoom = isInBreakoutRoom(state);
 
     return Boolean(salesforceUrl) && !isBreakoutRoom;
-};
+}
+
+/**
+ * Returns the salesforce integration URL.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @returns {URL} - The salesforce integration URL.
+ */
+export function getSalesforceUrl(stateful: IStateful) {
+    const state = toState(stateful);
+
+    return state['features/dynamic-branding'].salesforceUrl || state['features/base/config'].salesforceUrl;
+}
 
 /**
  * Fetches the Salesforce records that were most recently interacted with.

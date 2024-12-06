@@ -254,8 +254,9 @@ export function getConnectionData(state: IReduxState) {
  */
 export function isPreCallTestEnabled(state: IReduxState): boolean {
     const { prejoinConfig } = state['features/base/config'];
+    const { preCallTest } = state['features/dynamic-branding'];
 
-    return prejoinConfig?.preCallTestEnabled ?? false;
+    return preCallTest?.enabled ?? prejoinConfig?.preCallTestEnabled ?? false;
 }
 
 /**
@@ -266,6 +267,7 @@ export function isPreCallTestEnabled(state: IReduxState): boolean {
  */
 export function getPreCallICEUrl(state: IReduxState): string | undefined {
     const { prejoinConfig } = state['features/base/config'];
+    const { preCallTest } = state['features/dynamic-branding'];
 
-    return prejoinConfig?.preCallTestICEUrl;
+    return preCallTest?.iceUrl || prejoinConfig?.preCallTestICEUrl;
 }

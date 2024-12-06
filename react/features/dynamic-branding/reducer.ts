@@ -151,16 +151,28 @@ export interface IDynamicBrandingState {
     customizationReady: boolean;
     defaultBranding: boolean;
     didPageUrl: string;
+    downloadAppsUrl?: string;
     inviteDomain: string;
     labels: Object | null;
+    liveStreamingDialogUrls?: {
+        dataPrivacyUrl?: string;
+        helpUrl?: string;
+        termsUrl?: string;
+    };
     logoClickUrl: string;
     logoImageUrl: string;
     muiBrandedTheme?: boolean;
+    preCallTest?: {
+        enabled?: boolean;
+        iceUrl?: string;
+    };
     premeetingBackground: string;
+    salesforceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
     showGiphyIntegration?: boolean;
     supportUrl?: string;
     useDynamicBrandingData: boolean;
+    userDocumentationUrl?: string;
     virtualBackgrounds: Array<Image>;
 }
 
@@ -177,15 +189,20 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             brandedIcons,
             defaultBranding,
             didPageUrl,
+            downloadAppsUrl,
             inviteDomain,
             labels,
+            liveStreamingDialogUrls,
             logoClickUrl,
             logoImageUrl,
             muiBrandedTheme,
+            preCallTest,
             premeetingBackground,
+            salesforceUrl,
             sharedVideoAllowedURLDomains,
             showGiphyIntegration,
             supportUrl,
+            userDocumentationUrl,
             virtualBackgrounds
         } = action.value;
 
@@ -196,18 +213,23 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             brandedIcons,
             defaultBranding,
             didPageUrl,
+            downloadAppsUrl,
             inviteDomain,
             labels,
+            liveStreamingDialogUrls,
             logoClickUrl,
             logoImageUrl,
             muiBrandedTheme,
+            preCallTest,
             premeetingBackground,
+            salesforceUrl,
             sharedVideoAllowedURLDomains,
             showGiphyIntegration,
             supportUrl,
             customizationFailed: false,
             customizationReady: true,
             useDynamicBrandingData: true,
+            userDocumentationUrl,
             virtualBackgrounds: formatImages(virtualBackgrounds || [])
         };
     }
