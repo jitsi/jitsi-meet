@@ -398,6 +398,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._participants = {};
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
+        this._iAmvisitor = undefined;
         this._setupListeners();
         id++;
     }
@@ -619,6 +620,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                     email: data.email,
                     avatarURL: data.avatarURL
                 };
+                this._iAmvisitor = data.visitor;
             }
 
             // eslint-disable-next-line no-fallthrough
@@ -1171,12 +1173,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns whether we have joined as visitor in a meeting.
      *
-     * @returns {Promise} - Resolves with is visitor status.
+     * @returns {boolean} - Returns true if we have joined as visitor.
      */
     isVisitor() {
-        return this._transport.sendRequest({
-            name: 'is-visitor'
-        });
+        return this._iAmvisitor;
     }
 
     /**

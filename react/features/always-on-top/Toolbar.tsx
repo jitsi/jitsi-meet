@@ -91,14 +91,10 @@ export default class Toolbar extends Component<Props, IState> {
             return;
         }
 
-        api.isVisitor()
-            .then((value: boolean) => {
-                this.setState({
-                    showAudioButton: !value,
-                    showVideoButton: !value
-                });
-            })
-            .catch(console.error);
+        this.setState({
+            showAudioButton: !api.isVisitor(),
+            showVideoButton: !api.isVisitor()
+        });
     }
 
     /**
