@@ -20,6 +20,7 @@ export type DetectOutput = {
     faceBox?: FaceBox;
     faceCount: number;
     faceExpression?: FaceExpression;
+    raisedHand?: boolean;
 };
 
 export type FaceExpression = {
