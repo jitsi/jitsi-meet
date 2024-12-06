@@ -1,12 +1,9 @@
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { PIP_WHILE_SCREEN_SHARING_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowDown } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions.native';
 import { enterPictureInPicture } from '../actions';
 import { isPipEnabled } from '../functions';
 
@@ -58,9 +55,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const pipEnabled = isPipEnabled(state);
-    const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
-    const enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
+    const enabled = isPipEnabled(state);
 
     return {
         _enabled: enabled
