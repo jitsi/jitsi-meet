@@ -1,6 +1,7 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import path from 'node:path';
 import process from 'node:process';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
@@ -25,7 +26,7 @@ const chromeArgs = [
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-setuid-sandbox',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+    `--use-file-for-fake-audio-capture=${process.env.REMOTE_RESOURCE_PATH || 'tests/resources'}/fakeAudioStream.wav`
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -161,16 +162,23 @@ export const config: WebdriverIO.MultiremoteConfig = {
      *
      * @returns {Promise<void>}
      */
-    before() {
-        multiremotebrowser.instances.forEach((instance: string) => {
+    async before() {
+        await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             initLogger(multiremotebrowser.getInstance(instance), instance, TEST_RESULTS_DIR);
-        });
+
+            // if (process.env.GRID_HOST_URL) {
+            // TODO: make sure we use uploadFile only with chrome (it does not work with FF),
+            // we need to test it with the grid and FF, does it work there
+            const rpath = await multiremotebrowser.getInstance(instance)
+                .uploadFile('tests/resources/iframeAPITest.html');
+
+            // @ts-ignore
+            multiremotebrowser.getInstance(instance).iframePageBase = `file://${path.dirname(rpath)}`;
+        }));
 
         const globalAny: any = global;
 
         globalAny.context = {} as IContext;
-
-        globalAny.context.iframePageBase = process.env.IFRAME_PAGE_BASE;
     },
 
     /**
@@ -280,4 +288,4 @@ export const config: WebdriverIO.MultiremoteConfig = {
             });
         });
     }
-};
+} as WebdriverIO.MultiremoteConfig;

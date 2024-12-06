@@ -3,8 +3,6 @@ import { isEqual } from 'lodash-es';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 
 describe('Participants presence - ', () => {
-    // const context = {} as IContext;
-
     it('joining the meeting', async () => {
         context.iframeAPI = true;
 

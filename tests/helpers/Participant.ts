@@ -129,16 +129,20 @@ export class Participant {
         let url = urlObjectToString(config) || '';
 
         if (context.iframeAPI) {
-            url = `${url}&domain="${new URL(this.driver.options.baseUrl || '').host}"&room="${context.roomName}"`;
-
-            if (context.iframePageBase) {
-                url = `${context.iframePageBase}${url}`;
-            }
+            // @ts-ignore
+            url = `${this.driver.iframePageBase}${url}&domain="${
+                new URL(this.driver.options.baseUrl || '').host}"&room="${context.roomName}"`;
         }
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        await this.driver.url(url);
+        // workaround for https://github.com/webdriverio/webdriverio/issues/13956
+        if (url.startsWith('file://')) {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            await this.driver.url(url).catch(() => {});
+        } else {
+            await this.driver.url(url);
+        }
 
         await this.waitForPageToLoad();
 
