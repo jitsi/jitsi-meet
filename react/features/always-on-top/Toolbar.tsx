@@ -88,12 +88,15 @@ export default class Toolbar extends Component<Props, IState> {
         // for electron clients that embed the api and are not updated
         if (!api.isVisitor) {
             console.warn('external API not updated');
+
             return;
         }
 
+        const isVisitor = api.isVisitor();
+
         this.setState({
-            showAudioButton: !api.isVisitor(),
-            showVideoButton: !api.isVisitor()
+            showAudioButton: !isVisitor,
+            showVideoButton: !isVisitor
         });
     }
 
