@@ -507,9 +507,9 @@ export interface IConfig {
     prejoinPageEnabled?: boolean;
     raisedHands?: {
         disableLowerHandByModerator?: boolean;
-        disableLowerHandNotification?: boolean;
         disableNextSpeakerNotification?: boolean;
         disableRemoveRaisedHandOnFocus?: boolean;
+        disableRemoveRaisedHandOnFocusNotification?: boolean;
     };
     readOnlyName?: boolean;
     recordingLimit?: {
