@@ -11,7 +11,7 @@ import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { isPrejoinEnabledInConfig } from '../../../prejoin/functions';
+import { isPrejoinEnabledInConfig } from '../../../prejoin/functions.native';
 
 import FormRow from './FormRow';
 import FormSection from './FormSection';
@@ -28,7 +28,7 @@ const GeneralSection = () => {
 
     const showPrejoinPage = !userSelectedSkipPrejoin;
 
-    let showPrejoinSettings = useSelector(isPrejoinEnabledInConfig);
+    const showPrejoinSettings = useSelector(isPrejoinEnabledInConfig);
 
     const { language = DEFAULT_LANGUAGE } = i18next;
 
@@ -45,10 +45,6 @@ const GeneralSection = () => {
         navigate(screen.settings.language);
     }, [ navigate, screen ]);
 
-    // TODO:
-    // Delete this line when prejoin skipping is available on mobile
-    showPrejoinSettings = false;
-
     return (
         <FormSection>
             <FormRow label = 'videothumbnail.hideSelfView'>
@@ -56,13 +52,11 @@ const GeneralSection = () => {
                     checked = { Boolean(disableSelfView) }
                     onChange = { onSelfViewToggled } />
             </FormRow>
-
             {showPrejoinSettings && <FormRow label = 'prejoin.showScreen'>
                 <Switch
                     checked = { showPrejoinPage }
                     onChange = { onShowPejoinToggled } />
             </FormRow>}
-
             <FormRow label = 'settings.language'>
                 <View style = { styles.languageButtonContainer as ViewStyle }>
                     <TouchableHighlight onPress = { navigateToLanguageSelect }>
