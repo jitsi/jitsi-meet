@@ -177,12 +177,6 @@ export const PARTICIPANTS_ENABLED = 'participants.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
- * Flag indicating if Picture-in-Picture button should be shown while screen sharing.
- * Default: disabled (false).
- */
-export const PIP_WHILE_SCREEN_SHARING_ENABLED = 'pip-while-screen-sharing.enabled';
-
-/**
  * Flag indicating if the prejoin page should be enabled.
  * Default: enabled (true).
  */
