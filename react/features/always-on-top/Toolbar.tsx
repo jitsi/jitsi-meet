@@ -4,6 +4,8 @@ import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
 import VideoMuteButton from './VideoMuteButton';
 
+const { api } = window.alwaysOnTop;
+
 /**
  * The type of the React {@code Component} props of {@link Toolbar}.
  */
@@ -26,11 +28,89 @@ interface IProps {
 }
 
 /**
+ * The type of the React {@code Component} state of {@link Toolbar}.
+ */
+interface IState {
+
+    /**
+     * Whether audio button to be shown or not.
+     */
+    showAudioButton: boolean;
+
+    /**
+     * Whether video button to be shown or not.
+     */
+    showVideoButton: boolean;
+}
+
+type Props = Partial<IProps>;
+
+/**
  * Represents the toolbar in the Always On Top window.
  *
  * @augments Component
  */
-export default class Toolbar extends Component<IProps> {
+export default class Toolbar extends Component<Props, IState> {
+    /**
+     * Initializes a new {@code Toolbar} instance.
+     *
+     * @param {IProps} props - The React {@code Component} props to initialize the new {@code Toolbar} instance with.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            showAudioButton: true,
+            showVideoButton: true
+        };
+
+        this._videoChangedListener = this._videoChangedListener.bind(this);
+    }
+
+    /**
+     * Sets listens for changing meetings while showing the toolbar.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        api.on('videoConferenceJoined', this._videoChangedListener);
+
+        this._videoChangedListener();
+    }
+
+    /**
+     * Handles is visitor changes.
+     *
+     * @returns {void}
+     */
+    _videoChangedListener() {
+        // for electron clients that embed the api
+        if (!api.isVisitor) {
+            console.warn('API not updated');
+            return;
+        }
+
+        api.isVisitor()
+            .then((value: boolean) => {
+                this.setState({
+                    showAudioButton: !value,
+                    showVideoButton: !value
+                });
+            })
+            .catch(console.error);
+    }
+
+    /**
+     * Removes all listeners.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        api.removeListener('videoConferenceJoined', this._videoChangedListener);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -49,8 +129,8 @@ export default class Toolbar extends Component<IProps> {
                 className = { `toolbox-content-items always-on-top-toolbox ${className}` }
                 onMouseOut = { onMouseOut }
                 onMouseOver = { onMouseOver }>
-                <AudioMuteButton />
-                <VideoMuteButton />
+                { this.state.showAudioButton && <AudioMuteButton /> }
+                { this.state.showVideoButton && <VideoMuteButton /> }
                 <HangupButton customClass = 'hangup-button' />
             </div>
         );

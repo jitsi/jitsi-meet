@@ -1169,6 +1169,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns whether we have joined as visitor in a meeting.
+     *
+     * @returns {Promise} - Resolves with is visitor status.
+     */
+    isVisitor() {
+        return this._transport.sendRequest({
+            name: 'is-visitor'
+        });
+    }
+
+    /**
      * Returns the avatar URL of a participant.
      *
      * @param {string} participantId - The id of the participant.

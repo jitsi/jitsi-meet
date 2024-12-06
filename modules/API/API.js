@@ -124,6 +124,7 @@ import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
+import { iAmVisitor } from '../../react/features/visitors/functions';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -994,6 +995,9 @@ function initCommands() {
             break;
         case 'is-start-silent':
             callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
+            break;
+        case 'is-visitor':
+            callback(iAmVisitor(APP.store.getState()));
             break;
         case 'get-content-sharing-participants': {
             const sharingParticipantIds = getScreenshareParticipantIds(APP.store.getState());
