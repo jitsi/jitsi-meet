@@ -64,7 +64,7 @@ export default class Toolbar extends Component<Props, IState> {
             showVideoButton: true
         };
 
-        this._videoChangedListener = this._videoChangedListener.bind(this);
+        this._videoConferenceJoinedListener = this._videoConferenceJoinedListener.bind(this);
     }
 
     /**
@@ -74,9 +74,9 @@ export default class Toolbar extends Component<Props, IState> {
      * @returns {void}
      */
     componentDidMount() {
-        api.on('videoConferenceJoined', this._videoChangedListener);
+        api.on('videoConferenceJoined', this._videoConferenceJoinedListener);
 
-        this._videoChangedListener();
+        this._videoConferenceJoinedListener();
     }
 
     /**
@@ -84,10 +84,10 @@ export default class Toolbar extends Component<Props, IState> {
      *
      * @returns {void}
      */
-    _videoChangedListener() {
-        // for electron clients that embed the api
+    _videoConferenceJoinedListener() {
+        // for electron clients that embed the api and are not updated
         if (!api.isVisitor) {
-            console.warn('API not updated');
+            console.warn('external API not updated');
             return;
         }
 
@@ -108,7 +108,7 @@ export default class Toolbar extends Component<Props, IState> {
      * @returns {void}
      */
     componentWillUnmount() {
-        api.removeListener('videoConferenceJoined', this._videoChangedListener);
+        api.removeListener('videoConferenceJoined', this._videoConferenceJoinedListener);
     }
 
     /**
