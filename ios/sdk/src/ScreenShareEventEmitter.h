@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #import <Foundation/Foundation.h>
+
+#import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ScheenshareEventEmiter : NSObject
-
+@interface ScreenShareEventEmitter : RCTEventEmitter <RCTBridgeModule>
 @end
 
 NS_ASSUME_NONNULL_END
