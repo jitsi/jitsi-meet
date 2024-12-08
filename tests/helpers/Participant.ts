@@ -129,9 +129,15 @@ export class Participant {
         let url = urlObjectToString(config) || '';
 
         if (context.iframeAPI) {
+            const baseUrl = new URL(this.driver.options.baseUrl || '');
+
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${
-                new URL(this.driver.options.baseUrl || '').host}"&room="${context.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${context.roomName}"`;
+
+            if (baseUrl.pathname.length > 1) {
+                // remove leading slash
+                url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
+            }
         }
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });

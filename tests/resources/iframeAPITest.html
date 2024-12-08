@@ -56,6 +56,7 @@
     }
 
     const { config, domain, interfaceConfig, jwt, password, room:roomName, userInfo: uInfoObj } = json;
+    let tenant = json.tenant || '';
 
     let userInfo;
     if (uInfoObj) {
@@ -66,9 +67,13 @@
         }
     }
 
+    if (tenant.length > 0) {
+        tenant = tenant + '/';
+    }
+
     const options = {
         jwt,
-        roomName,
+        roomName: `${tenant}${roomName}`,
         configOverwrite: config,
         interfaceConfigOverwrite: interfaceConfig,
         userInfo,
@@ -102,7 +107,7 @@
     };
 
     const externalAPIScript = document.createElement('script');
-    externalAPIScript.src = `https://${domain}/external_api.js`;
+    externalAPIScript.src = `https://${domain}/${tenant}external_api.js`;
     externalAPIScript.type = "text/javascript";
     externalAPIScript.onload = function(){
         window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
