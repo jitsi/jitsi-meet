@@ -164,16 +164,21 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     async before() {
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
-            initLogger(multiremotebrowser.getInstance(instance), instance, TEST_RESULTS_DIR);
+            const bInstance = multiremotebrowser.getInstance(instance);
+
+            initLogger(bInstance, instance, TEST_RESULTS_DIR);
+
+            if (bInstance.isFirefox) {
+                return;
+            }
 
             // if (process.env.GRID_HOST_URL) {
             // TODO: make sure we use uploadFile only with chrome (it does not work with FF),
             // we need to test it with the grid and FF, does it work there
-            const rpath = await multiremotebrowser.getInstance(instance)
-                .uploadFile('tests/resources/iframeAPITest.html');
+            const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
 
             // @ts-ignore
-            multiremotebrowser.getInstance(instance).iframePageBase = `file://${path.dirname(rpath)}`;
+            bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
         }));
 
         const globalAny: any = global;
