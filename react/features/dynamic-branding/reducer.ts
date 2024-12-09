@@ -150,6 +150,7 @@ export interface IDynamicBrandingState {
     customizationFailed: boolean;
     customizationReady: boolean;
     defaultBranding: boolean;
+    defaultTranscriptionLanguage?: boolean;
     didPageUrl: string;
     inviteDomain: string;
     labels: Object | null;

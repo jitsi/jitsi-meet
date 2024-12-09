@@ -208,6 +208,7 @@ export function getConferenceOptions(stateful: IStateful) {
 
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
+    const { defaultTranscriptionLanguage } = state['features/dynamic-branding'];
     const { tenant } = state['features/base/jwt'];
     const { email, name: nick } = getLocalParticipant(state) ?? {};
     const options: any = { ...config };
@@ -229,7 +230,8 @@ export function getConferenceOptions(stateful: IStateful) {
     }
 
     options.applicationName = getName();
-    options.transcriptionLanguage = determineTranscriptionLanguage(options);
+    options.transcriptionLanguage
+        = defaultTranscriptionLanguage ?? determineTranscriptionLanguage(options);
 
     // Disable analytics, if requested.
     if (options.disableThirdPartyRequests) {
