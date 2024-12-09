@@ -24,6 +24,7 @@ export class Participant {
      */
     private _name: string;
     private _endpointId: string;
+    private _jwt?: string;
 
     /**
      * The default config to use when joining.
@@ -61,9 +62,11 @@ export class Participant {
      * Creates a participant with given name.
      *
      * @param {string} name - The name of the participant.
+     * @param {string }jwt - The jwt if any.
      */
-    constructor(name: string) {
+    constructor(name: string, jwt?: string) {
         this._name = name;
+        this._jwt = jwt;
     }
 
     /**
@@ -140,6 +143,9 @@ export class Participant {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
+        }
+        if (this._jwt) {
+            url = `${url}&jwt="${this._jwt}"`;
         }
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });

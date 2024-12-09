@@ -21,8 +21,12 @@ describe('Participants presence - ', () => {
         await p1.switchToAPI();
         await p2.switchToAPI();
 
-        expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
-        expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(false);
+        expect(await p1.getIframeAPI().getEventResult('isModerator'))
+            .withContext('Is p1 moderator')
+            .toBeTrue();
+        expect(await p2.getIframeAPI().getEventResult('isModerator'))
+            .withContext('Is p2 non-moderator')
+            .toBeFalse();
 
         // ROLE_CHANGED
 
@@ -91,10 +95,15 @@ describe('Participants presence - ', () => {
             timeoutMsg: 'Moderator role not granted'
         });
 
-        const event = await p1.getIframeAPI().getEventResult('participantRoleChanged');
+        const event1 = await p1.getIframeAPI().getEventResult('participantRoleChanged');
 
-        expect(event?.id).toBe(p2EpId);
-        expect(event?.role).toBe('moderator');
+        expect(event1?.id).toBe(p2EpId);
+        expect(event1?.role).toBe('moderator');
+
+        const event2 = await p2.getIframeAPI().getEventResult('participantRoleChanged');
+
+        expect(event2?.id).toBe(p2EpId);
+        expect(event2?.role).toBe('moderator');
 
         // ROLE_CHANGED
     });

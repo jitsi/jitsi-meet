@@ -2,6 +2,8 @@ import type { Participant } from './Participant';
 
 export type IContext = {
     iframeAPI: boolean;
+    jwtKid: string;
+    jwtPrivateKeyPath: string;
     p1: Participant;
     p2: Participant;
     p3: Participant;

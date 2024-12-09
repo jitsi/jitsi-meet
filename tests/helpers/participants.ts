@@ -1,3 +1,7 @@
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+
 import { Participant } from './Participant';
 import { IContext } from './types';
 
@@ -66,13 +70,18 @@ export async function ensureTwoParticipants(context: IContext): Promise<void> {
         context.roomName = generateRandomRoomName();
     }
 
-    // TODO
+    const p1DisplayName = 'participant1';
+    let token;
+
     // if it is jaas create the first one to be moderator and second not moderator
+    if (context.jwtPrivateKeyPath) {
+        token = getModeratorToken(p1DisplayName);
+    }
 
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant('participant1', context.p1, p => {
+    await _joinParticipant(p1DisplayName, context.p1, p => {
         context.p1 = p;
-    }, true);
+    }, true, token);
 
     await Promise.all([
         _joinParticipant('participant2', context.p2, p => {
@@ -89,11 +98,14 @@ export async function ensureTwoParticipants(context: IContext): Promise<void> {
  * @param p - The participant instance to prepare or undefined if new one is needed.
  * @param setter - The setter to use for setting the new participant instance into the context if needed.
  * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+ * @param {string?} jwtToken - The token to use if any.
  */
-async function _joinParticipant(
-        name: string, p: Participant,
+async function _joinParticipant( // eslint-disable-line max-params
+        name: string,
+        p: Participant,
         setter: (p: Participant) => void,
-        skipInMeetingChecks = false) {
+        skipInMeetingChecks = false,
+        jwtToken?: string) {
     if (p) {
         await p.switchInPage();
 
@@ -107,11 +119,12 @@ async function _joinParticipant(
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
         await p.driver.url('/base.html');
 
-        // we want the participant instance re-recreated so we clear and kept state, like endpoint ID
+        // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
-    const newParticipant = new Participant(name);
+    const newParticipant = new Participant(name, jwtToken);
 
+    // set the new participant instance, pass it to setter
     setter(newParticipant);
 
     return newParticipant.joinConference(context, skipInMeetingChecks);
@@ -151,4 +164,44 @@ export function parseJid(str: string): {
         domain: domainParts[0],
         resource: domainParts.length > 0 ? domainParts[1] : undefined
     };
+}
+
+/**
+ * Get a JWT token for a moderator.
+ */
+function getModeratorToken(displayName: string) {
+    const keyid = process.env.JWT_KID;
+    const headers = {
+        algorithm: 'RS256',
+        noTimestamp: true,
+        expiresIn: '24h',
+        keyid
+    };
+
+    if (!keyid) {
+        console.error('JWT_KID is not set');
+
+        return;
+    }
+
+    const key = fs.readFileSync(context.jwtPrivateKeyPath);
+
+    const payload = {
+        'aud': 'jitsi',
+        'iss': 'chat',
+        'sub': keyid.substring(0, keyid.indexOf('/')),
+        'context': {
+            'user': {
+                'name': displayName,
+                'id': uuidv4(),
+                'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
+                'email': 'john.doe@jitsi.org'
+            }
+        },
+        'room': '*'
+    };
+
+    payload.context.user.moderator = true;
+
+    return jwt.sign(payload, key, headers);
 }

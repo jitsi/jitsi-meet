@@ -184,6 +184,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const globalAny: any = global;
 
         globalAny.context = {} as IContext;
+
+        globalAny.context.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+        globalAny.context.jwtKid = process.env.JWT_KID;
     },
 
     /**
