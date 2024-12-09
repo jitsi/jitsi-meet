@@ -1,6 +1,8 @@
 import type { Participant } from './Participant';
+import WebhookProxy from './WebhookProxy';
 
 export type IContext = {
+    conferenceJid: string;
     iframeAPI: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
@@ -9,4 +11,5 @@ export type IContext = {
     p3: Participant;
     p4: Participant;
     roomName: string;
+    webhooksProxy: WebhookProxy;
 };

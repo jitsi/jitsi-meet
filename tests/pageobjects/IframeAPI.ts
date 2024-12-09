@@ -68,9 +68,9 @@ export default class IframeAPI {
      */
     async executeCommand(command: string, ...args: any[]) {
         return this.participant.driver.execute(
-            (commandName, commandArgs) => {
-                return window.jitsiAPI.executeCommand(commandName, ...commandArgs);
-            }, command, args);
+            (commandName, commandArgs) =>
+                window.jitsiAPI.executeCommand(commandName, ...commandArgs)
+            , command, args);
     }
 
     /**

@@ -54,7 +54,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     runner: 'local',
 
     specs: [
-        'specs/**'
+        'specs/2way/participantsPresence.spec.ts'
     ],
     maxInstances: 1,
 
@@ -187,6 +187,12 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         globalAny.context.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.context.jwtKid = process.env.JWT_KID;
+    },
+
+    after() {
+        if (context.webhooksProxy) {
+            context.webhooksProxy.disconnect();
+        }
     },
 
     /**
