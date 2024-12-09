@@ -189,6 +189,12 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.context.jwtKid = process.env.JWT_KID;
     },
 
+    after() {
+        if (context.webhooksProxy) {
+            context.webhooksProxy.disconnect();
+        }
+    },
+
     /**
      * Gets executed before the suite starts (in Mocha/Jasmine only).
      *

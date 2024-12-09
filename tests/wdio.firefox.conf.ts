@@ -21,7 +21,7 @@ if (process.env.HEADLESS === 'true') {
 
 export const config = deepmerge(defaultConfig, {
     'wdio:exclude': [
-        'specs/2way/participantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
+        'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
         'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
     ],
     capabilities: {

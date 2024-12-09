@@ -1,17 +1,30 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
+import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Participant } from './Participant';
+import WebhookProxy from './WebhookProxy';
 import { IContext } from './types';
 
 /**
  * Generate a random room name.
+ * Everytime we generate a name and iframeAPI is enabled and there is a configured
+ * webhooks proxy we connect to it with the new room name.
  *
  * @returns {string} - The random room name.
  */
 function generateRandomRoomName(): string {
-    return `jitsimeettorture-${crypto.randomUUID()}`;
+    const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+
+    if (context.iframeAPI && !context.webhooksProxy
+        && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
+        context.webhooksProxy = new WebhookProxy(`${process.env.WEBHOOKS_PROXY_URL}&room=${roomName}`,
+            process.env.WEBHOOKS_PROXY_SHARED_SECRET);
+        context.webhooksProxy.connect();
+    }
+
+    return roomName;
 }
 
 /**
@@ -21,7 +34,9 @@ function generateRandomRoomName(): string {
  * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(context: IContext): Promise<void> {
-    context.roomName = generateRandomRoomName();
+    if (!context.roomName) {
+        context.roomName = generateRandomRoomName();
+    }
 
     context.p1 = new Participant('participant1');
 
@@ -35,7 +50,9 @@ export async function ensureOneParticipant(context: IContext): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(context: IContext): Promise<void> {
-    context.roomName = generateRandomRoomName();
+    if (!context.roomName) {
+        context.roomName = generateRandomRoomName();
+    }
 
     const p1 = new Participant('participant1');
     const p2 = new Participant('participant2');
@@ -201,7 +218,9 @@ function getModeratorToken(displayName: string) {
         'room': '*'
     };
 
+    // @ts-ignore
     payload.context.user.moderator = true;
 
+    // @ts-ignore
     return jwt.sign(payload, key, headers);
 }
