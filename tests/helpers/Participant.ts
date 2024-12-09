@@ -147,7 +147,7 @@ export class Participant {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             await this.driver.url(url).catch(() => {});
         } else {
-            await this.driver.url(url);
+            await this.driver.url(url.substring(1)); // drop the leading '/' so we can use the tenant if any
         }
 
         await this.waitForPageToLoad();
