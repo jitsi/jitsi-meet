@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes';
 import { getFeatureFlag } from '../flags/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
@@ -21,8 +22,12 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_CONFIG:
         return _setConfig(store, next, action);
 
+    case SET_DYNAMIC_BRANDING_DATA:
+        return _setDynamicBrandingData(store, next, action);
+
     case OVERWRITE_CONFIG:
         return _updateSettings(store, next, action);
+
     }
 
     return next(action);
@@ -92,6 +97,79 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     }
 
     return result;
+}
+
+/**
+ * Updates config based on dynamic branding data.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being {@code dispatch}ed
+ * in the specified {@code store}.
+ * @private
+ * @returns {*} The return value of {@code next(action)}.
+ */
+function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: AnyAction) {
+    const config: IConfig = {};
+    const {
+        downloadAppsUrl,
+        liveStreamingDialogUrls = {},
+        preCallTest = {},
+        salesforceUrl,
+        userDocumentationUrl
+    } = action.value;
+
+    const { helpUrl, termsUrl, dataPrivacyUrl } = liveStreamingDialogUrls;
+
+    if (helpUrl || termsUrl || dataPrivacyUrl) {
+        config.liveStreaming = {};
+        if (helpUrl) {
+            config.liveStreaming.helpLink = helpUrl;
+        }
+
+        if (termsUrl) {
+            config.liveStreaming.termsLink = termsUrl;
+        }
+
+        if (dataPrivacyUrl) {
+            config.liveStreaming.dataPrivacyLink = dataPrivacyUrl;
+        }
+    }
+
+    if (downloadAppsUrl || userDocumentationUrl) {
+        config.deploymentUrls = {};
+
+        if (downloadAppsUrl) {
+            config.deploymentUrls.downloadAppsUrl = downloadAppsUrl;
+        }
+
+        if (userDocumentationUrl) {
+            config.deploymentUrls.userDocumentationURL = userDocumentationUrl;
+        }
+    }
+
+    if (salesforceUrl) {
+        config.salesforceUrl = salesforceUrl;
+    }
+
+    const { enabled, iceUrl } = preCallTest;
+
+    if (typeof enabled === 'boolean') {
+        config.prejoinConfig = {
+            preCallTestEnabled: enabled
+        };
+    }
+
+    if (iceUrl) {
+        config.prejoinConfig = config.prejoinConfig || {};
+        config.prejoinConfig.preCallTestICEUrl = iceUrl;
+    }
+
+    dispatch(updateConfig(config));
+
+    return next(action);
 }
 
 /**
