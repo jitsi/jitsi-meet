@@ -6,7 +6,9 @@ import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
+import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import Toolbar from '../pageobjects/Toolbar';
+import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext } from './types';
@@ -320,6 +322,24 @@ export class Participant {
      */
     getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
+    }
+
+    /**
+     * Returns the participants pane.
+     *
+     * @returns {ParticipantsPane}
+     */
+    getParticipantsPane(): ParticipantsPane {
+        return new ParticipantsPane(this);
+    }
+
+    /**
+     * Returns the videoQuality Dialog.
+     *
+     * @returns {VideoQualityDialog}
+     */
+    getVideoQualityDialog(): VideoQualityDialog {
+        return new VideoQualityDialog(this);
     }
 
     /**
