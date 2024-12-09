@@ -2,7 +2,6 @@ import { IReduxState } from '../app/types';
 
 import PageReloadOverlay from './components/web/PageReloadOverlay';
 import SuspendedOverlay from './components/web/SuspendedOverlay';
-import UserMediaPermissionsOverlay from './components/web/UserMediaPermissionsOverlay';
 
 /**
  * Returns the overlay to be currently rendered.
@@ -13,8 +12,7 @@ import UserMediaPermissionsOverlay from './components/web/UserMediaPermissionsOv
 export function getOverlayToRender(state: IReduxState) {
     const overlays = [
         PageReloadOverlay,
-        SuspendedOverlay,
-        UserMediaPermissionsOverlay
+        SuspendedOverlay
     ];
 
     for (const overlay of overlays) {
