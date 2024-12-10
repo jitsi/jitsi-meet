@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-#import "ScheenshareEventEmiter.h"
-#import "JitsiMeet+Private.h"
-#import "ExternalAPI.h"
+#import "ScreenShareEventEmitter.h"
+#import <React/RCTLog.h>
+#import <React/RCTBridge.h>
 
 NSNotificationName const kBroadcastStartedNotification = @"iOS_BroadcastStarted";
 NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped";
 
-@implementation ScheenshareEventEmiter {
+static NSString * const toggleScreenShareAction = @"org.jitsi.meet.TOGGLE_SCREEN_SHARE";
+
+@implementation ScreenShareEventEmitter {
     CFNotificationCenterRef _notificationCenter;
+    bool hasListeners;
 }
+
+RCT_EXPORT_MODULE();
+
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"TOGGLE_SCREEN_SHARE": toggleScreenShareAction,
+    };
+};
 
 - (instancetype)init {
     self = [super init];
@@ -31,7 +42,6 @@ NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped"
         _notificationCenter = CFNotificationCenterGetDarwinNotifyCenter();
         [self setupObserver];
     }
-    
     return self;
 }
 
@@ -44,11 +54,13 @@ NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped"
 - (void)setupObserver {
     CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastStartedNotificationCallback, (__bridge CFStringRef)kBroadcastStartedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastStoppedNotificationCallback, (__bridge CFStringRef)kBroadcastStoppedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    hasListeners = YES;
 }
 
 - (void)clearObserver {
     CFNotificationCenterRemoveObserver(_notificationCenter, (__bridge const void *)(self), (__bridge CFStringRef)kBroadcastStartedNotification, NULL);
     CFNotificationCenterRemoveObserver(_notificationCenter, (__bridge const void *)(self), (__bridge CFStringRef)kBroadcastStoppedNotification, NULL);
+    hasListeners = NO;
 }
 
 void broadcastStartedNotificationCallback(CFNotificationCenterRef center,
@@ -56,8 +68,8 @@ void broadcastStartedNotificationCallback(CFNotificationCenterRef center,
                                           CFStringRef name,
                                           const void *object,
                                           CFDictionaryRef userInfo) {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare:true];
+    ScreenShareEventEmitter *self = (__bridge ScreenShareEventEmitter *)observer;
+    [self handleBroadcastStarted];
 }
 
 void broadcastStoppedNotificationCallback(CFNotificationCenterRef center,
@@ -65,8 +77,23 @@ void broadcastStoppedNotificationCallback(CFNotificationCenterRef center,
                                           CFStringRef name,
                                           const void *object,
                                           CFDictionaryRef userInfo) {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare:false];
+    ScreenShareEventEmitter *self = (__bridge ScreenShareEventEmitter *)observer;
+    [self handleBroadcastStopped];
+}
+
+- (void)handleBroadcastStarted {
+    RCTLogInfo(@"Broadcast started");
+    [self sendEventWithName:toggleScreenShareAction body:@{@"enabled": @TRUE}];
+}
+
+- (void)handleBroadcastStopped {
+    RCTLogInfo(@"Broadcast stopped");
+    [self sendEventWithName:toggleScreenShareAction body:@{@"enabled": @FALSE}];
+}
+
+// Override the supportedEvents method
+- (NSArray<NSString *> *)supportedEvents {
+    return @[toggleScreenShareAction];
 }
 
 @end
