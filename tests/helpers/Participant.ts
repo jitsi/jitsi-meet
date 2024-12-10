@@ -11,7 +11,7 @@ import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
-import { IContext } from './types';
+import { IContext, IJoinOptions } from './types';
 
 /**
  * Participant.
@@ -112,20 +112,24 @@ export class Participant {
      * Joins conference.
      *
      * @param {IContext} context - The context.
-     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+     * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(context: IContext, skipInMeetingChecks = false): Promise<void> {
+    async joinConference(context: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
             room: context.roomName,
             configOverwrite: this.config,
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
-            },
-            userInfo: {
-                displayName: this._name
             }
         };
+
+        if (!options.skipDisplayName) {
+            // @ts-ignore
+            config.userInfo = {
+                displayName: this._name
+            };
+        }
 
         if (context.iframeAPI) {
             config.room = 'iframeAPITest.html';
@@ -168,7 +172,7 @@ export class Participant {
 
         await this.waitToJoinMUC();
 
-        await this.postLoadProcess(skipInMeetingChecks);
+        await this.postLoadProcess(options.skipInMeetingChecks);
     }
 
     /**
@@ -178,7 +182,7 @@ export class Participant {
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks: boolean): Promise<void> {
+    private async postLoadProcess(skipInMeetingChecks = false): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];

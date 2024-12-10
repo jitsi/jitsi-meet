@@ -13,3 +13,16 @@ export type IContext = {
     roomName: string;
     webhooksProxy: WebhookProxy;
 };
+
+export type IJoinOptions = {
+
+    /**
+     * Whether to skip setting display name.
+     */
+    skipDisplayName?: boolean;
+
+    /**
+     * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
+     */
+    skipInMeetingChecks?: boolean;
+};
