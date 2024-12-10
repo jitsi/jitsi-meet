@@ -509,11 +509,16 @@ var config = {
     // videoQuality: {
     //
     //    // Provides a way to set the codec preference on desktop based endpoints.
-    //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264' ],
+    //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264', 'AV1' ],
     //
     //    // Provides a way to set the codec for screenshare.
     //    screenshareCodec: 'AV1',
     //    mobileScreenshareCodec: 'VP8',
+    //
+    //    // Enables the adaptive mode in the client that will make runtime adjustments to selected codecs and received
+    //    // videos for a better user experience. This mode will kick in only when CPU overuse is reported in the
+    //    // WebRTC statistics for the outbound video streams.
+    //    enableAdaptiveMode: false,
     //
     //    // Codec specific settings for scalability modes and max bitrates.
     //    av1: {
