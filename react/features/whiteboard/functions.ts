@@ -52,7 +52,7 @@ const hasCollabDetails = (state: IReduxState): boolean => Boolean(
  * @returns {boolean}
  */
 export const isWhiteboardEnabled = (state: IReduxState): boolean =>
-    (getWhiteboardConfig(state).enabled || hasCollabDetails(state))
+    (getWhiteboardConfig(state).enabled ?? hasCollabDetails(state))
     && getWhiteboardConfig(state).collabServerBaseUrl
     && getCurrentConference(state)?.getMetadataHandler()
 ?.isSupported();
