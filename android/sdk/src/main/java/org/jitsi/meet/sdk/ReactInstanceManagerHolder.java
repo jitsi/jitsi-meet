@@ -153,6 +153,15 @@ class ReactInstanceManagerHolder {
             Log.d(TAG, "Not loading RNGoogleSignInPackage");
         }
 
+        // NotifeePackage
+        try {
+            Class<?> notifeePackageClass = Class.forName("io.invertase.notifee.NotifeePackage");
+            Constructor constructor = notifeePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            Log.d(TAG, "Not loading NotifeePackage");
+        }
+
         return packages;
     }
 

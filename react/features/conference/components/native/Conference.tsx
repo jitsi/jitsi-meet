@@ -48,7 +48,7 @@ import {
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
-import { isConnecting } from '../functions.native';
+import {displayNotificationAsForegroundService, isConnecting, stopForegroundService} from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -56,6 +56,7 @@ import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
 import styles from './styles';
+
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -229,6 +230,10 @@ class Conference extends AbstractConference<IProps, State> {
             _startCarMode
         } = this.props;
 
+        if (Platform.OS === 'android') {
+            displayNotificationAsForegroundService();
+        }
+
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
         }
@@ -251,6 +256,11 @@ class Conference extends AbstractConference<IProps, State> {
      * @returns {void}
      */
     componentWillUnmount() {
+
+        if (Platform.OS === 'android') {
+            stopForegroundService();
+        }
+
         // Tear handling any hardware button presses for back navigation down.
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
