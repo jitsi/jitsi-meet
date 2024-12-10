@@ -20,7 +20,7 @@ if (process.env.HEADLESS === 'true') {
 }
 
 export const config = merge(defaultConfig, {
-    'wdio:exclude': [
+    exclude: [
         'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
         'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
     ],
