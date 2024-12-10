@@ -213,8 +213,6 @@ class Conference extends AbstractConference<IProps, State> {
 
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
-        displayNotificationAsForegroundService();
-
         if (_audioOnlyEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
         }
@@ -231,6 +229,10 @@ class Conference extends AbstractConference<IProps, State> {
             _showLobby,
             _startCarMode
         } = this.props;
+
+        if (Platform.OS === 'android') {
+            displayNotificationAsForegroundService();
+        }
 
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
@@ -254,10 +256,13 @@ class Conference extends AbstractConference<IProps, State> {
      * @returns {void}
      */
     componentWillUnmount() {
+
+        if (Platform.OS === 'android') {
+            stopForegroundService();
+        }
+
         // Tear handling any hardware button presses for back navigation down.
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
-
-        stopForegroundService();
 
         clearTimeout(this._expandedLabelTimeout.current ?? 0);
     }
