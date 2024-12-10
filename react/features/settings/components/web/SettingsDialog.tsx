@@ -219,7 +219,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     }
 
     if ((showSoundsSettings || showNotificationsSettings) && !_iAmVisitor) {
-        tabs.push({
+        /*tabs.push({
             name: SETTINGS_TABS.NOTIFICATIONS,
             component: NotificationsTab,
             labelKey: 'settings.notifications',
@@ -238,11 +238,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             props: getNotificationsTabProps(state, showSoundsSettings),
             submit: submitNotificationsTab,
             icon: IconBell
-        });
+        });*/
     }
 
     if (showModeratorSettings && !_iAmVisitor) {
-        tabs.push({
+        /*tabs.push({
             name: SETTINGS_TABS.MODERATOR,
             component: ModeratorTab,
             labelKey: 'settings.moderator',
@@ -260,30 +260,30 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             submit: submitModeratorTab,
             icon: IconModerator
-        });
+        });*/
     }
 
     if (showProfileSettings) {
-        tabs.push({
+        /*tabs.push({
             name: SETTINGS_TABS.PROFILE,
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
             submit: submitProfileTab,
             icon: IconUser
-        });
+        });*/
     }
 
     if (showCalendarSettings && !_iAmVisitor) {
-        tabs.push({
+        /*tabs.push({
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
             labelKey: 'settings.calendar.title',
             icon: IconCalendar
-        });
+        });*/
     }
 
-    !_iAmVisitor && tabs.push({
+    /*!_iAmVisitor && tabs.push({
         name: SETTINGS_TABS.SHORTCUTS,
         component: ShortcutsTab,
         labelKey: 'settings.shortcuts',
@@ -298,10 +298,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         },
         submit: submitShortcutsTab,
         icon: IconShortcuts
-    });
+    });*/
 
     if (showMoreTab && !_iAmVisitor) {
-        tabs.push({
+        /*tabs.push({
             name: SETTINGS_TABS.MORE,
             component: MoreTab,
             labelKey: 'settings.more',
@@ -319,7 +319,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             submit: submitMoreTab,
             icon: IconGear
-        });
+        });*/
     }
 
     return { _tabs: tabs };
