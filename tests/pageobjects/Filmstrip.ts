@@ -20,12 +20,12 @@ export default class Filmstrip {
      * mute icon for the conference participant identified by
      * {@code testee}.
      *
-     * @param {Participant} testee - The {@code WebParticipant} for whom we're checking the status of audio muted icon.
+     * @param {Participant} testee - The {@code Participant} for whom we're checking the status of audio muted icon.
      * @param {boolean} reverse - If {@code true}, the method will assert the absence of the "mute" icon;
      * otherwise, it will assert its presence.
      * @returns {Promise<void>}
      */
-    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false) {
+    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false): Promise<void> {
         let id;
 
         if (testee === this.participant) {
@@ -40,7 +40,50 @@ export default class Filmstrip {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Audio mute icon is not displayed for ${testee.name}`
+            timeoutMsg: `Audio mute icon is ${reverse ? '' : 'not'} displayed for ${testee.name}`
         });
+    }
+
+    /**
+     * Asserts that {@code participant} shows or doesn't show the video mute icon for the conference participant
+     * identified by {@code testee}.
+     *
+     * @param {Participant} testee - The {@code Participant} for whom we're checking the status of audio muted icon.
+     * @param {boolean} reverse - If {@code true}, the method will assert the absence of the "mute" icon;
+     * otherwise, it will assert its presence.
+     * @returns {Promise<void>}
+     */
+    async assertVideoMuteIconIsDisplayed(testee: Participant, reverse = false): Promise<void> {
+        const isOpen = await this.participant.getParticipantsPane().isOpen();
+
+        if (!isOpen) {
+            await this.participant.getParticipantsPane().open();
+        }
+
+        const id = `participant-item-${await testee.getEndpointId()}`;
+        const mutedIconXPath
+            = `//div[@id='${id}']//div[contains(@class, 'indicators')]//*[local-name()='svg' and @id='videoMuted']`;
+
+        await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
+            reverse,
+            timeout: 2000,
+            timeoutMsg: `Video mute icon is ${reverse ? '' : 'not'} displayed for ${testee.name}`
+        });
+
+        if (!isOpen) {
+            await this.participant.getParticipantsPane().close();
+        }
+    }
+
+    /**
+     * Returns the remote display name for an endpoint.
+     * @param endpointId The endpoint id.
+     */
+    async getRemoteDisplayName(endpointId: string) {
+        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}_name"]`);
+
+        await remoteDisplayName.moveTo();
+
+        return await remoteDisplayName.getText();
     }
 }

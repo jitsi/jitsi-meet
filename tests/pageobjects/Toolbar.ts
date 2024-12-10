@@ -3,6 +3,13 @@ import { Participant } from '../helpers/Participant';
 
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
+const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
+const OVERFLOW_MENU = 'More actions menu';
+const OVERFLOW = 'More actions';
+const PARTICIPANTS = 'Open participants pane';
+const VIDEO_QUALITY = 'Manage video quality';
+const VIDEO_MUTE = 'Stop camera';
+const VIDEO_UNMUTE = 'Start camera';
 
 /**
  * The toolbar elements.
@@ -49,8 +56,8 @@ export default class Toolbar {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioMuteButton() {
-        await this.participant.log('Clicking on: Audio Mute Button');
+    async clickAudioMuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Audio Mute Button');
         await this.audioMuteBtn.click();
     }
 
@@ -59,8 +66,141 @@ export default class Toolbar {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioUnmuteButton() {
-        await this.participant.log('Clicking on: Audio Unmute Button');
+    async clickAudioUnmuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Audio Unmute Button');
         await this.audioUnMuteBtn.click();
+    }
+
+    /**
+     * The video mute button.
+     */
+    get videoMuteBtn() {
+        return this.getButton(VIDEO_MUTE);
+    }
+
+    /**
+     * The video unmute button.
+     */
+    get videoUnMuteBtn() {
+        return this.getButton(VIDEO_UNMUTE);
+    }
+
+    /**
+     * Clicks video mute button.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickVideoMuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Video Mute Button');
+        await this.videoMuteBtn.click();
+    }
+
+    /**
+     * Clicks video unmute button.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickVideoUnmuteButton(): Promise<void> {
+        this.participant.log('Clicking on: Video Unmute Button');
+        await this.videoUnMuteBtn.click();
+    }
+
+    /**
+     * Clicks Participants pane button.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickCloseParticipantsPaneButton(): Promise<void> {
+        this.participant.log('Clicking on: Close Participants pane Button');
+        await this.getButton(CLOSE_PARTICIPANTS_PANE).click();
+    }
+
+
+    /**
+     * Clicks Participants pane button.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickParticipantsPaneButton(): Promise<void> {
+        this.participant.log('Clicking on: Participants pane Button');
+        await this.getButton(PARTICIPANTS).click();
+    }
+
+    /**
+     * Clicks on the video quality toolbar button which opens the
+     * dialog for adjusting max-received video quality.
+     */
+    async clickVideoQualityButton(): Promise<void> {
+        return this.clickButtonInOverflowMenu(VIDEO_QUALITY);
+    }
+
+    /**
+     * Ensure the overflow menu is open and clicks on a specified button.
+     * @param accessibilityLabel The accessibility label of the button to be clicked.
+     * @private
+     */
+    private async clickButtonInOverflowMenu(accessibilityLabel: string) {
+        await this.openOverflowMenu();
+
+        await this.getButton(accessibilityLabel).click();
+
+        await this.closeOverflowMenu();
+    }
+
+    /**
+     * Checks if the overflow menu is open and visible.
+     * @private
+     */
+    private async isOverflowMenuOpen() {
+        return await this.participant.driver.$$(`[aria-label^="${OVERFLOW_MENU}"]`).length > 0;
+    }
+
+    /**
+     * Clicks on the overflow toolbar button which opens or closes the overflow menu.
+     * @private
+     */
+    private async clickOverflowButton(): Promise<void> {
+        await this.getButton(OVERFLOW).click();
+    }
+
+    /**
+     * Ensure the overflow menu is displayed.
+     * @private
+     */
+    private async openOverflowMenu() {
+        if (await this.isOverflowMenuOpen()) {
+            return;
+        }
+
+        await this.clickOverflowButton();
+
+        await this.waitForOverFlowMenu(true);
+    }
+
+    /**
+     * Ensures the overflow menu is not displayed.
+     * @private
+     */
+    private async closeOverflowMenu() {
+        if (!await this.isOverflowMenuOpen()) {
+            return;
+        }
+
+        await this.clickOverflowButton();
+
+        await this.waitForOverFlowMenu(false);
+    }
+
+    /**
+     * Waits for the overflow menu to be visible or hidden.
+     * @param visible
+     * @private
+     */
+    private async waitForOverFlowMenu(visible: boolean) {
+        await this.participant.driver.$(`[aria-label^="${OVERFLOW_MENU}"]`).waitForDisplayed({
+            reverse: !visible,
+            timeout: 3000,
+            timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`
+        });
     }
 }

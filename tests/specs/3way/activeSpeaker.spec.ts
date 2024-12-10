@@ -1,10 +1,8 @@
 /* global APP */
 import type { Participant } from '../../helpers/Participant';
-import { IContext, ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
+import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
-    const context = {} as IContext;
-
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(context);
 
@@ -64,7 +62,7 @@ async function testActiveSpeaker(
     await otherParticipant1Driver.waitUntil(
         () => otherParticipant1Driver.execute((id: string) => APP.UI.getLargeVideoID() === id, speakerEndpoint),
         {
-            timeout: 30_1000, // 30 seconds
+            timeout: 30_000, // 30 seconds
             timeoutMsg: 'Active speaker not displayed on large video.'
         });
 
