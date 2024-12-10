@@ -83,11 +83,12 @@ export default class WebhookProxy {
      * @param eventType
      * @param timeout
      */
-    async waitForEvent(eventType: string, timeout = 3000): Promise<any> {
+    async waitForEvent(eventType: string, timeout = 4000): Promise<any> {
+        // we create the error here so we have a meaningful stack trace
+        const error = new Error(`Timeout waiting for event:${eventType}`);
+
         return new Promise((resolve, reject) => {
-            const waiter = setTimeout(() => {
-                reject(new Error(`Timeout waiting for event:${eventType}`));
-            }, timeout);
+            const waiter = setTimeout(() => reject(error), timeout);
 
             this.addConsumer(eventType, event => {
                 clearTimeout(waiter);
