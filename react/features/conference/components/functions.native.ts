@@ -1,5 +1,5 @@
 import { IReduxState } from '../../app/types';
-import notifee, { AndroidImportance, AndroidVisibility, AuthorizationStatus } from '@notifee/react-native';
+import notifee, {AndroidImportance, AndroidVisibility, AuthorizationStatus, EventType} from '@notifee/react-native';
 import logger from "../../app/logger";
 
 export * from './functions.any';
@@ -35,14 +35,7 @@ export const isConnecting = (state: IReduxState) => {
 
 export async function displayNotificationAsForegroundService() {
 
-    // Foreground service needs to be registered first
-    notifee.registerForegroundService(() => {
-        return new Promise(() => {
-            logger.warn('Foreground service running');
-        });
-    });
-
-    // Request permissions
+    // Request permissions if not authorized
     const currentPermissions = await notifee.getNotificationSettings();
 
     if (currentPermissions.authorizationStatus !== AuthorizationStatus.AUTHORIZED) {
@@ -56,27 +49,24 @@ export async function displayNotificationAsForegroundService() {
         visibility: AndroidVisibility.PUBLIC
     });
 
-    // Display notification
+    // Display notification as a foreground service
     await notifee.displayNotification({
-        title: '<p style="color: #4caf50;"><b>Ongoing conference</span></p></b></p> &#128576;',
-        subtitle: '&#129395;',
+        title: 'Ongoing conference',
         body:
-            'Meeting <p style="text-decoration: line-through">you are </p> participating <p style="color: #ffffff; background-color: #9c27b0"><i>is ongoing</i></p> &#127881;!',
+            'Meeting you are participating is ongoing.',
         android: {
             asForegroundService: true,
             autoCancel: false,
             channelId,
             importance: AndroidImportance.HIGH,
-            color: '#4caf50',
             ongoing: true,
+            smallIcon: 'ic_notification',
             actions: [
                 {
-                    title: '<b>Dance</b> &#128111;',
-                    pressAction: { id: 'dance' },
-                },
-                {
-                    title: '<p style="color: #f44336;"><b>Cry</b> &#128557;</p>',
-                    pressAction: { id: 'cry' },
+                    title: 'Hang Up',
+                    pressAction: {
+                        id: 'hang-up'
+                    },
                 },
             ],
         },
@@ -86,7 +76,8 @@ export async function displayNotificationAsForegroundService() {
 export async function stopForegroundService() {
     try {
         await notifee.stopForegroundService();
+        logger.warn('Foreground service stopped.')
     } catch (err) {
-        console.log(err);
+        logger.error(err);
     }
 }
