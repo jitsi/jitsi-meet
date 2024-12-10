@@ -1,6 +1,6 @@
 // wdio.firefox.conf.ts
 // extends te main configuration file changing first participant to be Firefox
-import { deepmerge } from 'deepmerge-ts';
+import { merge } from 'lodash-es';
 import process from 'node:process';
 
 // @ts-ignore
@@ -19,7 +19,7 @@ if (process.env.HEADLESS === 'true') {
     ffArgs.push('--headless');
 }
 
-export const config = deepmerge(defaultConfig, {
+export const config = merge(defaultConfig, {
     'wdio:exclude': [
         'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
         'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input

@@ -127,7 +127,7 @@ async function _joinParticipant( // eslint-disable-line max-params
         await p.switchInPage();
 
         if (await p.isInMuc()) {
-            return Promise.resolve();
+            return;
         }
 
         // when loading url make sure we are on the top page context or strange errors may occur
@@ -162,25 +162,6 @@ export async function toggleMuteAndCheck(testee: Participant, observer: Particip
 
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
-}
-
-/**
- * Parse a JID string.
- * @param str the string to parse.
- */
-export function parseJid(str: string): {
-    domain: string;
-    node: string;
-    resource: string | undefined;
-} {
-    const parts = str.split('@');
-    const domainParts = parts[1].split('/');
-
-    return {
-        node: parts[0],
-        domain: domainParts[0],
-        resource: domainParts.length > 0 ? domainParts[1] : undefined
-    };
 }
 
 /**

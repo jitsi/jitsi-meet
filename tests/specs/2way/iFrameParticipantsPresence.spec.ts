@@ -1,7 +1,8 @@
 import { isEqual } from 'lodash-es';
+import { Strophe } from 'strophe.js';
 
 import type { Participant } from '../../helpers/Participant';
-import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
+import { ensureTwoParticipants } from '../../helpers/participants';
 
 /**
  * Tests PARTICIPANT_LEFT webhook.
@@ -92,11 +93,13 @@ describe('Participants presence - ', () => {
             expect(roomsInfo.isMainRoom).toBeTrue();
 
             expect(roomsInfo.id).toBeDefined();
-            const { node: roomNode } = parseJid(roomsInfo.id);
+
+            const roomNode = Strophe.getNodeFromJid(roomsInfo.id);
 
             expect(roomNode).toBe(roomName);
 
-            const { node, resource } = parseJid(roomsInfo.jid);
+            const node = Strophe.getNodeFromJid(roomsInfo.jid);
+            const resource = Strophe.getResourceFromJid(roomsInfo.jid);
 
             context.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
 
