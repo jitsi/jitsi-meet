@@ -1,5 +1,9 @@
 {
-    "include": ["**/*.ts", "../globals.d.ts"],
+    "include": [
+        "**/*.ts",
+        "../globals.d.ts",
+        "./globals.d.ts"
+    ],
     "extends": "../tsconfig.web",
     "compilerOptions": {
         "types": [

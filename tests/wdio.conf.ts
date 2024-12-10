@@ -1,9 +1,11 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import path from 'node:path';
 import process from 'node:process';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
+import { IContext } from './helpers/types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const allure = require('allure-commandline');
@@ -24,7 +26,7 @@ const chromeArgs = [
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-setuid-sandbox',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+    `--use-file-for-fake-audio-capture=${process.env.REMOTE_RESOURCE_PATH || 'tests/resources'}/fakeAudioStream.wav`
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -105,6 +107,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     prefs: chromePreferences
                 },
                 'wdio:exclude': [
+                    'specs/alone/**',
                     'specs/2way/**'
                 ]
             }
@@ -117,6 +120,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     prefs: chromePreferences
                 },
                 'wdio:exclude': [
+                    'specs/alone/**',
+                    'specs/2way/**',
                     'specs/3way/**'
                 ]
             }
@@ -157,10 +162,37 @@ export const config: WebdriverIO.MultiremoteConfig = {
      *
      * @returns {Promise<void>}
      */
-    before() {
-        multiremotebrowser.instances.forEach((instance: string) => {
-            initLogger(multiremotebrowser.getInstance(instance), instance, TEST_RESULTS_DIR);
-        });
+    async before() {
+        await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
+            const bInstance = multiremotebrowser.getInstance(instance);
+
+            initLogger(bInstance, instance, TEST_RESULTS_DIR);
+
+            if (bInstance.isFirefox) {
+                return;
+            }
+
+            // if (process.env.GRID_HOST_URL) {
+            // TODO: make sure we use uploadFile only with chrome (it does not work with FF),
+            // we need to test it with the grid and FF, does it work there
+            const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
+
+            // @ts-ignore
+            bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
+        }));
+
+        const globalAny: any = global;
+
+        globalAny.context = {} as IContext;
+
+        globalAny.context.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+        globalAny.context.jwtKid = process.env.JWT_KID;
+    },
+
+    after() {
+        if (context.webhooksProxy) {
+            context.webhooksProxy.disconnect();
+        }
     },
 
     /**
@@ -270,4 +302,4 @@ export const config: WebdriverIO.MultiremoteConfig = {
             });
         });
     }
-};
+} as WebdriverIO.MultiremoteConfig;

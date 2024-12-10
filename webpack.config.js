@@ -253,7 +253,10 @@ function getDevServerConfig() {
         ],
         server: process.env.CODESPACES ? 'http' : 'https',
         static: {
-            directory: process.cwd()
+            directory: process.cwd(),
+            watch: {
+                ignored: file => file.endsWith('.log')
+            }
         }
     };
 }

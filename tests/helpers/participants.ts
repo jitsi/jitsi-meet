@@ -1,20 +1,30 @@
-import { Participant } from './Participant';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import process from 'node:process';
+import { v4 as uuidv4 } from 'uuid';
 
-export type IContext = {
-    p1: Participant;
-    p2: Participant;
-    p3: Participant;
-    p4: Participant;
-    roomName: string;
-};
+import { Participant } from './Participant';
+import WebhookProxy from './WebhookProxy';
+import { IContext } from './types';
 
 /**
  * Generate a random room name.
+ * Everytime we generate a name and iframeAPI is enabled and there is a configured
+ * webhooks proxy we connect to it with the new room name.
  *
  * @returns {string} - The random room name.
  */
 function generateRandomRoomName(): string {
-    return `jitsimeettorture-${crypto.randomUUID()}}`;
+    const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+
+    if (context.iframeAPI && !context.webhooksProxy
+        && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
+        context.webhooksProxy = new WebhookProxy(`${process.env.WEBHOOKS_PROXY_URL}&room=${roomName}`,
+            process.env.WEBHOOKS_PROXY_SHARED_SECRET);
+        context.webhooksProxy.connect();
+    }
+
+    return roomName;
 }
 
 /**
@@ -24,7 +34,9 @@ function generateRandomRoomName(): string {
  * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(context: IContext): Promise<void> {
-    context.roomName = generateRandomRoomName();
+    if (!context.roomName) {
+        context.roomName = generateRandomRoomName();
+    }
 
     context.p1 = new Participant('participant1');
 
@@ -38,7 +50,9 @@ export async function ensureOneParticipant(context: IContext): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(context: IContext): Promise<void> {
-    context.roomName = generateRandomRoomName();
+    if (!context.roomName) {
+        context.roomName = generateRandomRoomName();
+    }
 
     const p1 = new Participant('participant1');
     const p2 = new Participant('participant2');
@@ -63,6 +77,77 @@ export async function ensureThreeParticipants(context: IContext): Promise<void> 
 }
 
 /**
+ * Ensure that there are two participants.
+ *
+ * @param {Object} context - The context.
+ * @returns {Promise<void>}
+ */
+export async function ensureTwoParticipants(context: IContext): Promise<void> {
+    if (!context.roomName) {
+        context.roomName = generateRandomRoomName();
+    }
+
+    const p1DisplayName = 'participant1';
+    let token;
+
+    // if it is jaas create the first one to be moderator and second not moderator
+    if (context.jwtPrivateKeyPath) {
+        token = getModeratorToken(p1DisplayName);
+    }
+
+    // make sure the first participant is moderator, if supported by deployment
+    await _joinParticipant(p1DisplayName, context.p1, p => {
+        context.p1 = p;
+    }, true, token);
+
+    await Promise.all([
+        _joinParticipant('participant2', context.p2, p => {
+            context.p2 = p;
+        }),
+        context.p1.waitForRemoteStreams(1),
+        context.p2.waitForRemoteStreams(1)
+    ]);
+}
+
+/**
+ * Creates a participant instance or prepares one for re-joining.
+ * @param name - The name of the participant.
+ * @param p - The participant instance to prepare or undefined if new one is needed.
+ * @param setter - The setter to use for setting the new participant instance into the context if needed.
+ * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+ * @param {string?} jwtToken - The token to use if any.
+ */
+async function _joinParticipant( // eslint-disable-line max-params
+        name: string,
+        p: Participant,
+        setter: (p: Participant) => void,
+        skipInMeetingChecks = false,
+        jwtToken?: string) {
+    if (p) {
+        await p.switchInPage();
+
+        if (await p.isInMuc()) {
+            return;
+        }
+
+        // when loading url make sure we are on the top page context or strange errors may occur
+        await p.switchToAPI();
+
+        // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
+        await p.driver.url('/base.html');
+
+        // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
+    }
+
+    const newParticipant = new Participant(name, jwtToken);
+
+    // set the new participant instance, pass it to setter
+    setter(newParticipant);
+
+    return newParticipant.joinConference(context, skipInMeetingChecks);
+}
+
+/**
  * Toggles the mute state of a specific Meet conference participant and verifies that a specific other Meet
  * conference participants sees a specific mute state for the former.
  *
@@ -77,4 +162,65 @@ export async function toggleMuteAndCheck(testee: Participant, observer: Particip
 
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
+}
+
+/**
+ * Get a JWT token for a moderator.
+ */
+function getModeratorToken(displayName: string) {
+    const keyid = process.env.JWT_KID;
+    const headers = {
+        algorithm: 'RS256',
+        noTimestamp: true,
+        expiresIn: '24h',
+        keyid
+    };
+
+    if (!keyid) {
+        console.error('JWT_KID is not set');
+
+        return;
+    }
+
+    const key = fs.readFileSync(context.jwtPrivateKeyPath);
+
+    const payload = {
+        'aud': 'jitsi',
+        'iss': 'chat',
+        'sub': keyid.substring(0, keyid.indexOf('/')),
+        'context': {
+            'user': {
+                'name': displayName,
+                'id': uuidv4(),
+                'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
+                'email': 'john.doe@jitsi.org'
+            }
+        },
+        'room': '*'
+    };
+
+    // @ts-ignore
+    payload.context.user.moderator = true;
+
+    // @ts-ignore
+    return jwt.sign(payload, key, headers);
+}
+
+/**
+ * Parse a JID string.
+ * @param str the string to parse.
+ */
+export function parseJid(str: string): {
+    domain: string;
+    node: string;
+    resource: string | undefined;
+} {
+    const parts = str.split('@');
+    const domainParts = parts[1].split('/');
+
+    return {
+        node: parts[0],
+        domain: domainParts[0],
+        resource: domainParts.length > 0 ? domainParts[1] : undefined
+    };
 }
