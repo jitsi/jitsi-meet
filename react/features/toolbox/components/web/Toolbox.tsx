@@ -289,7 +289,7 @@ const Toolbox = ({
 
         const filtered = [
             ...order.map(key => buttons[key as keyof typeof buttons]),
-            ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
+            ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]) && button.display)
         ].filter(({ key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButtons.includes(key)
             && (isButtonEnabled(key, _toolbarButtons) || isButtonEnabled(alias, _toolbarButtons))

@@ -205,31 +205,36 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
     const microphone = {
         key: 'microphone',
         Content: AudioSettingsButton,
-        group: 0
+        group: 0,
+        display: true,
     };
 
     const camera = {
         key: 'camera',
         Content: VideoSettingsButton,
-        group: 0
+        group: 0,
+        display: true,
     };
 
     const profile = {
         key: 'profile',
         Content: ProfileButton,
-        group: 1
+        group: 1,
+        display: false,
     };
 
     const chat = {
         key: 'chat',
         Content: ChatButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const desktop = {
         key: 'desktop',
         Content: ShareDesktopButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     // In Narrow layout and mobile web we are using drawer for popups and that is why it is better to include
@@ -238,159 +243,185 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
     const raisehand = {
         key: 'raisehand',
         Content: RaiseHandContainerButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const reactions = {
         key: 'reactions',
         Content: ReactionsMenuButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const participants = {
         key: 'participants-pane',
         Content: ParticipantsPaneButton,
-        group: 2
+        group: 2,
+        display: true,
     };
 
     const invite = {
         key: 'invite',
         Content: InviteButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const tileview = {
         key: 'tileview',
         Content: TileViewButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const toggleCamera = {
         key: 'toggle-camera',
         Content: ToggleCameraButton,
-        group: 2
+        group: 2,
+        display: true,
     };
 
     const videoQuality = {
         key: 'videoquality',
         Content: VideoQualityButton,
-        group: 2
+        group: 2,
+        display: true,
     };
 
     const fullscreen = {
         key: 'fullscreen',
         Content: FullscreenButton,
-        group: 2
+        group: 2,
+        display: true,
     };
 
     const security = {
         key: 'security',
         alias: 'info',
         Content: SecurityDialogButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const cc = {
         key: 'closedcaptions',
         Content: ClosedCaptionButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const recording = {
         key: 'recording',
         Content: RecordButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const livestreaming = {
         key: 'livestreaming',
         Content: LiveStreamButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const linkToSalesforce = {
         key: 'linktosalesforce',
         Content: LinkToSalesforceButton,
-        group: 2
+        group: 2,
+        display: false,
     };
 
     const shareVideo = {
         key: 'sharedvideo',
         Content: SharedVideoButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
     const shareAudio = {
         key: 'shareaudio',
         Content: ShareAudioButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
     const noiseSuppression = {
         key: 'noisesuppression',
         Content: NoiseSuppressionButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
 
     const whiteboard = {
         key: 'whiteboard',
         Content: WhiteboardButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
     const etherpad = {
         key: 'etherpad',
         Content: SharedDocumentButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
     const virtualBackground = {
         key: 'select-background',
         Content: VideoBackgroundButton,
-        group: 3
+        group: 3,
+        display: true,
     };
 
     const speakerStats = {
         key: 'stats',
         Content: SpeakerStatsButton,
-        group: 3
+        group: 3,
+        display: false,
     };
 
     const settings = {
         key: 'settings',
         Content: SettingsButton,
-        group: 4
+        group: 4,
+        display: true,
     };
 
     const shortcuts = {
         key: 'shortcuts',
         Content: KeyboardShortcutsButton,
-        group: 4
+        group: 4,
+        display: false,
     };
 
     const embed = {
         key: 'embedmeeting',
         Content: EmbedMeetingButton,
-        group: 4
+        group: 4,
+        display: false,
     };
 
     const feedback = {
         key: 'feedback',
         Content: FeedbackButton,
-        group: 4
+        group: 4,
+        display: false,
     };
 
     const download = {
         key: 'download',
         Content: DownloadButton,
-        group: 4
+        group: 4,
+        display: false,
     };
 
     const help = {
         key: 'help',
         Content: HelpButton,
-        group: 4
+        group: 4,
+        display: false,
     };
 
     const customButtons = _customToolbarButtons?.reduce((prev, { backgroundColor, icon, id, text }) => {
@@ -402,7 +433,8 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
                 Content: CustomOptionButton,
                 group: 4,
                 icon,
-                text
+                text,
+                display: false,
             }
         };
     }, {});
@@ -423,11 +455,11 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         fullscreen,
         security,
         cc,
-        //recording,
+        recording,
         livestreaming,
         linkToSalesforce,
-        //shareVideo,
-        //shareAudio,
+        shareVideo,
+        shareAudio,
         noiseSuppression,
         whiteboard,
         etherpad,

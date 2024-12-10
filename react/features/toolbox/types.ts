@@ -5,6 +5,7 @@ export interface IToolboxButton {
     alias?: string;
     group: number;
     key: string;
+    display: boolean;
 }
 
 export type ToolbarButton = 'camera' |
