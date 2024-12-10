@@ -205,3 +205,22 @@ function getModeratorToken(displayName: string) {
     // @ts-ignore
     return jwt.sign(payload, key, headers);
 }
+
+/**
+ * Parse a JID string.
+ * @param str the string to parse.
+ */
+export function parseJid(str: string): {
+    domain: string;
+    node: string;
+    resource: string | undefined;
+} {
+    const parts = str.split('@');
+    const domainParts = parts[1].split('/');
+
+    return {
+        node: parts[0],
+        domain: domainParts[0],
+        resource: domainParts.length > 0 ? domainParts[1] : undefined
+    };
+}
