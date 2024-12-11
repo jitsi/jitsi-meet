@@ -7,6 +7,7 @@ const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
+const PROFILE = 'Edit your profile';
 const VIDEO_QUALITY = 'Manage video quality';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
@@ -135,6 +136,13 @@ export default class Toolbar {
     }
 
     /**
+     * Clicks on the profile toolbar button which opens or closes the profile panel.
+     */
+    async clickProfileButton(): Promise<void> {
+        return this.clickButtonInOverflowMenu(PROFILE);
+    }
+
+    /**
      * Ensure the overflow menu is open and clicks on a specified button.
      * @param accessibilityLabel The accessibility label of the button to be clicked.
      * @private
@@ -202,5 +210,16 @@ export default class Toolbar {
             timeout: 3000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`
         });
+    }
+
+    /**
+     * Gets the participant's avatar image element located in the toolbar.
+     */
+    async getProfileImage() {
+        await this.openOverflowMenu();
+
+        const elem = this.participant.driver.$(`[aria-label^="${PROFILE}"] img`);
+
+        return await elem.isExisting() ? await elem.getAttribute('src') : null;
     }
 }
