@@ -51,10 +51,10 @@ describe('Audio only - ', () => {
      */
     async function verifyVideoMute(muted: boolean) {
         // Verify the observer sees the testee in the desired muted state.
-        await context.p2.getFilmstrip().assertVideoMuteIconIsDisplayed(context.p1, !muted);
+        await context.p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(context.p1, !muted);
 
         // Verify the testee sees itself in the desired muted state.
-        await context.p1.getFilmstrip().assertVideoMuteIconIsDisplayed(context.p1, !muted);
+        await context.p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(context.p1, !muted);
     }
 
     /**
