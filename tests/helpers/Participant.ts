@@ -243,7 +243,7 @@ export class Participant {
      * Checks if the participant is in the meeting.
      */
     isInMuc() {
-        return this.driver.execute(() => APP.conference.isJoined());
+        return this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
     /**
