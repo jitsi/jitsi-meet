@@ -293,7 +293,7 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         key: 'fullscreen',
         Content: FullscreenButton,
         group: 2,
-        display: true,
+        display: false,
     };
 
     const security = {
