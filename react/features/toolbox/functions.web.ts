@@ -286,7 +286,7 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         key: 'videoquality',
         Content: VideoQualityButton,
         group: 2,
-        display: true,
+        display: false,
     };
 
     const fullscreen = {
