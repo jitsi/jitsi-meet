@@ -58,7 +58,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     ],
     maxInstances: 1,
 
-    baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture',
+    baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture/',
     tsConfigPath: './tsconfig.json',
 
     // Default timeout for all waitForXXX commands.
