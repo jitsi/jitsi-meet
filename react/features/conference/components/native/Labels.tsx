@@ -43,7 +43,7 @@ class Labels extends Component<IProps> {
                         hitSlop = { LabelHitSlop }
                         onPress = {
                             this.props.createOnPress(LABEL_ID_QUALITY) } >
-                        <VideoQualityLabel />
+                        {/*<VideoQualityLabel />*/}
                     </TouchableOpacity>
                 </View>
             </View>
