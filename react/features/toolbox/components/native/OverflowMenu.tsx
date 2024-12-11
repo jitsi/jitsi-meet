@@ -228,11 +228,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         return (
             <>
                 {
-                    _customToolbarButtons.map(({ id, text, icon, ...rest }) => (
+                    _customToolbarButtons.map(({ id, text, icon, backgroundColor }) => (
                         <CustomOptionButton
-                            { ...rest }
                             { ...topButtonProps }
-
+                            backgroundColor = { backgroundColor }
                             /* eslint-disable react/jsx-no-bind */
                             handleClick = { () =>
                                 dispatch(customOverflowMenuButtonPressed(id, text))

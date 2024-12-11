@@ -10,6 +10,7 @@ import styles from './styles';
 
 
 interface IProps extends AbstractButtonProps {
+    backgroundColor?: string;
     icon: any;
     id?: string;
     text: string;
@@ -21,6 +22,7 @@ interface IProps extends AbstractButtonProps {
  * @returns {Component}
  */
 class CustomOptionButton extends AbstractButton<IProps> {
+    backgroundColor = this.props.backgroundColor;
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
@@ -48,8 +50,7 @@ class CustomOptionButton extends AbstractButton<IProps> {
                 = (
                     <Image
                         source = {{ uri: this.iconSrc }}
-                        style = { styles.iconImageStyles }
-                        tintColor = { 'white' } />);
+                        style = { styles.iconImageStyles } />);
         }
 
         return iconComponent;
