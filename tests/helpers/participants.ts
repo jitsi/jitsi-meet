@@ -177,6 +177,18 @@ export async function muteAudioAndCheck(testee: Participant, observer: Participa
 }
 
 /**
+ * Starts the video on testee and check on observer.
+ * @param testee
+ * @param observer
+ */
+export async function unMuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+    await testee.getToolbar().clickVideoUnmuteButton();
+
+    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+}
+
+/**
  * Get a JWT token for a moderator.
  */
 function getModeratorToken(displayName: string) {

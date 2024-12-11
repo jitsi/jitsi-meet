@@ -7,6 +7,7 @@ import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
+import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
@@ -353,6 +354,15 @@ export class Participant {
     }
 
     /**
+     * Returns the settings Dialog.
+     *
+     * @returns {SettingsDialog}
+     */
+    getSettingsDialog(): SettingsDialog {
+        return new SettingsDialog(this);
+    }
+
+    /**
      * Switches to the iframe API context
      */
     async switchToAPI() {
@@ -376,6 +386,13 @@ export class Participant {
     }
 
     /**
+     * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
+     */
+    async hangup() {
+        await this.driver.url('/base.html');
+    }
+
+    /**
      * Returns the local display name.
      */
     async getLocalDisplayName() {
@@ -386,5 +403,88 @@ export class Participant {
         const localDisplayName = localVideoContainer.$('span[id="localDisplayName"]');
 
         return await localDisplayName.getText();
+    }
+
+    /**
+     * Gets avatar SRC attribute for the one displayed on local video thumbnail.
+     */
+    async getLocalVideoAvatar() {
+        const avatar
+            = this.driver.$('//span[@id="localVideoContainer"]//img[contains(@class,"userAvatar")]');
+
+        return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
+    }
+
+    /**
+     * Gets avatar SRC attribute for the one displayed on large video.
+     */
+    async getLargeVideoAvatar() {
+        const avatar = this.driver.$('//img[@id="dominantSpeakerAvatar"]');
+
+        return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
+    }
+
+    /**
+     * Returns resource part of the JID of the user who is currently displayed in the large video area.
+     */
+    async getLargeVideoResource() {
+        return this.driver.execute(() => APP.UI.getLargeVideoID());
+    }
+
+    /**
+     * Makes sure that the avatar is displayed in the local thumbnail and that the video is not displayed.
+     */
+    async assertThumbnailShowsAvatar(participant: Participant, reverse = false, defaultAvatar = false): Promise<void> {
+        const id = participant === this
+            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+
+        const xpath = defaultAvatar
+            ? `//span[@id='${id}']//div[contains(@class,'userAvatar') and contains(@class, 'defaultAvatar')]`
+            : `//span[@id="${id}"]//img[contains(@class,"userAvatar")]`;
+
+        await this.driver.$(xpath).waitForDisplayed({
+            reverse,
+            timeout: 2000,
+            timeoutMsg: `Avatar is ${reverse ? '' : 'not'} displayed in the local thumbnail for ${participant.name}`
+        });
+
+        await this.driver.$(`//span[@id="${id}"]//video`).waitForDisplayed({
+            reverse: !reverse,
+            timeout: 2000,
+            timeoutMsg: `Video is ${reverse ? 'not' : ''} displayed in the local thumbnail for ${participant.name}`
+        });
+    }
+
+    /**
+     * Makes sure that the default avatar is used.
+     */
+    async assertDefaultAvatarExist(participant: Participant): Promise<void> {
+        const id = participant === this
+            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+
+        await this.driver.$(
+            `//span[@id='${id}']//div[contains(@class,'userAvatar') and contains(@class, 'defaultAvatar')]`)
+            .waitForExist({
+                timeout: 2000,
+                timeoutMsg: `Default avatar does not exist for ${participant.name}`
+            });
+    }
+
+    /**
+     * Makes sure that the local video is displayed in the local thumbnail and that the avatar is not displayed.
+     */
+    async asserLocalThumbnailShowsVideo(): Promise<void> {
+        await this.assertThumbnailShowsAvatar(this, true);
+    }
+
+    /**
+     * Make sure a display name is visible on the stage.
+     * @param value
+     */
+    async assertDisplayNameVisibleOnStage(value: string) {
+        const displayNameEl = this.driver.$('div[data-testid="stage-display-name"]');
+
+        expect(await displayNameEl.isDisplayed()).toBeTrue();
+        expect(await displayNameEl.getText()).toBe(value);
     }
 }

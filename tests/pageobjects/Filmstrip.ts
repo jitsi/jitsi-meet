@@ -55,4 +55,26 @@ export default class Filmstrip {
 
         return await remoteDisplayName.getText();
     }
+
+    /**
+     * Pins a participant by clicking on their thumbnail.
+     * @param participant The participant.
+     */
+    async pinParticipant(participant: Participant) {
+        const id = participant === this.participant
+            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+
+        await this.participant.driver.$(`//span[@id="${id}"]`).click();
+    }
+
+    /**
+     * Gets avatar SRC attribute for the one displayed on small video thumbnail.
+     * @param endpointId
+     */
+    async getAvatar(endpointId: string) {
+        const elem = this.participant.driver.$(
+            `//span[@id='participant_${endpointId}']//img[contains(@class,'userAvatar')]`);
+
+        return await elem.isExisting() ? elem.getAttribute('src') : null;
+    }
 }

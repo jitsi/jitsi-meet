@@ -19,9 +19,7 @@ describe('Audio only - ', () => {
         await context.p1.driver.$('//div[@id="dominantSpeaker"]').waitForDisplayed();
 
         // Makes sure that the avatar is displayed in the local thumbnail and that the video is not displayed.
-        await context.p1.driver.$('//span[@id="localVideoContainer"]//div[contains(@class,"userAvatar")]')
-            .waitForDisplayed();
-        await context.p1.driver.$('//span[@id="localVideoWrapper"]//video').waitForDisplayed({ reverse: true });
+        await context.p1.assertThumbnailShowsAvatar(context.p1);
     });
 
     /**
