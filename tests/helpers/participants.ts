@@ -165,7 +165,7 @@ async function _joinParticipant( // eslint-disable-line max-params
  * the mute state of {@code testee}.
  * @returns {Promise<void>}
  */
-export async function toggleMuteAndCheck(testee: Participant, observer: Participant): Promise<void> {
+export async function muteAudioAndCheck(testee: Participant, observer: Participant): Promise<void> {
     await testee.getToolbar().clickAudioMuteButton();
 
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);

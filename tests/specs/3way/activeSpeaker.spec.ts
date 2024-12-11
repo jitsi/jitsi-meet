@@ -1,14 +1,14 @@
 /* global APP */
 import type { Participant } from '../../helpers/Participant';
-import { ensureThreeParticipants, toggleMuteAndCheck } from '../../helpers/participants';
+import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/participants';
 
 describe('ActiveSpeaker ', () => {
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(context);
 
-        await toggleMuteAndCheck(context.p1, context.p2);
-        await toggleMuteAndCheck(context.p2, context.p1);
-        await toggleMuteAndCheck(context.p3, context.p1);
+        await muteAudioAndCheck(context.p1, context.p2);
+        await muteAudioAndCheck(context.p2, context.p1);
+        await muteAudioAndCheck(context.p3, context.p1);
 
         // participant1 becomes active speaker - check from participant2's perspective
         await testActiveSpeaker(context.p1, context.p2, context.p3);
