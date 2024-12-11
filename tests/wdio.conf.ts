@@ -3,6 +3,7 @@ import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
 import path from 'node:path';
 import process from 'node:process';
+import pretty from 'pretty';
 
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
@@ -249,7 +250,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
 
                 allProcessing.push(bInstance.getPageSource().then(source => {
-                    AllureReporter.addAttachment(`html-source-${instance}`, source, 'text/plain');
+                    AllureReporter.addAttachment(`html-source-${instance}`, pretty(source), 'text/plain');
                 }));
             });
 
