@@ -132,14 +132,18 @@ async function _joinParticipant( // eslint-disable-line max-params
         options: IJoinOptions = {},
         jwtToken?: string) {
     if (p) {
-        await p.switchInPage();
+        if (context.iframeAPI) {
+            await p.switchInPage();
+        }
 
         if (await p.isInMuc()) {
             return;
         }
 
-        // when loading url make sure we are on the top page context or strange errors may occur
-        await p.switchToAPI();
+        if (context.iframeAPI) {
+            // when loading url make sure we are on the top page context or strange errors may occur
+            await p.switchToAPI();
+        }
 
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
         await p.driver.url('/base.html');
@@ -152,7 +156,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     // set the new participant instance, pass it to setter
     setter(newParticipant);
 
-    return newParticipant.joinConference(context, options);
+    await newParticipant.joinConference(context, options);
 }
 
 /**
