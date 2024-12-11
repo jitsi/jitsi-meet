@@ -372,7 +372,7 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
         key: 'select-background',
         Content: VideoBackgroundButton,
         group: 3,
-        display: true,
+        display: false,
     };
 
     const speakerStats = {
