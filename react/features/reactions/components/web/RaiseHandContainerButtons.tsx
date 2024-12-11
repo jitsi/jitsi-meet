@@ -19,7 +19,7 @@ const RaiseHandContainerButton = (props: AbstractButtonProps) => {
     return showReactionsAsPartOfRaiseHand
         ? <ReactionsMenuButton
             { ...props }
-            showRaiseHand = { true } />
+            showRaiseHand = { false } />
         : <RaiseHandButton { ...props } />;
 };
 

@@ -289,10 +289,11 @@ const Toolbox = ({
 
         const filtered = [
             ...order.map(key => buttons[key as keyof typeof buttons]),
-            ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]) && button.display)
-        ].filter(({ key, alias = NOT_APPLICABLE }) =>
+            ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
+        ].filter(({ display, key, alias = NOT_APPLICABLE }) =>
             !_jwtDisabledButtons.includes(key)
             && (isButtonEnabled(key, _toolbarButtons) || isButtonEnabled(alias, _toolbarButtons))
+            && display
         );
 
         let sliceIndex = _overflowDrawer || _reactionsButtonEnabled ? order.length + 2 : order.length + 1;
