@@ -404,6 +404,7 @@ export interface IConfig {
     guestDialOutStatusUrl?: string;
     guestDialOutUrl?: string;
     helpCentreURL?: string;
+    hiddenDomain?: string;
     hiddenPremeetingButtons?: Array<'microphone' | 'camera' | 'select-background' | 'invite' | 'settings'>;
     hideAddRoomButton?: boolean;
     hideConferenceSubject?: boolean;
