@@ -27,12 +27,17 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch } = store;
         const { participant } = action;
 
+        // we need to first finish dispatching or the notification can be cleared out
+        const result = next(action);
+
         const participantDisplayName
-                = getParticipantDisplayName(store.getState, participant.getId());
+            = participant && getParticipantDisplayName(store.getState, participant.getId());
 
-        dispatch(hangup(true, i18next.t('dialog.kickTitle', { participantDisplayName })));
+        dispatch(hangup(true,
+            participantDisplayName ? i18next.t('dialog.kickTitle', { participantDisplayName })
+                : i18next.t('dialog.kickSystemTitle')));
 
-        break;
+        return result;
     }
     }
 

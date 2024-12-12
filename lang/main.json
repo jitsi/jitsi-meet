@@ -334,6 +334,7 @@
         "kickParticipantButton": "Kick",
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
         "kickParticipantTitle": "Kick this participant?",
+        "kickSystemTitle": "Ouch! You were kicked out of the meeting",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
         "linkMeeting": "Link meeting",
         "linkMeetingTitle": "Link meeting to Salesforce",
