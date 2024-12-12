@@ -433,14 +433,19 @@ export class Participant {
 
     /**
      * Makes sure that the avatar is displayed in the local thumbnail and that the video is not displayed.
+     * There are 3 options for avatar:
+     *  - defaultAvatar: true - the default avatar (with grey figure) is used
+     *  - image: true - the avatar is an image set in the settings
+     *  - defaultAvatar: false, image: false - the avatar is produced from the initials of the display name
      */
-    async assertThumbnailShowsAvatar(participant: Participant, reverse = false, defaultAvatar = false): Promise<void> {
+    async assertThumbnailShowsAvatar(
+            participant: Participant, reverse = false, defaultAvatar = false, image = false): Promise<void> {
         const id = participant === this
             ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
 
         const xpath = defaultAvatar
             ? `//span[@id='${id}']//div[contains(@class,'userAvatar') and contains(@class, 'defaultAvatar')]`
-            : `//span[@id="${id}"]//img[contains(@class,"userAvatar")]`;
+            : `//span[@id="${id}"]//${image ? 'img' : 'div'}[contains(@class,"userAvatar")]`;
 
         await this.driver.$(xpath).waitForDisplayed({
             reverse,

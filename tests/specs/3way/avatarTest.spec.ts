@@ -98,7 +98,7 @@ describe('Avatar - ', () => {
         await context.p1.getFilmstrip().pinParticipant(context.p2);
 
         // Check if avatar is displayed on p1's local video thumbnail
-        await context.p1.assertThumbnailShowsAvatar(context.p1);
+        await context.p1.assertThumbnailShowsAvatar(context.p1, false, false, true);
 
         // Unmute - now local avatar should be hidden and local video displayed
         await unMuteVideoAndCheck(context.p1, context.p2);
@@ -120,7 +120,7 @@ describe('Avatar - ', () => {
         // Pin local video and verify avatars are displayed
         await context.p3.getFilmstrip().pinParticipant(context.p3);
 
-        await context.p3.assertThumbnailShowsAvatar(context.p1);
+        await context.p3.assertThumbnailShowsAvatar(context.p1, false, false, true);
         await context.p3.assertThumbnailShowsAvatar(context.p2, false, true);
 
         const p1EndpointId = await context.p1.getEndpointId();
@@ -159,7 +159,7 @@ describe('Avatar - ', () => {
             await context.p3.getFilmstrip().getRemoteDisplayName(p2EndpointId)
         );
 
-        await context.p3.assertThumbnailShowsAvatar(context.p1);
+        await context.p3.assertThumbnailShowsAvatar(context.p1, false, false, true);
         await context.p3.assertThumbnailShowsAvatar(context.p3, true);
 
         await context.p3.hangup();
