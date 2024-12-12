@@ -16,7 +16,7 @@ import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
  */
 export function notifyKickedOut(participant: any, submit?: Function) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!participant || participant?.isReplaced?.()) {
+        if (participant?.isReplaced?.()) {
             submit?.();
 
             return;
@@ -24,9 +24,9 @@ export function notifyKickedOut(participant: any, submit?: Function) {
 
         dispatch(openDialog(AlertDialog, {
             contentKey: {
-                key: 'dialog.kickTitle',
+                key: participant ? 'dialog.kickTitle' : 'dialog.kickSystemTitle',
                 params: {
-                    participantDisplayName: getParticipantDisplayName(getState, participant.getId())
+                    participantDisplayName: participant && getParticipantDisplayName(getState, participant.getId())
                 }
             },
             onSubmit: submit

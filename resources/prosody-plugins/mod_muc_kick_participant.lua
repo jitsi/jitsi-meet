@@ -115,9 +115,10 @@ function handle_kick_participant (event)
     end
 
     local number = params["number"];
+    local participantId = params["participantId"];
 
-    if not number then
-        module:log("warn", "Missing number param");
+    if (not number and not participantId) or (number and participantId) then
+        module:log("warn", "Invalid parameters: exactly one of 'number' or 'participantId' must be provided.");
         return { status_code = 400; };
     end
 
@@ -134,10 +135,8 @@ function handle_kick_participant (event)
 
     for _, occupant in room:each_occupant() do
         local pr = occupant:get_presence();
-        local displayName = pr:get_child_text(
-                'nick', 'http://jabber.org/protocol/nick');
 
-        if is_sip_jigasi(pr) and displayName and starts_with(displayName, number) then
+        if is_participant_match(pr, number, participantId) then
             room:set_role(true, occupant.nick, nil);
             module:log('info', 'Occupant kicked %s from %s', occupant.nick, room.jid);
             return { status_code = 200; }
@@ -146,6 +145,20 @@ function handle_kick_participant (event)
 
     -- not found participant to kick
     return { status_code = 404; };
+end
+
+function is_participant_match(pr, number, participantId)
+    if number then
+        local displayName = pr:get_child_text('nick', 'http://jabber.org/protocol/nick');
+        return is_sip_jigasi(pr) and displayName and starts_with(displayName, number);
+    elseif participantId then
+        local from = pr.attr.from;
+        local _, _, from_resource = jid.split(from);
+        if from_resource then
+            return from_resource == participantId;
+        end
+    end
+    return false;
 end
 
 module:log("info","Adding http handler for /kick-participant on %s", module.host);

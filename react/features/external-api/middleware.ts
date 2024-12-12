@@ -153,8 +153,8 @@ MiddlewareRegistry.register(store => next => action => {
                 local: true
             },
             {
-                id: actor.getId(),
-                name: actor.getDisplayName()
+                id: actor?.getId(),
+                name: actor?.getDisplayName()
             }
         );
         break;
