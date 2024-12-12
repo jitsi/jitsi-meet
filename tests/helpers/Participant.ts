@@ -232,7 +232,7 @@ export class Participant {
      */
     async waitForPageToLoad(): Promise<void> {
         return this.driver.waitUntil(
-            () => this.driver.execute(() => document.readyState === 'complete'),
+            async () => await this.driver.execute(() => document.readyState === 'complete'),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: 'Timeout waiting for Page Load Request to complete.'
@@ -243,8 +243,8 @@ export class Participant {
     /**
      * Checks if the participant is in the meeting.
      */
-    isInMuc() {
-        return this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+    async isInMuc() {
+        return await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
     /**
@@ -271,7 +271,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
+            await driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: 'expected ICE to be connected for 15s'
         });
@@ -286,7 +286,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(() => {
+            await driver.execute(() => {
                 const stats = APP.conference.getStats();
                 const bitrateMap = stats?.bitrate || {};
                 const rtpStats = {
@@ -311,7 +311,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
+            await driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
@@ -428,7 +428,7 @@ export class Participant {
      * Returns resource part of the JID of the user who is currently displayed in the large video area.
      */
     async getLargeVideoResource() {
-        return this.driver.execute(() => APP.UI.getLargeVideoID());
+        return await this.driver.execute(() => APP.UI.getLargeVideoID());
     }
 
     /**
