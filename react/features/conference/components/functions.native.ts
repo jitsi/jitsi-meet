@@ -43,13 +43,13 @@ export async function displayNotificationAsForegroundService() {
     }
 
     // Create notification channel
-    const channelId = await notifee.createChannel({
+    await notifee.createChannel({
         id: 'ongoing-channel',
         name: 'Ongoing channel',
         visibility: AndroidVisibility.PUBLIC
     });
 
-    // Display notification as a foreground service
+    // Display notification
     await notifee.displayNotification({
         title: 'Ongoing conference',
         body:
@@ -57,7 +57,7 @@ export async function displayNotificationAsForegroundService() {
         android: {
             asForegroundService: true,
             autoCancel: false,
-            channelId,
+            channelId: 'ongoing-channel',
             importance: AndroidImportance.HIGH,
             ongoing: true,
             smallIcon: 'ic_notification',

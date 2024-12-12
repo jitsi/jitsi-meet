@@ -47,6 +47,7 @@ ext {
 
 allprojects {
     repositories {
+        maven { url("$rootDir/../node_modules/@notifee/react-native/android/libs") }
         mavenCentral()
         google()
         maven { url 'https://www.jitpack.io' }

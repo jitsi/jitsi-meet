@@ -2,9 +2,11 @@
 import './bootstrap.native';
 
 import React, { PureComponent } from 'react';
-import { AppRegistry } from 'react-native';
+import {AppRegistry, Platform} from 'react-native';
+import notifee, { EventType } from '@notifee/react-native';
 
 import { App } from './features/app/components/App.native';
+import logger from './features/app/logger';
 import { _initLogging } from './features/base/logging/functions';
 
 /**
@@ -15,6 +17,7 @@ import { _initLogging } from './features/base/logging/functions';
  * @augments Component
  */
 class Root extends PureComponent {
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -30,6 +33,28 @@ class Root extends PureComponent {
 
 // Initialize logging.
 _initLogging();
+
+if (Platform.OS === 'android') {
+
+    // Needs to be registered outside any React components as early as possible
+    notifee.registerForegroundService(() => {
+        return new Promise(() => {
+            logger.warn('Foreground service running');
+
+            notifee.onBackgroundEvent( event => {
+                if (event.type === EventType.ACTION_PRESS && event.detail.pressAction.id === 'hang-up') {
+                    console.log('HANG UP BUTTON PRESSED BACKGROUND');
+                }
+            });
+
+            notifee.onForegroundEvent( ({ type, detail }) => {
+                if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'hang-up') {
+                    console.log('HANG UP BUTTON PRESSED');
+                }
+            });
+        });
+    });
+}
 
 // Register the main/root Component of JitsiMeetView.
 AppRegistry.registerComponent('App', () => Root);
