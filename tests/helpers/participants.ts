@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Participant } from './Participant';
 import WebhookProxy from './WebhookProxy';
-import { IContext } from './types';
+import { IContext, IJoinOptions } from './types';
 
 /**
  * Generate a random room name.
@@ -31,16 +31,20 @@ function generateRandomRoomName(): string {
  * Ensure that there is on participant.
  *
  * @param {IContext} context - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(context: IContext): Promise<void> {
+export async function ensureOneParticipant(context: IContext, options?: IJoinOptions): Promise<void> {
     if (!context.roomName) {
         context.roomName = generateRandomRoomName();
     }
 
     context.p1 = new Participant('participant1');
 
-    await context.p1.joinConference(context, true);
+    await context.p1.joinConference(context, {
+        ...options,
+        skipInMeetingChecks: true
+    });
 }
 
 /**
@@ -80,9 +84,10 @@ export async function ensureThreeParticipants(context: IContext): Promise<void> 
  * Ensure that there are two participants.
  *
  * @param {Object} context - The context.
+ * @param {IJoinOptions} options - The options to join.
  * @returns {Promise<void>}
  */
-export async function ensureTwoParticipants(context: IContext): Promise<void> {
+export async function ensureTwoParticipants(context: IContext, options?: IJoinOptions): Promise<void> {
     if (!context.roomName) {
         context.roomName = generateRandomRoomName();
     }
@@ -98,12 +103,15 @@ export async function ensureTwoParticipants(context: IContext): Promise<void> {
     // make sure the first participant is moderator, if supported by deployment
     await _joinParticipant(p1DisplayName, context.p1, p => {
         context.p1 = p;
-    }, true, token);
+    }, {
+        ...options,
+        skipInMeetingChecks: true
+    }, token);
 
     await Promise.all([
         _joinParticipant('participant2', context.p2, p => {
             context.p2 = p;
-        }),
+        }, options),
         context.p1.waitForRemoteStreams(1),
         context.p2.waitForRemoteStreams(1)
     ]);
@@ -114,24 +122,28 @@ export async function ensureTwoParticipants(context: IContext): Promise<void> {
  * @param name - The name of the participant.
  * @param p - The participant instance to prepare or undefined if new one is needed.
  * @param setter - The setter to use for setting the new participant instance into the context if needed.
- * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+ * @param {boolean} options - Join options.
  * @param {string?} jwtToken - The token to use if any.
  */
 async function _joinParticipant( // eslint-disable-line max-params
         name: string,
         p: Participant,
         setter: (p: Participant) => void,
-        skipInMeetingChecks = false,
+        options: IJoinOptions = {},
         jwtToken?: string) {
     if (p) {
-        await p.switchInPage();
+        if (context.iframeAPI) {
+            await p.switchInPage();
+        }
 
         if (await p.isInMuc()) {
             return;
         }
 
-        // when loading url make sure we are on the top page context or strange errors may occur
-        await p.switchToAPI();
+        if (context.iframeAPI) {
+            // when loading url make sure we are on the top page context or strange errors may occur
+            await p.switchToAPI();
+        }
 
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
         await p.driver.url('/base.html');
@@ -144,7 +156,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     // set the new participant instance, pass it to setter
     setter(newParticipant);
 
-    return newParticipant.joinConference(context, skipInMeetingChecks);
+    await newParticipant.joinConference(context, options);
 }
 
 /**
@@ -157,11 +169,23 @@ async function _joinParticipant( // eslint-disable-line max-params
  * the mute state of {@code testee}.
  * @returns {Promise<void>}
  */
-export async function toggleMuteAndCheck(testee: Participant, observer: Participant): Promise<void> {
+export async function muteAudioAndCheck(testee: Participant, observer: Participant): Promise<void> {
     await testee.getToolbar().clickAudioMuteButton();
 
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
+}
+
+/**
+ * Starts the video on testee and check on observer.
+ * @param testee
+ * @param observer
+ */
+export async function unMuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+    await testee.getToolbar().clickVideoUnmuteButton();
+
+    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
 }
 
 /**

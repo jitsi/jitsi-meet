@@ -7,11 +7,12 @@ import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
+import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
-import { IContext } from './types';
+import { IContext, IJoinOptions } from './types';
 
 /**
  * Participant.
@@ -112,20 +113,24 @@ export class Participant {
      * Joins conference.
      *
      * @param {IContext} context - The context.
-     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
+     * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(context: IContext, skipInMeetingChecks = false): Promise<void> {
+    async joinConference(context: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
             room: context.roomName,
             configOverwrite: this.config,
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
-            },
-            userInfo: {
-                displayName: this._name
             }
         };
+
+        if (!options.skipDisplayName) {
+            // @ts-ignore
+            config.userInfo = {
+                displayName: this._name
+            };
+        }
 
         if (context.iframeAPI) {
             config.room = 'iframeAPITest.html';
@@ -168,7 +173,7 @@ export class Participant {
 
         await this.waitToJoinMUC();
 
-        await this.postLoadProcess(skipInMeetingChecks);
+        await this.postLoadProcess(options.skipInMeetingChecks);
     }
 
     /**
@@ -178,7 +183,7 @@ export class Participant {
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks: boolean): Promise<void> {
+    private async postLoadProcess(skipInMeetingChecks = false): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];
@@ -227,7 +232,7 @@ export class Participant {
      */
     async waitForPageToLoad(): Promise<void> {
         return this.driver.waitUntil(
-            () => this.driver.execute(() => document.readyState === 'complete'),
+            async () => await this.driver.execute(() => document.readyState === 'complete'),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: 'Timeout waiting for Page Load Request to complete.'
@@ -238,8 +243,8 @@ export class Participant {
     /**
      * Checks if the participant is in the meeting.
      */
-    isInMuc() {
-        return this.driver.execute(() => APP.conference.isJoined());
+    async isInMuc() {
+        return await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
     /**
@@ -266,7 +271,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
+            await driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: 'expected ICE to be connected for 15s'
         });
@@ -281,7 +286,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(() => {
+            await driver.execute(() => {
                 const stats = APP.conference.getStats();
                 const bitrateMap = stats?.bitrate || {};
                 const rtpStats = {
@@ -306,7 +311,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
-            driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
+            await driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
@@ -349,6 +354,15 @@ export class Participant {
     }
 
     /**
+     * Returns the settings Dialog.
+     *
+     * @returns {SettingsDialog}
+     */
+    getSettingsDialog(): SettingsDialog {
+        return new SettingsDialog(this);
+    }
+
+    /**
      * Switches to the iframe API context
      */
     async switchToAPI() {
@@ -372,6 +386,13 @@ export class Participant {
     }
 
     /**
+     * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
+     */
+    async hangup() {
+        await this.driver.url('/base.html');
+    }
+
+    /**
      * Returns the local display name.
      */
     async getLocalDisplayName() {
@@ -382,5 +403,93 @@ export class Participant {
         const localDisplayName = localVideoContainer.$('span[id="localDisplayName"]');
 
         return await localDisplayName.getText();
+    }
+
+    /**
+     * Gets avatar SRC attribute for the one displayed on local video thumbnail.
+     */
+    async getLocalVideoAvatar() {
+        const avatar
+            = this.driver.$('//span[@id="localVideoContainer"]//img[contains(@class,"userAvatar")]');
+
+        return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
+    }
+
+    /**
+     * Gets avatar SRC attribute for the one displayed on large video.
+     */
+    async getLargeVideoAvatar() {
+        const avatar = this.driver.$('//img[@id="dominantSpeakerAvatar"]');
+
+        return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
+    }
+
+    /**
+     * Returns resource part of the JID of the user who is currently displayed in the large video area.
+     */
+    async getLargeVideoResource() {
+        return await this.driver.execute(() => APP.UI.getLargeVideoID());
+    }
+
+    /**
+     * Makes sure that the avatar is displayed in the local thumbnail and that the video is not displayed.
+     * There are 3 options for avatar:
+     *  - defaultAvatar: true - the default avatar (with grey figure) is used
+     *  - image: true - the avatar is an image set in the settings
+     *  - defaultAvatar: false, image: false - the avatar is produced from the initials of the display name
+     */
+    async assertThumbnailShowsAvatar(
+            participant: Participant, reverse = false, defaultAvatar = false, image = false): Promise<void> {
+        const id = participant === this
+            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+
+        const xpath = defaultAvatar
+            ? `//span[@id='${id}']//div[contains(@class,'userAvatar') and contains(@class, 'defaultAvatar')]`
+            : `//span[@id="${id}"]//${image ? 'img' : 'div'}[contains(@class,"userAvatar")]`;
+
+        await this.driver.$(xpath).waitForDisplayed({
+            reverse,
+            timeout: 2000,
+            timeoutMsg: `Avatar is ${reverse ? '' : 'not'} displayed in the local thumbnail for ${participant.name}`
+        });
+
+        await this.driver.$(`//span[@id="${id}"]//video`).waitForDisplayed({
+            reverse: !reverse,
+            timeout: 2000,
+            timeoutMsg: `Video is ${reverse ? 'not' : ''} displayed in the local thumbnail for ${participant.name}`
+        });
+    }
+
+    /**
+     * Makes sure that the default avatar is used.
+     */
+    async assertDefaultAvatarExist(participant: Participant): Promise<void> {
+        const id = participant === this
+            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+
+        await this.driver.$(
+            `//span[@id='${id}']//div[contains(@class,'userAvatar') and contains(@class, 'defaultAvatar')]`)
+            .waitForExist({
+                timeout: 2000,
+                timeoutMsg: `Default avatar does not exist for ${participant.name}`
+            });
+    }
+
+    /**
+     * Makes sure that the local video is displayed in the local thumbnail and that the avatar is not displayed.
+     */
+    async asserLocalThumbnailShowsVideo(): Promise<void> {
+        await this.assertThumbnailShowsAvatar(this, true);
+    }
+
+    /**
+     * Make sure a display name is visible on the stage.
+     * @param value
+     */
+    async assertDisplayNameVisibleOnStage(value: string) {
+        const displayNameEl = this.driver.$('div[data-testid="stage-display-name"]');
+
+        expect(await displayNameEl.isDisplayed()).toBeTrue();
+        expect(await displayNameEl.getText()).toBe(value);
     }
 }

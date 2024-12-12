@@ -19,9 +19,7 @@ describe('Audio only - ', () => {
         await context.p1.driver.$('//div[@id="dominantSpeaker"]').waitForDisplayed();
 
         // Makes sure that the avatar is displayed in the local thumbnail and that the video is not displayed.
-        await context.p1.driver.$('//span[@id="localVideoContainer"]//div[contains(@class,"userAvatar")]')
-            .waitForDisplayed();
-        await context.p1.driver.$('//span[@id="localVideoWrapper"]//video').waitForDisplayed({ reverse: true });
+        await context.p1.assertThumbnailShowsAvatar(context.p1);
     });
 
     /**
@@ -51,10 +49,10 @@ describe('Audio only - ', () => {
      */
     async function verifyVideoMute(muted: boolean) {
         // Verify the observer sees the testee in the desired muted state.
-        await context.p2.getFilmstrip().assertVideoMuteIconIsDisplayed(context.p1, !muted);
+        await context.p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(context.p1, !muted);
 
         // Verify the testee sees itself in the desired muted state.
-        await context.p1.getFilmstrip().assertVideoMuteIconIsDisplayed(context.p1, !muted);
+        await context.p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(context.p1, !muted);
     }
 
     /**

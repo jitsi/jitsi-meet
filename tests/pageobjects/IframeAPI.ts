@@ -20,7 +20,7 @@ export default class IframeAPI {
      * @param event
      */
     async getEventResult(event: string): Promise<any> {
-        return this.participant.driver.execute(
+        return await this.participant.driver.execute(
             eventName => {
                 const result = window.jitsiAPI.test[eventName];
 
@@ -37,28 +37,29 @@ export default class IframeAPI {
      * @param eventName The event name.
      */
     async addEventListener(eventName: string) {
-        return this.participant.driver.executeAsync((event, prefix, done) => {
-            console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
-            window.jitsiAPI.addListener(event, evt => {
-                console.log(`${new Date().toISOString()} ${prefix} Received ${event} event: ${JSON.stringify(evt)}`);
-                window.jitsiAPI.test[event] = evt;
-            });
-            done();
-        }, eventName, LOG_PREFIX);
+        return await this.participant.driver.execute(
+            (event, prefix) => {
+                console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
+                window.jitsiAPI.addListener(event, evt => {
+                    console.log(
+                        `${new Date().toISOString()} ${prefix} Received ${event} event: ${JSON.stringify(evt)}`);
+                    window.jitsiAPI.test[event] = evt;
+                });
+            }, eventName, LOG_PREFIX);
     }
 
     /**
      * Returns an array of available rooms and details of it.
      */
     async getRoomsInfo() {
-        return this.participant.driver.execute(() => window.jitsiAPI.getRoomsInfo());
+        return await this.participant.driver.execute(() => window.jitsiAPI.getRoomsInfo());
     }
 
     /**
      * Returns the number of participants in the conference.
      */
     async getNumberOfParticipants() {
-        return this.participant.driver.execute(() => window.jitsiAPI.getNumberOfParticipants());
+        return await this.participant.driver.execute(() => window.jitsiAPI.getNumberOfParticipants());
     }
 
     /**
@@ -67,7 +68,7 @@ export default class IframeAPI {
      * @param args The arguments.
      */
     async executeCommand(command: string, ...args: any[]) {
-        return this.participant.driver.execute(
+        return await this.participant.driver.execute(
             (commandName, commandArgs) =>
                 window.jitsiAPI.executeCommand(commandName, ...commandArgs)
             , command, args);
@@ -77,14 +78,14 @@ export default class IframeAPI {
      * Returns the current state of the participant's pane.
      */
     async isParticipantsPaneOpen() {
-        return this.participant.driver.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
+        return await this.participant.driver.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
     }
 
     /**
      * Removes the embedded Jitsi Meet conference.
      */
     async dispose() {
-        return this.participant.driver.execute(() => window.jitsiAPI.dispose());
+        return await this.participant.driver.execute(() => window.jitsiAPI.dispose());
     }
 
 }
