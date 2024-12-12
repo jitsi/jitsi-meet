@@ -10,7 +10,6 @@ local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
 local json = require 'cjson.safe';
-local split_jid = require "util.jid".split;
 
 local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -154,7 +153,7 @@ function is_participant_match(pr, number, participantId)
         return is_sip_jigasi(pr) and displayName and starts_with(displayName, number);
     elseif participantId then
         local from = pr.attr.from;
-        local _, _, from_resource = split_jid(from);
+        local _, _, from_resource = jid.split(from);
         if from_resource then
             return from_resource == participantId;
         end
