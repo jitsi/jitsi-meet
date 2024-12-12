@@ -274,7 +274,6 @@ export function showStartedRecordingNotification(
             if (recordingSharingUrl
                 && isVpaasMeeting(state)
                 && iAmRecordingInitiator
-                && showRecordingLink
                 && !isSavingRecordingOnDropbox(state)) {
                 const region = getMeetingRegion(state);
                 const tenant = getVpaasTenant(state);
@@ -288,15 +287,17 @@ export function showStartedRecordingNotification(
                     }
 
                     // add the option to copy recording link
-                    notifyProps.dialogProps = {
-                        ...notifyProps.dialogProps,
-                        customActionNameKey: [ 'recording.copyLink' ],
-                        customActionHandler: [ () => copyText(link) ],
-                        titleKey: 'recording.on',
-                        descriptionKey: 'recording.linkGenerated'
-                    };
+                    if (showRecordingLink) {
+                        notifyProps.dialogProps = {
+                            ...notifyProps.dialogProps,
+                            customActionNameKey: [ 'recording.copyLink' ],
+                            customActionHandler: [ () => copyText(link) ],
+                            titleKey: 'recording.on',
+                            descriptionKey: 'recording.linkGenerated'
+                        };
 
-                    notifyProps.type = NOTIFICATION_TIMEOUT_TYPE.STICKY;
+                        notifyProps.type = NOTIFICATION_TIMEOUT_TYPE.STICKY;
+                    }
                 } catch (err) {
                     dispatch(showErrorNotification({
                         titleKey: 'recording.errorFetchingLink'
