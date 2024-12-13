@@ -58,7 +58,6 @@
     "peerDependencies": {
         "@amplitude/react-native": "0.0.0",
         "@giphy/react-native-sdk": "0.0.0",
-        "@react-native/metro-config": "*",
         "@react-native-async-storage/async-storage": "0.0.0",
         "@react-native-clipboard/clipboard": "0.0.0",
         "@react-native-community/netinfo": "0.0.0",
