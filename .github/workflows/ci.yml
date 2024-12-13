@@ -53,6 +53,8 @@ jobs:
         npm -v
     - run: npm install
     - run: make
+    - name: Check config.js syntax
+      run: node config.js
   android-rn-bundle-build:
     name: Build mobile bundle (Android)
     runs-on: macos-15
