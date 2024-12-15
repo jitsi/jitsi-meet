@@ -1726,7 +1726,7 @@ PODS:
     - React
   - RNCAsyncStorage (1.23.1):
     - React-Core
-  - RNCClipboard (1.14.1):
+  - RNCClipboard (1.14.3):
     - React-Core
   - RNDefaultPreference (1.4.4):
     - React-Core
@@ -2197,7 +2197,7 @@ SPEC CHECKSUMS:
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
-  RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
+  RNCClipboard: 2821ac938ef46f736a8de0c8814845dde2dcbdfb
   RNDefaultPreference: 08bdb06cfa9188d5da97d4642dac745218d7fb31
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   RNGestureHandler: 939f21fabf5d45a725c0bf175eb819dd25cf2e70
