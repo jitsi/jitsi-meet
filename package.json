@@ -32,7 +32,7 @@
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.12.1",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-clipboard/clipboard": "1.14.1",
+    "@react-native-clipboard/clipboard": "1.14.3",
     "@react-native-community/netinfo": "11.1.0",
     "@react-native-community/slider": "4.4.3",
     "@react-native-google-signin/google-signin": "10.1.0",
