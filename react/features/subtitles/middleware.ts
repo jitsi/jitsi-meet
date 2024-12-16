@@ -261,10 +261,10 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 }
 
 /**
- * Utility function to extract the primary language code like 'en-GB' 'en_GB' 
- * 'enGB' 'zh-CN' and 'zh-TW'
- * 
- * @param {string} language The language to use for translation or user requested
+ * Utility function to extract the primary language code like 'en-GB' 'en_GB'
+ * 'enGB' 'zh-CN' and 'zh-TW'.
+ *
+ * @param {string} language - The language to use for translation or user requested.
  * @returns {string}
  */
 function _getPrimaryLanguageCode(language: string) {
