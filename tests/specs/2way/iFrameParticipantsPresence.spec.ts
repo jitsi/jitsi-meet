@@ -48,12 +48,8 @@ describe('Participants presence - ', () => {
         await p1.switchToAPI();
         await p2.switchToAPI();
 
-        expect(await p1.getIframeAPI().getEventResult('isModerator'))
-            .withContext('Is p1 moderator')
-            .toBeTrue();
-        expect(await p2.getIframeAPI().getEventResult('isModerator'))
-            .withContext('Is p2 non-moderator')
-            .toBeFalse();
+        expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
+        expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(false);
 
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
         expect(await p2.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
@@ -89,7 +85,7 @@ describe('Participants presence - ', () => {
             const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
 
             expect(roomsInfo).toBeDefined();
-            expect(roomsInfo.isMainRoom).toBeTrue();
+            expect(roomsInfo.isMainRoom).toBe(true);
 
             expect(roomsInfo.id).toBeDefined();
             const { node: roomNode } = parseJid(roomsInfo.id);
@@ -235,7 +231,7 @@ describe('Participants presence - ', () => {
                 local: true,
                 name: p1DisplayName
             }
-        })).toBeTrue();
+        })).toBe(true);
 
         expect(isEqual(eventP2, {
             kicked: {
@@ -247,7 +243,7 @@ describe('Participants presence - ', () => {
                 id: p1EpId,
                 name: p1DisplayName
             }
-        })).toBeTrue();
+        })).toBe(true);
 
         const eventConferenceLeftP2 = await p2.driver.waitUntil(async () =>
             await p2.getIframeAPI().getEventResult('videoConferenceLeft'), {

@@ -11,6 +11,7 @@ export type IContext = {
     p3: Participant;
     p4: Participant;
     roomName: string;
+    skipSuiteTests: boolean;
     webhooksProxy: WebhookProxy;
 };
 

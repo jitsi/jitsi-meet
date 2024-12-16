@@ -489,7 +489,7 @@ export class Participant {
     async assertDisplayNameVisibleOnStage(value: string) {
         const displayNameEl = this.driver.$('div[data-testid="stage-display-name"]');
 
-        expect(await displayNameEl.isDisplayed()).toBeTrue();
+        expect(await displayNameEl.isDisplayed()).toBe(true);
         expect(await displayNameEl.getText()).toBe(value);
     }
 }

@@ -72,10 +72,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
     // Default request retries count
     connectionRetryCount: 3,
 
-    framework: 'jasmine',
+    framework: 'mocha',
 
-    jasmineOpts: {
-        defaultTimeoutInterval: 60_000
+    mochaOpts: {
+        timeout: 60_000
     },
 
     capabilities: {
@@ -200,7 +200,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * Gets executed before the suite starts (in Mocha/Jasmine only).
      *
      * @param {Object} suite - Suite details.
-     * @returns {Promise<void>}
      */
     beforeSuite(suite) {
         multiremotebrowser.instances.forEach((instance: string) => {
@@ -213,11 +212,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * Function to be executed before a test (in Mocha/Jasmine only).
      *
      * @param {Object} test - Test object.
-     * @returns {Promise<void>}
+     * @param {Object} context - The context object.
      */
-    beforeTest(test) {
+    beforeTest(test, context) {
+        ctx.skipSuiteTests && context.skip();
+
         multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.fullName} ===---`);
+            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
     },
 
