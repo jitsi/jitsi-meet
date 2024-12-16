@@ -15,7 +15,6 @@ export interface ITrackOptions {
     desktopSharingSources?: string[];
     devices?: string[];
     facingMode?: string;
-    firePermissionPromptIsShownEvent?: boolean;
     micDeviceId?: string | null;
     timeout?: number;
 }
@@ -76,7 +75,6 @@ export interface IShareOptions {
 
 export interface ICreateInitialTracksOptions {
     devices: Array<MediaType>;
-    firePermissionPromptIsShownEvent?: boolean;
     timeout?: number;
 }
 

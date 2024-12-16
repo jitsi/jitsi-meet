@@ -359,8 +359,7 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions, reco
     return (dispatch: IStore['dispatch'], _getState: IStore['getState']) => {
         const {
             devices,
-            timeout,
-            firePermissionPromptIsShownEvent
+            timeout
         } = options;
 
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
@@ -400,16 +399,14 @@ export function createInitialAVTracks(options: ICreateInitialTracksOptions, reco
             if (devices.includes(MEDIA_TYPE.AUDIO)) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.AUDIO ],
-                    timeout,
-                    firePermissionPromptIsShownEvent
+                    timeout
                 }));
             }
 
             if (devices.includes(MEDIA_TYPE.VIDEO)) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.VIDEO ],
-                    timeout,
-                    firePermissionPromptIsShownEvent
+                    timeout
                 }));
             }
 
