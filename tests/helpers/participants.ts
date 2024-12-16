@@ -17,11 +17,11 @@ import { IContext, IJoinOptions } from './types';
 function generateRandomRoomName(): string {
     const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
 
-    if (context.iframeAPI && !context.webhooksProxy
+    if (ctx.iframeAPI && !ctx.webhooksProxy
         && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
-        context.webhooksProxy = new WebhookProxy(`${process.env.WEBHOOKS_PROXY_URL}&room=${roomName}`,
+        ctx.webhooksProxy = new WebhookProxy(`${process.env.WEBHOOKS_PROXY_URL}&room=${roomName}`,
             process.env.WEBHOOKS_PROXY_SHARED_SECRET);
-        context.webhooksProxy.connect();
+        ctx.webhooksProxy.connect();
     }
 
     return roomName;
@@ -30,18 +30,18 @@ function generateRandomRoomName(): string {
 /**
  * Ensure that there is on participant.
  *
- * @param {IContext} context - The context.
+ * @param {IContext} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(context: IContext, options?: IJoinOptions): Promise<void> {
-    if (!context.roomName) {
-        context.roomName = generateRandomRoomName();
+export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
+    if (!ctx.roomName) {
+        ctx.roomName = generateRandomRoomName();
     }
 
-    context.p1 = new Participant('participant1');
+    ctx.p1 = new Participant('participant1');
 
-    await context.p1.joinConference(context, {
+    await ctx.p1.joinConference(ctx, {
         ...options,
         skipInMeetingChecks: true
     });
@@ -50,27 +50,27 @@ export async function ensureOneParticipant(context: IContext, options?: IJoinOpt
 /**
  * Ensure that there are three participants.
  *
- * @param {Object} context - The context.
+ * @param {Object} ctx - The context.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(context: IContext): Promise<void> {
-    if (!context.roomName) {
-        context.roomName = generateRandomRoomName();
+export async function ensureThreeParticipants(ctx: IContext): Promise<void> {
+    if (!ctx.roomName) {
+        ctx.roomName = generateRandomRoomName();
     }
 
     const p1 = new Participant('participant1');
     const p2 = new Participant('participant2');
     const p3 = new Participant('participant3');
 
-    context.p1 = p1;
-    context.p2 = p2;
-    context.p3 = p3;
+    ctx.p1 = p1;
+    ctx.p2 = p2;
+    ctx.p3 = p3;
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        p1.joinConference(context),
-        p2.joinConference(context),
-        p3.joinConference(context)
+        p1.joinConference(ctx),
+        p2.joinConference(ctx),
+        p3.joinConference(ctx)
     ]);
 
     await Promise.all([
@@ -83,37 +83,37 @@ export async function ensureThreeParticipants(context: IContext): Promise<void> 
 /**
  * Ensure that there are two participants.
  *
- * @param {Object} context - The context.
+ * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  * @returns {Promise<void>}
  */
-export async function ensureTwoParticipants(context: IContext, options?: IJoinOptions): Promise<void> {
-    if (!context.roomName) {
-        context.roomName = generateRandomRoomName();
+export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
+    if (!ctx.roomName) {
+        ctx.roomName = generateRandomRoomName();
     }
 
     const p1DisplayName = 'participant1';
     let token;
 
     // if it is jaas create the first one to be moderator and second not moderator
-    if (context.jwtPrivateKeyPath) {
+    if (ctx.jwtPrivateKeyPath) {
         token = getModeratorToken(p1DisplayName);
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant(p1DisplayName, context.p1, p => {
-        context.p1 = p;
+    await _joinParticipant(p1DisplayName, ctx.p1, p => {
+        ctx.p1 = p;
     }, {
         ...options,
         skipInMeetingChecks: true
     }, token);
 
     await Promise.all([
-        _joinParticipant('participant2', context.p2, p => {
-            context.p2 = p;
+        _joinParticipant('participant2', ctx.p2, p => {
+            ctx.p2 = p;
         }, options),
-        context.p1.waitForRemoteStreams(1),
-        context.p2.waitForRemoteStreams(1)
+        ctx.p1.waitForRemoteStreams(1),
+        ctx.p2.waitForRemoteStreams(1)
     ]);
 }
 
@@ -132,7 +132,7 @@ async function _joinParticipant( // eslint-disable-line max-params
         options: IJoinOptions = {},
         jwtToken?: string) {
     if (p) {
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             await p.switchInPage();
         }
 
@@ -140,7 +140,7 @@ async function _joinParticipant( // eslint-disable-line max-params
             return;
         }
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             // when loading url make sure we are on the top page context or strange errors may occur
             await p.switchToAPI();
         }
@@ -156,7 +156,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     // set the new participant instance, pass it to setter
     setter(newParticipant);
 
-    await newParticipant.joinConference(context, options);
+    await newParticipant.joinConference(ctx, options);
 }
 
 /**
@@ -206,7 +206,7 @@ function getModeratorToken(displayName: string) {
         return;
     }
 
-    const key = fs.readFileSync(context.jwtPrivateKeyPath);
+    const key = fs.readFileSync(ctx.jwtPrivateKeyPath);
 
     const payload = {
         'aud': 'jitsi',

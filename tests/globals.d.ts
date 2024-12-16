@@ -1,5 +1,5 @@
 import { IContext } from './helpers/types';
 
 declare global {
-    const context: IContext;
+    const ctx: IContext;
 }

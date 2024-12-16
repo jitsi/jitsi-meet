@@ -184,15 +184,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         const globalAny: any = global;
 
-        globalAny.context = {} as IContext;
+        globalAny.ctx = {} as IContext;
 
-        globalAny.context.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
-        globalAny.context.jwtKid = process.env.JWT_KID;
+        globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+        globalAny.ctx.jwtKid = process.env.JWT_KID;
     },
 
     after() {
-        if (context.webhooksProxy) {
-            context.webhooksProxy.disconnect();
+        if (ctx.webhooksProxy) {
+            ctx.webhooksProxy.disconnect();
         }
     },
 

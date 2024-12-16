@@ -112,13 +112,13 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IContext} context - The context.
+     * @param {IContext} ctx - The context.
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(context: IContext, options: IJoinOptions = {}): Promise<void> {
+    async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
-            room: context.roomName,
+            room: ctx.roomName,
             configOverwrite: this.config,
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
@@ -132,17 +132,17 @@ export class Participant {
             };
         }
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             config.room = 'iframeAPITest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${context.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
             if (baseUrl.pathname.length > 1) {
                 // remove leading slash
@@ -165,7 +165,7 @@ export class Participant {
 
         await this.waitForPageToLoad();
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             const mainFrame = this.driver.$('iframe');
 
             await this.driver.switchFrame(mainFrame);
