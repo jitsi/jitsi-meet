@@ -63,7 +63,7 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
     let token;
 
     // if it is jaas create the first one to be moderator and second not moderator
-    if (ctx.jwtPrivateKeyPath) {
+    if (ctx.jwtPrivateKeyPath && !options?.skipFirstModerator) {
         token = getModeratorToken(p1DisplayName);
     }
 

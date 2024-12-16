@@ -23,6 +23,11 @@ export type IJoinOptions = {
     skipDisplayName?: boolean;
 
     /**
+     * Whether to skip setting the moderator role for the first participant (whether to use jwt for it).
+     */
+    skipFirstModerator?: boolean;
+
+    /**
      * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
      */
     skipInMeetingChecks?: boolean;

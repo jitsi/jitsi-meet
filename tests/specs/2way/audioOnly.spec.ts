@@ -2,7 +2,9 @@ import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Audio only - ', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants(ctx, {
+            skipFirstModerator: true
+        });
     });
 
     /**

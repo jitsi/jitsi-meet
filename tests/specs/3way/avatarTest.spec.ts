@@ -11,7 +11,10 @@ describe('Avatar - ', () => {
     it('setup the meeting', async () => {
         // Start p1
         await ensureTwoParticipants(ctx, {
-            skipDisplayName: true
+            skipDisplayName: true,
+
+            // no default avatar if we have used to join a token with an avatar and no option to set it
+            skipFirstModerator: true
         });
     });
 
@@ -187,7 +190,8 @@ describe('Avatar - ', () => {
         await p1.hangup();
 
         await ensureTwoParticipants(ctx, {
-            skipDisplayName: true
+            skipDisplayName: true,
+            skipFirstModerator: true
         });
         p1 = ctx.p1;
 
