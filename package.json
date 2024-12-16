@@ -189,7 +189,7 @@
     "style-loader": "3.3.1",
     "traverse": "0.6.6",
     "ts-loader": "9.4.2",
-    "typescript": "5.0.4",
+    "typescript": "5.7.2",
     "unorm": "1.6.0",
     "webdriverio": "9.4.3",
     "webpack": "5.95.0",
