@@ -196,7 +196,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // Regex to filter out all possible country codes after language code:
         // this should catch all notations like 'en-GB' 'en_GB' and 'enGB'
         // and be independent of the country code length
-        if (json.language.replace(/[-_A-Z].*/, '') !== language) {
+        if (_getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language)) {
             return next(action);
         }
 
@@ -258,6 +258,17 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     }
 
     return next(action);
+}
+
+/**
+ * Utility function to extract the primary language code like 'en-GB' 'en_GB'
+ * 'enGB' 'zh-CN' and 'zh-TW'.
+ *
+ * @param {string} language - The language to use for translation or user requested.
+ * @returns {string}
+ */
+function _getPrimaryLanguageCode(language: string) {
+    return language.replace(/[-_A-Z].*/, '');
 }
 
 /**
