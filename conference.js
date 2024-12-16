@@ -442,8 +442,7 @@ export default {
         const timeout = browser.isElectron() ? 15000 : 60000;
         const audioOptions = {
             devices: [ MEDIA_TYPE.AUDIO ],
-            timeout,
-            firePermissionPromptIsShownEvent: true
+            timeout
         };
 
         // Spot uses the _desktopSharingSourceDevice config option to use an external video input device label as
@@ -478,8 +477,7 @@ export default {
         } else if (requestedAudio || requestedVideo) {
             tryCreateLocalTracks = APP.store.dispatch(createInitialAVTracks({
                 devices: initialDevices,
-                timeout,
-                firePermissionPromptIsShownEvent: true
+                timeout
             }, recordTimeMetrics)).then(({ tracks, errors: pErrors }) => {
                 Object.assign(errors, pErrors);
 
