@@ -5,6 +5,7 @@ import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
+import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
 
@@ -183,14 +184,17 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         const globalAny: any = global;
+        const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
 
         globalAny.ctx = {} as IContext;
-
+        globalAny.ctx.roomName = roomName;
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
     },
 
     after() {
+        const { ctx }: any = global;
+
         if (ctx.webhooksProxy) {
             ctx.webhooksProxy.disconnect();
         }
@@ -202,6 +206,22 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} suite - Suite details.
      */
     beforeSuite(suite) {
+        const { ctx }: any = global;
+
+        // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
+        // and connect to it.
+        if (path.basename(suite.file).startsWith('iFrameApi')) {
+            ctx.iframeAPI = true;
+
+            if (!ctx.webhooksProxy
+                && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
+                ctx.webhooksProxy = new WebhookProxy(
+                    `${process.env.WEBHOOKS_PROXY_URL}&room=${ctx.roomName}`,
+                    process.env.WEBHOOKS_PROXY_SHARED_SECRET);
+                ctx.webhooksProxy.connect();
+            }
+        }
+
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance),
                 `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);

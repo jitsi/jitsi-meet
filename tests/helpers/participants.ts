@@ -4,28 +4,7 @@ import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Participant } from './Participant';
-import WebhookProxy from './WebhookProxy';
 import { IContext, IJoinOptions } from './types';
-
-/**
- * Generate a random room name.
- * Everytime we generate a name and iframeAPI is enabled and there is a configured
- * webhooks proxy we connect to it with the new room name.
- *
- * @returns {string} - The random room name.
- */
-function generateRandomRoomName(): string {
-    const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
-
-    if (ctx.iframeAPI && !ctx.webhooksProxy
-        && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
-        ctx.webhooksProxy = new WebhookProxy(`${process.env.WEBHOOKS_PROXY_URL}&room=${roomName}`,
-            process.env.WEBHOOKS_PROXY_SHARED_SECRET);
-        ctx.webhooksProxy.connect();
-    }
-
-    return roomName;
-}
 
 /**
  * Ensure that there is on participant.
@@ -35,10 +14,6 @@ function generateRandomRoomName(): string {
  * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    if (!ctx.roomName) {
-        ctx.roomName = generateRandomRoomName();
-    }
-
     ctx.p1 = new Participant('participant1');
 
     await ctx.p1.joinConference(ctx, {
@@ -54,10 +29,6 @@ export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(ctx: IContext): Promise<void> {
-    if (!ctx.roomName) {
-        ctx.roomName = generateRandomRoomName();
-    }
-
     const p1 = new Participant('participant1');
     const p2 = new Participant('participant2');
     const p3 = new Participant('participant3');
@@ -88,10 +59,6 @@ export async function ensureThreeParticipants(ctx: IContext): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    if (!ctx.roomName) {
-        ctx.roomName = generateRandomRoomName();
-    }
-
     const p1DisplayName = 'participant1';
     let token;
 

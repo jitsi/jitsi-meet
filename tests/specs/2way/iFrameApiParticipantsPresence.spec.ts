@@ -32,8 +32,6 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
 
 describe('Participants presence - ', () => {
     it('joining the meeting', async () => {
-        ctx.iframeAPI = true;
-
         // ensure 2 participants one moderator and one guest, we will load both with iframeAPI
         await ensureTwoParticipants(ctx);
 
