@@ -130,11 +130,9 @@ class SharedVideo extends Component<IProps> {
             return null;
         }
 
-        const className = !isResizing && isOwner ? '' : 'disable-pointer';
-
         return (
             <div
-                className = { className }
+                className = { isResizing && 'disable-pointer' }
                 id = 'sharedVideo'
                 style = { this.getDimensions() }>
                 {this.getManager()}
