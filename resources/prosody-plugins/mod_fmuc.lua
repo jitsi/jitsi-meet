@@ -141,7 +141,7 @@ module:hook('muc-occupant-pre-join', function (event)
         else
             occupant.role = 'visitor';
         end
-    elseif room.moderators_list:contains(resource) then
+    elseif room.moderators_list and room.moderators_list:contains(resource) then
         -- remote participants, host is the main prosody
         occupant.role = 'moderator';
     end
