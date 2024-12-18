@@ -24,13 +24,13 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
     public void launch() {
         Context context = getReactApplicationContext();
         Activity currentActivity = getCurrentActivity();
-        JitsiMeetOngoingConferenceService.launch(context, currentActivity);
+        JMOngoingConferenceService.launch(context, currentActivity);
     }
 
     @ReactMethod
     public void abort() {
         Context context = getReactApplicationContext();
-        JitsiMeetOngoingConferenceService.abort(context);
+        JMOngoingConferenceService.abort(context);
     }
 
     @NonNull
