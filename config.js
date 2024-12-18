@@ -275,6 +275,10 @@ var config = {
     //     // Specifies whether there is a notification when you are the next speaker in line.
     //     disableNextSpeakerNotification: false,
 
+    //     // Specifies whether the raised hand recognition through the video stream will be enabled.
+    //     // The FaceLandmarks configuration needs to be enabled for this to work.
+    //     disableRaisedHandRecognition: false,
+
     //     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not.
     //     disableRemoveRaisedHandOnFocus: false,
     // },
