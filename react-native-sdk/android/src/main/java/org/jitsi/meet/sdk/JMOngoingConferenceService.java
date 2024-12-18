@@ -43,21 +43,18 @@ import java.util.Random;
  *
  * See: https://developer.android.com/guide/components/services
  */
-public class JitsiMeetOngoingConferenceService extends Service {
-    private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
+public class JMOngoingConferenceService extends Service {
+    private static final String TAG = JMOngoingConferenceService.class.getSimpleName();
 
     private static final int PERMISSIONS_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    private static PermissionListener permissionListener;
-
-
     public static void doLaunch(Context context, Activity currentActivity) {
 
         RNOngoingNotification.createOngoingConferenceNotificationChannel(currentActivity);
 
-        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+        Intent intent = new Intent(context, JMOngoingConferenceService.class);
 
         ComponentName componentName;
 
@@ -127,7 +124,7 @@ public class JitsiMeetOngoingConferenceService extends Service {
     }
 
     public static void abort(Context context) {
-        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+        Intent intent = new Intent(context, JMOngoingConferenceService.class);
         context.stopService(intent);
     }
 
