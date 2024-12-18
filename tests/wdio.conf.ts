@@ -28,6 +28,10 @@ const chromeArgs = [
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-setuid-sandbox',
+
+    // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
+    // when executing waitForStable()
+    '--disable-renderer-backgrounding',
     `--use-file-for-fake-audio-capture=${process.env.REMOTE_RESOURCE_PATH || 'tests/resources'}/fakeAudioStream.wav`
 ];
 

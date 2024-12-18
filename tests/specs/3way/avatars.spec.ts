@@ -1,7 +1,7 @@
 import {
     ensureThreeParticipants,
     ensureTwoParticipants,
-    unMuteVideoAndCheck
+    unmuteVideoAndCheck
 } from '../../helpers/participants';
 
 const EMAIL = 'support@jitsi.org';
@@ -109,7 +109,7 @@ describe('Avatar - ', () => {
         await p1.assertThumbnailShowsAvatar(p1, false, false, true);
 
         // Unmute - now local avatar should be hidden and local video displayed
-        await unMuteVideoAndCheck(p1, p2);
+        await unmuteVideoAndCheck(p1, p2);
 
         await p1.asserLocalThumbnailShowsVideo();
 

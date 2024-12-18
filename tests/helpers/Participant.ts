@@ -6,6 +6,7 @@ import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
+import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
@@ -243,6 +244,14 @@ export class Participant {
     }
 
     /**
+     * Checks if the participant is a moderator in the meeting.
+     */
+    async isModerator() {
+        return await this.driver.execute(() => typeof APP !== 'undefined'
+            && APP.store?.getState()['features/base/participants']?.local?.role === 'moderator');
+    }
+
+    /**
      * Waits to join the muc.
      *
      * @returns {Promise<void>}
@@ -328,6 +337,13 @@ export class Participant {
      */
     getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
+    }
+
+    /**
+     * Returns the notifications.
+     */
+    getNotifications(): Notifications {
+        return new Notifications(this);
     }
 
     /**

@@ -29,36 +29,34 @@ export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(ctx: IContext): Promise<void> {
-    const p1 = new Participant('participant1');
+    await joinTheModeratorAsP1(ctx);
+
     const p2 = new Participant('participant2');
     const p3 = new Participant('participant3');
 
-    ctx.p1 = p1;
     ctx.p2 = p2;
     ctx.p3 = p3;
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        p1.joinConference(ctx),
         p2.joinConference(ctx),
         p3.joinConference(ctx)
     ]);
 
     await Promise.all([
-        p1.waitForRemoteStreams(2),
         p2.waitForRemoteStreams(2),
         p3.waitForRemoteStreams(2)
     ]);
 }
 
 /**
- * Ensure that there are two participants.
+ * Ensure that the first participant is moderator.
  *
  * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  * @returns {Promise<void>}
  */
-export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
+async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     const p1DisplayName = 'participant1';
     let token;
 
@@ -74,13 +72,25 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
         ...options,
         skipInMeetingChecks: true
     }, token);
+}
+
+/**
+ * Ensure that there are two participants.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to join.
+ */
+export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    await joinTheModeratorAsP1(ctx, options);
+
+    const { skipInMeetingChecks } = options;
 
     await Promise.all([
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
         }, options),
-        ctx.p1.waitForRemoteStreams(1),
-        ctx.p2.waitForRemoteStreams(1)
+        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
     ]);
 }
 
@@ -144,15 +154,27 @@ export async function muteAudioAndCheck(testee: Participant, observer: Participa
 }
 
 /**
+ * Unmute audio, checks if the local UI has been updated accordingly and then does the verification from
+ * the other observer participant perspective.
+ * @param testee
+ * @param observer
+ */
+export async function unmuteAudioAndCheck(testee: Participant, observer: Participant) {
+    await testee.getToolbar().clickAudioUnmuteButton();
+    await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
+    await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
+}
+
+/**
  * Starts the video on testee and check on observer.
  * @param testee
  * @param observer
  */
-export async function unMuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+export async function unmuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
     await testee.getToolbar().clickVideoUnmuteButton();
 
-    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
 }
 
 /**
