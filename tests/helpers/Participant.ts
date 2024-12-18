@@ -155,13 +155,8 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        // workaround for https://github.com/webdriverio/webdriverio/issues/13956
-        if (url.startsWith('file://')) {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            await this.driver.url(url).catch(() => {});
-        } else {
-            await this.driver.url(url.substring(1)); // drop the leading '/' so we can use the tenant if any
-        }
+        // drop the leading '/' so we can use the tenant if any
+        await this.driver.url(url.startsWith('/') ? url.substring(1) : url);
 
         await this.waitForPageToLoad();
 
