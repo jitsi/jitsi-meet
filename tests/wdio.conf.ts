@@ -252,7 +252,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     async afterTest(test, context, { error }) {
         multiremotebrowser.instances.forEach((instance: string) =>
-            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.fullName} ===---`));
+            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
             const allProcessing: Promise<any>[] = [];
