@@ -1,6 +1,7 @@
 import { Participant } from '../helpers/Participant';
 
 import AVModerationMenu from './AVModerationMenu';
+import BasePageObject from './BasePageObject';
 
 /**
  * Classname of the closed/hidden participants pane
@@ -10,18 +11,7 @@ const PARTICIPANTS_PANE = 'participants_pane';
 /**
  * Represents the participants pane from the UI.
  */
-export default class ParticipantsPane {
-    private participant: Participant;
-
-    /**
-     * Initializes for a participant.
-     *
-     * @param {Participant} participant - The participant.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class ParticipantsPane extends BasePageObject {
     /**
      * Gets the audio video moderation menu.
      */

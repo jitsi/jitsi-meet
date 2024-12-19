@@ -1,4 +1,4 @@
-import { Participant } from '../helpers/Participant';
+import BasePageObject from './BasePageObject';
 
 const ASK_TO_UNMUTE_NOTIFICATION_ID = 'notify.hostAskedUnmute';
 const JOIN_ONE_TEST_ID = 'notify.connectedOneMember';
@@ -9,17 +9,7 @@ const RAISE_HAND_NOTIFICATION_ID = 'notify.raisedHand';
 /**
  * Gathers all notifications logic in the UI and obtaining those.
  */
-export default class Notifications {
-    private participant: Participant;
-
-    /**
-     * Represents the Audio Video Moderation menu in the participants pane.
-     * @param participant
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class Notifications extends BasePageObject {
     /**
      * Waits for the raised hand notification to be displayed.
      * The notification on moderators page when the participant tries to unmute.

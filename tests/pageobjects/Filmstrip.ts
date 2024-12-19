@@ -1,22 +1,12 @@
 import { Participant } from '../helpers/Participant';
 
 import BaseDialog from './BaseDialog';
+import BasePageObject from './BasePageObject';
 
 /**
  * Filmstrip elements.
  */
-export default class Filmstrip {
-    private participant: Participant;
-
-    /**
-     * Initializes for a participant.
-     *
-     * @param {Participant} participant - The participant.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class Filmstrip extends BasePageObject {
     /**
      * Asserts that {@code participant} shows or doesn't show the audio
      * mute icon for the conference participant identified by

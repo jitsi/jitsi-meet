@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import { Participant } from '../helpers/Participant';
+import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
@@ -16,18 +15,7 @@ const VIDEO_UNMUTE = 'Start camera';
 /**
  * The toolbar elements.
  */
-export default class Toolbar {
-    private participant: Participant;
-
-    /**
-     * Creates toolbar for a participant.
-     *
-     * @param {Participant} participant - The participants.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class Toolbar extends BasePageObject {
     /**
      * Returns the button.
      *

@@ -1,4 +1,4 @@
-import { Participant } from '../helpers/Participant';
+import BasePageObject from './BasePageObject';
 
 const CLOSE_BUTTON = 'modal-header-close-button';
 const OK_BUTTON = 'modal-dialog-ok-button';
@@ -6,18 +6,7 @@ const OK_BUTTON = 'modal-dialog-ok-button';
 /**
  * Base class for all dialogs.
  */
-export default class BaseDialog {
-    participant: Participant;
-
-    /**
-     * Initializes for a participant.
-     *
-     * @param {Participant} participant - The participant.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class BaseDialog extends BasePageObject {
     /**
      *  Clicks on the X (close) button.
      */

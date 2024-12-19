@@ -1,4 +1,4 @@
-import { Participant } from '../helpers/Participant';
+import BasePageObject from './BasePageObject';
 
 const START_AUDIO_MODERATION = 'participants-pane-context-menu-start-audio-moderation';
 const STOP_AUDIO_MODERATION = 'participants-pane-context-menu-stop-audio-moderation';
@@ -8,17 +8,7 @@ const STOP_VIDEO_MODERATION = 'participants-pane-context-menu-stop-video-moderat
 /**
  * Represents the Audio Video Moderation menu in the participants pane.
  */
-export default class AVModerationMenu {
-    private participant: Participant;
-
-    /**
-     * Represents the Audio Video Moderation menu in the participants pane.
-     * @param participant
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class AVModerationMenu extends BasePageObject {
     /**
      * Clicks the start audio moderation menu item.
      */
