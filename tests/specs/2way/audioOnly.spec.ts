@@ -34,36 +34,6 @@ describe('Audio only - ', () => {
     });
 
     /**
-     * Toggles the audio only state of a p1 participant and verifies participant sees the audio only label and that
-     * p2 participant sees a video mute state for the former.
-     * @param enable
-     */
-    async function setAudioOnlyAndCheck(enable: boolean) {
-        const { p1 } = ctx;
-
-        await p1.getVideoQualityDialog().setVideoQuality(enable);
-
-        await verifyVideoMute(enable);
-
-        await p1.driver.$('//div[@id="videoResolutionLabel"][contains(@class, "audio-only")]')
-            .waitForDisplayed({ reverse: !enable });
-    }
-
-    /**
-     * Verifies that p1 and p2 see p1 as video muted or not.
-     * @param muted
-     */
-    async function verifyVideoMute(muted: boolean) {
-        const { p1, p2 } = ctx;
-
-        // Verify the observer sees the testee in the desired muted state.
-        await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, !muted);
-
-        // Verify the testee sees itself in the desired muted state.
-        await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, !muted);
-    }
-
-    /**
      * Mutes video on participant1, toggles audio-only twice and then verifies if both participants see participant1
      * as video muted.
      */
@@ -92,3 +62,33 @@ describe('Audio only - ', () => {
         await verifyVideoMute(false);
     });
 });
+
+/**
+ * Toggles the audio only state of a p1 participant and verifies participant sees the audio only label and that
+ * p2 participant sees a video mute state for the former.
+ * @param enable
+ */
+async function setAudioOnlyAndCheck(enable: boolean) {
+    const { p1 } = ctx;
+
+    await p1.getVideoQualityDialog().setVideoQuality(enable);
+
+    await verifyVideoMute(enable);
+
+    await p1.driver.$('//div[@id="videoResolutionLabel"][contains(@class, "audio-only")]')
+        .waitForDisplayed({ reverse: !enable });
+}
+
+/**
+ * Verifies that p1 and p2 see p1 as video muted or not.
+ * @param muted
+ */
+async function verifyVideoMute(muted: boolean) {
+    const { p1, p2 } = ctx;
+
+    // Verify the observer sees the testee in the desired muted state.
+    await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, !muted);
+
+    // Verify the testee sees itself in the desired muted state.
+    await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, !muted);
+}
