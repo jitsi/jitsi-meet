@@ -6,6 +6,7 @@ import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
+import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
@@ -112,13 +113,13 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IContext} context - The context.
+     * @param {IContext} ctx - The context.
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(context: IContext, options: IJoinOptions = {}): Promise<void> {
+    async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
-            room: context.roomName,
+            room: ctx.roomName,
             configOverwrite: this.config,
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
@@ -132,17 +133,17 @@ export class Participant {
             };
         }
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             config.room = 'iframeAPITest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${context.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
             if (baseUrl.pathname.length > 1) {
                 // remove leading slash
@@ -155,17 +156,12 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        // workaround for https://github.com/webdriverio/webdriverio/issues/13956
-        if (url.startsWith('file://')) {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            await this.driver.url(url).catch(() => {});
-        } else {
-            await this.driver.url(url.substring(1)); // drop the leading '/' so we can use the tenant if any
-        }
+        // drop the leading '/' so we can use the tenant if any
+        await this.driver.url(url.startsWith('/') ? url.substring(1) : url);
 
         await this.waitForPageToLoad();
 
-        if (context.iframeAPI) {
+        if (ctx.iframeAPI) {
             const mainFrame = this.driver.$('iframe');
 
             await this.driver.switchFrame(mainFrame);
@@ -245,6 +241,14 @@ export class Participant {
      */
     async isInMuc() {
         return await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+    }
+
+    /**
+     * Checks if the participant is a moderator in the meeting.
+     */
+    async isModerator() {
+        return await this.driver.execute(() => typeof APP !== 'undefined'
+            && APP.store?.getState()['features/base/participants']?.local?.role === 'moderator');
     }
 
     /**
@@ -333,6 +337,13 @@ export class Participant {
      */
     getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
+    }
+
+    /**
+     * Returns the notifications.
+     */
+    getNotifications(): Notifications {
+        return new Notifications(this);
     }
 
     /**
@@ -489,7 +500,7 @@ export class Participant {
     async assertDisplayNameVisibleOnStage(value: string) {
         const displayNameEl = this.driver.$('div[data-testid="stage-display-name"]');
 
-        expect(await displayNameEl.isDisplayed()).toBeTrue();
+        expect(await displayNameEl.isDisplayed()).toBe(true);
         expect(await displayNameEl.getText()).toBe(value);
     }
 }

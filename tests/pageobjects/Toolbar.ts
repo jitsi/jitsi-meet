@@ -8,6 +8,7 @@ const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
+const RAISE_HAND = 'Raise your hand';
 const VIDEO_QUALITY = 'Manage video quality';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
@@ -143,6 +144,14 @@ export default class Toolbar {
     }
 
     /**
+     * Clicks on the raise hand button that enables participants will to speak.
+     */
+    async clickRaiseHandButton(): Promise<void> {
+        this.participant.log('Clicking on: Raise hand Button');
+        await this.getButton(RAISE_HAND).click();
+    }
+
+    /**
      * Ensure the overflow menu is open and clicks on a specified button.
      * @param accessibilityLabel The accessibility label of the button to be clicked.
      * @private
@@ -150,6 +159,7 @@ export default class Toolbar {
     private async clickButtonInOverflowMenu(accessibilityLabel: string) {
         await this.openOverflowMenu();
 
+        this.participant.log(`Clicking on: ${accessibilityLabel}`);
         await this.getButton(accessibilityLabel).click();
 
         await this.closeOverflowMenu();

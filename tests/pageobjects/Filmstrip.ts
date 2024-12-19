@@ -1,5 +1,7 @@
 import { Participant } from '../helpers/Participant';
 
+import BaseDialog from './BaseDialog';
+
 /**
  * Filmstrip elements.
  */
@@ -40,7 +42,7 @@ export default class Filmstrip {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Audio mute icon is ${reverse ? '' : 'not'} displayed for ${testee.name}`
+            timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.name}`
         });
     }
 
@@ -76,5 +78,57 @@ export default class Filmstrip {
             `//span[@id='participant_${endpointId}']//img[contains(@class,'userAvatar')]`);
 
         return await elem.isExisting() ? elem.getAttribute('src') : null;
+    }
+
+    /**
+     * Grants moderator rights to a participant.
+     * @param participant
+     */
+    async grantModerator(participant: Participant) {
+        await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'grantmoderatorlink', true);
+    }
+
+    /**
+     * Clicks on the link in the remote participant actions menu.
+     * @param participantId
+     * @param linkClassname
+     * @param dialogConfirm
+     * @private
+     */
+    private async clickOnRemoteMenuLink(participantId: string, linkClassname: string, dialogConfirm: boolean) {
+        const thumbnail = this.participant.driver.$(
+            `//span[@id='participant_${participantId}']//span[@id='remotevideomenu']`);
+
+        await thumbnail.moveTo();
+
+        const popoverElement = this.participant.driver.$(
+            `//div[contains(@class, 'popover')]//div[contains(@class, '${linkClassname}')]`);
+
+        await popoverElement.waitForDisplayed();
+        await popoverElement.click();
+
+        if (dialogConfirm) {
+            await new BaseDialog(this.participant).clickOkButton();
+        }
+    }
+
+    /**
+     * Mutes the audio of a participant.
+     * @param participant
+     */
+    async muteAudio(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+
+        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
+
+        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).click();
+    }
+
+    /**
+     * Mutes the video of a participant.
+     * @param participant
+     */
+    async muteVideo(participant: Participant) {
+        await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'mutevideolink', true);
     }
 }

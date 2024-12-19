@@ -9,8 +9,8 @@
         "types": [
             "node",
             "@wdio/globals/types",
-            "@types/jasmine",
-            "@wdio/jasmine-framework"
+            "@types/mocha",
+            "@wdio/mocha-framework"
         ]
     }
 }

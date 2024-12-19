@@ -5,6 +5,7 @@ import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
+import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
 
@@ -27,6 +28,10 @@ const chromeArgs = [
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-setuid-sandbox',
+
+    // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
+    // when executing waitForStable()
+    '--disable-renderer-backgrounding',
     `--use-file-for-fake-audio-capture=${process.env.REMOTE_RESOURCE_PATH || 'tests/resources'}/fakeAudioStream.wav`
 ];
 
@@ -72,10 +77,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
     // Default request retries count
     connectionRetryCount: 3,
 
-    framework: 'jasmine',
+    framework: 'mocha',
 
-    jasmineOpts: {
-        defaultTimeoutInterval: 60_000
+    mochaOpts: {
+        timeout: 60_000
     },
 
     capabilities: {
@@ -183,16 +188,19 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         const globalAny: any = global;
+        const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
 
-        globalAny.context = {} as IContext;
-
-        globalAny.context.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
-        globalAny.context.jwtKid = process.env.JWT_KID;
+        globalAny.ctx = {} as IContext;
+        globalAny.ctx.roomName = roomName;
+        globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+        globalAny.ctx.jwtKid = process.env.JWT_KID;
     },
 
     after() {
-        if (context.webhooksProxy) {
-            context.webhooksProxy.disconnect();
+        const { ctx }: any = global;
+
+        if (ctx.webhooksProxy) {
+            ctx.webhooksProxy.disconnect();
         }
     },
 
@@ -200,9 +208,24 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * Gets executed before the suite starts (in Mocha/Jasmine only).
      *
      * @param {Object} suite - Suite details.
-     * @returns {Promise<void>}
      */
     beforeSuite(suite) {
+        const { ctx }: any = global;
+
+        // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
+        // and connect to it.
+        if (path.basename(suite.file).startsWith('iFrameApi')) {
+            ctx.iframeAPI = true;
+
+            if (!ctx.webhooksProxy
+                && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
+                ctx.webhooksProxy = new WebhookProxy(
+                    `${process.env.WEBHOOKS_PROXY_URL}&room=${ctx.roomName}`,
+                    process.env.WEBHOOKS_PROXY_SHARED_SECRET);
+                ctx.webhooksProxy.connect();
+            }
+        }
+
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance),
                 `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
@@ -213,11 +236,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * Function to be executed before a test (in Mocha/Jasmine only).
      *
      * @param {Object} test - Test object.
-     * @returns {Promise<void>}
+     * @param {Object} context - The context object.
      */
-    beforeTest(test) {
+    beforeTest(test, context) {
+        ctx.skipSuiteTests && context.skip();
+
         multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.fullName} ===---`);
+            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
     },
 
@@ -231,7 +256,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     async afterTest(test, context, { error }) {
         multiremotebrowser.instances.forEach((instance: string) =>
-            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.fullName} ===---`));
+            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
             const allProcessing: Promise<any>[] = [];

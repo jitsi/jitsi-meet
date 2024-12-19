@@ -4,30 +4,32 @@ import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/partic
 
 describe('ActiveSpeaker ', () => {
     it('testActiveSpeaker', async () => {
-        await ensureThreeParticipants(context);
+        await ensureThreeParticipants(ctx);
 
-        await muteAudioAndCheck(context.p1, context.p2);
-        await muteAudioAndCheck(context.p2, context.p1);
-        await muteAudioAndCheck(context.p3, context.p1);
+        const { p1, p2, p3 } = ctx;
+
+        await muteAudioAndCheck(p1, p2);
+        await muteAudioAndCheck(p2, p1);
+        await muteAudioAndCheck(p3, p1);
 
         // participant1 becomes active speaker - check from participant2's perspective
-        await testActiveSpeaker(context.p1, context.p2, context.p3);
+        await testActiveSpeaker(p1, p2, p3);
 
         // participant3 becomes active speaker - check from participant2's perspective
-        await testActiveSpeaker(context.p3, context.p2, context.p1);
+        await testActiveSpeaker(p3, p2, p1);
 
         // participant2 becomes active speaker - check from participant1's perspective
-        await testActiveSpeaker(context.p2, context.p1, context.p3);
+        await testActiveSpeaker(p2, p1, p3);
 
         // check the displayed speakers, there should be only one speaker
-        await assertOneDominantSpeaker(context.p1);
-        await assertOneDominantSpeaker(context.p2);
-        await assertOneDominantSpeaker(context.p3);
+        await assertOneDominantSpeaker(p1);
+        await assertOneDominantSpeaker(p2);
+        await assertOneDominantSpeaker(p3);
     });
 });
 
 /**
- * Tries to make given participant an active speaker by un-muting it.
+ * Tries to make given participant an active speaker by unmuting it.
  * Verifies from {@code participant2}'s perspective that the active speaker
  * has been displayed on the large video area. Mutes him back.
  *
@@ -36,7 +38,6 @@ describe('ActiveSpeaker ', () => {
  * @param {Participant} otherParticipant1 - <tt>Participant</tt> of the participant who will be observing and verifying
  * active speaker change.
  * @param {Participant} otherParticipant2 - Used only to print some debugging info.
- * @returns {Promise<void>}
  */
 async function testActiveSpeaker(
         activeSpeaker: Participant, otherParticipant1: Participant, otherParticipant2: Participant) {
@@ -85,7 +86,6 @@ async function testActiveSpeaker(
  * indicator displayed equals 1.
  *
  * @param {Participant} participant - The participant to check.
- * @returns {Promise<void>}
  */
 async function assertOneDominantSpeaker(participant: Participant) {
     expect(await participant.driver.$$(
