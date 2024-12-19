@@ -121,7 +121,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isTokenAuthEnabled(config)
             && config.tokenAuthUrlAutoRedirect
             && state['features/base/jwt'].jwt) {
-            // auto redirect is turned on and we have succesfully logged in
+            // auto redirect is turned on and we have successfully logged in
             // let's mark that
             dispatch(setTokenAuthUrlSuccess(true));
         }

@@ -96,7 +96,7 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
 const DEFAULT_INITIAL_PROMISE_STATE = createDeferred<IInitialGUMPromiseResult>();
 
 /**
- * Reducer fot the common properties in media state.
+ * Reducer for the common properties in media state.
  *
  * @param {ICommonState} state - Common media state.
  * @param {Object} action - Action object.

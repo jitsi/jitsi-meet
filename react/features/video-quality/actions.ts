@@ -29,7 +29,7 @@ export function setMaxReceiverVideoQualityForLargeVideo(maxReceiverVideoQuality:
 }
 
 /**
- * Sets the max frame height that should be received for the screen sharing filmstrip particpant.
+ * Sets the max frame height that should be received for the screen sharing filmstrip participant.
  *
  * @param {number} maxReceiverVideoQuality - The max video frame height to
  * receive.

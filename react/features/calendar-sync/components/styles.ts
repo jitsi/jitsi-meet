@@ -152,7 +152,7 @@ export default createStyleSheet({
     },
 
     /**
-     * The container for all the lines if the norification.
+     * The container for all the lines if the notification.
      */
     notificationTextContainer: {
         flexDirection: 'column',

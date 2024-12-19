@@ -84,7 +84,7 @@ export function updateKnownLargeVideoResolution(resolution: number) {
 }
 
 /**
- * Sets the dimenstions of the large video in redux.
+ * Sets the dimensions of the large video in redux.
  *
  * @param {number} height - The height of the large video.
  * @param {number} width - The width of the large video.

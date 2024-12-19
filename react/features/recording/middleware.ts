@@ -216,11 +216,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (updatedSessionData?.status === ON) {
 
             // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
-            // The second one is from jicofo which will deliever the initiator value. Since the start
+            // The second one is from jicofo which will deliver the initiator value. Since the start
             // recording notification uses the initiator value we skip the jibri update and show the
             // notification on the update from jicofo.
-            // FIXE: simplify checks when the backend start sending only one status ON update containing the
-            // initiator.
+            // FIXME: simplify checks when the backend start sending only one status ON update containing
+            // the initiator.
             if (initiator && !oldSessionData?.initiator) {
                 if (typeof recordingLimit === 'object') {
                     dispatch(showRecordingLimitNotification(mode));

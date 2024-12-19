@@ -240,7 +240,7 @@ export function participantJoined(participant: IParticipant) {
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
         // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
-        // (which is not outragous given that leaving involves network
+        // (which is not outrageous given that leaving involves network
         // requests.)
         const stateFeaturesBaseConference
             = getState()['features/base/conference'];
