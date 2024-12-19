@@ -142,7 +142,7 @@ function _setFullScreen(next: Function, action: AnyAction) {
 /**
  * Common logic to gather buttons that have to notify the api when clicked.
  *
- * @param {Array} buttonsWithNotifyClick - The array of systme buttons that need to notify the api.
+ * @param {Array} buttonsWithNotifyClick - The array of system buttons that need to notify the api.
  * @param {Array} customButtons - The custom buttons.
  * @returns {Array}
  */

@@ -50,7 +50,7 @@ export function setMediaEncryptionKey(keyInfo: Object) {
 }
 
 /**
- * Dispatches an action to start participant e2ee verficiation process.
+ * Dispatches an action to start participant e2ee verification process.
  *
  * @param {string} pId - The participant id.
  * @returns {{
@@ -69,7 +69,7 @@ export function startVerification(pId: string) {
  * Dispatches an action to set participant e2ee verification status.
  *
  * @param {string} pId - The participant id.
- * @param {boolean} isVerified - The verifcation status.
+ * @param {boolean} isVerified - The verification status.
  * @returns {{
  *     type: PARTICIPANT_VERIFIED,
  *     pId: string,

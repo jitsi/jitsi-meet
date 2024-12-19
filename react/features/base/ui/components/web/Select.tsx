@@ -19,12 +19,12 @@ interface ISelectProps {
     className?: string;
 
     /**
-     * Wether or not the select is disabled.
+     * Whether or not the select is disabled.
      */
     disabled?: boolean;
 
     /**
-     * Wether or not the select is in the error state.
+     * Whether or not the select is in the error state.
      */
     error?: boolean;
 

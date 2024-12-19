@@ -1571,8 +1571,8 @@ class API {
                 formattedArgument += `${arg.toString()}: ${arg.stack}`;
             } else if (typeof arg === 'object') {
                 // NOTE: The non-enumerable properties of the objects wouldn't be included in the string after
-                // JSON.strigify. For example Map instance will be translated to '{}'. So I think we have to eventually
-                // do something better for parsing the arguments. But since this option for strigify is part of the
+                // JSON.stringify. For example Map instance will be translated to '{}'. So I think we have to eventually
+                // do something better for parsing the arguments. But since this option for stringify is part of the
                 // public interface and I think it could be useful in some cases I will it for now.
                 try {
                     formattedArgument += JSON.stringify(arg);

@@ -322,7 +322,7 @@ export function calculateResponsiveTileViewDimensions({
     for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants, desiredNumberOfVisibleTiles); c++) {
         const r = Math.ceil(numberOfParticipants / c);
 
-        // we want to display as much as possible tumbnails up to desiredNumberOfVisibleTiles
+        // we want to display as much as possible thumbnails up to desiredNumberOfVisibleTiles
         const visibleRows
             = numberOfParticipants <= desiredNumberOfVisibleTiles ? r : Math.floor(desiredNumberOfVisibleTiles / c);
 

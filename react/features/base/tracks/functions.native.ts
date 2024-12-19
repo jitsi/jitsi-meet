@@ -17,7 +17,7 @@ export * from './functions.any';
  * and/or 'video'.
  * @param {string|null} [options.micDeviceId] - Microphone device id or
  * {@code undefined} to use app's settings.
- * @param {number|undefined} [oprions.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
+ * @param {number|undefined} [options.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
  * @param {IStore} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}

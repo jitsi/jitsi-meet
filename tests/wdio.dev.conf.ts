@@ -1,5 +1,5 @@
 // wdio.dev.conf.ts
-// extends te main configuration file for the development environment (make dev)
+// extends the main configuration file for the development environment (make dev)
 // it will connect to the webpack-dev-server running locally on port 8080
 import { deepmerge } from 'deepmerge-ts';
 

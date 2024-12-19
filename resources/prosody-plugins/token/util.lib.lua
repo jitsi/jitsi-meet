@@ -80,7 +80,7 @@ function Util.new(module)
         These setups relay on configuration 'muc_domain_base' which holds
         the main domain and we use it to subtract subdomains from the
         virtual addresses.
-        The following confgurations are for multidomain setups and domain name
+        The following configurations are for multidomain setups and domain name
         verification:
      --]]
 
@@ -225,7 +225,7 @@ function Util:get_public_key(keyId)
             self.cache:set(keyId, content);
         else
             if code == nil then
-                -- this is timout after nr_retries retries
+                -- this is timeout after nr_retries retries
                 module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
             end
         end

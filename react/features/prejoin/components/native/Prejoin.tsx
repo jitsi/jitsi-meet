@@ -117,7 +117,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
         return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
 
-    }, []); // dispatch is not in the dependancy list because we want the action to be dispatched only once when
+    }, []); // dispatch is not in the dependency list because we want the action to be dispatched only once when
     // the component is mounted.
 
     const headerLeft = () => {

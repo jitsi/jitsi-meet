@@ -99,7 +99,7 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     iAmVisitor: boolean;
 
     /**
-     * Wether noise suppression is on or not.
+     * Whether noise suppression is on or not.
      */
     noiseSuppressionEnabled: boolean;
 

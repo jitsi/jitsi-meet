@@ -202,7 +202,7 @@ export function getVisibleButtons({
     setButtonsNotifyClickMode(allButtons, buttonsWithNotifyClick);
 
     const filteredButtons = Object.keys(allButtons).filter(key =>
-        typeof key !== 'undefined' // filter invalid buttons that may be comming from config.mainToolbarButtons
+        typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons
         // override
         && !jwtDisabledButtons.includes(key)
         && isButtonEnabled(key, toolbarButtons));
@@ -264,7 +264,7 @@ interface ICSSTransitionObject {
  * @returns {ICSSTransitionObject}
  */
 export function getTransitionParamsForElementsAboveToolbox(isToolbarVisible: boolean): ICSSTransitionObject {
-    // The transistion time and delay is different to account for the time when the toolbar is about to hide/show but
+    // The transition time and delay is different to account for the time when the toolbar is about to hide/show but
     // the elements don't have to move.
     return isToolbarVisible ? {
         duration: 0.15,

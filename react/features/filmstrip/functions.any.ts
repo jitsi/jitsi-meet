@@ -57,7 +57,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         remoteParticipants.delete(speaker);
     }
 
-    // Always update the order of the thumnails.
+    // Always update the order of the thubmnails.
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 

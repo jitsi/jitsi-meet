@@ -79,7 +79,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showPrejoinSettings: boolean;
 
     /**
-     * Wether or not the stage filmstrip is enabled.
+     * Whether or not the stage filmstrip is enabled.
      */
     stageFilmstripEnabled: boolean;
 }
