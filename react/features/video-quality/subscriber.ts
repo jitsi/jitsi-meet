@@ -309,7 +309,7 @@ StateListenerRegistry.register(
     });
 
 /**
- * Returns the source names asociated with the given participants list.
+ * Returns the source names associated with the given participants list.
  *
  * @param {Array<string>} participantList - The list of participants.
  * @param {Object} state - The redux state.

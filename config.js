@@ -907,7 +907,7 @@ var config = {
     // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
     // buttons varies from 2 buttons to 8 buttons. Every array in the mainToolbarButtons array will replace the
     // corresponding default buttons configuration matched by the number of buttons specified in the array. Arrays with
-    // more than 8 buttons or less then 2 buttons will be ignored. When there there isn't an override for a cerain
+    // more than 8 buttons or less then 2 buttons will be ignored. When there there isn't an override for a certain
     // configuration (for example when 3 buttons are displayed) the default jitsi-meet configuration will be used.
     // The order of the buttons in the array is preserved.
     // mainToolbarButtons: [
@@ -1735,7 +1735,7 @@ var config = {
     //     'notify.participantsWantToJoin', // shown when lobby is enabled and participants request to join meeting
     //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
-    //     'notify.raisedHand', // shown when a partcipant used raise hand,
+    //     'notify.raisedHand', // shown when a participant used raise hand,
     //     'notify.screenShareNoAudio', // shown when the audio could not be shared for the selected screen
     //     'notify.screenSharingAudioOnlyTitle', // shown when the best performance has been affected by screen sharing
     //     'notify.selfViewTitle', // show "You can always un-hide the self-view from settings"
@@ -1766,7 +1766,7 @@ var config = {
     // disableFilmstripAutohiding: false,
 
     // filmstrip: {
-    //     // Disable the vertical/horizonal filmstrip.
+    //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,
     //     // Disables user resizable filmstrip. Also, allows configuration of the filmstrip
     //     // (width, tiles aspect ratios) through the interfaceConfig options.

@@ -52,7 +52,7 @@ StateListenerRegistry.register(
 
 /**
  * Compares the old and new screenshare lists provided and creates/removes the virtual screenshare participant
- * tiles accodingly.
+ * tiles accordingly.
  *
  * @param {Array<string>} oldScreenshareSourceNames - List of old screenshare source names.
  * @param {Array<string>} newScreenshareSourceNames - Current list of screenshare source names.

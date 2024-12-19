@@ -107,7 +107,7 @@ export function requestRemoteControl(userId: string) {
 
         dispatch(setRemoteControlActive(true));
 
-        logger.log(`Requsting remote control permissions from: ${userId}`);
+        logger.log(`Requesting remote control permissions from: ${userId}`);
 
         const { conference } = state['features/base/conference'];
 

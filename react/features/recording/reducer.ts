@@ -113,7 +113,7 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
  * @param {Array} sessionDatas - The current sessions in the redux store.
  * @param {Object} newSessionData - The updated session data.
  * @private
- * @returns {Array} The session datas with the updated session data added.
+ * @returns {Array} The session data with the updated session data added.
  */
 function _updateSessionDatas(sessionDatas: ISessionData[], newSessionData: ISessionData) {
     const hasExistingSessionData = sessionDatas.find(
@@ -133,7 +133,7 @@ function _updateSessionDatas(sessionDatas: ISessionData[], newSessionData: ISess
         });
     } else {
         // If the session data is not present, then there is nothing to update
-        // and instead it needs to be added to the known session datas.
+        // and instead it needs to be added to the known session data.
         newSessionDatas = [
             ...sessionDatas,
             { ...newSessionData }

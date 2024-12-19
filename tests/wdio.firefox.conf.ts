@@ -1,5 +1,5 @@
 // wdio.firefox.conf.ts
-// extends te main configuration file changing first participant to be Firefox
+// extends the main configuration file changing first participant to be Firefox
 import { merge } from 'lodash-es';
 import process from 'node:process';
 

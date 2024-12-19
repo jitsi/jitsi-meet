@@ -9,7 +9,7 @@ import { isLocalVideoTrackDesktop } from '../../base/tracks/functions.any';
  * Checks whether full-screen state should be used or not.
  *
  * @param {IReduxState} state - The redux state.
- * @returns {boolean} - Whether full-screen state shuld be used or not.
+ * @returns {boolean} - Whether full-screen state should be used or not.
  */
 export function shouldUseFullScreen(state: IReduxState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];

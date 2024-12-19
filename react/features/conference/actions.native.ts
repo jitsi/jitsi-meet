@@ -11,7 +11,7 @@ import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
  *
  * @param {JitsiParticipant} participant - The {@link JitsiParticipant}
  * instance which initiated the kick event.
- * @param {?Function} submit - The function to execute after submiting the dialog.
+ * @param {?Function} submit - The function to execute after submitting the dialog.
  * @returns {Function}
  */
 export function notifyKickedOut(participant: any, submit?: Function) {
@@ -38,7 +38,7 @@ export function notifyKickedOut(participant: any, submit?: Function) {
  * Notify that we've been kicked out of the conference.
  *
  * @param {string} reasonKey - The translation key for the reason why the conference failed.
- * @param {?Function} submit - The function to execute after submiting the dialog.
+ * @param {?Function} submit - The function to execute after submitting the dialog.
  * @returns {Function}
  */
 export function notifyConferenceFailed(reasonKey: string, submit?: Function) {
