@@ -19,11 +19,12 @@ if (process.env.HEADLESS === 'true') {
     ffArgs.push('--headless');
 }
 
+const ffExcludes = [
+    'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
+    'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
+];
+
 export const config = merge(defaultConfig, {
-    exclude: [
-        'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
-        'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
-    ],
     capabilities: {
         participant1: {
             capabilities: {
@@ -33,6 +34,30 @@ export const config = merge(defaultConfig, {
                     prefs: ffPreferences
                 },
                 acceptInsecureCerts: process.env.ALLOW_INSECURE_CERTS === 'true'
+            }
+        },
+        participant2: {
+            capabilities: {
+                'wdio:exclude': [
+                    ...defaultConfig.capabilities.participant2.capabilities['wdio:exclude'],
+                    ...ffExcludes
+                ]
+            }
+        },
+        participant3: {
+            capabilities: {
+                'wdio:exclude': [
+                    ...defaultConfig.capabilities.participant3.capabilities['wdio:exclude'],
+                    ...ffExcludes
+                ]
+            }
+        },
+        participant4: {
+            capabilities: {
+                'wdio:exclude': [
+                    ...defaultConfig.capabilities.participant4.capabilities['wdio:exclude'],
+                    ...ffExcludes
+                ]
             }
         }
     }
