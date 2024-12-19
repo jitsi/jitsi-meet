@@ -24,7 +24,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
-        return this.participant.driver.$(`[aria-label^="${accessibilityCSSSelector}"]`);
+        return this.participant.driver.$(`aria/${accessibilityCSSSelector}`);
     }
 
     /**
@@ -113,7 +113,10 @@ export default class Toolbar extends BasePageObject {
      */
     async clickParticipantsPaneButton(): Promise<void> {
         this.participant.log('Clicking on: Participants pane Button');
-        await this.getButton(PARTICIPANTS).click();
+
+        // Special case for participants pane button, as it contains the number of participants and its label
+        // is changing
+        await this.participant.driver.$(`[aria-label^="${PARTICIPANTS}"]`).click();
     }
 
     /**
@@ -158,7 +161,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private async isOverflowMenuOpen() {
-        return await this.participant.driver.$$(`[aria-label^="${OVERFLOW_MENU}"]`).length > 0;
+        return await this.participant.driver.$$(`aria/${OVERFLOW_MENU}`).length > 0;
     }
 
     /**
@@ -203,7 +206,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private async waitForOverFlowMenu(visible: boolean) {
-        await this.participant.driver.$(`[aria-label^="${OVERFLOW_MENU}"]`).waitForDisplayed({
+        await this.getButton(OVERFLOW_MENU).waitForDisplayed({
             reverse: !visible,
             timeout: 3000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`
