@@ -2,6 +2,8 @@ import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
+const CHAT = 'Open chat';
+const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
@@ -140,6 +142,22 @@ export default class Toolbar extends BasePageObject {
     async clickRaiseHandButton(): Promise<void> {
         this.participant.log('Clicking on: Raise hand Button');
         await this.getButton(RAISE_HAND).click();
+    }
+
+    /**
+     * Clicks on the chat button that opens chat panel.
+     */
+    async clickChatButton(): Promise<void> {
+        this.participant.log('Clicking on: Chat Button');
+        await this.getButton(CHAT).click();
+    }
+
+    /**
+     * Clicks on the chat button that closes chat panel.
+     */
+    async clickCloseChatButton(): Promise<void> {
+        this.participant.log('Clicking on: Close Chat Button');
+        await this.getButton(CLOSE_CHAT).click();
     }
 
     /**

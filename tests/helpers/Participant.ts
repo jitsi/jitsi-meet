@@ -5,6 +5,7 @@ import { multiremotebrowser } from '@wdio/globals';
 import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import BreakoutRooms from '../pageobjects/BreakoutRooms';
+import ChatPanel from '../pageobjects/ChatPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import Notifications from '../pageobjects/Notifications';
@@ -336,6 +337,13 @@ export class Participant {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
+    }
+
+    /**
+     * Returns the chat panel for this participant.
+     */
+    getChatPanel(): ChatPanel {
+        return new ChatPanel(this);
     }
 
     /**
