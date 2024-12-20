@@ -35,7 +35,10 @@ class RNOngoingNotification {
     private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
     static void createOngoingConferenceNotificationChannel(Activity currentActivity) {
+        JitsiMeetLogger.w(TAG + " Checking Android version and activity context");
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            JitsiMeetLogger.w(TAG + " Android version is lower than Oreo, skipping notification channel creation");
             return;
         }
         if (currentActivity == null) {
@@ -50,7 +53,7 @@ class RNOngoingNotification {
             = notificationManager.getNotificationChannel("OngoingConferenceChannel");
 
         if (channel != null) {
-            // The channel was already created, no need to do it again.
+            JitsiMeetLogger.w(TAG + " Notification channel already exists");
             return;
         }
 
@@ -60,12 +63,15 @@ class RNOngoingNotification {
         channel.setShowBadge(false);
 
         notificationManager.createNotificationChannel(channel);
+        JitsiMeetLogger.w(TAG + " Notification channel created successfully");
     }
     static Notification buildOngoingConferenceNotification(Context context) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
         }
+
+        JitsiMeetLogger.w(TAG + " Creating notification with context: " + context);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "OngoingConferenceChannel");
 
