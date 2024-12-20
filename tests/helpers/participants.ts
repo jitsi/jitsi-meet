@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Participant } from './Participant';
 import { IContext, IJoinOptions } from './types';
 
+const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
+
 /**
  * Ensure that there is on participant.
  *
@@ -236,4 +238,20 @@ export function parseJid(str: string): {
         domain: domainParts[0],
         resource: domainParts.length > 0 ? domainParts[1] : undefined
     };
+}
+
+/**
+ * Check the subject of the participant.
+ * @param participant
+ * @param subject
+ */
+export async function checkSubject(participant: Participant, subject: string) {
+    const localTile = participant.driver.$(SUBJECT_XPATH);
+
+    await localTile.waitForExist();
+    await localTile.moveTo();
+
+    const txt = await localTile.getText();
+
+    expect(txt.startsWith(subject)).toBe(true);
 }

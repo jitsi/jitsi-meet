@@ -1,6 +1,7 @@
 import { Participant } from '../helpers/Participant';
 
 import AVModerationMenu from './AVModerationMenu';
+import BasePageObject from './BasePageObject';
 
 /**
  * Classname of the closed/hidden participants pane
@@ -10,18 +11,7 @@ const PARTICIPANTS_PANE = 'participants_pane';
 /**
  * Represents the participants pane from the UI.
  */
-export default class ParticipantsPane {
-    private participant: Participant;
-
-    /**
-     * Initializes for a participant.
-     *
-     * @param {Participant} participant - The participant.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class ParticipantsPane extends BasePageObject {
     /**
      * Gets the audio video moderation menu.
      */
@@ -138,22 +128,10 @@ export default class ParticipantsPane {
         await this.participant.getNotifications().dismissAnyJoinNotification();
 
         const participantId = await participantToUnmute.getEndpointId();
-        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
 
-        await participantItem.waitForExist();
-        await participantItem.waitForStable();
-        await participantItem.waitForDisplayed();
-        await participantItem.moveTo();
-
+        await this.selectParticipant(participantToUnmute);
         if (fromContextMenu) {
-            const meetingParticipantMoreOptions = this.participant.driver
-                .$(`[data-testid="participant-more-options-${participantId}"]`);
-
-            await meetingParticipantMoreOptions.waitForExist();
-            await meetingParticipantMoreOptions.waitForDisplayed();
-            await meetingParticipantMoreOptions.waitForStable();
-            await meetingParticipantMoreOptions.moveTo();
-            await meetingParticipantMoreOptions.click();
+            await this.openParticipantContextMenu(participantToUnmute);
         }
 
         const unmuteButton = this.participant.driver
@@ -161,5 +139,33 @@ export default class ParticipantsPane {
 
         await unmuteButton.waitForExist();
         await unmuteButton.click();
+    }
+
+    /**
+     * Open context menu for given participant.
+     */
+    async selectParticipant(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
+
+        await participantItem.waitForExist();
+        await participantItem.waitForStable();
+        await participantItem.waitForDisplayed();
+        await participantItem.moveTo();
+    }
+
+    /**
+     * Open context menu for given participant.
+     */
+    async openParticipantContextMenu(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+        const meetingParticipantMoreOptions = this.participant.driver
+            .$(`[data-testid="participant-more-options-${participantId}"]`);
+
+        await meetingParticipantMoreOptions.waitForExist();
+        await meetingParticipantMoreOptions.waitForDisplayed();
+        await meetingParticipantMoreOptions.waitForStable();
+        await meetingParticipantMoreOptions.moveTo();
+        await meetingParticipantMoreOptions.click();
     }
 }

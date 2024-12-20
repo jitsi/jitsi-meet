@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import { Participant } from '../helpers/Participant';
+import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
 const AUDIO_UNMUTE = 'Unmute microphone';
@@ -16,18 +15,7 @@ const VIDEO_UNMUTE = 'Start camera';
 /**
  * The toolbar elements.
  */
-export default class Toolbar {
-    private participant: Participant;
-
-    /**
-     * Creates toolbar for a participant.
-     *
-     * @param {Participant} participant - The participants.
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class Toolbar extends BasePageObject {
     /**
      * Returns the button.
      *
@@ -36,7 +24,7 @@ export default class Toolbar {
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
-        return this.participant.driver.$(`[aria-label^="${accessibilityCSSSelector}"]`);
+        return this.participant.driver.$(`aria/${accessibilityCSSSelector}`);
     }
 
     /**
@@ -125,7 +113,10 @@ export default class Toolbar {
      */
     async clickParticipantsPaneButton(): Promise<void> {
         this.participant.log('Clicking on: Participants pane Button');
-        await this.getButton(PARTICIPANTS).click();
+
+        // Special case for participants pane button, as it contains the number of participants and its label
+        // is changing
+        await this.participant.driver.$(`[aria-label^="${PARTICIPANTS}"]`).click();
     }
 
     /**
@@ -170,7 +161,7 @@ export default class Toolbar {
      * @private
      */
     private async isOverflowMenuOpen() {
-        return await this.participant.driver.$$(`[aria-label^="${OVERFLOW_MENU}"]`).length > 0;
+        return await this.participant.driver.$$(`aria/${OVERFLOW_MENU}`).length > 0;
     }
 
     /**
@@ -215,7 +206,7 @@ export default class Toolbar {
      * @private
      */
     private async waitForOverFlowMenu(visible: boolean) {
-        await this.participant.driver.$(`[aria-label^="${OVERFLOW_MENU}"]`).waitForDisplayed({
+        await this.getButton(OVERFLOW_MENU).waitForDisplayed({
             reverse: !visible,
             timeout: 3000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`

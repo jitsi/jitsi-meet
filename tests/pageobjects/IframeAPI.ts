@@ -1,20 +1,11 @@
-import { Participant } from '../helpers/Participant';
 import { LOG_PREFIX } from '../helpers/browserLogger';
+
+import BasePageObject from './BasePageObject';
 
 /**
  * The Iframe API and helpers from iframeAPITest.html
  */
-export default class IframeAPI {
-    private participant: Participant;
-
-    /**
-     * Initializes for a participant.
-     * @param participant
-     */
-    constructor(participant: Participant) {
-        this.participant = participant;
-    }
-
+export default class IframeAPI extends BasePageObject {
     /**
      * Returns the json object from the iframeAPI helper.
      * @param event

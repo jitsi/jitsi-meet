@@ -178,9 +178,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 return;
             }
 
-            // if (process.env.GRID_HOST_URL) {
-            // TODO: make sure we use uploadFile only with chrome (it does not work with FF),
-            // we need to test it with the grid and FF, does it work there
             const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
 
             // @ts-ignore
@@ -199,7 +196,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     after() {
         const { ctx }: any = global;
 
-        if (ctx.webhooksProxy) {
+        if (ctx?.webhooksProxy) {
             ctx.webhooksProxy.disconnect();
         }
     },
