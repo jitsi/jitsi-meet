@@ -5,6 +5,7 @@ import { multiremotebrowser } from '@wdio/globals';
 import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import BreakoutRooms from '../pageobjects/BreakoutRooms';
+import ChatPanel from '../pageobjects/ChatPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import Notifications from '../pageobjects/Notifications';
@@ -121,7 +122,10 @@ export class Participant {
     async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
             room: ctx.roomName,
-            configOverwrite: this.config,
+            configOverwrite: {
+                ...this.config,
+                ...options.configOverwrite || {}
+            },
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
             }
@@ -336,6 +340,13 @@ export class Participant {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
+    }
+
+    /**
+     * Returns the chat panel for this participant.
+     */
+    getChatPanel(): ChatPanel {
+        return new ChatPanel(this);
     }
 
     /**

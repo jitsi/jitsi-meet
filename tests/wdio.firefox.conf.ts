@@ -24,7 +24,8 @@ const ffExcludes = [
     'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
 ];
 
-export const config = merge(defaultConfig, {
+const mergedConfig = merge(defaultConfig, {
+    ffExcludes,
     capabilities: {
         participant1: {
             capabilities: {
@@ -62,3 +63,9 @@ export const config = merge(defaultConfig, {
         }
     }
 }, { clone: false });
+
+// Remove the chrome options from the first participant
+// @ts-ignore
+mergedConfig.capabilities.participant1.capabilities['goog:chromeOptions'] = undefined;
+
+export const config = mergedConfig;

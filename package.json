@@ -142,6 +142,7 @@
     "@types/js-md5": "0.4.3",
     "@types/jsonwebtoken": "9.0.7",
     "@types/lodash-es": "4.17.12",
+    "@types/minimatch": "5.1.2",
     "@types/mocha": "10.0.10",
     "@types/moment-duration-format": "2.2.6",
     "@types/offscreencanvas": "2019.7.2",

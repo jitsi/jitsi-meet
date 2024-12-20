@@ -1,6 +1,7 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import minimatch from 'minimatch';
 import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
@@ -62,7 +63,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     specs: [
         'specs/**'
     ],
-    maxInstances: 1,
+    maxInstances: 1, // if changing check onWorkerStart logic
 
     baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture/',
     tsConfigPath: './tsconfig.json',
@@ -236,11 +237,34 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} context - The context object.
      */
     beforeTest(test, context) {
-        ctx.skipSuiteTests && context.skip();
+        if (ctx.skipSuiteTests) {
+            context.skip();
+
+            return;
+        }
 
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
+    },
+
+    /**
+     * Gets executed before a worker process is spawned and can be used to initialize specific service
+     * for that worker as well as modify runtime environments in an async fashion.
+     */
+    onWorkerStart(...args) {
+        // We run a worker per suite, and replay on this logic here
+        if (args[2].length > 1) {
+            console.warn('Our worker is supposed to get a single suite, but got more than one');
+
+            return;
+        }
+
+        // We skip the suite tests if the suite is marked as such, we used that from firefox overwrite
+        // @ts-ignore
+        if (config?.ffExcludes.some((e: string) => minimatch(args[2][0].replace('file://', ''), `${__dirname}/${e}`))) {
+            args[2].pop();
+        }
     },
 
     /**

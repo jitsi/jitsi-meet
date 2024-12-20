@@ -1,3 +1,5 @@
+import { IConfig } from '../../react/features/base/config/configType';
+
 import type { Participant } from './Participant';
 import WebhookProxy from './WebhookProxy';
 
@@ -16,6 +18,11 @@ export type IContext = {
 };
 
 export type IJoinOptions = {
+
+    /**
+     * Config overwrites to use.
+     */
+    configOverwrite?: IConfig;
 
     /**
      * Whether to skip setting display name.
