@@ -33,6 +33,7 @@ import com.facebook.react.modules.core.PermissionListener;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -113,13 +114,14 @@ public class JMOngoingConferenceService extends Service {
         if (permissionsArray.length > 0) {
             try {
                 currentActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE);
+                JitsiMeetLogger.w(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
             } catch (Exception e) {
                 JitsiMeetLogger.e(e, "Error requesting permissions");
                 listener.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, permissionsArray, new int[0]);
             }
         } else {
             doLaunch(context, currentActivity);
-            JitsiMeetLogger.w(TAG + " Service launched");
+            JitsiMeetLogger.w(TAG + " No permissions needed, launching service");
         }
     }
 
@@ -131,11 +133,15 @@ public class JMOngoingConferenceService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        JitsiMeetLogger.w(TAG + " Building ongoing conference notification");
+
         Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(this);
         if (notification == null) {
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
+            JitsiMeetLogger.w(TAG + " Starting service in foreground with notification");
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
             } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
