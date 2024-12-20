@@ -459,7 +459,7 @@ var config = {
 
     //     // Translation languages.
     //     // Available languages can be found in
-    //     // ./src/react/features/transcribing/translation-languages.json.
+    //     // ./lang/translation-languages.json.
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
 
     //     // Important languages to show on the top of the language list.
