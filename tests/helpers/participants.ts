@@ -28,26 +28,25 @@ export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions
  * Ensure that there are three participants.
  *
  * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(ctx: IContext): Promise<void> {
-    await joinTheModeratorAsP1(ctx);
-
-    const p2 = new Participant('participant2');
-    const p3 = new Participant('participant3');
-
-    ctx.p2 = p2;
-    ctx.p3 = p3;
+export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
+    await joinTheModeratorAsP1(ctx, options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        p2.joinConference(ctx),
-        p3.joinConference(ctx)
+        _joinParticipant('participant2', ctx.p2, p => {
+            ctx.p2 = p;
+        }, options),
+        _joinParticipant('participant3', ctx.p3, p => {
+            ctx.p3 = p;
+        }, options)
     ]);
 
     await Promise.all([
-        p2.waitForRemoteStreams(2),
-        p3.waitForRemoteStreams(2)
+        ctx.p2.waitForRemoteStreams(2),
+        ctx.p3.waitForRemoteStreams(2)
     ]);
 }
 

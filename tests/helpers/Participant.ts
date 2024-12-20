@@ -122,7 +122,10 @@ export class Participant {
     async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
         const config = {
             room: ctx.roomName,
-            configOverwrite: this.config,
+            configOverwrite: {
+                ...this.config,
+                ...options.configOverwrite || {}
+            },
             interfaceConfigOverwrite: {
                 SHOW_CHROME_EXTENSION_BANNER: false
             }
