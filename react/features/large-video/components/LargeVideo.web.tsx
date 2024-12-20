@@ -19,7 +19,7 @@ import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
-import { getLargeVideoParticipant } from '../functions';
+import { getLargeVideoParticipant, isWatermarksEnabled } from '../functions';
 
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
 
@@ -110,6 +110,11 @@ interface IProps {
     _visibleFilmstrip: boolean;
 
     /**
+     * Whether or not the watermarks are visible.
+     */
+    _watermarksEnabled: boolean;
+
+    /**
      * Whether or not the whiteboard is ready to be used.
      */
     _whiteboardEnabled: boolean;
@@ -193,6 +198,7 @@ class LargeVideo extends Component<IProps> {
             _isChatOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
+            _watermarksEnabled,
             _whiteboardEnabled
         } = this.props;
         const style = this._getCustomStyles();
@@ -208,7 +214,7 @@ class LargeVideo extends Component<IProps> {
                 {_whiteboardEnabled && <Whiteboard />}
                 <div id = 'etherpad' />
 
-                <Watermarks />
+                { _watermarksEnabled ? <Watermarks /> : <></> }
 
                 <div
                     id = 'dominantSpeaker'
@@ -378,6 +384,7 @@ function _mapStateToProps(state: IReduxState) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
+        _watermarksEnabled: isWatermarksEnabled(state),
         _whiteboardEnabled: isWhiteboardEnabled(state)
     };
 }
