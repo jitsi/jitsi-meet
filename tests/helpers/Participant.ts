@@ -4,6 +4,7 @@ import { multiremotebrowser } from '@wdio/globals';
 
 import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
+import BreakoutRooms from '../pageobjects/BreakoutRooms';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import Notifications from '../pageobjects/Notifications';
@@ -252,6 +253,22 @@ export class Participant {
     }
 
     /**
+     * Checks if the meeting supports breakout rooms.
+     */
+    async isBreakoutRoomsSupported() {
+        return await this.driver.execute(() => typeof APP !== 'undefined'
+            && APP.store?.getState()['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
+    }
+
+    /**
+     * Checks if the participant is in breakout room.
+     */
+    async isInBreakoutRoom() {
+        return await this.driver.execute(() => typeof APP !== 'undefined'
+            && APP.store?.getState()['features/base/conference'].conference?.getBreakoutRooms()?.isBreakoutRoom());
+    }
+
+    /**
      * Waits to join the muc.
      *
      * @returns {Promise<void>}
@@ -319,6 +336,15 @@ export class Participant {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
         });
+    }
+
+    /**
+     * Returns the BreakoutRooms for this participant.
+     *
+     * @returns {BreakoutRooms}
+     */
+    getBreakoutRooms(): BreakoutRooms {
+        return new BreakoutRooms(this);
     }
 
     /**

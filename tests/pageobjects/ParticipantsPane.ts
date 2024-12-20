@@ -128,22 +128,10 @@ export default class ParticipantsPane extends BasePageObject {
         await this.participant.getNotifications().dismissAnyJoinNotification();
 
         const participantId = await participantToUnmute.getEndpointId();
-        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
 
-        await participantItem.waitForExist();
-        await participantItem.waitForStable();
-        await participantItem.waitForDisplayed();
-        await participantItem.moveTo();
-
+        await this.selectParticipant(participantToUnmute);
         if (fromContextMenu) {
-            const meetingParticipantMoreOptions = this.participant.driver
-                .$(`[data-testid="participant-more-options-${participantId}"]`);
-
-            await meetingParticipantMoreOptions.waitForExist();
-            await meetingParticipantMoreOptions.waitForDisplayed();
-            await meetingParticipantMoreOptions.waitForStable();
-            await meetingParticipantMoreOptions.moveTo();
-            await meetingParticipantMoreOptions.click();
+            await this.openParticipantContextMenu(participantToUnmute);
         }
 
         const unmuteButton = this.participant.driver
@@ -151,5 +139,33 @@ export default class ParticipantsPane extends BasePageObject {
 
         await unmuteButton.waitForExist();
         await unmuteButton.click();
+    }
+
+    /**
+     * Open context menu for given participant.
+     */
+    async selectParticipant(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
+
+        await participantItem.waitForExist();
+        await participantItem.waitForStable();
+        await participantItem.waitForDisplayed();
+        await participantItem.moveTo();
+    }
+
+    /**
+     * Open context menu for given participant.
+     */
+    async openParticipantContextMenu(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+        const meetingParticipantMoreOptions = this.participant.driver
+            .$(`[data-testid="participant-more-options-${participantId}"]`);
+
+        await meetingParticipantMoreOptions.waitForExist();
+        await meetingParticipantMoreOptions.waitForDisplayed();
+        await meetingParticipantMoreOptions.waitForStable();
+        await meetingParticipantMoreOptions.moveTo();
+        await meetingParticipantMoreOptions.click();
     }
 }
