@@ -81,6 +81,13 @@ export function shouldDisplayTileView(state: IReduxState) {
         return false;
     }
 
+    const { tileView } = state['features/base/config'];
+
+    if (tileView?.force) {
+        return true;
+    }
+
+
     const participantCount = getParticipantCount(state);
     const { iAmRecorder } = state['features/base/config'];
 
@@ -99,7 +106,7 @@ export function shouldDisplayTileView(state: IReduxState) {
         // It's a 1-on-1 meeting
         || participantCount < 3
 
-        // There is a shared YouTube video in the meeting
+        // Screen or YouTube video is shared in the meeting
         || isVideoPlaying(state)
 
         // We want jibri to use stage view by default
@@ -132,7 +139,7 @@ export function updateAutoPinnedParticipant(
     // Unpin the screen share when the screen sharing participant leaves. Switch to tile view if no other
     // participant was pinned before screen share was auto-pinned, pin the previously pinned participant otherwise.
     if (!remoteScreenShares?.length) {
-        let participantId = null;
+        let participantId: string | null = null;
 
         if (pinned && !screenShares.find(share => share === pinned.id)) {
             participantId = pinned.id;
