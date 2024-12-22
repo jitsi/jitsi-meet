@@ -5,7 +5,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { setSharedVideoStatus } from '../../actions.any';
+import { setSharedVideoStatus } from '../../actions';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 /**

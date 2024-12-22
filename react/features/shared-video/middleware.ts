@@ -22,7 +22,7 @@ import {
     setAllowedUrlDomians,
     setSharedVideoStatus,
     showConfirmPlayingDialog
-} from './actions.any';
+} from './actions';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
     PLAYBACK_START,

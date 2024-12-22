@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconPlay } from '../../../base/icons/svg';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { toggleSharedVideo } from '../../actions.any';
+import { toggleSharedVideo } from '../../actions';
 import { isSharingStatus } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
@@ -83,16 +84,14 @@ class SharedVideoButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const {
-        disabled: sharedVideoBtnDisabled,
-        status: sharedVideoStatus
-    } = state['features/shared-video'];
+    const { ownerId, status: sharedVideoStatus } = state['features/shared-video'];
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const isSharing = isSharingStatus(sharedVideoStatus ?? '');
 
     return {
-        _isDisabled: Boolean(sharedVideoBtnDisabled),
-        _sharingVideo: isSharingStatus(sharedVideoStatus ?? '')
+        _isDisabled: isSharing && ownerId !== localParticipantId,
+        _sharingVideo: isSharing
     };
 }
-
 
 export default translate(connect(_mapStateToProps)(SharedVideoButton));
