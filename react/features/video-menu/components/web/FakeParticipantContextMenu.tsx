@@ -9,7 +9,7 @@ import { isWhiteboardParticipant } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-import { stopSharedVideo } from '../../../shared-video/actions.any';
+import { stopSharedVideo } from '../../../shared-video/actions';
 import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { setWhiteboardOpen } from '../../../whiteboard/actions';

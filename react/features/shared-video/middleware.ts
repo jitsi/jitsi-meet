@@ -22,7 +22,7 @@ import {
     setAllowedUrlDomians,
     setSharedVideoStatus,
     showConfirmPlayingDialog
-} from './actions.any';
+} from './actions';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
     PLAYBACK_START,
@@ -55,27 +55,41 @@ MiddlewareRegistry.register(store => next => action => {
 
         conference.addCommandListener(SHARED_VIDEO,
             ({ value, attributes }: { attributes: {
-                from: string; muted: string; state: string; time: string; }; value: string; }) => {
+                muted: string; state: string; time: string; }; value: string; },
+            from: string) => {
                 const state = getState();
-
-                const { from } = attributes;
                 const sharedVideoStatus = attributes.state;
+
+                const { ownerId } = state['features/shared-video'];
+
+                if (ownerId && ownerId !== from) {
+                    logger.warn(
+                        `User with id: ${from} sent shared video command: ${sharedVideoStatus} while we are playing.`);
+
+                    return;
+                }
 
                 if (isSharingStatus(sharedVideoStatus)) {
                     // confirmShowVideo is undefined the first time we receive
                     // when confirmShowVideo is false we ignore everything except stop that resets it
-                    if (getState()['features/shared-video'].confirmShowVideo === false) {
+                    if (state['features/shared-video'].confirmShowVideo === false) {
                         return;
                     }
 
-                    if (isURLAllowedForSharedVideo(value, getState()['features/shared-video'].allowedUrlDomains, true)
+                    if (isURLAllowedForSharedVideo(value, state['features/shared-video'].allowedUrlDomains, true)
                         || localParticipantId === from
-                        || getState()['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
-                        handleSharingVideoStatus(store, value, attributes, conference);
+                        || state['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
+                        handleSharingVideoStatus(store, value, {
+                            ...attributes,
+                            from
+                        }, conference);
                     } else {
-                        dispatch(showConfirmPlayingDialog(getParticipantDisplayName(getState(), from), () => {
+                        dispatch(showConfirmPlayingDialog(getParticipantDisplayName(state, from), () => {
 
-                            handleSharingVideoStatus(store, value, attributes, conference);
+                            handleSharingVideoStatus(store, value, {
+                                ...attributes,
+                                from
+                            }, conference);
 
                             return true; // on mobile this is used to close the dialog
                         }));
@@ -87,11 +101,11 @@ MiddlewareRegistry.register(store => next => action => {
                 if (sharedVideoStatus === 'stop') {
                     const videoParticipant = getParticipantById(state, value);
 
-                    if (getState()['features/shared-video'].confirmShowVideo === false) {
+                    if (state['features/shared-video'].confirmShowVideo === false) {
                         dispatch(showWarningNotification({
                             titleKey: 'dialog.shareVideoLinkStopped',
                             titleArguments: {
-                                name: getParticipantDisplayName(getState(), from)
+                                name: getParticipantDisplayName(state, from)
                             }
                         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
                     }
