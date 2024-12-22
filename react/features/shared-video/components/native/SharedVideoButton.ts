@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconPlay } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { toggleSharedVideo } from '../../actions.native';
+import { toggleSharedVideo } from '../../actions';
 import { isSharingStatus } from '../../functions';
 
 /**

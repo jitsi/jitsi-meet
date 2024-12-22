@@ -28,17 +28,6 @@ export const RESET_SHARED_VIDEO_STATUS = 'RESET_SHARED_VIDEO_STATUS';
  */
 export const SET_CONFIRM_SHOW_VIDEO = 'SET_CONFIRM_SHOW_VIDEO';
 
-
-/**
- * The type of the action which signals to disable or enable the shared video
- * button.
- *
- * {
- *     type: SET_DISABLE_BUTTON
- * }
- */
-export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
-
 /**
  * The type of the action which sets an array of whitelisted urls.
  *
