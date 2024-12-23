@@ -510,6 +510,7 @@ export interface IConfig {
         disableLowerHandByModerator?: boolean;
         disableLowerHandNotification?: boolean;
         disableNextSpeakerNotification?: boolean;
+        disableRaisedHandRecognition?: boolean;
         disableRemoveRaisedHandOnFocus?: boolean;
     };
     readOnlyName?: boolean;

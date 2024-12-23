@@ -108,6 +108,10 @@ deploy-face-landmarks:
 		$(FACE_MODELS_DIR)/blazeface-front.json \
 		$(FACE_MODELS_DIR)/emotion.bin \
 		$(FACE_MODELS_DIR)/emotion.json \
+		$(FACE_MODELS_DIR)/handlandmark-lite.bin \
+		$(FACE_MODELS_DIR)/handlandmark-lite.json \
+		$(FACE_MODELS_DIR)/handtrack.bin \
+		$(FACE_MODELS_DIR)/handtrack.json \
 		$(DEPLOY_DIR)
 
 deploy-css:
