@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 package org.jitsi.meet.sdk;
+
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 import static android.Manifest.permission.RECORD_AUDIO;
 
 import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
-import android.content.ComponentName;
+
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+
 import android.os.Build;
 import android.os.IBinder;
 
@@ -51,28 +54,23 @@ public class JMOngoingConferenceService extends Service {
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    public static void doLaunch(Context context, Activity currentActivity) {
+    public static void doLaunch(Context context) {
 
-        RNOngoingNotification.createOngoingConferenceNotificationChannel(currentActivity);
+        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
 
         Intent intent = new Intent(context, JMOngoingConferenceService.class);
 
-        ComponentName componentName;
-
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                componentName = context.startForegroundService(intent);
+                context.startForegroundService(intent);
             } else {
-                componentName = context.startService(intent);
+                context.startService(intent);
             }
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
             JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
             return;
-        }
-        if (componentName == null) {
-            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
         }
     }
 
@@ -92,7 +90,7 @@ public class JMOngoingConferenceService extends Service {
                     }
 
                     if (counter == results.length){
-                        doLaunch(context, currentActivity);
+                        doLaunch(context);
                         JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
                     } else {
                         JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
@@ -120,7 +118,7 @@ public class JMOngoingConferenceService extends Service {
                 listener.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, permissionsArray, new int[0]);
             }
         } else {
-            doLaunch(context, currentActivity);
+            doLaunch(context);
             JitsiMeetLogger.w(TAG + " No permissions needed, launching service");
         }
     }

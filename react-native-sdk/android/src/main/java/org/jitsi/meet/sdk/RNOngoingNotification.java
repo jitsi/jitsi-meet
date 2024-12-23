@@ -14,40 +14,41 @@
  * limitations under the License.
  */
 package org.jitsi.meet.sdk;
-import android.app.Activity;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.content.Context;
-import android.content.Intent;
+
 import android.os.Build;
-import androidx.annotation.StringRes;
+
 import androidx.core.app.NotificationCompat;
+
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+
 import java.util.Random;
+
 /**
  * Helper class for creating the ongoing notification which is used with
- * {@link JitsiMeetOngoingConferenceService}. It allows the user to easily get back to the app
+ * {@link JMOngoingConferenceService}. It allows the user to easily get back to the app
  * and to hangup from within the notification itself.
  */
 class RNOngoingNotification {
     private static final String TAG = RNOngoingNotification.class.getSimpleName();
 
-    static void createOngoingConferenceNotificationChannel(Activity currentActivity) {
-        JitsiMeetLogger.w(TAG + " Checking Android version and activity context");
-
+    static void createOngoingConferenceNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             JitsiMeetLogger.w(TAG + " Android version is lower than Oreo, skipping notification channel creation");
             return;
         }
-        if (currentActivity == null) {
+        if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;
         }
 
         NotificationManager notificationManager
-            = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+            = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
             = notificationManager.getNotificationChannel("OngoingConferenceChannel");
@@ -57,7 +58,7 @@ class RNOngoingNotification {
             return;
         }
 
-        channel = new NotificationChannel("OngoingConferenceChannel", currentActivity.getString(R.string.ongoing_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel("OngoingConferenceChannel", context.getString(R.string.ongoing_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);
@@ -86,7 +87,8 @@ class RNOngoingNotification {
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
-            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
+            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName())),
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
 
         return builder.build();
     }
