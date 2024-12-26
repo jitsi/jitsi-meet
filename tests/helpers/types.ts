@@ -25,6 +25,11 @@ export type IJoinOptions = {
     configOverwrite?: IConfig;
 
     /**
+     * The display name to use.
+     */
+    displayName?: string;
+
+    /**
      * Whether to skip setting display name.
      */
     skipDisplayName?: boolean;

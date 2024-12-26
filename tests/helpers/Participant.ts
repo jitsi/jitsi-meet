@@ -134,7 +134,7 @@ export class Participant {
         if (!options.skipDisplayName) {
             // @ts-ignore
             config.userInfo = {
-                displayName: this._name
+                displayName: options.displayName || this._name
             };
         }
 
