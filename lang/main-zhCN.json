@@ -410,6 +410,7 @@
         "sendPrivateMessageTitle": "私信回复？",
         "serviceUnavailable": "服务不可用",
         "sessTerminated": "通话已结束",
+        "sessTerminatedReason": "会议已经结束",
         "sessionRestarted": "由于连接问题，呼叫重新启动。",
         "shareAudio": "继续",
         "shareAudioTitle": "如何分享音频",
