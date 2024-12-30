@@ -5,6 +5,7 @@ const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
+const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
@@ -175,6 +176,14 @@ export default class Toolbar extends BasePageObject {
      */
     async clickExitTileViewButton() {
         await this.getButton(EXIT_TILE_VIEW_BUTTON).click();
+    }
+
+    /**
+     * Clicks on the hangup button that ends the conference.
+     */
+    async clickHangupButton(): Promise<void> {
+        this.participant.log('Clicking on: Hangup Button');
+        await this.getButton(HANGUP).click();
     }
 
     /**
