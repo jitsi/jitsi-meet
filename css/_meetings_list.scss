@@ -19,11 +19,11 @@
         flex-direction: column;
 
         .description {
-           color: #2f3237;
-           font-size: 14px;
-           line-height: 18px;
-           margin-bottom: 16px;
-           max-width: 436px;
+            color: #2f3237;
+            font-size: 14px;
+            line-height: 18px;
+            margin-bottom: 16px;
+            max-width: 436px;
         }
     }
 
@@ -156,14 +156,22 @@
         margin-right: 16px;
         position: absolute;
 
-        &> svg {
+        &>svg {
             fill: #0074e0;
         }
     }
 
-    .item:hover, .item:focus, .item:focus-within {
+    .item:hover,
+    .item:focus,
+    .item:focus-within {
         .delete-meeting {
             display: block;
+        }
+
+        .delete-meeting:hover {
+            &>svg {
+                fill: #4687ED;
+            }
         }
     }
 }
