@@ -127,7 +127,8 @@
             cursor: pointer;
         }
 
-        &.with-click-handler:hover {
+        &.with-click-handler:hover,
+        &.with-click-handler:focus {
             background-color: #c7ddff;
         }
 

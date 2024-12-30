@@ -227,14 +227,14 @@ class MeetingsList extends Component<IProps> {
             <Container
                 className = { rootClassName }
                 key = { index }
-                onClick = { onPress }>
+                onClick = { onPress }
+                tabIndex = { 0 }>
                 <Container className = 'right-column'>
                     <Text
                         className = 'title'
                         onClick = { onPress }
                         onKeyPress = { onKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
+                        role = 'button'>
                         { title }
                     </Text>
                     {
