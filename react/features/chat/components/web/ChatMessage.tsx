@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -264,7 +264,7 @@ const ChatMessage = ({
      *
      * @returns {React$Element<*>}
      */
-    const renderReactions = () => {
+    const renderReactions = useMemo(() => {
         if (!message.reactions || message.reactions.size === 0) {
             return null;
         }
@@ -321,7 +321,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    };
+    }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
     return (
         <div
@@ -366,7 +366,7 @@ const ChatMessage = ({
                                     <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.size > 0 && (
                                             <>
-                                                {renderReactions()}
+                                                {renderReactions}
                                             </>
                                         )}
                                     </div>
