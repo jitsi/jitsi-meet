@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -321,7 +321,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    },[ message?.reactions , isHovered , isReactionsOpen ]);
+    }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
     return (
         <div
