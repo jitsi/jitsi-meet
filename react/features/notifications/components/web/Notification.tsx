@@ -345,6 +345,7 @@ const Notification = ({
                 { !disableClosing && (
                     <Icon
                         className = { classes.closeIcon }
+                        tabIndex = { 0 }
                         color = { theme.palette.icon04 }
                         id = 'close-notification'
                         onClick = { onDismiss }
