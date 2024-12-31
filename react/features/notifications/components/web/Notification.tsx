@@ -345,12 +345,12 @@ const Notification = ({
                 { !disableClosing && (
                     <Icon
                         className = { classes.closeIcon }
-                        tabIndex = { 0 }
                         color = { theme.palette.icon04 }
                         id = 'close-notification'
                         onClick = { onDismiss }
                         size = { 20 }
                         src = { IconCloseLarge }
+                        tabIndex = { 0 }
                         testId = { `${titleKey || descriptionKey}-dismiss` } />
                 )}
             </div>
