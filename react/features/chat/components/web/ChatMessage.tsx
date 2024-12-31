@@ -321,7 +321,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    },[message?.reactions, isHovered, isReactionsOpen]);
+    },[ message?.reactions , isHovered , isReactionsOpen ]);
 
     return (
         <div
