@@ -18,7 +18,6 @@ import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
-
 /**
  * Check if native modules are being used or not.
  * If not, then the init of middleware doesn't happen.
