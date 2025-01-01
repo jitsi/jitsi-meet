@@ -32,6 +32,10 @@
     pointer-events: none;
     z-index: $toolbarZ + 2;
 
+    .toolbox-content {
+        margin-bottom: 46px;
+    }
+
     &.shift-up {
         bottom: calc(((#{$newToolbarSize} + 30px) * 2) * -1);
     }
