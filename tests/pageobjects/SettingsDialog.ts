@@ -1,7 +1,9 @@
 import BaseDialog from './BaseDialog';
 
 const EMAIL_FIELD = '#setEmail';
+const HIDE_SELF_VIEW_CHECKBOX = '//input[@name="hide-self-view"]';
 const SETTINGS_DIALOG_CONTENT = '.settings-pane';
+const X_PATH_MORE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="General"]';
 const X_PATH_PROFILE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Profile"]';
 
 /**
@@ -35,6 +37,13 @@ export default class SettingsDialog extends BaseDialog {
     }
 
     /**
+     * Selects the Profile tab to be displayed.
+     */
+    async openMoreTab() {
+        await this.openTab(X_PATH_MORE_TAB);
+    }
+
+    /**
      * Enters the passed in email into the email field.
      * @param email
      */
@@ -58,5 +67,22 @@ export default class SettingsDialog extends BaseDialog {
      */
     async submit() {
         await this.clickOkButton();
+    }
+
+    /**
+     * Sets the state checked/selected of a checkbox in the settings dialog.
+     */
+    async setHideSelfView(hideSelfView: boolean) {
+        await this.openMoreTab();
+
+        const checkbox = this.participant.driver.$(HIDE_SELF_VIEW_CHECKBOX);
+
+        await checkbox.waitForExist();
+
+        if (hideSelfView !== await checkbox.isSelected()) {
+            // we show a div with svg and text after the input and those elements grab the click
+            // so we need to click on the parent element
+            await this.participant.driver.$(`${HIDE_SELF_VIEW_CHECKBOX}//ancestor::div[1]`).click();
+        }
     }
 }

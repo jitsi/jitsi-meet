@@ -5,11 +5,15 @@ const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
+const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
+const SETTINGS = 'Open settings';
+const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
+const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
@@ -161,12 +165,45 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
+     * Clicks on the tile view button which enables tile layout.
+     */
+    async clickEnterTileViewButton() {
+        await this.getButton(ENTER_TILE_VIEW_BUTTON).click();
+    }
+
+    /**
+     * Clicks on the tile view button which exits tile layout.
+     */
+    async clickExitTileViewButton() {
+        await this.getButton(EXIT_TILE_VIEW_BUTTON).click();
+    }
+
+    /**
+     * Clicks on the hangup button that ends the conference.
+     */
+    async clickHangupButton(): Promise<void> {
+        this.participant.log('Clicking on: Hangup Button');
+        await this.getButton(HANGUP).click();
+    }
+
+    /**
+     * Clicks on the settings toolbar button which opens or closes the settings panel.
+     */
+    async clickSettingsButton() {
+        await this.clickButtonInOverflowMenu(SETTINGS);
+    }
+
+    /**
      * Ensure the overflow menu is open and clicks on a specified button.
      * @param accessibilityLabel The accessibility label of the button to be clicked.
      * @private
      */
     private async clickButtonInOverflowMenu(accessibilityLabel: string) {
         await this.openOverflowMenu();
+
+        // sometimes the overflow button tooltip is over the last entry in the menu,
+        // so let's move focus away before clicking the button
+        await this.participant.driver.$('#overflow-context-menu').moveTo();
 
         this.participant.log(`Clicking on: ${accessibilityLabel}`);
         await this.getButton(accessibilityLabel).click();
