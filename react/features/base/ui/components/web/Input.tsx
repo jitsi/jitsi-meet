@@ -184,7 +184,7 @@ const Input = React.forwardRef<any, IProps>(({
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
-    const showClearIcon = clearable && value !== '' && !disabled 
+    const showClearIcon = clearable && value !== '' && !disabled;
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange?.(e.target.value), []);
