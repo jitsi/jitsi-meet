@@ -98,6 +98,9 @@ const useStyles = makeStyles()(theme => {
 
             '&.error': {
                 boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+            },
+            '&.clearable-input': {
+                paddingRight: '46px'
             }
         },
 
@@ -119,10 +122,6 @@ const useStyles = makeStyles()(theme => {
 
         iconClickable: {
             cursor: 'pointer'
-        },
-
-        clearableInput: {
-            paddingRight: '46px'
         },
 
         clearButton: {
@@ -185,6 +184,7 @@ const Input = React.forwardRef<any, IProps>(({
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
+    const showClearIcon = clearable && value !== '' && !disabled;
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange?.(e.target.value), []);
@@ -211,7 +211,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
                         disabled = { disabled }
                         id = { id }
                         maxLength = { maxLength }
@@ -232,7 +232,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
                         data-testid = { testId }
                         disabled = { disabled }
                         id = { id }
@@ -252,7 +252,7 @@ const Input = React.forwardRef<any, IProps>(({
                         type = { type }
                         value = { value } />
                 )}
-                {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
+                {showClearIcon && <button className = { styles.clearButton }>
                     <Icon
                         onClick = { clearInput }
                         size = { 20 }
