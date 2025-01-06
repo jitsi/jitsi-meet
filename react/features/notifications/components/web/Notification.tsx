@@ -192,7 +192,7 @@ const Notification = ({
     uid
 }: IProps) => {
     const { classes, cx, theme } = useStyles();
-    const { t ,i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const language = i18n.language;
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
@@ -331,8 +331,8 @@ const Notification = ({
                         src = { getIcon() } />
                 </div>
                 <div className = { classes.textContainer }>
-                    <span 
-                        className = { classes.title } 
+                    <span
+                        className = { classes.title }
                         lang = { language }>{title || t(titleKey ?? '', titleArguments)}
                     </span>
                     {renderDescription()}
