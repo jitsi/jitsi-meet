@@ -124,7 +124,9 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold)
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            overflowWrap: 'break-word',
+            hyphens: 'auto'
         },
 
         description: {
@@ -190,7 +192,8 @@ const Notification = ({
     uid
 }: IProps) => {
     const { classes, cx, theme } = useStyles();
-    const { t } = useTranslation();
+    const { t , i18n } = useTranslation();
+    const language = i18n.language;
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
 
@@ -328,7 +331,7 @@ const Notification = ({
                         src = { getIcon() } />
                 </div>
                 <div className = { classes.textContainer }>
-                    <span className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}</span>
+                    <span className = { classes.title } lang = { language }>{title || t(titleKey ?? '', titleArguments)}</span>
                     {renderDescription()}
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
