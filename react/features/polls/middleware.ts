@@ -31,7 +31,7 @@ StateListenerRegistry.register(
         }
     });
 
-const parsePollData = (pollData: IPollData): IPoll | null => {
+const parsePollData = (pollData: Partial<IPollData>): IPoll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -122,6 +122,18 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
 
     case COMMAND_NEW_POLL: {
         const { pollId, answers, senderId, question } = data;
+        const tmp = {
+            id: pollId,
+            answers,
+            question
+        };
+
+        // Check integrity of the poll data.
+        // TODO(saghul): we should move this to the server side, likely by storing the
+        // poll data in the room metadata.
+        if (parsePollData(tmp) === null) {
+            return;
+        }
 
         const poll = {
             changingVote: false,
