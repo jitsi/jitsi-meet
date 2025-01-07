@@ -3,6 +3,11 @@ import { Participant } from '../helpers/Participant';
 import BaseDialog from './BaseDialog';
 import BasePageObject from './BasePageObject';
 
+const LOCAL_VIDEO_XPATH = '//span[@id="localVideoContainer"]';
+const LOCAL_VIDEO_MENU_TRIGGER = '#local-video-menu-trigger';
+const LOCAL_USER_CONTROLS = 'aria/Local user controls';
+const HIDE_SELF_VIEW_BUTTON_XPATH = '//div[contains(@class, "popover")]//div[@id="hideselfviewButton"]';
+
 /**
  * Filmstrip elements.
  */
@@ -120,5 +125,32 @@ export default class Filmstrip extends BasePageObject {
      */
     async muteVideo(participant: Participant) {
         await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'mutevideolink', true);
+    }
+
+    /**
+     * Clicks on the hide self view button from local video.
+     */
+    async hideSelfView() {
+        // open local video menu
+        await this.participant.driver.$(LOCAL_VIDEO_MENU_TRIGGER).moveTo();
+        await this.participant.driver.$(LOCAL_USER_CONTROLS).moveTo();
+
+        // click Hide self view button
+        const hideSelfViewButton = this.participant.driver.$(HIDE_SELF_VIEW_BUTTON_XPATH);
+
+        await hideSelfViewButton.waitForExist();
+        await hideSelfViewButton.waitForClickable();
+        await hideSelfViewButton.click();
+    }
+
+    /**
+     * Checks whether the local self view is displayed or not.
+     */
+    async assertSelfViewIsHidden(hidden: boolean) {
+        await this.participant.driver.$(LOCAL_VIDEO_XPATH).waitForDisplayed({
+            reverse: hidden,
+            timeout: 5000,
+            timeoutMsg: `Local video thumbnail is${hidden ? '' : ' not'} displayed for ${this.participant.name}`
+        });
     }
 }

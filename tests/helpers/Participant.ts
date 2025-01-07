@@ -1,6 +1,7 @@
 /* global APP $ */
 
 import { multiremotebrowser } from '@wdio/globals';
+import { Key } from 'webdriverio';
 
 import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
@@ -134,7 +135,7 @@ export class Participant {
         if (!options.skipDisplayName) {
             // @ts-ignore
             config.userInfo = {
-                displayName: this._name
+                displayName: options.displayName || this._name
             };
         }
 
@@ -441,16 +442,40 @@ export class Participant {
     }
 
     /**
-     * Returns the local display name.
+     * Returns the local display name element.
+     * @private
      */
-    async getLocalDisplayName() {
+    private async getLocalDisplayNameElement() {
         const localVideoContainer = this.driver.$('span[id="localVideoContainer"]');
 
         await localVideoContainer.moveTo();
 
-        const localDisplayName = localVideoContainer.$('span[id="localDisplayName"]');
+        return localVideoContainer.$('span[id="localDisplayName"]');
+    }
 
-        return await localDisplayName.getText();
+    /**
+     * Returns the local display name.
+     */
+    async getLocalDisplayName() {
+        return await (await this.getLocalDisplayNameElement()).getText();
+    }
+
+    /**
+     * Sets the display name of the local participant.
+     */
+    async setLocalDisplayName(displayName: string) {
+        const localDisplayName = await this.getLocalDisplayNameElement();
+
+        await localDisplayName.click();
+
+        await this.driver.keys(displayName);
+        await this.driver.keys(Key.Return);
+
+        // just click somewhere to lose focus, to make sure editing has ended
+        const localVideoContainer = this.driver.$('span[id="localVideoContainer"]');
+
+        await localVideoContainer.moveTo();
+        await localVideoContainer.click();
     }
 
     /**
