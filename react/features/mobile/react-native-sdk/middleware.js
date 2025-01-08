@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
 
 import { getAppProp } from '../../base/app/functions';
 import {
@@ -93,7 +93,7 @@ const { JMOngoingConference } = NativeModules;
  * Before enabling media projection service control on Android,
  * we need to check if native modules are being used or not.
  */
-Platform.OS === 'android' && !externalAPIEnabled && StateListenerRegistry.register(
+JMOngoingConference && !externalAPIEnabled && StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, previousConference) => {
         if (!conference) {

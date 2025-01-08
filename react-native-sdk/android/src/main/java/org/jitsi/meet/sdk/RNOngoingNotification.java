@@ -19,6 +19,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
+import android.app.Service;
 import android.content.Context;
 
 import android.os.Build;
@@ -26,8 +27,6 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
-
-import java.util.Random;
 
 /**
  * Helper class for creating the ongoing notification which is used with
@@ -87,7 +86,7 @@ class RNOngoingNotification {
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
-            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName())),
+            .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()))
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
 
         return builder.build();
