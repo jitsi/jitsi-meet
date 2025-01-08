@@ -706,6 +706,18 @@ export function isLocalParticipantModerator(stateful: IStateful) {
     return isParticipantModerator(local);
 }
 
+export function getNumberOfNonModeratorParticipants(stateful: IStateful) {
+    const state = toState(stateful)['features/base/participants'];
+
+    const { numberOfNonModeratorParticipants } = state;
+
+    if (!numberOfNonModeratorParticipants) {
+        return false;
+    }
+
+    return numberOfNonModeratorParticipants;
+}
+
 /**
  * Resolves the first loadable avatar URL for a participant.
  *

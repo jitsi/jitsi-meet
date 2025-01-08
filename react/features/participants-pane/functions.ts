@@ -13,6 +13,7 @@ import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
+    getNumberOfNonModeratorParticipants,
     getRaiseHandsQueue,
     getRemoteParticipantsSorted,
     isLocalParticipantModerator,
@@ -278,8 +279,9 @@ export const isMuteAllVisible = (state: IReduxState) => {
     const isLocalModerator = isLocalParticipantModerator(state);
     const inBreakoutRoom = isInBreakoutRoom(state);
     const { hideMuteAllButton } = getParticipantsPaneConfig(state);
+    const numberOfNonModeratorParticipants = getNumberOfNonModeratorParticipants(state)
 
-    return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator;
+    return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator && numberOfNonModeratorParticipants != 0;
 };
 
 /**
