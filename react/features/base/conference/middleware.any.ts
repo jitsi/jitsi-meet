@@ -430,7 +430,7 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
         } as INotificationProps;
 
         const { locationURL = { href: '' } as URL } = getState()['features/base/connection'];
-        const { tenant } = parseURIString(locationURL.href) || {};
+        const { tenant = '' } = parseURIString(locationURL.href) || {};
 
         if (tenant.startsWith('-') || tenant.endsWith('-')) {
             notificationProps.descriptionKey = 'notify.invalidTenantHyphenDescription';
