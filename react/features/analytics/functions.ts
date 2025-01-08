@@ -155,6 +155,30 @@ export async function createHandlers({ getState }: IStore) {
 }
 
 /**
+ * Checks whether a url is a data URL or not.
+ *
+ * @param {string} url - The URL to be checked.
+ * @returns {boolean}
+ */
+function isDataURL(url?: string): boolean {
+    if (typeof url !== 'string') { // The icon will be ignored
+        return false;
+    }
+
+    try {
+        const urlObject = new URL(url);
+
+        if (urlObject.protocol === 'data:') {
+            return false;
+        }
+    } catch {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Inits JitsiMeetJS.analytics by setting permanent properties and setting the handlers from the loaded scripts.
  * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be null.
  *
@@ -186,6 +210,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         isPromotedFromVisitor?: boolean;
         isVisitor?: boolean;
         overwritesCustomButtonsWithURL?: boolean;
+        overwritesCustomParticipantButtonsWithURL?: boolean;
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesEtherpadBase?: boolean;
@@ -287,23 +312,12 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     const customToolbarButtons = params['config.customToolbarButtons'] ?? [];
 
     permanentProperties.overwritesCustomButtonsWithURL = Boolean(
-        customToolbarButtons.find(({ icon }: { icon: string; }) => {
-            if (typeof icon !== 'string') { // The icon will be ignored
-                return false;
-            }
+        customToolbarButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
 
-            try {
-                const url = new URL(icon);
+    const customParticipantMenuButtons = params['config.customParticipantMenuButtons'] ?? [];
 
-                if (url.protocol === 'data:') {
-                    return false;
-                }
-            } catch {
-                return false;
-            }
-
-            return true;
-        }));
+    permanentProperties.overwritesCustomParticipantButtonsWithURL = Boolean(
+        customParticipantMenuButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
