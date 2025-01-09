@@ -5,6 +5,7 @@ const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
+const DESKTOP = 'Start sharing your screen';
 const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
@@ -12,6 +13,7 @@ const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
 const SETTINGS = 'Open settings';
+const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
@@ -162,6 +164,20 @@ export default class Toolbar extends BasePageObject {
     async clickCloseChatButton(): Promise<void> {
         this.participant.log('Clicking on: Close Chat Button');
         await this.getButton(CLOSE_CHAT).click();
+    }
+
+    /**
+     * Clicks on the desktop sharing button that starts desktop sharing.
+     */
+    async clickDesktopSharingButton() {
+        await this.getButton(DESKTOP).click();
+    }
+
+    /**
+     * Clicks on the desktop sharing button to stop it.
+     */
+    async clickStopDesktopSharingButton() {
+        await this.getButton(STOP_DESKTOP).click();
     }
 
     /**
