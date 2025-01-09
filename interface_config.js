@@ -227,7 +227,7 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading f droid app.
      */
-    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/packages/org.jitsi.meet/',
 
     // Connection indicators (
     // CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
