@@ -4,7 +4,7 @@ import { merge } from 'lodash-es';
 import { URL } from 'url';
 
 // @ts-ignore
-import { config as defaultConfig } from './wdio.conf.ts';
+import { config as defaultConfig } from './wdio.conf.ts?grid=true';
 
 const gridUrl = new URL(process.env.GRID_HOST_URL as string);
 const protocol = gridUrl.protocol.replace(':', '');

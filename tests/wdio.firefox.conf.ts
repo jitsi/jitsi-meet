@@ -21,7 +21,10 @@ if (process.env.HEADLESS === 'true') {
 
 const ffExcludes = [
     'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
-    'specs/3way/activeSpeaker.spec.ts' // FF does not support setting a file as mic input
+
+    // FF does not support setting a file as mic input, no dominant speaker events
+    'specs/3way/activeSpeaker.spec.ts',
+    'specs/4way/desktopSharing.spec.ts'
 ];
 
 const mergedConfig = merge(defaultConfig, {
