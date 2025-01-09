@@ -1083,7 +1083,7 @@
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarningNative": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting ",
-        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing you meeting <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
         "title": "Security Options",
         "unsafeRoomActions": {
             "meeting": "Consider securing your meeting using the security button.",
