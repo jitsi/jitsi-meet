@@ -2,7 +2,7 @@ import { IReduxState } from '../../app/types';
 import { requestDisableAudioModeration, requestEnableAudioModeration } from '../../av-moderation/actions';
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
-import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
+import { getLocalParticipant, getParticipantDisplayName, isEveryoneModerator } from '../../base/participants/functions';
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantDialog, {
@@ -17,6 +17,7 @@ export interface IProps extends AbstractProps {
     content?: string;
     exclude: Array<string>;
     isAudioModerationEnabled?: boolean;
+    isEveryoneModerator: boolean;
     isModerationSupported?: boolean;
     showAdvancedModerationToggle: boolean;
     title: string;
@@ -119,10 +120,12 @@ export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
 
     return whom.length ? {
         content: t('dialog.muteEveryoneElseDialog'),
-        title: t('dialog.muteEveryoneElseTitle', { whom })
+        title: t('dialog.muteEveryoneElseTitle', { whom }),
+        isEveryoneModerator: isEveryoneModerator(state)
     } : {
         title: t('dialog.muteEveryoneTitle'),
         isAudioModerationEnabled: isEnabledFromState(MEDIA_TYPE.AUDIO, state),
-        isModerationSupported: isSupported()(state)
+        isModerationSupported: isSupported()(state),
+        isEveryoneModerator: isEveryoneModerator(state)
     };
 }
