@@ -17,10 +17,10 @@ export interface IProps extends AbstractProps {
     content?: string;
     exclude: Array<string>;
     isAudioModerationEnabled?: boolean;
+    isEveryoneModerator: boolean;
     isModerationSupported?: boolean;
     showAdvancedModerationToggle: boolean;
     title: string;
-    isEveryoneModerator: boolean
 }
 
 interface IState {
@@ -120,7 +120,8 @@ export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
 
     return whom.length ? {
         content: t('dialog.muteEveryoneElseDialog'),
-        title: t('dialog.muteEveryoneElseTitle', { whom })
+        title: t('dialog.muteEveryoneElseTitle', { whom }),
+        isEveryoneModerator: isEveryoneModerator(state)
     } : {
         title: t('dialog.muteEveryoneTitle'),
         isAudioModerationEnabled: isEnabledFromState(MEDIA_TYPE.AUDIO, state),
