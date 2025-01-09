@@ -157,9 +157,15 @@ async function _toggleScreenSharing(
             try {
                 tracks = await createLocalTracksF(options) as any[];
             } catch (error) {
-                dispatch(handleScreenSharingError(error));
+                if (error.name) {
+                    console.log(error.message);
+                    return; 
+                }
+            
+               dispatch(handleScreenSharingError(error, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+               throw error;
 
-                return;
+
             }
         }
 
