@@ -99,6 +99,7 @@ export default class Filmstrip extends BasePageObject {
         const popoverElement = this.participant.driver.$(
             `//div[contains(@class, 'popover')]//div[contains(@class, '${linkClassname}')]`);
 
+        await popoverElement.waitForExist();
         await popoverElement.waitForDisplayed();
         await popoverElement.click();
 
@@ -125,6 +126,14 @@ export default class Filmstrip extends BasePageObject {
      */
     async muteVideo(participant: Participant) {
         await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'mutevideolink', true);
+    }
+
+    /**
+     * Kicks a participant.
+     * @param participantId
+     */
+    async kickParticipant(participantId: string) {
+        await this.clickOnRemoteMenuLink(participantId, 'kicklink', true);
     }
 
     /**

@@ -5,6 +5,7 @@ import WebhookProxy from './WebhookProxy';
 
 export type IContext = {
     conferenceJid: string;
+    dialInPin: string;
     iframeAPI: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
@@ -14,6 +15,7 @@ export type IContext = {
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
+    times: any;
     webhooksProxy: WebhookProxy;
 };
 
