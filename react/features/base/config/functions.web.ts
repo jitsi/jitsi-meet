@@ -89,7 +89,7 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
     android.downloadLink = android.downloadLink
         || 'https://play.google.com/store/apps/details?id=org.jitsi.meet';
     android.appPackage = android.appPackage || 'org.jitsi.meet';
-    android.fDroidUrl = android.fDroidUrl || 'https://f-droid.org/en/packages/org.jitsi.meet/';
+    android.fDroidUrl = android.fDroidUrl || 'https://f-droid.org/packages/org.jitsi.meet/';
     if (android.dynamicLink) {
         android.dynamicLink.apn = android.dynamicLink.apn || 'org.jitsi.meet';
         android.dynamicLink.appCode = android.dynamicLink.appCode || 'w2atb';
