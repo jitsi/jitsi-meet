@@ -2,6 +2,7 @@ import https from 'node:https';
 import process from 'node:process';
 
 import { ensureOneParticipant } from '../../helpers/participants';
+import { cleanup, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
 describe('Dial-In - ', () => {
     it('join participant', async () => {
@@ -75,25 +76,8 @@ describe('Dial-In - ', () => {
             return;
         }
 
-        // waits 15 seconds for the participant to join
-        await p1.waitForParticipants(1, `dial-in.test.jigasi.participant.no.join.for:${
-            ctx.times.restAPIExecutionTS + 15_000} ms.`);
+        await waitForAudioFromDialInParticipant(p1);
 
-        const joinedTS = Date.now();
-
-        console.log(`dial-in.test.jigasi.participant.join.after:${joinedTS - ctx.times.restAPIExecutionTS}`);
-
-        await p1.waitForIceConnected();
-        await p1.waitForRemoteStreams(1);
-
-        await p1.waitForSendReceiveData(20_000, 'dial-in.test.jigasi.participant.no.audio.after.join');
-        console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${Date.now() - joinedTS} ms.`);
-
-        // cleanup
-        if (await p1.isModerator()) {
-            const jigasiEndpointId = await p1.driver.execute(() => APP.conference.listMembers()[0].getId());
-
-            await p1.getFilmstrip().kickParticipant(jigasiEndpointId);
-        }
+        await cleanup(p1);
     });
 });
