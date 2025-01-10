@@ -228,7 +228,7 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     _detachTrack(track?: ITrack) {
-        if (this._ref?.current && track && track.jitsiTrack) {
+        if (this._ref?.current && track?.jitsiTrack) {
             clearTimeout(this._playTimeout);
             this._playTimeout = undefined;
             track.jitsiTrack.detach(this._ref.current);

@@ -15,7 +15,6 @@ import i18next from '../i18n/i18next';
 import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { toState } from '../redux/functions';
 import { getScreenShareTrack, isLocalTrackMuted } from '../tracks/functions.any';
-import { createDeferred } from '../util/helpers';
 
 import {
     JIGASI_PARTICIPANT_ICON,
@@ -127,7 +126,7 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
  * @returns {Promise}
  */
 export function getFirstLoadableAvatarUrl(participant: IParticipant, store: IStore) {
-    const deferred: any = createDeferred();
+    const deferred: any = Promise.withResolvers();
     const fullPromise = deferred.promise
         .then(() => _getFirstLoadableAvatarUrl(participant, store))
         .then((result: any) => {

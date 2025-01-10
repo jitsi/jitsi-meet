@@ -1,5 +1,5 @@
 import { IStore } from '../../app/types';
-import { elideNotificationTitleParams, showNotification } from '../../notifications/actions';
+import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { IJitsiConference } from '../conference/reducer';
 import { set } from '../redux/functions';
@@ -61,7 +61,7 @@ import { FakeParticipant, IJitsiParticipant, IParticipant } from './types';
  * }}
  */
 export function dominantSpeakerChanged(
-    dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: IJitsiConference) {
+        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: IJitsiConference) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
@@ -246,7 +246,7 @@ export function participantJoined(participant: IParticipant) {
             = getState()['features/base/conference'];
 
         if (conference === stateFeaturesBaseConference.conference
-            || conference === stateFeaturesBaseConference.joining) {
+                || conference === stateFeaturesBaseConference.joining) {
             return dispatch({
                 type: PARTICIPANT_JOINED,
                 participant
@@ -477,9 +477,8 @@ export function participantMutedUs(participant: any, track: any) {
         dispatch(showNotification({
             titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
-                participantDisplayName: elideNotificationTitleParams(getParticipantDisplayName(getState, participant.getId()))
-            },
-            toolTipContent: getParticipantDisplayName(getState, participant.getId())
+                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
+            }
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }
@@ -533,11 +532,12 @@ export function participantKicked(kicker: any, kicked: any) {
 
         dispatch(showNotification({
             titleArguments: {
-                kicked: elideNotificationTitleParams(getParticipantDisplayName(state, kickedId)),
-                kicker: elideNotificationTitleParams(getParticipantDisplayName(state, kickerId))
+                kicked:
+                    getParticipantDisplayName(state, kickedId),
+                kicker:
+                    getParticipantDisplayName(state, kickerId)
             },
-            titleKey: 'notify.kickParticipant',
-            toolTipContent: getParticipantDisplayName(state, kickedId) + 'was kicked by' + getParticipantDisplayName(state, kickerId),
+            titleKey: 'notify.kickParticipant'
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }

@@ -8,6 +8,8 @@ import BasePageObject from './BasePageObject';
  */
 const PARTICIPANTS_PANE = 'participants_pane';
 
+const INVITE = 'Invite someone';
+
 /**
  * Represents the participants pane from the UI.
  */
@@ -167,5 +169,19 @@ export default class ParticipantsPane extends BasePageObject {
         await meetingParticipantMoreOptions.waitForStable();
         await meetingParticipantMoreOptions.moveTo();
         await meetingParticipantMoreOptions.click();
+    }
+
+    /**
+     * Clicks the invite button.
+     */
+    async clickInvite() {
+        if (!await this.isOpen()) {
+            await this.open();
+        }
+
+        const inviteButton = this.participant.driver.$(`aria/${INVITE}`);
+
+        await inviteButton.waitForDisplayed();
+        await inviteButton.click();
     }
 }

@@ -124,7 +124,7 @@ function _removeCachedTranscriptMessage(state: ISubtitlesState,
  * reduction of the specified action.
  */
 function _updateTranscriptMessage(state: ISubtitlesState, { transcriptMessageID, newTranscriptMessage }:
-    { newTranscriptMessage: ITranscriptMessage; transcriptMessageID: string; }) {
+{ newTranscriptMessage: ITranscriptMessage; transcriptMessageID: string; }) {
     const newTranscriptMessages = new Map(state._transcriptMessages);
     const _cachedTranscriptMessages = new Map(state._cachedTranscriptMessages);
 

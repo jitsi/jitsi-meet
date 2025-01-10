@@ -287,4 +287,3 @@ export function getScreenshareFilmstripParticipantId(_state: any) {
     return undefined;
 }
 
-

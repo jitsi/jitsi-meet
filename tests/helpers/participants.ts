@@ -16,12 +16,7 @@ const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
  * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    ctx.p1 = new Participant('participant1');
-
-    await ctx.p1.joinConference(ctx, {
-        ...options,
-        skipInMeetingChecks: true
-    });
+    await joinTheModeratorAsP1(ctx, options);
 }
 
 /**
@@ -31,22 +26,71 @@ export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
+export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
-        }, options),
+        }, {
+            displayName: 'p2',
+            ...options
+        }),
         _joinParticipant('participant3', ctx.p3, p => {
             ctx.p3 = p;
-        }, options)
+        }, {
+            displayName: 'p3',
+            ...options
+        })
     ]);
 
+    const { skipInMeetingChecks } = options;
+
     await Promise.all([
-        ctx.p2.waitForRemoteStreams(2),
-        ctx.p3.waitForRemoteStreams(2)
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(2),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(2)
+    ]);
+}
+
+/**
+ * Ensure that there are four participants.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export async function ensureFourParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    await joinTheModeratorAsP1(ctx, options);
+
+    // these need to be all, so we get the error when one fails
+    await Promise.all([
+        _joinParticipant('participant2', ctx.p2, p => {
+            ctx.p2 = p;
+        }, {
+            displayName: 'p2',
+            ...options
+        }),
+        _joinParticipant('participant3', ctx.p3, p => {
+            ctx.p3 = p;
+        }, {
+            displayName: 'p3',
+            ...options
+        }),
+        _joinParticipant('participant4', ctx.p4, p => {
+            ctx.p4 = p;
+        }, {
+            displayName: 'p4',
+            ...options
+        })
+    ]);
+
+    const { skipInMeetingChecks } = options;
+
+    await Promise.all([
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(3),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3)
     ]);
 }
 
@@ -58,7 +102,7 @@ export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOpti
  * @returns {Promise<void>}
  */
 async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
-    const p1DisplayName = 'participant1';
+    const p1DisplayName = 'p1';
     let token;
 
     // if it is jaas create the first one to be moderator and second not moderator
@@ -67,9 +111,10 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant(p1DisplayName, ctx.p1, p => {
+    await _joinParticipant('participant1', ctx.p1, p => {
         ctx.p1 = p;
     }, {
+        displayName: p1DisplayName,
         ...options,
         skipInMeetingChecks: true
     }, token);
@@ -89,7 +134,10 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
     await Promise.all([
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
-        }, options),
+        }, {
+            displayName: 'p2',
+            ...options
+        }),
         skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
         skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
     ]);

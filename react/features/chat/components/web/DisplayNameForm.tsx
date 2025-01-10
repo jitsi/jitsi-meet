@@ -117,7 +117,7 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmit(event: any) {
-        event?.preventDefault && event.preventDefault();
+        event?.preventDefault?.();
 
         // Store display name in settings
         this.props.dispatch(updateSettings({

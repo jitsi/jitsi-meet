@@ -22,27 +22,6 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
-export type DefferedPromise<T> = {
-    promise: Promise<T>;
-    reject: (reason?: any) => void;
-    resolve: (value: T) => void;
-};
-
-/**
- * Creates a deferred object.
- *
- * @returns {{promise, resolve, reject}}
- */
-export function createDeferred<T>() {
-    const deferred = {} as DefferedPromise<T>;
-
-    deferred.promise = new Promise<T>((resolve, reject) => {
-        deferred.resolve = resolve;
-        deferred.reject = reject;
-    });
-
-    return deferred;
-}
 
 const MATCH_OPERATOR_REGEXP = /[|\\{}()[\]^$+*?.-]/g;
 

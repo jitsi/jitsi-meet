@@ -19,6 +19,5 @@ export interface INotificationProps {
         [key: string]: string | number;
     };
     titleKey?: string;
-    toolTipContent?: string;
     uid?: string;
 }

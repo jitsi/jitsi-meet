@@ -9,6 +9,9 @@ module.exports = {
             parserOptions: {
                 sourceType: 'module',
                 project: [ './tests/tsconfig.json' ]
+            },
+            rules: {
+                '@typescript-eslint/no-require-imports': 0
             }
         }
     ]

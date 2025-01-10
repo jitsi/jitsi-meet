@@ -1,7 +1,11 @@
 import BaseDialog from './BaseDialog';
 
 const EMAIL_FIELD = '#setEmail';
+const FOLLOW_ME_CHECKBOX = '//input[@name="follow-me"]';
+const HIDE_SELF_VIEW_CHECKBOX = '//input[@name="hide-self-view"]';
 const SETTINGS_DIALOG_CONTENT = '.settings-pane';
+const X_PATH_MODERATOR_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Moderator"]';
+const X_PATH_MORE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="General"]';
 const X_PATH_PROFILE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Profile"]';
 
 /**
@@ -35,6 +39,20 @@ export default class SettingsDialog extends BaseDialog {
     }
 
     /**
+     * Selects the More tab to be displayed.
+     */
+    async openMoreTab() {
+        await this.openTab(X_PATH_MORE_TAB);
+    }
+
+    /**
+     * Selects the moderator tab to be displayed.
+     */
+    async openModeratorTab() {
+        await this.openTab(X_PATH_MODERATOR_TAB);
+    }
+
+    /**
      * Enters the passed in email into the email field.
      * @param email
      */
@@ -58,5 +76,57 @@ export default class SettingsDialog extends BaseDialog {
      */
     async submit() {
         await this.clickOkButton();
+    }
+
+    /**
+     * Sets the state checked/selected of a checkbox in the settings dialog.
+     */
+    async setHideSelfView(hideSelfView: boolean) {
+        await this.openMoreTab();
+
+        await this.setCheckbox(HIDE_SELF_VIEW_CHECKBOX, hideSelfView);
+    }
+
+    /**
+     * Sets the follow me feature to enabled/disabled.
+     * @param enable
+     */
+    async setFollowMe(enable: boolean) {
+        await this.openModeratorTab();
+
+        await this.setCheckbox(FOLLOW_ME_CHECKBOX, enable);
+    }
+
+    /**
+     * Returns true if the follow me checkbox is displayed in the settings dialog.
+     */
+    async isFollowMeDisplayed() {
+        const elem = this.participant.driver.$(X_PATH_MODERATOR_TAB);
+
+        if (!await elem.isExisting()) {
+            return false;
+        }
+
+        await this.openModeratorTab();
+
+        return await this.participant.driver.$$(FOLLOW_ME_CHECKBOX).length > 0;
+    }
+
+    /**
+     * Sets the state of a checkbox.
+     * @param selector
+     * @param enable
+     * @private
+     */
+    private async setCheckbox(selector: string, enable: boolean) {
+        const checkbox = this.participant.driver.$(selector);
+
+        await checkbox.waitForExist();
+
+        if (enable !== await checkbox.isSelected()) {
+            // we show a div with svg and text after the input and those elements grab the click
+            // so we need to click on the parent element
+            await this.participant.driver.$(`${selector}//ancestor::div[1]`).click();
+        }
     }
 }

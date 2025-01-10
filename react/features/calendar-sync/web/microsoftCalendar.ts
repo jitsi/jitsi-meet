@@ -5,8 +5,6 @@ import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
 import { IanaName } from 'windows-iana/dist/enums';
 
-// @ts-expect-error
-import { createDeferred } from '../../../../modules/util/helpers';
 import { IStore } from '../../app/types';
 import { parseURLParams } from '../../base/util/parseURLParams';
 import { parseStandardURIString } from '../../base/util/uri';
@@ -153,8 +151,7 @@ export const microsoftCalendarApi = {
                 return Promise.reject('Sign in already in progress.');
             }
 
-            const signInDeferred = createDeferred();
-
+            const signInDeferred = Promise.withResolvers();
             const guids = {
                 authState: uuidV4(),
                 authNonce: uuidV4()
@@ -229,7 +226,7 @@ export const microsoftCalendarApi = {
                     userSigninName: tokenParts.userSigninName
                 }));
 
-                signInDeferred.resolve();
+                signInDeferred.resolve(undefined);
             }
 
             window.addEventListener('message', handleAuth);

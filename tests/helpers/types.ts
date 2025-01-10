@@ -5,6 +5,7 @@ import WebhookProxy from './WebhookProxy';
 
 export type IContext = {
     conferenceJid: string;
+    dialInPin: string;
     iframeAPI: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
@@ -14,6 +15,7 @@ export type IContext = {
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
+    times: any;
     webhooksProxy: WebhookProxy;
 };
 
@@ -23,6 +25,11 @@ export type IJoinOptions = {
      * Config overwrites to use.
      */
     configOverwrite?: IConfig;
+
+    /**
+     * The display name to use.
+     */
+    displayName?: string;
 
     /**
      * Whether to skip setting display name.

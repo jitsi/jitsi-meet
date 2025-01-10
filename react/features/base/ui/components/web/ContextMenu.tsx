@@ -244,9 +244,9 @@ const ContextMenu = ({
                 list: Element | null,
                 currentFocus: Element | null,
                 traversalFunction: (
-                list: Element | null,
-                currentFocus: Element | null
-            ) => Element | null
+                    list: Element | null,
+                    currentFocus: Element | null
+                ) => Element | null
         ) => {
             let wrappedOnce = false;
             let nextFocus = traversalFunction(list, currentFocus);

@@ -19,6 +19,11 @@ import {
 import { IAnswer, IPoll, IPollData } from './types';
 
 /**
+ * The maximum number of answers a poll can have.
+ */
+const MAX_ANSWERS = 32;
+
+/**
  * Set up state change listener to perform maintenance tasks when the conference
  * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
@@ -31,7 +36,7 @@ StateListenerRegistry.register(
         }
     });
 
-const parsePollData = (pollData: IPollData): IPoll | null => {
+const parsePollData = (pollData: Partial<IPollData>): IPoll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -122,6 +127,18 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
 
     case COMMAND_NEW_POLL: {
         const { pollId, answers, senderId, question } = data;
+        const tmp = {
+            id: pollId,
+            answers,
+            question
+        };
+
+        // Check integrity of the poll data.
+        // TODO(saghul): we should move this to the server side, likely by storing the
+        // poll data in the room metadata.
+        if (parsePollData(tmp) === null) {
+            return;
+        }
 
         const poll = {
             changingVote: false,
@@ -134,7 +151,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
                     name: answer,
                     voters: []
                 };
-            }),
+            }).slice(MAX_ANSWERS),
             saved: false,
             editing: false
         };
@@ -155,7 +172,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
         const receivedAnswer: IAnswer = {
             voterId,
             pollId,
-            answers
+            answers: answers.slice(MAX_ANSWERS)
         };
 
         dispatch(receiveAnswer(pollId, receivedAnswer));

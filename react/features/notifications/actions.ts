@@ -126,7 +126,7 @@ export function showSuccessNotification(props: INotificationProps, type?: string
  * @returns {Function}
  */
 export function showNotification(props: INotificationProps = {}, type?: string) {
-    return function (dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         const { disabledNotifications = [], notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
@@ -152,20 +152,6 @@ export function showNotification(props: INotificationProps = {}, type?: string) 
             });
         }
     };
-}
-
-/**
- * Elides the notification title parameters which are passed to the notification component.
- * 
- * @param {string} notificationTitle -
- * @returns {string} 
- */
-export const elideNotificationTitleParams = (notificationTitle: string): string => {
-    if (notificationTitle.length > 30) {
-        return `${notificationTitle.slice(0, 30)}...`;
-    }
-
-    return notificationTitle;
 }
 
 /**
@@ -234,27 +220,24 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: IStore['dispatc
     if (joinedParticipantsCount >= 3) {
         notificationProps = {
             titleArguments: {
-                name: elideNotificationTitleParams(joinedParticipantsNames[0]),
+                name: joinedParticipantsNames[0]
             },
-            titleKey: 'notify.connectedThreePlusMembers',
-            toolTipContent: joinedParticipantsNames[0],
+            titleKey: 'notify.connectedThreePlusMembers'
         };
     } else if (joinedParticipantsCount === 2) {
         notificationProps = {
             titleArguments: {
-                first: elideNotificationTitleParams(joinedParticipantsNames[0]),
-                second: elideNotificationTitleParams(joinedParticipantsNames[1])
+                first: joinedParticipantsNames[0],
+                second: joinedParticipantsNames[1]
             },
-            titleKey: 'notify.connectedTwoMembers',
-            toolTipContent: joinedParticipantsNames[0] + 'and' + joinedParticipantsNames[1]
+            titleKey: 'notify.connectedTwoMembers'
         };
     } else if (joinedParticipantsCount) {
         notificationProps = {
             titleArguments: {
-                name: elideNotificationTitleParams(joinedParticipantsNames[0])
+                name: joinedParticipantsNames[0]
             },
-            titleKey: 'notify.connectedOneMember',
-            toolTipContent: joinedParticipantsNames[0]
+            titleKey: 'notify.connectedOneMember'
         };
     }
 
@@ -301,27 +284,24 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: IStore['dispatch'], 
     if (leftParticipantsCount >= 3) {
         notificationProps = {
             titleArguments: {
-                name: elideNotificationTitleParams(leftParticipantsNames[0])
+                name: leftParticipantsNames[0]
             },
-            titleKey: 'notify.leftThreePlusMembers',
-            toolTipContent: leftParticipantsNames[0]
+            titleKey: 'notify.leftThreePlusMembers'
         };
     } else if (leftParticipantsCount === 2) {
         notificationProps = {
             titleArguments: {
-                first: elideNotificationTitleParams(leftParticipantsNames[0]),
-                second: elideNotificationTitleParams(leftParticipantsNames[1])
+                first: leftParticipantsNames[0],
+                second: leftParticipantsNames[1]
             },
-            titleKey: 'notify.leftTwoMembers',
-            toolTipContent: leftParticipantsNames[0] + 'and' + leftParticipantsNames[1]
+            titleKey: 'notify.leftTwoMembers'
         };
     } else if (leftParticipantsCount) {
         notificationProps = {
             titleArguments: {
-                name: elideNotificationTitleParams(leftParticipantsNames[0])
+                name: leftParticipantsNames[0]
             },
-            titleKey: 'notify.leftOneMember',
-            toolTipContent: leftParticipantsNames[0]
+            titleKey: 'notify.leftOneMember'
         };
     }
 

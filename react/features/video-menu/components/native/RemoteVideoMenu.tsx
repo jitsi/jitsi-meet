@@ -1,4 +1,4 @@
-/* eslint-disable lines-around-comment*/
+/* eslint-disable lines-around-comment */
 
 import React, { PureComponent } from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';

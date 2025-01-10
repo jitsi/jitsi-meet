@@ -349,8 +349,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  */
 function _onConferenceMessageReceived(store: IStore,
         { displayName, isGuest, message, messageId, participantId, privateMessage, timestamp }: {
-        displayName?: string; isGuest?: boolean; message: string; messageId?: string;
-        participantId: string; privateMessage: boolean; timestamp: number; }
+            displayName?: string; isGuest?: boolean; message: string; messageId?: string;
+            participantId: string; privateMessage: boolean; timestamp: number; }
 ) {
 
     const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
@@ -479,8 +479,8 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
         { displayName, isGuest, lobbyChat, message, messageId, participantId, privateMessage, timestamp }: {
-        displayName?: string; isGuest?: boolean; lobbyChat: boolean; message: string;
-        messageId?: string; participantId: string; privateMessage: boolean; timestamp: number; },
+            displayName?: string; isGuest?: boolean; lobbyChat: boolean; message: string;
+            messageId?: string; participantId: string; privateMessage: boolean; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
 ) {

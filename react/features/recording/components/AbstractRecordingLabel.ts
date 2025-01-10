@@ -22,12 +22,12 @@ export interface IProps extends WithTranslation {
     /**
      * Whether this meeting is being transcribed.
     */
-   _isTranscribing: boolean;
+    _isTranscribing: boolean;
 
-   /**
+    /**
     * Whether the recording/livestreaming/transcriber is currently running.
     */
-   _isVisible: boolean;
+    _isVisible: boolean;
 
     /**
      * The status of the higher priority session.

@@ -16,7 +16,6 @@ import {
     IconWarningCircle
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
-import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getSupportUrl } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
@@ -126,6 +125,12 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         title: {
             ...withPixelLineHeight(theme.typography.bodyShortBold),
+            display: 'inline-block',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'middle',
         },
 
         description: {
@@ -168,8 +173,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         closeIcon: {
-            cursor: 'pointer',
-        }
+            cursor: 'pointer'
+        },
+
+        inlineText: {
+            display: 'inline',
+        },
     };
 });
 
@@ -188,7 +197,6 @@ const Notification = ({
     title,
     titleArguments,
     titleKey,
-    toolTipContent = '',
     uid
 }: IProps) => {
     const { classes, cx, theme } = useStyles();
@@ -315,26 +323,21 @@ const Notification = ({
     }, [ icon, appearance ]);
 
     const renderNotificationTitle = useCallback(() => {
-        const notificationTitle = String(title || t(titleKey ?? '', titleArguments))
-        let showToolTip = false
-        showToolTip = toolTipContent.split(" ").some((word) => {
-            return !notificationTitle.includes(word);
-        });
+        const notificationTitle = String(title || t(titleKey ?? '', titleArguments));
 
-        return showToolTip ? (
-                <Tooltip content = { toolTipContent }>
-                    <span
-                    className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}
-                    </span>
-                </Tooltip>
-            ) : (
-                <span
-                    className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}
-                </span>
-            )                     
-    },[title, titleKey, titleArguments, toolTipContent])
-
-    console.log(title || t(titleKey ?? '', titleArguments), 'title args')
+        return (
+            <span className = { classes.inlineText }>
+                {notificationTitle.split(' ').map((titleWord, index, titleArray) => (
+                    <React.Fragment key = { index }>
+                        <span className = { classes.title }>
+                            {t(titleWord)}
+                        </span>
+                        { index < titleArray.length - 1 && ' ' }
+                    </React.Fragment>
+                ))}
+            </span>
+        );
+    }, [ title, titleKey, titleArguments ]);
 
     return (
         <div
