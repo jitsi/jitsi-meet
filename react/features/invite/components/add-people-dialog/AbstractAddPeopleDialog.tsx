@@ -4,7 +4,7 @@ import { createInviteDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { getMeetingRegion } from '../../../base/config/functions.any';
-import { showErrorNotification, showNotification } from '../../../notifications/actions';
+import { elideNotificationTitleParams, showErrorNotification, showNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { INotificationProps } from '../../../notifications/types';
 import { invite } from '../../actions.any';
@@ -198,25 +198,29 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                     if (invitedCount >= 3) {
                         notificationProps = {
                             titleArguments: {
-                                name: this._getDisplayName(invitees[0]),
+                                name: elideNotificationTitleParams(this._getDisplayName(invitees[0])),
                                 count: `${invitedCount - 1}`
                             },
-                            titleKey: 'notify.invitedThreePlusMembers'
+                            titleKey: 'notify.invitedThreePlusMembers',
+                            toolTipContent: this._getDisplayName(invitees[0])
                         };
                     } else if (invitedCount === 2) {
                         notificationProps = {
                             titleArguments: {
-                                first: this._getDisplayName(invitees[0]),
-                                second: this._getDisplayName(invitees[1])
+                                first: elideNotificationTitleParams(this._getDisplayName(invitees[0])),
+                                second: elideNotificationTitleParams(this._getDisplayName(invitees[1]))
                             },
-                            titleKey: 'notify.invitedTwoMembers'
+                            titleKey: 'notify.invitedTwoMembers',
+                            toolTipContent: this._getDisplayName(invitees[0]) + 'and' + this._getDisplayName(invitees[1])
+
                         };
                     } else if (invitedCount) {
                         notificationProps = {
                             titleArguments: {
-                                name: this._getDisplayName(invitees[0])
+                                name: elideNotificationTitleParams(this._getDisplayName(invitees[0]))
                             },
-                            titleKey: 'notify.invitedOneMember'
+                            titleKey: 'notify.invitedOneMember',
+                            toolTipContent: this._getDisplayName(invitees[0])
                         };
                     }
 

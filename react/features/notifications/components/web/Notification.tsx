@@ -16,6 +16,7 @@ import {
     IconWarningCircle
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getSupportUrl } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
@@ -125,8 +126,6 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         title: {
             ...withPixelLineHeight(theme.typography.bodyShortBold),
-            overflowWrap: 'break-word',
-            hyphens: 'auto'
         },
 
         description: {
@@ -169,7 +168,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         closeIcon: {
-            cursor: 'pointer'
+            cursor: 'pointer',
         }
     };
 });
@@ -189,11 +188,11 @@ const Notification = ({
     title,
     titleArguments,
     titleKey,
+    toolTipContent = '',
     uid
 }: IProps) => {
     const { classes, cx, theme } = useStyles();
-    const { t, i18n } = useTranslation();
-    const language = i18n.language;
+    const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
 
@@ -315,6 +314,28 @@ const Notification = ({
         return iconToDisplay;
     }, [ icon, appearance ]);
 
+    const renderNotificationTitle = useCallback(() => {
+        const notificationTitle = String(title || t(titleKey ?? '', titleArguments))
+        let showToolTip = false
+        showToolTip = toolTipContent.split(" ").some((word) => {
+            return !notificationTitle.includes(word);
+        });
+
+        return showToolTip ? (
+                <Tooltip content = { toolTipContent }>
+                    <span
+                    className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}
+                    </span>
+                </Tooltip>
+            ) : (
+                <span
+                    className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}
+                </span>
+            )                     
+    },[title, titleKey, titleArguments, toolTipContent])
+
+    console.log(title || t(titleKey ?? '', titleArguments), 'title args')
+
     return (
         <div
             aria-atomic = 'false'
@@ -331,10 +352,7 @@ const Notification = ({
                         src = { getIcon() } />
                 </div>
                 <div className = { classes.textContainer }>
-                    <span
-                        className = { classes.title }
-                        lang = { language }>{title || t(titleKey ?? '', titleArguments)}
-                    </span>
+                    {renderNotificationTitle()}
                     {renderDescription()}
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
