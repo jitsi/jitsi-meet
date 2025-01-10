@@ -192,6 +192,7 @@ export default [
     'p2p.enabled',
     'p2p.iceTransportPolicy',
     'p2p.mobileCodecPreferenceOrder',
+    'p2p.mobileScreenshareCodec',
     'participantMenuButtonsWithNotifyClick',
     'participantsPane',
     'pcStatsInterval',
