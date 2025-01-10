@@ -54,6 +54,28 @@ export default class Filmstrip extends BasePageObject {
     }
 
     /**
+     * Returns the remote video id of a participant with endpointID.
+     * @param endpointId
+     */
+    async getRemoteVideoId(endpointId: string) {
+        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}"]`);
+
+        await remoteDisplayName.moveTo();
+
+        return await this.participant.driver.execute(eId =>
+            document.evaluate(`//span[@id="participant_${eId}"]//video`,
+                document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue?.srcObject?.id, endpointId);
+    }
+
+    /**
+     * Returns the local video id.
+     */
+    async getLocalVideoId() {
+        return await this.participant.driver.execute(
+            'return document.getElementById("localVideo_container").srcObject.id');
+    }
+
+    /**
      * Pins a participant by clicking on their thumbnail.
      * @param participant The participant.
      */
@@ -161,5 +183,31 @@ export default class Filmstrip extends BasePageObject {
             timeout: 5000,
             timeoutMsg: `Local video thumbnail is${hidden ? '' : ' not'} displayed for ${this.participant.name}`
         });
+    }
+
+    /**
+     * Toggles the filmstrip.
+     */
+    async toggle() {
+        const toggleButton = this.participant.driver.$('#toggleFilmstripButton');
+
+        await toggleButton.moveTo();
+        await toggleButton.waitForDisplayed();
+        await toggleButton.click();
+    }
+
+    /**
+     * Asserts that the remote videos are hidden or not.
+     * @param reverse
+     */
+    async assertRemoteVideosHidden(reverse = false) {
+        await this.participant.driver.waitUntil(
+            async () =>
+                await this.participant.driver.$$('//div[@id="remoteVideos" and contains(@class, "hidden")]').length > 0,
+            {
+                timeout: 10_000, // 10 seconds
+                timeoutMsg: `Timeout waiting fore remote videos to be hidden: ${!reverse}.`
+            }
+        );
     }
 }

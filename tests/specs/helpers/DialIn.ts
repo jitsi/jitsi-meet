@@ -37,3 +37,12 @@ export async function cleanup(participant: Participant) {
         await participant.getFilmstrip().kickParticipant(jigasiEndpointId);
     }
 }
+
+/**
+ * Checks if the dial-in is enabled.
+ * @param participant
+ */
+export async function isDialInEnabled(participant: Participant) {
+    return await participant.driver.execute(() => Boolean(
+        config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc));
+}
