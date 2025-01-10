@@ -44,5 +44,5 @@ export async function cleanup(participant: Participant) {
  */
 export async function isDialInEnabled(participant: Participant) {
     return await participant.driver.execute(() => Boolean(
-        config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts && config.hosts.muc));
+        config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc));
 }

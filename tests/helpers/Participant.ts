@@ -320,8 +320,8 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForSendReceiveData(timeout = 15_000, msg = `expected to receive/send data in 15s for ${this.name}`):
-        Promise<void> {
+    async waitForSendReceiveData(
+            timeout = 15_000, msg = `expected to receive/send data in 15s for ${this.name}`): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
