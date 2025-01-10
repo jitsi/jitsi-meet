@@ -14,7 +14,7 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
     await participant.waitForParticipants(1, `dial-in.test.jigasi.participant.no.join.for:${
         ctx.times.restAPIExecutionTS + 15_000} ms.`);
 
-    const joinedTS = Date.now();
+    const joinedTS = performance.now();
 
     console.log(`dial-in.test.jigasi.participant.join.after:${joinedTS - ctx.times.restAPIExecutionTS}`);
 
@@ -22,7 +22,7 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
     await participant.waitForRemoteStreams(1);
 
     await participant.waitForSendReceiveData(20_000, 'dial-in.test.jigasi.participant.no.audio.after.join');
-    console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${Date.now() - joinedTS} ms.`);
+    console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${performance.now() - joinedTS} ms.`);
 }
 
 /**

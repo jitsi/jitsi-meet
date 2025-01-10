@@ -54,7 +54,7 @@ describe('Dial-In - ', () => {
                 });
 
                 res.on('end', () => {
-                    ctx.times.restAPIExecutionTS = Date.now();
+                    ctx.times.restAPIExecutionTS = performance.now();
 
                     resolve(data);
                 });
