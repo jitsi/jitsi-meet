@@ -358,7 +358,7 @@ class Video extends Component<IProps> {
      * @returns {void}
      */
     _detachTrack(videoTrack?: Partial<ITrack>) {
-        if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
+        if (this._videoElement && videoTrack?.jitsiTrack) {
             videoTrack.jitsiTrack.detach(this._videoElement);
         }
     }

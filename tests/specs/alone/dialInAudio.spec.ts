@@ -17,7 +17,7 @@ describe('Dial-In - ', () => {
 
         // check dial-in is enabled
         if (!await ctx.p1.driver.execute(() => Boolean(
-            config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts && config.hosts.muc))) {
+            config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc))) {
             ctx.skipSuiteTests = true;
         }
     });

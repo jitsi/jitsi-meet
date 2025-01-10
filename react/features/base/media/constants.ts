@@ -19,11 +19,11 @@ export const MEDIA_TYPE: {
     AUDIO: MediaType;
     SCREENSHARE: MediaType;
     VIDEO: MediaType;
-    } = {
-        AUDIO: 'audio',
-        SCREENSHARE: 'screenshare',
-        VIDEO: 'video'
-    };
+} = {
+    AUDIO: 'audio',
+    SCREENSHARE: 'screenshare',
+    VIDEO: 'video'
+};
 
 
 /* eslint-disable no-bitwise */

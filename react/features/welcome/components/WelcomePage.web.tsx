@@ -508,9 +508,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalCard() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD
-            && this._additionalCardTemplate
-            && this._additionalCardTemplate.content
-            && this._additionalCardTemplate.innerHTML.trim();
+            && this._additionalCardTemplate?.content
+            && this._additionalCardTemplate?.innerHTML?.trim();
     }
 
     /**
@@ -522,9 +521,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalContent() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
-            && this._additionalContentTemplate
-            && this._additionalContentTemplate.content
-            && this._additionalContentTemplate.innerHTML.trim();
+            && this._additionalContentTemplate?.content
+            && this._additionalContentTemplate?.innerHTML?.trim();
     }
 
     /**
@@ -536,9 +534,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _shouldShowAdditionalToolbarContent() {
         return interfaceConfig.DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT
-            && this._additionalToolbarContentTemplate
-            && this._additionalToolbarContentTemplate.content
-            && this._additionalToolbarContentTemplate.innerHTML.trim();
+            && this._additionalToolbarContentTemplate?.content
+            && this._additionalToolbarContentTemplate?.innerHTML.trim();
     }
 }
 

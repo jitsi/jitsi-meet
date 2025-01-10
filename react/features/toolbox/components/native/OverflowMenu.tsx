@@ -69,12 +69,12 @@ interface IProps {
     /**
      * Whether the recoding button should be enabled or not.
     */
-   _recordingEnabled: boolean;
+    _recordingEnabled: boolean;
 
-   /**
+    /**
     * Whether or not any reactions buttons should be displayed.
     */
-   _shouldDisplayReactionsButtons: boolean;
+    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The width of the screen.

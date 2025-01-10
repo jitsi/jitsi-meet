@@ -102,7 +102,8 @@ const DEFAULT_INITIAL_PROMISE_STATE = Promise.withResolvers<IInitialGUMPromiseRe
  * @param {string} action.type - Type of action.
  * @returns {ICommonState}
  */
-function _initialGUMPromise(state: PromiseWithResolvers<IInitialGUMPromiseResult> | null = DEFAULT_INITIAL_PROMISE_STATE,
+function _initialGUMPromise(
+        state: PromiseWithResolvers<IInitialGUMPromiseResult> | null = DEFAULT_INITIAL_PROMISE_STATE,
         action: AnyAction) {
     if (action.type === SET_INITIAL_GUM_PROMISE) {
         return action.promise ?? null;

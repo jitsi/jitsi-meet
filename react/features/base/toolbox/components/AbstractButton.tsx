@@ -375,7 +375,7 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
 
         // blur after click to release focus from button to allow PTT.
         // @ts-ignore
-        e?.currentTarget?.blur && e.currentTarget.blur();
+        e?.currentTarget?.blur?.();
     }
 
     /**

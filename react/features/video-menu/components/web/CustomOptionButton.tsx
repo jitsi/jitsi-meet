@@ -8,7 +8,7 @@ const CustomOptionButton = (
             icon: string;
             onClick: (e?: React.MouseEvent<Element, MouseEvent> | undefined) => void;
             text: string;
-    }
+        }
 ) => {
 
     const icon = useCallback(props => (<img

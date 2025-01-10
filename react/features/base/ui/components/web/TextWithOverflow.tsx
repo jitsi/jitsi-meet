@@ -5,9 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 import { TEXT_OVERFLOW_TYPES } from '../../constants.web';
 
 interface ITextWithOverflowProps {
-  children: ReactNode;
-  className?: string;
-  overflowType?: TEXT_OVERFLOW_TYPES;
+    children: ReactNode;
+    className?: string;
+    overflowType?: TEXT_OVERFLOW_TYPES;
 }
 
 const useStyles = makeStyles<{ translateDiff: number; }>()((_, { translateDiff }) => {

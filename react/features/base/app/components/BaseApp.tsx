@@ -45,7 +45,7 @@ export default class BaseApp<P> extends Component<P, IState> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
-    _init: PromiseWithResolvers<any>
+    _init: PromiseWithResolvers<any>;
 
     /**
      * Initializes a new {@code BaseApp} instance.

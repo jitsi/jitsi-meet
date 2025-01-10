@@ -23,7 +23,7 @@ MiddlewareRegistry.register(store => next => action => {
             ? action.value
             : store.getState()['features/dynamic-branding'];
 
-        if (language && labels && labels[language]) {
+        if (language && labels?.[language]) {
             changeLanguageBundle(language, labels[language])
             .catch(err => {
                 logger.log('Error setting dynamic language bundle', err);
