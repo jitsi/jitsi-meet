@@ -31,15 +31,15 @@ const styles = () => {
  */
 interface IProps extends AbstractAudioMuteButtonProps {
 
-  /**
+    /**
    * The gumPending state from redux.
    */
-  _gumPending: IGUMPendingState;
+    _gumPending: IGUMPendingState;
 
-  /**
+    /**
    * An object containing the CSS classes.
    */
-  classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
 }
 

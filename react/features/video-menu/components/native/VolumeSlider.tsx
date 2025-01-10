@@ -1,4 +1,4 @@
-/* eslint-disable lines-around-comment*/
+/* eslint-disable lines-around-comment */
 
 import Slider from '@react-native-community/slider';
 import { throttle } from 'lodash-es';

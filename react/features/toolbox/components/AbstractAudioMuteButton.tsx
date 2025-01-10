@@ -18,12 +18,12 @@ export interface IProps extends AbstractButtonProps {
     /**
      * Whether audio is currently muted or not.
     */
-   _audioMuted: boolean;
+    _audioMuted: boolean;
 
-   /**
+    /**
     * Whether the button is disabled.
    */
-  _disabled: boolean;
+    _disabled: boolean;
 }
 
 /**

@@ -141,7 +141,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 interface IObject {
-    [key: string]: string | string[] | boolean | number | number[] | {} | undefined;
+    [key: string]: unknown;
 }
 
 export interface IDialogTab<P> {

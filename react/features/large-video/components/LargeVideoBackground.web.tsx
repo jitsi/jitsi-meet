@@ -214,8 +214,7 @@ export class LargeVideoBackground extends Component<IProps> {
         // because we don't have a good way to do it.
         // All other cases when the canvas is not visible are handled through the component props
         // (hidden, _shouldDisplayTileView).
-        if (!this._canvasEl || this._canvasEl.offsetParent === null
-                || window.innerHeight === 0 || window.innerWidth === 0) {
+        if (!this._canvasEl?.offsetParent || window.innerHeight === 0 || window.innerWidth === 0) {
             return;
         }
 

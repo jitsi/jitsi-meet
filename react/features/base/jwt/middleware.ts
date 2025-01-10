@@ -237,7 +237,7 @@ function _undoOverwriteLocalParticipant(
  * }}
  */
 function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }:
-    { avatar?: string; avatarUrl?: string; email: string; 'hidden-from-recorder': string | boolean;
+{ avatar?: string; avatarUrl?: string; email: string; 'hidden-from-recorder': string | boolean;
     id: string; name: string; }) {
     const participant: {
         avatarURL?: string;

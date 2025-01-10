@@ -150,7 +150,7 @@ class ThumbnailWrapper extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
-        data: { filmstripType: string; }; index?: number; rowIndex: number; }) {
+    data: { filmstripType: string; }; index?: number; rowIndex: number; }) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);

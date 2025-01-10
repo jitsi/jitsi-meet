@@ -494,7 +494,7 @@ export function isDialOutEnabled(state: IReduxState): boolean {
     const isModerator = isLocalParticipantModerator(state);
 
     return isJwtFeatureEnabled(state, 'outbound-call', isModerator, false)
-        && conference && conference.isSIPCallingSupported();
+        && conference?.isSIPCallingSupported();
 }
 
 /**

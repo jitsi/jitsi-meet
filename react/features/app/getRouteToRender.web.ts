@@ -140,10 +140,7 @@ function _getWebWelcomePageRoute(state: IReduxState) {
  *
  * @returns {Object}
  */
-function _getEmptyRoute(): {
-    component: React.ReactNode;
-    href?: string;
-    } {
+function _getEmptyRoute(): { component: React.ReactNode; href?: string; } {
     return {
         component: BlankPage,
         href: undefined
