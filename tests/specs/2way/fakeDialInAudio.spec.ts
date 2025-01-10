@@ -1,7 +1,7 @@
 import process from 'node:process';
 
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
-import { cleanup, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
+import { cleanup, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
 describe('Fake Dial-In - ', () => {
     it('join participant', async () => {
@@ -17,8 +17,7 @@ describe('Fake Dial-In - ', () => {
         await ensureOneParticipant(ctx);
 
         // check dial-in is enabled, so skip
-        if (await ctx.p1.driver.execute(() => Boolean(
-            config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc))) {
+        if (await isDialInEnabled(ctx.p1)) {
             ctx.skipSuiteTests = true;
         }
     });
