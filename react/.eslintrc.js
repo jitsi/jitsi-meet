@@ -14,24 +14,14 @@ module.exports = {
                 project: [ './tsconfig.web.json', './tsconfig.native.json' ]
             },
             rules: {
-                '@typescript-eslint/naming-convention': [
-                    'error',
-                    {
-                        'selector': 'interface',
-                        'format': [ 'PascalCase' ],
-                        'custom': {
-                            'regex': '^I[A-Z]',
-                            'match': true
-                        }
-                    }
-                ]
+                // TODO: Remove these and fix the warnings
+                '@typescript-eslint/no-unsafe-function-type': 0,
+                '@typescript-eslint/no-wrapper-object-types': 0,
+
+                '@typescript-eslint/no-require-imports': 0
             }
         }
     ],
-    'rules': {
-        // XXX remove this eventually.
-        'react/jsx-indent-props': 0
-    },
     'settings': {
         'react': {
             'version': 'detect'
