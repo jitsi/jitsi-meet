@@ -191,7 +191,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const globalAny: any = global;
         const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
 
-        globalAny.ctx = {} as IContext;
+        globalAny.ctx = {
+            times: {}
+        } as IContext;
         globalAny.ctx.roomName = roomName;
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;

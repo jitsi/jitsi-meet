@@ -9,6 +9,7 @@ import BreakoutRooms from '../pageobjects/BreakoutRooms';
 import ChatPanel from '../pageobjects/ChatPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
+import InviteDialog from '../pageobjects/InviteDialog';
 import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import SettingsDialog from '../pageobjects/SettingsDialog';
@@ -308,7 +309,7 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForSendReceiveData(): Promise<void> {
+    async waitForSendReceiveData(timeout = 15_000, msg = 'expected to receive/send data in 15s'): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
@@ -322,15 +323,15 @@ export class Participant {
 
                 return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
             }), {
-            timeout: 15_000,
-            timeoutMsg: 'expected to receive/send data in 15s'
+            timeout,
+            timeoutMsg: msg
         });
     }
 
     /**
      * Waits for remote streams.
      *
-     * @param {number} number - The number of remote streams o wait for.
+     * @param {number} number - The number of remote streams to wait for.
      * @returns {Promise<void>}
      */
     waitForRemoteStreams(number: number): Promise<void> {
@@ -340,6 +341,23 @@ export class Participant {
             await driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
             timeout: 15_000,
             timeoutMsg: 'expected remote streams in 15s'
+        });
+    }
+
+    /**
+     * Waits for number of participants.
+     *
+     * @param {number} number - The number of participant to wait for.
+     * @param {string} msg - A custom message to use.
+     * @returns {Promise<void>}
+     */
+    waitForParticipants(number: number, msg?: string): Promise<void> {
+        const driver = this.driver;
+
+        return driver.waitUntil(async () =>
+            await driver.execute(count => APP.conference.listMembers().length === count, number), {
+            timeout: 15_000,
+            timeoutMsg: msg || `not the expected participants ${number} in 15s`
         });
     }
 
@@ -375,6 +393,15 @@ export class Participant {
      */
     getFilmstrip(): Filmstrip {
         return new Filmstrip(this);
+    }
+
+    /**
+     * Returns the invite dialog for this participant.
+     *
+     * @returns {InviteDialog}
+     */
+    getInviteDialog(): InviteDialog {
+        return new InviteDialog(this);
     }
 
     /**
