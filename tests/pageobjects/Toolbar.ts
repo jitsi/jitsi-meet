@@ -113,7 +113,6 @@ export default class Toolbar extends BasePageObject {
         await this.getButton(CLOSE_PARTICIPANTS_PANE).click();
     }
 
-
     /**
      * Clicks Participants pane button.
      *
