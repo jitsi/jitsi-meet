@@ -610,4 +610,11 @@ export class Participant {
         expect(await displayNameEl.isDisplayed()).toBe(true);
         expect(await displayNameEl.getText()).toBe(value);
     }
+
+    /**
+     * Checks if the leave reason dialog is open.
+     */
+    async isLeaveReasonDialogOpen() {
+        return await this.driver.$(`div[data-testid="dialog.leaveReason"]`).isDisplayed();
+    }
 }
