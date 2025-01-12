@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext } from 'react';
+import React, { isValidElement, useCallback, useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -18,6 +18,7 @@ import {
 import Message from '../../../base/react/components/web/Message';
 import { getSupportUrl } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
@@ -174,11 +175,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         closeIcon: {
             cursor: 'pointer'
-        },
-
-        inlineText: {
-            display: 'inline',
-        },
+        }
     };
 });
 
@@ -203,6 +200,7 @@ const Notification = ({
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
+    const textContainerRef = useRef<HTMLDivElement>(null);
 
     const ICON_COLOR = {
         error: theme.palette.iconError,
@@ -326,16 +324,45 @@ const Notification = ({
         const notificationTitle = String(title || t(titleKey ?? '', titleArguments));
 
         return (
-            <span className = { classes.inlineText }>
-                {notificationTitle.split(' ').map((titleWord, index, titleArray) => (
-                    <React.Fragment key = { index }>
-                        <span className = { classes.title }>
-                            {t(titleWord)}
+            <span>
+            {notificationTitle.split(' ').map((titleWord, index, titleArray) => {
+                const spanRef = React.createRef<HTMLSpanElement>();
+                const [isTruncated, setIsTruncated] = React.useState(false);
+
+                useEffect(() => {
+                    if (spanRef.current && textContainerRef.current) {
+                        const element = spanRef.current;
+                        const container = textContainerRef.current;
+                        const containerStyles = window.getComputedStyle(container);
+                        const containerWidth = Math.floor(parseFloat(containerStyles.width));
+                        const wordWidth = Math.floor(element.scrollWidth);
+                        setIsTruncated(wordWidth > containerWidth);
+                    }
+                }, [spanRef, textContainerRef]);
+
+                return (
+                    <React.Fragment key={ index }>
+                    {isTruncated ? (
+                        <Tooltip
+                            content={ titleWord }>
+                            <span
+                                ref={ spanRef }
+                                className={classes.title}>
+                                {t(titleWord)}
+                            </span>
+                        </Tooltip>
+                    ):(
+                        <span
+                            ref={ spanRef }
+                            className={ classes.title }>
+                                {t(titleWord)}
                         </span>
-                        { index < titleArray.length - 1 && ' ' }
+                    )}
+                    {index < titleArray.length - 1 && ' '}
                     </React.Fragment>
-                ))}
-            </span>
+                );
+            })}
+                </span>
         );
     }, [ title, titleKey, titleArguments ]);
 
@@ -354,7 +381,7 @@ const Notification = ({
                         size = { 20 }
                         src = { getIcon() } />
                 </div>
-                <div className = { classes.textContainer }>
+                <div ref={textContainerRef} className = { classes.textContainer }>
                     {renderNotificationTitle()}
                     {renderDescription()}
                     <div className = { classes.actionsContainer }>
