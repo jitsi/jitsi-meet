@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext, useEffect, useRef } from 'react';
+import React, { isValidElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -320,51 +320,60 @@ const Notification = ({
         return iconToDisplay;
     }, [ icon, appearance ]);
 
+
     const renderNotificationTitle = useCallback(() => {
         const notificationTitle = String(title || t(titleKey ?? '', titleArguments));
+        const titleWords = notificationTitle.split(' ');
+        const [ isTruncatedWordList, setIsTruncatedWordList ] = useState<boolean[]>(
+            Array(titleWords.length).fill(false)
+        );
+        const spanRefs = useRef<HTMLSpanElement[] | null[]>([]);
+
+        const assignRef = (index: number) => (spanElement: HTMLSpanElement | null) => {
+            spanRefs.current[index] = spanElement;
+        };
+
+        useEffect(() => {
+            if (textContainerRef.current) {
+                const container = textContainerRef.current;
+                const containerStyles = window.getComputedStyle(container);
+                const containerWidth = Math.floor(parseFloat(containerStyles.width));
+
+                const updatedIsTruncatedWordList = titleWords.map((_, index) => {
+                    const element = spanRefs.current[index];
+
+                    return element ? Math.floor(element.scrollWidth) > containerWidth : false;
+                });
+
+                setIsTruncatedWordList(updatedIsTruncatedWordList);
+            }
+        }, [ titleWords, textContainerRef ]);
 
         return (
             <span>
-            {notificationTitle.split(' ').map((titleWord, index, titleArray) => {
-                const spanRef = React.createRef<HTMLSpanElement>();
-                const [isTruncated, setIsTruncated] = React.useState(false);
-
-                useEffect(() => {
-                    if (spanRef.current && textContainerRef.current) {
-                        const element = spanRef.current;
-                        const container = textContainerRef.current;
-                        const containerStyles = window.getComputedStyle(container);
-                        const containerWidth = Math.floor(parseFloat(containerStyles.width));
-                        const wordWidth = Math.floor(element.scrollWidth);
-                        setIsTruncated(wordWidth > containerWidth);
-                    }
-                }, [spanRef, textContainerRef]);
-
-                return (
-                    <React.Fragment key={ index }>
-                    {isTruncated ? (
-                        <Tooltip
-                            content={ titleWord }>
+                {titleWords.map((word, index) => (
+                    <React.Fragment key = { index }>
+                        {isTruncatedWordList[index] ? (
+                            <Tooltip content = { word }>
+                                <span
+                                    className = { classes.title }
+                                    ref = { assignRef(index) }>
+                                    {t(word)}
+                                </span>
+                            </Tooltip>
+                        ) : (
                             <span
-                                ref={ spanRef }
-                                className={classes.title}>
-                                {t(titleWord)}
+                                className = { classes.title }
+                                ref = { assignRef(index) }>
+                                {t(word)}
                             </span>
-                        </Tooltip>
-                    ):(
-                        <span
-                            ref={ spanRef }
-                            className={ classes.title }>
-                                {t(titleWord)}
-                        </span>
-                    )}
-                    {index < titleArray.length - 1 && ' '}
+                        )}
+                        {index < titleWords.length - 1 && ' '}
                     </React.Fragment>
-                );
-            })}
-                </span>
+                ))}
+            </span>
         );
-    }, [ title, titleKey, titleArguments ]);
+    }, [ title, titleKey, titleArguments, textContainerRef ]);
 
     return (
         <div
@@ -381,7 +390,9 @@ const Notification = ({
                         size = { 20 }
                         src = { getIcon() } />
                 </div>
-                <div ref={textContainerRef} className = { classes.textContainer }>
+                <div
+                    className = { classes.textContainer }
+                    ref = { textContainerRef }>
                     {renderNotificationTitle()}
                     {renderDescription()}
                     <div className = { classes.actionsContainer }>
