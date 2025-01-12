@@ -296,49 +296,20 @@ describe('Desktop sharing - ', () => {
         expect(await p4.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived())).toBe(true);
 
         const p1EndpointId = await p1.getEndpointId();
+        const p2EndpointId = await p2.getEndpointId();
 
         // p4 has lastN=2 and has selected p3. With p2 being dominant speaker p4 should eventually
         // see video for [p3, p2] and p1 as ninja.
-        await p4.driver.$(`//span[@id='participant_${p1EndpointId}']//span[@class='connection_ninja']`)
-            .waitForDisplayed({
-                timeout: 15_000
-            });
-
-        const p2EndpointId = await p2.getEndpointId();
-
-        await p4.driver.waitUntil(async () =>
-            await p4.driver.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                p2EndpointId) && await p4.driver.$(
-                `//span[@id="participant_${p2EndpointId}" and contains(@class, "display-video")]`).isExisting(), {
-            timeout: 15_000,
-            timeoutMsg: 'expected remote video to be received 15s'
-        });
-
-        await p4.driver.waitUntil(async () =>
-            await p4.driver.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                p2EndpointId) && await p4.driver.$(
-                `//span[@id="participant_${p2EndpointId}" and contains(@class, "display-video")]`).isExisting(), {
-            timeout: 15_000,
-            timeoutMsg: 'expected remote video to be received 15s'
-        });
+        await p4.waitForNinjaIcon(p1EndpointId);
+        await p4.waitForRemoteVideo(p2EndpointId);
 
         // Let's switch and check, muting participant 2 and unmuting 1 will leave participant 1 as dominant
         await p1.getToolbar().clickAudioUnmuteButton();
         await p2.getToolbar().clickAudioMuteButton();
 
         // Participant4 should eventually see video for [p3, p1] and p2 as a ninja.
-        await p4.driver.$(`//span[@id='participant_${p2EndpointId}']//span[@class='connection_ninja']`)
-            .waitForDisplayed({
-                timeout: 15_000
-            });
-
-        await p4.driver.waitUntil(async () =>
-            await p4.driver.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                p1EndpointId) && await p4.driver.$(
-              `//span[@id="participant_${p1EndpointId}" and contains(@class, "display-video")]`).isExisting(), {
-            timeout: 15_000,
-            timeoutMsg: 'expected remote video to be received 15s'
-        });
+        await p4.waitForNinjaIcon(p2EndpointId);
+        await p4.waitForRemoteVideo(p1EndpointId);
     });
 });
 

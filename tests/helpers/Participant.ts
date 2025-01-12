@@ -340,6 +340,30 @@ export class Participant {
     }
 
     /**
+     * Waits for send and receive data.
+     *
+     * @returns {Promise<void>}
+     */
+    async waitForSendData(
+        timeout = 15_000, msg = `expected to send data in 15s for ${this.name}`): Promise<void> {
+        const driver = this.driver;
+
+        return driver.waitUntil(async () =>
+            await driver.execute(() => {
+                const stats = APP.conference.getStats();
+                const bitrateMap = stats?.bitrate || {};
+                const rtpStats = {
+                    uploadBitrate: bitrateMap.upload || 0
+                };
+
+                return rtpStats.uploadBitrate > 0;
+            }), {
+            timeout,
+            timeoutMsg: msg
+        });
+    }
+
+    /**
      * Waits for remote streams.
      *
      * @param {number} number - The number of remote streams to wait for.
@@ -351,7 +375,7 @@ export class Participant {
         return driver.waitUntil(async () =>
             await driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
             timeout: 15_000,
-            timeoutMsg: `expected remote streams in 15s for ${this.name}`
+            timeoutMsg: `expected number of remote streams:${number} in 15s for ${this.name}`
         });
     }
 
@@ -616,5 +640,31 @@ export class Participant {
      */
     async isLeaveReasonDialogOpen() {
         return await this.driver.$(`div[data-testid="dialog.leaveReason"]`).isDisplayed();
+    }
+
+    /**
+     * Waits for remote video state - receiving and displayed.
+     * @param endpointId
+     */
+    async waitForRemoteVideo(endpointId: string) {
+        await this.driver.waitUntil(async () =>
+            await this.driver.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
+                endpointId) && await this.driver.$(
+                `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+            timeout: 15_000,
+            timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.name}`
+        });
+    }
+
+    /**
+     * Waits for ninja icon to be displayed.
+     * @param endpointId
+     */
+    async waitForNinjaIcon(endpointId: string) {
+        await this.driver.$(`//span[@id='participant_${endpointId}']//span[@class='connection_ninja']`)
+            .waitForDisplayed({
+                timeout: 15_000,
+                timeoutMsg: `expected ninja icon for ${endpointId} to be displayed in 15s by ${this.name}`
+            });
     }
 }
