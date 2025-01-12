@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { toggleScreensharing } from '../../../base/tracks/actions';
 import Dialog from '../../../base/ui/components/web/Dialog';
+import { handleScreenSharingError } from '../../../base/tracks/actions.web';
+
 
 export interface IProps extends WithTranslation {
 
@@ -42,12 +43,13 @@ class ShareScreenWarningDialog extends Component<IProps> {
      * @returns {boolean}
      */
     _onStopSharing() {
-        // Depending on the context from which this dialog is opened we'll either be toggling off an audio only
-        // share session or a normal screen sharing one, this is indicated by the _isAudioScreenShareWarning prop.
-        this.props.dispatch(toggleScreensharing(undefined,
-            !this.props._isAudioScreenShareWarning));
+             this.props.dispatch(
+                toggleScreensharing(undefined, !this.props._isAudioScreenShareWarning)
+            );
 
-        return true;
+
+    
+        return true; // Ensure the dialog closes as expected.
     }
 
     /**
