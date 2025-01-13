@@ -31,6 +31,9 @@ import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -56,70 +59,96 @@ public class JMOngoingConferenceService extends Service {
 
     public static void doLaunch(Context context) {
 
-        RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
+        try {
+            RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
+            JitsiMeetLogger.w(TAG + " Notification channel creation completed");
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, TAG + " Error creating notification channel");
+        }
 
         Intent intent = new Intent(context, JMOngoingConferenceService.class);
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
+                JitsiMeetLogger.w(TAG + " Starting foreground service");
             } else {
                 context.startService(intent);
+                JitsiMeetLogger.w(TAG + " Starting service");
             }
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
             JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
-            return;
         }
     }
 
     public static void launch(Context context, Activity currentActivity) {
+        JitsiMeetLogger.w(TAG + " Service launch started");
         List<String> permissionsList = new ArrayList<>();
 
         PermissionListener listener = new PermissionListener() {
             @Override
             public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                JitsiMeetLogger.w(TAG + " Permission callback received");
+
+                if (results == null || results.length == 0) {
+                    JitsiMeetLogger.w(TAG + " Permission results are null or empty");
+                    return false;
+                }
+
                 int counter = 0;
-
-                if (results.length > 0) {
-                    for (int result : results) {
-                        if (result == PackageManager.PERMISSION_GRANTED) {
-                            counter++;
-                        }
-                    }
-
-                    if (counter == results.length){
-                        doLaunch(context);
-                        JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
-                    } else {
-                        JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+                for (int result : results) {
+                    if (result == PackageManager.PERMISSION_GRANTED) {
+                        counter++;
                     }
                 }
 
-                return true;
+                JitsiMeetLogger.w(TAG + " Permissions granted: " + counter + "/" + results.length);
+
+                if (counter == results.length) {
+                    JitsiMeetLogger.w(TAG + " All permissions granted, launching service");
+                    doLaunch(context);
+                    return true;
+                } else {
+                    JitsiMeetLogger.w(TAG + " Not all permissions were granted");
+                    return false;
+                }
             }
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            JitsiMeetLogger.w(TAG + " Checking Tiramisu permissions");
             permissionsList.add(POST_NOTIFICATIONS);
             permissionsList.add(RECORD_AUDIO);
         }
 
-        String[] permissionsArray = new String[ permissionsList.size() ];
-        permissionsArray = permissionsList.toArray( permissionsArray );
+        String[] permissionsArray = permissionsList.toArray(new String[0]);
 
         if (permissionsArray.length > 0) {
             try {
-                currentActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE);
                 JitsiMeetLogger.w(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
+                currentActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE);
+
+                // Only call onRequestPermissionsResult if we actually have permissions to check
+                boolean[] grantResults = new boolean[permissionsArray.length];
+                int[] results = new int[permissionsArray.length];
+
+                for (int i = 0; i < permissionsArray.length; i++) {
+                    grantResults[i] = context.checkSelfPermission(permissionsArray[i])
+                        == PackageManager.PERMISSION_GRANTED;
+                    results[i] = grantResults[i] ?
+                        PackageManager.PERMISSION_GRANTED :
+                        PackageManager.PERMISSION_DENIED;
+                }
+
+                listener.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, permissionsArray, results);
             } catch (Exception e) {
-                JitsiMeetLogger.e(e, "Error requesting permissions");
-                listener.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, permissionsArray, new int[0]);
+                JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
             }
         } else {
-            doLaunch(context);
             JitsiMeetLogger.w(TAG + " No permissions needed, launching service");
+            doLaunch(context);
         }
     }
 
@@ -131,22 +160,28 @@ public class JMOngoingConferenceService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        JitsiMeetLogger.w(TAG + " Building ongoing conference notification");
+        JitsiMeetLogger.w(TAG + " onCreate called");
 
-        Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(this);
-        if (notification == null) {
-            stopSelf();
-            JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
-        } else {
-            JitsiMeetLogger.w(TAG + " Starting service in foreground with notification");
+        try {
+            Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(this);
+            JitsiMeetLogger.w(TAG + " Notification build result: " + (notification != null));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
-            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            if (notification == null) {
+                stopSelf();
+                JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
             } else {
-                startForeground(NOTIFICATION_ID, notification);
+                JitsiMeetLogger.w(TAG + " Starting service in foreground with notification");
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                } else {
+                    startForeground(NOTIFICATION_ID, notification);
+                }
             }
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, TAG + " Error in onCreate");
         }
     }
 
