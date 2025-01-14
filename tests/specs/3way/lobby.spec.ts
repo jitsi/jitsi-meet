@@ -1,4 +1,4 @@
-import type { Participant } from '../../helpers/Participant';
+import { P1_DISPLAY_NAME, P3_DISPLAY_NAME, Participant } from '../../helpers/Participant';
 import { ensureOneParticipant, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
 import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
@@ -19,54 +19,336 @@ describe('Lobby', () => {
     });
 
     it('entering in lobby and approve', async () => {
-        const { p1 } = ctx;
+        const { p1, p2 } = ctx;
 
         await enterLobby(p1, true);
+
+        const { p3 } = ctx;
+
+        await p1.getNotifications().allowLobbyParticipant();
+
+        const notificationText = await p2.getNotifications().getLobbyParticipantAccessGranted();
+
+        expect(notificationText.includes(P1_DISPLAY_NAME)).toBe(true);
+        expect(notificationText.includes(P3_DISPLAY_NAME)).toBe(true);
+
+        await p2.getNotifications().closeLobbyParticipantAccessGranted();
+
+        // ensure 3 participants in the call will check for the third one that muc is joined, ice connected,
+        // media is being receiving and there are two remote streams
+        await p3.waitToJoinMUC();
+        await p3.waitForIceConnected();
+        await p3.waitForSendReceiveData();
+        await p3.waitForRemoteStreams(2);
+
+        // now check third one display name in the room, is the one set in the prejoin screen
+        const name = await p1.getFilmstrip().getRemoteDisplayName(await p3.getEndpointId());
+
+        expect(name).toBe(P3_DISPLAY_NAME);
+
+        await p3.hangup();
     });
 
     it('entering in lobby and deny', async () => {
-        //
+        const { p1, p2 } = ctx;
+
+        // the first time tests is executed we need to enter display name,
+        // for next execution that will be locally stored
+        await enterLobby(p1, false);
+
+        // moderator rejects access
+        await p1.getNotifications().rejectLobbyParticipant();
+
+        // deny notification on 2nd participant
+        const notificationText = await p2.getNotifications().getLobbyParticipantAccessDenied();
+
+        expect(notificationText.includes(P1_DISPLAY_NAME)).toBe(true);
+        expect(notificationText.includes(P3_DISPLAY_NAME)).toBe(true);
+
+        await p2.getNotifications().closeLobbyParticipantAccessDenied();
+
+        const { p3 } = ctx;
+
+        // check the denied one is out of lobby, sees the notification about it
+        await p3.getNotifications().waitForLobbyAccessDeniedNotification();
+
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(false);
+
+        await p3.hangup();
     });
 
 
     it('approve from participants pane', async () => {
-        //
+        const { p1 } = ctx;
+
+        const knockingParticipant = await enterLobby(p1, false);
+
+        // moderator allows access
+        const p1ParticipantsPane = p1.getParticipantsPane();
+
+        await p1ParticipantsPane.open();
+        await p1ParticipantsPane.admitLobbyParticipant(knockingParticipant);
+        await p1ParticipantsPane.close();
+
+        const { p3 } = ctx;
+
+        // ensure 3 participants in the call will check for the third one that muc is joined, ice connected,
+        // media is being receiving and there are two remote streams
+        await p3.waitToJoinMUC();
+        await p3.waitForIceConnected();
+        await p3.waitForSendReceiveData();
+        await p3.waitForRemoteStreams(2);
+
+        // now check third one display name in the room, is the one set in the prejoin screen
+        // now check third one display name in the room, is the one set in the prejoin screen
+        const name = await p1.getFilmstrip().getRemoteDisplayName(await p3.getEndpointId());
+
+        expect(name).toBe(P3_DISPLAY_NAME);
+
+        await p3.hangup();
     });
 
     it('reject from participants pane', async () => {
-        //
+        const { p1 } = ctx;
+
+        const knockingParticipant = await enterLobby(p1, false);
+
+        // moderator rejects access
+        const p1ParticipantsPane = p1.getParticipantsPane();
+
+        await p1ParticipantsPane.open();
+        await p1ParticipantsPane.rejectLobbyParticipant(knockingParticipant);
+        await p1ParticipantsPane.close();
+
+        const { p3 } = ctx;
+
+        // check the denied one is out of lobby, sees the notification about it
+        // The third participant should see a warning that his access to the room was denied
+        await p3.getNotifications().waitForLobbyAccessDeniedNotification();
+
+        // check Lobby room not left
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(false);
+
+        await p3.hangup();
     });
 
     it('lobby user leave', async () => {
-        //
+        const { p1 } = ctx;
+
+        await enterLobby(p1, false);
+
+        await ctx.p3.hangup();
+
+        // check that moderator (participant 1) no longer sees notification about participant in lobby
+        await p1.getNotifications().waitForHideOfKnockingParticipants();
     });
 
     it('conference ended in lobby', async () => {
-        //
+        const { p1, p2 } = ctx;
+
+        await enterLobby(p1, false);
+
+        await p1.hangup();
+        await p2.hangup();
+
+        const { p3 } = ctx;
+
+        await p3.driver.$('.dialog.leaveReason').isExisting();
+
+        await p3.driver.waitUntil(
+            async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
+            {
+                timeout: 2000,
+                timeoutMsg: 'p2 did not leave lobby'
+            }
+        );
+
+        await p3.hangup();
     });
 
     it('disable while participant in lobby', async () => {
-        //
+        await ensureTwoParticipants(ctx);
+
+        const { p1 } = ctx;
+
+        await enableLobby();
+        await enterLobby(p1);
+
+        // WebParticipant participant1 = getParticipant1();
+        const p1SecurityDialog = p1.getSecurityDialog();
+
+        await p1.getToolbar().clickSecurityButton();
+        await p1SecurityDialog.waitForDisplay();
+
+        await p1SecurityDialog.toggleLobby();
+        await p1SecurityDialog.waitForLobbyEnabled();
+
+        const { p3 } = ctx;
+
+        await p3.waitToJoinMUC();
+
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(false);
     });
 
     it('change of moderators in lobby', async () => {
-        //
+        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+
+        await ensureTwoParticipants(ctx);
+
+        const { p1, p2 } = ctx;
+
+        // hanging up the first one, which is moderator and second one should be
+        await p1.hangup();
+
+        await p2.driver.waitUntil(
+            async () => await p2.isModerator(),
+            {
+                timeout: 3000,
+                timeoutMsg: 'p2 is not moderator after p1 leaves'
+            }
+        );
+
+        const p2SecurityDialog = p2.getSecurityDialog();
+
+        await p2.getToolbar().clickSecurityButton();
+        await p2SecurityDialog.waitForDisplay();
+
+        await p2SecurityDialog.toggleLobby();
+        await p2SecurityDialog.waitForLobbyEnabled();
+
+        // here the important check is whether the moderator sees the knocking participant
+        await enterLobby(p2, false);
+
+        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
     });
 
     it('shared password', async () => {
-        //
+        await ensureTwoParticipants(ctx);
+
+        const { p1 } = ctx;
+
+        await enableLobby();
+
+        const p1SecurityDialog = p1.getSecurityDialog();
+
+        await p1.getToolbar().clickSecurityButton();
+        await p1SecurityDialog.waitForDisplay();
+
+        expect(await p1SecurityDialog.isLocked()).toBe(false);
+
+        const roomPasscode = String(Math.random() * 1_000);
+
+        await p1SecurityDialog.addPassword(roomPasscode);
+
+        await p1.driver.waitUntil(
+            async () => await p1SecurityDialog.isLocked(),
+            {
+                timeout: 2000,
+                timeoutMsg: 'room did not lock for p1'
+            }
+        );
+
+        await enterLobby(p1, false);
+
+        const { p3 } = ctx;
+
+        // now fill in password
+        const lobbyScreen = p3.getLobbyScreen();
+
+        await lobbyScreen.enterPassword(roomPasscode);
+
+        await p3.waitToJoinMUC();
+        await p3.waitForIceConnected();
+        await p3.waitForSendReceiveData();
     });
 
     it('enable with more than two participants', async () => {
-        //
+        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+
+
+        await ensureThreeParticipants(ctx);
+
+        await enableLobby();
+
+        // we need to check remote participants as isInMuc has not changed its value as
+        // the bug is triggered by presence with status 322 which is not handled correctly
+        const { p1, p2, p3 } = ctx;
+
+        await p1.waitForRemoteStreams(2);
+        await p2.waitForRemoteStreams(2);
+        await p3.waitForRemoteStreams(2);
     });
 
     it('moderator leaves while lobby enabled', async () => {
-        //
+        const { p1, p2, p3 } = ctx;
+
+        await p3.hangup();
+        await p1.hangup();
+
+        await p2.driver.waitUntil(
+            async () => await p2.isModerator(),
+            {
+                timeout: 3000,
+                timeoutMsg: 'p2 is not moderator after p1 leaves'
+            }
+        );
+
+        const lobbyScreen = p2.getLobbyScreen();
+
+        expect(await lobbyScreen.isLobbyRoomJoined()).toBe(true);
     });
 
     it('reject and approve in pre-join', async () => {
-        //
+        await ctx.p2.hangup();
+
+        await ensureTwoParticipants(ctx);
+        await enableLobby();
+
+        const { p1 } = ctx;
+
+        const knockingParticipant = await enterLobby(p1, true, true);
+
+        // moderator rejects access
+        const p1ParticipantsPane = p1.getParticipantsPane();
+
+        await p1ParticipantsPane.open();
+        await p1ParticipantsPane.rejectLobbyParticipant(knockingParticipant);
+        await p1ParticipantsPane.close();
+
+        const { p3 } = ctx;
+
+        // check the denied one is out of lobby, sees the notification about it
+        // The third participant should see a warning that his access to the room was denied
+        await p3.getNotifications().waitForLobbyAccessDeniedNotification();
+
+        // check Lobby room left
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(false);
+
+        // try again entering the lobby with the third one and approve it
+        // check that everything is fine in the meeting
+        await p3.getNotifications().closeLocalLobbyAccessDenied();
+
+        // let's retry to enter the lobby and approve this time
+        const lobbyScreen = p3.getPreJoinScreen();
+
+        // click join button
+        await lobbyScreen.getJoinButton().click();
+        await lobbyScreen.waitToJoinLobby();
+
+        // check that moderator (participant 1) sees notification about participant in lobby
+        const name = await p1.getNotifications().getKnockingParticipantName();
+
+        expect(name).toBe(P3_DISPLAY_NAME);
+        expect(await lobbyScreen.isLobbyRoomJoined()).toBe(true);
+
+        await p1ParticipantsPane.open();
+        await p1ParticipantsPane.admitLobbyParticipant(knockingParticipant);
+        await p1ParticipantsPane.close();
+
+        await p3.waitForParticipants(2);
+        await p3.waitForRemoteStreams(2);
+
+        expect(await p3.getFilmstrip().countVisibleThumbnails()).toBe(3);
     });
 });
 
@@ -75,10 +357,6 @@ describe('Lobby', () => {
  */
 async function enableLobby() {
     const { p1, p2 } = ctx;
-
-    // TODO? remove
-    // we set the name so we can check it on the notifications
-    //     participant1.setDisplayName(participant1.getName());
 
     const p1SecurityDialog = p1.getSecurityDialog();
 
@@ -153,7 +431,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
         screen = p3.getLobbyScreen();
     }
 
-    // // participant 3 should be now on pre-join screen
+    // participant 3 should be now on pre-join screen
     await screen.waitForLoading();
 
     const displayNameInput = screen.getDisplayNameInput();
@@ -178,7 +456,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
         // this check needs to be added once the functionality exists
 
         // enter display name
-        await screen.enterDisplayName(p3.name);
+        await screen.enterDisplayName(P3_DISPLAY_NAME);
 
         // check join button is enabled
         classes = await joinButton.getAttribute('class');
@@ -202,7 +480,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     // check that moderator (participant 1) sees notification about participant in lobby
     const name = await participant.getNotifications().getKnockingParticipantName();
 
-    expect(name).toBe(p3.name);
+    expect(name).toBe(P3_DISPLAY_NAME);
     expect(await screen.isLobbyRoomJoined()).toBe(true);
 
     return name;

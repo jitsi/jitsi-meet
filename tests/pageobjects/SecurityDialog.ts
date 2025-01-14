@@ -1,0 +1,136 @@
+import { Key } from 'webdriverio';
+
+import BaseDialog from './BaseDialog';
+
+const ADD_PASSWORD_LINK = 'add-password';
+const ADD_PASSWORD_FIELD = 'info-password-input';
+const DIALOG_CONTAINER = 'security-dialog';
+const LOCAL_LOCK = 'info-password-local';
+const REMOTE_LOCK = 'info-password-remote';
+
+/**
+ * Page object for the security dialog.
+ */
+export default class SecurityDialog extends BaseDialog {
+    /**
+     *  Waits for the settings dialog to be visible.
+     */
+    async waitForDisplay() {
+        await this.participant.driver.$(`.${DIALOG_CONTAINER}`).waitForDisplayed();
+    }
+
+    /**
+     * Returns the switch that can be used to detect lobby state or change lobby state.
+     * @private
+     */
+    private getLobbySwitch() {
+        return this.participant.driver.$('#lobby-section-switch');
+    }
+
+    /**
+     * Returns is the lobby enabled.
+     */
+    async isLobbyEnabled() {
+        return this.getLobbySwitch().isSelected();
+    }
+
+    /**
+     * Toggles the lobby option from the security dialog.
+     */
+    async toggleLobby() {
+        const lobbySwitch = this.getLobbySwitch();
+
+        await lobbySwitch.moveTo();
+        await lobbySwitch.click();
+    }
+
+    /**
+     * Checks whether lobby section is present in the UI.
+     */
+    async isLobbySectionPresent() {
+        return await this.getLobbySwitch().isExisting();
+    }
+
+    /**
+     * Waits for the lobby to be enabled or disabled.
+     * @param reverse
+     */
+    async waitForLobbyEnabled(reverse = false) {
+        const lobbySwitch = this.getLobbySwitch();
+
+        return this.participant.driver.waitUntil(
+            async () => await lobbySwitch.isSelected() !== reverse,
+            {
+                timeout: 5_000, // 30 seconds
+                timeoutMsg: `Timeout waiting for lobby being ${reverse ? 'disabled' : 'enabled'} for ${
+                    this.participant.name}.`
+            }
+        );
+    }
+
+    /**
+     * Checks if the current conference is locked with a locally set password.
+     *
+     * @return {@code true} if the conference is displayed as locked locally in
+     * the security dialog, {@code false} otherwise.
+     */
+    private async isLockedLocally() {
+        return this.participant.driver.$(`.${LOCAL_LOCK}`).isExisting();
+    }
+
+    /**
+     * Checks if the current conference is locked with a locally set password.
+     *
+     * @return {@code true}  if the conference is displayed as locked remotely
+     * in the security dialog, {@code false} otherwise.
+     */
+    private async isLockedRemotely() {
+        return await this.participant.driver.$(`.${REMOTE_LOCK}`).isExisting();
+    }
+
+    /**
+     * Checks if the current conference is locked based on the security dialog's
+     * display state.
+     *
+     * @return {@code true} if the conference is displayed as locked in the
+     * security dialog, {@code false} otherwise.
+     */
+    async isLocked() {
+        return await this.isLockedLocally() || await this.isLockedRemotely();
+    }
+
+    /**
+     * Sets a password on the current conference to lock it.
+     *
+     * @param password - The password to use to lock the conference.
+     */
+    async addPassword(password: string) {
+        const addPasswordLink = this.participant.driver.$(`.${ADD_PASSWORD_LINK}`);
+
+        await addPasswordLink.waitForClickable();
+        await addPasswordLink.click();
+
+        const passwordEntry = this.participant.driver.$(`#${ADD_PASSWORD_FIELD}`);
+
+        await passwordEntry.waitForDisplayed();
+        await passwordEntry.click();
+
+        await this.participant.driver.keys(password);
+        await this.participant.driver.$('button=Add').click();
+
+        let validationMessage;
+
+        // There are two cases here, validation is enabled and the field passwordEntry maybe there
+        // with validation failed, or maybe successfully hidden after setting the password
+        // So let's give it some time to act on any of the above
+        if (!await passwordEntry.isExisting()) {
+            // validation had failed on password field as it is still on the page
+            validationMessage = passwordEntry.getAttribute('validationMessage');
+        }
+
+        if (validationMessage) {
+            await this.participant.driver.keys([ Key.Escape ]);
+            expect(validationMessage).toBe('');
+        }
+    }
+}

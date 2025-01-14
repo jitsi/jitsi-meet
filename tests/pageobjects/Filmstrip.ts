@@ -210,4 +210,12 @@ export default class Filmstrip extends BasePageObject {
             }
         );
     }
+
+    /**
+     * Counts the displayed remote video thumbnails.
+     */
+    async countVisibleThumbnails() {
+        return (await this.participant.driver.$$('//div[@id="remoteVideos"]//span[contains(@class,"videocontainer")]')
+            .filter(thumbnail => thumbnail.isDisplayed())).length;
+    }
 }

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Participant } from './Participant';
+import { P1_DISPLAY_NAME, P2_DISPLAY_NAME, P3_DISPLAY_NAME, P4_DISPLAY_NAME, Participant } from './Participant';
 import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -34,13 +34,13 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
         }, {
-            displayName: 'p2',
+            displayName: P2_DISPLAY_NAME,
             ...options
         }),
         _joinParticipant('participant3', ctx.p3, p => {
             ctx.p3 = p;
         }, {
-            displayName: 'p3',
+            displayName: P3_DISPLAY_NAME,
             ...options
         })
     ]);
@@ -68,19 +68,19 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
         }, {
-            displayName: 'p2',
+            displayName: P2_DISPLAY_NAME,
             ...options
         }),
         _joinParticipant('participant3', ctx.p3, p => {
             ctx.p3 = p;
         }, {
-            displayName: 'p3',
+            displayName: P3_DISPLAY_NAME,
             ...options
         }),
         _joinParticipant('participant4', ctx.p4, p => {
             ctx.p4 = p;
         }, {
-            displayName: 'p4',
+            displayName: P4_DISPLAY_NAME,
             ...options
         })
     ]);
@@ -102,7 +102,7 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
  * @returns {Promise<void>}
  */
 async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
-    const p1DisplayName = 'p1';
+    const p1DisplayName = P1_DISPLAY_NAME;
     let token;
 
     // if it is jaas create the first one to be moderator and second not moderator
@@ -135,7 +135,7 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
         _joinParticipant('participant2', ctx.p2, p => {
             ctx.p2 = p;
         }, {
-            displayName: 'p2',
+            displayName: P2_DISPLAY_NAME,
             ...options
         }),
         skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
