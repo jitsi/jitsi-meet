@@ -307,8 +307,8 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
-        "demoteParticipantDialog": "Are you sure you want to move this participant to visitor?",
-        "demoteParticipantTitle": "Move to visitor",
+        "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
+        "demoteParticipantTitle": "Move to viewer",
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
         "done": "Done",
@@ -831,9 +831,9 @@
         "videoUnmuteBlockedTitle": "Camera unmute and desktop sharing blocked!",
         "viewLobby": "View lobby",
         "viewParticipants": "View participants",
-        "viewVisitors": "View visitors",
+        "viewVisitors": "View viewers",
         "waitingParticipants": "{{waitingParticipants}} people",
-        "waitingVisitors": "Visitors waiting in queue: {{waitingVisitors}}",
+        "waitingVisitors": "Viewers waiting in queue: {{waitingVisitors}}",
         "waitingVisitorsTitle": "The meeting is not live yet!",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
         "whiteboardLimitTitle": "Whiteboard usage"
@@ -870,7 +870,7 @@
             "participantsList": "Meeting participants ({{count}})",
             "visitorInQueue": " (waiting {{count}})",
             "visitorRequests": " (requests {{count}})",
-            "visitors": "Visitors {{count}}",
+            "visitors": "Viewers {{count}}",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
         "search": "Search participants",
@@ -1451,7 +1451,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
-        "demote": "Move to visitor",
+        "demote": "Move to viewer",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "domuteVideo": "Disable camera",
@@ -1503,21 +1503,21 @@
         "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser"
     },
     "visitors": {
-        "chatIndicator": "(visitor)",
+        "chatIndicator": "(viewer)",
         "joinMeeting": {
-            "description": "You're currently an observer in this conference.",
+            "description": "You're currently a viewer in this conference.",
             "raiseHand": "Raise your hand",
             "title": "Joining meeting",
             "wishToSpeak": "If you wish to speak, please raise your hand below and wait for the moderator's approval."
         },
-        "labelTooltip": "Number of visitors: {{count}}",
+        "labelTooltip": "Number of viewers: {{count}}",
         "notification": {
             "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
             "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
             "noMainParticipantsTitle": "This meeting hasn’t started yet.",
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
             "notAllowedPromotion": "A participant needs to allow your request first.",
-            "title": "You are a visitor in the meeting"
+            "title": "You are a viewer in the meeting"
         },
         "waitingMessage": "You'll join the meeting as soon as it is live!"
     },
