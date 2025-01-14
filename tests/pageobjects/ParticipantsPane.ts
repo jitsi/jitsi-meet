@@ -1,3 +1,5 @@
+import { ChainablePromiseElement } from 'webdriverio';
+
 import { Participant } from '../helpers/Participant';
 
 import AVModerationMenu from './AVModerationMenu';
@@ -183,5 +185,58 @@ export default class ParticipantsPane extends BasePageObject {
 
         await inviteButton.waitForDisplayed();
         await inviteButton.click();
+    }
+
+    /**
+     * Find the participant by name.
+     * @param name - The name to look for.
+     * @private
+     */
+    private async findLobbyParticipantByName(name: string): Promise<ChainablePromiseElement> {
+        return this.participant.driver.$$('//div[@id="lobby-list"]//div[starts-with(@id, "participant-item-")]')
+            .find(async participant => (await participant.getText()).includes(name));
+    }
+
+    /**
+     * Tries to click on the approve button and fails if it cannot be clicked.
+     * @param participantNameToAdmit - the name of the participant to admit.
+     */
+    async admitLobbyParticipant(participantNameToAdmit: string) {
+        const participantToAdmit = await this.findLobbyParticipantByName(participantNameToAdmit);
+
+        await participantToAdmit.moveTo();
+
+        const participantIdToAdmit = (await participantToAdmit.getAttribute('id'))
+            .substring('participant-item-'.length);
+        const admitButton = this.participant.driver
+            .$(`[data-testid="admit-${participantIdToAdmit}"]`);
+
+        await admitButton.waitForExist();
+        await admitButton.click();
+    }
+
+    /**
+     * Tries to click on the reject button and fails if it cannot be clicked.
+     * @param participantNameToReject - the name of the participant for this {@link ParticipantsPane} to reject.
+     */
+    async rejectLobbyParticipant(participantNameToReject: string) {
+        const participantToReject
+            = await this.findLobbyParticipantByName(participantNameToReject);
+
+        await participantToReject.moveTo();
+
+        const participantIdToReject = (await participantToReject.getAttribute('id'))
+            .substring('participant-item-'.length);
+
+        const moreOptionsButton
+            = this.participant.driver.$(`aria/More moderation options ${participantNameToReject}`);
+
+        await moreOptionsButton.click();
+
+        const rejectButton = this.participant.driver
+            .$(`[data-testid="reject-${participantIdToReject}"]`);
+
+        await rejectButton.waitForExist();
+        await rejectButton.click();
     }
 }

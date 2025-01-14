@@ -12,6 +12,7 @@ const OVERFLOW = 'More actions';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
+const SECURITY = 'Security options';
 const SETTINGS = 'Open settings';
 const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
@@ -199,6 +200,13 @@ export default class Toolbar extends BasePageObject {
     async clickHangupButton(): Promise<void> {
         this.participant.log('Clicking on: Hangup Button');
         await this.getButton(HANGUP).click();
+    }
+
+    /**
+     * Clicks on the security toolbar button which opens the security panel.
+     */
+    async clickSecurityButton() {
+        await this.clickButtonInOverflowMenu(SECURITY);
     }
 
     /**

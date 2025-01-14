@@ -45,4 +45,10 @@ export type IJoinOptions = {
      * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
      */
     skipInMeetingChecks?: boolean;
+
+    /**
+     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
+     * based on the logic of the test.
+     */
+    skipWaitToJoin?: boolean;
 };

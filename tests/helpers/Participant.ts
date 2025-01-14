@@ -10,14 +10,22 @@ import ChatPanel from '../pageobjects/ChatPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
+import LobbyScreen from '../pageobjects/LobbyScreen';
 import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
+import PreJoinScreen from '../pageobjects/PreJoinScreen';
+import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
+
+export const P1_DISPLAY_NAME = 'p1';
+export const P2_DISPLAY_NAME = 'p2';
+export const P3_DISPLAY_NAME = 'p3';
+export const P4_DISPLAY_NAME = 'p4';
 
 /**
  * Participant.
@@ -29,6 +37,7 @@ export class Participant {
      * @private
      */
     private _name: string;
+    private _displayName: string;
     private _endpointId: string;
     private _jwt?: string;
 
@@ -104,6 +113,13 @@ export class Participant {
     }
 
     /**
+     * The name.
+     */
+    get displayName() {
+        return this._displayName || this.name;
+    }
+
+    /**
      * Adds a log to the participants log file.
      *
      * @param {string} message - The message to log.
@@ -135,7 +151,7 @@ export class Participant {
         if (!options.skipDisplayName) {
             // @ts-ignore
             config.userInfo = {
-                displayName: options.displayName || this._name
+                displayName: this._displayName = options.displayName || this._name
             };
         }
 
@@ -173,7 +189,9 @@ export class Participant {
             await this.driver.switchFrame(mainFrame);
         }
 
-        await this.waitToJoinMUC();
+        if (!options.skipWaitToJoin) {
+            await this.waitToJoinMUC();
+        }
 
         await this.postLoadProcess(options.skipInMeetingChecks);
     }
@@ -345,7 +363,7 @@ export class Participant {
      * @returns {Promise<void>}
      */
     async waitForSendData(
-        timeout = 15_000, msg = `expected to send data in 15s for ${this.name}`): Promise<void> {
+            timeout = 15_000, msg = `expected to send data in 15s for ${this.name}`): Promise<void> {
         const driver = this.driver;
 
         return driver.waitUntil(async () =>
@@ -465,12 +483,35 @@ export class Participant {
     }
 
     /**
+     * Returns the security Dialog.
+     *
+     * @returns {SecurityDialog}
+     */
+    getSecurityDialog(): SecurityDialog {
+        return new SecurityDialog(this);
+    }
+
+    /**
      * Returns the settings Dialog.
      *
      * @returns {SettingsDialog}
      */
     getSettingsDialog(): SettingsDialog {
         return new SettingsDialog(this);
+    }
+
+    /**
+     * Returns the prejoin screen.
+     */
+    getPreJoinScreen(): PreJoinScreen {
+        return new PreJoinScreen(this);
+    }
+
+    /**
+     * Returns the lobby screen.
+     */
+    getLobbyScreen(): LobbyScreen {
+        return new LobbyScreen(this);
     }
 
     /**
@@ -500,6 +541,26 @@ export class Participant {
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
+        const current = await this.driver.getUrl();
+
+        // already hangup
+        if (current.endsWith('/base.html')) {
+            return;
+        }
+
+        // do a hangup, to make sure unavailable presence is sent
+        await this.driver.execute(() => typeof APP !== 'undefined' && APP?.conference?.hangup());
+
+        // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
+        // change of url
+        await this.driver.waitUntil(
+            async () => current !== await this.driver.getUrl(),
+            {
+                timeout: 5000,
+                timeoutMsg: `${this.name} did not leave the muc in 5s`
+            }
+        );
+
         await this.driver.url('/base.html');
     }
 
@@ -639,7 +700,7 @@ export class Participant {
      * Checks if the leave reason dialog is open.
      */
     async isLeaveReasonDialogOpen() {
-        return await this.driver.$(`div[data-testid="dialog.leaveReason"]`).isDisplayed();
+        return await this.driver.$('div[data-testid="dialog.leaveReason"]').isDisplayed();
     }
 
     /**
