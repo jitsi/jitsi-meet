@@ -334,6 +334,7 @@
         "kickParticipantButton": "Izraidīt",
         "kickParticipantDialog": "Vai esat pārliecināti, ka vēlaties izraidīt šo dalībnieku?",
         "kickParticipantTitle": "Izraidīt šo dalībnieku?",
+        "kickSystemTitle": "Ak! Jūs izraidīja no sapulces",
         "kickTitle": "Ak! {{participantDisplayName}} izraidīja jūs no sapulces",
         "linkMeeting": "Sasaistīt sapulci",
         "linkMeetingTitle": "Sasaistīt sapulci ar Salesforce",
