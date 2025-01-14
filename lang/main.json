@@ -1183,6 +1183,7 @@
         "fearful": "Fearful",
         "happy": "Happy",
         "hours": "{{count}}h",
+        "labelTooltip": "Number of participants: {{count}}",
         "minutes": "{{count}}m",
         "name": "Name",
         "neutral": "Neutral",
