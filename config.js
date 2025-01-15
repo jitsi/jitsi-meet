@@ -107,6 +107,8 @@ var config = {
         // Log the audio levels.
         // debugAudioLevels: true,
 
+        // Will replace ice candidates IPs with invalid ones in order to fail ice.
+        // failICE: true,
     },
 
     // Disables moderator indicators.
