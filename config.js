@@ -1631,6 +1631,9 @@ var config = {
     //         video: true
     //     },
     // },
+    // The default type of desktop sharing sources that will be used in the electron app.
+    // desktopSharingSources: ['screen', 'window'],
+
     // Disables the echo cancelation for local audio tracks.
     // disableAEC: true,
 
