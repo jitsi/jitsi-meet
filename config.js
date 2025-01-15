@@ -103,6 +103,10 @@ var config = {
 
         // Dump transcripts to a <transcript> element for debugging.
         // dumpTranscript: false,
+
+        // Log the audio levels.
+        // debugAudioLevels: true,
+
     },
 
     // Disables moderator indicators.
@@ -1633,7 +1637,6 @@ var config = {
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
-     debugAudioLevels
      deploymentInfo
      dialOutAuthUrl
      dialOutCodesUrl
