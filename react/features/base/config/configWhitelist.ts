@@ -233,7 +233,7 @@ export default [
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
-    'visitors',
+    'visitors.enableMediaOnPromote',
     'watchRTCConfigParams.console',
     'watchRTCConfigParams.allowBrowserLogCollection',
     'watchRTCConfigParams.collectionInterval',
