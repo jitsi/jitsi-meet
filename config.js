@@ -368,9 +368,6 @@ var config = {
 
     // Recording
 
-    // DEPRECATED. Use recordingService.enabled instead.
-    // fileRecordingsEnabled: false,
-
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>', // Specify your app key here.
@@ -824,10 +821,6 @@ var config = {
     // deemed unsafe (due to the simplicity in the name) and a password is not
     // set or the lobby is not enabled.
     // enableInsecureRoomNameWarning: false,
-
-    // Whether to automatically copy invitation URL after creating a room.
-    // Document should be focused for this option to work
-    // enableAutomaticUrlCopy: false,
 
     // Array with avatar URL prefixes that need to use CORS.
     // corsAvatarURLs: [ 'https://www.gravatar.com/avatar/' ],
@@ -1645,7 +1638,6 @@ var config = {
      dialOutRegionUrl
      disableRemoteControl
      displayJids
-     firefox_fake_device
      googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
@@ -1668,7 +1660,6 @@ var config = {
      disableAEC
      disableAGC
      disableAP
-     disableHPF
      disableLocalStats
      disableNS
      enableTalkWhileMuted

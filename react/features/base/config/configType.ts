@@ -345,7 +345,6 @@ export interface IConfig {
         maxMessagesPerSecond?: number;
         numRequests?: number;
     };
-    enableAutomaticUrlCopy?: boolean;
     enableCalendarIntegration?: boolean;
     enableClosePage?: boolean;
     enableDisplayNameInStats?: boolean;
@@ -372,7 +371,6 @@ export interface IConfig {
         faceCenteringThreshold?: number;
     };
     feedbackPercentage?: number;
-    fileRecordingsEnabled?: boolean;
     fileRecordingsServiceEnabled?: boolean;
     fileRecordingsServiceSharingEnabled?: boolean;
     filmstrip?: {
@@ -382,7 +380,6 @@ export interface IConfig {
         disabled?: boolean;
         minParticipantCountForTopPanel?: number;
     };
-    firefox_fake_device?: string;
     flags?: {
         ssrcRewritingEnabled: boolean;
     };
