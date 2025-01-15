@@ -1620,6 +1620,16 @@ var config = {
     // For external entities (e. g. email), the localStorage key holding the token value for directory authentication
     // peopleSearchTokenLocation: "mytoken",
 
+
+    // Options related to visitors.
+    // visitors: {
+    //     // Starts audio/video when the participant is promoted from visitor.
+    //     enableMediaOnPromote: {
+    //         audio: true,
+    //         video: true
+    //     },
+    // },
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
