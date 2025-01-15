@@ -1,5 +1,6 @@
 import { ToolbarButton } from '../../toolbox/types';
 import { ILoggingConfig } from '../logging/types';
+import { DesktopSharingSourceType } from '../tracks/types';
 
 type ButtonsWithNotifyClick = 'camera' |
     'chat' |
@@ -280,6 +281,7 @@ export interface IConfig {
         max?: number;
         min?: number;
     };
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
     dialInConfCodeUrl?: string;
     dialInNumbersUrl?: string;
     dialOutAuthUrl?: string;
