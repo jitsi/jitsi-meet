@@ -1633,7 +1633,6 @@ var config = {
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
-     debug
      debugAudioLevels
      deploymentInfo
      dialOutAuthUrl

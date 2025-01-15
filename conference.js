@@ -1012,7 +1012,7 @@ export default {
     },
 
     /**
-     * Will be filled with values only when config.debug is enabled.
+     * Will be filled with values only when config.testing.testMode is true.
      * Its used by torture to check audio levels.
      */
     audioLevelsMap: {},
@@ -1588,7 +1588,7 @@ export default {
                 newLvl = 0;
             }
 
-            if (config.debug) {
+            if (config.testing?.testMode) {
                 this.audioLevelsMap[id] = newLvl;
                 if (config.debugAudioLevels) {
                     logger.log(`AudioLevel:${id}/${newLvl}`);

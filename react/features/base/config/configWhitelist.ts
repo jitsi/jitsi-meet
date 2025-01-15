@@ -77,7 +77,6 @@ export default [
     'connectionIndicators',
     'constraints',
     'brandingRoomAlias',
-    'debug',
     'debugAudioLevels',
     'deeplinking.disabled',
     'deeplinking.desktop.enabled',
