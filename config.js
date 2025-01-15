@@ -788,6 +788,9 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
+    // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
+    // googleApiApplicationClientID: '<client_id>',
+
     // Configs for prejoin page.
     // prejoinConfig: {
     //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
@@ -1657,7 +1660,6 @@ var config = {
      dialOutCodesUrl
      dialOutRegionUrl
      disableRemoteControl
-     googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
      microsoftApiApplicationClientID
