@@ -571,6 +571,7 @@ export interface IConfig {
     subject?: string;
     testing?: {
         assumeBandwidth?: boolean;
+        debugAudioLevels?: boolean;
         dumpTranscript?: boolean;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;

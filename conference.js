@@ -1590,7 +1590,7 @@ export default {
 
             if (config.testing?.testMode) {
                 this.audioLevelsMap[id] = newLvl;
-                if (config.debugAudioLevels) {
+                if (config.testing?.debugAudioLevels) {
                     logger.log(`AudioLevel:${id}/${newLvl}`);
                 }
             }
