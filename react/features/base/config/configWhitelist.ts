@@ -147,7 +147,6 @@ export default [
     'enableTcc',
     'enableAutomaticUrlCopy',
     'faceLandmarks',
-    'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',
     'filmstrip',
