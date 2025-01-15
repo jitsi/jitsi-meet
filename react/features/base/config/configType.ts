@@ -215,6 +215,10 @@ export interface IConfig {
         hideAutoAssignButton?: boolean;
         hideJoinRoomButton?: boolean;
     };
+    bridgeChannel?: {
+        ignoreDomain?: string;
+        preferSctp?: boolean;
+    };
     buttonsWithNotifyClick?: Array<ButtonsWithNotifyClick | {
         key: ButtonsWithNotifyClick;
         preventExecution: boolean;
@@ -280,6 +284,9 @@ export interface IConfig {
     dialOutAuthUrl?: string;
     dialOutRegionUrl?: string;
     disable1On1Mode?: boolean | null;
+    disableAEC?: boolean;
+    disableAGC?: boolean;
+    disableAP?: boolean;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -294,6 +301,7 @@ export interface IConfig {
     disableJoinLeaveSounds?: boolean;
     disableLocalVideoFlip?: boolean;
     disableModeratorIndicator?: boolean;
+    disableNS?: boolean;
     disablePolls?: boolean;
     disableProfile?: boolean;
     disableReactions?: boolean;
@@ -317,6 +325,7 @@ export interface IConfig {
     disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;
+    displayJids?: boolean;
     doNotFlipLocalVideo?: boolean;
     doNotStoreRoom?: boolean;
     dropbox?: {
@@ -359,6 +368,7 @@ export interface IConfig {
     enableOpusRed?: boolean;
     enableRemb?: boolean;
     enableSaveLogs?: boolean;
+    enableTalkWhileMuted?: boolean;
     enableTcc?: boolean;
     enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
@@ -385,6 +395,7 @@ export interface IConfig {
         ssrcRewritingEnabled: boolean;
     };
     focusUserJid?: string;
+    forceTurnRelay?: boolean;
     gatherStats?: boolean;
     giphy?: {
         displayMode?: 'all' | 'tile' | 'chat';
@@ -424,6 +435,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
+    ignoreStartMuted?: boolean;
     inviteAppName?: string | null;
     inviteServiceCallFlowsUrl?: string;
     inviteServiceUrl?: string;
@@ -477,6 +489,7 @@ export interface IConfig {
         enabled?: boolean;
         iceTransportPolicy?: string;
         mobileCodecPreferenceOrder?: Array<string>;
+        mobileScreenshareCodec?: string;
         stunServers?: Array<{ urls: string; }>;
     };
     participantMenuButtonsWithNotifyClick?: Array<string | ParticipantMenuButtonsWithNotifyClick | {

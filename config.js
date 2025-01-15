@@ -1628,6 +1628,26 @@ var config = {
     //         video: true
     //     },
     // },
+    // Disables the echo cancelation for local audio tracks.
+    // disableAEC: true,
+
+    // Disables the auto gain control for local audio tracks.
+    // disableAGC: true,
+
+    // Disables the audio processing (echo cancelation, auto gain control and noise suppression) for local audio tracks.
+    // disableAP: true,
+
+    // Disables the anoise suppression for local audio tracks.
+    // disableNS: true,
+
+    // Replaces the display name with the JID of the participants.
+    // displayJids: true,
+
+    // Enables disables talk while muted detection.
+    // enableTalkWhileMuted: true,
+
+    // Sets the peer connection ICE transport policy to "relay".
+    // forceTurnRelay: true,
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -1637,7 +1657,6 @@ var config = {
      dialOutCodesUrl
      dialOutRegionUrl
      disableRemoteControl
-     displayJids
      googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
@@ -1657,13 +1676,7 @@ var config = {
      _peerConnStatusRtcMuteTimeout
      avgRtpStatsN
      desktopSharingSources
-     disableAEC
-     disableAGC
-     disableAP
      disableLocalStats
-     disableNS
-     enableTalkWhileMuted
-     forceTurnRelay
      hiddenDomain
      hiddenFromRecorderFeatureEnabled
      ignoreStartMuted
