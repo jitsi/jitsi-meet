@@ -299,6 +299,7 @@ export interface IConfig {
     disableReactions?: boolean;
     disableReactionsModeration?: boolean;
     disableRecordAudioNotification?: boolean;
+    disableRemoteControl?: boolean;
     disableRemoteMute?: boolean;
     disableRemoveRaisedHandOnFocus?: boolean;
     disableResponsiveTiles?: boolean;
@@ -617,6 +618,13 @@ export interface IConfig {
         };
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
+    };
+    visitors?: {
+        enableMediaOnPromote?: {
+            audio?: boolean;
+            video?: boolean;
+        };
+        queueService: string;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
