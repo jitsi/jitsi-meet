@@ -63,7 +63,6 @@ export interface IConfigState extends IConfig {
     analysis?: {
         obfuscateRoomName?: boolean;
     };
-    disableRemoteControl?: boolean;
     error?: Error;
     oldConfig?: {
         bosh?: string;
@@ -74,13 +73,6 @@ export interface IConfigState extends IConfig {
         };
         p2p?: object;
         websocket?: string;
-    };
-    visitors?: {
-        enableMediaOnPromote?: {
-            audio?: boolean;
-            video?: boolean;
-        };
-        queueService: string;
     };
 }
 
