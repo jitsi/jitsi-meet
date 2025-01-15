@@ -1845,9 +1845,10 @@ var config = {
     //      //disableLogCollector: true,
     //      // Individual loggers are customizable.
     //      loggers: {
-    //      // The following are too verbose in their logging with the default level.
-    //      'modules/RTC/TraceablePeerConnection.js': 'info',
-    //      'modules/xmpp/strophe.util.js': 'log',
+    //          // The following are too verbose in their logging with the default level.
+    //          'modules/RTC/TraceablePeerConnection.js': 'info',
+    //          'modules/xmpp/strophe.util.js': 'log',
+    //      },
     // },
 
     // Application logo url

@@ -1,4 +1,5 @@
 import { ToolbarButton } from '../../toolbox/types';
+import { ILoggingConfig } from '../logging/types';
 
 type ButtonsWithNotifyClick = 'camera' |
     'chat' |
@@ -468,6 +469,7 @@ export interface IConfig {
     };
     localSubject?: string;
     locationURL?: URL;
+    logging?: ILoggingConfig;
     mainToolbarButtons?: Array<Array<string>>;
     maxFullResolutionParticipants?: number;
     microsoftApiApplicationClientID?: string;
