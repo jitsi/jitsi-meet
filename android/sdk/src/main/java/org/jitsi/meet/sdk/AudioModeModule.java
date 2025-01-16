@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Build;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -58,7 +57,6 @@ import java.util.concurrent.Executors;
  * Before a call has started and after it has ended the
  * {@code AudioModeModule.DEFAULT} mode should be used.
  */
-@SuppressLint("AnnotateVersionCheck")
 @ReactModule(name = AudioModeModule.NAME)
 class AudioModeModule extends ReactContextBaseJavaModule {
     public static final String NAME = "AudioMode";
@@ -84,11 +82,10 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * Whether or not the ConnectionService is used for selecting audio devices.
      */
-    private static final boolean supportsConnectionService = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
-    private static boolean useConnectionService_ = supportsConnectionService;
+    private static boolean useConnectionService_ = true;
 
     static boolean useConnectionService() {
-        return supportsConnectionService && useConnectionService_;
+        return useConnectionService_;
     }
 
     /**

@@ -18,7 +18,6 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Build;
 import android.telecom.CallAudioState;
 import androidx.annotation.RequiresApi;
 
@@ -34,7 +33,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * {@link AudioModeModule.AudioDeviceHandlerInterface} module implementing device handling for
  * Android versions >= O when ConnectionService is enabled.
  */
-@RequiresApi(Build.VERSION_CODES.O)
 class AudioDeviceHandlerConnectionService implements
         AudioModeModule.AudioDeviceHandlerInterface,
         RNConnectionService.CallAudioStateListener {
