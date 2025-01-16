@@ -34,6 +34,7 @@ import android.os.IBinder;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.facebook.react.ReactActivity;
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -58,7 +59,6 @@ public class JMOngoingConferenceService extends Service {
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
     public static void doLaunch(Context context) {
-
         try {
             RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
             JitsiMeetLogger.w(TAG + " Notification channel creation completed");
@@ -83,9 +83,7 @@ public class JMOngoingConferenceService extends Service {
         }
     }
 
-    public static void launch(Context context, Activity currentActivity) {
-        JitsiMeetLogger.w(TAG + " Service launch started");
-        List<String> permissionsList = new ArrayList<>();
+    public static void launch(Context context, ReactActivity currentReactActivity) {
 
         PermissionListener listener = new PermissionListener() {
             @Override
@@ -117,32 +115,21 @@ public class JMOngoingConferenceService extends Service {
             }
         };
 
+        List<String> permissionsList = new ArrayList<>();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             JitsiMeetLogger.w(TAG + " Checking Tiramisu permissions");
             permissionsList.add(POST_NOTIFICATIONS);
             permissionsList.add(RECORD_AUDIO);
         }
 
-        String[] permissionsArray = permissionsList.toArray(new String[0]);
+        String[] permissionsArray = new String[ permissionsList.size() ];
+        permissionsArray = permissionsList.toArray( permissionsArray );
 
         if (permissionsArray.length > 0) {
             try {
                 JitsiMeetLogger.w(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
-                currentActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE);
-
-                // Only call onRequestPermissionsResult if we actually have permissions to check
-                boolean[] grantResults = new boolean[permissionsArray.length];
-                int[] results = new int[permissionsArray.length];
-
-                for (int i = 0; i < permissionsArray.length; i++) {
-                    grantResults[i] = context.checkSelfPermission(permissionsArray[i])
-                        == PackageManager.PERMISSION_GRANTED;
-                    results[i] = grantResults[i] ?
-                        PackageManager.PERMISSION_GRANTED :
-                        PackageManager.PERMISSION_DENIED;
-                }
-
-                listener.onRequestPermissionsResult(PERMISSIONS_REQUEST_CODE, permissionsArray, results);
+                currentReactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
             } catch (Exception e) {
                 JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
             }

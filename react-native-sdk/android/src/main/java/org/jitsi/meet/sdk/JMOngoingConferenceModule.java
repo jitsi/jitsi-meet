@@ -1,7 +1,11 @@
 package org.jitsi.meet.sdk;
-import android.app.Activity;
+
 import android.content.Context;
+
 import androidx.annotation.NonNull;
+
+import com.facebook.react.ReactActivity;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -26,16 +30,18 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void launch() {
         Context context = getReactApplicationContext();
-        Activity currentActivity = getCurrentActivity();
+        ReactActivity currentActivity = (ReactActivity) getCurrentActivity();
         JMOngoingConferenceService.launch(context, currentActivity);
-        JitsiMeetLogger.w(NAME + " Module launch");
+
+        JitsiMeetLogger.w(NAME + " launch");
     }
 
     @ReactMethod
     public void abort() {
         Context context = getReactApplicationContext();
         JMOngoingConferenceService.abort(context);
-        JitsiMeetLogger.w(NAME + " Module abort");
+
+        JitsiMeetLogger.w(NAME + " abort");
     }
 
     @NonNull
