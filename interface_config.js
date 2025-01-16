@@ -42,14 +42,6 @@ var interfaceConfig = {
     DISABLE_PRESENCE_STATUS: false,
 
     /**
-     * Whether the ringing sound in the call/ring overlay is disabled. If
-     * {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_RINGING: false,
-
-    /**
      * Whether the speech to text transcription subtitles panel is disabled.
      * If {@code undefined}, defaults to {@code false}.
      *
@@ -69,9 +61,6 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
-
-    // DEPRECATED. Animation no longer supported.
-    // ENABLE_FEEDBACK_ANIMATION: false,
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
