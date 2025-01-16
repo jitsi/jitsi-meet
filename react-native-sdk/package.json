@@ -36,6 +36,7 @@
         "moment-duration-format": "0.0.0",
         "optional-require": "0.0.0",
         "promise.allsettled": "0.0.0",
+        "promise.withresolvers": "0.0.0",
         "punycode": "0.0.0",
         "react-emoji-render": "0.0.0",
         "react-i18next": "0.0.0",
