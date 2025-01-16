@@ -83,7 +83,7 @@ public class JMOngoingConferenceService extends Service {
         }
     }
 
-    public static void launch(Context context, ReactActivity currentReactActivity) {
+    public static void launch(Context context, ReactActivity reactActivity) {
 
         PermissionListener listener = new PermissionListener() {
             @Override
@@ -129,7 +129,7 @@ public class JMOngoingConferenceService extends Service {
         if (permissionsArray.length > 0) {
             try {
                 JitsiMeetLogger.w(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
-                currentReactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
+                reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
             } catch (Exception e) {
                 JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
             }
