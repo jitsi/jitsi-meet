@@ -69,7 +69,7 @@ cd ios && pod install && cd ..
 
 ## Android
 
-- In your build.gradle have at least `minSdkVersion = 24`
+- In your build.gradle have at least `minSdkVersion = 26`
 - In `android/app/src/debug/AndroidManifest.xml` and `android/app/src/main/AndroidManifest.xml`, under the `</application>` tag, include
   ```xml
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

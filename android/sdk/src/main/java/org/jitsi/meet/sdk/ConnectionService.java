@@ -37,7 +37,6 @@ import java.util.Objects;
  *
  * @author Pawel Domas
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
 public class ConnectionService extends android.telecom.ConnectionService {
 
     /**
