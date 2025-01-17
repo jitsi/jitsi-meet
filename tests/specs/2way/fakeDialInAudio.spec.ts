@@ -3,7 +3,7 @@ import process from 'node:process';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { cleanup, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
-describe('Fake Dial-In - ', () => {
+describe('Fake Dial-In', () => {
     it('join participant', async () => {
         // we execute fake dial in only if the real dial in is not enabled
 

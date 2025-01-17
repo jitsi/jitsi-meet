@@ -6,7 +6,7 @@ import {
     unmuteVideoAndCheck
 } from '../../helpers/participants';
 
-describe('AVModeration -', () => {
+describe('AVModeration', () => {
 
     it('check for moderators', async () => {
         // if all 3 participants are moderators, skip this test

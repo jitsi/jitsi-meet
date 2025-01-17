@@ -1,6 +1,6 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('End Conference - ', () => {
+describe('End Conference', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx);
     });

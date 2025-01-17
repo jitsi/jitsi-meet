@@ -1,6 +1,6 @@
 import { ensureFourParticipants, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
 
-describe('lastN - ', () => {
+describe('lastN', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx, {
             skipInMeetingChecks: true,

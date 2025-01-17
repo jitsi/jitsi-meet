@@ -1,6 +1,6 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Kick - ', () => {
+describe('Kick', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx);
 
@@ -26,6 +26,9 @@ describe('Kick - ', () => {
     });
 });
 
+/**
+ * Kicks the second participant and checks that the participant is removed from the conference and that dialog is open.
+ */
 async function kickParticipant2AndCheck() {
     const { p1, p2 } = ctx;
 

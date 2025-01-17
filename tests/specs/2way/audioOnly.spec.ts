@@ -1,6 +1,6 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Audio only - ', () => {
+describe('Audio only', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx, {
             skipFirstModerator: true

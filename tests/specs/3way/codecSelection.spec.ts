@@ -1,6 +1,6 @@
 import { ensureOneParticipant, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Codec selection - ', () => {
+describe('Codec selection', () => {
     it('asymmetric codecs', async () => {
         await ensureOneParticipant(ctx, {
             configOverwrite: {
