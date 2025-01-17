@@ -95,10 +95,7 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
 
         try {
             JitsiMeetLogger.i(NAME + " Requesting permissions: " + Arrays.toString(permissionsArray));
-
-            if (reactActivity != null) {
-                reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
-            }
+            reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
         } catch (Exception e) {
             JitsiMeetLogger.e(e, NAME + " Error requesting permissions");
         }
