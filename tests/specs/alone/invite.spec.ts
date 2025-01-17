@@ -1,7 +1,7 @@
 import { ensureOneParticipant } from '../../helpers/participants';
 import { isDialInEnabled } from '../helpers/DialIn';
 
-describe('Invite - ', () => {
+describe('Invite', () => {
     it('join participant', async () => {
         await ensureOneParticipant(ctx);
     });

@@ -1,6 +1,6 @@
 import { ensureOneParticipant } from '../../helpers/participants';
 
-describe('Chat Panel - ', () => {
+describe('Chat Panel', () => {
     it('join participant', async () => {
         await ensureOneParticipant(ctx);
     });

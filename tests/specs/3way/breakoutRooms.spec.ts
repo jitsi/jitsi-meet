@@ -7,7 +7,7 @@ const MAIN_ROOM_NAME = 'Main room';
 const BREAKOUT_ROOMS_LIST_ID = 'breakout-rooms-list';
 const LIST_ITEM_CONTAINER = 'list-item-container';
 
-describe('BreakoutRooms ', () => {
+describe('BreakoutRooms', () => {
     it('check support', async () => {
         await ensureTwoParticipants(ctx);
 

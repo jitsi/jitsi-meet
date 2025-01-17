@@ -1,6 +1,6 @@
 import { ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Follow Me - ', () => {
+describe('Follow Me', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx);
 

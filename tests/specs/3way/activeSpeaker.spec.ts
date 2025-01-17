@@ -2,7 +2,7 @@
 import type { Participant } from '../../helpers/Participant';
 import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/participants';
 
-describe('ActiveSpeaker ', () => {
+describe('ActiveSpeaker', () => {
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(ctx);
 

@@ -1,7 +1,7 @@
 import type { Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Self view - ', () => {
+describe('Self view', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx);
     });

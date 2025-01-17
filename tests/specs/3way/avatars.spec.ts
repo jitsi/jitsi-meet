@@ -7,7 +7,7 @@ import {
 const EMAIL = 'support@jitsi.org';
 const HASH = '38f014e4b7dde0f64f8157d26a8c812e';
 
-describe('Avatar - ', () => {
+describe('Avatar', () => {
     it('setup the meeting', async () => {
         // Start p1
         await ensureTwoParticipants(ctx, {

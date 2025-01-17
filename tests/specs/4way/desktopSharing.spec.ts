@@ -7,7 +7,7 @@ import {
     ensureTwoParticipants
 } from '../../helpers/participants';
 
-describe('Desktop sharing - ', () => {
+describe('Desktop sharing', () => {
     it('start', async () => {
         await ensureTwoParticipants(ctx, {
             configOverwrite: {

@@ -1,6 +1,6 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('DisplayName - ', () => {
+describe('DisplayName', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants(ctx, {
             skipDisplayName: true
