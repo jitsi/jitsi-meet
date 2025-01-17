@@ -1,26 +1,31 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector, useStore } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { OVERFLOW_MENU_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import Platform from '../../../base/react/Platform.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../../../visitors/functions';
+import { customOverflowMenuButtonPressed } from '../../actions.native';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import HangupButton from '../HangupButton';
 
 import AudioMuteButton from './AudioMuteButton';
+import CustomOptionButton from './CustomOptionButton';
 import HangupMenuButton from './HangupMenuButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
 import VideoMuteButton from './VideoMuteButton';
 import styles from './styles';
+
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -89,6 +94,37 @@ function Toolbox(props: IProps) {
         style.justifyContent = 'center';
     }
 
+    const store = useStore();
+    const state = store.getState();
+    const overflowMenuEnabledFlag = getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true);
+    const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+
+    const renderCustomToolbarButtons = () => {
+        const dispatch = useDispatch();
+
+        if (!customToolbarButtons?.length) {
+            return;
+        }
+
+        return (
+            <>
+                {
+                    customToolbarButtons.map(({ id, text, icon, backgroundColor }) => (
+                        <CustomOptionButton
+                            backgroundColor = { backgroundColor }
+                            /* eslint-disable react/jsx-no-bind */
+                            handleClick = { () =>
+                                dispatch(customOverflowMenuButtonPressed(id, text))
+                            }
+                            icon = { icon }
+                            key = { id }
+                            text = { text } />
+                    ))
+                }
+            </>
+        );
+    }
+
     return (
         <View
             style = { styles.toolboxContainer as ViewStyle }>
@@ -99,38 +135,45 @@ function Toolbox(props: IProps) {
                 edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
-                {!_iAmVisitor && <AudioMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
+                {
+                    !overflowMenuEnabledFlag && customToolbarButtons
+                    ? renderCustomToolbarButtons()
+                    : <>
+                            {!_iAmVisitor && <AudioMuteButton
+                                styles = { buttonStylesBorderless }
+                                toggledStyles = { toggledButtonStyles } />
+                            }
+                            {!_iAmVisitor && <VideoMuteButton
+                                styles = { buttonStylesBorderless }
+                                toggledStyles = { toggledButtonStyles } />
+                            }
+                            {additionalButtons.has('chat')
+                                && <ChatButton
+                                    styles = { buttonStylesBorderless }
+                                    toggledStyles = { backgroundToggledStyle } />
+                            }
+                            {!_iAmVisitor && additionalButtons.has('screensharing')
+                                && <ScreenSharingButton styles = { buttonStylesBorderless } />}
+                            {additionalButtons.has('raisehand') && (_shouldDisplayReactionsButtons
+                                ? <ReactionsMenuButton
+                                    styles = { buttonStylesBorderless }
+                                    toggledStyles = { backgroundToggledStyle } />
+                                : <RaiseHandButton
+                                    styles = { buttonStylesBorderless }
+                                    toggledStyles = { backgroundToggledStyle } />)}
+                            {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
+                            {(!_iAmVisitor) && <OverflowMenuButton
+                                styles = { buttonStylesBorderless }
+                                toggledStyles = { toggledButtonStyles } />
+                            }
+                            { _endConferenceSupported
+                                ? <HangupMenuButton />
+                                : <HangupButton
+                                    styles = { hangupButtonStyles } />
+                            }
+                        </>
                 }
-                {!_iAmVisitor && <VideoMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                }
-                {additionalButtons.has('chat')
-                    && <ChatButton
-                        styles = { buttonStylesBorderless }
-                        toggledStyles = { backgroundToggledStyle } />
-                }
-                {!_iAmVisitor && additionalButtons.has('screensharing')
-                    && <ScreenSharingButton styles = { buttonStylesBorderless } />}
-                {additionalButtons.has('raisehand') && (_shouldDisplayReactionsButtons
-                    ? <ReactionsMenuButton
-                        styles = { buttonStylesBorderless }
-                        toggledStyles = { backgroundToggledStyle } />
-                    : <RaiseHandButton
-                        styles = { buttonStylesBorderless }
-                        toggledStyles = { backgroundToggledStyle } />)}
-                {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                {!_iAmVisitor && <OverflowMenuButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                }
-                { _endConferenceSupported
-                    ? <HangupMenuButton />
-                    : <HangupButton
-                        styles = { hangupButtonStyles } />
-                }
+
             </SafeAreaView>
         </View>
     );
