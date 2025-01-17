@@ -190,6 +190,7 @@ describe('AVModeration -', () => {
         await p1ParticipantsPane.clickContextMenuButton();
         await p1ParticipantsPane.getAVModerationMenu().clickStartAudioModeration();
         await p1ParticipantsPane.getAVModerationMenu().clickStartVideoModeration();
+        await p1ParticipantsPane.close();
 
         // join with second participant and check
         await ensureTwoParticipants(ctx, {
