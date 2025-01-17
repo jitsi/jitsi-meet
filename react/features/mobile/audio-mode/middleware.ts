@@ -10,9 +10,11 @@ import {
     CONFERENCE_LEFT
 } from '../../base/conference/actionTypes';
 import { getCurrentConference } from '../../base/conference/functions';
+import { SET_CONFIG } from '../../base/config/actionTypes';
 import { AUDIO_FOCUS_DISABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import { parseURIString } from '../../base/util/uri';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
 import logger from './logger';
@@ -44,7 +46,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case APP_WILL_MOUNT:
         _appWillMount(store);
-    case CONFERENCE_FAILED: // eslint-disable-line no-fallthrough
+    case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
 
     /*
@@ -60,6 +62,23 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_AUDIO_ONLY:
         return _updateAudioMode(store, next, action);
 
+    case SET_CONFIG: {
+        const { locationURL } = store.getState()['features/base/connection'];
+        const location = parseURIString(locationURL?.href ?? '');
+
+        /**
+         * Don't touch the current value if there is no room in the URL. This
+         * avoids audio cutting off for a moment right after the user leaves
+         * a meeting. The next meeting join will set it to the right value.
+         */
+        if (location.room) {
+            const { startSilent } = action.config;
+
+            AudioMode.setDisabled?.(Boolean(startSilent));
+        }
+
+        break;
+    }
     }
 
     /* eslint-enable no-fallthrough */
