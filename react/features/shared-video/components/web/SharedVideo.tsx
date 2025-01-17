@@ -8,7 +8,7 @@ import { FakeParticipant } from '../../../base/participants/types';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
-import { isSharedVideoEnabled } from '../../functions';
+import { isSharedVideoEnabled, isVideoPlaying } from '../../functions';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
@@ -44,6 +44,11 @@ interface IProps {
      * Whether the user is actively resizing the filmstrip.
      */
     isResizing: boolean;
+
+    /**
+     * Whether the shared video is currently playing.
+     */
+    isVideoShared: boolean;
 
     /**
      * Whether the shared video should be shown on stage.
@@ -125,9 +130,9 @@ class SharedVideo extends Component<IProps> {
      * @returns {React$Element}
      */
     render() {
-        const { isEnabled, isResizing, onStage } = this.props;
+        const { isEnabled, isResizing, isVideoShared, onStage } = this.props;
 
-        if (!isEnabled) {
+        if (!isEnabled || !isVideoShared) {
             return null;
         }
 
@@ -161,6 +166,7 @@ function _mapStateToProps(state: IReduxState) {
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
+    const isVideoShared = isVideoPlaying(state);
 
     return {
         clientHeight,
@@ -169,6 +175,7 @@ function _mapStateToProps(state: IReduxState) {
         filmstripWidth: getVerticalViewMaxWidth(state),
         isEnabled: isSharedVideoEnabled(state),
         isResizing,
+        isVideoShared,
         onStage,
         videoUrl
     };
