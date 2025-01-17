@@ -61,7 +61,7 @@ public class JMOngoingConferenceService extends Service {
     public static void doLaunch(Context context) {
         try {
             RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
-            JitsiMeetLogger.w(TAG + " Notification channel creation completed");
+            JitsiMeetLogger.i(TAG + " Notification channel creation completed");
         } catch (Exception e) {
             JitsiMeetLogger.e(e, TAG + " Error creating notification channel");
         }
@@ -69,13 +69,8 @@ public class JMOngoingConferenceService extends Service {
         Intent intent = new Intent(context, JMOngoingConferenceService.class);
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
-                JitsiMeetLogger.w(TAG + " Starting foreground service");
-            } else {
-                context.startService(intent);
-                JitsiMeetLogger.w(TAG + " Starting service");
-            }
+            context.startForegroundService(intent);
+            JitsiMeetLogger.i(TAG + " Starting foreground service");
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
@@ -88,11 +83,11 @@ public class JMOngoingConferenceService extends Service {
         PermissionListener listener = new PermissionListener() {
             @Override
             public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                JitsiMeetLogger.w(TAG + " Permission callback received");
+                JitsiMeetLogger.i(TAG + " Permission callback received");
 
                 if (results == null || results.length == 0) {
                     JitsiMeetLogger.w(TAG + " Permission results are null or empty");
-                    return false;
+                    return true;
                 }
 
                 int counter = 0;
@@ -102,39 +97,45 @@ public class JMOngoingConferenceService extends Service {
                     }
                 }
 
-                JitsiMeetLogger.w(TAG + " Permissions granted: " + counter + "/" + results.length);
+                JitsiMeetLogger.i(TAG + " Permissions granted: " + counter + "/" + results.length);
 
                 if (counter == results.length) {
-                    JitsiMeetLogger.w(TAG + " All permissions granted, launching service");
+                    JitsiMeetLogger.i(TAG + " All permissions granted, launching service");
                     doLaunch(context);
-                    return true;
                 } else {
                     JitsiMeetLogger.w(TAG + " Not all permissions were granted");
-                    return false;
                 }
+
+                return true;
             }
         };
 
-        List<String> permissionsList = new ArrayList<>();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            JitsiMeetLogger.w(TAG + " Checking Tiramisu permissions");
+            JitsiMeetLogger.i(TAG + " Checking Tiramisu permissions");
+
+            List<String> permissionsList = new ArrayList<>();
+
             permissionsList.add(POST_NOTIFICATIONS);
             permissionsList.add(RECORD_AUDIO);
-        }
 
-        String[] permissionsArray = new String[ permissionsList.size() ];
-        permissionsArray = permissionsList.toArray( permissionsArray );
+            String[] permissionsArray = new String[ permissionsList.size() ];
+            permissionsArray = permissionsList.toArray( permissionsArray );
 
-        if (permissionsArray.length > 0) {
-            try {
-                JitsiMeetLogger.w(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
-                reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
-            } catch (Exception e) {
-                JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
+            if (permissionsArray.length > 0) {
+                try {
+                    JitsiMeetLogger.i(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
+                    reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
+                } catch (Exception e) {
+                    JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
+                }
+            } else {
+                JitsiMeetLogger.i(TAG + " No permissions needed, launching service");
+                doLaunch(context);
             }
+
         } else {
-            JitsiMeetLogger.w(TAG + " No permissions needed, launching service");
+            JitsiMeetLogger.i(TAG + " Launching service");
             doLaunch(context);
         }
     }
@@ -147,17 +148,17 @@ public class JMOngoingConferenceService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        JitsiMeetLogger.w(TAG + " onCreate called");
+        JitsiMeetLogger.i(TAG + " onCreate called");
 
         try {
             Notification notification = RNOngoingNotification.buildOngoingConferenceNotification(this);
-            JitsiMeetLogger.w(TAG + " Notification build result: " + (notification != null));
+            JitsiMeetLogger.i(TAG + " Notification build result: " + (notification != null));
 
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
             } else {
-                JitsiMeetLogger.w(TAG + " Starting service in foreground with notification");
+                JitsiMeetLogger.i(TAG + " Starting service in foreground with notification");
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);

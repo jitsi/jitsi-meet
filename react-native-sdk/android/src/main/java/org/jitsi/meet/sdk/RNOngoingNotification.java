@@ -42,15 +42,11 @@ class RNOngoingNotification {
     static final String RN_ONGOING_CONFERENCE_CHANNEL_ID = "OngoingConferenceChannel";
 
     static void createOngoingConferenceNotificationChannel(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
-
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
         NotificationChannel channel = notificationManager.getNotificationChannel(RN_ONGOING_CONFERENCE_CHANNEL_ID);
 
         if (channel != null) {
-            JitsiMeetLogger.w(TAG + " Notification channel already exists");
+            JitsiMeetLogger.i(TAG + " Notification channel already exists");
             return;
         }
 
@@ -65,7 +61,7 @@ class RNOngoingNotification {
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
         notificationManager.createNotificationChannel(channel);
-        JitsiMeetLogger.w(TAG + " Notification channel created with importance: " + channel.getImportance());
+        JitsiMeetLogger.i(TAG + " Notification channel created with importance: " + channel.getImportance());
     }
 
     static Notification buildOngoingConferenceNotification(Context context) {
@@ -74,7 +70,7 @@ class RNOngoingNotification {
             return null;
         }
 
-        JitsiMeetLogger.w(TAG + " Creating notification with context: " + context);
+        JitsiMeetLogger.i(TAG + " Creating notification with context: " + context);
 
         // Creating an intent to launch app's main activity
         Intent intent = context.getPackageManager()
