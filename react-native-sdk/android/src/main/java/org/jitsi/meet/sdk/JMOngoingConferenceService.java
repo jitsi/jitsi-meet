@@ -15,33 +15,19 @@
  */
 package org.jitsi.meet.sdk;
 
-import static android.Manifest.permission.POST_NOTIFICATIONS;
-import static android.Manifest.permission.RECORD_AUDIO;
-
-import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
 
 import android.content.Context;
 import android.content.Intent;
 
-import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 
 import android.os.Build;
 import android.os.IBinder;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
-import com.facebook.react.ReactActivity;
-import com.facebook.react.modules.core.PermissionListener;
-
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -54,11 +40,9 @@ import java.util.Random;
 public class JMOngoingConferenceService extends Service {
     private static final String TAG = JMOngoingConferenceService.class.getSimpleName();
 
-    private static final int PERMISSIONS_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
-
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
-    public static void doLaunch(Context context) {
+    public static void launch(Context context) {
         try {
             RNOngoingNotification.createOngoingConferenceNotificationChannel(context);
             JitsiMeetLogger.i(TAG + " Notification channel creation completed");
@@ -75,68 +59,6 @@ public class JMOngoingConferenceService extends Service {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
             JitsiMeetLogger.w(TAG + " Ongoing conference service not started", e);
-        }
-    }
-
-    public static void launch(Context context, ReactActivity reactActivity) {
-
-        PermissionListener listener = new PermissionListener() {
-            @Override
-            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                JitsiMeetLogger.i(TAG + " Permission callback received");
-
-                if (results == null || results.length == 0) {
-                    JitsiMeetLogger.w(TAG + " Permission results are null or empty");
-                    return true;
-                }
-
-                int counter = 0;
-                for (int result : results) {
-                    if (result == PackageManager.PERMISSION_GRANTED) {
-                        counter++;
-                    }
-                }
-
-                JitsiMeetLogger.i(TAG + " Permissions granted: " + counter + "/" + results.length);
-
-                if (counter == results.length) {
-                    JitsiMeetLogger.i(TAG + " All permissions granted, launching service");
-                    doLaunch(context);
-                } else {
-                    JitsiMeetLogger.w(TAG + " Not all permissions were granted");
-                }
-
-                return true;
-            }
-        };
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            JitsiMeetLogger.i(TAG + " Checking Tiramisu permissions");
-
-            List<String> permissionsList = new ArrayList<>();
-
-            permissionsList.add(POST_NOTIFICATIONS);
-            permissionsList.add(RECORD_AUDIO);
-
-            String[] permissionsArray = new String[ permissionsList.size() ];
-            permissionsArray = permissionsList.toArray( permissionsArray );
-
-            if (permissionsArray.length > 0) {
-                try {
-                    JitsiMeetLogger.i(TAG + " Requesting permissions: " + Arrays.toString(permissionsArray));
-                    reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
-                } catch (Exception e) {
-                    JitsiMeetLogger.e(e, TAG + " Error requesting permissions");
-                }
-            } else {
-                JitsiMeetLogger.i(TAG + " No permissions needed, launching service");
-                doLaunch(context);
-            }
-
-        } else {
-            JitsiMeetLogger.i(TAG + " Launching service");
-            doLaunch(context);
         }
     }
 
