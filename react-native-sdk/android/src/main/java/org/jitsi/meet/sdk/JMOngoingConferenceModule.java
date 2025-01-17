@@ -40,7 +40,6 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
         super(reactContext);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @ReactMethod
     public void launch() {
         Context context = getReactApplicationContext();
@@ -48,7 +47,10 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             JMOngoingConferenceService.launch(context);
-            JitsiMeetLogger.i(NAME + " Launching service");
+
+            JitsiMeetLogger.i(NAME + " launch");
+
+            return;
         }
 
         PermissionListener listener = new PermissionListener() {
@@ -91,21 +93,15 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
         String[] permissionsArray = new String[ permissionsList.size() ];
         permissionsArray = permissionsList.toArray( permissionsArray );
 
-        if (permissionsArray.length > 0) {
-            try {
-                JitsiMeetLogger.i(NAME + " Requesting permissions: " + Arrays.toString(permissionsArray));
-                if (reactActivity != null) {
-                    reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
-                }
-            } catch (Exception e) {
-                JitsiMeetLogger.e(e, NAME + " Error requesting permissions");
-            }
-        } else {
-            JitsiMeetLogger.i(NAME + " No permissions needed, launching service");
-            JMOngoingConferenceService.launch(context);
-        }
+        try {
+            JitsiMeetLogger.i(NAME + " Requesting permissions: " + Arrays.toString(permissionsArray));
 
-        JitsiMeetLogger.w(NAME + " launch");
+            if (reactActivity != null) {
+                reactActivity.requestPermissions(permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
+            }
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, NAME + " Error requesting permissions");
+        }
     }
 
     @ReactMethod
@@ -113,7 +109,7 @@ class JMOngoingConferenceModule extends ReactContextBaseJavaModule {
         Context context = getReactApplicationContext();
         JMOngoingConferenceService.abort(context);
 
-        JitsiMeetLogger.w(NAME + " abort");
+        JitsiMeetLogger.i(NAME + " abort");
     }
 
     @NonNull
