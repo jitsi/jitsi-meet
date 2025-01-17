@@ -137,6 +137,11 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     private String userSelectedDevice;
 
     /**
+     * Whether or not audio is disabled.
+     */
+    private boolean audioDisabled;
+
+    /**
      * Initializes a new module instance. There shall be a single instance of
      * this module throughout the lifetime of the application.
      *
@@ -236,6 +241,12 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             audioDeviceHandler.stop();
         }
 
+        audioDeviceHandler = null;
+
+        if (audioDisabled) {
+            return;
+        }
+
         if (useConnectionService()) {
             audioDeviceHandler = new AudioDeviceHandlerConnectionService(audioManager);
         } else {
@@ -278,6 +289,27 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @ReactMethod
+    public void setDisabled(final boolean disabled, final Promise promise) {
+        if (audioDisabled == disabled) {
+            promise.resolve(null);
+            return;
+        }
+
+        JitsiMeetLogger.i(TAG + "  audio disabled: " + disabled);
+
+        audioDisabled = disabled;
+        setAudioDeviceHandler();
+
+        if (disabled) {
+            mode = -1;
+            availableDevices.clear();
+            resetSelectedDevice();
+        }
+
+        promise.resolve(null);
+    }
+
     /**
      * Public method to set the current audio mode.
      *
@@ -287,7 +319,12 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void setMode(final int mode, final Promise promise) {
-        if (mode != DEFAULT && mode != AUDIO_CALL && mode != VIDEO_CALL) {
+        if (audioDisabled) {
+            promise.resolve(null);
+            return;
+        }
+
+        if (mode < DEFAULT || mode > VIDEO_CALL) {
             promise.reject("setMode", "Invalid audio mode " + mode);
             return;
         }
