@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
+import { FakeParticipant } from '../../../base/participants/types';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
+import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 import { isSharedVideoEnabled } from '../../functions';
 
@@ -39,9 +41,14 @@ interface IProps {
     isEnabled: boolean;
 
     /**
-     * Whether or not the user is actively resizing the filmstrip.
+     * Whether the user is actively resizing the filmstrip.
      */
     isResizing: boolean;
+
+    /**
+     * Whether the shared video should be shown on stage.
+     */
+    onStage: boolean;
 
     /**
      * The shared video url.
@@ -118,17 +125,23 @@ class SharedVideo extends Component<IProps> {
      * @returns {React$Element}
      */
     render() {
-        const { isEnabled, isResizing } = this.props;
+        const { isEnabled, isResizing, onStage } = this.props;
 
         if (!isEnabled) {
             return null;
+        }
+
+        const style: any = this.getDimensions();
+
+        if (!onStage) {
+            style.display = 'none';
         }
 
         return (
             <div
                 className = { (isResizing && 'disable-pointer') || '' }
                 id = 'sharedVideo'
-                style = { this.getDimensions() }>
+                style = { style }>
                 {this.getManager()}
             </div>
         );
@@ -147,6 +160,7 @@ function _mapStateToProps(state: IReduxState) {
     const { videoUrl } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
+    const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
 
     return {
         clientHeight,
@@ -155,6 +169,7 @@ function _mapStateToProps(state: IReduxState) {
         filmstripWidth: getVerticalViewMaxWidth(state),
         isEnabled: isSharedVideoEnabled(state),
         isResizing,
+        onStage,
         videoUrl
     };
 }
