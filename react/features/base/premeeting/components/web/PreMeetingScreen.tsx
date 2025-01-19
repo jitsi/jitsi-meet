@@ -161,7 +161,7 @@ const useStyles = makeStyles()(theme => {
                 display: 'none'
             }
         },
-        roomNameContainer : {
+        roomNameContainer: {
             width: '100%',
             textAlign: 'center',
             marginBottom: theme.spacing(4)
@@ -202,7 +202,7 @@ const PreMeetingScreen = ({
     } : {};
 
     const roomNameRef = useRef<HTMLSpanElement | null>(null);
-    const [isOverflowing, setIsOverflowing] = useState(false);
+    const [ isOverflowing, setIsOverflowing ] = useState(false);
 
     useEffect(() => {
         if (roomNameRef.current) {
@@ -225,7 +225,7 @@ const PreMeetingScreen = ({
                             {title}
                         </h1>
                         {_roomName && (
-                             <span className = { classes.roomNameContainer }>
+                            <span className = { classes.roomNameContainer }>
                                 {isOverflowing ? (
                                     <Tooltip content = { _roomName }>
                                         <span
