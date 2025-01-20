@@ -41,7 +41,6 @@ export class Participant {
         analytics: {
             disabled: true
         },
-        debug: true,
         requireDisplayName: false,
         testing: {
             testMode: true

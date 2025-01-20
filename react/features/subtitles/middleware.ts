@@ -196,7 +196,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // Regex to filter out all possible country codes after language code:
         // this should catch all notations like 'en-GB' 'en_GB' and 'enGB'
         // and be independent of the country code length
-        if (_getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language)) {
+        if (!language || (_getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language))) {
             return next(action);
         }
 

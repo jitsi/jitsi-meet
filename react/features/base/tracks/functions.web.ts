@@ -60,7 +60,6 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
 
     const {
         desktopSharingFrameRate,
-        firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
     const constraints = options.constraints ?? state['features/base/config'].constraints;
@@ -86,7 +85,6 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
                     devices: options.devices?.slice(0),
                     effects,
                     facingMode: options.facingMode || getCameraFacingMode(state),
-                    firefox_fake_device, // eslint-disable-line camelcase
                     micDeviceId,
                     resolution,
                     timeout

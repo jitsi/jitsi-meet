@@ -12,7 +12,7 @@ export interface ITrackOptions {
         };
     };
     desktopSharingSourceDevice?: string;
-    desktopSharingSources?: string[];
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
     devices?: string[];
     facingMode?: string;
     micDeviceId?: string | null;
@@ -67,9 +67,11 @@ export interface IToggleScreenSharingOptions {
     shareOptions: IShareOptions;
 }
 
+export type DesktopSharingSourceType = 'screen' | 'window';
+
 export interface IShareOptions {
     desktopSharingSourceDevice?: string;
-    desktopSharingSources?: string[];
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
     desktopStream?: any;
 }
 

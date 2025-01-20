@@ -83,11 +83,7 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
         ComponentName componentName;
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                componentName = context.startForegroundService(intent);
-            } else {
-                componentName = context.startService(intent);
-            }
+            componentName = context.startForegroundService(intent);
         } catch (RuntimeException e) {
             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
