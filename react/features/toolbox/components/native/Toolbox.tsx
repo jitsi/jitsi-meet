@@ -191,7 +191,6 @@ function Toolbox(props: IProps) {
                             }
                         </>
                 }
-
             </SafeAreaView>
         </View>
     );
