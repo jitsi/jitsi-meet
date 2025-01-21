@@ -159,7 +159,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
-                { this._renderCustomMenuButtons(topButtonProps) }
+                { this._renderCustomOverflowMenuButtons(topButtonProps) }
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {
