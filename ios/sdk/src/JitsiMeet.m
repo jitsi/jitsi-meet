@@ -231,6 +231,9 @@
 }
 
 - (void)setDefaultConferenceOptions:(JitsiMeetConferenceOptions *)defaultConferenceOptions {
+    
+    // For testing configOverrides a room needs to be set,
+    // thus the following check needs to be commented out
     if (defaultConferenceOptions != nil && defaultConferenceOptions.room != nil) {
         @throw [NSException exceptionWithName:@"RuntimeError"
                                        reason:@"'room' must be null in the default conference options"

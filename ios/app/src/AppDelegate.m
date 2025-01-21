@@ -34,9 +34,15 @@
     jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+        
+        // For testing configOverrides a room needs to be set,
+        // builder.room = @"test0988test";
+        
         [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
+        [builder setFeatureFlag:@"overflow-menu.enabled" withBoolean:NO];
+        [builder setFeatureFlag:@"disablePolls" withBoolean:YES];
     }];
 
   [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
