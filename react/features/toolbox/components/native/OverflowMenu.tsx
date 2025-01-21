@@ -25,7 +25,7 @@ import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCapt
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
-import { customOverflowMenuButtonPressed } from '../../actions.native';
+import { customButtonPressed } from '../../actions.native';
 import { getMovableButtons } from '../../functions.native';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -159,7 +159,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { _shouldDisplayReactionsButtons && !toolbarButtons.has('raisehand')
                     ? this._renderReactionMenu
                     : undefined }>
-                { this._renderCustomOverflowMenuButtons(topButtonProps) }
+                { this._renderCustomMenuButtons(topButtonProps) }
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {
@@ -218,7 +218,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @param {Object} topButtonProps - Button properties.
      * @returns {React.ReactElement}
      */
-    _renderCustomOverflowMenuButtons(topButtonProps: Object) {
+    _renderCustomMenuButtons(topButtonProps: Object) {
         const { _customToolbarButtons, dispatch } = this.props;
 
         if (!_customToolbarButtons?.length) {
@@ -234,7 +234,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                             backgroundColor = { backgroundColor }
                             /* eslint-disable react/jsx-no-bind */
                             handleClick = { () =>
-                                dispatch(customOverflowMenuButtonPressed(id, text))
+                                dispatch(customButtonPressed(id, text))
                             }
                             icon = { icon }
                             key = { id }

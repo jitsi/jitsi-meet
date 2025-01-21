@@ -99,8 +99,9 @@ const styles = {
         backgroundColor: BaseTheme.palette.uiBackground,
         flexDirection: 'column',
         maxWidth: 580,
-        marginLeft: 'auto',
-        marginRight: 'auto',
+        marginHorizontal: 'auto',
+        marginVertical: BaseTheme.spacing[0],
+        paddingHorizontal: BaseTheme.spacing[1],
         width: '100%'
     },
 

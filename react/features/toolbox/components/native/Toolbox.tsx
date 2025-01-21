@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { connect, useDispatch, useSelector, useStore } from 'react-redux';
+import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { OVERFLOW_MENU_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
@@ -13,7 +13,7 @@ import ReactionsMenuButton from '../../../reactions/components/native/ReactionsM
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import TileViewButton from '../../../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../../../visitors/functions';
-import { customOverflowMenuButtonPressed } from '../../actions.native';
+import { customButtonPressed } from '../../actions.native';
 import { getMovableButtons, isToolboxVisible } from '../../functions.native';
 import HangupButton from '../HangupButton';
 
@@ -33,6 +33,11 @@ import styles from './styles';
 interface IProps {
 
     /**
+     * Custom Toolbar buttons.
+     */
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+
+    /**
      * Whether the end conference feature is supported.
      */
     _endConferenceSupported: boolean;
@@ -41,6 +46,11 @@ interface IProps {
      * Whether we are in visitors mode.
      */
     _iAmVisitor: boolean;
+
+    /**
+     * Whether the end overflow-menu is enabled or not.
+     */
+    _overflowMenuEnabled: boolean;
 
     /**
      * Whether or not any reactions buttons should be visible.
@@ -61,6 +71,11 @@ interface IProps {
      * The width of the screen.
      */
     _width: number;
+
+    /**
+     * Redux store dispatch method.
+     */
+    dispatch: IStore['dispatch'];
 }
 
 /**
@@ -70,7 +85,17 @@ interface IProps {
  * @returns {React$Element}
  */
 function Toolbox(props: IProps) {
-    const { _endConferenceSupported, _shouldDisplayReactionsButtons, _styles, _visible, _iAmVisitor, _width } = props;
+    const {
+        _customToolbarButtons,
+        _endConferenceSupported,
+        _overflowMenuEnabled,
+        _iAmVisitor,
+        _shouldDisplayReactionsButtons,
+        _styles,
+        _visible,
+        _width,
+        dispatch
+    } = props;
 
     if (!_visible) {
         return null;
@@ -94,27 +119,20 @@ function Toolbox(props: IProps) {
         style.justifyContent = 'center';
     }
 
-    const store = useStore();
-    const state = store.getState();
-    const overflowMenuEnabledFlag = getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true);
-    const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
-
     const renderCustomToolbarButtons = () => {
-        const dispatch = useDispatch();
-
-        if (!customToolbarButtons?.length) {
+        if (!_customToolbarButtons?.length) {
             return;
         }
 
         return (
             <>
                 {
-                    customToolbarButtons.map(({ id, text, icon, backgroundColor }) => (
+                    _customToolbarButtons.map(({ id, text, icon, backgroundColor }) => (
                         <CustomOptionButton
                             backgroundColor = { backgroundColor }
                             /* eslint-disable react/jsx-no-bind */
                             handleClick = { () =>
-                                dispatch(customOverflowMenuButtonPressed(id, text))
+                                dispatch(customButtonPressed(id, text))
                             }
                             icon = { icon }
                             key = { id }
@@ -136,7 +154,7 @@ function Toolbox(props: IProps) {
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 {
-                    !overflowMenuEnabledFlag && customToolbarButtons
+                    !_overflowMenuEnabled && _customToolbarButtons
                     ? renderCustomToolbarButtons()
                     : <>
                             {!_iAmVisitor && <AudioMuteButton
@@ -191,9 +209,12 @@ function Toolbox(props: IProps) {
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
+    const overflowMenuEnabled = getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true);
 
     return {
+        _customToolbarButtons: state['features/base/config']?.customToolbarButtons,
         _endConferenceSupported: Boolean(endConferenceSupported),
+        _overflowMenuEnabled: overflowMenuEnabled,
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _iAmVisitor: iAmVisitor(state),
