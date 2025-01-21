@@ -141,7 +141,7 @@ function Toolbox(props: IProps) {
                 }
             </>
         );
-    }
+    };
 
     return (
         <View
@@ -154,7 +154,7 @@ function Toolbox(props: IProps) {
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 {
-                    (!_overflowMenuEnabled && _customToolbarButtons)
+                    !_overflowMenuEnabled && _customToolbarButtons
                         ? renderCustomToolboxButtons()
                         : <>
                             {!_iAmVisitor && <AudioMuteButton
@@ -176,8 +176,9 @@ function Toolbox(props: IProps) {
                                 : <RaiseHandButton
                                     styles = { buttonStylesBorderless }
                                     toggledStyles = { backgroundToggledStyle } />)}
-                            {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                            {(!_iAmVisitor) && <OverflowMenuButton
+                            {additionalButtons.has('tileview')
+                                && <TileViewButton styles = { buttonStylesBorderless } />}
+                            {!_iAmVisitor && <OverflowMenuButton
                                 styles = { buttonStylesBorderless }
                                 toggledStyles = { toggledButtonStyles } />}
                             { _endConferenceSupported
