@@ -119,7 +119,7 @@ function Toolbox(props: IProps) {
         style.justifyContent = 'center';
     }
 
-    const renderCustomToolbarButtons = () => {
+    const renderCustomToolboxButtons = () => {
         if (!_customToolbarButtons?.length) {
             return;
         }
@@ -155,7 +155,7 @@ function Toolbox(props: IProps) {
                 style = { style as ViewStyle }>
                 {
                     !_overflowMenuEnabled && _customToolbarButtons
-                    ? renderCustomToolbarButtons()
+                    ? renderCustomToolboxButtons()
                     : <>
                             {!_iAmVisitor && <AudioMuteButton
                                 styles = { buttonStylesBorderless }
