@@ -118,8 +118,8 @@ interface IProps extends AbstractProps, WithTranslation {
  * @param {IProps} props - The props object.
  * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
  */
-function shouldShowPrejoin({ _showPrejoin, _showVisitorsQueue }: IProps) {
-    return _showPrejoin && !_showVisitorsQueue;
+function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue && !_showLobby;
 }
 
 /**
