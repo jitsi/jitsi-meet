@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import { OVERFLOW_MENU_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import Platform from '../../../base/react/Platform.native';
 import ChatButton from '../../../chat/components/native/ChatButton';
 import ReactionsMenuButton from '../../../reactions/components/native/ReactionsMenuButton';
@@ -35,7 +33,7 @@ interface IProps {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ backgroundColor?: string;  icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
 
     /**
      * Whether the end conference feature is supported.
@@ -46,11 +44,6 @@ interface IProps {
      * Whether we are in visitors mode.
      */
     _iAmVisitor: boolean;
-
-    /**
-     * Whether the end overflow-menu is enabled or not.
-     */
-    _overflowMenuEnabled: boolean;
 
     /**
      * Whether or not any reactions buttons should be visible.
@@ -88,7 +81,6 @@ function Toolbox(props: IProps) {
     const {
         _customToolbarButtons,
         _endConferenceSupported,
-        _overflowMenuEnabled,
         _iAmVisitor,
         _shouldDisplayReactionsButtons,
         _styles,
@@ -134,9 +126,7 @@ function Toolbox(props: IProps) {
                             /* eslint-disable react/jsx-no-bind */
                             handleClick = { () => dispatch(customButtonPressed(id, text)) }
                             icon = { icon }
-                            key = { id }
-                            text = { text }
-                        />
+                            key = { id } />
                     ))
                 }
             </>
@@ -154,7 +144,7 @@ function Toolbox(props: IProps) {
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 {
-                    !_overflowMenuEnabled && _customToolbarButtons
+                    _customToolbarButtons
                         ? renderCustomToolboxButtons()
                         : <>
                             {!_iAmVisitor && <AudioMuteButton
@@ -203,12 +193,10 @@ function Toolbox(props: IProps) {
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const endConferenceSupported = conference?.isEndConferenceSupported();
-    const overflowMenuEnabled = getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true);
 
     return {
         _customToolbarButtons: state['features/base/config']?.customToolbarButtons,
         _endConferenceSupported: Boolean(endConferenceSupported),
-        _overflowMenuEnabled: overflowMenuEnabled,
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _iAmVisitor: iAmVisitor(state),
