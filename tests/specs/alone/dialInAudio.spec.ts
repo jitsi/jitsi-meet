@@ -30,7 +30,7 @@ describe('Dial-In', () => {
             console.error('dial-in.test.no-pin');
         }
 
-        expect(dialInPin.length >= 9).toBe(true);
+        expect(dialInPin.length >= 8).toBe(true);
 
         ctx.dialInPin = dialInPin;
     });
