@@ -13,7 +13,7 @@ interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
     icon: any;
     id?: string;
-    text: string;
+    text?: string;
 }
 
 /**
@@ -26,7 +26,6 @@ class CustomOptionButton extends AbstractButton<IProps> {
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
-
     /**
      * Custom icon component.
      *
@@ -56,7 +55,7 @@ class CustomOptionButton extends AbstractButton<IProps> {
         return iconComponent;
     };
 
-    label = this.text;
+    label = this.text || '';
 }
 
 export default translate(connect()(CustomOptionButton));

@@ -35,7 +35,7 @@ interface IProps {
     /**
      * Custom Toolbar buttons.
      */
-    _customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+    _customToolbarButtons?: Array<{ backgroundColor?: string;  icon: string; id: string; text: string; }>;
 
     /**
      * Whether the end conference feature is supported.
@@ -127,16 +127,16 @@ function Toolbox(props: IProps) {
         return (
             <>
                 {
-                    _customToolbarButtons.map(({ id, text, icon, backgroundColor }) => (
+                    _customToolbarButtons.map(({ backgroundColor, id, text, icon }) => (
                         <CustomOptionButton
                             backgroundColor = { backgroundColor }
+
                             /* eslint-disable react/jsx-no-bind */
-                            handleClick = { () =>
-                                dispatch(customButtonPressed(id, text))
-                            }
+                            handleClick = { () => dispatch(customButtonPressed(id, text)) }
                             icon = { icon }
                             key = { id }
-                            text = { text } />
+                            text = { text }
+                        />
                     ))
                 }
             </>
