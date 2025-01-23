@@ -40,9 +40,9 @@ export default abstract class PreMeetingScreen extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async waitToJoinLobby(): Promise<void> {
+    waitToJoinLobby(): Promise<void> {
         return this.participant.driver.waitUntil(
-            async () => await this.isLobbyRoomJoined(),
+            () => this.isLobbyRoomJoined(),
             {
                 timeout: 3_000, // 3 seconds
                 timeoutMsg: `Timeout waiting to join lobby for ${this.participant.name}`
@@ -53,8 +53,8 @@ export default abstract class PreMeetingScreen extends BasePageObject {
     /**
      * Checks internally whether lobby room is joined.
      */
-    async isLobbyRoomJoined() {
-        return await this.participant.driver.execute(
+    isLobbyRoomJoined() {
+        return this.participant.driver.execute(
             () => APP.conference._room?.room?.getLobby()?.lobbyRoom?.joined === true);
     }
 

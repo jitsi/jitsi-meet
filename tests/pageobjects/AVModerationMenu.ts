@@ -12,29 +12,29 @@ export default class AVModerationMenu extends BasePageObject {
     /**
      * Clicks the start audio moderation menu item.
      */
-    async clickStartAudioModeration() {
-        await this.clickButton(START_AUDIO_MODERATION);
+    clickStartAudioModeration() {
+        return this.clickButton(START_AUDIO_MODERATION);
     }
 
     /**
      * Clicks the stop audio moderation menu item.
      */
-    async clickStopAudioModeration() {
-        await this.clickButton(STOP_AUDIO_MODERATION);
+    clickStopAudioModeration() {
+        return this.clickButton(STOP_AUDIO_MODERATION);
     }
 
     /**
      * Clicks the start video moderation menu item.
      */
-    async clickStartVideoModeration() {
-        await this.clickButton(START_VIDEO_MODERATION);
+    clickStartVideoModeration() {
+        return this.clickButton(START_VIDEO_MODERATION);
     }
 
     /**
      * Clicks the stop audio moderation menu item.
      */
-    async clickStopVideoModeration() {
-        await this.clickButton(STOP_VIDEO_MODERATION);
+    clickStopVideoModeration() {
+        return this.clickButton(STOP_VIDEO_MODERATION);
     }
 
     /**

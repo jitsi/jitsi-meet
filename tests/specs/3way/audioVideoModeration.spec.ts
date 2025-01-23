@@ -135,7 +135,7 @@ describe('AVModeration', () => {
         await p1.getFilmstrip().grantModerator(p3);
 
         await p3.driver.waitUntil(
-            async () => await p3.isModerator(), {
+            () => p3.isModerator(), {
                 timeout: 5000,
                 timeoutMsg: `${p3.name} is not moderator`
             });

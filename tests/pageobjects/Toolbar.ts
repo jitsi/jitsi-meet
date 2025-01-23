@@ -55,9 +55,10 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioMuteButton(): Promise<void> {
+    clickAudioMuteButton(): Promise<void> {
         this.participant.log('Clicking on: Audio Mute Button');
-        await this.audioMuteBtn.click();
+
+        return this.audioMuteBtn.click();
     }
 
     /**
@@ -65,9 +66,10 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickAudioUnmuteButton(): Promise<void> {
+    clickAudioUnmuteButton(): Promise<void> {
         this.participant.log('Clicking on: Audio Unmute Button');
-        await this.audioUnMuteBtn.click();
+
+        return this.audioUnMuteBtn.click();
     }
 
     /**
@@ -89,9 +91,10 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickVideoMuteButton(): Promise<void> {
+    clickVideoMuteButton(): Promise<void> {
         this.participant.log('Clicking on: Video Mute Button');
-        await this.videoMuteBtn.click();
+
+        return this.videoMuteBtn.click();
     }
 
     /**
@@ -99,9 +102,10 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickVideoUnmuteButton(): Promise<void> {
+    clickVideoUnmuteButton(): Promise<void> {
         this.participant.log('Clicking on: Video Unmute Button');
-        await this.videoUnMuteBtn.click();
+
+        return this.videoUnMuteBtn.click();
     }
 
     /**
@@ -109,9 +113,10 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickCloseParticipantsPaneButton(): Promise<void> {
+    clickCloseParticipantsPaneButton(): Promise<void> {
         this.participant.log('Clicking on: Close Participants pane Button');
-        await this.getButton(CLOSE_PARTICIPANTS_PANE).click();
+
+        return this.getButton(CLOSE_PARTICIPANTS_PANE).click();
     }
 
     /**
@@ -119,101 +124,105 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    async clickParticipantsPaneButton(): Promise<void> {
+    clickParticipantsPaneButton(): Promise<void> {
         this.participant.log('Clicking on: Participants pane Button');
 
         // Special case for participants pane button, as it contains the number of participants and its label
         // is changing
-        await this.participant.driver.$(`[aria-label^="${PARTICIPANTS}"]`).click();
+        return this.participant.driver.$(`[aria-label^="${PARTICIPANTS}"]`).click();
     }
 
     /**
      * Clicks on the video quality toolbar button which opens the
      * dialog for adjusting max-received video quality.
      */
-    async clickVideoQualityButton(): Promise<void> {
+    clickVideoQualityButton(): Promise<void> {
         return this.clickButtonInOverflowMenu(VIDEO_QUALITY);
     }
 
     /**
      * Clicks on the profile toolbar button which opens or closes the profile panel.
      */
-    async clickProfileButton(): Promise<void> {
+    clickProfileButton(): Promise<void> {
         return this.clickButtonInOverflowMenu(PROFILE);
     }
 
     /**
      * Clicks on the raise hand button that enables participants will to speak.
      */
-    async clickRaiseHandButton(): Promise<void> {
+    clickRaiseHandButton(): Promise<void> {
         this.participant.log('Clicking on: Raise hand Button');
-        await this.getButton(RAISE_HAND).click();
+
+        return this.getButton(RAISE_HAND).click();
     }
 
     /**
      * Clicks on the chat button that opens chat panel.
      */
-    async clickChatButton(): Promise<void> {
+    clickChatButton(): Promise<void> {
         this.participant.log('Clicking on: Chat Button');
-        await this.getButton(CHAT).click();
+
+        return this.getButton(CHAT).click();
     }
 
     /**
      * Clicks on the chat button that closes chat panel.
      */
-    async clickCloseChatButton(): Promise<void> {
+    clickCloseChatButton(): Promise<void> {
         this.participant.log('Clicking on: Close Chat Button');
-        await this.getButton(CLOSE_CHAT).click();
+
+        return this.getButton(CLOSE_CHAT).click();
     }
 
     /**
      * Clicks on the desktop sharing button that starts desktop sharing.
      */
-    async clickDesktopSharingButton() {
-        await this.getButton(DESKTOP).click();
+    clickDesktopSharingButton() {
+        return this.getButton(DESKTOP).click();
     }
 
     /**
      * Clicks on the desktop sharing button to stop it.
      */
-    async clickStopDesktopSharingButton() {
-        await this.getButton(STOP_DESKTOP).click();
+    clickStopDesktopSharingButton() {
+        return this.getButton(STOP_DESKTOP).click();
     }
 
     /**
      * Clicks on the tile view button which enables tile layout.
      */
-    async clickEnterTileViewButton() {
-        await this.getButton(ENTER_TILE_VIEW_BUTTON).click();
+    clickEnterTileViewButton() {
+        return this.getButton(ENTER_TILE_VIEW_BUTTON).click();
     }
 
     /**
      * Clicks on the tile view button which exits tile layout.
      */
-    async clickExitTileViewButton() {
-        await this.getButton(EXIT_TILE_VIEW_BUTTON).click();
+    clickExitTileViewButton() {
+        return this.getButton(EXIT_TILE_VIEW_BUTTON).click();
     }
 
     /**
      * Clicks on the hangup button that ends the conference.
      */
-    async clickHangupButton(): Promise<void> {
+    clickHangupButton(): Promise<void> {
         this.participant.log('Clicking on: Hangup Button');
-        await this.getButton(HANGUP).click();
+
+        return this.getButton(HANGUP).click();
     }
 
     /**
      * Clicks on the security toolbar button which opens the security panel.
      */
-    async clickSecurityButton() {
-        await this.clickButtonInOverflowMenu(SECURITY);
+    clickSecurityButton() {
+        return this.clickButtonInOverflowMenu(SECURITY);
     }
 
     /**
      * Clicks on the settings toolbar button which opens or closes the settings panel.
      */
-    async clickSettingsButton() {
-        await this.clickButtonInOverflowMenu(SETTINGS);
+    clickSettingsButton() {
+        return this.clickButtonInOverflowMenu(SETTINGS);
     }
 
     /**
@@ -246,8 +255,8 @@ export default class Toolbar extends BasePageObject {
      * Clicks on the overflow toolbar button which opens or closes the overflow menu.
      * @private
      */
-    private async clickOverflowButton(): Promise<void> {
-        await this.getButton(OVERFLOW).click();
+    private clickOverflowButton(): Promise<void> {
+        return this.getButton(OVERFLOW).click();
     }
 
     /**
@@ -283,8 +292,8 @@ export default class Toolbar extends BasePageObject {
      * @param visible
      * @private
      */
-    private async waitForOverFlowMenu(visible: boolean) {
-        await this.getButton(OVERFLOW_MENU).waitForDisplayed({
+    private waitForOverFlowMenu(visible: boolean) {
+        return this.getButton(OVERFLOW_MENU).waitForDisplayed({
             reverse: !visible,
             timeout: 3000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`

@@ -8,15 +8,14 @@ const EMAIL = 'support@jitsi.org';
 const HASH = '38f014e4b7dde0f64f8157d26a8c812e';
 
 describe('Avatar', () => {
-    it('setup the meeting', async () => {
-        // Start p1
-        await ensureTwoParticipants(ctx, {
+    it('setup the meeting', () =>
+        ensureTwoParticipants(ctx, {
             skipDisplayName: true,
 
             // no default avatar if we have used to join a token with an avatar and no option to set it
             skipFirstModerator: true
-        });
-    });
+        })
+    );
 
     it('change and check', async () => {
         const { p1, p2 } = ctx;

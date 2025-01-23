@@ -9,9 +9,7 @@ describe('Kick', () => {
         }
     });
 
-    it('kick and check', async () => {
-        await kickParticipant2AndCheck();
-    });
+    it('kick and check', () => kickParticipant2AndCheck());
 
     it('kick p2p and check', async () => {
         await ensureTwoParticipants(ctx, {

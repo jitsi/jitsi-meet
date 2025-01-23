@@ -47,10 +47,10 @@ export default class Notifications extends BasePageObject {
     /**
      * Dismisses any join notifications.
      */
-    async dismissAnyJoinNotification() {
-        await Promise.allSettled(
+    dismissAnyJoinNotification() {
+        return Promise.allSettled(
             [ `${JOIN_ONE_TEST_ID}-dismiss`, `${JOIN_TWO_TEST_ID}-dismiss`, `${JOIN_MULTIPLE_TEST_ID}-dismiss` ]
-                .map(async id => this.participant.driver.$(`#${id}"]`).click()));
+                .map(id => this.participant.driver.$(`#${id}"]`).click()));
     }
 
     /**
@@ -68,15 +68,15 @@ export default class Notifications extends BasePageObject {
     /**
      * Closes the self view notification.
      */
-    async closeReEnableSelfViewNotification() {
-        await this.participant.driver.$(`div[data-testid="${REENABLE_SELF_VIEW_CLOSE_NOTIFICATION}"]`).click();
+    closeReEnableSelfViewNotification() {
+        return this.participant.driver.$(`div[data-testid="${REENABLE_SELF_VIEW_CLOSE_NOTIFICATION}"]`).click();
     }
 
     /**
      * The notification on participants page when Lobby is being enabled or disabled.
      */
-    async getLobbyEnabledText() {
-        return await this.getNotificationText(LOBBY_ENABLED_TEST_ID);
+    getLobbyEnabledText() {
+        return this.getNotificationText(LOBBY_ENABLED_TEST_ID);
     }
 
     /**
@@ -101,8 +101,8 @@ export default class Notifications extends BasePageObject {
     /**
      * Closes the notification.
      */
-    async closeLobbyEnabled() {
-        await this.closeLobbyNotification(LOBBY_ENABLED_TEST_ID);
+    closeLobbyEnabled() {
+        return this.closeLobbyNotification(LOBBY_ENABLED_TEST_ID);
     }
 
     /**
@@ -135,15 +135,15 @@ export default class Notifications extends BasePageObject {
     /**
      * The notification that someone's access was approved.
      */
-    async getLobbyParticipantAccessGranted() {
-        return await this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
+    getLobbyParticipantAccessGranted() {
+        return this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
     }
 
     /**
      * Closes the notification.
      */
-    async closeLobbyParticipantAccessGranted() {
-        await this.closeLobbyNotification(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
+    closeLobbyParticipantAccessGranted() {
+        return this.closeLobbyNotification(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
     }
 
     /**
@@ -173,15 +173,15 @@ export default class Notifications extends BasePageObject {
     /**
      * The notification test that someone's access was denied.
      */
-    async getLobbyParticipantAccessDenied() {
-        return await this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
+    getLobbyParticipantAccessDenied() {
+        return this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
     }
 
     /**
      * Closes the notification.
      */
-    async closeLobbyParticipantAccessDenied() {
-        await this.closeLobbyNotification(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
+    closeLobbyParticipantAccessDenied() {
+        return this.closeLobbyNotification(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
     }
 
     /**
@@ -199,8 +199,8 @@ export default class Notifications extends BasePageObject {
      * Will wait 3 seconds for the knocking participants to disappear and return true or will return false.
      * @return <tt>true</tt> if the knocking participants list was not displayed.
      */
-    async waitForHideOfKnockingParticipants() {
-        await this.participant.driver.$(LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_XPATH)
+    waitForHideOfKnockingParticipants() {
+        return this.participant.driver.$(LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_XPATH)
             .waitForDisplayed({
                 timeout: 3000,
                 reverse: true

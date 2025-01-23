@@ -70,8 +70,8 @@ export default class Filmstrip extends BasePageObject {
     /**
      * Returns the local video id.
      */
-    async getLocalVideoId() {
-        return await this.participant.driver.execute(
+    getLocalVideoId() {
+        return this.participant.driver.execute(
             'return document.getElementById("localVideo_container").srcObject.id');
     }
 
@@ -94,7 +94,7 @@ export default class Filmstrip extends BasePageObject {
         const elem = this.participant.driver.$(
             `//span[@id='participant_${endpointId}']//img[contains(@class,'userAvatar')]`);
 
-        return await elem.isExisting() ? elem.getAttribute('src') : null;
+        return await elem.isExisting() ? await elem.getAttribute('src') : null;
     }
 
     /**
@@ -154,8 +154,8 @@ export default class Filmstrip extends BasePageObject {
      * Kicks a participant.
      * @param participantId
      */
-    async kickParticipant(participantId: string) {
-        await this.clickOnRemoteMenuLink(participantId, 'kicklink', true);
+    kickParticipant(participantId: string) {
+        return this.clickOnRemoteMenuLink(participantId, 'kicklink', true);
     }
 
     /**
@@ -177,8 +177,8 @@ export default class Filmstrip extends BasePageObject {
     /**
      * Checks whether the local self view is displayed or not.
      */
-    async assertSelfViewIsHidden(hidden: boolean) {
-        await this.participant.driver.$(LOCAL_VIDEO_XPATH).waitForDisplayed({
+    assertSelfViewIsHidden(hidden: boolean) {
+        return this.participant.driver.$(LOCAL_VIDEO_XPATH).waitForDisplayed({
             reverse: hidden,
             timeout: 5000,
             timeoutMsg: `Local video thumbnail is${hidden ? '' : ' not'} displayed for ${this.participant.name}`
@@ -200,8 +200,8 @@ export default class Filmstrip extends BasePageObject {
      * Asserts that the remote videos are hidden or not.
      * @param reverse
      */
-    async assertRemoteVideosHidden(reverse = false) {
-        await this.participant.driver.waitUntil(
+    assertRemoteVideosHidden(reverse = false) {
+        return this.participant.driver.waitUntil(
             async () =>
                 await this.participant.driver.$$('//div[@id="remoteVideos" and contains(@class, "hidden")]').length > 0,
             {

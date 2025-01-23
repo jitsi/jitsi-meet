@@ -15,8 +15,8 @@ export default class SecurityDialog extends BaseDialog {
     /**
      *  Waits for the settings dialog to be visible.
      */
-    async waitForDisplay() {
-        await this.participant.driver.$(`.${DIALOG_CONTAINER}`).waitForDisplayed();
+    waitForDisplay() {
+        return this.participant.driver.$(`.${DIALOG_CONTAINER}`).waitForDisplayed();
     }
 
     /**
@@ -30,7 +30,7 @@ export default class SecurityDialog extends BaseDialog {
     /**
      * Returns is the lobby enabled.
      */
-    async isLobbyEnabled() {
+    isLobbyEnabled() {
         return this.getLobbySwitch().isSelected();
     }
 
@@ -47,15 +47,15 @@ export default class SecurityDialog extends BaseDialog {
     /**
      * Checks whether lobby section is present in the UI.
      */
-    async isLobbySectionPresent() {
-        return await this.getLobbySwitch().isExisting();
+    isLobbySectionPresent() {
+        return this.getLobbySwitch().isExisting();
     }
 
     /**
      * Waits for the lobby to be enabled or disabled.
      * @param reverse
      */
-    async waitForLobbyEnabled(reverse = false) {
+    waitForLobbyEnabled(reverse = false) {
         const lobbySwitch = this.getLobbySwitch();
 
         return this.participant.driver.waitUntil(
@@ -74,7 +74,7 @@ export default class SecurityDialog extends BaseDialog {
      * @return {@code true} if the conference is displayed as locked locally in
      * the security dialog, {@code false} otherwise.
      */
-    private async isLockedLocally() {
+    private isLockedLocally() {
         return this.participant.driver.$(`.${LOCAL_LOCK}`).isExisting();
     }
 
@@ -84,8 +84,8 @@ export default class SecurityDialog extends BaseDialog {
      * @return {@code true}  if the conference is displayed as locked remotely
      * in the security dialog, {@code false} otherwise.
      */
-    private async isLockedRemotely() {
-        return await this.participant.driver.$(`.${REMOTE_LOCK}`).isExisting();
+    private isLockedRemotely() {
+        return this.participant.driver.$(`.${REMOTE_LOCK}`).isExisting();
     }
 
     /**

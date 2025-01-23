@@ -24,8 +24,8 @@ export default class PreJoinScreen extends PreMeetingScreen {
     /**
      * Waits for pre join screen to load.
      */
-    async waitForLoading() {
-        await this.participant.driver.$('[data-testid="prejoin.screen"]')
+    waitForLoading(): Promise<void> {
+        return this.participant.driver.$('[data-testid="prejoin.screen"]')
             .waitForDisplayed({ timeout: 3000 });
     }
 }

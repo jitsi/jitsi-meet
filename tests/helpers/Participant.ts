@@ -252,7 +252,7 @@ export class Participant {
      */
     async waitForPageToLoad(): Promise<void> {
         return this.driver.waitUntil(
-            async () => await this.driver.execute(() => document.readyState === 'complete'),
+            () => this.driver.execute(() => document.readyState === 'complete'),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: `Timeout waiting for Page Load Request to complete for ${this.name}.`
@@ -325,8 +325,8 @@ export class Participant {
     async waitForIceConnected(): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(async () =>
-            await driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
+        return driver.waitUntil(() =>
+            driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: `expected ICE to be connected for 15s for ${this.name}`
         });
@@ -341,17 +341,16 @@ export class Participant {
             timeout = 15_000, msg = `expected to receive/send data in 15s for ${this.name}`): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(async () =>
-            await driver.execute(() => {
-                const stats = APP.conference.getStats();
-                const bitrateMap = stats?.bitrate || {};
-                const rtpStats = {
-                    uploadBitrate: bitrateMap.upload || 0,
-                    downloadBitrate: bitrateMap.download || 0
-                };
+        return driver.waitUntil(() => driver.execute(() => {
+            const stats = APP.conference.getStats();
+            const bitrateMap = stats?.bitrate || {};
+            const rtpStats = {
+                uploadBitrate: bitrateMap.upload || 0,
+                downloadBitrate: bitrateMap.download || 0
+            };
 
-                return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
-            }), {
+            return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
+        }), {
             timeout,
             timeoutMsg: msg
         });
@@ -366,16 +365,15 @@ export class Participant {
             timeout = 15_000, msg = `expected to send data in 15s for ${this.name}`): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(async () =>
-            await driver.execute(() => {
-                const stats = APP.conference.getStats();
-                const bitrateMap = stats?.bitrate || {};
-                const rtpStats = {
-                    uploadBitrate: bitrateMap.upload || 0
-                };
+        return driver.waitUntil(() => driver.execute(() => {
+            const stats = APP.conference.getStats();
+            const bitrateMap = stats?.bitrate || {};
+            const rtpStats = {
+                uploadBitrate: bitrateMap.upload || 0
+            };
 
-                return rtpStats.uploadBitrate > 0;
-            }), {
+            return rtpStats.uploadBitrate > 0;
+        }), {
             timeout,
             timeoutMsg: msg
         });
@@ -390,8 +388,8 @@ export class Participant {
     waitForRemoteStreams(number: number): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(async () =>
-            await driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
+        return driver.waitUntil(() =>
+            driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
             timeout: 15_000,
             timeoutMsg: `expected number of remote streams:${number} in 15s for ${this.name}`
         });
@@ -407,8 +405,7 @@ export class Participant {
     waitForParticipants(number: number, msg?: string): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(async () =>
-            await driver.execute(count => APP.conference.listMembers().length === count, number), {
+        return driver.waitUntil(() => driver.execute(count => APP.conference.listMembers().length === count, number), {
             timeout: 15_000,
             timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
         });
@@ -580,7 +577,7 @@ export class Participant {
      * Returns the local display name.
      */
     async getLocalDisplayName() {
-        return await (await this.getLocalDisplayNameElement()).getText();
+        return (await this.getLocalDisplayNameElement()).getText();
     }
 
     /**
@@ -631,7 +628,7 @@ export class Participant {
      * Returns the source of the large video currently shown.
      */
     async getLargeVideoId() {
-        return await this.driver.execute('return document.getElementById("largeVideo").srcObject.id');
+        return this.driver.execute('return document.getElementById("largeVideo").srcObject.id');
     }
 
     /**
@@ -700,7 +697,7 @@ export class Participant {
      * Checks if the leave reason dialog is open.
      */
     async isLeaveReasonDialogOpen() {
-        return await this.driver.$('div[data-testid="dialog.leaveReason"]').isDisplayed();
+        return this.driver.$('div[data-testid="dialog.leaveReason"]').isDisplayed();
     }
 
     /**

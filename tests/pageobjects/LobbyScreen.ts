@@ -24,7 +24,7 @@ export default class LobbyScreen extends PreMeetingScreen {
     /**
      * Waits for lobby screen to load.
      */
-    async waitForLoading() {
-        await this.participant.driver.$('.lobby-screen').waitForDisplayed({ timeout: 4000 });
+    waitForLoading(): Promise<void> {
+        return this.participant.driver.$('.lobby-screen').waitForDisplayed({ timeout: 4000 });
     }
 }

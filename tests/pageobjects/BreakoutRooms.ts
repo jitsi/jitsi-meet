@@ -50,11 +50,11 @@ class BreakoutRoom extends BasePageObject {
     /**
      * Collapses the breakout room.
      */
-    async collapse() {
+    collapse() {
         const collapseElem = this.participant.driver.$(
             `div[data-testid="${this.id}"]`);
 
-        await collapseElem.click();
+        return collapseElem.click();
     }
 
     /**
@@ -209,21 +209,4 @@ export default class BreakoutRooms extends BasePageObject {
         await sendButton.waitForClickable();
         await sendButton.click();
     }
-
-    // /**
-    //  * Open context menu for given participant.
-    //  */
-    // async openParticipantContextMenu(participant: Participant) {
-    //     const listItem = this.participant.driver.$(
-    //         `div[@id="participant-item-${await participant.getEndpointId()}"]`);
-    //
-    //     await listItem.waitForDisplayed();
-    //     await listItem.moveTo();
-    //
-    //     const button = listItem.$(`aria/${PARTICIPANT_MORE_LABEL}`);
-    //
-    //     await button.waitForClickable();
-    //     await button.click();
-    // }
 }
-
