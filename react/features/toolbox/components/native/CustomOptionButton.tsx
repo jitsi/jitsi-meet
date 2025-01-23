@@ -26,6 +26,7 @@ class CustomOptionButton extends AbstractButton<IProps> {
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
+
     /**
      * Custom icon component.
      *
