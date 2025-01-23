@@ -128,6 +128,6 @@
  *
  * The `data` dictionary contains a `id`, `text` key.
  */
-- (void)customOverflowMenuButtonPressed:(NSDictionary *)data;
+- (void)customButtonPressed:(NSDictionary *)data;
 
 @end

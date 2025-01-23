@@ -88,8 +88,8 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
 
-// - (void)customOverflowMenuButtonPressed:(NSDictionary *)data {
-//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED" withData:data];
+// - (void)customButtonPressed:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_BUTTON_PRESSED" withData:data];
 // }
 
 #if 0
