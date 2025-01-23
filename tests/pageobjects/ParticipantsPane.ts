@@ -26,7 +26,7 @@ export default class ParticipantsPane extends BasePageObject {
     /**
      * Checks if the pane is open.
      */
-    async isOpen() {
+    isOpen() {
         return this.participant.driver.$(`.${PARTICIPANTS_PANE}`).isExisting();
     }
 

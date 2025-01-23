@@ -203,8 +203,7 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p3, p2);
 
         // the video should be playing
-        await p1.driver.waitUntil(async () =>
-            await p1.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived()), {
+        await p1.driver.waitUntil(() => p1.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived()), {
             timeout: 5_000,
             timeoutMsg: 'expected remote screen share to be on large'
         });
@@ -255,8 +254,7 @@ describe('Desktop sharing', () => {
         expect(await p1.driver.execute(() => APP.UI.getLargeVideoID())).toBe(`${await p3.getEndpointId()}-v1`);
 
         // the video should be playing
-        await p1.driver.waitUntil(async () =>
-            await p1.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived()), {
+        await p1.driver.waitUntil(() => p1.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived()), {
             timeout: 5_000,
             timeoutMsg: 'expected remote screen share to be on large'
         });

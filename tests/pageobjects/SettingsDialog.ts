@@ -15,8 +15,8 @@ export default class SettingsDialog extends BaseDialog {
     /**
      *  Waits for the settings dialog to be visible.
      */
-    async waitForDisplay() {
-        await this.participant.driver.$(SETTINGS_DIALOG_CONTENT).waitForDisplayed();
+    waitForDisplay() {
+        return this.participant.driver.$(SETTINGS_DIALOG_CONTENT).waitForDisplayed();
     }
 
     /**
@@ -34,22 +34,22 @@ export default class SettingsDialog extends BaseDialog {
     /**
      * Selects the Profile tab to be displayed.
      */
-    async openProfileTab() {
-        await this.openTab(X_PATH_PROFILE_TAB);
+    openProfileTab() {
+        return this.openTab(X_PATH_PROFILE_TAB);
     }
 
     /**
      * Selects the More tab to be displayed.
      */
-    async openMoreTab() {
-        await this.openTab(X_PATH_MORE_TAB);
+    openMoreTab() {
+        return this.openTab(X_PATH_MORE_TAB);
     }
 
     /**
      * Selects the moderator tab to be displayed.
      */
-    async openModeratorTab() {
-        await this.openTab(X_PATH_MODERATOR_TAB);
+    openModeratorTab() {
+        return this.openTab(X_PATH_MODERATOR_TAB);
     }
 
     /**
@@ -74,8 +74,8 @@ export default class SettingsDialog extends BaseDialog {
     /**
      * Clicks the OK button on the settings dialog to close the dialog and save any changes made.
      */
-    async submit() {
-        await this.clickOkButton();
+    submit() {
+        return this.clickOkButton();
     }
 
     /**

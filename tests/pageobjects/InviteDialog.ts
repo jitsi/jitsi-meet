@@ -13,7 +13,7 @@ export default class InviteDialog extends BaseDialog {
     /**
      * Checks if the dialog is open.
      */
-    async isOpen() {
+    isOpen() {
         return this.participant.driver.$(`.${DIALOG_CONTAINER}`).isExisting();
     }
 
@@ -85,8 +85,8 @@ export default class InviteDialog extends BaseDialog {
     /**
      * Gets the string that contains the dial in number for the current conference.
      */
-    async getDialInNumber() {
-        return await this.getValueAfterColon(PHONE_NUMBER);
+    getDialInNumber() {
+        return this.getValueAfterColon(PHONE_NUMBER);
     }
 
     /**

@@ -266,8 +266,8 @@ describe('BreakoutRooms', () => {
             });
 
         // there should be two participants in the main room, either p2 or p3 got moved to the main room
-        const checkParticipants = async (p: Participant) => {
-            await p.driver.waitUntil(
+        const checkParticipants = (p: Participant) =>
+            p.driver.waitUntil(
                 async () => {
                     const isInBreakoutRoom = await p.isInBreakoutRoom();
                     const breakoutRooms = p.getBreakoutRooms();
@@ -303,7 +303,6 @@ describe('BreakoutRooms', () => {
                     timeout: 2000,
                     timeoutMsg: `${p.name} is not seeing an empty breakout room and one with one participant`
                 });
-        };
 
         await checkParticipants(p2);
         await checkParticipants(p3);

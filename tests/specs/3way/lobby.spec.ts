@@ -201,7 +201,7 @@ describe('Lobby', () => {
         await p1.hangup();
 
         await p2.driver.waitUntil(
-            async () => await p2.isModerator(),
+            () => p2.isModerator(),
             {
                 timeout: 3000,
                 timeoutMsg: 'p2 is not moderator after p1 leaves'
@@ -241,7 +241,7 @@ describe('Lobby', () => {
         await p1SecurityDialog.addPassword(roomPasscode);
 
         await p1.driver.waitUntil(
-            async () => await p1SecurityDialog.isLocked(),
+            () => p1SecurityDialog.isLocked(),
             {
                 timeout: 2000,
                 timeoutMsg: 'room did not lock for p1'
@@ -286,7 +286,7 @@ describe('Lobby', () => {
         await p1.hangup();
 
         await p2.driver.waitUntil(
-            async () => await p2.isModerator(),
+            () => p2.isModerator(),
             {
                 timeout: 3000,
                 timeoutMsg: 'p2 is not moderator after p1 leaves'

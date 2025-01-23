@@ -10,8 +10,8 @@ export default class IframeAPI extends BasePageObject {
      * Returns the json object from the iframeAPI helper.
      * @param event
      */
-    async getEventResult(event: string): Promise<any> {
-        return await this.participant.driver.execute(
+    getEventResult(event: string): Promise<any> {
+        return this.participant.driver.execute(
             eventName => {
                 const result = window.jitsiAPI.test[eventName];
 
@@ -27,8 +27,8 @@ export default class IframeAPI extends BasePageObject {
      * Adds an event listener to the iframeAPI.
      * @param eventName The event name.
      */
-    async addEventListener(eventName: string) {
-        return await this.participant.driver.execute(
+    addEventListener(eventName: string) {
+        return this.participant.driver.execute(
             (event, prefix) => {
                 console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
@@ -42,15 +42,15 @@ export default class IframeAPI extends BasePageObject {
     /**
      * Returns an array of available rooms and details of it.
      */
-    async getRoomsInfo() {
-        return await this.participant.driver.execute(() => window.jitsiAPI.getRoomsInfo());
+    getRoomsInfo() {
+        return this.participant.driver.execute(() => window.jitsiAPI.getRoomsInfo());
     }
 
     /**
      * Returns the number of participants in the conference.
      */
-    async getNumberOfParticipants() {
-        return await this.participant.driver.execute(() => window.jitsiAPI.getNumberOfParticipants());
+    getNumberOfParticipants() {
+        return this.participant.driver.execute(() => window.jitsiAPI.getNumberOfParticipants());
     }
 
     /**
@@ -58,8 +58,8 @@ export default class IframeAPI extends BasePageObject {
      * @param command The command.
      * @param args The arguments.
      */
-    async executeCommand(command: string, ...args: any[]) {
-        return await this.participant.driver.execute(
+    executeCommand(command: string, ...args: any[]) {
+        return this.participant.driver.execute(
             (commandName, commandArgs) =>
                 window.jitsiAPI.executeCommand(commandName, ...commandArgs)
             , command, args);
@@ -68,15 +68,14 @@ export default class IframeAPI extends BasePageObject {
     /**
      * Returns the current state of the participant's pane.
      */
-    async isParticipantsPaneOpen() {
-        return await this.participant.driver.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
+    isParticipantsPaneOpen() {
+        return this.participant.driver.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
     }
 
     /**
      * Removes the embedded Jitsi Meet conference.
      */
-    async dispose() {
-        return await this.participant.driver.execute(() => window.jitsiAPI.dispose());
+    dispose() {
+        return this.participant.driver.execute(() => window.jitsiAPI.dispose());
     }
-
 }

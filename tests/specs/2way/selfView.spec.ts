@@ -2,9 +2,7 @@ import type { Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Self view', () => {
-    it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
-    });
+    it('joining the meeting', () => ensureTwoParticipants(ctx));
 
     it('hide from menu', async () => {
         const { p1 } = ctx;
