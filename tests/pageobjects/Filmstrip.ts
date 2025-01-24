@@ -113,10 +113,11 @@ export default class Filmstrip extends BasePageObject {
      * @private
      */
     private async clickOnRemoteMenuLink(participantId: string, linkClassname: string, dialogConfirm: boolean) {
-        const thumbnail = this.participant.driver.$(
-            `//span[@id='participant_${participantId}']//span[@id='remotevideomenu']`);
+        await this.participant.driver.$(`//span[@id='participant_${participantId}']`).moveTo();
 
-        await thumbnail.moveTo();
+        await this.participant.driver.$(
+            `//span[@id='participant_${participantId
+            }']//span[@id='remotevideomenu']//div[@id='remote-video-menu-trigger']`).moveTo();
 
         const popoverElement = this.participant.driver.$(
             `//div[contains(@class, 'popover')]//div[contains(@class, '${linkClassname}')]`);
