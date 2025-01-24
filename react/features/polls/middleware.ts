@@ -130,7 +130,8 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
         const tmp = {
             id: pollId,
             answers,
-            question
+            question,
+            senderId
         };
 
         // Check integrity of the poll data.
@@ -151,7 +152,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
                     name: answer,
                     voters: []
                 };
-            }).slice(MAX_ANSWERS),
+            }).slice(0, MAX_ANSWERS),
             saved: false,
             editing: false
         };
@@ -172,7 +173,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
         const receivedAnswer: IAnswer = {
             voterId,
             pollId,
-            answers: answers.slice(MAX_ANSWERS)
+            answers: answers.slice(0, MAX_ANSWERS)
         };
 
         dispatch(receiveAnswer(pollId, receivedAnswer));
