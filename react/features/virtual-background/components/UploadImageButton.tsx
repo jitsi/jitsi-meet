@@ -89,8 +89,13 @@ function UploadImageButton({
 
 
     const uploadImage = useCallback(async e => {
-        const reader = new FileReader();
         const imageFile = e.target.files;
+
+        if (!imageFile) {
+            return;
+        }
+
+        const reader = new FileReader();
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
