@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { translate } from '../../../base/i18n/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import styles from "./styles";
+import styles from './styles';
 
 interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
