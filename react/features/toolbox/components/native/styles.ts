@@ -105,7 +105,7 @@ const styles = {
         width: '100%'
     },
 
-    iconContainer: {
+    toolboxButtonIconContainer: {
         alignItems: 'center',
         borderRadius: BaseTheme.shape.borderRadius,
         height: BaseTheme.spacing[7],
