@@ -75,17 +75,35 @@ module:hook('muc-broadcast-presence', function (event)
     end
 end);
 
---- Avoids any participant joining the room in the interval between creating the room
---- and jicofo entering the room
-module:hook('muc-occupant-pre-join', function (event)
-    local room, stanza = event.room, event.stanza;
-
-    -- we skip processing only if jicofo_lock is set to false
-    if room._data.jicofo_lock == false or is_healthcheck_room(room.jid) then
+local function process_region(session, stanza)
+    if not session.user_region then
         return;
     end
 
-    local occupant = event.occupant;
+    local region = stanza:get_child_text('jitsi_participant_region');
+    if region then
+        return;
+    end
+
+    stanza:tag('jitsi_participant_region'):text(session.user_region):up();
+end
+
+--- Avoids any participant joining the room in the interval between creating the room
+--- and jicofo entering the room
+module:hook('muc-occupant-pre-join', function (event)
+    local occupant, room, stanza = event.occupant, event.room, event.stanza;
+
+    local is_health_room = is_healthcheck_room(room.jid);
+    -- check for region
+    if not is_admin(occupant.bare_jid) and not is_health_room then
+        process_region(event.origin, stanza);
+    end
+
+    -- we skip processing only if jicofo_lock is set to false
+    if room._data.jicofo_lock == false or is_health_room then
+        return;
+    end
+
     if ends_with(occupant.nick, '/focus') then
         module:fire_event('jicofo-unlock-room', { room = room; });
     else
