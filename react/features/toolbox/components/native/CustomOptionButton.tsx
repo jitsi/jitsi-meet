@@ -1,13 +1,12 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { connect } from 'react-redux';
 
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { translate } from '../../../base/i18n/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-
-import styles from './styles';
-
+import styles from "./styles";
 
 interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
@@ -42,15 +41,34 @@ class CustomOptionButton extends AbstractButton<IProps> {
         if (this.iconSrc?.includes('svg')) {
             iconComponent
                 = (
+                <View
+                    style = { [
+                        styles.iconContainer,
+                        {
+                            backgroundColor: this.backgroundColor
+                        }
+                    ] as ViewStyle }>
                     <SvgCssUri
-                        style = { styles.iconImageStyles }
-                        uri = { this.iconSrc } />);
+                        height = { BaseTheme.spacing[4] }
+                        uri = { this.iconSrc }
+                        width = { BaseTheme.spacing[4] } />
+                </View>);
         } else {
             iconComponent
                 = (
-                    <Image
-                        source = {{ uri: this.iconSrc }}
-                        style = { styles.iconImageStyles } />);
+                    <View
+                        style = { [
+                        styles.iconContainer,
+                        {
+                            backgroundColor: this.backgroundColor
+                        }
+                    ] as ViewStyle }>
+                        <Image
+                            height = { BaseTheme.spacing[4] }
+                            resizeMode = { 'contain' }
+                            source = {{ uri: this.iconSrc }}
+                            width = { BaseTheme.spacing[4] } />
+                    </View>);
         }
 
         return iconComponent;
