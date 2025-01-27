@@ -3,10 +3,12 @@ import { Image, View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { connect } from 'react-redux';
 
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { translate } from '../../../base/i18n/functions';
-import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+
 import styles from './styles';
+
 
 interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
@@ -41,35 +43,25 @@ class CustomOptionButton extends AbstractButton<IProps> {
 
         if (this.iconSrc?.includes('svg')) {
             iconComponent
-                = (
-                <View
-                    style = { this.props.isToolboxButton && [
-                        styles.toolboxButtonIconContainer,
-                        {
-                            backgroundColor: this.backgroundColor
-                        }
-                    ] as ViewStyle }>
-                    <SvgCssUri
-                        height = { BaseTheme.spacing[4] }
-                        uri = { this.iconSrc }
-                        width = { BaseTheme.spacing[4] } />
+                = (<View style = { this.props.isToolboxButton
+                && [ styles.toolboxButtonIconContainer,
+                    { backgroundColor: this.backgroundColor } ] as ViewStyle }>
+                <SvgCssUri
+                    height = { BaseTheme.spacing[4] }
+                    uri = { this.iconSrc }
+                    width = { BaseTheme.spacing[4] } />
                 </View>);
         } else {
             iconComponent
-                = (
-                    <View
-                        style = { this.props.isToolboxButton && [
-                        styles.toolboxButtonIconContainer,
-                        {
-                            backgroundColor: this.backgroundColor
-                        }
-                    ] as ViewStyle }>
-                        <Image
-                            height = { BaseTheme.spacing[4] }
-                            resizeMode = { 'contain' }
-                            source = {{ uri: this.iconSrc }}
-                            width = { BaseTheme.spacing[4] } />
-                    </View>);
+                = (<View style = { this.props.isToolboxButton
+                && [ styles.toolboxButtonIconContainer,
+                    { backgroundColor: this.backgroundColor } ] as ViewStyle }>
+                <Image
+                    height = { BaseTheme.spacing[4] }
+                    resizeMode = { 'contain' }
+                    source = {{ uri: this.iconSrc }}
+                    width = { BaseTheme.spacing[4] } />
+                </View>);
         }
 
         return iconComponent;
