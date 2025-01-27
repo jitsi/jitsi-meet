@@ -12,6 +12,7 @@ interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
     icon: any;
     id?: string;
+    isToolboxButton?: boolean;
     text?: string;
 }
 
@@ -42,8 +43,8 @@ class CustomOptionButton extends AbstractButton<IProps> {
             iconComponent
                 = (
                 <View
-                    style = { [
-                        styles.iconContainer,
+                    style = { this.props.isToolboxButton && [
+                        styles.toolboxButtonIconContainer,
                         {
                             backgroundColor: this.backgroundColor
                         }
@@ -57,8 +58,8 @@ class CustomOptionButton extends AbstractButton<IProps> {
             iconComponent
                 = (
                     <View
-                        style = { [
-                        styles.iconContainer,
+                        style = { this.props.isToolboxButton && [
+                        styles.toolboxButtonIconContainer,
                         {
                             backgroundColor: this.backgroundColor
                         }
