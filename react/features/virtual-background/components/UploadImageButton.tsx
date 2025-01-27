@@ -91,7 +91,7 @@ function UploadImageButton({
     const uploadImage = useCallback(async e => {
         const imageFile = e.target.files;
 
-        if (!imageFile) {
+        if (imageFile.length === 0) {
             return;
         }
 
