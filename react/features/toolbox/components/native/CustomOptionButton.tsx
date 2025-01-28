@@ -59,11 +59,10 @@ class CustomOptionButton extends AbstractButton<IProps> {
         }
 
         return (
-            <View style = {
-                this.props.isToolboxButton && [
+            <View
+                style = { this.props.isToolboxButton && [
                     styles.toolboxButtonIconContainer,
-                    { backgroundColor: this.backgroundColor }
-                ] as ViewStyle }>
+                    { backgroundColor: this.backgroundColor } ] as ViewStyle }>
                 { iconComponent }
             </View>
         );
