@@ -3,6 +3,7 @@
 module:set_global();
 
 local formdecode = require "util.http".formdecode;
+local region_header_name = module:get_option_string('region_header_name', 'x_proxy_region');
 
 -- Extract the following parameters from the URL and set them in the session:
 -- * previd: for session resumption
@@ -24,6 +25,8 @@ function init_session(event)
         session.jitsi_web_query_room = params.room;
         session.jitsi_web_query_prefix = params.prefix or "";
     end
+
+    session.user_region = request.headers[region_header_name];
 end
 
 module:hook_global("bosh-session", init_session, 1);
