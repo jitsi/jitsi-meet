@@ -40,6 +40,13 @@
  */
 @property (nonatomic, nullable) JitsiMeetConferenceOptions *defaultConferenceOptions;
 
+/**
+ * Custom RTCAudioDevice implementation.
+ * https://github.com/jitsi/webrtc/blob/M124/sdk/objc/components/audio/RTCAudioDevice.h
+ * https://github.com/mstyura/RTCAudioDevice
+ */
+@property (nonatomic, strong, nullable) id rtcAudioDevice;
+
 #pragma mark - This class is a singleton
 
 + (instancetype _Nonnull)sharedInstance;
