@@ -54,6 +54,10 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        // Initialize WebRTC options.
+        self.rtcAudioDevice = nil;
+        self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
+
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
 
@@ -135,12 +139,8 @@
 
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
-    if (_rtcAudioDevice != nil) {
-        options.audioDevice = _rtcAudioDevice;
-    }
-#if 0
-    options.loggingSeverity = RTCLoggingSeverityInfo;
-#endif
+    options.audioDevice = _rtcAudioDevice;
+    options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 
     // Initialize the one and only bridge for interfacing with React Native.
     _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
