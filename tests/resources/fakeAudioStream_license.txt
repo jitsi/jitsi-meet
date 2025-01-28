@@ -1,0 +1,9 @@
+fakeAudioStream.wav created from [1].
+
+Speaker: The Jacobin
+Derivative of [2]
+Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)[3]
+
+[1]: https://en.wikipedia.org/wiki/File:Helium.ogg
+[2]: https://en.wikipedia.org/wiki/Helium?oldid=302049858
+[3]: https://creativecommons.org/licenses/by-sa/3.0/deed.en
