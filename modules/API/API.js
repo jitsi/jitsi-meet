@@ -851,6 +851,8 @@ function initCommands() {
         'overwrite-config': config => {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
+            logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
