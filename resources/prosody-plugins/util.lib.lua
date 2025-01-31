@@ -474,12 +474,20 @@ end
 
 -- Returns the initiator extension if the stanza is coming from a sip jigasi
 function is_sip_jigasi(stanza)
+    if not stanza then
+        return false;
+    end
+
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
 function is_transcriber_jigasi(stanza)
+    if not stanza then
+        return false;
+    end
+
     local features = stanza:get_child('features');
-    if not features  then
+    if not features then
         return false;
     end
 
