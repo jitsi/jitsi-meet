@@ -12,7 +12,7 @@ import styles from './styles';
 
 interface IProps extends AbstractButtonProps {
     backgroundColor?: string;
-    icon: any;
+    icon?: any;
     id?: string;
     isToolboxButton?: boolean;
     text?: string;
@@ -52,7 +52,6 @@ class CustomOptionButton extends AbstractButton<IProps> {
             iconComponent = (
                 <Image
                     height = { BaseTheme.spacing[4] }
-                    resizeMode = { 'contain' }
                     source = {{ uri: this.iconSrc }}
                     width = { BaseTheme.spacing[4] } />
             );
