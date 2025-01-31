@@ -270,7 +270,7 @@ function useHelpButton() {
 */
 export function useToolboxButtons(
         _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
-    const dekstopSharing = getDesktopSharingButton();
+    const desktopSharing = getDesktopSharingButton();
     const toggleCameraButton = useToggleCameraButton();
     const _fullscreen = getFullscreenButton();
     const security = useSecurityDialogButton();
@@ -297,7 +297,7 @@ export function useToolboxButtons(
         microphone,
         camera,
         profile,
-        desktop: dekstopSharing,
+        desktop: desktopSharing,
         chat,
         raisehand,
         reactions,
