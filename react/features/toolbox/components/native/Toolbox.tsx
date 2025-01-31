@@ -6,11 +6,10 @@ import { connect, useSelector } from 'react-redux';
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import Platform from '../../../base/react/Platform.native';
-import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import { iAmVisitor } from '../../../visitors/functions';
 
 import { customButtonPressed } from '../../actions.native';
-import { getMovableButtons, getVisibleNativeButtons, isToolboxVisible } from '../../functions.native';
+import { getVisibleNativeButtons, isToolboxVisible } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
 
 import styles from './styles';
@@ -29,11 +28,6 @@ interface IProps {
      * Whether we are in visitors mode.
      */
     _iAmVisitor: boolean;
-
-    /**
-     * Whether or not any reactions buttons should be visible.
-     */
-    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -86,13 +80,13 @@ function Toolbox(props: IProps) {
     });
 
     const bottomEdge = Platform.OS === 'ios' && _visible;
-    const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
-    const additionalButtons = getMovableButtons(clientWidth);
-    const style = { ...styles.toolbox };
+    const { buttonStylesBorderless, hangupButtonStyles } = _styles;
+    const style = {
+        ...styles.toolbox
+    };
 
-    // we have only hangup and raisehand button in _iAmVisitor mode
+    // We have only hangup and raisehand button in _iAmVisitor mode
     if (_iAmVisitor) {
-        additionalButtons.add('raisehand');
         style.justifyContent = 'center';
     }
 
@@ -146,7 +140,6 @@ function Toolbox(props: IProps) {
 function _mapStateToProps(state: IReduxState) {
     return {
         _iAmVisitor: iAmVisitor(state),
-        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
     };

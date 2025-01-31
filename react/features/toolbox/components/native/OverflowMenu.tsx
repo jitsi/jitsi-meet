@@ -22,18 +22,16 @@ import { isSharedVideoEnabled } from '../../../shared-video/functions';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCaptionButton';
-import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { customButtonPressed } from '../../actions.native';
-import { getMovableButtons, getVisibleNativeButtons } from '../../functions.native';
+import { getVisibleNativeButtons } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
-import ScreenSharingButton from './ScreenSharingButton';
 
 
 /**
@@ -82,11 +80,6 @@ interface IProps {
     _shouldDisplayReactionsButtons: boolean;
 
     /**
-     * The width of the screen.
-     */
-    _width: number;
-
-    /**
      * Used for hiding the dialog when the selection was completed.
      */
     dispatch: IStore['dispatch'];
@@ -133,10 +126,8 @@ class OverflowMenu extends PureComponent<IProps, IState> {
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
             _isSharedVideoEnabled,
-            _width,
             dispatch
         } = this.props;
-        const toolbarButtons = getMovableButtons(_width);
 
         const buttonProps = {
             afterClick: this._onCancel,
@@ -161,7 +152,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         return (
             <BottomSheet
                 renderFooter = { this._renderReactionMenu }>
-                { this._renderOverflowMenuButtons(topButtonProps) }
                 <Divider style = { styles.divider as ViewStyle } />
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
@@ -175,9 +165,8 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 {_isSharedVideoEnabled && <SharedVideoButton { ...buttonProps } />}
-                {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
+                { this._renderOverflowMenuButtons(topButtonProps) }
                 {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
-                {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 {_isBreakoutRoomsSupported && <BreakoutRoomsButton { ...buttonProps } />}
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
@@ -204,10 +193,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @returns {React.ReactElement}
      */
     _renderReactionMenu() {
-        const { _overflowMenuButtons, _shouldDisplayReactionsButtons } = this.props;
-        const isRaiseHandInOverflowMenu = _overflowMenuButtons.some(item => item.key === 'raisehand');
+        const { _mainMenuButtons, _shouldDisplayReactionsButtons } = this.props;
+        const isRaiseHandInMainMenu = _mainMenuButtons.some(item => item.key === 'raisehand');
 
-        if ( _shouldDisplayReactionsButtons && isRaiseHandInOverflowMenu) {
+        if ( _shouldDisplayReactionsButtons && !isRaiseHandInMainMenu) {
             return (
                 <ReactionMenu
                     onCancel = { this._onCancel }
@@ -224,10 +213,10 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @returns {React.ReactElement}
      */
     _renderRaiseHandButton(buttonProps: Object) {
-        const { _overflowMenuButtons, _shouldDisplayReactionsButtons } = this.props;
-        const isRaiseHandInOverflowMenu = _overflowMenuButtons.some(item => item.key === 'raisehand');
+        const { _mainMenuButtons, _shouldDisplayReactionsButtons } = this.props;
+        const isRaiseHandInMainMenu = _mainMenuButtons.some(item => item.key === 'raisehand');
 
-        if ( !_shouldDisplayReactionsButtons && isRaiseHandInOverflowMenu) {
+        if ( !_shouldDisplayReactionsButtons && !isRaiseHandInMainMenu) {
             return (
                 <RaiseHandButton { ...buttonProps }/>
             );
@@ -285,8 +274,7 @@ function _mapStateToProps(state: IReduxState) {
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSharedVideoEnabled: isSharedVideoEnabled(state),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
-        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
-        _width: state['features/base/responsive-ui'].clientWidth
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
     };
 }
 
