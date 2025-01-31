@@ -1,4 +1,4 @@
-import { ToolbarButton } from './types';
+import { NativeToolbarButton, ToolbarButton } from './types';
 
 /**
  * Thresholds for displaying toolbox buttons.
@@ -35,6 +35,32 @@ export const THRESHOLDS = [
 ];
 
 /**
+ * Thresholds for displaying native toolbox buttons.
+ */
+export const NATIVE_THRESHOLDS = [
+    {
+        width: 560,
+        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 500,
+        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 440,
+        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 380,
+        order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 320,
+        order: [ 'microphone', 'camera', 'overflowmenu', 'hangup' ]
+    }
+];
+
+/**
  * Main toolbar buttons priority used to determine which button should be picked to fill empty spaces for disabled
  * buttons.
  */
@@ -47,6 +73,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'reactions',
     'participants-pane',
     'tileview',
+    'overflowmenu',
+    'hangup',
     'invite',
     'toggle-camera',
     'videoquality',
@@ -126,6 +154,23 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'toggle-camera',
     'videoquality',
     'whiteboard'
+];
+
+/**
+ * The list of all possible native buttons.
+ *
+ * @protected
+ * @type Array<string>
+ */
+export const NATIVE_TOOLBAR_BUTTONS: NativeToolbarButton[] = [
+    'camera',
+    'chat',
+    'hangup',
+    'overflowmenu',
+    'microphone',
+    'raisehand',
+    'screensharing',
+    'tileview'
 ];
 
 /**
