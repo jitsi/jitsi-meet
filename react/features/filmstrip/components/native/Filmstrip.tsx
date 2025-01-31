@@ -8,8 +8,8 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import Platform from '../../../base/react/Platform.native';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { isToolboxVisible } from '../../../toolbox/functions';
-import { setVisibleRemoteParticipants } from '../../actions';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
+import { setVisibleRemoteParticipants } from '../../actions.native';
 import {
     getFilmstripDimensions,
     isFilmstripVisible,
