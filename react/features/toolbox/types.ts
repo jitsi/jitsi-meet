@@ -28,6 +28,7 @@ export type ToolbarButton = 'camera' |
     'mute-everyone' |
     'mute-video-everyone' |
     'noisesuppression' |
+    'overflowmenu' |
     'participants-pane' |
     'profile' |
     'raisehand' |
@@ -52,7 +53,7 @@ export enum NOTIFY_CLICK_MODE {
 }
 
 export type IMainToolbarButtonThresholds = Array<{
-    order: Array<ToolbarButton | string>;
+    order: Array<ToolbarButton | NativeToolbarButton | string>;
     width: number;
 }>;
 
@@ -60,8 +61,33 @@ export interface ICustomToolbarButton {
     Content?: typeof CustomOptionButton;
     backgroundColor?: string;
     group?: number;
-    icon: string;
-    id: string;
+    icon?: string;
+    id?: string;
     key?: string;
-    text: string;
+    text?: string;
+}
+
+export type NativeToolbarButton = 'camera' |
+    'chat' |
+    'microphone' |
+    'raisehand' |
+    'screensharing' |
+    'tileview' |
+    'overflowmenu' |
+    'hangup';
+
+export interface IGetVisibleNativeButtonsParams {
+    allButtons: { [key: string]: IToolboxButton; };
+    clientWidth: number;
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
+}
+
+export interface IGetVisibleButtonsParams {
+    allButtons: { [key: string]: IToolboxButton; };
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+    clientWidth: number;
+    jwtDisabledButtons: string[];
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
 }
