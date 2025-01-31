@@ -2,7 +2,7 @@
 
 // Polyfill Promise.withReolvers.
 // FIXME(saghul) webpack + core-js v3 should polyfill this.
-import 'promise.withresolvers';
+import 'promise.withresolvers/auto';
 
 // Re-export jQuery
 // FIXME: Remove this requirement from torture tests.
