@@ -1,4 +1,8 @@
-/* application specific logic */
+/* Jitsi Meet app main entrypoint. */
+
+// Polyfill Promise.withReolvers.
+// FIXME(saghul) webpack + core-js v3 should polyfill this.
+import 'promise.withresolvers';
 
 // Re-export jQuery
 // FIXME: Remove this requirement from torture tests.
