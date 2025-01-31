@@ -84,6 +84,9 @@ var config = {
         // Allows the setting of a custom bandwidth value from the UI.
         // assumeBandwidth: true,
 
+        // Enables use of getDisplayMedia in electron
+        // electronUseGetDisplayMedia: false,
+
         // Enables the use of the codec selection API supported by the browsers .
         // enableCodecSelectionAPI: false,
 
