@@ -1,5 +1,8 @@
 {
     "addPeople": {
+        "accessibilityLabel": {
+            "meetingLink": "Mötes länk: {{url}}"
+        },
         "add": "Bjud in",
         "addContacts": "Bjud in dina kontakter",
         "contacts": "Kontakter",
@@ -39,6 +42,18 @@
     "audioOnly": {
         "audioOnly": "Enbart ljud"
     },
+    "bandwidthSettings": {
+        "assumedBandwidthBps": "t.ex. 10000000 för 10 Mbps",
+        "assumedBandwidthBpsWarning": "Högre värden kan skapa nätverksproblem.",
+        "customValue": "anpassat värde",
+        "customValueEffect": "för att ställa in det faktiska bps-värdet",
+        "leaveEmpty": "lämna tomt",
+        "leaveEmptyEffect": "för att uppskattningar ska äga rum",
+        "possibleValues": "Möjliga värden",
+        "setAssumedBandwidthBps": "Uppskattat värde (bps)",
+        "title": "Bandbreddsinställningar",
+        "zeroEffect": "för att slå av video"
+    },
     "breakoutRooms": {
         "actions": {
             "add": "Lägg till grupprum",
@@ -48,15 +63,22 @@
             "leaveBreakoutRoom": "Lämna grupprum",
             "more": "Mer",
             "remove": "Ta bort",
+            "rename": "Döp om",
+            "renameBreakoutRoom": "Döp om grupprum",
             "sendToBreakoutRoom": "Skicka deltagare till grupprum:"
         },
+        "breakoutList": "Grupprums lista",
+        "buttonLabel": "Grupprum",
         "defaultName": "Grupprum #{{index}}",
+        "hideParticipantList": "Dölj deltagarlista",
         "mainRoom": "Huvudrum",
         "notifications": {
-            "joined": "Gick med i \"{{name}}\"",
+            "joined": "Gick med i grupprum \"{{name}}\"",
             "joinedMainRoom": "Gick med i huvudrummet",
             "joinedTitle": "Grupprum"
-        }
+        },
+        "showParticipantList": "Visa deltagarlista",
+        "title": "Grupprum"
     },
     "calendarSync": {
         "addMeetingURL": "Lägg till en möteslänk",
@@ -106,6 +128,7 @@
         "privateNotice": "Privat meddelande till {{recipient}}",
         "sendButton": "Skicka",
         "smileysPanel": "Emoji panel",
+        "systemDisplayName": "",
         "tabs": {
             "chat": "Chatt",
             "polls": "Omröstningar"
@@ -197,7 +220,9 @@
         "joinInBrowser": "Delta på webben",
         "launchMeetingLabel": "Hur vill du delta i detta möte?",
         "launchWebButton": "Starta på webben",
+        "noDesktopApp": "",
         "noMobileApp": "Har du inte appen?",
+        "or": "",
         "termsAndConditions": "Genom att fortsätta godkänner du våra <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>villkor.</a>",
         "title": "Startar ditt möte i {{app}}…",
         "titleNew": "Startar ditt möte…",
@@ -239,9 +264,13 @@
         "Share": "Dela",
         "Submit": "Skicka",
         "WaitForHostMsg": "Konferensen har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
+        "WaitForHostNoAuthMsg": "Konferensen har ännu inte startat eftersom ingen värd har anlänt ännu. Vänligen vänta.",
+        "WaitingForHostButton": "Vänta på värd",
         "WaitingForHostTitle": "Väntar på värden…",
         "Yes": "Ja",
         "accessibilityLabel": {
+            "Cancel": "Avbryt",
+            "Ok": "Ok",
             "close": "Stäng",
             "liveStreaming": "Livesändning",
             "sharingTabs": "Delningsalternativ"
@@ -250,6 +279,8 @@
         "addMeetingNote": "Mötesinformation",
         "addOptionalNote": "Ytterligare information",
         "allow": "Tillåt",
+        "allowToggleCameraDialog": "Tillåter du att {{initiatorName}} får växla kamera till ansiktsläge?",
+        "allowToggleCameraTitle": "Tillåt att växla kamera",
         "alreadySharedVideoMsg": "En annan deltagare delar redan en video. Konferensen tillåter bara en video-delning åt gången.",
         "alreadySharedVideoTitle": "Endast en delad video åt gången tillåts",
         "applicationWindow": "Applikationsfönster",
@@ -276,6 +307,8 @@
         "contactSupport": "Kontakta kundtjänst",
         "copied": "Kopierad",
         "copy": "Kopiera",
+        "demoteParticipantDialog": "Are you sure you want to move this participant to viewer? Är du säker på att du vill flytta denna deltagaren till tittare",
+        "demoteParticipantTitle": "Flytta till tittare",
         "dismiss": "Förkasta",
         "displayNameRequired": "Hej, vad heter du?",
         "done": "Klar",
@@ -287,6 +320,7 @@
         "embedMeeting": "Bädda in möte",
         "enterDisplayName": "Ange namn",
         "error": "Fel",
+        "errorRoomCreationRestriction": "Du försökte gå med för snabbt, kom tillbaka om en stund.",
         "gracefulShutdown": "Vår tjänst är för tillfället nedstängd för underhåll. Vänligen försök senare.",
         "grantModeratorDialog": "Är du säker du vill göra denna deltagare till en moderator?",
         "grantModeratorTitle": "Godkänn moderator",
@@ -300,6 +334,7 @@
         "kickParticipantButton": "Sparka ut",
         "kickParticipantDialog": "Vill du sparka ut den här deltagaren?",
         "kickParticipantTitle": "Tysta deltagaren?",
+        "kickSystemTitle": "Aj! du blev utsparkad ur mötet",
         "kickTitle": "Aj! {{participantDisplayName}} sparkade ut dig ur mötet",
         "linkMeeting": "Länka möte",
         "linkMeetingTitle": "Länka möte till Salesforce",
@@ -310,7 +345,8 @@
         "lockRoom": "Lägg till möte $t(lockRoomPasswordUppercase)",
         "lockTitle": "Låsning misslyckades",
         "login": "Logga in",
-        "logoutQuestion": "Är du säker på att du vill logga ut och stoppa konferensen?",
+        "loginQuestion": "Är du säker på att du vill logga in och lämna mötet",
+        "logoutQuestion": "Är du säker på att du vill logga ut och lämna konferensen?",
         "logoutTitle": "Logga ut",
         "maxUsersLimitReached": "Gränsen för maximalt antal deltagare har nåtts. Konferensen är full. Kontakta mötesägaren eller försök igen senare!",
         "maxUsersLimitReachedTitle": "Maximal deltagarantal uppnått",
@@ -353,8 +389,6 @@
         "permissionCameraRequiredError": "Tillåtelse krävs för att delta med kamera i denna möte. Var god skaffa detta i \"inställningar\".",
         "permissionErrorTitle": "Tillåtelse krävs",
         "permissionMicRequiredError": "Tillåtelse krävs för att delta med mikrofon i denna möte. Var god skaffa detta i \"inställningar\".",
-        "popupError": "Din webbläsare blockerar pop-up-fönster från sajten. Tillåt pop-up-fönster från den här sajten i inställningarna och försök igen.",
-        "popupErrorTitle": "Pop-up blockerad",
         "readMore": "Mer",
         "recentlyUsedObjects": "Dina senaste använda objekt",
         "recording": "Inspelning",
@@ -371,6 +405,8 @@
         "removePassword": "Ta bort $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Är du säker på att du vill ta bort din delade video?",
         "removeSharedVideoTitle": "Ta bort den delade videon",
+        "renameBreakoutRoomLabel": "Rums namn",
+        "renameBreakoutRoomTitle": "Döp om grupprum",
         "reservationError": "Fel i reservationssystemet",
         "reservationErrorMsg": "Felkod: {{code}}, meddelande: {{msg}}",
         "retry": "Försök igen",
@@ -390,8 +426,10 @@
         "sendPrivateMessageTitle": "Skicka privat?",
         "serviceUnavailable": "Tjänsten otillgänglig",
         "sessTerminated": "Konferensen avslutades",
+        "sessTerminatedReason": "",
         "sessionRestarted": "Samtal återstartat av bryggan",
         "shareAudio": "Fortsätt",
+        "shareAudioAltText": "För att dela önskat innehåll, navigera till \"Webläsarfliken\", välj innehållet, aktivera \"dela ljud\"-kryssmärket och klicka sedan på \"dela\" knappen",
         "shareAudioTitle": "Hur man delar ljud",
         "shareAudioWarningD1": "Du måste avsluta din skärmdelning innan du kan dela ditt ljud",
         "shareAudioWarningD2": "Du måste starta om din skärmdelning och därefter klicka på \"ljuddelning\"",
@@ -402,7 +440,10 @@
         "shareScreenWarningD2": "du måste avsluta ljuddelning, starta skärmdelning och sen aktivera \"ljuddelning\"",
         "shareScreenWarningH1": "Om du bara vill dela din skärm:",
         "shareScreenWarningTitle": "Du måste avsluta ljuddelning innan du kan dela in skärm",
+        "shareVideoConfirmPlay": "Du är på väg att öppna en extern webbplats. Vill du fortsätta?",
+        "shareVideoConfirmPlayTitle": "{{name}} har delat en video med dig.",
         "shareVideoLinkError": "Skriv in en fungerande länk.",
+        "shareVideoLinkStopped": "Videon från {{name}} har avslutats.",
         "shareVideoTitle": "Ta bort en delad video",
         "shareYourScreen": "Dela din skärm",
         "shareYourScreenDisabled": "Skärmdelning har inaktiverats.",
@@ -421,7 +462,25 @@
         "thankYou": "Tack för att du använder {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Du är inte behörig att delta i det här samtalet.",
+        "tokenAuthFailedReason": {
+            "audInvalid": "Ogiltigt `aud`-värde. Det ska vara `jitsi`.",
+            "contextNotFound": "Objektet `context` saknas från payload.",
+            "expInvalid": "Ogilting `exp` värde.",
+            "featureInvalid": "Ogiltig feature: {{feature}}, mest troligt inte implementerat än.",
+            "featureValueInvalid": "Felaktigt värde för feature: {{feature}}.",
+            "featuresNotFound": "`Features` objektet saknas i payload.",
+            "headerNotFound": "Saknar header.",
+            "issInvalid": "Ogiltigt `iss`-värde. Det ska vara `chat`.",
+            "kidMismatch": "Nyckel ID (kid) matchat inte sub.",
+            "kidNotFound": "Nyckel ID saknas (kid).",
+            "nbfFuture": "Värdet i `nbf` är i framtiden.",
+            "nbfInvalid": "Ogilitigt `nbf`värde.",
+            "payloadNotFound": "Payload saknas.",
+            "tokenExpired": "Token har gått ut."
+        },
         "tokenAuthFailedTitle": "Autentisering misslyckades",
+        "tokenAuthFailedWithReasons": "Förlåt, du har inte tillåtelse att gå med i det här samtalet. Troliga anledingar: {{reason}}",
+        "tokenAuthUnsupported": "Token URL är inte tillåten",
         "transcribing": "Transkriberar",
         "unlockRoom": "Ta bort möte $t(lockRoomPassword)",
         "user": "Användare",
@@ -435,6 +494,10 @@
         "viewUpgradeOptions": "Se uppgraderings alternativ",
         "viewUpgradeOptionsContent": "För att få obegränsad tillgång till premiumfunktioner som inspelning, transkriptioner, RTMP-streaming och mer måste du uppgradera din plan.",
         "viewUpgradeOptionsTitle": "Du upptäckte en premiumfunktion!",
+        "whiteboardLimitContent": "Förlåt, max antal samtidiga deltagare i whiteboard har uppnåts.",
+        "whiteboardLimitReference": "För mer information besök",
+        "whiteboardLimitReferenceUrl": "vår webplats",
+        "whiteboardLimitTitle": "Användande av whiteboard har begränsats",
         "yourEntireScreen": "Helskärm"
     },
     "documentSharing": {
@@ -447,6 +510,9 @@
         "title": "Bädda in möte"
     },
     "feedback": {
+        "accessibilityLabel": {
+            "yourChoice": "Ditt val: {{rating}}"
+        },
         "average": "Medel",
         "bad": "Dåligt",
         "detailsLabel": "Berätta mer.",
@@ -503,13 +569,16 @@
         "noNumbers": "Inga inringningsnummer.",
         "noPassword": "Inget lösenord",
         "noRoom": "Inget rum specificerades för inringning.",
+        "noWhiteboard": "Kan inte ladda whiteboard.",
         "numbers": "Inringningsnummer",
         "password": "$t(lockRoomPasswordUppercase):",
         "reachedLimit": "Du har nått gränsen för din prenumeration.",
         "sip": "SIP adress",
+        "sipAudioOnly": "SIP endast ljud address",
         "title": "Dela",
         "tooltip": "Dela länk och information om inringning för mötet",
-        "upgradeOptions": "Vänligen kontrollera om uppgraderingsalternativen är på"
+        "upgradeOptions": "Vänligen kontrollera om uppgraderingsalternativen är på",
+        "whiteboardError": "Problem att ladda whiteboard, var god försök senare."
     },
     "inlineDialogFailure": {
         "msg": "Vi slirade lite.",
@@ -542,8 +611,7 @@
         "toggleParticipantsPane": "Visa eller dölj deltagarfönstret",
         "toggleScreensharing": "Växla mellan kamera och skärmdelning",
         "toggleShortcuts": "Visa eller dölj kortkommandon",
-        "videoMute": "Aktivera / inaktivera din kamera",
-        "whiteboard": "Visa / dölj whiteboardtavlan"
+        "videoMute": "Aktivera / inaktivera din kamera"
     },
     "largeVideo": {
         "screenIsShared": "Du delar din skärm",
@@ -574,6 +642,7 @@
         "on": "Strömma",
         "onBy": "{{name}} startade direktströmningen",
         "pending": "Börja strömma…",
+        "policyError": "",
         "serviceName": "Livesändningstjänst",
         "sessionAlreadyActive": "Den här sessionen spelas redan in eller livestreamas.",
         "signIn": "Logga in med Google",
@@ -612,13 +681,13 @@
         "knockingParticipantList": "Väntande deltagare",
         "lobbyChatStartedNotification": "{{moderator}} startade en lobbychatt med {{attendee}}",
         "lobbyChatStartedTitle": "{{moderator}} har startat en lobbychatt med dig.",
+        "lobbyClosed": "Lobbyn har stängts.",
         "nameField": "Ange ditt namn",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} har nekats att delta av {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} har godkänts att delta av {{originParticipantName}}",
         "notificationLobbyDisabled": "Väntrumsläge har inaktiverats av {{originParticipantName}}",
         "notificationLobbyEnabled": "Väntrumsläge har aktiverats av {{originParticipantName}}",
         "notificationTitle": "Väntrum",
-        "passwordField": "Ange möteslösenord",
         "passwordJoinButton": "Anslut",
         "title": "Lobby",
         "toggleLabel": "Aktivera väntrum"
@@ -651,6 +720,8 @@
         "sessionToken": "Sessionstoken",
         "start": "Starta inspelning",
         "stop": "Avsluta inspelning",
+        "stopping": "Avslutar inspelning",
+        "wait": "Var god vänta medans vi sparar din inspelning",
         "yes": "Ja"
     },
     "lockRoomPassword": "lösenord",
@@ -670,9 +741,13 @@
         "connectedOneMember": "{{name}} har gått med i mötet",
         "connectedThreePlusMembers": "{{name}} och {{count}} andra har gått med i mötet",
         "connectedTwoMembers": "{{first}} och {{second}} har gått med i mötet",
+        "connectionFailed": "Anslutning misslyckades. Var god försök senare!",
         "dataChannelClosed": "Försämrad videokvalitet",
         "dataChannelClosedDescription": "Bryggkanalen har kopplats bort och därmed är videokvaliteten begränsad till sin lägsta inställning",
+        "dataChannelClosedDescriptionWithAudio": "Bryggkanalen har kopplats bort och därmed kan abvrott i ljud och bild uppstå.",
+        "dataChannelClosedWithAudio": "Ljud och bild kvalite kan vara försämrad.",
         "disabledIframe": "Inbäddning är endast avsedd för demonstrationsändamål, så det här samtalet kommer att kopplas ner om {{timeout}} minuter.",
+        "disabledIframeSecondary": "Bädda in {{domain}} är bara till för demo, så detta samtal kommer att kopplas bort inom {{timeout}} minuter. Var god använd <a href='{{jaasDomain}}' rel='nooper noreferrer' target='_blank'>Jitsi som tjänst</a> för att bädda in i produktion.",
         "disconnected": "frånkopplad",
         "displayNotifications": "Visa aviseringar för",
         "dontRemindMe": "Påminn mig inte",
@@ -681,6 +756,9 @@
         "gifsMenu": "GIPHY",
         "groupTitle": "Notifieringar",
         "hostAskedUnmute": "Värden vill att du ska stänga av ljudet",
+        "invalidTenant": "Ogiltig tenant",
+        "invalidTenantHyphenDescription": "Tenant du använder har ogiltiga tecken (startar eller slutar med '-').",
+        "invalidTenantLengthDescription": "Tenant du använder är för lång",
         "invitedOneMember": "{{name}} har bjudits in",
         "invitedThreePlusMembers": "{{name}} och {{count}} andra har bjudits in",
         "invitedTwoMembers": "{{first}} och {{second}} har bjudits in",
@@ -717,9 +795,9 @@
         "newDeviceAction": "Använd",
         "newDeviceAudioTitle": "Ny ljudenhet hittad",
         "newDeviceCameraTitle": "Ny kamera hittad",
+        "nextToSpeak": "Du är näst i kö för att prata",
         "noiseSuppressionDesktopAudioDescription": "Brusreducering kan inte aktiveras när du delar skrivbordsljud, vänligen inaktivera det och försök igen.",
         "noiseSuppressionFailedTitle": "Det gick inte att starta brusreducering",
-        "noiseSuppressionNoTrackDescription": "Slå på mikrofonen först.",
         "noiseSuppressionStereoDescription": "Brusreducering i stereoljud stöds för närvarande inte.",
         "oldElectronClientDescription1": "Den version av Jitsi meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
         "oldElectronClientDescription2": "senast build",
@@ -743,13 +821,22 @@
         "startSilentTitle": "Du gick med utan ljud aktiverat!",
         "suboptimalBrowserWarning": "Din mötesupplevelse kommer tyvärr inte att bli så bra. Vi letar efter sätt att förbättra detta, men fram till dess kan du försöka använda en av de <a href='{{recommendedBrowserPageLink}}' target='_blank'> fullt stödda webbläsarna </a>.",
         "suboptimalExperienceTitle": "Webbläsarvarning",
+        "suggestRecordingAction": "Starta",
+        "suggestRecordingDescription": "Vill du starta en inspelning?",
+        "suggestRecordingTitle": "Spela in detta mötet",
         "unmute": "Slå på mikrofonen",
         "videoMutedRemotelyDescription": "Du kan alltid slå på den igen.",
         "videoMutedRemotelyTitle": "Din kamera har inaktiverats av {{participantDisplayName}}!",
         "videoUnmuteBlockedDescription": "Aktivering av kameran och delning av skrivbord har tillfälligt blockerats på grund av systembegränsningar.",
         "videoUnmuteBlockedTitle": "Aktivering av kameran och skrivbordsdelning blockerad!",
         "viewLobby": "Visa lobby",
-        "waitingParticipants": "{{waitingParticipants}} personer"
+        "viewParticipants": "Visa deltagare",
+        "viewVisitors": "Visa besökare",
+        "waitingParticipants": "{{waitingParticipants}} personer",
+        "waitingVisitors": "Väntande besökare i kö: {{waitingVisitors}}",
+        "waitingVisitorsTitle": "Mötet är inte live än!",
+        "whiteboardLimitDescription": "Var god spara, max antal användare har snart uppnåtts och whiteboard kommer att stängas av.",
+        "whiteboardLimitTitle": "Användande whiteboard"
     },
     "participantsPane": {
         "actions": {
@@ -760,7 +847,11 @@
             "askUnmute": "Be om att aktivera ljud",
             "audioModeration": "Slå på ljudet för sig själva",
             "blockEveryoneMicCamera": "Inaktivera allas mikrofon och kamera",
+            "breakoutRooms": "Grupprum",
+            "goLive": "Gå live",
             "invite": "Bjud in någon",
+            "lowerAllHands": "Ta ner allas händer",
+            "lowerHand": "Ta ner handen",
             "moreModerationActions": "Fler modereringsalternativ",
             "moreModerationControls": "Fler modereringskontroller",
             "moreParticipantOptions": "Fler deltagaralternativ",
@@ -777,6 +868,8 @@
         "headings": {
             "lobby": "Väntrum ({{count}})",
             "participantsList": "Mötesdeltagare ({{count}})",
+            "visitorInQueue": "(väntande {{count}})",
+            "visitorRequests": "(förfrågningar {{count}})",
             "visitors": "Gäster ({{count}})",
             "waitingLobby": "Väntar i väntrum ({{count}})"
         },
@@ -789,10 +882,13 @@
     "pinnedParticipant": "Deltagaren är fäst",
     "polls": {
         "answer": {
+            "edit": "Redigera",
+            "send": "Skicka",
             "skip": "Avstå",
             "submit": "Skicka"
         },
         "by": "Av {{ name }}",
+        "closeButton": "Stäng omröstning",
         "create": {
             "addOption": "Lägg till alternativ",
             "answerPlaceholder": "Alternativ",
@@ -802,6 +898,7 @@
             "pollQuestion": "Fråga för omröstning",
             "questionPlaceholder": "Ställ en fråga",
             "removeOption": "Ta bort alternativ",
+            "save": "Spara",
             "send": "Skicka"
         },
         "errors": {
@@ -831,9 +928,11 @@
         "configuringDevices": "Konfigurerar enheter…",
         "connectedWithAudioQ": "Är din mikrofon ansluten?",
         "connection": {
+            "failed": "Anslutningstest misslyckades!",
             "good": "Din internetanslutning fungerar bra!",
             "nonOptimal": "Din internetanslutning är inte optimal",
-            "poor": "Din internetanslutning fungerar dåligt"
+            "poor": "Din internetanslutning fungerar dåligt",
+            "running": "Kör anslutningstest..."
         },
         "connectionDetails": {
             "audioClipping": "Ditt ljud kan upplevas hackigt.",
@@ -842,6 +941,7 @@
             "goodQuality": "Grymt bra! Din mediekvalitet kommer att bli bra.",
             "noMediaConnectivity": "Vi kunde inte hitta ett sätt att upprätta mediaanslutning för detta test. Detta orsakas vanligtvis av en brandvägg eller NAT.",
             "noVideo": "Vi förväntar oss att din video kommer ha låg kvalitet eller inte fungera.",
+            "testFailed": "Anslutningstestet stötte på oväntade problem, men det behöver inte påverka din upplevelse.",
             "undetectable": "Om du fortfarande inte kan ringa i webbläsaren rekommenderar vi att du ser till att dina högtalare, mikrofon och kamera är korrekt inställda, att du har beviljat din webbläsare rättigheter att använda din mikrofon och kamera och att din webbläsarversion är uppdaterad.",
             "veryPoorConnection": "Vi förväntar oss att din samtalskvalitet är riktigt dålig.",
             "videoFreezing": "Vi förväntar oss att din video fryser, blir svart och pixeleras.",
@@ -874,6 +974,7 @@
         "or": "eller",
         "premeeting": "Förmöte",
         "proceedAnyway": "Fortsätt ändå",
+        "recordingWarning": "",
         "screenSharingError": "Skärmdelningsfel:",
         "showScreen": "Aktivera skärmen före mötet",
         "startWithPhone": "Börja med telefonljud",
@@ -940,7 +1041,6 @@
         "limitNotificationDescriptionNative": "På grund av stor efterfrågan är din inspelning begränsad till {{limit}} min. För obegränsade inspelningar, försök <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "På grund av stor efterfrågan är din inspelning begränsad till {{limit}} min. För obegränsade inspelningar, prova <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Vi har genererat en länk till din inspelning.",
-        "live": "LIVE",
         "localRecordingNoNotificationWarning": "Inspelningen kommer inte att meddelas till andra deltagare. Du måste meddela dem att mötet inspelas.",
         "localRecordingNoVideo": "Video spelas inte in",
         "localRecordingStartWarning": "Se till att du stoppar inspelningen innan du avslutar mötet för att spara det.",
@@ -957,13 +1057,16 @@
         "onBy": "{{name}} påbörjade inspelningen",
         "onlyRecordSelf": "Spela bara in mina ljud- och videoströmmar",
         "pending": "Förbereder inspelning av mötet…",
-        "rec": "REC",
+        "policyError": "Du försökte starta inspelningen för fort. Var god försök senare!",
+        "recordAudioAndVideo": "Spela in ljud och bild",
+        "recordTranscription": "Spela in transkribiering",
         "saveLocalRecording": "Spara inspelningsfil lokalt (beta)",
         "serviceDescription": "Din inspelning kommer att sparas av inspelningstjänsten",
         "serviceDescriptionCloud": "Molninspelning",
         "serviceDescriptionCloudInfo": "Inspelade möten rensas automatiskt 24 timmar efter inspelningstiden.",
         "serviceName": "Inspelningstjänst",
         "sessionAlreadyActive": "Den här sessionen spelas redan in eller livestreamas.",
+        "showAdvancedOptions": "Visa avancerade inställningar",
         "signIn": "Logga in",
         "signOut": "Logga ut",
         "surfaceError": "Välj aktuell flik.",
@@ -1003,6 +1106,7 @@
         "desktopShareWarning": "Du måste starta om skärmdelningen för att de nya inställningarna ska träda i kraft.",
         "devices": "Enheter",
         "followMe": "Alla följer mig",
+        "followMeRecorder": "Den som spelar in följer mig",
         "framesPerSecond": "bildrutor per sekund",
         "incomingMessage": "Inkommande meddelande",
         "language": "Språk",
@@ -1040,6 +1144,7 @@
         "alertOk": "OK",
         "alertTitle": "Varning",
         "alertURLText": "Den angivna serverlänken är felaktig",
+        "apply": "Tillämpa",
         "buildInfoSection": "Versionsinformation",
         "conferenceSection": "Konferens",
         "disableCallIntegration": "Tillåt inte deltagande via telefon",
@@ -1050,12 +1155,14 @@
         "displayNamePlaceholderText": "Exempel: John Doe",
         "email": "E-post",
         "emailPlaceholderText": "mejl@exempel.se",
+        "gavatarMessage": "Om din e-post är associerad med ett Gravatar konto, så kommer vi använda det för att visa din profilbild.",
         "goTo": "Gå till",
         "header": "Inställningar",
         "help": "Hjälp",
         "links": "Länkar",
         "privacy": "Sekretess",
         "profileSection": "Profil",
+        "sdkVersion": "",
         "serverURL": "Serverlänk",
         "showAdvanced": "Visa avancerade inställningar",
         "startCarModeInLowBandwidthMode": "Starta billäget i lågbandbreddsläge",
@@ -1076,6 +1183,7 @@
         "fearful": "Rädd",
         "happy": "Glad",
         "hours": "{{count}} h",
+        "labelTooltip": "",
         "minutes": "{{count}} m",
         "name": "Namn",
         "neutral": "Neutral",
@@ -1108,7 +1216,7 @@
             "audioOnly": "Slå av eller på ljudet",
             "audioRoute": "Välj ljudenhet",
             "boo": "Bua",
-            "breakoutRoom": "Anslut eller lämna grupprum",
+            "breakoutRooms": "Grupprum",
             "callQuality": "Hantera videokvalitet",
             "carmode": "Billäge",
             "cc": "Slå av eller på undertexter",
@@ -1146,6 +1254,7 @@
             "lobbyButton": "Aktivera / inaktivera lobbyläge",
             "localRecording": "Växla lokala inspelningskontroller",
             "lockRoom": "Växla möteslösenord",
+            "love": "Kärlek",
             "lowerHand": "Sänk din hand",
             "moreActions": "Fler åtgärder",
             "moreActionsMenu": "Menyn Fler åtgärder",
@@ -1155,6 +1264,7 @@
             "muteEveryoneElse": "Stäng av ljudet för alla andra",
             "muteEveryoneElsesVideoStream": "Stoppa alla andras video",
             "muteEveryonesVideoStream": "Stoppa allas video",
+            "muteGUMPending": "Ansluter din mikrofon",
             "noiseSuppression": "Brusdämpning",
             "openChat": "Öppna chatt",
             "participants": "Öppna deltagarfönstret",
@@ -1162,6 +1272,7 @@
             "privateMessage": "Skicka privat meddelande",
             "profile": "Redigera din profil",
             "raiseHand": "Räck upp handen",
+            "react": "Reaktioner på meddelanden",
             "reactions": "Reaktioner",
             "reactionsMenu": "Reaktionsmeny",
             "recording": "Växla inspelning",
@@ -1188,6 +1299,7 @@
             "unmute": "Slå på ljudet",
             "videoblur": "Växla videooskärpa",
             "videomute": "Stoppa kamera",
+            "videomuteGUMPending": "Ansluter din kamera",
             "videounmute": "Starta kameran"
         },
         "addPeople": "Lägg till personer i samtal",
@@ -1232,12 +1344,14 @@
         "lobbyButtonEnable": "Aktivera väntrumsläge",
         "login": "Logga in",
         "logout": "Logga ut",
+        "love": "Kärlek",
         "lowerYourHand": "Ta ner handen",
         "moreActions": "Fler handlingar",
         "moreOptions": "Visa fler alternativ",
         "mute": "Slå av/på ljud",
         "muteEveryone": "Tysta alla",
         "muteEveryonesVideo": "Inaktivera allas kamera",
+        "muteGUMPending": "Ansluter din mikrofon",
         "noAudioSignalDesc": "Om du inte avsiktligt stängde av det från systeminställningar eller hårdvara, överväg att byta enhet.",
         "noAudioSignalDescSuggestion": "Om du inte avsiktligt tystade det från systeminställningar eller hårdvara, överväg att byta till den föreslagna enheten.",
         "noAudioSignalDialInDesc": "Du kan också ringa in med:",
@@ -1254,8 +1368,9 @@
         "profile": "Redigera din profil",
         "raiseHand": "Räck upp / ta ner din hand",
         "raiseYourHand": "Räck upp handen",
-        "reactionBoo": "Bua",
-        "reactionClap": "Klappa",
+        "reactionBoo": "Skicka Bu",
+        "reactionClap": "Klappa i händerna",
+        "reactionHeart": "Skicka kärlek",
         "reactionLaugh": "Skratta",
         "reactionLike": "Skicka tummen upp",
         "reactionSilence": "Skicka tyst reaktion",
@@ -1283,16 +1398,14 @@
         "unmute": "Slå på ljud",
         "videoSettings": "Videoinställningar",
         "videomute": "Inaktivera kameran",
+        "videomuteGUMPending": "Ansluter din kamera",
         "videounmute": "Aktivera kameran"
     },
     "transcribing": {
         "ccButtonTooltip": "Aktivera / Inaktivera undertexter",
-        "error": "Transkriberingen misslyckades. Försök igen.",
         "expandedLabel": "Transkribering är aktiverad",
-        "failedToStart": "Det gick inte att starta transkribering",
+        "failed": "Transkribiering misslyckades",
         "labelToolTip": "Mötet transkriberas",
-        "off": "Transkribering avslutades",
-        "pending": "Förbereder transkribering av mötet…",
         "sourceLanguageDesc": "För närvarande är mötesspråket inställt på <b>{{sourceLanguage}}</b>. <br/> Du kan ändra det från ",
         "sourceLanguageHere": "här",
         "start": "Börja visa undertexter",
@@ -1339,6 +1452,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Anslutningsinformation",
+        "demote": "Gör till besökare",
         "domute": "Tysta",
         "domuteOthers": "Inaktivera ljud för alla andra",
         "domuteVideo": "Inaktivera kamera",
@@ -1362,6 +1476,10 @@
         "videomute": "Deltagaren har stängt av kameran"
     },
     "virtualBackground": {
+        "accessibilityLabel": {
+            "currentBackground": "Nuvarande bakgrund: {{background}}",
+            "selectBackground": "Välj bakgrund"
+        },
         "addBackground": "Lägg till bakgrund",
         "apply": "Tillämpa",
         "backgroundEffectError": "Det gick inte att tillämpa bakgrundseffekt.",
@@ -1387,11 +1505,22 @@
     },
     "visitors": {
         "chatIndicator": "(besökare)",
+        "joinMeeting": {
+            "description": "Du är just nu en beskökare i konferensen",
+            "raiseHand": "Räck upp handen",
+            "title": "Gå med i mötet",
+            "wishToSpeak": "Om du vill prata, räck upp handen och vänta på att en moderator ska godkänna."
+        },
         "labelTooltip": "Antal besökare: {{count}}",
         "notification": {
-            "description": "Räck upp handen för att delta",
+            "demoteDescription": "Skickad hit av {{actor}}, räck upphanden för att delta",
+            "noMainParticipantsDescription": "En deltagare behöver starta mötet. Var god försök igen senare.",
+            "noMainParticipantsTitle": "Det är mötet har inte startat än",
+            "noVisitorLobby": "Du kan inte gå med medans lobby är påslagen för mötet.",
+            "notAllowedPromotion": "En deltagare behöver godkänna din förfrågan först.",
             "title": "Du är en besökare i mötet"
-        }
+        },
+        "waitingMessage": "Du kommer att komma in i mötet när det är live!"
     },
     "volumeSlider": "Volymreglage",
     "welcomepage": {
@@ -1449,6 +1578,7 @@
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Whiteboard"
-        }
+        },
+        "screenTitle": "Whiteboard"
     }
 }
