@@ -1,4 +1,4 @@
-
+{
     "addPeople": {
         "accessibilityLabel": {
             "meetingLink": "Mötes länk: {{url}}"
