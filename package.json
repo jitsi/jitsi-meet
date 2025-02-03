@@ -26,7 +26,7 @@
     "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.19/jitsi-excalidraw-0.0.19.tgz",
     "@jitsi/js-utils": "2.2.1",
     "@jitsi/logger": "2.0.2",
-    "@jitsi/rnnoise-wasm": "0.2.0",
+    "@jitsi/rnnoise-wasm": "0.2.1",
     "@jitsi/rtcstats": "9.5.1",
     "@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.3.tgz",
     "@microsoft/microsoft-graph-client": "3.0.1",

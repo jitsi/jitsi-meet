@@ -139,7 +139,8 @@ function getConfig(options = {}) {
                         require.resolve('@babel/preset-react')
                     ]
                 },
-                test: /\.jsx?$/
+                test: /\.jsx?$/,
+                exclude: /node_modules/
             }, {
                 // Allow CSS to be imported into JavaScript.
 
