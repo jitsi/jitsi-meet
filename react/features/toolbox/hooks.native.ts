@@ -149,8 +149,7 @@ function getOverflowMenuButton() {
  * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
  */
 export function useNativeToolboxButtons(
-    _customToolbarButtons?: ICustomToolbarButton[]
-): { [key: string]: IToolboxButton; } {
+        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
     const audioMuteButton = getAudioMuteButton();
     const videoMuteButton = getVideoMuteButton();
     const chatButton = getChatButton();

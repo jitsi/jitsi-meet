@@ -273,6 +273,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { conference } = state['features/base/conference'];
+
     return {
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
         _isSharedVideoEnabled: isSharedVideoEnabled(state),
@@ -300,10 +301,10 @@ export default connect(_mapStateToProps)(props => {
 
     return (
         <OverflowMenu
+
             // @ts-ignore
             { ... props }
             _mainMenuButtons = { mainMenuButtons }
-            _overflowMenuButtons = { overflowMenuButtons }
-        />
+            _overflowMenuButtons = { overflowMenuButtons } />
     );
 });
