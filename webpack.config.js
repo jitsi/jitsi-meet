@@ -316,16 +316,6 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.ts'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 35 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
                 'close3': './static/close3.js'
             },
             plugins: [

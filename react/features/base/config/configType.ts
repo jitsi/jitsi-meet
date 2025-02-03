@@ -185,7 +185,6 @@ export interface IConfig {
         amplitudeIncludeUTM?: boolean;
         blackListedEvents?: string[];
         disabled?: boolean;
-        googleAnalyticsTrackingId?: string;
         matomoEndpoint?: string;
         matomoSiteID?: string;
         obfuscateRoomName?: boolean;

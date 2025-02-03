@@ -237,7 +237,6 @@ export function getConferenceOptions(stateful: IStateful) {
     if (options.disableThirdPartyRequests) {
         delete config.analytics?.scriptURLs;
         delete config.analytics?.amplitudeAPPKey;
-        delete config.analytics?.googleAnalyticsTrackingId;
     }
 
     return options;

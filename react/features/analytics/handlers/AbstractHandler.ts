@@ -14,7 +14,6 @@ interface IOptions {
     amplitudeIncludeUTM?: boolean;
     blackListedEvents?: string[];
     envType?: string;
-    googleAnalyticsTrackingId?: string;
     group?: string;
     host?: string;
     matomoEndpoint?: string;
