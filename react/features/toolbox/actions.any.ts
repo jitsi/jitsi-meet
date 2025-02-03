@@ -123,8 +123,8 @@ export function setShiftUp(shiftUp: boolean) {
 
 /**
  * Sets the mainToolbarButtonsThresholds.
- * @param {IMainToolbarButtonThresholds} thresholds - Thresholds for screen size and visible main toolbar buttons.
  *
+ * @param {IMainToolbarButtonThresholds} thresholds - Thresholds for screen size and visible main toolbar buttons.
  * @returns {Function}
  */
 export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThresholds) {
