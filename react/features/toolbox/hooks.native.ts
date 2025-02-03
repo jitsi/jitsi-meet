@@ -12,7 +12,7 @@ import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
 import { isDesktopShareButtonDisabled } from './functions.native';
-import { ICustomToolbarButton, IToolboxButton, NativeToolbarButton, ToolbarButton } from './types';
+import { ICustomToolbarButton, IToolboxButton, NativeToolbarButton } from './types';
 
 
 const microphone = {
