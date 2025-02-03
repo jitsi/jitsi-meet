@@ -26,7 +26,7 @@ import {
     setUserFilmstripWidth,
     setUserIsResizing,
     setVisibleRemoteParticipants
-} from '../../actions';
+} from '../../actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -39,10 +39,10 @@ import {
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
+    isFilmstripDisabled,
     isStageFilmstripTopPanel,
     shouldRemoteVideosBeVisible
-} from '../../functions';
-import { isFilmstripDisabled } from '../../functions.web';
+} from '../../functions.web';
 
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
