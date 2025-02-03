@@ -5,6 +5,7 @@ local timer = require "util.timer";
 local http = require "net.http";
 local cache = require "util.cache";
 local array = require "util.array";
+local is_set = require 'util.set'.is_set;
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -288,14 +289,25 @@ function starts_with(str, start)
 end
 
 function starts_with_one_of(str, prefixes)
-    if not str then
+    if not str or not prefixes then
         return false;
     end
-    for i=1,#prefixes do
-        if starts_with(str, prefixes[i]) then
-            return prefixes[i];
+
+    if is_set(prefixes) then
+        -- set is a table with keys and value of true
+        for k, _ in prefixes:items() do
+            if starts_with(str, k) then
+                return k;
+            end
+        end
+    else
+        for _, v in pairs(prefixes) do
+          if starts_with(str, v) then
+              return v;
+          end
         end
     end
+
     return false
 end
 
