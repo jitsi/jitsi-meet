@@ -27,8 +27,6 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
             </Dialog>
         );
     }
-
-    _onSubmit: () => boolean;
 }
 
 export default translate(connect(abstractMapStateToProps)(GrantModeratorDialog));
