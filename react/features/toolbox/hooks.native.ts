@@ -167,7 +167,7 @@ export function useNativeToolboxButtons(
         overflowmenu: overflowMenuButton,
         hangup
     };
-    const buttonKeys = Object.keys(buttons) as ToolbarButton[];
+    const buttonKeys = Object.keys(buttons) as NativeToolbarButton[];
 
     buttonKeys.forEach(
         key => typeof buttons[key] === 'undefined' && delete buttons[key]);
