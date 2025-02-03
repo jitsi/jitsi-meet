@@ -6,9 +6,10 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
+
 import { MAIN_TOOLBAR_BUTTONS_PRIORITY } from './constants';
-import { IGetVisibleNativeButtonsParams, IToolboxButton } from './types';
 import { isButtonEnabled } from './functions.any';
+import { IGetVisibleNativeButtonsParams, IToolboxButton } from './types';
 
 export * from './functions.any';
 
@@ -65,15 +66,10 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
  * @param {IGetVisibleButtonsParams} params - The parameters needed to extract the visible buttons.
  * @returns {Object} - The visible buttons arrays .
  */
-export function getVisibleNativeButtons({
-                                      allButtons,
-                                      clientWidth,
-                                      mainToolbarButtonsThresholds,
-                                      toolbarButtons
-                                  }: IGetVisibleNativeButtonsParams) {
+export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarButtonsThresholds, toolbarButtons
+}: IGetVisibleNativeButtonsParams) {
     const filteredButtons = Object.keys(allButtons).filter(key =>
-        typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons
-        // override
+        typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons override
         && isButtonEnabled(key, toolbarButtons));
 
     const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth > width)

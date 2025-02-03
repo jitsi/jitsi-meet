@@ -11,7 +11,6 @@ import HangupContainerButtons from './components/native/HangupContainerButtons';
 import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
-
 import { isDesktopShareButtonDisabled } from './functions.native';
 import { ICustomToolbarButton, IToolboxButton, NativeToolbarButton, ToolbarButton } from './types';
 
@@ -63,8 +62,6 @@ const hangup = {
     Content: HangupContainerButtons,
     group: 3
 };
-
-
 
 /**
  * A hook that returns the audio mute button.
@@ -152,7 +149,8 @@ function getOverflowMenuButton() {
  * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
  */
 export function useNativeToolboxButtons(
-    _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
+    _customToolbarButtons?: ICustomToolbarButton[]
+): { [key: string]: IToolboxButton; } {
     const audioMuteButton = getAudioMuteButton();
     const videoMuteButton = getVideoMuteButton();
     const chatButton = getChatButton();

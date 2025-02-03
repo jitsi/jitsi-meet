@@ -1,3 +1,4 @@
+/* eslint-disable no-negated-condition */
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { set } from '../base/redux/functions';
 
@@ -51,7 +52,7 @@ const INITIAL_STATE = {
 
     /**
      * The thresholds for screen size and visible main toolbar buttons.
-     */
+    */
     mainToolbarButtonsThresholds: navigator.product !== 'ReactNative' ? THRESHOLDS : NATIVE_THRESHOLDS,
 
     participantMenuButtonsWithNotifyClick: new Map(),

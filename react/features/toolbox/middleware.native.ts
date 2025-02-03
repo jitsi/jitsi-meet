@@ -4,8 +4,8 @@ import { SET_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
 
-import { setMainToolbarThresholds } from './actions.native';
 import { SET_TOOLBAR_BUTTONS } from './actionTypes';
+import { setMainToolbarThresholds } from './actions.native';
 import { NATIVE_THRESHOLDS, NATIVE_TOOLBAR_BUTTONS } from './constants';
 import { getToolbarButtons } from './functions.native';
 
@@ -36,7 +36,7 @@ MiddlewareRegistry.register(store => next => action => {
                 type: SET_TOOLBAR_BUTTONS,
                 toolbarButtons
             });
-        })
+        });
 
         return result;
     }

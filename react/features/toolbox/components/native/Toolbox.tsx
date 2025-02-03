@@ -7,7 +7,6 @@ import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import Platform from '../../../base/react/Platform.native';
 import { iAmVisitor } from '../../../visitors/functions';
-
 import { customButtonPressed } from '../../actions.native';
 import { getVisibleNativeButtons, isToolboxVisible } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';

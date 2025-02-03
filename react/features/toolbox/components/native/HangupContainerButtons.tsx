@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import AbstractHangupButton from "../../../base/toolbox/components/AbstractHangupButton";
-import HangupMenuButton from "./HangupMenuButton";
-import HangupButton from "../HangupButton";
-import {IReduxState} from "../../../app/types";
+import { IReduxState } from '../../../app/types';
+import AbstractHangupButton from '../../../base/toolbox/components/AbstractHangupButton';
+import HangupButton from '../HangupButton';
+
+import HangupMenuButton from './HangupMenuButton';
+
 
 const HangupContainerButtons = (props: AbstractHangupButton) => {
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
