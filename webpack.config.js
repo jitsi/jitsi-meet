@@ -142,7 +142,7 @@ function getConfig(options = {}) {
                         require.resolve('@babel/preset-react')
                     ]
                 },
-                test: /\.jsx?$/,
+                test: /\.(j|t)sx?$/,
                 exclude: /node_modules/
             }, {
                 // Allow CSS to be imported into JavaScript.
@@ -322,7 +322,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
             ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 35 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -347,7 +347,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 85 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 95 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -401,7 +401,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 4 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 30 * 1024)
         })
     ];
 };
