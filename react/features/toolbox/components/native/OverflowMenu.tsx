@@ -237,6 +237,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                                 dispatch(customButtonPressed(id, text))
                             }
                             icon = { icon }
+                            isToolboxButton = { false }
                             key = { id }
                             text = { text } />
                     ))

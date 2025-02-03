@@ -126,6 +126,7 @@ function Toolbox(props: IProps) {
                             /* eslint-disable react/jsx-no-bind */
                             handleClick = { () => dispatch(customButtonPressed(id, text)) }
                             icon = { icon }
+                            isToolboxButton = { true }
                             key = { id } />
                     ))
                 }
@@ -145,7 +146,12 @@ function Toolbox(props: IProps) {
                 style = { style as ViewStyle }>
                 {
                     _customToolbarButtons
-                        ? renderCustomToolboxButtons()
+                        ? <>
+                            { renderCustomToolboxButtons() }
+                            { !_iAmVisitor && <OverflowMenuButton
+                                styles = { buttonStylesBorderless }
+                                toggledStyles = { toggledButtonStyles } /> }
+                        </>
                         : <>
                             {!_iAmVisitor && <AudioMuteButton
                                 styles = { buttonStylesBorderless }

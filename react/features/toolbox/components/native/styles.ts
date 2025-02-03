@@ -101,13 +101,16 @@ const styles = {
         maxWidth: 580,
         marginHorizontal: 'auto',
         marginVertical: BaseTheme.spacing[0],
-        paddingHorizontal: BaseTheme.spacing[1],
+        paddingHorizontal: BaseTheme.spacing[2],
         width: '100%'
     },
 
-    iconImageStyles: {
-        height: BaseTheme.spacing[4],
-        width: BaseTheme.spacing[4]
+    toolboxButtonIconContainer: {
+        alignItems: 'center',
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: BaseTheme.spacing[7],
+        justifyContent: 'center',
+        width: BaseTheme.spacing[7]
     }
 };
 
