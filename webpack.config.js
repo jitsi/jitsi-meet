@@ -126,8 +126,17 @@ function getConfig(options = {}) {
                                     electron: 10,
                                     firefox: 68,
                                     safari: 14
-                                }
+                                },
 
+                                // Consider stage 3 proposals which are implemented by some browsers already.
+                                shippedProposals: true,
+
+                                // Detect usage of modern JavaScript features and automatically polyfill them
+                                // with core-js.
+                                useBuiltIns: 'usage',
+
+                                // core-js version to use, must be in sync with the version in package.json.
+                                corejs: '3.40'
                             }
                         ],
                         require.resolve('@babel/preset-react')
@@ -338,7 +347,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 40 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 85 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
