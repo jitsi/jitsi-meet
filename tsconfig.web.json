@@ -3,9 +3,9 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "module": "es2020",
-        "target": "es2020",
+        "target": "es2024",
         "jsx": "react",
-        "lib": [ "ES2020", "ES2024.Promise", "DOM" ],
+        "lib": [ "ES2024", "DOM" ],
         "skipLibCheck": true,
         "moduleResolution": "Node",
         "strict": true,
