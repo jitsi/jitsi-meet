@@ -87,7 +87,6 @@ export async function createHandlers({ getState }: IStore) {
         amplitudeIncludeUTM,
         blackListedEvents,
         scriptURLs,
-        googleAnalyticsTrackingId,
         matomoEndpoint,
         matomoSiteID,
         whiteListedEvents
@@ -98,7 +97,6 @@ export async function createHandlers({ getState }: IStore) {
         amplitudeIncludeUTM,
         blackListedEvents,
         envType: deploymentInfo?.envType || 'dev',
-        googleAnalyticsTrackingId,
         matomoEndpoint,
         matomoSiteID,
         group,
