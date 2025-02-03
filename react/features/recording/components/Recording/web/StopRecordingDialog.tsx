@@ -35,8 +35,6 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
         );
     }
 
-    _onSubmit: () => boolean;
-
     /**
      * Toggles screenshot capture.
      *
