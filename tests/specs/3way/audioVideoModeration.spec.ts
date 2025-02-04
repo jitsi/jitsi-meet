@@ -166,8 +166,8 @@ describe('AVModeration', () => {
 
         // p1 mute audio on p2 and check
         await p1.getFilmstrip().muteAudio(p2);
-        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1);
-        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1);
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
         // we try to unmute and test it that it was still muted
         await tryToAudioUnmuteAndCheck(p2, p1);
@@ -206,6 +206,8 @@ describe('AVModeration', () => {
 
         // mute and check
         await p1.getFilmstrip().muteAudio(p2);
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
         await tryToAudioUnmuteAndCheck(p2, p1);
     });
