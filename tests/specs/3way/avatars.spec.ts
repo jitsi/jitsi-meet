@@ -50,7 +50,7 @@ describe('Avatar', () => {
             });
 
         // check if the avatar in the large video has changed
-        expect(await p2.getLargeVideoAvatar()).toContain(HASH);
+        expect(await p2.getLargeVideo().getAvatar()).toContain(HASH);
 
         // we check whether the default avatar of participant2 is displayed on both sides
         await p1.assertDefaultAvatarExist(p2);
@@ -72,12 +72,12 @@ describe('Avatar', () => {
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
 
         await p1.driver.waitUntil(
-            async () => (await p1.getLargeVideoAvatar())?.includes(HASH), {
+            async () => (await p1.getLargeVideo().getAvatar())?.includes(HASH), {
                 timeout: 2000,
                 timeoutMsg: 'Avatar on large video did not change'
             });
 
-        const p1LargeSrc = await p1.getLargeVideoAvatar();
+        const p1LargeSrc = await p1.getLargeVideo().getAvatar();
         const p1ThumbSrc = await p1.getLocalVideoAvatar();
 
         // Check if avatar on large video is the same as on local thumbnail
@@ -96,7 +96,7 @@ describe('Avatar', () => {
 
         // Check if p1's avatar is on large video now
         await p2.driver.waitUntil(
-              async () => await p2.getLargeVideoAvatar() === p1LargeSrc, {
+              async () => await p2.getLargeVideo().getAvatar() === p1LargeSrc, {
                   timeout: 2000,
                   timeoutMsg: 'Avatar on large video did not change'
               });
@@ -141,7 +141,7 @@ describe('Avatar', () => {
 
         // The avatar should be on large video and display name instead of an avatar, local video displayed
         await p3.driver.waitUntil(
-            async () => await p3.getLargeVideoResource() === p1EndpointId, {
+            async () => await p3.getLargeVideo().getResource() === p1EndpointId, {
                 timeout: 2000,
                 timeoutMsg: `Large video did not switch to ${p1.name}`
             });
@@ -158,7 +158,7 @@ describe('Avatar', () => {
 
         // The avatar should be on large video and display name instead of an avatar, local video displayed
         await p3.driver.waitUntil(
-            async () => await p3.getLargeVideoResource() === p2EndpointId, {
+            async () => await p3.getLargeVideo().getResource() === p2EndpointId, {
                 timeout: 2000,
                 timeoutMsg: `Large video did not switch to ${p2.name}`
             });

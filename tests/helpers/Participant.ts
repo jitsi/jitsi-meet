@@ -1,6 +1,7 @@
 /* global APP $ */
 
 import { multiremotebrowser } from '@wdio/globals';
+import assert from 'assert';
 import { Key } from 'webdriverio';
 
 import { IConfig } from '../../react/features/base/config/configType';
@@ -10,6 +11,7 @@ import ChatPanel from '../pageobjects/ChatPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
+import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
 import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
@@ -26,6 +28,13 @@ export const P1_DISPLAY_NAME = 'p1';
 export const P2_DISPLAY_NAME = 'p2';
 export const P3_DISPLAY_NAME = 'p3';
 export const P4_DISPLAY_NAME = 'p4';
+
+interface IWaitForSendReceiveDataOptions {
+    checkReceive?: boolean;
+    checkSend?: boolean;
+    msg?: string;
+    timeout?: number;
+}
 
 /**
  * Participant.
@@ -91,7 +100,7 @@ export class Participant {
     async getEndpointId(): Promise<string> {
         if (!this._endpointId) {
             this._endpointId = await this.driver.execute(() => { // eslint-disable-line arrow-body-style
-                return APP.conference.getMyUserId();
+                return APP?.conference?.getMyUserId();
             });
         }
 
@@ -209,7 +218,7 @@ export class Participant {
         const parallel = [];
 
         parallel.push(driver.execute((name, sessionId, prefix) => {
-            APP.UI.dockToolbar(true);
+            APP?.UI?.dockToolbar(true);
 
             // disable keyframe animations (.fadeIn and .fadeOut classes)
             $('<style>.notransition * { '
@@ -274,8 +283,8 @@ export class Participant {
     /**
      * Checks if the participant is in the meeting.
      */
-    async isInMuc() {
-        return await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+    isInMuc() {
+        return this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
     /**
@@ -326,7 +335,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(() =>
-            driver.execute(() => APP.conference.getConnectionState() === 'connected'), {
+            driver.execute(() => APP?.conference?.getConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: `expected ICE to be connected for 15s for ${this.name}`
         });
@@ -335,47 +344,35 @@ export class Participant {
     /**
      * Waits for send and receive data.
      *
+     * @param {Object} options
+     * @param {boolean} options.checkSend - If true we will chec
      * @returns {Promise<void>}
      */
-    async waitForSendReceiveData(
-            timeout = 15_000, msg = `expected to receive/send data in 15s for ${this.name}`): Promise<void> {
-        const driver = this.driver;
+    waitForSendReceiveData({
+        checkSend = true,
+        checkReceive = true,
+        timeout = 15_000,
+        msg
+    } = {} as IWaitForSendReceiveDataOptions): Promise<void> {
+        if (!checkSend && !checkReceive) {
+            return Promise.resolve();
+        }
 
-        return driver.waitUntil(() => driver.execute(() => {
-            const stats = APP.conference.getStats();
+        const lMsg = msg ?? `expected to ${
+            checkSend && checkReceive ? 'receive/send' : checkSend ? 'send' : 'receive'} data in 15s for ${this.name}`;
+
+        return this.driver.waitUntil(() => this.driver.execute((pCheckSend: boolean, pCheckReceive: boolean) => {
+            const stats = APP?.conference?.getStats();
             const bitrateMap = stats?.bitrate || {};
             const rtpStats = {
                 uploadBitrate: bitrateMap.upload || 0,
                 downloadBitrate: bitrateMap.download || 0
             };
 
-            return rtpStats.uploadBitrate > 0 && rtpStats.downloadBitrate > 0;
-        }), {
+            return (rtpStats.uploadBitrate > 0 || !pCheckSend) && (rtpStats.downloadBitrate > 0 || !pCheckReceive);
+        }, checkSend, checkReceive), {
             timeout,
-            timeoutMsg: msg
-        });
-    }
-
-    /**
-     * Waits for send and receive data.
-     *
-     * @returns {Promise<void>}
-     */
-    async waitForSendData(
-            timeout = 15_000, msg = `expected to send data in 15s for ${this.name}`): Promise<void> {
-        const driver = this.driver;
-
-        return driver.waitUntil(() => driver.execute(() => {
-            const stats = APP.conference.getStats();
-            const bitrateMap = stats?.bitrate || {};
-            const rtpStats = {
-                uploadBitrate: bitrateMap.upload || 0
-            };
-
-            return rtpStats.uploadBitrate > 0;
-        }), {
-            timeout,
-            timeoutMsg: msg
+            timeoutMsg: lMsg
         });
     }
 
@@ -389,7 +386,7 @@ export class Participant {
         const driver = this.driver;
 
         return driver.waitUntil(() =>
-            driver.execute(count => APP.conference.getNumberOfParticipantsWithTracks() >= count, number), {
+            driver.execute(count => (APP?.conference?.getNumberOfParticipantsWithTracks() ?? -1) >= count, number), {
             timeout: 15_000,
             timeoutMsg: `expected number of remote streams:${number} in 15s for ${this.name}`
         });
@@ -405,10 +402,12 @@ export class Participant {
     waitForParticipants(number: number, msg?: string): Promise<void> {
         const driver = this.driver;
 
-        return driver.waitUntil(() => driver.execute(count => APP.conference.listMembers().length === count, number), {
-            timeout: 15_000,
-            timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
-        });
+        return driver.waitUntil(
+            () => driver.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
+            {
+                timeout: 15_000,
+                timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
+            });
     }
 
     /**
@@ -468,6 +467,15 @@ export class Participant {
      */
     getParticipantsPane(): ParticipantsPane {
         return new ParticipantsPane(this);
+    }
+
+    /**
+     * Returns the large video page object.
+     *
+     * @returns {LargeVideo}
+     */
+    getLargeVideo(): LargeVideo {
+        return new LargeVideo(this);
     }
 
     /**
@@ -546,7 +554,7 @@ export class Participant {
         }
 
         // do a hangup, to make sure unavailable presence is sent
-        await this.driver.execute(() => typeof APP !== 'undefined' && APP?.conference?.hangup());
+        await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.hangup());
 
         // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
         // change of url
@@ -606,29 +614,6 @@ export class Participant {
             = this.driver.$('//span[@id="localVideoContainer"]//img[contains(@class,"userAvatar")]');
 
         return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
-    }
-
-    /**
-     * Gets avatar SRC attribute for the one displayed on large video.
-     */
-    async getLargeVideoAvatar() {
-        const avatar = this.driver.$('//img[@id="dominantSpeakerAvatar"]');
-
-        return await avatar.isExisting() ? await avatar.getAttribute('src') : null;
-    }
-
-    /**
-     * Returns resource part of the JID of the user who is currently displayed in the large video area.
-     */
-    async getLargeVideoResource() {
-        return await this.driver.execute(() => APP.UI.getLargeVideoID());
-    }
-
-    /**
-     * Returns the source of the large video currently shown.
-     */
-    async getLargeVideoId() {
-        return this.driver.execute('return document.getElementById("largeVideo").srcObject.id');
     }
 
     /**
@@ -699,6 +684,85 @@ export class Participant {
     async isLeaveReasonDialogOpen() {
         return this.driver.$('div[data-testid="dialog.leaveReason"]').isDisplayed();
     }
+
+    /**
+     * Returns the audio level for a participant.
+     *
+     * @param observer
+     * @param participant
+     * @return
+     */
+    async getRemoteAudioLevel(p: Participant) {
+        const jid = await p.getEndpointId();
+
+        return await this.driver.execute(id => {
+            const level = APP?.conference?.getPeerSSRCAudioLevel(id);
+
+            return level ? level.toFixed(2) : null;
+        }, jid);
+    }
+
+    /**
+     * For the participant to have his audio muted/unmuted from given observer's
+     * perspective. The method will fail the test if something goes wrong or
+     * the audio muted status is different than the expected one. We wait up to
+     * 3 seconds for the expected status to appear.
+     *
+     * @param testee - instance of the participant for whom we're checking the audio muted status.
+     * @param muted - <tt>true</tt> to wait for audio muted status or <tt>false</tt> to wait for the participant to
+     * unmute.
+     */
+    async waitForAudioMuted(testee: Participant, muted: boolean): Promise<void> {
+        // Waits for the correct icon
+        await this.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, !muted);
+
+        // Extended timeout for 'unmuted' to make tests more resilient to
+        // unexpected glitches.
+        const timeout = muted ? 3_000 : 6_000;
+
+        // Give it 3 seconds to not get any audio or to receive some
+        // depending on "muted" argument
+        try {
+            await this.driver.waitUntil(async () => {
+                const audioLevel = await this.getRemoteAudioLevel(testee);
+
+                if (muted) {
+                    if (audioLevel !== null && audioLevel > 0.1) {
+                        console.log(`muted exiting on: ${audioLevel}`);
+
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                // When testing for unmuted we wait for first sound
+                if (audioLevel !== null && audioLevel > 0.1) {
+                    console.log(`unmuted exiting on: ${audioLevel}`);
+
+                    return true;
+                }
+
+                return false;
+            },
+            { timeout });
+
+            // When testing for muted we don't want to have
+            // the condition succeeded
+            if (muted) {
+                const name = await testee.displayName;
+
+                assert.fail(`There was some sound coming from muted: '${name}'`);
+            } // else we're good for unmuted participant
+        } catch (_timeoutE) {
+            if (!muted) {
+                const name = await testee.displayName;
+
+                assert.fail(`There was no sound from unmuted: '${name}'`);
+            } // else we're good for muted participant
+        }
+    }
+
 
     /**
      * Waits for remote video state - receiving and displayed.

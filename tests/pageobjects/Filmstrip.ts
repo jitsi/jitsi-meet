@@ -36,7 +36,7 @@ export default class Filmstrip extends BasePageObject {
 
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
-            timeout: 2000,
+            timeout: 5_000,
             timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.name}`
         });
     }

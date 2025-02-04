@@ -4,6 +4,8 @@ const EMAIL_FIELD = '#setEmail';
 const FOLLOW_ME_CHECKBOX = '//input[@name="follow-me"]';
 const HIDE_SELF_VIEW_CHECKBOX = '//input[@name="hide-self-view"]';
 const SETTINGS_DIALOG_CONTENT = '.settings-pane';
+const START_AUDIO_MUTED_CHECKBOX = '//input[@name="start-audio-muted"]';
+const START_VIDEO_MUTED_CHECKBOX = '//input[@name="start-video-muted"]';
 const X_PATH_MODERATOR_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Moderator"]';
 const X_PATH_MORE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="General"]';
 const X_PATH_PROFILE_TAB = '//div[contains(@class, "settings-dialog")]//*[text()="Profile"]';
@@ -76,6 +78,28 @@ export default class SettingsDialog extends BaseDialog {
      */
     submit() {
         return this.clickOkButton();
+    }
+
+    /**
+     * Sets the start audio muted feature to enabled/disabled.
+     * @param {boolean} enable - true for enabled and false for disabled.
+     * @returns {Promise<void>}
+     */
+    async setStartAudioMuted(enable: boolean) {
+        await this.openModeratorTab();
+
+        await this.setCheckbox(START_AUDIO_MUTED_CHECKBOX, enable);
+    }
+
+    /**
+     * Sets the start video muted feature to enabled/disabled.
+     * @param {boolean} enable - true for enabled and false for disabled.
+     * @returns {Promise<void>}
+     */
+    async setStartVideoMuted(enable: boolean) {
+        await this.openModeratorTab();
+
+        await this.setCheckbox(START_VIDEO_MUTED_CHECKBOX, enable);
     }
 
     /**

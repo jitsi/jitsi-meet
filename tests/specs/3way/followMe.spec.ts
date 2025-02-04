@@ -75,7 +75,7 @@ describe('Follow Me', () => {
         const localVideoId = await p2Filmstrip.getLocalVideoId();
 
         await p2.driver.waitUntil(
-            async () => await localVideoId === await p2.getLargeVideoId(),
+            async () => await localVideoId === await p2.getLargeVideo().getId(),
             {
                 timeout: 5_000,
                 timeoutMsg: 'The pinned participant is not displayed on stage for p2'
@@ -84,7 +84,7 @@ describe('Follow Me', () => {
         const p2VideoIdOnp3 = await p3.getFilmstrip().getRemoteVideoId(await p2.getEndpointId());
 
         await p3.driver.waitUntil(
-            async () => p2VideoIdOnp3 === await p3.getLargeVideoId(),
+            async () => p2VideoIdOnp3 === await p3.getLargeVideo().getId(),
             {
                 timeout: 5_000,
                 timeoutMsg: 'The pinned participant is not displayed on stage for p3'

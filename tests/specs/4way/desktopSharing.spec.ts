@@ -251,7 +251,7 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p3, p2);
 
         // The desktop sharing participant should be on large
-        expect(await p1.driver.execute(() => APP.UI.getLargeVideoID())).toBe(`${await p3.getEndpointId()}-v1`);
+        expect(await p1.getLargeVideo().getResource()).toBe(`${await p3.getEndpointId()}-v1`);
 
         // the video should be playing
         await p1.driver.waitUntil(() => p1.driver.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived()), {
