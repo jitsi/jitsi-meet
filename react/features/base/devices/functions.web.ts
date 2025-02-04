@@ -167,17 +167,6 @@ export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['a
 }
 
 /**
- * Filters audio devices from a list of MediaDeviceInfo objects.
- *
- * @param {Array<MediaDeviceInfo>} devices - Unfiltered media devices.
- * @private
- * @returns {Array<MediaDeviceInfo>} Filtered audio devices.
- */
-export function filterAudioDevices(devices: MediaDeviceInfo[]) {
-    return devices.filter(device => device.kind === 'audioinput');
-}
-
-/**
  * Filters the devices that start with one of the prefixes from DEVICE_LABEL_PREFIXES_TO_IGNORE.
  *
  * @param {MediaDeviceInfo[]} devices - The devices to be filtered.
