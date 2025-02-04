@@ -54,6 +54,38 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
 }
 
 /**
+ * Creates the second participant instance or prepares one for re-joining.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    return _joinParticipant('participant2', ctx.p2, p => {
+        ctx.p2 = p;
+    }, {
+        displayName: P2_DISPLAY_NAME,
+        ...options
+    });
+}
+
+/**
+ * Creates the third participant instance or prepares one for re-joining.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export function joinThirdParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    return _joinParticipant('participant3', ctx.p3, p => {
+        ctx.p3 = p;
+    }, {
+        displayName: P3_DISPLAY_NAME,
+        ...options
+    });
+}
+
+/**
  * Ensure that there are four participants.
  *
  * @param {Object} ctx - The context.
