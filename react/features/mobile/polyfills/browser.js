@@ -4,8 +4,8 @@ import { NativeModules, Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 
-import 'promise.allsettled/auto'; // Promise.allSettled.
-import 'promise.withresolvers/auto'; // Promise.withResolvers.
+import 'core-js/features/promise/all-settled'; // Promise.allSettled.
+import 'core-js/features/promise/with-resolvers'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
