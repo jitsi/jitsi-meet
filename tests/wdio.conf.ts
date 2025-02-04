@@ -267,7 +267,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         // We skip the suite tests if the suite is marked as such, we used that from firefox overwrite
         // @ts-ignore
-        if (config?.ffExcludes.some((e: string) => minimatch(args[2][0].replace('file://', ''), `${__dirname}/${e}`))) {
+        if (config?.ffExcludes?.some(
+                (e: string) => minimatch(args[2][0].replace('file://', ''), `${__dirname}/${e}`))) {
             args[2].pop();
         }
     },
