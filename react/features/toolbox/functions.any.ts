@@ -65,8 +65,9 @@ export function getJwtDisabledButtons(
 /**
  * Returns the list of enabled toolbar buttons.
  *
- * @param stateful
- * @param definedToolbarButtons
+ * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @param {string[]} definedToolbarButtons - The list of all possible buttons.
+ *
  * @returns {Array<string>} - The list of enabled toolbar buttons.
  */
 export function getToolbarButtons(stateful: IStateful, definedToolbarButtons: string[]): Array<string> {

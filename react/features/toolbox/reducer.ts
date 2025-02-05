@@ -52,7 +52,7 @@ const INITIAL_STATE = {
     /**
      * The thresholds for screen size and visible main toolbar buttons.
      */
-    mainToolbarButtonsThresholds: navigator.product !== 'ReactNative' ? THRESHOLDS : NATIVE_THRESHOLDS,
+    mainToolbarButtonsThresholds: navigator.product === 'ReactNative' ? NATIVE_THRESHOLDS : THRESHOLDS,
 
     participantMenuButtonsWithNotifyClick: new Map(),
 

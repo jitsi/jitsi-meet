@@ -52,6 +52,7 @@ class CustomOptionButton extends AbstractButton<IProps> {
             iconComponent = (
                 <Image
                     height = { BaseTheme.spacing[4] }
+                    resizeMode = { 'contain' }
                     source = {{ uri: this.iconSrc }}
                     width = { BaseTheme.spacing[4] } />
             );

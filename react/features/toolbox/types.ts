@@ -61,10 +61,10 @@ export interface ICustomToolbarButton {
     Content?: typeof CustomOptionButton;
     backgroundColor?: string;
     group?: number;
-    icon?: string;
-    id?: string;
+    icon: string;
+    id: string;
     key?: string;
-    text?: string;
+    text: string;
 }
 
 export type NativeToolbarButton = 'camera' |

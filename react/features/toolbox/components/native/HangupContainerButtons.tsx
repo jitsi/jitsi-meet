@@ -1,19 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import AbstractHangupButton from "../../../base/toolbox/components/AbstractHangupButton";
-import HangupMenuButton from "./HangupMenuButton";
-import HangupButton from "../HangupButton";
-import {IReduxState} from "../../../app/types";
+import { IReduxState } from '../../../app/types';
+import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import HangupButton from '../HangupButton';
 
-const HangupContainerButtons = (props: AbstractHangupButton) => {
+import HangupMenuButton from './HangupMenuButton';
+
+const HangupContainerButtons = (props: AbstractButtonProps) => {
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const endConferenceSupported = conference?.isEndConferenceSupported();
 
     return endConferenceSupported
-        ? <HangupMenuButton
-            { ...props }
-            showRaiseHand = { true } />
+
+        // @ts-ignore
+        ? <HangupMenuButton { ...props } />
         : <HangupButton { ...props } />;
 };
 
