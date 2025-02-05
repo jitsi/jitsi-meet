@@ -166,8 +166,8 @@ export const NATIVE_TOOLBAR_BUTTONS: NativeToolbarButton[] = [
     'camera',
     'chat',
     'hangup',
-    'overflowmenu',
     'microphone',
+    'overflowmenu',
     'raisehand',
     'screensharing',
     'tileview'
@@ -179,11 +179,11 @@ export const NATIVE_TOOLBAR_BUTTONS: NativeToolbarButton[] = [
 export const VISITORS_MODE_BUTTONS: ToolbarButton[] = [
     'chat',
     'closedcaptions',
+    'fullscreen',
     'hangup',
     'raisehand',
     'settings',
-    'tileview',
-    'fullscreen',
     'stats',
+    'tileview',
     'videoquality'
 ];

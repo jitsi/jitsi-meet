@@ -6,56 +6,12 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
+
 import { MAIN_TOOLBAR_BUTTONS_PRIORITY } from './constants';
-import { IGetVisibleNativeButtonsParams, IToolboxButton } from './types';
 import { isButtonEnabled } from './functions.any';
+import { IGetVisibleNativeButtonsParams, IToolboxButton } from './types';
 
 export * from './functions.any';
-
-const WIDTH = {
-    FIT_9_ICONS: 560,
-    FIT_8_ICONS: 500,
-    FIT_7_ICONS: 440,
-    FIT_6_ICONS: 380
-};
-
-/**
- * Returns a set of the buttons that are shown in the toolbar
- * but removed from the overflow menu, based on the width of the screen.
- *
- * @param {number} width - The width of the screen.
- * @returns {Set}
- */
-export function getMovableButtons(width: number): Set<string> {
-    let buttons: string[] = [];
-
-    switch (true) {
-    case width >= WIDTH.FIT_9_ICONS: {
-        buttons = [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview' ];
-        break;
-    }
-    case width >= WIDTH.FIT_8_ICONS: {
-        buttons = [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_7_ICONS: {
-        buttons = [ 'microphone', 'camera', 'chat', 'raisehand' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_6_ICONS: {
-        buttons = [ 'microphone', 'camera', 'chat', 'togglecamera' ];
-        break;
-    }
-
-    default: {
-        buttons = [ 'chat' ];
-    }
-    }
-
-    return new Set(buttons);
-}
 
 /**
  * Indicates if the desktop share button is disabled or not.
@@ -110,15 +66,10 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
  * @param {IGetVisibleButtonsParams} params - The parameters needed to extract the visible buttons.
  * @returns {Object} - The visible buttons arrays .
  */
-export function getVisibleNativeButtons({
-                                      allButtons,
-                                      clientWidth,
-                                      mainToolbarButtonsThresholds,
-                                      toolbarButtons
-                                  }: IGetVisibleNativeButtonsParams) {
+export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarButtonsThresholds, toolbarButtons
+}: IGetVisibleNativeButtonsParams) {
     const filteredButtons = Object.keys(allButtons).filter(key =>
-        typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons
-        // override
+        typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons override
         && isButtonEnabled(key, toolbarButtons));
 
     const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth > width)

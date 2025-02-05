@@ -11,10 +11,8 @@ import HangupContainerButtons from './components/native/HangupContainerButtons';
 import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
-
-import { NativeToolbarButton } from './functions.native';
 import { isDesktopShareButtonDisabled } from './functions.native';
-import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
+import { ICustomToolbarButton, IToolboxButton, NativeToolbarButton } from './types';
 
 
 const microphone = {
@@ -65,14 +63,12 @@ const hangup = {
     group: 3
 };
 
-
-
 /**
  * A hook that returns the audio mute button.
  *
  *  @returns {Object | undefined}
  */
-function getAudiMuteButton() {
+function getAudioMuteButton() {
     const _iAmVisitor = useSelector(iAmVisitor);
 
     if (!_iAmVisitor) {
@@ -94,6 +90,19 @@ function getVideoMuteButton() {
 }
 
 /**
+ * A hook that returns the chat button.
+ *
+ *  @returns {Object | undefined}
+ */
+function getChatButton() {
+    const _iAmVisitor = useSelector(iAmVisitor);
+
+    if (!_iAmVisitor) {
+        return chat;
+    }
+}
+
+/**
  * A hook that returns the screen sharing button.
  *
  *  @returns {Object | undefined}
@@ -108,15 +117,15 @@ function getScreenSharingButton() {
 }
 
 /**
- * A hook that returns the raise hand button.
+ * A hook that returns the tile view button.
  *
  *  @returns {Object | undefined}
  */
-function getRaiseHandButton() {
+function getTileViewButton() {
     const _iAmVisitor = useSelector(iAmVisitor);
 
     if (!_iAmVisitor) {
-        return raisehand;
+        return tileview;
     }
 }
 
@@ -140,24 +149,25 @@ function getOverflowMenuButton() {
  * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
  */
 export function useNativeToolboxButtons(
-    _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
-    const audioMuteButton = getAudiMuteButton();
+        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
+    const audioMuteButton = getAudioMuteButton();
     const videoMuteButton = getVideoMuteButton();
+    const chatButton = getChatButton();
     const screenSharingButton = getScreenSharingButton();
-    const raiseHandButton = getRaiseHandButton();
+    const tileViewButton = getTileViewButton();
     const overflowMenuButton = getOverflowMenuButton();
 
     const buttons: { [key in NativeToolbarButton]?: IToolboxButton; } = {
         microphone: audioMuteButton,
         camera: videoMuteButton,
-        chat,
+        chat: chatButton,
         screensharing: screenSharingButton,
-        raisehand: raiseHandButton,
-        tileview,
+        raisehand,
+        tileview: tileViewButton,
         overflowmenu: overflowMenuButton,
         hangup
     };
-    const buttonKeys = Object.keys(buttons) as ToolbarButton[];
+    const buttonKeys = Object.keys(buttons) as NativeToolbarButton[];
 
     buttonKeys.forEach(
         key => typeof buttons[key] === 'undefined' && delete buttons[key]);

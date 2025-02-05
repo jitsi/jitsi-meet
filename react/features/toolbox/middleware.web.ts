@@ -68,7 +68,7 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
 
-        const toolbarButtons = getToolbarButtons(state, TOOLBAR_BUTTONS as string[]);
+        const toolbarButtons = getToolbarButtons(state, TOOLBAR_BUTTONS);
 
         dispatch({
             type: SET_TOOLBAR_BUTTONS,

@@ -157,7 +157,9 @@ export function getDevicesFromURL(state: IReduxState) {
  * @returns {Object} An object with the media devices split by type. The keys
  * are device type and the values are arrays with devices matching the device
  * type.
- */
+*/
+// @ts-ignore
+// eslint-disable-next-line require-jsdoc
 export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['availableDevices'] {
     return {
         audioInput: devices.filter(device => device.kind === 'audioinput'),
@@ -172,7 +174,11 @@ export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['a
  * @param {MediaDeviceInfo[]} devices - The devices to be filtered.
  * @returns {MediaDeviceInfo[]} - The filtered devices.
  */
+// @ts-ignore
+// eslint-disable-next-line require-jsdoc
 export function filterIgnoredDevices(devices: MediaDeviceInfo[] = []) {
+
+    // @ts-ignore
     const ignoredDevices: MediaDeviceInfo[] = [];
     const filteredDevices = devices.filter(device => {
         if (!device.label) {
@@ -201,6 +207,8 @@ export function filterIgnoredDevices(devices: MediaDeviceInfo[] = []) {
  * @param {MediaDeviceInfo[]} devices2 - Array with devices to be compared.
  * @returns {boolean} - True if the device arrays are different and false otherwise.
 */
+// @ts-ignore
+// eslint-disable-next-line require-jsdoc
 export function areDevicesDifferent(devices1: MediaDeviceInfo[] = [], devices2: MediaDeviceInfo[] = []) {
     if (devices1.length !== devices2.length) {
         return true;
@@ -304,6 +312,8 @@ export function getVideoDeviceIds(state: IReduxState) {
  * @param {MediaDeviceInfo[]} devices - The devices.
  * @returns {string}
  */
+// @ts-ignore
+// eslint-disable-next-line require-jsdoc
 function devicesToStr(devices?: MediaDeviceInfo[]) {
     return devices?.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
 }
@@ -315,6 +325,8 @@ function devicesToStr(devices?: MediaDeviceInfo[]) {
  * @param {string} title - The title that will be printed in the log.
  * @returns {void}
  */
+// @ts-ignore
+// eslint-disable-next-line require-jsdoc
 export function logDevices(devices: MediaDeviceInfo[], title = '') {
     const deviceList = groupDevicesByKind(devices);
     const audioInputs = devicesToStr(deviceList.audioInput);

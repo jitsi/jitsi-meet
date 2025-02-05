@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import RaiseHandButton from '../../../toolbox/components/native/RaiseHandButton';
 import { shouldDisplayReactionsButtons } from '../../functions.native';
 
-import RaiseHandButton from './RaiseHandButton';
 import ReactionsMenuButton from './ReactionsMenuButton';
 
 const RaiseHandContainerButtons = (props: AbstractButtonProps) => {
