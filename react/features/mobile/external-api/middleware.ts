@@ -426,18 +426,25 @@ function _registerForNativeEvents(store: IStore) {
         ({ appearance, description, timeout, title, uid }: any) => {
             const validTypes = Object.values(NOTIFICATION_TYPE);
             const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
             if (!validTypes.includes(appearance)) {
                 logger.error(`Invalid notification type "${appearance}". Expecting one of ${validTypes}`);
 
                 return;
             }
+
             if (!validTimeouts.includes(timeout)) {
                 logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
 
                 return;
             }
 
-            dispatch(showNotification({ appearance, description, title, uid }, timeout));
+            dispatch(showNotification({
+                appearance,
+                description,
+                title,
+                uid
+            }, timeout));
         });
 
     eventEmitter.addListener(ExternalAPI.HIDE_NOTIFICATION, ({ uid }: any) => {
