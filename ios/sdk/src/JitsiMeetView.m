@@ -142,6 +142,14 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI toggleCamera];
 }
+- (void)showNotification:(NSString *)appearance :(NSString *)description :(NSString *)timeout :(NSString *)title :(NSString *)uid {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI showNotification:appearance :description :timeout :title :uid];
+}
+-(void)hideNotification:(NSString *)uid {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI hideNotification:uid];
+}
 
 #pragma mark Private methods
 
