@@ -175,6 +175,7 @@ let room;
  * lib-jitsi-meet to detect and invoke
  */
 window.JitsiMeetScreenObtainer = {
+    gDMSupported: true,
     openDesktopPicker(options, onSourceChoose) {
         APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
     }
