@@ -70,11 +70,13 @@ public class BroadcastIntentHelper {
         return new Intent(BroadcastAction.Type.TOGGLE_CAMERA.getAction());
     }
 
-    public static Intent buildShowNotificationIntent(String appearance, String description, String timeout, String uid) {
+    public static Intent buildShowNotificationIntent(
+        String appearance, String description, String timeout, String title, String uid) {
         Intent intent = new Intent(BroadcastAction.Type.SHOW_NOTIFICATION.getAction());
         intent.putExtra("appearance", appearance);
         intent.putExtra("description", description);
         intent.putExtra("timeout", timeout);
+        intent.putExtra("title", title);
         intent.putExtra("uid", uid);
         return intent;
     }

@@ -423,7 +423,7 @@ function _registerForNativeEvents(store: IStore) {
     });
 
     eventEmitter.addListener(ExternalAPI.SHOW_NOTIFICATION,
-        ({ appearance, description, timeout, uid }: any) => {
+        ({ appearance, description, timeout, title, uid }: any) => {
 
         const validTypes = Object.values(NOTIFICATION_TYPE);
         const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
@@ -440,7 +440,7 @@ function _registerForNativeEvents(store: IStore) {
             return;
         }
 
-        dispatch(showNotification({ appearance, description, uid }, timeout));
+        dispatch(showNotification({ appearance, description, title, uid }, timeout));
     });
 
     eventEmitter.addListener(ExternalAPI.HIDE_NOTIFICATION, ({ uid }: any) => {
