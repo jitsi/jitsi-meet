@@ -159,7 +159,7 @@ async function _toggleScreenSharing(
             } catch (error) {
                 dispatch(handleScreenSharingError(error, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-                throw error;
+                return;
             }
         }
 
@@ -173,7 +173,7 @@ async function _toggleScreenSharing(
             if (!desktopAudioTrack) {
                 dispatch(handleScreenSharingError(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-                throw new Error(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK);
+                return;
             }
         } else if (desktopVideoTrack) {
             if (localScreenshare) {
