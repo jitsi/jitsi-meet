@@ -1,0 +1,394 @@
+/* TODO: MIGRATE THIS TO css-config or internxt/ui */
+@import url("../../../../../fonts/font.css");
+
+@tailwind components;
+
+/* COLORS */
+
+:root,
+#root {
+    background: rgb(var(--color-surface));
+    font-family: "Instrument Sans", sans-serif;
+    height: 100%;
+    -webkit-touch-callout: none; /* iOS Safari */ /* Safari */ /* Konqueror HTML */ /* Old versions of Firefox */ /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+
+    --footer-height: 1rem;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color-scheme: light;
+
+        --color-primary: 0 102 255;
+        --color-primary-dark: 0 88 219;
+        --color-red: 255 13 0;
+        --color-red-dark: 230 11 0;
+        --color-orange: 255 149 0;
+        --color-orange-dark: 230 134 0;
+        --color-yellow: 255 204 0;
+        --color-yellow-dark: 230 184 0;
+        --color-green: 50 195 86;
+        --color-green-dark: 45 174 77;
+        --color-pink: 255 36 76;
+        --color-pink-dark: 235 0 63;
+        --color-indigo: 81 78 212;
+        --color-indigo-dark: 60 58 207;
+        --color-surface: 255 255 255;
+        --color-highlight: 17 17 17;
+        --color-gray-1: 249 249 252;
+        --color-gray-5: 243 243 248;
+        --color-gray-10: 229 229 235;
+        --color-gray-20: 209 209 215;
+        --color-gray-30: 199 199 205;
+        --color-gray-40: 174 174 179;
+        --color-gray-50: 142 142 148;
+        --color-gray-60: 99 99 103;
+        --color-gray-70: 72 72 75;
+        --color-gray-80: 58 58 59;
+        --color-gray-90: 44 44 48;
+        --color-gray-100: 24 24 27;
+    }
+
+    :root.dark {
+        color-scheme: dark;
+
+        --color-primary: 20 114 255;
+        --color-primary-dark: 0 96 240;
+        --color-red: 255 61 51;
+        --color-red-dark: 255 36 26;
+        --color-orange: 255 164 36;
+        --color-orange-dark: 255 153 10;
+        --color-yellow: 255 214 51;
+        --color-yellow-dark: 255 209 26;
+        --color-green: 72 208 106;
+        --color-green-dark: 52 203 90;
+        --color-pink: 255 71 105;
+        --color-pink-dark: 255 15 80;
+        --color-indigo: 106 103 218;
+        --color-indigo-dark: 85 83 213;
+        --color-surface: 17 17 17;
+        --color-highlight: 255 255 255;
+        --color-gray-1: 24 24 27;
+        --color-gray-5: 44 44 48;
+        --color-gray-10: 58 58 59;
+        --color-gray-20: 72 72 75;
+        --color-gray-30: 99 99 103;
+        --color-gray-40: 142 142 148;
+        --color-gray-50: 174 174 179;
+        --color-gray-60: 199 199 205;
+        --color-gray-70: 209 209 215;
+        --color-gray-80: 229 229 235;
+        --color-gray-90: 243 243 248;
+        --color-gray-100: 249 249 252;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+
+        --color-primary: 20 114 255;
+        --color-primary-dark: 0 96 240;
+        --color-red: 255 61 51;
+        --color-red-dark: 255 36 26;
+        --color-orange: 255 164 36;
+        --color-orange-dark: 255 153 10;
+        --color-yellow: 255 214 51;
+        --color-yellow-dark: 255 209 26;
+        --color-green: 72 208 106;
+        --color-green-dark: 52 203 90;
+        --color-pink: 255 71 105;
+        --color-pink-dark: 255 15 80;
+        --color-indigo: 106 103 218;
+        --color-indigo-dark: 85 83 213;
+        --color-surface: 17 17 17;
+        --color-highlight: 255 255 255;
+        --color-gray-1: 24 24 27;
+        --color-gray-5: 44 44 48;
+        --color-gray-10: 58 58 59;
+        --color-gray-20: 72 72 75;
+        --color-gray-30: 99 99 103;
+        --color-gray-40: 142 142 148;
+        --color-gray-50: 174 174 179;
+        --color-gray-60: 199 199 205;
+        --color-gray-70: 209 209 215;
+        --color-gray-80: 229 229 235;
+        --color-gray-90: 243 243 248;
+        --color-gray-100: 249 249 252;
+    }
+
+    :root:not(.dark) {
+        color-scheme: light;
+
+        --color-primary: 0 102 255;
+        --color-primary-dark: 0 88 219;
+        --color-red: 255 13 0;
+        --color-red-dark: 230 11 0;
+        --color-orange: 255 149 0;
+        --color-orange-dark: 230 134 0;
+        --color-yellow: 255 204 0;
+        --color-yellow-dark: 230 184 0;
+        --color-green: 50 195 86;
+        --color-green-dark: 45 174 77;
+        --color-pink: 255 36 76;
+        --color-pink-dark: 235 0 63;
+        --color-indigo: 81 78 212;
+        --color-indigo-dark: 60 58 207;
+        --color-surface: 255 255 255;
+        --color-highlight: 17 17 17;
+        --color-gray-1: 249 249 252;
+        --color-gray-5: 243 243 248;
+        --color-gray-10: 229 229 235;
+        --color-gray-20: 209 209 215;
+        --color-gray-30: 199 199 205;
+        --color-gray-40: 174 174 179;
+        --color-gray-50: 142 142 148;
+        --color-gray-60: 99 99 103;
+        --color-gray-70: 72 72 75;
+        --color-gray-80: 58 58 59;
+        --color-gray-90: 44 44 48;
+        --color-gray-100: 24 24 27;
+    }
+}
+
+/* COMPONENTS */
+
+iframe#webpack-dev-server-client-overlay {
+    display: none !important;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    position: relative;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* TAILWIND FALLBACKS */
+
+.text-supporting-2 {
+    font-size: 10px;
+    font-stretch: normal;
+    font-style: normal;
+}
+
+@layer components {
+    html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-x: hidden;
+
+        @apply text-gray-100;
+    }
+
+    /* LINKS */
+    a,
+    .link {
+        @apply text-primary underline hover:text-primary-dark;
+    }
+
+    a.secondary {
+        @apply text-white;
+    }
+
+    /* INPUTS */
+    input[type="checkbox"]:not(.base-checkbox) {
+        @apply h-4 w-4 rounded border-2 border-gray-70 text-xs text-gray-70;
+    }
+
+    input:not([type], .inxt-input),
+    input[type="text"]:not(.inxt-input),
+    input[type="email"]:not(.inxt-input),
+    input[type="password"]:not(.inxt-input) {
+        @apply rounded-md px-3 py-2 text-base text-gray-70 placeholder-gray-30 ring-1 ring-gray-50 focus:ring-primary;
+
+        &:focus {
+            outline: none !important;
+        }
+
+        &.error {
+            @apply bg-white ring-1 ring-1 ring-red;
+        }
+
+        &.warning {
+            @apply bg-white ring-1 ring-1 ring-orange;
+        }
+
+        &.success {
+            @apply bg-white ring-1 ring-1 ring-green;
+        }
+
+        &.semi-dense {
+            @apply px-2 py-0.5;
+        }
+
+        &.dense {
+            @apply px-1 py-0;
+        }
+
+        &.right-icon {
+            @apply pr-8;
+        }
+
+        &.left-icon {
+            @apply pl-9;
+        }
+
+        &.no-ring {
+            @apply ring-0 focus:ring-1 focus:ring-primary;
+        }
+
+        &.no-ring-at-all {
+            @apply ring-0;
+        }
+
+        &.rect {
+            @apply rounded-none;
+        }
+    }
+
+    .input-number {
+        @apply appearance-none border-gray-30 text-center outline-none;
+
+        appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+
+    .inxt-input::placeholder {
+        @apply font-normal;
+    }
+
+    /* BUTTONS */
+    .base-button,
+    button {
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    .base-button.primary,
+    .base-button.secondary,
+    .base-button.cancel {
+        height: 40px;
+
+        @apply rounded-lg px-4 py-2 transition duration-200 ease-in-out;
+    }
+
+    button.primary,
+    .base-button.primary {
+        @apply bg-primary text-white hover:bg-primary-dark;
+
+        &:disabled {
+            @apply bg-gray-5 text-gray-40 hover:bg-gray-5;
+        }
+    }
+
+    button.secondary,
+    .base-button.secondary {
+        @apply bg-white text-primary hover:bg-primary hover:text-white;
+    }
+
+    button.dark,
+    .base-button.dark {
+        @apply bg-white text-gray-70 hover:bg-gray-70 hover:text-white;
+    }
+
+    button.tertiary,
+    .base-button.tertiary {
+        @apply text-gray-80 transition-colors duration-100 ease-in-out;
+
+        &:disabled {
+            @apply pointer-events-none text-gray-40;
+        }
+
+        &.squared {
+            @apply h-10 w-10;
+        }
+    }
+
+    button.quaternary,
+    .base-button.quaternary {
+        @apply bg-gray-10 text-gray-80 hover:bg-gray-20;
+    }
+
+    button.delete-red,
+    .base-button.delete-red {
+        @apply bg-red text-white hover:bg-red-dark;
+    }
+
+    button.cancel,
+    .base-button.cancel {
+        @apply bg-opacity-0 text-red;
+    }
+
+    .base-button.square {
+        @apply box-content flex items-center justify-center px-2 py-0;
+    }
+
+    /* EVENTS */
+    .pointer-events-none.descendants {
+        * {
+            pointer-events: none;
+        }
+
+        &.only {
+            @apply pointer-events-auto;
+        }
+    }
+
+    /* GRID */
+    .square {
+        aspect-ratio: 1;
+    }
+
+    /* DRAG AND DROP */
+    .drag-over-effect {
+        box-shadow: inset 0 0 0 0.15rem var(--color-primary);
+
+        @apply rounded-md bg-primary/30;
+    }
+}
+
+/* RECAPTCHA */
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
+/* Abbr */
+abbr[title] {
+    text-decoration: none !important;
+}
+
+/* Photos skeleton animation */
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.mt-22 {
+    margin-top: 5.5rem;
+}
+
+.separator {
+    height: 1px;
+
+    @apply w-full bg-gray-10;
+}
+
+.text-ellipsis {
+    text-overflow: ellipsis;
+}

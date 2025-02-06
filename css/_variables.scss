@@ -1,7 +1,7 @@
 /**
  * Style variables
  */
-$baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$baseFontFamily: -apple-system, BlinkMacSystemFont, "open_sanslight", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 /**
  * Size variables.
@@ -45,7 +45,7 @@ $filmstripVideosZ: $toolbarZ + 1;
 /**
  * Unsupported browser
  */
-$primaryUnsupportedBrowserButtonBgColor: #0052CC;
+$primaryUnsupportedBrowserButtonBgColor: #0052cc;
 $unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
 $unsupportedBrowserTextColor: #4a4a4a;
 $unsupportedBrowserTextSmallFontSize: 17px;
@@ -71,7 +71,8 @@ $welcomePageFontFamily: inherit;
 $welcomePageBackground: none;
 $welcomePageTitleColor: #fff;
 
-$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
+$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+    url("../images/welcome-background.png");
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
 $welcomePageHeaderBackgroundSize: cover;
