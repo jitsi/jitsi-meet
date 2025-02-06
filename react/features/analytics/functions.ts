@@ -219,9 +219,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesPrejoinConfigICEUrl?: boolean;
         overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
-        overwritesWatchRTCConfigParams?: boolean;
-        overwritesWatchRTCProxyUrl?: boolean;
-        overwritesWatchRTCWSUrl?: boolean;
         server?: string;
         tenant?: string;
         wasLobbyVisible?: boolean;
@@ -271,14 +268,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
 
     permanentProperties.overwritesHosts = 'config.hosts' in params
         || Boolean(hostsProps.find(p => `config.hosts.${p}` in params || (typeof hosts === 'object' && p in hosts)));
-
-    permanentProperties.overwritesWatchRTCConfigParams = 'config.watchRTCConfigParams' in params;
-    const watchRTCConfigParams = params['config.watchRTCConfigParams'] ?? {};
-
-    permanentProperties.overwritesWatchRTCProxyUrl = ('config.watchRTCConfigParams.proxyUrl' in params)
-        || (typeof watchRTCConfigParams === 'object' && 'proxyUrl' in watchRTCConfigParams);
-    permanentProperties.overwritesWatchRTCWSUrl = ('config.watchRTCConfigParams.wsUrl' in params)
-        || (typeof watchRTCConfigParams === 'object' && 'wsUrl' in watchRTCConfigParams);
 
     const prejoinConfig = params['config.prejoinConfig'] ?? {};
 
