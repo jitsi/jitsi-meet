@@ -1,6 +1,5 @@
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { TRANSCRIBER_LEFT } from './actionTypes';
 import './subscriber';
@@ -17,7 +16,7 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
         if (action.abruptly) {
             dispatch(showErrorNotification({
                 titleKey: 'transcribing.failed'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
         }
         break;
     }

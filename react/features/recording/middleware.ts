@@ -162,7 +162,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     false, 'local', err.message, isRecorderTranscriptionsRunning(getState()));
             }
 
-            dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(showErrorNotification(props));
         });
         break;
     }
