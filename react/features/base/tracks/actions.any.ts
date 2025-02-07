@@ -291,7 +291,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
             const notificationAction = dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
 
             notificationInfo = {
                 uid: notificationAction?.uid

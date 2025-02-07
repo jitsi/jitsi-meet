@@ -177,7 +177,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             dispatch(showErrorNotification({
                 description: 'Restart initiated because of a bridge failure',
                 titleKey: 'dialog.sessionRestarted'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
         }
 
         break;
@@ -190,7 +190,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             descriptionArguments: { msg },
             descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
             titleKey: 'connection.CONNFAIL'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }));
 
         break;
     }
@@ -199,7 +199,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             hideErrorSupportLink: true,
             descriptionKey: 'dialog.maxUsersLimitReached',
             titleKey: 'dialog.maxUsersLimitReachedTitle'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }));
 
         // In case of max users(it can be from a visitor node), let's restore
         // oldConfig if any as we will be back to the main prosody.
@@ -236,7 +236,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             descriptionKey,
             hideErrorSupportLink: true,
             titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        }));
 
         sendAnalytics(createNotAllowedErrorEvent(type, msg));
 
@@ -416,7 +416,7 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
                 descriptionKey: errors ? 'dialog.tokenAuthFailedWithReasons' : 'dialog.tokenAuthFailed',
                 descriptionArguments: { reason: errors },
                 titleKey: 'dialog.tokenAuthFailedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            }));
         }
     }
 

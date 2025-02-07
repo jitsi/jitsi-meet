@@ -190,7 +190,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                         }));
                     dispatch(showErrorNotification({
                         titleKey: 'addPeople.failedToAdd'
-                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                    }));
                 } else if (!_callFlowsEnabled) {
                     const invitedCount = invitees.length;
                     let notificationProps: INotificationProps | undefined;

@@ -287,7 +287,7 @@ class ConferenceConnector {
                 },
                 descriptionKey: 'dialog.reservationErrorMsg',
                 titleKey: 'dialog.reservationError'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
             break;
         }
 
@@ -295,7 +295,7 @@ class ConferenceConnector {
             APP.store.dispatch(showErrorNotification({
                 descriptionKey: 'dialog.gracefulShutdown',
                 titleKey: 'dialog.serviceUnavailable'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
             break;
 
         // FIXME FOCUS_DISCONNECTED is a confusing event name.

@@ -142,7 +142,7 @@ function _setPasswordFailed(store: IStore, next: Function, action: AnyAction) {
         APP.store.dispatch(showErrorNotification({
             descriptionKey,
             titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }));
     }
 
     return next(action);

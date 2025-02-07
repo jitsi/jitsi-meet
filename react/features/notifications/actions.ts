@@ -97,7 +97,7 @@ export function setNotificationsEnabled(enabled: boolean) {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: INotificationProps, type?: string) {
+export function showErrorNotification(props: INotificationProps, type = NOTIFICATION_TIMEOUT_TYPE.STICKY) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
