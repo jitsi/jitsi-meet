@@ -181,8 +181,11 @@ const useUserData = (): UserData | null => {
 
 const LeftContent = React.memo(
     (): JSX.Element => (
-        <div className="rounded-2xl border bg-black/50 border-white/10 px-4">
-            <div className="flex items-center space-x-2 h-12">
+        <div className="rounded-2xl border bg-black/50 border-white/10 ">
+            <div
+                className="flex items-center space-x-2 h-12 px-3"
+                style={{ paddingLeft: "12px", paddingRight: "12px" }}
+            >
                 <img src={"images/internxt_logo.png"} alt="logo" className="h-7" />
                 <span className="text-lg font-semibold text-white" style={{ fontWeight: 600 }}>
                     Meet
