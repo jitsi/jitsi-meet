@@ -8,6 +8,7 @@ import { default as IconArrowRight } from './arrow-right.svg';
 import { default as IconArrowUpLarge } from './arrow-up-large.svg';
 import { default as IconArrowUp } from './arrow-up.svg';
 import { default as IconBell } from './bell.svg';
+import { default as IconBeta } from "./beta.svg";
 import { default as IconBluetooth } from './bluetooth.svg';
 import { default as IconCalendar } from './calendar.svg';
 import { default as IconCameraRefresh } from './camera-refresh.svg';
@@ -52,6 +53,7 @@ import { default as IconRingGroup } from './icon-ring-group.svg';
 import { default as IconImage } from './image.svg';
 import { default as IconInfoCircle } from './info-circle.svg';
 import { default as IconInfo } from './info.svg';
+import { default as IconInternxtLogo } from "./internxt_logo.svg";
 import { default as IconRecordLead } from './lead-record.svg';
 import { default as IconMessage } from './message.svg';
 import { default as IconMeter } from './meter.svg';
@@ -127,6 +129,8 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconCar,
     IconChatUnread,
     IconCheck,
+    IconBeta,
+    IconInternxtLogo,
     IconCloseCircle,
     IconCloseLarge,
     IconCloudUpload,
@@ -218,5 +222,5 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconWifi1Bar,
     IconWifi2Bars,
     IconWifi3Bars,
-    IconYahoo
+    IconYahoo,
 };

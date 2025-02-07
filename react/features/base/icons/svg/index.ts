@@ -19,6 +19,8 @@ const {
     IconCar,
     IconChatUnread,
     IconCheck,
+    IconBeta,
+    IconInternxtLogo,
     IconCloseCircle,
     IconCloseLarge,
     IconCloudUpload,
@@ -110,14 +112,14 @@ const {
     IconWifi1Bar,
     IconWifi2Bars,
     IconWifi3Bars,
-    IconYahoo
+    IconYahoo,
 } = Object.keys(DEFAULT_ICON).reduce((exportedIcons: Record<string, any>, key) => {
     return {
         ...exportedIcons,
         [key]: withBranding({
             iconName: key,
-            DefaultIcon: DEFAULT_ICON[key]
-        })
+            DefaultIcon: DEFAULT_ICON[key],
+        }),
     };
 }, {});
 
@@ -127,12 +129,14 @@ export {
     IconArrowDown,
     IconArrowDownLarge,
     IconArrowLeft,
+    IconArrowRight,
     IconArrowUp,
     IconArrowUpLarge,
     IconAudioOnly,
     IconAudioOnlyOff,
-    IconBluetooth,
     IconBell,
+    IconBeta,
+    IconBluetooth,
     IconCalendar,
     IconCameraRefresh,
     IconCar,
@@ -150,9 +154,6 @@ export {
     IconDownload,
     IconE2EE,
     IconEdit,
-    IconEnlarge,
-    IconEnterFullscreen,
-    IconEnvelope,
     IconEmotionsAngry,
     IconEmotionsDisgusted,
     IconEmotionsFearful,
@@ -160,6 +161,9 @@ export {
     IconEmotionsNeutral,
     IconEmotionsSad,
     IconEmotionsSurprised,
+    IconEnlarge,
+    IconEnterFullscreen,
+    IconEnvelope,
     IconExclamationSolid,
     IconExclamationTriangle,
     IconExitFullscreen,
@@ -175,6 +179,7 @@ export {
     IconImage,
     IconInfo,
     IconInfoCircle,
+    IconInternxtLogo,
     IconMessage,
     IconMeter,
     IconMic,
@@ -182,7 +187,6 @@ export {
     IconModerator,
     IconNoiseSuppressionOff,
     IconNoiseSuppressionOn,
-    IconArrowRight,
     IconOffice365,
     IconPerformance,
     IconPhoneRinging,
@@ -215,9 +219,9 @@ export {
     IconSubtitles,
     IconTileView,
     IconTrash,
+    IconUser,
     IconUserDeleted,
     IconUsers,
-    IconUser,
     IconVideo,
     IconVideoOff,
     IconVolumeOff,
@@ -229,5 +233,6 @@ export {
     IconWifi1Bar,
     IconWifi2Bars,
     IconWifi3Bars,
-    IconYahoo
+    IconYahoo,
 };
+

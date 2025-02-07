@@ -1,7 +1,9 @@
 /* TODO: MIGRATE THIS TO css-config or internxt/ui */
 @import url("../../../../../fonts/font.css");
 
+@tailwind base;
 @tailwind components;
+@tailwind utilities;
 
 /* COLORS */
 
@@ -304,19 +306,6 @@ code {
     button.dark,
     .base-button.dark {
         @apply bg-white text-gray-70 hover:bg-gray-70 hover:text-white;
-    }
-
-    button.tertiary,
-    .base-button.tertiary {
-        @apply text-gray-80 transition-colors duration-100 ease-in-out;
-
-        &:disabled {
-            @apply pointer-events-none text-gray-40;
-        }
-
-        &.squared {
-            @apply h-10 w-10;
-        }
     }
 
     button.quaternary,

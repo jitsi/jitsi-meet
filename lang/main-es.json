@@ -1,4 +1,13 @@
 {
+    "meet": {
+        "login": {
+            "login": "Iniciar sesión",
+            "signUp": "Registrarse"
+        },
+        "preMeeting": {
+            "newMeeting": "Nueva reunión"
+        }
+    },
     "addPeople": {
         "add": "Invitar",
         "addContacts": "Invitar a sus contactos",

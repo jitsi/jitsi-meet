@@ -1,4 +1,13 @@
 {
+    "meet": {
+        "login": {
+            "login": "Log in",
+            "signUp": "Sign up"
+        },
+        "preMeeting": {
+            "newMeeting": "New Meeting"
+        }
+    },
     "addPeople": {
         "accessibilityLabel": {
             "meetingLink": "Meeting link: {{url}}"
