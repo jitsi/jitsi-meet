@@ -225,6 +225,7 @@ const RightContent = React.memo(({ isLogged, avatar, fullName, t }: RightContent
         </div>
     ) : (
         <div className="flex space-x-2 flex-row">
+            {/* TODO: Change to secondary variant when dark mode works properly */}
             <Button variant="tertiary" onClick={handleLogin}>
                 {t("meet.login.login")}
             </Button>
