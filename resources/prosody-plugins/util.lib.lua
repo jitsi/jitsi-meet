@@ -33,6 +33,7 @@ local roomless_iqs = {};
 local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
 local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
 local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
+local TRANSCRIBER_PREFIXES = module:get_option_inherited_set('transcriber_prefixes', { 'transcriber@recorder.', 'transcribera@recorder.', 'transcriberb@recorder.' });
 
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
@@ -268,17 +269,18 @@ function is_feature_allowed(ft, features, granted_features, is_moderator)
 end
 
 --- Extracts the subdomain and room name from internal jid node [foo]room1
--- @return subdomain(optional, if extracted or nil), the room name
+-- @return subdomain(optional, if extracted or nil), the room name, the customer_id in case of vpaas
 function extract_subdomain(room_node)
     local ret = extract_subdomain_cache:get(room_node);
     if ret then
-        return ret.subdomain, ret.room;
+        return ret.subdomain, ret.room, ret.customer_id;
     end
 
     local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
-    local cache_value = {subdomain=subdomain, room=room_name};
+    local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
+    local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
-    return subdomain, room_name;
+    return subdomain, room_name, customer_id;
 end
 
 function starts_with(str, start)
@@ -493,6 +495,7 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
+-- This requires presence stanza being passed
 function is_transcriber_jigasi(stanza)
     if not stanza then
         return false;
@@ -513,6 +516,9 @@ function is_transcriber_jigasi(stanza)
     return false;
 end
 
+function is_transcriber(jid)
+    return starts_with_one_of(jid, TRANSCRIBER_PREFIXES);
+end
 
 function get_sip_jibri_email_prefix(email)
     if not email then
@@ -628,6 +634,7 @@ return {
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
+    is_transcriber = is_transcriber;
     is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
