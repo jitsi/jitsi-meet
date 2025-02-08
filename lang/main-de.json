@@ -368,7 +368,7 @@
         "muteEveryoneSelf": "sich selbst",
         "muteEveryoneStartMuted": "Alle beginnen von jetzt an stummgeschaltet",
         "muteEveryoneTitle": "Alle stummschalten?",
-        "muteEveryonesVideoDialog": "Sind Sie sicher, dass Sie die Kamera von allen Personen deaktivieren möchten? Sie können sie nicht wieder aktivieren, die Personen können dies aber jederzeit wieder ändern.",
+        "muteEveryonesVideoDialog": "Sind Sie sicher, dass Sie die Kamera von allen Personen deaktivieren möchten? Sie können dies nicht wieder rückgängig machen, jede Personen kann ihre Kamera aber jederzeit wieder einschalten.",
         "muteEveryonesVideoDialogModerationOn": "Die Anwesenden können jederzeit eine Anfrage senden, um ihre Kamera einzuschalten.",
         "muteEveryonesVideoDialogOk": "deaktivieren",
         "muteEveryonesVideoTitle": "Die Kamera von allen anderen ausschalten?",
