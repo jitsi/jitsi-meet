@@ -374,7 +374,7 @@
         "muteEveryonesVideoTitle": "Die Kamera von allen anderen ausschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Personen nicht aufheben, aber eine Person kann ihre eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
-        "muteParticipantsVideoBody": "Sie können die Kamera nicht wieder aktivieren, die Personen können dies aber jederzeit wieder ändern.",
+        "muteParticipantsVideoBody": "Sie können die Kamera nicht wieder einschalten, die Person kann ihre Kamera aber jederzeit wieder einschalten.",
         "muteParticipantsVideoBodyModerationOn": "Sie können die Kamera nicht wieder aktivieren und die Person selbst auch nicht.",
         "muteParticipantsVideoButton": "Kamera ausschalten",
         "muteParticipantsVideoDialog": "Wollen Sie die Kamera dieser Person wirklich deaktivieren? Sie können die Kamera nicht wieder aktivieren, die Person kann dies aber jederzeit selbst tun.",
