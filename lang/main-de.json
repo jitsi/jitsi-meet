@@ -363,7 +363,7 @@
         "muteEveryoneDialogModerationOn": "Die Anwesenden können eine Anfrage zum Sprechen jederzeit senden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneElseTitle": "Alle außer {{whom}} stummschalten?",
-        "muteEveryoneElsesVideoDialog": "Sobald die Kamera deaktiviert ist, können Sie sie nicht wieder aktivieren, die Personen können dies aber jederzeit wieder ändern.",
+        "muteEveryoneElsesVideoDialog": "Sobald die Kamera für alle anderen Personen deaktiviert ist, können Sie diese nicht wieder für alle einschalten, die anderen Personen können ihre Kamera aber jederzeit wieder einschalten.",
         "muteEveryoneElsesVideoTitle": "Die Kamera von allen außer {{whom}} ausschalten?",
         "muteEveryoneSelf": "sich selbst",
         "muteEveryoneStartMuted": "Alle beginnen von jetzt an stummgeschaltet",
