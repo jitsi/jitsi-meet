@@ -46,7 +46,6 @@ import {
 } from '../../base/participants/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
-import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
@@ -363,10 +362,6 @@ function _registerForNativeEvents(store: IStore) {
         } catch (error) {
             logger.warn('Cannot send endpointMessage', error);
         }
-    });
-
-    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }: any) => {
-        dispatch(toggleScreensharing(enabled));
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }: any) => {
