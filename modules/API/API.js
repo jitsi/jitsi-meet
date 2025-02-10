@@ -1046,8 +1046,20 @@ function initCommands() {
             callback(conference?.getMeetingUniqueId() || '');
             break;
         }
-        case '_new_electron_screensharing_supported': {
-            callback(true);
+        case 'open-desktop-picker': {
+            const { desktopSharingSources } = APP.store.getState()['features/base/config'];
+
+            window.JitsiMeetScreenObtainer.openDesktopPicker(
+                {
+                    desktopSharingSources: desktopSharingSources ?? [ 'screen', 'window' ]
+                },
+                (streamId, _, screenShareAudio) => {
+                    callback({
+                        streamId,
+                        screenShareAudio
+                    });
+                }
+            );
             break;
         }
         default:
