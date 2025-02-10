@@ -184,7 +184,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     ...newProps,
                     currentFramerate: tabState?.currentFramerate,
                     localFlipX: tabState.localFlipX,
-                    selectedVideoInputId: tabState.selectedVideoInputId
+                    selectedVideoInputId: tabState.selectedVideoInputId,
+                    hideSelfView: tabState?.hideSelfView
                 };
             },
             submit: (newState: any) => submitVideoDeviceSelectionTab(newState, isDisplayedOnWelcomePage),
@@ -313,7 +314,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 return {
                     ...newProps,
                     currentLanguage: tabState?.currentLanguage,
-                    hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
