@@ -38,7 +38,6 @@ describe('StartMuted', () => {
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p1.waitForAudioMuted(p2, true);
 
-
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
 
@@ -145,7 +144,6 @@ describe('StartMuted', () => {
 
         const { p1, p2 } = ctx;
 
-
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
 
@@ -155,7 +153,6 @@ describe('StartMuted', () => {
         ]);
 
         await unmuteVideoAndCheck(p2, p1);
-
         await p1.getLargeVideo().assertPlaying();
     });
 

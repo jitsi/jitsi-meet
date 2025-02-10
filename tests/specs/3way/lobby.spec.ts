@@ -7,7 +7,7 @@ describe('Lobby', () => {
     it('joining the meeting', async () => {
         await ensureOneParticipant(ctx);
 
-        if (!await ctx.p1.driver.execute(() => APP.conference._room.isLobbySupported())) {
+        if (!await ctx.p1.execute(() => APP.conference._room.isLobbySupported())) {
             ctx.skipSuiteTests = true;
         }
     });

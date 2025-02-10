@@ -4,7 +4,7 @@ describe('Grant moderator', () => {
     it('joining the meeting', async () => {
         await ensureOneParticipant(ctx);
 
-        if (await ctx.p1.driver.execute(() => typeof APP.conference._room.grantOwner !== 'function')) {
+        if (await ctx.p1.execute(() => typeof APP.conference._room.grantOwner !== 'function')) {
             ctx.skipSuiteTests = true;
 
             return;

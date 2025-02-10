@@ -35,7 +35,7 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
 export async function cleanup(participant: Participant) {
     // cleanup
     if (await participant.isModerator()) {
-        const jigasiEndpointId = await participant.driver.execute(() => APP.conference.listMembers()[0].getId());
+        const jigasiEndpointId = await participant.execute(() => APP?.conference?.listMembers()[0].getId());
 
         await participant.getFilmstrip().kickParticipant(jigasiEndpointId);
     }
@@ -46,6 +46,6 @@ export async function cleanup(participant: Participant) {
  * @param participant
  */
 export async function isDialInEnabled(participant: Participant) {
-    return await participant.driver.execute(() => Boolean(
+    return await participant.execute(() => Boolean(
         config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc));
 }

@@ -16,8 +16,8 @@ describe('Lock Room with Digits only', () => {
     it('lock room with digits only', async () => {
         const { p1 } = ctx;
 
-        expect(await p1.driver.execute(() => APP.store.getState()['features/base/config']
-            .roomPasswordNumberOfDigits === 5)).toBe(true);
+        expect(await p1.execute(
+            () => APP.store.getState()['features/base/config'].roomPasswordNumberOfDigits === 5)).toBe(true);
 
         const p1SecurityDialog = p1.getSecurityDialog();
 
