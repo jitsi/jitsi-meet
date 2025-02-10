@@ -163,13 +163,14 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
 
     const { skipInMeetingChecks } = options;
 
+    await _joinParticipant('participant2', ctx.p2, p => {
+        ctx.p2 = p;
+    }, {
+        displayName: P2_DISPLAY_NAME,
+        ...options
+    });
+
     await Promise.all([
-        _joinParticipant('participant2', ctx.p2, p => {
-            ctx.p2 = p;
-        }, {
-            displayName: P2_DISPLAY_NAME,
-            ...options
-        }),
         skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
         skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
     ]);
