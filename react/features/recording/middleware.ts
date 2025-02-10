@@ -204,10 +204,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             = getSessionById(state, action.sessionData.id);
         const { initiator, mode = '', terminator } = updatedSessionData ?? {};
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
+        const isRecordingStarting = updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING;
 
-        if (updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING) {
-            dispatch(showPendingRecordingNotification(mode));
+        if (isRecordingStarting || updatedSessionData?.status === ON) {
             dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
+        }
+
+        if (isRecordingStarting) {
+            dispatch(showPendingRecordingNotification(mode));
             break;
         }
 
