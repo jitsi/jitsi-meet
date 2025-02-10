@@ -90,6 +90,13 @@ export const LOBBY_NOTIFICATION_ID = 'LOBBY_NOTIFICATION';
 export const LOCAL_RECORDING_NOTIFICATION_ID = 'LOCAL_RECORDING_NOTIFICATION_ID';
 
 /**
+ * The identifier of the lower raised hand notification.
+ *
+ * @type {string}
+ */
+export const LOWER_RAISED_HANDS_ID = 'LOWER_RAISED_HANDS_ID';
+
+/**
  * The identifier of the raise hand notification.
  *
  * @type {string}

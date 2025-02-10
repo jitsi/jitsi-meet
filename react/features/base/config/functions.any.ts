@@ -103,16 +103,6 @@ export function getDisableLowerHandByModerator(state: IReduxState) {
 }
 
 /**
- * Selector used to get the disableLowerHandNotification.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getDisableLowerHandNotification(state: IReduxState) {
-    return state['features/base/config']?.raisedHands?.disableLowerHandNotification || true;
-}
-
-/**
  * Selector used to get the disableNextSpeakerNotification.
  *
  * @param {Object} state - The global state.
@@ -120,6 +110,16 @@ export function getDisableLowerHandNotification(state: IReduxState) {
  */
 export function getDisableNextSpeakerNotification(state: IReduxState) {
     return state['features/base/config']?.raisedHands?.disableNextSpeakerNotification || false;
+}
+
+/**
+ * Selector used to get the disableRemoveRaisedHandOnFocusNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRemoveRaisedHandOnFocusNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableRemoveRaisedHandOnFocusNotification || false;
 }
 
 /**
