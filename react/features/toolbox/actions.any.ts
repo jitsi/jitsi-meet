@@ -131,7 +131,7 @@ export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThreshold
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { mainToolbarButtons } = getState()['features/base/config'];
 
-        if (!mainToolbarButtons || !Array.isArray(mainToolbarButtons) || mainToolbarButtons.length === 0) {
+        if (!Array.isArray(mainToolbarButtons) || mainToolbarButtons.length === 0) {
             return;
         }
 

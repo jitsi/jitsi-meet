@@ -10,6 +10,7 @@ import { iAmVisitor } from '../../../visitors/functions';
 import { customButtonPressed } from '../../actions.native';
 import { getVisibleNativeButtons, isToolboxVisible } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
+import { IToolboxNativeButton } from '../../types';
 
 import styles from './styles';
 
@@ -90,9 +91,7 @@ function Toolbox(props: IProps) {
         return (
             <>
                 {
-
-                    // @ts-ignore
-                    mainMenuButtons?.map(({ Content, key, text, ...rest }) => (
+                    mainMenuButtons?.map(({ Content, key, text, ...rest }: IToolboxNativeButton) => (
                         <Content
                             { ...rest }
                             /* eslint-disable react/jsx-no-bind */

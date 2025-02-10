@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc */
+
 import { IReduxState, IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings/actions';
@@ -159,7 +161,6 @@ export function getDevicesFromURL(state: IReduxState) {
  * type.
 */
 // @ts-ignore
-// eslint-disable-next-line require-jsdoc
 export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['availableDevices'] {
     return {
         audioInput: devices.filter(device => device.kind === 'audioinput'),
@@ -175,7 +176,6 @@ export function groupDevicesByKind(devices: MediaDeviceInfo[]): IDevicesState['a
  * @returns {MediaDeviceInfo[]} - The filtered devices.
  */
 // @ts-ignore
-// eslint-disable-next-line require-jsdoc
 export function filterIgnoredDevices(devices: MediaDeviceInfo[] = []) {
 
     // @ts-ignore
@@ -208,7 +208,6 @@ export function filterIgnoredDevices(devices: MediaDeviceInfo[] = []) {
  * @returns {boolean} - True if the device arrays are different and false otherwise.
 */
 // @ts-ignore
-// eslint-disable-next-line require-jsdoc
 export function areDevicesDifferent(devices1: MediaDeviceInfo[] = [], devices2: MediaDeviceInfo[] = []) {
     if (devices1.length !== devices2.length) {
         return true;
@@ -313,7 +312,6 @@ export function getVideoDeviceIds(state: IReduxState) {
  * @returns {string}
  */
 // @ts-ignore
-// eslint-disable-next-line require-jsdoc
 function devicesToStr(devices?: MediaDeviceInfo[]) {
     return devices?.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
 }
@@ -326,7 +324,6 @@ function devicesToStr(devices?: MediaDeviceInfo[]) {
  * @returns {void}
  */
 // @ts-ignore
-// eslint-disable-next-line require-jsdoc
 export function logDevices(devices: MediaDeviceInfo[], title = '') {
     const deviceList = groupDevicesByKind(devices);
     const audioInputs = devicesToStr(deviceList.audioInput);
