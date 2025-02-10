@@ -28,6 +28,8 @@ static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSA
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
 static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
 static NSString * const toggleCameraAction = @"org.jitsi.meet.TOGGLE_CAMERA";
+static NSString * const showNotificationAction = @"org.jitsi.meet.SHOW_NOTIFICATION";
+static NSString * const hideNotificationAction = @"org.jitsi.meet.HIDE_NOTIFICATION";
 
 @implementation ExternalAPI
 
@@ -52,7 +54,9 @@ RCT_EXPORT_MODULE();
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
         @"SET_VIDEO_MUTED" : setVideoMutedAction,
         @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction,
-        @"TOGGLE_CAMERA": toggleCameraAction
+        @"TOGGLE_CAMERA": toggleCameraAction,
+        @"SHOW_NOTIFICATION": showNotificationAction,
+        @"HIDE_NOTIFICATION": hideNotificationAction
     };
 };
 
@@ -78,7 +82,9 @@ RCT_EXPORT_MODULE();
               sendChatMessageAction,
               setVideoMutedAction,
               setClosedCaptionsEnabledAction,
-              toggleCameraAction
+              toggleCameraAction,
+              showNotificationAction,
+              hideNotificationAction
     ];
 }
 
@@ -178,6 +184,24 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 
 - (void)toggleCamera {
     [self sendEventWithName:toggleCameraAction body:nil];
+}
+
+- (void)showNotification:(NSString *)appearance :(NSString *)description :(NSString *)timeout :(NSString *)title :(NSString *)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"appearance"] = appearance;
+    data[@"description"] = description;
+    data[@"timeout"] = timeout;
+    data[@"title"] = title;
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:showNotificationAction body:data];
+}
+
+- (void)hideNotification:(NSString *)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:hideNotificationAction body:data];
 }
 
 @end

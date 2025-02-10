@@ -47,5 +47,7 @@
 - (void)setVideoMuted:(BOOL)muted;
 - (void)setClosedCaptionsEnabled:(BOOL)enabled;
 - (void)toggleCamera;
+- (void)showNotification:(NSString * _Nonnull)appearance :(NSString * _Nullable)description :(NSString * _Nullable)timeout :(NSString * _Nullable)title :(NSString * _Nullable)uid;
+- (void)hideNotification:(NSString * _Nullable)uid;
 
 @end

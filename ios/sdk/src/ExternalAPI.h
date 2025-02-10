@@ -27,9 +27,11 @@ static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
 - (void)openChat:(NSString*)to;
 - (void)closeChat;
-- (void)sendChatMessage:(NSString*)message :(NSString*)to ;
+- (void)sendChatMessage:(NSString*)message :(NSString*)to;
 - (void)sendSetVideoMuted:(BOOL)muted;
 - (void)sendSetClosedCaptionsEnabled:(BOOL)enabled;
 - (void)toggleCamera;
+- (void)showNotification:(NSString*)appearance :(NSString*)description :(NSString*)timeout :(NSString*)title :(NSString*)uid;
+- (void)hideNotification:(NSString*)uid;
 
 @end
