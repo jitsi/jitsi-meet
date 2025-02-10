@@ -54,7 +54,7 @@ export default abstract class PreMeetingScreen extends BasePageObject {
      * Checks internally whether lobby room is joined.
      */
     isLobbyRoomJoined() {
-        return this.participant.driver.execute(
+        return this.participant.execute(
             () => APP?.conference?._room?.room?.getLobby()?.lobbyRoom?.joined === true);
     }
 

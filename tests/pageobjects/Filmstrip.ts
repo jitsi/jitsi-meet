@@ -62,7 +62,7 @@ export default class Filmstrip extends BasePageObject {
 
         await remoteDisplayName.moveTo();
 
-        return await this.participant.driver.execute(eId =>
+        return await this.participant.execute(eId =>
             document.evaluate(`//span[@id="participant_${eId}"]//video`,
                 document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue?.srcObject?.id, endpointId);
     }
@@ -71,7 +71,7 @@ export default class Filmstrip extends BasePageObject {
      * Returns the local video id.
      */
     getLocalVideoId() {
-        return this.participant.driver.execute(
+        return this.participant.execute(
             'return document.getElementById("localVideo_container").srcObject.id');
     }
 
