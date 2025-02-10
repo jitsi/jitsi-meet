@@ -18,7 +18,7 @@ import {
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
-import { THRESHOLDS } from './constants';
+import { NATIVE_THRESHOLDS, THRESHOLDS } from './constants';
 import { IMainToolbarButtonThresholds, NOTIFY_CLICK_MODE } from './types';
 
 /**
@@ -52,7 +52,7 @@ const INITIAL_STATE = {
     /**
      * The thresholds for screen size and visible main toolbar buttons.
      */
-    mainToolbarButtonsThresholds: THRESHOLDS,
+    mainToolbarButtonsThresholds: navigator.product === 'ReactNative' ? NATIVE_THRESHOLDS : THRESHOLDS,
 
     participantMenuButtonsWithNotifyClick: new Map(),
 

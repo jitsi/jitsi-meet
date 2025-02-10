@@ -10,12 +10,12 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import styles from './styles';
 
 
-interface IProps extends AbstractButtonProps {
+export interface ICustomOptionButton extends AbstractButtonProps {
     backgroundColor?: string;
     icon: any;
     id?: string;
     isToolboxButton?: boolean;
-    text?: string;
+    text: string;
 }
 
 /**
@@ -23,7 +23,7 @@ interface IProps extends AbstractButtonProps {
  *
  * @returns {Component}
  */
-class CustomOptionButton extends AbstractButton<IProps> {
+class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
     backgroundColor = this.props.backgroundColor;
     iconSrc = this.props.icon;
     id = this.props.id;

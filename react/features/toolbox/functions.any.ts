@@ -1,8 +1,12 @@
 import { IReduxState } from '../app/types';
+import { IStateful } from '../base/app/types';
 import { isJwtFeatureEnabledStateless } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
 import { IParticipantFeatures } from '../base/participants/types';
+import { toState } from '../base/redux/functions';
 import { iAmVisitor } from '../visitors/functions';
+
+import { VISITORS_MODE_BUTTONS } from './constants';
 
 /**
  * Indicates if the audio mute button is disabled or not.
@@ -56,4 +60,42 @@ export function getJwtDisabledButtons(
     }
 
     return acc;
+}
+
+/**
+ * Returns the list of enabled toolbar buttons.
+ *
+ * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @param {string[]} definedToolbarButtons - The list of all possible buttons.
+ *
+ * @returns {Array<string>} - The list of enabled toolbar buttons.
+ */
+export function getToolbarButtons(stateful: IStateful, definedToolbarButtons: string[]): Array<string> {
+    const state = toState(stateful);
+    const { toolbarButtons, customToolbarButtons } = state['features/base/config'];
+    const customButtons = customToolbarButtons?.map(({ id }) => id);
+    let buttons = Array.isArray(toolbarButtons) ? toolbarButtons : definedToolbarButtons;
+
+    if (iAmVisitor(state)) {
+        buttons = VISITORS_MODE_BUTTONS.filter(button => buttons.indexOf(button) > -1);
+    }
+
+    if (customButtons) {
+        return [ ...buttons, ...customButtons ];
+    }
+
+    return buttons;
+}
+
+/**
+ * Checks if the specified button is enabled.
+ *
+ * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
+ * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
+ * @returns {boolean} - True if the button is enabled and false otherwise.
+ */
+export function isButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
+    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
+
+    return buttons.includes(buttonName);
 }

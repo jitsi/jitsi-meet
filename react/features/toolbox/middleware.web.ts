@@ -1,12 +1,10 @@
 import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
-import { IReduxState } from '../app/types';
 import { OVERWRITE_CONFIG, SET_CONFIG, UPDATE_CONFIG } from '../base/config/actionTypes';
 import { NotifyClickButton } from '../base/config/configType';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
-import { iAmVisitor } from '../visitors/functions';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -17,7 +15,8 @@ import {
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 import { setMainToolbarThresholds } from './actions.web';
-import { TOOLBAR_BUTTONS, VISITORS_MODE_BUTTONS } from './constants';
+import { THRESHOLDS, TOOLBAR_BUTTONS } from './constants';
+import { getToolbarButtons } from './functions.web';
 import { NOTIFY_CLICK_MODE } from './types';
 
 import './subscriber.web';
@@ -55,7 +54,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             batch(() => {
                 if (action.type !== I_AM_VISITOR_MODE) {
-                    dispatch(setMainToolbarThresholds());
+                    dispatch(setMainToolbarThresholds(THRESHOLDS));
                 }
                 dispatch({
                     type: SET_BUTTONS_WITH_NOTIFY_CLICK,
@@ -69,7 +68,7 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
 
-        const toolbarButtons = _getToolbarButtons(state);
+        const toolbarButtons = getToolbarButtons(state, TOOLBAR_BUTTONS);
 
         dispatch({
             type: SET_TOOLBAR_BUTTONS,
@@ -170,26 +169,4 @@ function _buildButtonsArray(
         });
 
     return new Map([ ...customButtonsWithNotifyClick, ...buttons ]);
-}
-
-/**
- * Returns the list of enabled toolbar buttons.
- *
- * @param {Object} state - The redux state.
- * @returns {Array<string>} - The list of enabled toolbar buttons.
- */
-function _getToolbarButtons(state: IReduxState): Array<string> {
-    const { toolbarButtons, customToolbarButtons } = state['features/base/config'];
-    const customButtons = customToolbarButtons?.map(({ id }) => id);
-    let buttons = Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
-
-    if (iAmVisitor(state)) {
-        buttons = VISITORS_MODE_BUTTONS.filter(button => buttons.indexOf(button) > -1);
-    }
-
-    if (customButtons) {
-        return [ ...buttons, ...customButtons ];
-    }
-
-    return buttons;
 }

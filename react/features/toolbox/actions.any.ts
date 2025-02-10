@@ -6,11 +6,13 @@ import { setVideoMuted } from '../base/media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import {
+    SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_SHIFT_UP,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
+import { IMainToolbarButtonThresholds } from './types';
 
 /**
  * Enables/disables the toolbox.
@@ -116,5 +118,56 @@ export function setShiftUp(shiftUp: boolean) {
     return {
         type: SET_TOOLBOX_SHIFT_UP,
         shiftUp
+    };
+}
+
+/**
+ * Sets the mainToolbarButtonsThresholds.
+ *
+ * @param {IMainToolbarButtonThresholds} thresholds - Thresholds for screen size and visible main toolbar buttons.
+ * @returns {Function}
+ */
+export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThresholds) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { mainToolbarButtons } = getState()['features/base/config'];
+
+        if (!Array.isArray(mainToolbarButtons) || mainToolbarButtons.length === 0) {
+            return;
+        }
+
+        const mainToolbarButtonsThresholds: IMainToolbarButtonThresholds = [];
+
+        const mainToolbarButtonsLengthMap = new Map();
+        let orderIsChanged = false;
+
+        mainToolbarButtons.forEach(buttons => {
+            if (!Array.isArray(buttons) || buttons.length === 0) {
+                return;
+            }
+
+            mainToolbarButtonsLengthMap.set(buttons.length, buttons);
+        });
+
+        thresholds.forEach(({ width, order }) => {
+            let finalOrder = mainToolbarButtonsLengthMap.get(order.length);
+
+            if (finalOrder) {
+                orderIsChanged = true;
+            } else {
+                finalOrder = order;
+            }
+
+            mainToolbarButtonsThresholds.push({
+                order: finalOrder,
+                width
+            });
+        });
+
+        if (orderIsChanged) {
+            dispatch({
+                type: SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
+                mainToolbarButtonsThresholds
+            });
+        }
     };
 }
