@@ -9,7 +9,7 @@ import DialInSummaryApp from './features/invite/components/dial-in-summary/web/D
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
 
-import "../react/features/base/ui/styles/index.css";
+import "../react/features/base/ui/styles/tailwind.css";
 
 const logger = getLogger('index.web');
 
