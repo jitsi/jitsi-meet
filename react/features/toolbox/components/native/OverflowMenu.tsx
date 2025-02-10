@@ -27,6 +27,7 @@ import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardBu
 import { customButtonPressed } from '../../actions.native';
 import { getVisibleNativeButtons } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
+import { IToolboxNativeButton } from '../../types';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
@@ -62,12 +63,12 @@ interface IProps {
     /**
      * Toolbar buttons.
      */
-    _mainMenuButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+    _mainMenuButtons?: Array<IToolboxNativeButton>;
 
     /**
      * Overflow menu buttons.
      */
-    _overflowMenuButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
+    _overflowMenuButtons?: Array<IToolboxNativeButton>;
 
     /**
      * Whether the recoding button should be enabled or not.
@@ -205,8 +206,6 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                     overflowMenu = { true } />
             );
         }
-
-        return undefined;
     }
 
     /**
@@ -244,9 +243,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
         return (
             <>
                 {
-
-                    // @ts-ignore
-                    _overflowMenuButtons?.map(({ Content, key, text, ...rest }) => {
+                    _overflowMenuButtons?.map(({ Content, key, text, ...rest }: IToolboxNativeButton) => {
 
                         if (key === 'raisehand') {
                             return null;

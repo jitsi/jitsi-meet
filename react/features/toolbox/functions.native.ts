@@ -9,7 +9,7 @@ import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
 
 import { MAIN_TOOLBAR_BUTTONS_PRIORITY } from './constants';
 import { isButtonEnabled } from './functions.any';
-import { IGetVisibleNativeButtonsParams, IToolboxButton } from './types';
+import { IGetVisibleNativeButtonsParams, IToolboxNativeButton } from './types';
 
 export * from './functions.any';
 
@@ -88,7 +88,7 @@ export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarBu
         }
 
         return acc;
-    }, [] as IToolboxButton[]);
+    }, [] as IToolboxNativeButton[]);
 
     // if we have 1 button in the overflow menu it is better to directly display it in the main toolbar by replacing
     // the "More" menu button with it.

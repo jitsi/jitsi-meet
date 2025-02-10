@@ -12,7 +12,7 @@ import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
 import { isDesktopShareButtonDisabled } from './functions.native';
-import { ICustomToolbarButton, IToolboxButton, NativeToolbarButton } from './types';
+import { ICustomToolbarButton, IToolboxNativeButton, NativeToolbarButton } from './types';
 
 
 const microphone = {
@@ -149,7 +149,7 @@ function getOverflowMenuButton() {
  * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
  */
 export function useNativeToolboxButtons(
-        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
+        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
     const audioMuteButton = getAudioMuteButton();
     const videoMuteButton = getVideoMuteButton();
     const chatButton = getChatButton();
@@ -157,7 +157,7 @@ export function useNativeToolboxButtons(
     const tileViewButton = getTileViewButton();
     const overflowMenuButton = getOverflowMenuButton();
 
-    const buttons: { [key in NativeToolbarButton]?: IToolboxButton; } = {
+    const buttons: { [key in NativeToolbarButton]?: IToolboxNativeButton; } = {
         microphone: audioMuteButton,
         camera: videoMuteButton,
         chat: chatButton,
