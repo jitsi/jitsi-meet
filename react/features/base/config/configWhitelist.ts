@@ -80,6 +80,7 @@ export default [
     'customToolbarButtons',
     'deeplinking.disabled',
     'deeplinking.desktop.enabled',
+    'defaultLanguage',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'desktopSharingFrameRate',
