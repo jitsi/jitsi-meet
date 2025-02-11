@@ -153,7 +153,7 @@ export default class Notifications extends BasePageObject {
     private async getNotificationText(testId: string) {
         const notificationElement = this.participant.driver.$(`[data-testid="${testId}"]`);
 
-        await notificationElement.waitForExist();
+        await notificationElement.waitForExist({ timeout: 2_000 });
 
         return await notificationElement.getText();
     }

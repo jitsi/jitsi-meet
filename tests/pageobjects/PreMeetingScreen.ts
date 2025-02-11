@@ -55,7 +55,7 @@ export default abstract class PreMeetingScreen extends BasePageObject {
      */
     isLobbyRoomJoined() {
         return this.participant.driver.execute(
-            () => APP.conference._room?.room?.getLobby()?.lobbyRoom?.joined === true);
+            () => APP?.conference?._room?.room?.getLobby()?.lobbyRoom?.joined === true);
     }
 
     /**
