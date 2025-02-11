@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { UserData } from "../types";
 
-export
-const useUserData = (): UserData | null => {
+export const useUserData = (): UserData | null => {
     const xUser = localStorage.getItem("xUser");
 
     return useMemo(() => {
