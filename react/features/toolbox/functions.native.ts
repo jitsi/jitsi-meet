@@ -98,7 +98,21 @@ export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarBu
         button && mainButtonsKeys.push(button);
     }
 
-    const mainMenuButtons = mainButtonsKeys.map(key => allButtons[key]);
+    const mainMenuButtons
+        = mainButtonsKeys.map(key => allButtons[key]).sort((a, b) => {
+
+            // Native toolbox includes hangup and overflowmenu button keys, too
+            // hangup goes last, overflowmenu goes second-to-last
+            if (a.key === 'hangup' || a.key === 'overflowmenu') {
+                return 1;
+            }
+
+            if (b.key === 'hangup' || b.key === 'overflowmenu') {
+                return -1;
+            }
+
+            return 0; // other buttons are sorted by priority
+        });
 
     return {
         mainMenuButtons,
