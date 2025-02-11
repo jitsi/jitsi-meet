@@ -208,8 +208,7 @@ end
 -- @param creator_group the group of the user who created the user which
 -- presence we are updating (this is the poltergeist case, where a user creates
 -- a poltergeist), optional.
-function update_presence_identity(
-    stanza, user, group, creator_user, creator_group)
+function update_presence_identity(stanza, user, group, creator_user, creator_group)
 
     -- First remove any 'identity' element if it already
     -- exists, so it cannot be spoofed by a client
@@ -222,7 +221,11 @@ function update_presence_identity(
             end
             return tag
         end
-    )
+    );
+
+    if not user then
+        return;
+    end
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
