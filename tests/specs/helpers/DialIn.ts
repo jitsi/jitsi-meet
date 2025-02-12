@@ -21,7 +21,10 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
     await participant.waitForIceConnected();
     await participant.waitForRemoteStreams(1);
 
-    await participant.waitForSendReceiveData(20_000, 'dial-in.test.jigasi.participant.no.audio.after.join');
+    await participant.waitForSendReceiveData({
+        timeout: 20_000,
+        msg: 'dial-in.test.jigasi.participant.no.audio.after.join'
+    });
     console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${performance.now() - joinedTS} ms.`);
 }
 

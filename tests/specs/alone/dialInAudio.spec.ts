@@ -22,12 +22,22 @@ describe('Dial-In', () => {
     });
 
     it('retrieve pin', async () => {
-        const dialInPin = await ctx.p1.getInviteDialog().getPinNumber();
+        let dialInPin;
+
+        try {
+            dialInPin = await ctx.p1.getInviteDialog().getPinNumber();
+        } catch (e) {
+            console.error('dial-in.test.no-pin');
+            ctx.skipSuiteTests = true;
+            throw e;
+        }
 
         await ctx.p1.getInviteDialog().clickCloseButton();
 
         if (dialInPin.length === 0) {
             console.error('dial-in.test.no-pin');
+            ctx.skipSuiteTests = true;
+            throw new Error('no pin');
         }
 
         expect(dialInPin.length >= 8).toBe(true);
