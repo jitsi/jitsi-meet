@@ -11,6 +11,7 @@ public class BroadcastIntentHelper {
     public static Intent buildSetAudioMutedIntent(boolean muted) {
         Intent intent = new Intent(BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
         intent.putExtra("muted", muted);
+
         return intent;
     }
 
@@ -22,18 +23,21 @@ public class BroadcastIntentHelper {
         Intent intent = new Intent(BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
         intent.putExtra("to", to);
         intent.putExtra("message", message);
+
         return intent;
     }
 
     public static Intent buildToggleScreenShareIntent(boolean enabled) {
         Intent intent = new Intent(BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
         intent.putExtra("enabled", enabled);
+
         return intent;
     }
 
     public static Intent buildOpenChatIntent(String participantId) {
         Intent intent = new Intent(BroadcastAction.Type.OPEN_CHAT.getAction());
         intent.putExtra("to", participantId);
+
         return intent;
     }
 
@@ -45,24 +49,28 @@ public class BroadcastIntentHelper {
         Intent intent = new Intent(BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
         intent.putExtra("to", participantId);
         intent.putExtra("message", message);
+
         return intent;
     }
 
     public static Intent buildSetVideoMutedIntent(boolean muted) {
         Intent intent = new Intent(BroadcastAction.Type.SET_VIDEO_MUTED.getAction());
         intent.putExtra("muted", muted);
+
         return intent;
     }
 
     public static Intent buildSetClosedCaptionsEnabledIntent(boolean enabled) {
         Intent intent = new Intent(BroadcastAction.Type.SET_CLOSED_CAPTIONS_ENABLED.getAction());
         intent.putExtra("enabled", enabled);
+
         return intent;
     }
 
     public static Intent buildRetrieveParticipantsInfo(String requestId) {
         Intent intent = new Intent(BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
         intent.putExtra("requestId", requestId);
+
         return intent;
     }
 
@@ -78,12 +86,48 @@ public class BroadcastIntentHelper {
         intent.putExtra("timeout", timeout);
         intent.putExtra("title", title);
         intent.putExtra("uid", uid);
+
         return intent;
     }
 
     public static Intent buildHideNotificationIntent(String uid) {
         Intent intent = new Intent(BroadcastAction.Type.HIDE_NOTIFICATION.getAction());
         intent.putExtra("uid", uid);
+
+        return intent;
+    }
+
+    public static Intent buildStartRecordingIntent(
+        String mode, 
+        String dropboxToken, 
+        boolean onlySelf, 
+        boolean shouldShare, 
+        String rtmpStreamKey, 
+        String rtmpBroadcastID, 
+        String youtubeStreamKey, 
+        String youtubeBroadcastID, 
+        String extraMetadata, 
+        boolean transcription) {
+        Intent intent = new Intent(BroadcastAction.Type.START_RECORDING.getAction());
+        intent.putExtra("mode", mode);
+        intent.putExtra("dropboxToken", dropboxToken);
+        intent.putExtra("onlySelf", onlySelf);
+        intent.putExtra("shouldShare", shouldShare);
+        intent.putExtra("rtmpStreamKey", rtmpStreamKey);
+        intent.putExtra("rtmpBroadcastID", rtmpBroadcastID);
+        intent.putExtra("youtubeStreamKey", youtubeStreamKey);
+        intent.putExtra("youtubeBroadcastID", youtubeBroadcastID);
+        intent.putExtra("extraMetadata", extraMetadata);
+        intent.putExtra("transcription", transcription);
+        
+        return intent;
+    }
+
+    public static Intent buildStopRecordingIntent(String mode, boolean transcription) {
+        Intent intent = new Intent(BroadcastAction.Type.STOP_RECORDING.getAction());
+        intent.putExtra("mode", mode);
+        intent.putExtra("transcription", transcription);
+        
         return intent;
     }
 }
