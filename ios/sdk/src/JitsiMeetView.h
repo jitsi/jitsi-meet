@@ -49,5 +49,7 @@
 - (void)toggleCamera;
 - (void)showNotification:(NSString * _Nonnull)appearance :(NSString * _Nullable)description :(NSString * _Nullable)timeout :(NSString * _Nullable)title :(NSString * _Nullable)uid;
 - (void)hideNotification:(NSString * _Nullable)uid;
+- (void)startRecording:(NSString * _Nonnull)mode :(NSString * _Nullable)dropboxToken :(BOOL)onlySelf :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSString * _Nullable)extraMetadata :(BOOL)transcription;
+- (void)stopRecording:(NSString * _Nonnull)mode :(BOOL)transcription;
 
 @end
