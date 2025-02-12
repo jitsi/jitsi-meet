@@ -23,6 +23,7 @@ describe('Dial-In', () => {
 
     it('retrieve pin', async () => {
         let dialInPin;
+
         try {
             dialInPin = await ctx.p1.getInviteDialog().getPinNumber();
         } catch (e) {
