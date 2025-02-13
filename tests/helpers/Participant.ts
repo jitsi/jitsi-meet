@@ -363,11 +363,9 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForP2PIceConnected(): Promise<void> {
-        const driver = this.driver;
-
-        return driver.waitUntil(() =>
-            driver.execute(() => APP?.conference?.getP2PConnectionState() === 'connected'), {
+    waitForP2PIceConnected(): Promise<void> {
+        return this.driver.waitUntil(() =>
+            this.execute(() => APP?.conference?.getP2PConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: `expected P2P ICE to be connected for 15s for ${this.name}`
         });

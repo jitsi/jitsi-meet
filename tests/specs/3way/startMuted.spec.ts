@@ -234,10 +234,8 @@ describe('StartMuted', () => {
         const { p3 } = ctx;
 
         // Unmute p2 and check if its video is being received by p1 and p3.
-        await p2.getToolbar().clickVideoUnmuteButton();
-
+        await unmuteVideoAndCheck(p2, p3);
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
-        await p3.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
 
         // Mute p2's video just before p3 leaves.
         await p2.getToolbar().clickVideoMuteButton();

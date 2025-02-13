@@ -173,10 +173,7 @@ describe('Avatar', () => {
         await p3.hangup();
 
         // Unmute p1's and p2's videos
-        await p1.getToolbar().clickVideoUnmuteButton();
-
-        await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
-        await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
+        await unmuteVideoAndCheck(p1, p2);
     });
 
     it('email persistence', async () => {
