@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 import { getFeatureFlag } from '../../../base/flags/functions';
 
+
 import { IReduxState, IStore } from '../../../app/types';
 import {
     IconBell,
@@ -324,14 +325,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             icon: IconGear
         });
     }
-    if (helpEnabled) { 
-        tabs.push({
-            name: SETTINGS_TABS.HELP,
-            component: MoreTab,
-            labelKey: 'settings.help',
-            icon: IconGear
-        });
-    }
+
 
     return { _tabs: tabs };
 }
