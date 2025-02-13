@@ -80,10 +80,12 @@ export default class Filmstrip extends BasePageObject {
      * @param participant The participant.
      */
     async pinParticipant(participant: Participant) {
-        const id = participant === this.participant
-            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+        if (participant === this.participant) {
+            // when looking up the element and clicking it, it doesn't work if we do it twice in a row (oneOnOne.spec)
+            return this.participant.execute(() => document?.getElementById('localVideoContainer')?.click());
+        }
 
-        await this.participant.driver.$(`//span[@id="${id}"]`).click();
+        return this.participant.driver.$(`//span[@id="participant_${await participant.getEndpointId()}"]`).click();
     }
 
     /**
@@ -156,11 +158,18 @@ export default class Filmstrip extends BasePageObject {
     }
 
     /**
+     * Hover over local video.
+     */
+    hoverOverLocalVideo() {
+        return this.participant.driver.$(LOCAL_VIDEO_MENU_TRIGGER).moveTo();
+    }
+
+    /**
      * Clicks on the hide self view button from local video.
      */
     async hideSelfView() {
         // open local video menu
-        await this.participant.driver.$(LOCAL_VIDEO_MENU_TRIGGER).moveTo();
+        await this.hoverOverLocalVideo();
         await this.participant.driver.$(LOCAL_USER_CONTROLS).moveTo();
 
         // click Hide self view button
@@ -214,5 +223,17 @@ export default class Filmstrip extends BasePageObject {
     async countVisibleThumbnails() {
         return (await this.participant.driver.$$('//div[@id="remoteVideos"]//span[contains(@class,"videocontainer")]')
             .filter(thumbnail => thumbnail.isDisplayed())).length;
+    }
+
+    /**
+     * Check if remote videos in filmstrip are visible.
+     *
+     * @param isDisplayed whether or not filmstrip remote videos should be visible
+     */
+    verifyRemoteVideosDisplay(isDisplayed: boolean) {
+        return this.participant.driver.$('//div[contains(@class, "remote-videos")]/div').waitForDisplayed({
+            timeout: 5_000,
+            reverse: !isDisplayed,
+        });
     }
 }
