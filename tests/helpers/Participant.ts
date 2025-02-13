@@ -343,6 +343,21 @@ export class Participant {
     }
 
     /**
+     * Waits for ICE to get connected on the p2p connection.
+     *
+     * @returns {Promise<void>}
+     */
+    async waitForP2PIceConnected(): Promise<void> {
+        const driver = this.driver;
+
+        return driver.waitUntil(() =>
+            driver.execute(() => APP?.conference?.getP2PConnectionState() === 'connected'), {
+            timeout: 15_000,
+            timeoutMsg: `expected P2P ICE to be connected for 15s for ${this.name}`
+        });
+    }
+
+    /**
      * Waits for send and receive data.
      *
      * @param {Object} options

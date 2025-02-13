@@ -334,3 +334,14 @@ export async function checkSubject(participant: Participant, subject: string) {
 
     expect(txt.startsWith(subject)).toBe(true);
 }
+
+/**
+ * Check if a screensharing tile is displayed on the observer.
+ * Expects there was already a video by this participant and screen sharing will be the second video `-v1`.
+ */
+export async function checkForScreensharingTile(sharer: Participant, observer: Participant, reverse = false) {
+    await observer.driver.$(`//span[@id='participant_${await sharer.getEndpointId()}-v1']`).waitForDisplayed({
+        timeout: 3_000,
+        reverse
+    });
+}
