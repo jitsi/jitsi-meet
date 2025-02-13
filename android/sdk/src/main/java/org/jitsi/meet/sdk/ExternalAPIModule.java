@@ -99,6 +99,8 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         constants.put("TOGGLE_CAMERA", BroadcastAction.Type.TOGGLE_CAMERA.getAction());
         constants.put("SHOW_NOTIFICATION", BroadcastAction.Type.SHOW_NOTIFICATION.getAction());
         constants.put("HIDE_NOTIFICATION", BroadcastAction.Type.HIDE_NOTIFICATION.getAction());
+        constants.put("START_RECORDING", BroadcastAction.Type.START_RECORDING.getAction());
+        constants.put("STOP_RECORDING", BroadcastAction.Type.STOP_RECORDING.getAction());
 
         return constants;
     }

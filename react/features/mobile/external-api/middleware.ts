@@ -4,7 +4,7 @@ import { debounce } from 'lodash-es';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
+// @ts-ignore
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
@@ -32,8 +32,7 @@ import {
     JITSI_CONNECTION_URL_KEY
 } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import {
-    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
@@ -51,8 +50,11 @@ import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.n
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
+import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
+import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
 import { muteLocal } from '../../video-menu/actions.native';
@@ -450,6 +452,129 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.HIDE_NOTIFICATION, ({ uid }: any) => {
         dispatch(hideNotification(uid));
     });
+
+    eventEmitter.addListener(ExternalAPI.START_RECORDING, (
+            {
+                mode,
+                dropboxToken,
+                shouldShare,
+                rtmpStreamKey,
+                rtmpBroadcastID,
+                youtubeStreamKey,
+                youtubeBroadcastID,
+                extraMetadata = {},
+                transcription
+            }: any) => {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!conference) {
+            logger.error('Conference is not defined');
+
+            return;
+        }
+
+        if (dropboxToken && !isDropboxEnabled(state)) {
+            logger.error('Failed starting recording: dropbox is not enabled on this deployment');
+
+            return;
+        }
+
+        if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
+            logger.error('Failed starting recording: missing youtube or RTMP stream key');
+
+            return;
+        }
+
+        let recordingConfig;
+
+        if (mode === JitsiRecordingConstants.mode.FILE) {
+            const { recordingService } = state['features/base/config'];
+
+            if (!recordingService?.enabled && !dropboxToken) {
+                logger.error('Failed starting recording: the recording service is not enabled');
+
+                return;
+            }
+
+            if (dropboxToken) {
+                recordingConfig = {
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData: JSON.stringify({
+                        'file_recording_metadata': {
+                            ...extraMetadata,
+                            'upload_credentials': {
+                                'service_name': RECORDING_TYPES.DROPBOX,
+                                'token': dropboxToken
+                            }
+                        }
+                    })
+                };
+            } else {
+                recordingConfig = {
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData: JSON.stringify({
+                        'file_recording_metadata': {
+                            ...extraMetadata,
+                            'share': shouldShare
+                        }
+                    })
+                };
+            }
+        } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+            recordingConfig = {
+                broadcastId: youtubeBroadcastID || rtmpBroadcastID,
+                mode: JitsiRecordingConstants.mode.STREAM,
+                streamId: youtubeStreamKey || rtmpStreamKey
+            };
+        }
+
+        // Start audio / video recording, if requested.
+        if (typeof recordingConfig !== 'undefined') {
+            conference.startRecording(recordingConfig);
+        }
+
+        if (transcription) {
+            store.dispatch(setRequestingSubtitles(true, false, null));
+            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: true
+            });
+        }
+    });
+
+    eventEmitter.addListener(ExternalAPI.STOP_RECORDING, ({ mode, transcription }: any) => {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!conference) {
+            logger.error('Conference is not defined');
+
+            return;
+        }
+
+        if (transcription) {
+            store.dispatch(setRequestingSubtitles(false, false, null));
+            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: false
+            });
+        }
+
+        if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {
+            logger.error('Invalid recording mode provided!');
+
+            return;
+        }
+
+        const activeSession = getActiveSession(state, mode);
+
+        if (!activeSession?.id) {
+            logger.error('No recording or streaming session found');
+
+            return;
+        }
+
+        conference.stopRecording(activeSession.id);
+    });
 }
 
 /**
@@ -472,6 +597,8 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_CAMERA);
     eventEmitter.removeAllListeners(ExternalAPI.SHOW_NOTIFICATION);
     eventEmitter.removeAllListeners(ExternalAPI.HIDE_NOTIFICATION);
+    eventEmitter.removeAllListeners(ExternalAPI.START_RECORDING);
+    eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
 }
 
 /**

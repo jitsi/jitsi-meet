@@ -142,14 +142,26 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI toggleCamera];
 }
+
 - (void)showNotification:(NSString *)appearance :(NSString *)description :(NSString *)timeout :(NSString *)title :(NSString *)uid {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI showNotification:appearance :description :timeout :title :uid];
 }
+
 -(void)hideNotification:(NSString *)uid {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI hideNotification:uid];
 }
+
+- (void)startRecording:(RecordingMode)mode :(NSString *)dropboxToken :(BOOL)shouldShare :(NSString *)rtmpStreamKey :(NSString *)rtmpBroadcastID :(NSString *)youtubeStreamKey :(NSString *)youtubeBroadcastID :(NSString *)extraMetadata :(BOOL)transcription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI startRecording:mode :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
+}
+
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI stopRecording:mode :transcription];
+}       
 
 #pragma mark Private methods
 
