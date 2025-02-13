@@ -4,7 +4,8 @@ import {
     ensureFourParticipants,
     ensureOneParticipant,
     ensureThreeParticipants,
-    ensureTwoParticipants
+    ensureTwoParticipants,
+    hangupAllParticipants
 } from '../../helpers/participants';
 
 describe('Desktop sharing', () => {
@@ -126,7 +127,7 @@ describe('Desktop sharing', () => {
      *  The call switches to jvb and then back to p2p.
      */
     it('screen sharing toggle before others join', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureOneParticipant(ctx, {
             configOverwrite: {
@@ -178,7 +179,7 @@ describe('Desktop sharing', () => {
      * where only a screen share can be received. A bug fixed in jvb 0c5dd91b where the video was not received.
      */
     it('audio only and non dominant screen share', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureOneParticipant(ctx);
         const { p1 } = ctx;
@@ -215,7 +216,7 @@ describe('Desktop sharing', () => {
      * A problem fixed in jitsi-meet 3657c19e and d6ab0a72.
      */
     it('audio only and dominant screen share', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureOneParticipant(ctx, {
             configOverwrite: {
@@ -264,7 +265,7 @@ describe('Desktop sharing', () => {
      * Test screensharing with lastN. We add p4 with lastN=2 and verify that it receives the expected streams.
      */
     it('with lastN', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureThreeParticipants(ctx);
         const { p1, p2, p3 } = ctx;

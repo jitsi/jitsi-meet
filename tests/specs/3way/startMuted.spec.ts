@@ -1,6 +1,7 @@
 import {
     ensureOneParticipant,
     ensureTwoParticipants,
+    hangupAllParticipants,
     joinSecondParticipant,
     joinThirdParticipant,
     unmuteVideoAndCheck
@@ -252,11 +253,3 @@ describe('StartMuted', () => {
         await p1.getLargeVideo().assertPlaying();
     });
 });
-
-/**
- * Hangs up all participants (p1, p2 and p3)
- * @returns {Promise<void>}
- */
-function hangupAllParticipants() {
-    return Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup(), ctx.p3?.hangup() ]);
-}

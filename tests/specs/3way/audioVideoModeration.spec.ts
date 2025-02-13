@@ -2,6 +2,7 @@ import { Participant } from '../../helpers/Participant';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
+    hangupAllParticipants,
     unmuteAudioAndCheck,
     unmuteVideoAndCheck
 } from '../../helpers/participants';
@@ -120,7 +121,7 @@ describe('AVModeration', () => {
         await moderatorParticipantsPane.getAVModerationMenu().clickStopVideoModeration();
     });
     it('grant moderator', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureThreeParticipants(ctx);
 
@@ -143,7 +144,7 @@ describe('AVModeration', () => {
         await unmuteByModerator(p3, p2, false, true);
     });
     it('ask to unmute', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
 
@@ -181,7 +182,7 @@ describe('AVModeration', () => {
         await tryToVideoUnmuteAndCheck(p2, p1);
     });
     it('join moderated', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureOneParticipant(ctx);
 

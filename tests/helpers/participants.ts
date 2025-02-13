@@ -346,3 +346,12 @@ export async function checkForScreensharingTile(sharer: Participant, observer: P
         reverse
     });
 }
+
+/**
+ * Hangs up all participants (p1, p2, p3 and p4)
+ * @returns {Promise<void>}
+ */
+export function hangupAllParticipants() {
+    return Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup(), ctx.p3?.hangup(), ctx.p4?.hangup() ]
+        .map(p => p ?? Promise.resolve()));
+}
