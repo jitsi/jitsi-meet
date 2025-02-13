@@ -1,4 +1,9 @@
-import { ensureOneParticipant, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import {
+    ensureOneParticipant,
+    ensureThreeParticipants,
+    ensureTwoParticipants,
+    hangupAllParticipants
+} from '../../helpers/participants';
 
 describe('Codec selection', () => {
     it('asymmetric codecs', async () => {
@@ -66,7 +71,7 @@ describe('Codec selection', () => {
     });
 
     it('codec switch over', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx, {
             configOverwrite: {
