@@ -7,6 +7,7 @@ const ADD_PASSWORD_FIELD = 'info-password-input';
 const DIALOG_CONTAINER = 'security-dialog';
 const LOCAL_LOCK = 'info-password-local';
 const REMOTE_LOCK = 'info-password-remote';
+const REMOVE_PASSWORD = 'remove-password';
 
 /**
  * Page object for the security dialog.
@@ -132,5 +133,19 @@ export default class SecurityDialog extends BaseDialog {
             await this.participant.driver.keys([ Key.Escape ]);
             expect(validationMessage).toBe('');
         }
+    }
+
+    /**
+     * Removes the password from the current conference through the security dialog, if a password is set.
+     */
+    async removePassword() {
+        if (!await this.isLocked()) {
+            return;
+        }
+
+        const removePassword = this.participant.driver.$(`.${REMOVE_PASSWORD}`);
+
+        await removePassword.waitForClickable();
+        await removePassword.click();
     }
 }

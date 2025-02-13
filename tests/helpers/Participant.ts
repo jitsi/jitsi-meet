@@ -15,6 +15,7 @@ import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
 import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
+import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
 import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
@@ -503,6 +504,13 @@ export class Participant {
      */
     getSettingsDialog(): SettingsDialog {
         return new SettingsDialog(this);
+    }
+
+    /**
+     * Returns the password dialog.
+     */
+    getPasswordDialog(): PasswordDialog {
+        return new PasswordDialog(this);
     }
 
     /**

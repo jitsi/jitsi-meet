@@ -13,6 +13,7 @@ export type IContext = {
     p2: Participant;
     p3: Participant;
     p4: Participant;
+    roomKey: string;
     roomName: string;
     skipSuiteTests: boolean;
     times: any;
