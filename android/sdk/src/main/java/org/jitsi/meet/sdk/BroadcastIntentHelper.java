@@ -1,11 +1,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Intent;
-
-import org.jitsi.meet.sdk.log.JitsiMeetLogger;
-
-import java.util.Arrays;
-import java.util.List;
+import android.os.Bundle;
 
 public class BroadcastIntentHelper {
     public static Intent buildSetAudioMutedIntent(boolean muted) {
@@ -113,17 +109,17 @@ public class BroadcastIntentHelper {
     }
 
     public static Intent buildStartRecordingIntent(
-        RecordingMode mode, 
-        String dropboxToken, 
-        boolean shouldShare, 
-        String rtmpStreamKey, 
-        String rtmpBroadcastID, 
-        String youtubeStreamKey, 
-        String youtubeBroadcastID, 
-        Bundle extraMetadata, 
+        RecordingMode mode,
+        String dropboxToken,
+        boolean shouldShare,
+        String rtmpStreamKey,
+        String rtmpBroadcastID,
+        String youtubeStreamKey,
+        String youtubeBroadcastID,
+        Bundle extraMetadata,
         boolean transcription) {
         Intent intent = new Intent(BroadcastAction.Type.START_RECORDING.getAction());
-        intent.putExtra("mode", mode);
+        intent.putExtra("mode", mode.getMode());
         intent.putExtra("dropboxToken", dropboxToken);
         intent.putExtra("shouldShare", shouldShare);
         intent.putExtra("rtmpStreamKey", rtmpStreamKey);
@@ -132,15 +128,15 @@ public class BroadcastIntentHelper {
         intent.putExtra("youtubeBroadcastID", youtubeBroadcastID);
         intent.putExtra("extraMetadata", extraMetadata);
         intent.putExtra("transcription", transcription);
-        
+
         return intent;
     }
 
     public static Intent buildStopRecordingIntent(RecordingMode mode, boolean transcription) {
         Intent intent = new Intent(BroadcastAction.Type.STOP_RECORDING.getAction());
-        intent.putExtra("mode", mode);
+        intent.putExtra("mode", mode.getMode());
         intent.putExtra("transcription", transcription);
-        
+
         return intent;
     }
 }

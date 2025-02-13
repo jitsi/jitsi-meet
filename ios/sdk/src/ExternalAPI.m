@@ -210,25 +210,20 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:hideNotificationAction body:data];
 }
 
-typedef NS_ENUM(NSInteger, RecordingMode) {
-    FILE,
-    STREAM
-}
-
 static inline NSString *RecordingModeToString(RecordingMode mode) {
     switch (mode) {
-        case FILE:
+        case RecordingModeFile:
             return @"file";
-        case STREAM:
+        case RecordingModeStream:
             return @"stream";
         default:
             return nil;
     }
 }
 
-- (void)startRecording: (RecordingMode)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
+- (void)startRecording:(RecordingMode)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
     NSString *modeString = RecordingModeToString(mode);
-    NSMutableDictionary *data = @{
+    NSDictionary *data = @{
         @"mode": modeString,
         @"dropboxToken": dropboxToken,
         @"shouldShare": @(shouldShare),
@@ -243,9 +238,9 @@ static inline NSString *RecordingModeToString(RecordingMode mode) {
     [self sendEventWithName:startRecordingAction body:data];
 }
 
-- (void)stopRecording: (RecordingMode)mode :(BOOL)transcription {
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
     NSString *modeString = RecordingModeToString(mode);
-    NSMutableDictionary *data = @{
+    NSDictionary *data = @{
         @"mode": modeString,
         @"transcription": @(transcription)
     };

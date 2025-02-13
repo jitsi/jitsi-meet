@@ -18,12 +18,12 @@
 
 static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 
-@interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
-
 typedef NS_ENUM(NSInteger, RecordingMode) {
-    FILE,
-    STREAM
+    RecordingModeFile,
+    RecordingModeStream
 };
+
+@interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
 - (void)sendHangUp;
 - (void)sendSetAudioMuted:(BOOL)muted;
