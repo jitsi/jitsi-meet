@@ -3,7 +3,10 @@ import {
     checkForScreensharingTile,
     ensureOneParticipant,
     ensureTwoParticipants,
-    joinSecondParticipant
+    joinSecondParticipant,
+    muteAudioAndCheck,
+    unmuteAudioAndCheck,
+    unmuteVideoAndCheck
 } from '../../helpers/participants';
 
 describe('Mute', () => {
@@ -33,10 +36,7 @@ describe('Mute', () => {
     it('p2 unmute after p1 mute and check', async () => {
         const { p1, p2 } = ctx;
 
-        await p2.getToolbar().clickAudioUnmuteButton();
-
-        // and now check whether second participant is muted
-        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
+        await unmuteAudioAndCheck(p2, p1);
     });
 
     it('p1 mutes before p2 joins', async () => {
@@ -73,13 +73,10 @@ async function toggleMuteAndCheck(
         observer: Participant,
         muted: boolean) {
     if (muted) {
-        await testee.getToolbar().clickAudioMuteButton();
+        await muteAudioAndCheck(testee, observer);
     } else {
-        await testee.getToolbar().clickAudioUnmuteButton();
+        await unmuteAudioAndCheck(testee, observer);
     }
-
-    await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, !muted);
-    await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, !muted);
 }
 
 /**
@@ -136,7 +133,6 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
     await p1.getToolbar().clickStopDesktopSharingButton();
 
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
-    await p1.getToolbar().clickVideoUnmuteButton();
-    await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
+    await unmuteVideoAndCheck(p1, p2);
     await p2.waitForRemoteVideo(await p1.getEndpointId());
 }
