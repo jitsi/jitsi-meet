@@ -54,6 +54,17 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
 }
 
 /**
+ * Creates the first participant instance or prepares one for re-joining.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    return joinTheModeratorAsP1(ctx, options);
+}
+
+/**
  * Creates the second participant instance or prepares one for re-joining.
  *
  * @param {Object} ctx - The context.
