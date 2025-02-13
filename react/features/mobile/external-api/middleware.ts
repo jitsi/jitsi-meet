@@ -4,6 +4,7 @@ import { debounce } from 'lodash-es';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { AnyAction } from 'redux';
 
+// @ts-ignore
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
@@ -31,10 +32,7 @@ import {
     JITSI_CONNECTION_URL_KEY
 } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import { 
-    JitsiConferenceEvents, 
-    JitsiRecordingConstants 
-} from '../../base/lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
@@ -52,9 +50,11 @@ import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.n
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
+import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
-import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
+import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
 import { muteLocal } from '../../video-menu/actions.native';
@@ -66,12 +66,6 @@ import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../recording/actions.native';
-import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
-import { getActiveSession, supportsLocalRecording } from '../../recording/functions';
-import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
-import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
-
 
 /**
  * Event which will be emitted on the native side when a chat message is received
@@ -458,20 +452,22 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.HIDE_NOTIFICATION, ({ uid }: any) => {
         dispatch(hideNotification(uid));
     });
-    eventEmitter.addListener(ExternalAPI.START_RECORDING, ({ 
-        mode, 
-        dropboxToken, 
-        onlySelf, 
-        shouldShare, 
-        rtmpStreamKey, 
-        rtmpBroadcastID, 
-        youtubeStreamKey, 
-        youtubeBroadcastID,
-        extraMetadata = {}, 
-        transcription }: any) => {
+
+    eventEmitter.addListener(ExternalAPI.START_RECORDING, (
+            {
+                mode,
+                dropboxToken,
+                shouldShare,
+                rtmpStreamKey,
+                rtmpBroadcastID,
+                youtubeStreamKey,
+                youtubeBroadcastID,
+                extraMetadata = {},
+                transcription
+            }: any) => {
         const state = store.getState();
         const conference = getCurrentConference(state);
-        
+
         if (!conference) {
             logger.error('Conference is not defined');
 
@@ -490,18 +486,6 @@ function _registerForNativeEvents(store: IStore) {
             return;
         }
 
-        if (mode === 'local') {
-            const { localRecording } = state['features/base/config'];
-
-            if (!localRecording?.disable && supportsLocalRecording()) {
-                store.dispatch(startLocalVideoRecording(onlySelf));
-            } else {
-                logger.error('Failed starting recording: local recording is either disabled or not supported');
-            }
-
-            return;
-        }
-
         let recordingConfig;
 
         if (mode === JitsiRecordingConstants.mode.FILE) {
@@ -512,6 +496,7 @@ function _registerForNativeEvents(store: IStore) {
 
                 return;
             }
+
             if (dropboxToken) {
                 recordingConfig = {
                     mode: JitsiRecordingConstants.mode.FILE,
@@ -544,10 +529,6 @@ function _registerForNativeEvents(store: IStore) {
             };
         }
 
-        if (isScreenshotCaptureEnabled(state, true, false)) {
-            store.dispatch(toggleScreenshotCaptureSummary(true));
-        }
-
         // Start audio / video recording, if requested.
         if (typeof recordingConfig !== 'undefined') {
             conference.startRecording(recordingConfig);
@@ -578,12 +559,6 @@ function _registerForNativeEvents(store: IStore) {
             });
         }
 
-        if (mode === 'local') {
-            store.dispatch(stopLocalVideoRecording());
-
-            return;
-        }
-
         if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {
             logger.error('Invalid recording mode provided!');
 
@@ -592,12 +567,13 @@ function _registerForNativeEvents(store: IStore) {
 
         const activeSession = getActiveSession(state, mode);
 
-        if (activeSession && activeSession.id) {
-            store.dispatch(toggleScreenshotCaptureSummary(false));
-            conference.stopRecording(activeSession.id);
-        } else {
+        if (!activeSession?.id) {
             logger.error('No recording or streaming session found');
+
+            return;
         }
+
+        conference.stopRecording(activeSession.id);
     });
 }
 

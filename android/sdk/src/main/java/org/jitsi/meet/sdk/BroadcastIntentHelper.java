@@ -97,21 +97,34 @@ public class BroadcastIntentHelper {
         return intent;
     }
 
+    public enum RecordingMode {
+        FILE("file"),
+        STREAM("stream");
+
+        private final String mode;
+
+        RecordingMode(String mode) {
+            this.mode = mode;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+    }
+
     public static Intent buildStartRecordingIntent(
-        String mode, 
+        RecordingMode mode, 
         String dropboxToken, 
-        boolean onlySelf, 
         boolean shouldShare, 
         String rtmpStreamKey, 
         String rtmpBroadcastID, 
         String youtubeStreamKey, 
         String youtubeBroadcastID, 
-        String extraMetadata, 
+        Bundle extraMetadata, 
         boolean transcription) {
         Intent intent = new Intent(BroadcastAction.Type.START_RECORDING.getAction());
         intent.putExtra("mode", mode);
         intent.putExtra("dropboxToken", dropboxToken);
-        intent.putExtra("onlySelf", onlySelf);
         intent.putExtra("shouldShare", shouldShare);
         intent.putExtra("rtmpStreamKey", rtmpStreamKey);
         intent.putExtra("rtmpBroadcastID", rtmpBroadcastID);
@@ -123,7 +136,7 @@ public class BroadcastIntentHelper {
         return intent;
     }
 
-    public static Intent buildStopRecordingIntent(String mode, boolean transcription) {
+    public static Intent buildStopRecordingIntent(RecordingMode mode, boolean transcription) {
         Intent intent = new Intent(BroadcastAction.Type.STOP_RECORDING.getAction());
         intent.putExtra("mode", mode);
         intent.putExtra("transcription", transcription);

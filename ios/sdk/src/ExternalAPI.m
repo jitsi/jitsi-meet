@@ -192,7 +192,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:toggleCameraAction body:nil];
 }
 
-- (void)showNotification:(NSString *)appearance :(NSString *)description :(NSString *)timeout :(NSString *)title :(NSString *)uid {
+- (void)showNotification:(NSString*)appearance :(NSString*)description :(NSString*)timeout :(NSString*)title :(NSString*)uid {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     data[@"appearance"] = appearance;
     data[@"description"] = description;
@@ -203,33 +203,52 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:showNotificationAction body:data];
 }
 
-- (void)hideNotification:(NSString *)uid {
+- (void)hideNotification:(NSString*)uid {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     data[@"uid"] = uid;
     
     [self sendEventWithName:hideNotificationAction body:data];
 }
 
-- (void)startRecording: (NSString*)mode : (NSString*)dropboxToken : (BOOL)onlySelf : (BOOL)shouldShare : (NSString*)rtmpStreamKey : (NSString*)rtmpBroadcastID : (NSString*)youtubeStreamKey : (NSString*)youtubeBroadcastID : (NSString*)extraMetadata : (BOOL)transcription {
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-    data[@"mode"] = mode;
-    data[@"dropboxToken"] = dropboxToken;
-    data[@"onlySelf"] = [NSNumber numberWithBool:onlySelf];
-    data[@"shouldShare"] = [NSNumber numberWithBool:shouldShare];
-    data[@"rtmpStreamKey"] = rtmpStreamKey;
-    data[@"rtmpBroadcastID"] = rtmpBroadcastID;
-    data[@"youtubeStreamKey"] = youtubeStreamKey;
-    data[@"youtubeBroadcastID"] = youtubeBroadcastID;
-    data[@"extraMetadata"] = extraMetadata;
-    data[@"transcription"] = [NSNumber numberWithBool:transcription];
+typedef NS_ENUM(NSInteger, RecordingMode) {
+    FILE,
+    STREAM
+}
+
+static inline NSString *RecordingModeToString(RecordingMode mode) {
+    switch (mode) {
+        case FILE:
+            return @"file";
+        case STREAM:
+            return @"stream";
+        default:
+            return nil;
+    }
+}
+
+- (void)startRecording: (RecordingMode)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
+    NSString *modeString = RecordingModeToString(mode);
+    NSMutableDictionary *data = @{
+        @"mode": modeString,
+        @"dropboxToken": dropboxToken,
+        @"shouldShare": @(shouldShare),
+        @"rtmpStreamKey": rtmpStreamKey,
+        @"rtmpBroadcastID": rtmpBroadcastID,
+        @"youtubeStreamKey": youtubeStreamKey,
+        @"youtubeBroadcastID": youtubeBroadcastID,
+        @"extraMetadata": extraMetadata,
+        @"transcription": @(transcription)
+    };
     
     [self sendEventWithName:startRecordingAction body:data];
 }
 
-- (void)stopRecording: (NSString*)mode : (BOOL)transcription {
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-    data[@"mode"] = mode;
-    data[@"transcription"] = [NSNumber numberWithBool:transcription];
+- (void)stopRecording: (RecordingMode)mode :(BOOL)transcription {
+    NSString *modeString = RecordingModeToString(mode);
+    NSMutableDictionary *data = @{
+        @"mode": modeString,
+        @"transcription": @(transcription)
+    };
     
     [self sendEventWithName:stopRecordingAction body:data];
 }
