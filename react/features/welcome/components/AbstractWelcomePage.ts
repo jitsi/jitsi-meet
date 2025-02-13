@@ -160,7 +160,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     _animateRoomNameChanging(word: string) {
         let animateTimeoutId;
-        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
+        const roomPlaceholder = this.state.roomPlaceholder + word.substring(0, 1);
 
         if (word.length > 1) {
             animateTimeoutId
