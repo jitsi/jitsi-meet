@@ -14,13 +14,20 @@ import { withPixelLineHeight } from "../../../styles/functions.web";
 
 import { Button, Input, TransparentModal } from "@internxt/ui";
 import { WithTranslation } from "react-i18next";
+import { toggleAudioSettings, toggleVideoSettings } from "../../../../settings/actions.web";
+import { handleToggleVideoMuted } from "../../../../toolbox/actions.any";
+import { muteLocal } from "../../../../video-menu/actions.any";
 import Video from "../../../media/components/web/Video";
+import { MEDIA_TYPE } from "../../../media/constants";
 import ConnectionStatus from "../../../premeeting/components/web/ConnectionStatus";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
 import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";
 import Header from "./components/Header";
+
 import { useFullName } from "./hooks/useFullName";
 import { useUserData } from "./hooks/useUserData";
+
+import MediaControls from "./components/MediaControls";
 
 interface IProps extends WithTranslation {
     /**
@@ -103,13 +110,18 @@ interface IProps extends WithTranslation {
      */
 
     audioTrack?: any;
-}
 
-interface RightContentProps {
-    isLogged: boolean;
-    avatar: string | null;
-    fullName?: string;
-    t: Function;
+    /**
+     * Click handler for the small icon. Opens video options.
+     */
+    onVideoOptionsClick: Function;
+
+    /**
+     * Click handler for the small icon. Opens audio options.
+     */
+    onAudioOptionsClick: Function;
+
+    dispatch: Function;
 }
 
 const useStyles = makeStyles()((theme) => ({
@@ -217,6 +229,9 @@ const PreMeetingScreen = ({
     videoTrack,
     audioTrack,
     t,
+    onVideoOptionsClick,
+    onAudioOptionsClick,
+    dispatch,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -246,6 +261,14 @@ const PreMeetingScreen = ({
         ),
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
     );
+
+    const handleVideoClick = () => {
+        dispatch(handleToggleVideoMuted(!videoMuted, true, true));
+    };
+
+    const handleAudioClick = () => {
+        dispatch(muteLocal(!audioTrack?.isMuted(), MEDIA_TYPE.AUDIO));
+    };
 
     return (
         <div className="flex flex-col h-full">
@@ -283,6 +306,15 @@ const PreMeetingScreen = ({
                                 </div>
                             )}
                         </div>
+                        <MediaControls
+                            videoTrack={videoTrack}
+                            isVideoMuted={videoMuted}
+                            audioTrack={audioTrack}
+                            onVideoClick={handleVideoClick}
+                            onAudioClick={handleAudioClick}
+                            onVideoOptionsClick={() => onVideoOptionsClick()}
+                            onAudioOptionsClick={() => onAudioOptionsClick()}
+                        />
                         <Button onClick={() => undefined} disabled={!userName} variant="primary">
                             {t("meet.preMeeting.joinMeeting")}
                         </Button>
@@ -336,4 +368,10 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     };
 }
 
-export default translate(connect(mapStateToProps)(PreMeetingScreen));
+const mapDispatchToProps = (dispatch: any) => ({
+    onAudioOptionsClick: toggleAudioSettings,
+    onVideoOptionsClick: toggleVideoSettings,
+    dispatch,
+});
+
+export default translate(connect(mapStateToProps, mapDispatchToProps)(PreMeetingScreen));
