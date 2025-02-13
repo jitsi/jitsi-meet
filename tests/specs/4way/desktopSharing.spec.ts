@@ -1,6 +1,6 @@
 import { SET_AUDIO_ONLY } from '../../../react/features/base/audio-only/actionTypes';
-import type { Participant } from '../../helpers/Participant';
 import {
+    checkForScreensharingTile,
     ensureFourParticipants,
     ensureOneParticipant,
     ensureThreeParticipants,
@@ -311,12 +311,3 @@ describe('Desktop sharing', () => {
     });
 });
 
-/**
- * Check if a screensharing tile is displayed on the observer.
- */
-async function checkForScreensharingTile(sharer: Participant, observer: Participant, reverse = false) {
-    await observer.driver.$(`//span[@id='participant_${await sharer.getEndpointId()}-v1']`).waitForDisplayed({
-        timeout: 3_000,
-        reverse
-    });
-}

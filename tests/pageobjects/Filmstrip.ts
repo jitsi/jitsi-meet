@@ -136,11 +136,7 @@ export default class Filmstrip extends BasePageObject {
      * @param participant
      */
     async muteAudio(participant: Participant) {
-        const participantId = await participant.getEndpointId();
-
-        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
-
-        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).click();
+        await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'mutelink', false);
     }
 
     /**
