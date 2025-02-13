@@ -226,6 +226,7 @@
     "test-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.firefox.conf.ts --spec",
     "test-ff": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.firefox.conf.ts",
     "test-dev": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.dev.conf.ts",
+    "test-dev-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.dev.conf.ts --spec",
     "test-grid": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts",
     "test-grid-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts --spec"
   },
