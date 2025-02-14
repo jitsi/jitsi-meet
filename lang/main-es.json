@@ -1,5 +1,6 @@
 {
     "meet": {
+        "internxtMeet": "Internxt Meet",
         "login": {
             "login": "Iniciar sesión",
             "signUp": "Registrarse"
@@ -8,7 +9,8 @@
             "newMeeting": "Nueva reunión",
             "enterYourName": "Introduce tu nombre",
             "joinMeeting": "Unirse a la reunión",
-            "nameRequired": "Se requiere un nombre"
+            "nameRequired": "Se requiere un nombre",
+            "participants": "Participantes"
         }
     },
     "addPeople": {
