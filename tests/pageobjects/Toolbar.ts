@@ -277,7 +277,7 @@ export default class Toolbar extends BasePageObject {
      * Ensures the overflow menu is not displayed.
      * @private
      */
-    private async closeOverflowMenu() {
+    async closeOverflowMenu() {
         if (!await this.isOverflowMenuOpen()) {
             return;
         }

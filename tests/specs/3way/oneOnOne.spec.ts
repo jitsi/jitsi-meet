@@ -56,7 +56,7 @@ describe('OneOnOne', () => {
         await p1.getFilmstrip().pinParticipant(p1);
         await p1.getFilmstrip().verifyRemoteVideosDisplay(true);
 
-        await p1.getFilmstrip().pinParticipant(p1);
+        await p1.getFilmstrip().unpinParticipant(p1);
         await p1.getFilmstrip().verifyRemoteVideosDisplay(false);
     });
 
