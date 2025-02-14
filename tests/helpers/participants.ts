@@ -259,7 +259,7 @@ export async function unmuteAudioAndCheck(testee: Participant, observer: Partici
 }
 
 /**
- * Starts the video on testee and check on observer.
+ * Stop the video on testee and check on observer.
  * @param testee
  * @param observer
  */
@@ -268,6 +268,18 @@ export async function unmuteVideoAndCheck(testee: Participant, observer: Partici
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
     await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+}
+
+/**
+ * Starts the video on testee and check on observer.
+ * @param testee
+ * @param observer
+ */
+export async function muteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+    await testee.getToolbar().clickVideoMuteButton();
+
+    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
+    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
 }
 
 /**
