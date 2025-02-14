@@ -178,6 +178,7 @@ export default [
     'hideEmailInSettings',
     'hideLobbyButton',
     'hidePasswordInLobby',
+    'participantNamesToAutoApprove',
     'hosts',
     'iAmRecorder',
     'iAmSipGateway',

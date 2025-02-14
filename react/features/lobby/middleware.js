@@ -10,7 +10,7 @@ import {
     conferenceWillJoin
 } from '../base/conference';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
+import { getFirstLoadableAvatarUrl, getLocalParticipant, getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
@@ -105,6 +105,17 @@ StateListenerRegistry.register(
                             name
                         })
                     );
+
+                    /**
+                     * ignore if knocking participant is in auto approve list
+                     */
+                    try {
+                      if (_shouldAutoApproveKnockingParticipant(getState, name)) {
+                        dispatch(approveKnockingParticipant(id));
+                        return;
+                      }
+                    } catch(ex) { }
+                      
                     if (soundsParticipantKnocking) {
                         dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
                     }
@@ -207,6 +218,18 @@ StateListenerRegistry.register(
     }
 );
 
+
+function _shouldAutoApproveKnockingParticipant(getState, name) {
+  const { participantNamesToAutoApprove } = getState()['features/base/config'];
+  return participantNamesToAutoApprove?.includes(name)
+}
+
+function _areAllKnockingParticipantsAutoApproved(getState, knockingParticipants) {
+  return knockingParticipants.every((participant) =>
+    _shouldAutoApproveKnockingParticipant(getState, participant.name)
+  )
+}
+
 /**
  * Function to handle the lobby notification.
  *
@@ -222,6 +245,16 @@ function _handleLobbyNotification(store) {
 
         return;
     }
+
+    /**
+     * Do not show notification if all knocking participants are in auto approve list
+     */
+
+    try {
+      if (_areAllKnockingParticipantsAutoApproved(getState, knockingParticipants)) {
+        return;
+      }
+    } catch(ex) { }
 
     let notificationTitle;
     let customActionNameKey;
@@ -288,7 +321,17 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
         const result = next(action);
 
-        dispatch(openLobbyScreen());
+        /**
+         * do not show the lobby if participant will be auto approved
+         */
+        try {
+          const local = getLocalParticipant(getState());
+          if (!_shouldAutoApproveKnockingParticipant(getState, local.name)) {
+            dispatch(openLobbyScreen());
+          }
+        } catch(ex) {
+          dispatch(openLobbyScreen());
+        }
 
         if (shouldAutoKnock(state)) {
             dispatch(startKnocking());

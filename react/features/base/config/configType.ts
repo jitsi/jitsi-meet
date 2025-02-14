@@ -331,6 +331,7 @@ export interface IConfig {
     hideEmailInSettings?: boolean;
     hideLobbyButton?: boolean;
     hidePasswordInLobby?: boolean;
+    participantNamesToAutoApprove?: Array<string>;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {
