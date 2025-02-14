@@ -63,7 +63,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     specs: [
         'specs/**'
     ],
-    maxInstances: 1, // if changing check onWorkerStart logic
+    maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
     baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture/',
     tsConfigPath: './tsconfig.json',
