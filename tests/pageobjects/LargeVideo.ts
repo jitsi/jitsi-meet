@@ -46,9 +46,8 @@ export default class LargeVideo extends BasePageObject {
      * Returns the source of the large video currently shown.
      */
     getId() {
-        return this.participant.execute('return document.getElementById("largeVideo").srcObject.id');
+        return this.participant.execute(() => document.getElementById('largeVideo')?.srcObject?.id);
     }
-
 
     /**
      * Checks if the large video is playing or not.
