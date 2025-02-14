@@ -17,8 +17,6 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
-const usingGrid = Boolean(new URL(import.meta.url).searchParams.get('grid'));
-
 const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
@@ -35,8 +33,7 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    `--use-file-for-fake-audio-capture=${
-        usingGrid ? process.env.REMOTE_RESOURCE_PATH : 'tests/resources'}/fakeAudioStream.wav`
+    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
 ];
 
 if (process.env.RESOLVER_RULES) {
