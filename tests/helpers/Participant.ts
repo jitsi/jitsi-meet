@@ -406,7 +406,6 @@ export class Participant {
         });
     }
 
-
     /**
      * Waits for remote streams.
      *
@@ -803,26 +802,54 @@ export class Participant {
     /**
      * Waits for remote video state - receiving and displayed.
      * @param endpointId
+     * @param reverse
      */
-    async waitForRemoteVideo(endpointId: string) {
-        await this.driver.waitUntil(async () =>
-            await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                endpointId) && await this.driver.$(
-                `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
-            timeout: 15_000,
-            timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.name}`
-        });
+    async waitForRemoteVideo(endpointId: string, reverse = false) {
+        if (reverse) {
+            await this.driver.waitUntil(async () =>
+                !await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
+                    endpointId) && !await this.driver.$(
+                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                timeout: 15_000,
+                timeoutMsg: `expected remote video for ${endpointId} to not be received 15s by ${this.displayName}`
+            });
+        } else {
+            await this.driver.waitUntil(async () =>
+                await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
+                    endpointId) && await this.driver.$(
+                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                timeout: 15_000,
+                timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.displayName}`
+            });
+        }
     }
 
     /**
      * Waits for ninja icon to be displayed.
-     * @param endpointId
+     * @param endpointId When no endpoint id is passed we check for any ninja icon.
      */
-    async waitForNinjaIcon(endpointId: string) {
-        await this.driver.$(`//span[@id='participant_${endpointId}']//span[@class='connection_ninja']`)
-            .waitForDisplayed({
-                timeout: 15_000,
-                timeoutMsg: `expected ninja icon for ${endpointId} to be displayed in 15s by ${this.name}`
-            });
+    async waitForNinjaIcon(endpointId?: string) {
+        if (endpointId) {
+            await this.driver.$(`//span[@id='participant_${endpointId}']//span[@class='connection_ninja']`)
+                .waitForDisplayed({
+                    timeout: 15_000,
+                    timeoutMsg: `expected ninja icon for ${endpointId} to be displayed in 15s by ${this.name}`
+                });
+        } else {
+            await this.driver.$('//span[contains(@class,"videocontainer")]//span[contains(@class,"connection_ninja")]')
+                .waitForDisplayed({
+                    timeout: 5_000,
+                    timeoutMsg: `expected ninja icon to be displayed in 5s by ${this.displayName}`
+                });
+        }
+    }
+
+    /**
+     * Waits for dominant speaker icon to appear in remote video of a participant.
+     * @param endpointId the endpoint ID of the participant whose dominant speaker icon status will be checked.
+     */
+    waitForDominantSpeaker(endpointId: string) {
+        return this.driver.$(`//span[@id="participant_${endpointId}" and contains(@class, "dominant-speaker")]`)
+            .waitForDisplayed({ timeout: 5_000 });
     }
 }
