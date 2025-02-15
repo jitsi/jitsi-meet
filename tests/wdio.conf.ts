@@ -323,6 +323,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
                         'image/png');
                 }));
 
+                // @ts-ignore
+                allProcessing.push(bInstance.execute(() => typeof APP !== 'undefined' && APP.connection?.getLogs())
+                    .then(logs =>
+                        logs && AllureReporter.addAttachment(
+                            `debug-logs-${instance}`,
+                            JSON.stringify(logs, null, '    '),
+                            'text/plain'))
+                    .catch(e => console.error('Failed grabbing debug logs', e)));
 
                 AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
 
@@ -331,7 +339,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }));
             });
 
-            await Promise.all(allProcessing);
+            await Promise.allSettled(allProcessing);
         }
     },
 
