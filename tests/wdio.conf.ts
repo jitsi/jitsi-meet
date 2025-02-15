@@ -166,14 +166,24 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
+     * We have overriden this function in beforeSession to be able to pass cid as first param.
      *
      * @returns {Promise<void>}
      */
-    async before() {
+    async before(cid, _, specs) {
+        if (specs.length !== 1) {
+            console.warn('We expect to run a single suite, but got more than one');
+        }
+
+        const testName = path.basename(specs[0]).replace('.spec.ts', '');
+
+        console.log(`Running test: ${testName} via worker: ${cid}`);
+
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             const bInstance = multiremotebrowser.getInstance(instance);
 
-            initLogger(bInstance, instance, TEST_RESULTS_DIR);
+            // @ts-ignore
+            initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
 
             if (bInstance.isFirefox) {
                 return;
@@ -201,6 +211,24 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (ctx?.webhooksProxy) {
             ctx.webhooksProxy.disconnect();
+        }
+    },
+
+    beforeSession(c, capabilities, specs, cid) {
+        const originalBefore = c.before;
+
+        if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
+            console.warn('No before hook found or more than one found, skipping');
+
+            return;
+        }
+
+        if (originalBefore) {
+            c.before = [ async function(...args) {
+                // Call original with cid as first param, followed by original args
+                // @ts-ignore
+                return await originalBefore[0].call(c, cid, ...args);
+            } ];
         }
     },
 
