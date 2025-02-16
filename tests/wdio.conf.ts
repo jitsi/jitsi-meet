@@ -179,11 +179,23 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         console.log(`Running test: ${testName} via worker: ${cid}`);
 
+        const globalAny: any = global;
+
+        globalAny.ctx = {
+            times: {}
+        } as IContext;
+        globalAny.ctx.keepAlive = [];
+
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             const bInstance = multiremotebrowser.getInstance(instance);
 
             // @ts-ignore
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
+
+            // setup keepalive
+            globalAny.ctx.keepAlive.push(setInterval(async () => {
+                await bInstance.execute(() => console.log('keep-alive'));
+            }, 20_000));
 
             if (bInstance.isFirefox) {
                 return;
@@ -195,13 +207,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
         }));
 
-        const globalAny: any = global;
-        const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
-
-        globalAny.ctx = {
-            times: {}
-        } as IContext;
-        globalAny.ctx.roomName = roomName;
+        globalAny.ctx.roomName = `jitsimeettorture-${crypto.randomUUID()}`;
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
     },
@@ -212,6 +218,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         if (ctx?.webhooksProxy) {
             ctx.webhooksProxy.disconnect();
         }
+
+        ctx.keepAlive?.forEach(clearInterval);
     },
 
     beforeSession(c, capabilities, specs, cid) {
