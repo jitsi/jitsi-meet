@@ -26,6 +26,7 @@ const ffExcludes = [
     'specs/3way/activeSpeaker.spec.ts',
     'specs/3way/startMuted.spec.ts', // bad audio levels
     'specs/4way/desktopSharing.spec.ts',
+    'specs/4way/lastN.spec.ts',
 
     // when unmuting a participant, we see the presence in debug logs imidiately,
     // but for 15 seconds it is not received/processed by the client
