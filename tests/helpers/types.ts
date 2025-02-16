@@ -9,6 +9,7 @@ export type IContext = {
     iframeAPI: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
+    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
