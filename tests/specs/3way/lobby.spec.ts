@@ -179,14 +179,13 @@ describe('Lobby', () => {
         await enableLobby();
         await enterLobby(p1);
 
-        // WebParticipant participant1 = getParticipant1();
         const p1SecurityDialog = p1.getSecurityDialog();
 
         await p1.getToolbar().clickSecurityButton();
         await p1SecurityDialog.waitForDisplay();
 
         await p1SecurityDialog.toggleLobby();
-        await p1SecurityDialog.waitForLobbyEnabled();
+        await p1SecurityDialog.waitForLobbyEnabled(true);
 
         const { p3 } = ctx;
 
