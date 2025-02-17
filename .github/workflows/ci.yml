@@ -88,7 +88,7 @@ jobs:
       run: |
         uname -a
         xcode-select -p
-        sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
       uses: maxim-lobanov/setup-cocoapods@v1
@@ -99,6 +99,8 @@ jobs:
         pod --version
         cd ios
         pod install --repo-update --deployment
+    - name: Check if the git repository is clean
+      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
   android-sdk-build:
     name: Build mobile SDK (Android)
@@ -137,7 +139,7 @@ jobs:
       run: |
         uname -a
         xcode-select -p
-        sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
       uses: maxim-lobanov/setup-cocoapods@v1
@@ -148,6 +150,8 @@ jobs:
         pod --version
         cd ios
         pod install --repo-update --deployment
+    - name: Check if the git repository is clean
+      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: |
         xcodebuild clean \
           -workspace ios/jitsi-meet.xcworkspace \
