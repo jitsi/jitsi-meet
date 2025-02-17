@@ -62,6 +62,7 @@ buck-out/
 
 # fastlane
 #
+.bundle/
 **/fastlane/report.xml
 **/fastlane/Preview.html
 **/fastlane/test_output
