@@ -5,6 +5,7 @@ GEM
       base64
       nkf
       rexml
+    abbrev (0.1.2)
     activesupport (7.2.2.1)
       base64
       benchmark (>= 0.3)
@@ -89,6 +90,7 @@ GEM
       highline (~> 2.0.0)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.0)
+    csv (3.3.2)
     declarative (0.0.20)
     digest-crc (0.7.0)
       rake (>= 12.0.0, < 14.0.0)
@@ -240,6 +242,7 @@ GEM
     molinillo (0.8.0)
     multi_json (1.15.0)
     multipart-post (2.4.1)
+    mutex_m (0.3.0)
     nanaimo (0.4.0)
     nap (1.1.0)
     naturally (2.2.1)
@@ -312,9 +315,14 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  abbrev
+  bigdecimal
   bundler
   cocoapods (~> 1.16)
+  csv
   fastlane
+  logger
+  mutex_m
 
 RUBY VERSION
    ruby 3.4.2p28
