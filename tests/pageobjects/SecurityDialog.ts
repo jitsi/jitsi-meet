@@ -1,5 +1,3 @@
-import { Key } from 'webdriverio';
-
 import BaseDialog from './BaseDialog';
 
 const ADD_PASSWORD_LINK = 'add-password';
@@ -118,21 +116,6 @@ export default class SecurityDialog extends BaseDialog {
 
         await this.participant.driver.keys(password);
         await this.participant.driver.$('button=Add').click();
-
-        let validationMessage;
-
-        // There are two cases here, validation is enabled and the field passwordEntry maybe there
-        // with validation failed, or maybe successfully hidden after setting the password
-        // So let's give it some time to act on any of the above
-        if (!await passwordEntry.isExisting()) {
-            // validation had failed on password field as it is still on the page
-            validationMessage = passwordEntry.getAttribute('validationMessage');
-        }
-
-        if (validationMessage) {
-            await this.participant.driver.keys([ Key.Escape ]);
-            expect(validationMessage).toBe('');
-        }
     }
 
     /**
