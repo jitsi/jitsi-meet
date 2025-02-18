@@ -212,7 +212,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesEtherpadBase?: boolean;
-        overwritesHosts?: boolean;
         overwritesLiveStreamingUrls?: boolean;
         overwritesPeopleSearchUrl?: boolean;
         overwritesPrejoinConfigICEUrl?: boolean;
@@ -262,11 +261,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     permanentProperties.overwritesPeopleSearchUrl = 'config.peopleSearchUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
     permanentProperties.overwritesEtherpadBase = 'config.etherpad_base' in params;
-    const hosts = params['config.hosts'] ?? {};
-    const hostsProps = [ 'anonymousdomain', 'authdomain', 'domain', 'focus', 'muc', 'visitorFocus' ];
-
-    permanentProperties.overwritesHosts = 'config.hosts' in params
-        || Boolean(hostsProps.find(p => `config.hosts.${p}` in params || (typeof hosts === 'object' && p in hosts)));
 
     const prejoinConfig = params['config.prejoinConfig'] ?? {};
 
