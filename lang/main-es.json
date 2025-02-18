@@ -11,6 +11,12 @@
             "joinMeeting": "Unirse a la reunión",
             "nameRequired": "Se requiere un nombre",
             "participants": "Participantes"
+        },
+        "meeting": {
+            "button": {
+                "gallery": "Galeria",
+                "speaker": "Speaker"
+            }
         }
     },
     "addPeople": {
