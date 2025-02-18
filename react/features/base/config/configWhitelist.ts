@@ -91,6 +91,7 @@ export default [
     'disableAddingBackgroundImages',
     'disableAudioLevels',
     'disableBeforeUnloadHandlers',
+    'disableCameraTintForeground',
     'disableChatSmileys',
     'disableDeepLinking',
     'disabledNotifications',
