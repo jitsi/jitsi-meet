@@ -36,6 +36,7 @@ function _getInitialState() {
 export interface ITranscribingState {
     isTranscribing: boolean;
     transcriberJID?: string | null;
+    language?: string | null;
 }
 
 /**
@@ -48,13 +49,15 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
             return {
                 ...state,
                 isTranscribing: true,
-                transcriberJID: action.transcriberJID
+                transcriberJID: action.transcriberJID,
+                language: action.language || state.language
             };
         case TRANSCRIBER_LEFT:
             return {
                 ...state,
                 isTranscribing: false,
-                transcriberJID: undefined
+                transcriberJID: undefined,
+                language: null
             };
         default:
             return state;

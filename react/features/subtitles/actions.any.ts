@@ -52,6 +52,13 @@ export function removeCachedTranscriptMessage(transcriptMessageID: string) {
  *      newTranscriptMessage: Object
  * }}
  */
+export function startTranscription(language: string) {
+    return {
+        type: 'START_TRANSCRIPTION',
+        language
+    };
+}
+
 export function updateTranscriptMessage(transcriptMessageID: string,
         newTranscriptMessage: Object) {
     return {
@@ -91,10 +98,12 @@ export function setRequestingSubtitles(
         enabled: boolean,
         displaySubtitles = true,
         language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`) {
-    return {
+    return (dispatch, getState) => {
+        dispatch({
         type: SET_REQUESTING_SUBTITLES,
         displaySubtitles,
         enabled,
         language
-    };
-}
+    });
+
+}}

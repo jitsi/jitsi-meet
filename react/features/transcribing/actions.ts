@@ -15,7 +15,7 @@ import {
 export function transcriberJoined(participantId: string) {
     return {
         type: TRANSCRIBER_JOINED,
-        transcriberJID: participantId
+        transcriberJID: participantId,
     };
 }
 

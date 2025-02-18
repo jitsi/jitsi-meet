@@ -492,6 +492,10 @@ function initCommands() {
         },
         'set-subtitles': (enabled, displaySubtitles, language) => {
             APP.store.dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
+        
+            if (enabled) {
+                APP.store.dispatch({ type: 'START_TRANSCRIPTION', language });
+            }
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
