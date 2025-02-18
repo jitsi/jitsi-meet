@@ -213,7 +213,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDeploymentUrls?: boolean;
         overwritesEtherpadBase?: boolean;
         overwritesHosts?: boolean;
-        overwritesIceServers?: boolean;
         overwritesLiveStreamingUrls?: boolean;
         overwritesPeopleSearchUrl?: boolean;
         overwritesPrejoinConfigICEUrl?: boolean;
@@ -293,8 +292,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
                     || 'helpLink' in liveStreamingConfig
                 )
             );
-
-    permanentProperties.overwritesIceServers = Boolean(Object.keys(params).find(k => k.startsWith('iceServers')));
 
     const customToolbarButtons = params['config.customToolbarButtons'] ?? [];
 
