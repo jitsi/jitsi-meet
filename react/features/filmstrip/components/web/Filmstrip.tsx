@@ -75,6 +75,11 @@ interface IProps extends WithTranslation {
     _disableSelfView: boolean;
 
     /**
+     * Whether or not to set the background of the filmstrip opaque.
+     */
+    _filmstripBackgroundOpaque: boolean;
+
+    /**
      * Whether vertical/horizontal filmstrip is disabled through config.
      */
     _filmstripDisabled: boolean;
@@ -339,6 +344,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _currentLayout,
             _disableSelfView,
             _filmstripDisabled,
+            _filmstripBackgroundOpaque,
             _localScreenShareId,
             _mainFilmstripVisible,
             _resizableFilmstrip,
@@ -452,7 +458,8 @@ class Filmstrip extends PureComponent <IProps, IState> {
                 {_resizableFilmstrip
                     ? <div
                         className = { clsx('resizable-filmstrip', classes.resizableFilmstripContainer,
-                            _topPanelFilmstrip && 'top-panel-filmstrip') }>
+                            _topPanelFilmstrip && 'top-panel-filmstrip',
+                            _filmstripBackgroundOpaque && 'opaque-filmstrip') }>
                         <div
                             className = { clsx('dragHandleContainer',
                                 classes.dragHandleContainer,
@@ -916,6 +923,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
         || (filmstripType === FILMSTRIP_TYPE.MAIN && _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 
+    const filmstripBackgroundOpaque = state['features/base/config'].filmstripBackgroundOpaque ?? false;
+
     return {
         _className: className,
         _chatOpen: state['features/chat'].isOpen,
@@ -937,7 +946,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _topPanelVisible,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
-        _videosClassName: videosClassName
+        _videosClassName: videosClassName,
+        _filmstripBackgroundOpaque: filmstripBackgroundOpaque
     };
 }
 
