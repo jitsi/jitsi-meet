@@ -48,7 +48,7 @@ function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     body_json.type = 'av_moderation';
     body_json.enabled = enable;
     body_json.room = internal_room_jid_match_rewrite(room.jid);
-    body_json.actor = actorJid;
+    body_json.actor = internal_room_jid_match_rewrite(actorJid);
     body_json.mediaType = mediaType;
     local body_json_str, error = json.encode(body_json);
 
