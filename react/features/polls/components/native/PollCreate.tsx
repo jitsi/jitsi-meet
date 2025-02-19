@@ -45,7 +45,9 @@ const PollCreate = (props: AbstractProps) => {
 
     useEffect(() => {
         answerInputs.current = answerInputs.current.slice(0, answers.length);
-
+        setTimeout(() => {
+            answerListRef.current?.scrollToEnd({ animated: true });
+        }, 1000);
     }, [ answers ]);
 
     /*
