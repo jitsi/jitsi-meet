@@ -45,6 +45,13 @@ export default class Notifications extends BasePageObject {
     }
 
     /**
+     * Closes the ask to unmute notification.
+     */
+    async closeAskToUnmuteNotification() {
+        return this.closeLobbyNotification(ASK_TO_UNMUTE_NOTIFICATION_ID);
+    }
+
+    /**
      * Dismisses any join notifications.
      */
     dismissAnyJoinNotification() {
