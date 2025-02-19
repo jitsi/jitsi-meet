@@ -480,6 +480,7 @@ export interface IConfig {
     noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {
+        extraLong?: number;
         long?: number;
         medium?: number;
         short?: number;
