@@ -107,10 +107,9 @@ export default class ParticipantsPane extends BasePageObject {
         }
 
         const participantId = await participantToUnmute.getEndpointId();
-        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
 
-        await participantItem.waitForExist();
-        await participantItem.moveTo();
+        await this.selectParticipant(participantToUnmute);
+        await this.openParticipantContextMenu(participantToUnmute);
 
         const unmuteButton = this.participant.driver
             .$(`button[data-testid="unmute-video-${participantId}"]`);

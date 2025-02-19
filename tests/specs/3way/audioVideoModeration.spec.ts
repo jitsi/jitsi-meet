@@ -244,6 +244,7 @@ async function unmuteByModerator(
     await moderatorParticipantsPane.allowVideo(participant);
     await moderatorParticipantsPane.askToUnmute(participant, false);
     await participant.getNotifications().waitForAskToUnmuteNotification();
+    await participant.getNotifications().closeAskToUnmuteNotification();
 
     await unmuteAudioAndCheck(participant, moderator);
     await unmuteVideoAndCheck(participant, moderator);
