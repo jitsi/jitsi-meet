@@ -51,6 +51,37 @@ Advanced users also have the possibility of building all the components from sou
 
 You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
 
+## Detailed Installation Guide for specific systems
+
+Jitsi Meet supports multiple deployment methods. For Users with Ubuntu/Debian, below is a step by step installation guide with specific commands. These instructions should provide a clear description of the process to help 
+
+## Ubuntu/Debian Installation
+## to install Ubuntu/Debian, follow the steps below
+
+```sh
+sudo apt update && sudo apt upgrade
+sudo apt install -y gnupg2 wget
+wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo tee /usr/share/keyrings/jitsi-keyring.asc > /dev/null
+echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.asc] https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list
+sudo apt update
+sudo apt install -y jitsi-meet
+
+### After you have completed the installation setup, follow these steps:
+### To enable "Let's Encrypt SSL Certificates", run:
+
+sudo /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+
+### configuring your firewall:
+
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 10000/udp
+sudo ufw reload
+
+## References
+## https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-quickstart
+## https://github.com/jitsi/jitsi-meet
+
 ## Jitsi as a Service
 
 If you like the branding capabilities of running your own instance but you'd like
