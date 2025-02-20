@@ -1,5 +1,6 @@
 import BasePageObject from './BasePageObject';
 
+const AV_MODERATION_MUTED_NOTIFICATION_ID = 'notify.moderationInEffectTitle';
 const ASK_TO_UNMUTE_NOTIFICATION_ID = 'notify.hostAskedUnmute';
 const JOIN_ONE_TEST_ID = 'notify.connectedOneMember';
 const JOIN_TWO_TEST_ID = 'notify.connectedTwoMembers';
@@ -47,8 +48,15 @@ export default class Notifications extends BasePageObject {
     /**
      * Closes the ask to unmute notification.
      */
-    async closeAskToUnmuteNotification() {
-        return this.closeLobbyNotification(ASK_TO_UNMUTE_NOTIFICATION_ID);
+    async closeAVModerationMutedNotification(skipNonExisting = false) {
+        return this.closeNotification(AV_MODERATION_MUTED_NOTIFICATION_ID, skipNonExisting);
+    }
+
+    /**
+     * Closes the ask to unmute notification.
+     */
+    async closeAskToUnmuteNotification(skipNonExisting = false) {
+        return this.closeNotification(ASK_TO_UNMUTE_NOTIFICATION_ID, skipNonExisting);
     }
 
     /**
@@ -84,6 +92,28 @@ export default class Notifications extends BasePageObject {
      */
     getLobbyEnabledText() {
         return this.getNotificationText(LOBBY_ENABLED_TEST_ID);
+    }
+
+    /**
+     * Closes a specific lobby notification.
+     * @param testId
+     * @param skipNonExisting
+     * @private
+     */
+    private async closeNotification(testId: string, skipNonExisting = false) {
+        const notification = this.participant.driver.$(`[data-testid="${testId}"]`);
+
+        if (skipNonExisting && !await notification.isExisting()) {
+            return Promise.resolve();
+        }
+
+        await notification.waitForExist();
+        await notification.waitForStable();
+
+        const closeButton = notification.$('#close-notification');
+
+        await closeButton.moveTo();
+        await closeButton.click();
     }
 
     /**

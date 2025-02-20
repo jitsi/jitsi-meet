@@ -70,8 +70,10 @@ describe('AVModeration', () => {
         // participant3 was unmuted by unmuteByModerator
         await unmuteAudioAndCheck(p2, p1);
         await unmuteVideoAndCheck(p2, p1);
-        await unmuteAudioAndCheck(p1, p2);
-        await unmuteVideoAndCheck(p1, p2);
+
+        // make sure p1 is not muted after turning on and then off the AV moderation
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
     });
 
     it('hangup and change moderator', async () => {
@@ -244,7 +246,6 @@ async function unmuteByModerator(
     await moderatorParticipantsPane.allowVideo(participant);
     await moderatorParticipantsPane.askToUnmute(participant, false);
     await participant.getNotifications().waitForAskToUnmuteNotification();
-    await participant.getNotifications().closeAskToUnmuteNotification();
 
     await unmuteAudioAndCheck(participant, moderator);
     await unmuteVideoAndCheck(participant, moderator);
