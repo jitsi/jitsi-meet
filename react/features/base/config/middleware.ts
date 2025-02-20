@@ -118,7 +118,8 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         liveStreamingDialogUrls = {},
         preCallTest = {},
         salesforceUrl,
-        userDocumentationUrl
+        userDocumentationUrl,
+        peopleSearchUrl
     } = action.value;
 
     const { helpUrl, termsUrl, dataPrivacyUrl } = liveStreamingDialogUrls;
@@ -152,6 +153,10 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
 
     if (salesforceUrl) {
         config.salesforceUrl = salesforceUrl;
+    }
+
+    if (peopleSearchUrl) {
+        config.peopleSearchUrl = peopleSearchUrl;
     }
 
     const { enabled, iceUrl } = preCallTest;

@@ -213,7 +213,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDeploymentUrls?: boolean;
         overwritesEtherpadBase?: boolean;
         overwritesLiveStreamingUrls?: boolean;
-        overwritesPeopleSearchUrl?: boolean;
         overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
         server?: string;
@@ -257,7 +256,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     // TODO: Temporary metric. To be removed once we don't need it.
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
     permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
-    permanentProperties.overwritesPeopleSearchUrl = 'config.peopleSearchUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
     permanentProperties.overwritesEtherpadBase = 'config.etherpad_base' in params;
 
