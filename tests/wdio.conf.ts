@@ -44,7 +44,7 @@ if (process.env.ALLOW_INSECURE_CERTS === 'true') {
 }
 if (process.env.HEADLESS === 'true') {
     chromeArgs.push('--headless');
-    chromeArgs.push('--window-size=1280,720');
+    chromeArgs.push('--window-size=1280,1024');
 }
 if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);

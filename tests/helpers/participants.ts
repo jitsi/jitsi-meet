@@ -253,7 +253,8 @@ export async function muteAudioAndCheck(testee: Participant, observer: Participa
  * @param observer
  */
 export async function unmuteAudioAndCheck(testee: Participant, observer: Participant) {
-    await testee.getNotifications().closeAskToUnmuteNotification();
+    await testee.getNotifications().closeAskToUnmuteNotification(true);
+    await testee.getNotifications().closeAVModerationMutedNotification(true);
     await testee.getToolbar().clickAudioUnmuteButton();
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
