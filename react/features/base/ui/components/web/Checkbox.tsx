@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useId, useRef } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
@@ -22,6 +22,11 @@ interface ICheckboxProps {
      * Whether the input is disabled or not.
      */
     disabled?: boolean;
+
+    /**
+     * Optional id for input and label association.
+     */
+    id?: string;
 
     /**
      * The label of the input.
@@ -140,6 +145,10 @@ const useStyles = makeStyles()(theme => {
                     top: '10px'
                 }
             }
+        },
+
+        clickableLabel: {
+            cursor: 'pointer'
         }
     };
 });
@@ -148,6 +157,7 @@ const Checkbox = ({
     checked,
     className,
     disabled,
+    id,
     label,
     name,
     onChange
@@ -155,12 +165,29 @@ const Checkbox = ({
     const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
 
+    let inputId: string;
+
+    if (id && id.length > 0) {
+        inputId = `${id}-checkbox`;
+    } else if (name && name.length > 0) {
+        inputId = `${name}-checkbox`;
+    } else {
+        inputId = `${useId()}-checkbox`;
+    }
+
+    const labelRef = useRef<HTMLLabelElement>(null);
+
+    const toggleCheckbox = useCallback(() => {
+        labelRef.current?.click();
+    }, [ labelRef ]);
+
     return (
         <label className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
             <div className = { cx(styles.activeArea, isMobile && 'is-mobile', disabled && styles.disabled) }>
                 <input
                     checked = { checked }
                     disabled = { disabled }
+                    id = { inputId }
                     name = { name }
                     onChange = { onChange }
                     type = 'checkbox' />
@@ -168,10 +195,16 @@ const Checkbox = ({
                     aria-hidden = { true }
                     className = 'checkmark'
                     color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    onClick = { toggleCheckbox }
                     size = { 18 }
                     src = { IconCheck } />
             </div>
-            <div>{label}</div>
+            <label
+                className = { styles.clickableLabel }
+                htmlFor = { inputId }
+                ref = { labelRef }>
+                {label}
+            </label>
         </label>
     );
 };
