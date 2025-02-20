@@ -2320,7 +2320,7 @@ export default {
              * and let the page take care of sending the message, since there will be
              * a redirect to the page anyway.
              */
-            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+            if (!Config.SHOW_PROMOTIONAL_CLOSE_PAGE) {
                 APP.API.notifyReadyToClose();
             }
 

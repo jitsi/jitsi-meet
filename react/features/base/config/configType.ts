@@ -653,4 +653,19 @@ export interface IConfig {
         disabled?: boolean;
     };
     whiteboard?: IWhiteboardConfig;
+    toolbarAlwaysVisible: false,
+    initialToolbarTimeout: 20000,
+    toolbarTimeout: 4000,
+    connectionIndicatorAutoHideEnabled: true,
+    connectionIndicatorAutoHideTimeout: 5000,
+  
+        mobileDynamicLink: '', 
+        nativeAppName: 'Jitsi Meet', 
+        hideDeepLinkingLogo: false, 
+        appScheme: 'org.jitsi.meet', 
+        mobileDownloadLinkAndroid: '',
+        androidAppPackage: 'org.jitsi.meet', 
+        mobileDownloadLinkFDroid: ''
+        liveStreamingHelpLink: '', 
+        mobileDownloadLinkIOS: '' 
 }

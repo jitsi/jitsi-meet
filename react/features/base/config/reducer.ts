@@ -238,8 +238,8 @@ function _translateInterfaceConfig(oldValue: IConfig) {
     const newValue = oldValue;
 
     if (!Array.isArray(oldValue.toolbarButtons)
-        && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
-        newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+        && typeof config === 'object' && Array.isArray(config.toolbarButtons)) {
+        newValue.toolbarButtons = config.toolbarButtons;
     }
 
     if (!oldValue.toolbarConfig) {
@@ -248,57 +248,57 @@ function _translateInterfaceConfig(oldValue: IConfig) {
 
     newValue.toolbarConfig = oldValue.toolbarConfig || {};
     if (typeof oldValue.toolbarConfig.alwaysVisible !== 'boolean'
-        && typeof interfaceConfig === 'object'
-        && typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE === 'boolean') {
-        newValue.toolbarConfig.alwaysVisible = interfaceConfig.TOOLBAR_ALWAYS_VISIBLE;
+        && typeof config === 'object'
+        && typeof config.toolbarAlwaysVisible === 'boolean') {
+        newValue.toolbarConfig.alwaysVisible = config.toolbarAlwaysVisible;
     }
 
     if (typeof oldValue.toolbarConfig.initialTimeout !== 'number'
-        && typeof interfaceConfig === 'object'
-        && typeof interfaceConfig.INITIAL_TOOLBAR_TIMEOUT === 'number') {
-        newValue.toolbarConfig.initialTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+        && typeof config === 'object'
+        && typeof config.initialToolbarTimeout === 'number') {
+        newValue.toolbarConfig.initialTimeout = config.initialToolbarTimeout;
     }
 
     if (typeof oldValue.toolbarConfig.timeout !== 'number'
-        && typeof interfaceConfig === 'object'
-        && typeof interfaceConfig.TOOLBAR_TIMEOUT === 'number') {
-        newValue.toolbarConfig.timeout = interfaceConfig.TOOLBAR_TIMEOUT;
+        && typeof config === 'object'
+        && typeof config.toolbarTimeout === 'number') {
+        newValue.toolbarConfig.timeout = config.toolbarTimeout;
     }
 
     if (!oldValue.connectionIndicators
-        && typeof interfaceConfig === 'object'
-        && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
-            || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
-            || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
+        && typeof config === 'object'
+        && (config.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+            || config.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+            || config.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
         newValue.connectionIndicators = {
-            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
-            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
+            disabled: config.connectionIndicators,
+            autoHide: config.connectionIndicatorAutoHideEnabled,
+            autoHideTimeout: config.connectionIndicatorAutoHideTimeout
         };
     }
 
     if (oldValue.disableModeratorIndicator === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
-        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
+        && typeof config === 'object'
+        && config.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
+        newValue.disableModeratorIndicator = config.disableFocus;
     }
 
     if (oldValue.defaultLocalDisplayName === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
-        newValue.defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+        && typeof config === 'object'
+        && config.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
+        newValue.defaultLocalDisplayName = config.defaultLocalDisplayName;
     }
 
     if (oldValue.defaultRemoteDisplayName === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
-        newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        && typeof config === 'object'
+        && config.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
+        newValue.defaultRemoteDisplayName = config.defaultRemoteDisplayName;
     }
 
     if (oldValue.defaultLogoUrl === undefined) {
-        if (typeof interfaceConfig === 'object'
-            && interfaceConfig.hasOwnProperty('DEFAULT_LOGO_URL')) {
-            newValue.defaultLogoUrl = interfaceConfig.DEFAULT_LOGO_URL;
+        if (typeof config === 'object'
+            && config.hasOwnProperty('DEFAULT_LOGO_URL')) {
+            newValue.defaultLogoUrl = config.defaultLogoUrl;
         } else {
             newValue.defaultLogoUrl = 'images/watermark.svg';
         }
@@ -320,8 +320,8 @@ function _translateInterfaceConfig(oldValue: IConfig) {
             ios: {} as IDeeplinkingMobileConfig
         };
 
-        if (typeof interfaceConfig === 'object') {
-            const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
+        if (typeof config === 'object') {
+            const mobileDynamicLink = config.mobileDynamicLink;
             const dynamicLink: IMobileDynamicLink | undefined = mobileDynamicLink ? {
                 apn: mobileDynamicLink.APN,
                 appCode: mobileDynamicLink.APP_CODE,
@@ -331,22 +331,22 @@ function _translateInterfaceConfig(oldValue: IConfig) {
             } : undefined;
 
             if (deeplinking.desktop) {
-                deeplinking.desktop.appName = interfaceConfig.NATIVE_APP_NAME;
+                deeplinking.desktop.appName = config.nativeAppName;
             }
 
-            deeplinking.hideLogo = Boolean(interfaceConfig.HIDE_DEEP_LINKING_LOGO);
+            deeplinking.hideLogo = Boolean(config.hideDeepLinkingLogo);
             deeplinking.android = {
-                appName: interfaceConfig.NATIVE_APP_NAME,
-                appScheme: interfaceConfig.APP_SCHEME,
-                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
-                appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
-                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID,
+                appName: config.nativeAppName,
+                appScheme: config.appScheme,
+                downloadLink: config.mobileDownloadLinkAndroid,
+                appPackage:config.androidAppPackage,
+                fDroidUrl: config.mobileDownloadLinkFDroid,
                 dynamicLink
             };
             deeplinking.ios = {
-                appName: interfaceConfig.NATIVE_APP_NAME,
-                appScheme: interfaceConfig.APP_SCHEME,
-                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS,
+                appName: config.nativeAppName,
+                appScheme: config.appScheme,
+                downloadLink: config.mobileDownloadLinkIOS,
                 dynamicLink
             };
         }
@@ -521,11 +521,11 @@ function _translateLegacyConfig(oldValue: IConfig) {
 
     // Migrate interfaceConfig.LIVE_STREAMING_HELP_LINK
     if (oldValue.liveStreaming === undefined
-        && typeof interfaceConfig === 'object'
-        && interfaceConfig.hasOwnProperty('LIVE_STREAMING_HELP_LINK')) {
+        && typeof config === 'object'
+        && config.hasOwnProperty('LIVE_STREAMING_HELP_LINK')) {
         newValue.liveStreaming = {
             ...newValue.liveStreaming,
-            helpLink: interfaceConfig.LIVE_STREAMING_HELP_LINK
+            helpLink: config.liveStreamingHelpLink
         };
     }
 
