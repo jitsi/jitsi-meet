@@ -27,10 +27,11 @@ MiddlewareRegistry.register(store => next => action => {
             inviteDomain,
             labels,
             liveStreamingDialogUrls,
+            peopleSearchUrl,
             salesforceUrl,
             sharedVideoAllowedURLDomains,
             supportUrl,
-            userDocumentationUrl
+            userDocumentationUrl,
         } = action.value;
 
         action.value = {
@@ -43,6 +44,7 @@ MiddlewareRegistry.register(store => next => action => {
             inviteDomain,
             labels,
             liveStreamingDialogUrls,
+            peopleSearchUrl,
             salesforceUrl,
             sharedVideoAllowedURLDomains,
             supportUrl,
