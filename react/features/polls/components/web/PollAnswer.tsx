@@ -27,17 +27,14 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer',
             float: 'right'
         },
-        header: {
-            marginBottom: '24px'
-        },
         question: {
             ...withPixelLineHeight(theme.typography.heading6),
             color: theme.palette.text01,
-            marginBottom: '8px'
         },
         creator: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text02
+            color: theme.palette.text02,
+            marginBottom: '12px'
         },
         answerList: {
             listStyleType: 'none',
@@ -78,7 +75,7 @@ const PollAnswer = ({
     const { classes } = useStyles();
 
     return (
-        <div className = { classes.container }>
+        <form className = { classes.container }>
             {
                 pollSaved && <Icon
                     ariaLabel = { t('polls.closeButton') }
@@ -88,30 +85,27 @@ const PollAnswer = ({
                     src = { IconCloseLarge }
                     tabIndex = { 0 } />
             }
-            <div className = { classes.header }>
-                <div className = { classes.question }>
+            <fieldset className = { classes.answerList }>
+                <legend
+                    className = { classes.question }>
                     { poll.question }
-                </div>
-                <div className = { classes.creator }>
+                </legend>
+                <p className = { classes.creator }>
                     { t('polls.by', { name: creatorName }) }
-                </div>
-            </div>
-            <ul className = { classes.answerList }>
+                </p>
                 {
                     poll.answers.map((answer, index: number) => (
-                        <li
+                        <Checkbox
+                            checked = { checkBoxStates[index] }
                             className = { classes.answer }
-                            key = { index }>
-                            <Checkbox
-                                checked = { checkBoxStates[index] }
-                                disabled = { poll.saved }
-                                key = { index }
-                                label = { answer.name }
-                                onChange = { ev => setCheckbox(index, ev.target.checked) } />
-                        </li>
+                            disabled = { poll.saved }
+                            id = { `${pollId}-${index}` }
+                            key = { index }
+                            label = { answer.name }
+                            onChange = { ev => setCheckbox(index, ev.target.checked) } />
                     ))
                 }
-            </ul>
+            </fieldset>
             <div className = { classes.footer } >
                 {
                     pollSaved ? <>
@@ -143,7 +137,7 @@ const PollAnswer = ({
                     </>
                 }
             </div>
-        </div>
+        </form>
     );
 };
 
