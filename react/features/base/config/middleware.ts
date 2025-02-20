@@ -115,6 +115,7 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
     const config: IConfig = {};
     const {
         downloadAppsUrl,
+        etherpadBase,
         liveStreamingDialogUrls = {},
         preCallTest = {},
         salesforceUrl,
@@ -165,6 +166,11 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         config.prejoinConfig = {
             preCallTestEnabled: enabled
         };
+    }
+
+    if (etherpadBase) {
+        // eslint-disable-next-line camelcase
+        config.etherpad_base = etherpadBase;
     }
 
     if (iceUrl) {

@@ -211,7 +211,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesCustomParticipantButtonsWithURL?: boolean;
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
-        overwritesEtherpadBase?: boolean;
         overwritesLiveStreamingUrls?: boolean;
         overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
@@ -257,7 +256,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
     permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
-    permanentProperties.overwritesEtherpadBase = 'config.etherpad_base' in params;
 
     const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
 
