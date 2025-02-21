@@ -33,17 +33,13 @@ const MediaControlsWrapper: React.FC<IProps> = ({
 }) => {
     const handleVideoClick = () => {
         if (videoGUMPending === IGUMPendingState.NONE) {
-            APP.conference.toggleVideoMuted(false, true).then(() => {
-                //     // dispatch(showToolbox());
-            });
+            APP.conference.toggleVideoMuted(false, true);
         }
     };
 
     const handleAudioClick = () => {
         if (audioGUMPending === IGUMPendingState.NONE) {
-            APP.conference.toggleAudioMuted(false, true).then(() => {
-                // dispatch(showToolbox());
-            });
+            APP.conference.toggleAudioMuted(false, true);
         }
     };
 
