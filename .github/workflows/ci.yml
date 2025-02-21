@@ -19,13 +19,14 @@ jobs:
         echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
         echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
         echo "always-auth=true" >> .npmrc
+        npm config set legacy-peer-deps true
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v41
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-    - run: npm install
+    - run: npm install --legacy-peer-deps
     - name: Check git status
       run: git status
     - name: Normalize lang files to ensure sorted
@@ -54,7 +55,8 @@ jobs:
         echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
         echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
         echo "always-auth=true" >> .npmrc
-    - run: npm install
+        npm config set legacy-peer-deps true
+    - run: npm install --legacy-peer-deps
     - run: make
   # macos-ci:
   #   name: Build Frontend (macOS)
