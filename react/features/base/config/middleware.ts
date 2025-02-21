@@ -114,13 +114,14 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
 function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: AnyAction) {
     const config: IConfig = {};
     const {
+        customParticipantMenuButtons,
         downloadAppsUrl,
         etherpadBase,
         liveStreamingDialogUrls = {},
         preCallTest = {},
         salesforceUrl,
         userDocumentationUrl,
-        peopleSearchUrl
+        peopleSearchUrl,
     } = action.value;
 
     const { helpUrl, termsUrl, dataPrivacyUrl } = liveStreamingDialogUrls;
@@ -176,6 +177,10 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
     if (iceUrl) {
         config.prejoinConfig = config.prejoinConfig || {};
         config.prejoinConfig.preCallTestICEUrl = iceUrl;
+    }
+
+    if (customParticipantMenuButtons) {
+        config.customParticipantMenuButtons = customParticipantMenuButtons;
     }
 
     dispatch(updateConfig(config));
