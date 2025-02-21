@@ -61,7 +61,7 @@ const Header = ({ mode, translate, onSetModeClicked }) => (
     <IntxHeader
         leftContent={<LeftContent />}
         rightContent={<RightContent mode={mode} translate={translate} onSetModeClicked={onSetModeClicked} />}
-        className="z-50 p-3"
+        className="fixed top-0 left-0 right-0 p-3 z-[99]"
     />
 );
 

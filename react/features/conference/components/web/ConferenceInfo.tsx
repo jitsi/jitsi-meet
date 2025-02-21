@@ -4,28 +4,23 @@ import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import E2EELabel from '../../../e2ee/components/E2EELabel';
-import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
+import E2EELabel from "../../../e2ee/components/E2EELabel";
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import { showToolbox } from '../../../toolbox/actions.web';
-import { isToolboxVisible } from '../../../toolbox/functions.web';
-import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
-import VisitorsCountLabel from '../../../visitors/components/web/VisitorsCountLabel';
-import ConferenceTimer from '../ConferenceTimer';
-import { getConferenceInfo } from '../functions.web';
+import { isToolboxVisible } from "../../../toolbox/functions.web";
+import VisitorsCountLabel from "../../../visitors/components/web/VisitorsCountLabel";
+import { getConferenceInfo } from "../functions.web";
 
-import ConferenceInfoContainer from './ConferenceInfoContainer';
-import InsecureRoomNameLabel from './InsecureRoomNameLabel';
-import RaisedHandsCountLabel from './RaisedHandsCountLabel';
-import SpeakerStatsLabel from './SpeakerStatsLabel';
-import SubjectText from './SubjectText';
-import ToggleTopPanelLabel from './ToggleTopPanelLabel';
+import ConferenceInfoContainer from "./ConferenceInfoContainer";
+import InsecureRoomNameLabel from "./InsecureRoomNameLabel";
+import RaisedHandsCountLabel from "./RaisedHandsCountLabel";
+import SpeakerStatsLabel from "./SpeakerStatsLabel";
+import ToggleTopPanelLabel from "./ToggleTopPanelLabel";
 
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
 interface IProps {
-
     /**
      * The conference info labels to be shown in the conference header.
      */
@@ -42,45 +37,45 @@ interface IProps {
     /**
      * Invoked to active other features of the app.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 }
 
 const COMPONENTS: Array<{
     Component: React.ComponentType<any>;
     id: string;
 }> = [
-    {
-        Component: HighlightButton,
-        id: 'highlight-moment'
-    },
-    {
-        Component: SubjectText,
-        id: 'subject'
-    },
-    {
-        Component: ConferenceTimer,
-        id: 'conference-timer'
-    },
+    // {
+    //     Component: HighlightButton,
+    //     id: "highlight-moment",
+    // },
+    // {
+    //     Component: SubjectText,
+    //     id: "subject",
+    // },
+    // {
+    //     Component: ConferenceTimer,
+    //     id: 'conference-timer'
+    // },
     {
         Component: SpeakerStatsLabel,
-        id: 'participants-count'
+        id: "participants-count",
     },
     {
         Component: E2EELabel,
-        id: 'e2ee'
+        id: "e2ee",
     },
     {
         Component: () => (
             <>
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
+                <RecordingLabel mode={JitsiRecordingConstants.mode.FILE} />
+                <RecordingLabel mode={JitsiRecordingConstants.mode.STREAM} />
             </>
         ),
-        id: 'recording'
+        id: "recording",
     },
     {
         Component: RaisedHandsCountLabel,
-        id: 'raised-hands-count'
+        id: "raised-hands-count",
     },
     /*{
         Component: VideoQualityLabel,
@@ -88,16 +83,16 @@ const COMPONENTS: Array<{
     },*/
     {
         Component: VisitorsCountLabel,
-        id: 'visitors-count'
+        id: "visitors-count",
     },
     {
         Component: InsecureRoomNameLabel,
-        id: 'insecure-room'
+        id: "insecure-room",
     },
     {
         Component: ToggleTopPanelLabel,
-        id: 'top-panel-toggle'
-    }
+        id: "top-panel-toggle",
+    },
 ];
 
 /**

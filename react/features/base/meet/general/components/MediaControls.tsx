@@ -2,13 +2,14 @@ import { CircleButton } from "@internxt/ui";
 import { ExclamationMark, Microphone, MicrophoneSlash, VideoCamera, VideoCameraSlash } from "@phosphor-icons/react";
 import React from "react";
 
-import MeetAudioSettingsPopUp from "../MeetAudioSettingsPopup";
-import CustomVideoSettingsPopUp from "../MeetVideoSettingsPopUp";
+import MeetAudioSettingsPopUp from "../containers/MeetAudioSettingsPopup";
+import CustomVideoSettingsPopUp from "../containers/MeetVideoSettingsPopUp";
 
 interface MediaControlsProps {
-    videoTrack?: any;
+    hasVideoPermissions?: boolean;
     isVideoMuted?: boolean;
-    audioTrack?: any;
+    hasAudioPermissions?: boolean;
+    isAudioMuted?: boolean;
     onVideoClick: () => void;
     onAudioClick: () => void;
     onVideoOptionsClick: () => void;
@@ -19,30 +20,29 @@ const indicatorProps = {
     className: "bg-orange",
 };
 const MediaControls: React.FC<MediaControlsProps> = ({
-    videoTrack,
+    hasVideoPermissions,
     isVideoMuted,
-    audioTrack,
+    hasAudioPermissions,
+    isAudioMuted,
     onVideoClick,
     onAudioClick,
     onVideoOptionsClick,
     onAudioOptionsClick,
 }) => {
-    const isAudioTrackMuted = audioTrack?.isMuted();
-
-    const audioIndicatorProps = !audioTrack ? indicatorProps : undefined;
-    const videoIndicatorProps = !videoTrack ? indicatorProps : undefined;
-
+    const audioIndicatorProps = !hasAudioPermissions ? indicatorProps : undefined;
+    const videoIndicatorProps = !hasVideoPermissions ? indicatorProps : undefined;
+    console.log({ isAudioMuted });
     return (
         <div className="flex space-x-2 justify-center items-center">
             <CircleButton
                 variant="default"
-                active={videoTrack && !isVideoMuted}
+                active={hasVideoPermissions && !isVideoMuted}
                 indicator={videoIndicatorProps}
                 onClick={onVideoClick}
                 onClickToggleButton={onVideoOptionsClick}
                 dropdown={<CustomVideoSettingsPopUp />}
             >
-                {videoTrack && !isVideoMuted ? (
+                {hasVideoPermissions && !isVideoMuted ? (
                     <VideoCamera size={22} color="black" weight="fill" />
                 ) : (
                     <VideoCameraSlash size={22} color="white" weight="fill" />
@@ -50,16 +50,16 @@ const MediaControls: React.FC<MediaControlsProps> = ({
             </CircleButton>
             <CircleButton
                 variant="default"
-                active={audioTrack && !isAudioTrackMuted}
+                active={hasAudioPermissions && !isAudioMuted}
                 indicator={audioIndicatorProps}
                 onClick={onAudioClick}
                 onClickToggleButton={onAudioOptionsClick}
                 dropdown={<MeetAudioSettingsPopUp />}
             >
-                {audioTrack && !isAudioTrackMuted ? (
-                    <Microphone size={22} color="black" weight="fill" />
-                ) : (
+                {isAudioMuted || !hasAudioPermissions ? (
                     <MicrophoneSlash size={20} color="white" weight="fill" />
+                ) : (
+                    <Microphone size={22} color="black" weight="fill" />
                 )}
             </CircleButton>
         </div>
