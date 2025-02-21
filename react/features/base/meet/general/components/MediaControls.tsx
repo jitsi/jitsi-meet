@@ -31,7 +31,7 @@ const MediaControls: React.FC<MediaControlsProps> = ({
 }) => {
     const audioIndicatorProps = !hasAudioPermissions ? indicatorProps : undefined;
     const videoIndicatorProps = !hasVideoPermissions ? indicatorProps : undefined;
-    console.log({ isAudioMuted });
+
     return (
         <div className="flex space-x-2 justify-center items-center">
             <CircleButton
