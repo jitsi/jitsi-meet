@@ -18,6 +18,7 @@ local array = require 'util.array';
 local set = require 'util.set';
 
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local ends_with = util.ends_with;
 local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -62,11 +63,6 @@ local measure_visitors = module:measure('vnode-visitors', 'amount');
 local sent_iq_cache = require 'util.cache'.new(200);
 
 local sessions = prosody.full_sessions;
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 local function send_transcriptions_update(room)
     -- let's notify main prosody
