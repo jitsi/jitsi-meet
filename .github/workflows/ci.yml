@@ -12,6 +12,13 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
+        registry-url: 'https://npm.pkg.github.com'
+    - name: Configure NPM
+      run: |
+        echo "registry=https://registry.yarnpkg.com/" > .npmrc
+        echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+        echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
+        echo "always-auth=true" >> .npmrc
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v41
@@ -30,6 +37,7 @@ jobs:
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npm run lint:ci && npm run tsc:ci
+
   linux-build:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
@@ -39,6 +47,13 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
+        registry-url: 'https://npm.pkg.github.com'
+    - name: Configure NPM
+      run: |
+        echo "registry=https://registry.yarnpkg.com/" > .npmrc
+        echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+        echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
+        echo "always-auth=true" >> .npmrc
     - run: npm install
     - run: make
   # macos-ci:
