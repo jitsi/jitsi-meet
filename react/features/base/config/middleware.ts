@@ -115,6 +115,7 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
     const config: IConfig = {};
     const {
         customParticipantMenuButtons,
+        customToolbarButtons,
         downloadAppsUrl,
         etherpadBase,
         liveStreamingDialogUrls = {},
@@ -177,6 +178,10 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
     if (iceUrl) {
         config.prejoinConfig = config.prejoinConfig || {};
         config.prejoinConfig.preCallTestICEUrl = iceUrl;
+    }
+
+    if (customToolbarButtons) {
+        config.customToolbarButtons = customToolbarButtons;
     }
 
     if (customParticipantMenuButtons) {
