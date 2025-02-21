@@ -6,7 +6,7 @@ import { setScreenshareMuted } from '../media/actions';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState } from './functions.native';
-import logger from './logger';
+
 
 export * from './actions.any';
 
