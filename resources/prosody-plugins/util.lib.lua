@@ -6,6 +6,7 @@ local http = require "net.http";
 local cache = require "util.cache";
 local array = require "util.array";
 local is_set = require 'util.set'.is_set;
+local usermanager = require 'core.usermanager';
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -624,6 +625,11 @@ end;
 function get_ip(session)
     local request = get_request_from_conn(session.conn);
     return request and request.ip or session.ip;
+end
+
+-- Checks whether the provided jid is in the list of admins
+local function is_admin(jid)
+    return usermanager.is_admin(jid, module.host);
 end
 
 return {
