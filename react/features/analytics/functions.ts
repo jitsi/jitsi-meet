@@ -208,7 +208,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         isPromotedFromVisitor?: boolean;
         isVisitor?: boolean;
         overwritesCustomButtonsWithURL?: boolean;
-        overwritesCustomParticipantButtonsWithURL?: boolean;
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesLiveStreamingUrls?: boolean;
@@ -282,11 +281,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
 
     permanentProperties.overwritesCustomButtonsWithURL = Boolean(
         customToolbarButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
-
-    const customParticipantMenuButtons = params['config.customParticipantMenuButtons'] ?? [];
-
-    permanentProperties.overwritesCustomParticipantButtonsWithURL = Boolean(
-        customParticipantMenuButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
