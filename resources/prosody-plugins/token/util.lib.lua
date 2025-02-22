@@ -145,14 +145,32 @@ function Util.new(module)
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
-                -- Let's convert any certificate to public key
-                for k, v in pairs(cjson_safe.decode(content)) do
-                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                local decoded_content = cjson_safe.decode(content);
+
+                -- Process the decoded content
+                for k, v in pairs(decoded_content) do
+                    if k == "keys" and type(v) == "table" then
+                        -- Process as JWKS format
+                        for _, key in ipairs(v) do
+                            if key.kid and key.x5c and key.x5c[1] then
+                                -- Convert the first certificate in x5c array to public key
+                                local cert = "-----BEGIN CERTIFICATE-----\n" ..
+                                           key.x5c[1] ..
+                                           "\n-----END CERTIFICATE-----";
+                                self.cachedKeys[key.kid] = ssl.loadcertificate(cert):pubkey();
+                                -- do not clean this key if it already exists
+                                keys_to_delete[key.kid] = nil;
+                            end
+                        end
+                    -- Process as {kid}: "certificate" format
+                    -- Let's convert any certificate to public key
+                    elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
                         -- do not clean this key if it already exists
                         keys_to_delete[k] = nil;
                     end
                 end
+
                 -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
                 timer.add_task(90*60, function ()
                     for k, _ in pairs(keys_to_delete) do
