@@ -9,6 +9,10 @@ window.$ = window.jQuery = $;
 import '@matrix-org/olm';
 
 import 'focus-visible';
+import { toggleE2EE } from './react/features/e2ee/actions';  
+import { Store } from 'redux';
+
+
 
 // We need to setup the jitsi-local-storage as early as possible so that we can start using it.
 // NOTE: If jitsi-local-storage is used before the initial setup is performed this will break the use case when we use
@@ -22,10 +26,12 @@ import translation from './modules/translation/translation';
 
 // Initialize Olm as early as possible.
 if (window.Olm) {
-    window.Olm.init().catch(e => {
-        console.error('Failed to initialize Olm, E2EE will be disabled', e);
-        delete window.Olm;
-    });
+  window.Olm.init().catch(e => {
+    console.error('Failed to initialize Olm, E2EE will be disabled', e);
+    delete window.Olm;
+    // Use toggleE2EE(false) to disable E2EE
+    store.dispatch(toggleE2EE(false)); 
+  });
 }
 
 window.APP = {
@@ -42,3 +48,5 @@ window.APP = {
 // the execution of the Web app to start from app.js in order to reduce the
 // complexity of the beginning step.
 import './react';
+
+

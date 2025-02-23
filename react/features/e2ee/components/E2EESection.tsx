@@ -10,6 +10,7 @@ import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
 import { doesEveryoneSupportE2EE } from '../functions';
+import { showErrorNotification } from '../../notifications/actions';
 
 interface IProps {
 
@@ -100,7 +101,14 @@ const E2EESection = ({
      */
     const _onToggle = useCallback(() => {
         const newValue = !toggled;
-
+        if (newValue && !window.Olm) {
+            dispatch(showErrorNotification({
+              titleKey: 'e2ee.errorTitle',
+              descriptionKey: 'e2ee.olmMissing'
+            }));
+            return;
+          }
+        
         setToggled(newValue);
 
         sendAnalytics(createE2EEEvent(`enabled.${String(newValue)}`));
@@ -172,3 +180,4 @@ function mapStateToProps(state: IReduxState) {
 }
 
 export default connect(mapStateToProps)(E2EESection);
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -24,18 +24,25 @@ export interface IProps extends WithTranslation {
 
 
 const E2EELabel = ({ _e2eeLabels, _showLabel, t }: IProps) => {
-    if (!_showLabel) {
-        return null;
+    const [olmAvailable, setOlmAvailable] = useState(Boolean(window.Olm)); 
+
+    useEffect(() => {
+        const checkOlm = () => setOlmAvailable(Boolean(window.Olm)); 
+
+        const interval = setInterval(checkOlm, 1000); 
+
+        return () => clearInterval(interval); 
+    }, []);
+
+    if (!_showLabel || !olmAvailable) { 
+        return null; 
     }
+
     const content = _e2eeLabels?.tooltip || t('e2ee.labelToolTip');
 
     return (
-        <Tooltip
-            content = { content }
-            position = { 'bottom' }>
-            <Label
-                color = { COLORS.green }
-                icon = { IconE2EE } />
+        <Tooltip content={content} position="bottom">
+            <Label color={COLORS.green} icon={IconE2EE} />
         </Tooltip>
     );
 };

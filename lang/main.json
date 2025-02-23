@@ -504,7 +504,9 @@
         "title": "Shared Document"
     },
     "e2ee": {
-        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
+        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted",
+        "errorTitle": "Encryption Error",
+        "olmMissing": "Encryption requires Olm support. Update your browser!"
     },
     "embedMeeting": {
         "title": "Embed this meeting"
