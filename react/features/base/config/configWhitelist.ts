@@ -80,7 +80,6 @@ export default [
     'channelLastN',
     'connectionIndicators',
     'constraints',
-    'customToolbarButtons',
     'deeplinking.disabled',
     'deeplinking.desktop.enabled',
     'defaultLocalDisplayName',
